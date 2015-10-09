@@ -350,7 +350,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
                 {
                     grantAddonUserSpaceAdmin(getConfluenceUser(username));
                 }
-                catch (IllegalStateException e)
+                catch (Exception e)
                 {
                     log.error("Could not add user '{}' to new spaces", username, e);
                 }
