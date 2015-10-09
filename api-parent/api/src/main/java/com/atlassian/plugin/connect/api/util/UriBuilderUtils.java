@@ -30,18 +30,6 @@ public class UriBuilderUtils
         }
     }
 
-    public static Map<String, String[]> toMultiValue(Map<String, String> urlParameters)
-    {
-        return Maps.transformValues(urlParameters, new Function<String, String[]>()
-        {
-            @Override
-            public String[] apply(@Nullable String input)
-            {
-                return null == input ? new String[0] : new String[]{input};
-            }
-        });
-    }
-
     public static Map<String, List<String>> toListFormat(Map<String, String[]> allParameters)
     {
         return Maps.transformValues(allParameters, new Function<String[], List<String>>()

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.api.OAuth;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -14,8 +13,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.Environment;
-import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.google.common.collect.ImmutableMap;
@@ -24,8 +21,6 @@ import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ToggleableConditionServlet;
-import org.apache.commons.lang.NotImplementedException;
-import org.bouncycastle.openssl.PEMWriter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -40,12 +35,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -292,23 +284,6 @@ public class ConnectRunner
     {
         return new SignedRequestHandler()
         {
-            @Override
-            public String getHostBaseUrl(String key)
-            {
-                throw new NotImplementedException();
-            }
-
-            @Override
-            public String getLocalBaseUrl()
-            {
-                throw new NotImplementedException();
-            }
-
-            @Override
-            public String validateRequest(HttpServletRequest req) throws ServletException
-            {
-                throw new NotImplementedException();
-            }
 
             @Override
             public void sign(URI uri, String method, String username, HttpURLConnection connection)
@@ -328,12 +303,6 @@ public class ConnectRunner
                     throw new RuntimeException(e);
                 }
             }
-
-            @Override
-            public String getAuthorizationHeaderValue(URI uri, String method, String username) throws IllegalArgumentException
-            {
-                throw new NotImplementedException();
-            }
         };
     }
 
@@ -352,28 +321,6 @@ public class ConnectRunner
     public SignedRequestHandler getSignedRequestHandler()
     {
         return signedRequestHandler;
-    }
-
-    @OAuth
-    public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException, IOException
-    {
-        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        KeyPair oauthKeyPair = gen.generateKeyPair();
-        StringWriter publicKeyWriter = new StringWriter();
-        PEMWriter pubWriter = new PEMWriter(publicKeyWriter);
-        pubWriter.writeObject(oauthKeyPair.getPublic());
-        pubWriter.close();
-
-        StringWriter privateKeyWriter = new StringWriter();
-        PEMWriter privWriter = new PEMWriter(privateKeyWriter);
-        privWriter.writeObject(oauthKeyPair.getPrivate());
-        privWriter.close();
-
-        Environment env = new TestEnv();
-        env.setEnv("OAUTH_LOCAL_PUBLIC_KEY", publicKeyWriter.toString());
-        env.setEnv("OAUTH_LOCAL_PRIVATE_KEY", privateKeyWriter.toString());
-        env.setEnv("OAUTH_LOCAL_KEY", appKey);
-        return new RunnerSignedRequestHandler(appKey, env);
     }
 
     public ConnectRunner start() throws Exception
@@ -420,11 +367,6 @@ public class ConnectRunner
         return new HttpContextServlet(servlet);
     }
 
-    public static HttpServlet newMustacheServlet(String resource)
-    {
-        return newServlet(new MustacheServlet(resource));
-    }
-
     /**
      * @return a {@link org.junit.rules.TestRule} that reverts the condition back to it's initial value.
      */
@@ -443,22 +385,6 @@ public class ConnectRunner
         return ImmutableMap.<String, Object>of("port", port, "baseurl", productBaseUrl);
     }
 
-    private static final class MustacheServlet extends ContextServlet
-    {
-        private final String path;
-
-        private MustacheServlet(String path)
-        {
-            this.path = checkNotNull(path);
-        }
-
-        @Override
-        public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-            HttpUtils.renderHtml(resp, path, context);
-        }
-    }
-
     private class DescriptorServlet extends HttpServlet
     {
         @Override
@@ -468,39 +394,6 @@ public class ConnectRunner
             response.setContentType(MediaType.APPLICATION_JSON);
             response.getWriter().write(json);
             response.getWriter().close();
-        }
-    }
-
-    private static class TestEnv implements Environment
-    {
-        private Map<String, String> env = newHashMap();
-
-        @Override
-        public String getEnv(String name)
-        {
-            return env.get(name);
-        }
-
-        @Override
-        public String getOptionalEnv(String name, String def)
-        {
-            final String value = env.get(name);
-            return value == null ? def : value;
-        }
-
-        @Override
-        public void setEnv(String name, String value)
-        {
-            env.put(name, value);
-        }
-
-        @Override
-        public void setEnvIfNull(String name, String value)
-        {
-            if (env.get(name) == null)
-            {
-                setEnv(name, value);
-            }
         }
     }
 }

@@ -7,13 +7,11 @@ import com.atlassian.plugin.connect.plugin.condition.PageConditionsFactoryImpl;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.sal.api.message.I18nResolver;
-import com.opensymphony.util.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.DefaultResourceLoader;
 
 import java.io.IOException;
 
@@ -24,8 +22,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PageConditionValidationTest
 {
-    @Mock
-    private I18nResolver i18nResolver;
 
     private PageConditionsFactory pageConditionsFactory = new PageConditionsFactoryImpl();
     private PageConditionsValidator conditionsValidator;
@@ -33,9 +29,7 @@ public class PageConditionValidationTest
     @Before
     public void setup()
     {
-        when(i18nResolver.getText(anyString(), anyString(), anyString())).thenReturn("error message");
-
-        this.conditionsValidator = new PageConditionsValidator(i18nResolver, pageConditionsFactory);
+        this.conditionsValidator = new PageConditionsValidator(pageConditionsFactory);
     }
 
     @Test
@@ -85,10 +79,5 @@ public class PageConditionValidationTest
         ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
 
         conditionsValidator.validate(addon);
-    }
-
-    private String getSchema() throws IOException
-    {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/schema/jira-schema.json").getFile());
     }
 }

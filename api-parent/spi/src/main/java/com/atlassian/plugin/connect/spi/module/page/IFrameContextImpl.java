@@ -15,15 +15,6 @@ public final class IFrameContextImpl implements IFrameContext
     private final String pluginKey;
 
     public IFrameContextImpl(String pluginKey,
-                             URI iframePath,
-                             String namespace,
-                             IFrameParams iframeParams
-    )
-    {
-        this(pluginKey, iframePath.toString(), namespace, iframeParams);
-    }
-
-    public IFrameContextImpl(String pluginKey,
                              String iframePath,
                              String namespace,
                              IFrameParams iframeParams

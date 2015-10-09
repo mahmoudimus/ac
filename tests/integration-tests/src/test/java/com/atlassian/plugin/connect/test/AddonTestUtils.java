@@ -8,13 +8,11 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
 import org.apache.commons.lang.RandomStringUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
@@ -53,15 +51,6 @@ public class AddonTestUtils
             return null;
         }
         return regex.matcher(selector).replaceAll("\\\\$0");
-    }
-
-    public static URI signWithJwt(@Nonnull final URI uri,
-                                  @Nonnull final String addOnKey,
-                                  @Nonnull final String secret,
-                                  @Nonnull final String contextPath,
-                                  @Nullable final String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException
-    {
-        return URI.create(uri.toString() + "?jwt=" + generateJwtSignature(HttpMethod.GET, uri, addOnKey, secret, contextPath, subject));
     }
 
     public static String generateJwtSignature(HttpMethod httpMethod, URI uri, String addOnKey, String secret, String contextPath, String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException

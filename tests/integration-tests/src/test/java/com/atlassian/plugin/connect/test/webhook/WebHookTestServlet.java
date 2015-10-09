@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
@@ -267,12 +266,6 @@ public final class WebHookTestServlet extends HttpServlet
             {
                 return value.toString();
             }
-        }
-
-        @Override
-        public URI getRequestURI() throws Exception
-        {
-            return new URI(requestURI);
         }
 
         @Override

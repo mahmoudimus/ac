@@ -67,20 +67,4 @@ public class EchoQueryParametersServlet extends MustacheServlet
     {
         return queryParameters.poll(5, TimeUnit.SECONDS);
     }
-
-    private void render(PrintWriter writer, List<NameValuePair> nameValuePairs)
-    {
-        writer.write(" <p id=\"hello-world-message\">Hello world</p>\n");
-
-        writer.write("<ul>");
-        for (NameValuePair pair : nameValuePairs)
-        {
-            writer.write(String.format("<li id=\"%s\">", pair.getName()));
-            writer.write(pair.getName());
-            writer.write(": ");
-            writer.write(pair.getValue());
-            writer.write("</li>\n");
-        }
-        writer.write("</ul>");
-    }
 }

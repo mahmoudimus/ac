@@ -13,10 +13,6 @@ import static com.atlassian.webdriver.utils.element.ElementConditions.isVisible;
 
 public class ExtendedViewWorkflowTransitionPage extends ViewWorkflowTransitionPage
 {
-    private final String workflowMode;
-    private final String workflowName;
-    private final String workflowStep;
-    private final String workflowTransition;
 
     @Inject
     private PageBinder pageBinder;
@@ -27,10 +23,6 @@ public class ExtendedViewWorkflowTransitionPage extends ViewWorkflowTransitionPa
     public ExtendedViewWorkflowTransitionPage(String workflowMode, String workflowName, String workflowStep, String workflowTransition)
     {
         super(workflowMode, workflowName, workflowStep, workflowTransition);
-        this.workflowMode = workflowMode;
-        this.workflowName = workflowName;
-        this.workflowStep = workflowStep;
-        this.workflowTransition = workflowTransition;
     }
 
     public JiraEditWorkflowTransitionFunctionParamsPage updateFirstPostFunction(String addonKey, String moduleKey)

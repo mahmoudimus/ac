@@ -545,11 +545,11 @@
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
+                    <containerId>tomcat7x</containerId>
                     <enableDevToolbox>false</enableDevToolbox>
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
-                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>
@@ -691,11 +691,18 @@
                                     <version>${atlassian.jira.projects.plugin.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+                            <bundledArtifacts>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-javascript-tests</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+                            </bundledArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-confluence.properties</log4jProperties>
                             <jvmArgs>-Xmx512m -XX:MaxPermSize=512m</jvmArgs>
                             <systemPropertyVariables>
                                 <product>confluence</product>
@@ -748,6 +755,11 @@
                                     <groupId>com.atlassian.devrel</groupId>
                                     <artifactId>developer-toolbox-plugin</artifactId>
                                     <version>${toolbox.version}</version>
+                                </bundledArtifact>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-javascript-tests</artifactId>
+                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
@@ -987,9 +999,6 @@
                         <phase>process-classes</phase>
                     </execution>
                 </executions>
-                <configuration>
-                    <includeExclude>-com.atlassian.jira.compatibility.*</includeExclude>
-                </configuration>
             </plugin>
 
             <!-- this MUST run after compilation -->

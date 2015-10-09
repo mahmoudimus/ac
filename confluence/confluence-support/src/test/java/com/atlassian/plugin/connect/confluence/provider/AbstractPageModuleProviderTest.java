@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.confluence.provider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -26,7 +25,6 @@ import org.osgi.framework.BundleContext;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.confluence.capabilities.bean.matchers.WebItemModuleBeanMatchers.hasUrlValue;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -51,7 +49,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     private T moduleProvider;
 
     protected Plugin plugin = new PluginForTests(PLUGIN_KEY, "pluginName");
-    protected ConnectAddonBean addon = newConnectAddonBean().withKey(PLUGIN_KEY).build();
     private ConnectModuleProviderContext moduleProviderContext = mock(ConnectModuleProviderContext.class);
 
     private List<ConnectPageModuleBean> beans = ImmutableList.of(

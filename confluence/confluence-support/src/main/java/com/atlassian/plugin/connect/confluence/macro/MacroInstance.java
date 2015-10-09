@@ -48,11 +48,6 @@ public class MacroInstance
         this.requestContextParameterFactory = requestContextParameterFactory;
     }
 
-    public ConversionContext getConversionContext()
-    {
-        return conversionContext;
-    }
-
     public ContentEntityObject getEntity()
     {
         return conversionContext.getEntity();
@@ -61,11 +56,6 @@ public class MacroInstance
     public URI getPath()
     {
         return path;
-    }
-
-    public RemotablePluginAccessor getRemotablePluginAccessor()
-    {
-        return remotablePluginAccessor;
     }
 
     /*!#url-parameters
@@ -165,11 +155,6 @@ public class MacroInstance
         sb.append(method).append("|");
         sb.append(entityId);
         return String.valueOf(sb.toString().hashCode());
-    }
-
-    public Map<String, String> getHeaders(String userId, String userKey)
-    {
-        return createRequestContextParameters(userId, userKey).getHeaders();
     }
 
     private RequestContextParameters createRequestContextParameters(String userId, String userKey)

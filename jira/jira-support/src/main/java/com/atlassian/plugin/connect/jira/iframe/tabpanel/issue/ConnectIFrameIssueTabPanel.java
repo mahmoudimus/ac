@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.iframe.tabpanel.issue;
 
-import com.atlassian.jira.compatibility.bridge.plugin.issuetabpanel.ShowPanelRequestHelperBridge;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
@@ -30,14 +29,11 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
 {
     private final IFrameRenderStrategy iFrameRenderStrategy;
     private final ModuleContextFilter moduleContextFilter;
-    private final ShowPanelRequestHelperBridge showPanelRequestHelperBridge;
 
-    public ConnectIFrameIssueTabPanel(IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter,
-                                      ShowPanelRequestHelperBridge showPanelRequestHelperBridge)
+    public ConnectIFrameIssueTabPanel(IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter)
     {
         this.iFrameRenderStrategy = iFrameRenderStrategy;
         this.moduleContextFilter = moduleContextFilter;
-        this.showPanelRequestHelperBridge = showPanelRequestHelperBridge;
     }
 
     @Override
@@ -68,7 +64,7 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
         conditionContext.put(CONTEXT_KEY_HELPER, helper);
         if (!request.isAnonymous())
         {
-            ApplicationUser user = showPanelRequestHelperBridge.remoteUser(request);
+            ApplicationUser user = request.remoteUser();
             if (user != null)
             {
                 conditionContext.put(CONTEXT_KEY_USERNAME, user.getUsername());

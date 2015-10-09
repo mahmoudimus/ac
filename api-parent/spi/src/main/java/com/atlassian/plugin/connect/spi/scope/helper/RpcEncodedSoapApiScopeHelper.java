@@ -47,12 +47,6 @@ public final class RpcEncodedSoapApiScopeHelper
     }
 
     public RpcEncodedSoapApiScopeHelper(String path, final String namespace,
-                                        Collection<String> methods)
-    {
-        this(path, namespace, methods, "POST");
-    }
-
-    public RpcEncodedSoapApiScopeHelper(String path, final String namespace,
                                         Collection<String> methods,
                                         String httpMethod)
     {

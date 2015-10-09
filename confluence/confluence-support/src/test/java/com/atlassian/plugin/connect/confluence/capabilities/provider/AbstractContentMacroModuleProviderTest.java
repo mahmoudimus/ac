@@ -18,13 +18,11 @@ import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModule
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
-import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -78,11 +76,8 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
     
 
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
-    protected RemotablePluginAccessorFactory remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
 
     @Mock protected AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
-
-    protected ConnectAddonBean addon = newConnectAddonBean().withKey("my-plugin").build();
 
     @Mock
     private ConnectModuleProviderContext moduleProviderContext;

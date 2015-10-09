@@ -99,10 +99,10 @@
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
+                    <containerId>tomcat7x</containerId>
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
-                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>

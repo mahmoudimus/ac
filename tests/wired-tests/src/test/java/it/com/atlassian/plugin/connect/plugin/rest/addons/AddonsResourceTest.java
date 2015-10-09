@@ -2,14 +2,15 @@ package it.com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.license.LicenseHandler;
@@ -18,22 +19,20 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.reflect.TypeToken;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.request.RequestUtil;
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Random;
 
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,15 +46,19 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonsResourceTest
 {
-    final static String TIMEBOMB_WILDCARD_PLUGIN_LICENSE = "AAACKw0ODAoPeNqFVNuO2jAQfc9XROpbpaCYm7pIkcolXWjZLILQVqu+mGRg3Tp25AuUv69xkk2ygPqQh4xnzsw5c+wPsQZ3Bonb8100HPXRaOC74SZ2uz7qOxsQRxCLWTB5fIi9n9vvfe/by8vcm/joh7MkCTAJ8TmHCGcQxKZsET06mzAKzOcNfN9JBD+lnUZmML1Efo1MzyNQnoNwEs72HZwocoRACQ2mSCdkR6EVLDHCvzkR5xlWEKx68zq13aIItrr8JgK3AFdaJK/4CjGn+kCY7HzsMJ3NuVSQbiUIGSDfiXS2A/G8LwIeaiTHgmAasvQNZwYyESRXhLMgBqlcWkzo7rlwizo3raaTTnjEVGObbaerkcda8TUwOBUHT5gwBQyz5EqLi44tHUyAajCZLSWmAmwjW9hFqOf5yOs+FPUVxSnVhrqIeAoy8J0lluqJp2RPIA1Qb4j6D5/6/mAwRA5nKWSYpcV4O5ztOH+DmdjfJU8wHR+AKatamXOtb3nQ5FAAuKHhLHJBZJtKrVJzs3bV/0MPU2LVDqM4XK/Wi03oGL2UwQmNxDQw3hCUwGesKJaSYNZJeFb77S58m/kaMq6gpI7K69D2+iVyjbYn8hXOt/pYdvdJVIXNJjdHW1HM7Do2eldb1eY/iwNmRBZ2HFcCFAa5HqicxbwSW/aH8ROr+t26be9N12RjF/51sR7fW3fFrZn/xcTC8zuHF4u0r9K02KNb0/gH0dzB7jAsAhR57uHDWPnpB6fEIvWR5ojy91DbLgIUICMxFTZJcgaUcq46PBpkDHzwBOY=X02q2";
+    public static final int LICENSED_ADDON_KEY_COUNT = 100;
+    public static final String TIMEBOMB_100_PLUGIN_LICENSE_PATH = "testfiles.licenses/timebomb-ac-test-json-0..99.license";
 
-    private static String REST_BASE = "/atlassian-connect/1/addons";
+    private static final String REST_BASE = "/atlassian-connect/1/addons";
+
+    private static int addonCount = 0;
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final LicenseHandler licenseHandler;
     private final RequestUtil requestUtil;
+    private final Random random;
 
     private String addonKey;
     private String addonSecret;
@@ -69,12 +72,16 @@ public class AddonsResourceTest
         this.connectAddonRegistry = connectAddonRegistry;
         this.licenseHandler = licenseHandler;
         this.requestUtil = new RequestUtil(applicationProperties);
+        this.random = new Random();
     }
 
     @Before
     public void setUp() throws IOException
     {
-        licenseHandler.setLicense(TIMEBOMB_WILDCARD_PLUGIN_LICENSE);
+        InputStream licenseResource = getClass().getClassLoader().getResourceAsStream(TIMEBOMB_100_PLUGIN_LICENSE_PATH);
+        String license = IOUtils.lineIterator(licenseResource, "UTF-8").nextLine();
+        licenseHandler.setLicense(license);
+
         testAuthenticator.authenticateUser("admin");
         addonKey = generateAddonKey();
         installJsonAddon(addonKey);
@@ -256,7 +263,19 @@ public class AddonsResourceTest
 
     private String generateAddonKey()
     {
-        return "ac-test-json-" + UUID.randomUUID();
+        // We license the specific add-on keys that this method may generate (ac-test-json-0 to ac-test-json-99)
+        // using this license: /tests/wired-tests/src/test/resources/testfiles.licenses/timebomb-ac-test-json-0..99.license
+        // This is necessary because changes for https://ecosystem.atlassian.net/browse/UPM-4851 mean
+        // the wildcard license isn't returned if we ask for a specific add-on's license
+        //
+        // A range of 100 licenses, combined with our teardown method that uninstalls the add-on, makes conflicts very unlikely.
+
+        if (addonCount >= LICENSED_ADDON_KEY_COUNT)
+        {
+            throw new IllegalStateException("Ran out of licensed test add-ons");
+        }
+
+        return "ac-test-json-" + addonCount++;
     }
 
     private Plugin installJsonAddon(String addonKey) throws IOException
