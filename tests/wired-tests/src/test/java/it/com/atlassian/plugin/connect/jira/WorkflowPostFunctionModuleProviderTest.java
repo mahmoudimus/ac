@@ -82,7 +82,7 @@ public class WorkflowPostFunctionModuleProviderTest
                 .build();
 
         // simulate a descriptor that includes an absolute url
-        addon = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(ConnectModulesGsonFactory.addonBeanToJson(addon).replace("/view", BASE_URL + "/view"), null);
+        addon = ConnectModulesGsonFactory.addonFromJson(ConnectModulesGsonFactory.addonBeanToJson(addon).replace("/view", BASE_URL + "/view"));
 
         plugin = testPluginInstaller.installAddon(addon);
     }

@@ -1,7 +1,5 @@
 <application key="confluence">
 
-    <resource type="i18n" key="addon-18n" name="confluence-addon-i18n" location="connect-addons"/>
-
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">

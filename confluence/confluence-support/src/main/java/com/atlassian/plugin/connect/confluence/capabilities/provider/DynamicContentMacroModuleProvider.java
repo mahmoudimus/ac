@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -31,10 +30,9 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
                                              @Qualifier("hostContainer") HostContainer hostContainer,
                                              AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-										     ConnectAddonI18nManager connectAddonI18nManager)
+                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
         this.dynamicContentMacroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 

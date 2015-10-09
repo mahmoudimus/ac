@@ -39,10 +39,9 @@ import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
-import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -63,21 +62,18 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 
 /**
@@ -116,7 +112,6 @@ public class ConnectAddonManager
     private final I18nResolver i18nResolver;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
-    private final ConnectAddonI18nManager i18nManager;
     private final DarkFeatureManager darkFeatureManager;
 
     @Inject
@@ -128,7 +123,6 @@ public class ConnectAddonManager
                                ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
                                SharedSecretService sharedSecretService,
                                ConnectHttpClientFactory connectHttpClientFactory,
-                               ConnectAddonI18nManager i18nManager,
                                DarkFeatureManager darkFeatureManager)
     {
         this.isDevModeService = isDevModeService;
@@ -148,7 +142,6 @@ public class ConnectAddonManager
         this.i18nResolver = i18nResolver;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.sharedSecretService = sharedSecretService;
-        this.i18nManager = i18nManager;
         this.darkFeatureManager = darkFeatureManager;
     }
 
@@ -177,24 +170,8 @@ public class ConnectAddonManager
     {
         long startTime = System.currentTimeMillis();
 
-        Map<String, String> i18nCollector = newHashMap();
-        ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
-
+        ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
         String pluginKey = addOn.getKey();
-
-        if(!i18nCollector.isEmpty())
-        {
-            try
-            {
-                i18nManager.add(pluginKey,i18nCollector);
-            }
-            catch (IOException e)
-            {
-                //just logging for now... do we really want to throw for this?
-                log.error("Unable to write i18n props for addon '" + pluginKey + "'",e);
-            }
-        }
-
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
 
         AuthenticationType newAuthType = addOn.getAuthentication().getType();
