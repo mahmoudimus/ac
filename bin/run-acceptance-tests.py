@@ -35,8 +35,9 @@ def clone(path):
 
 def run_ats(path, version, url, mpac_password):
     with cd(path):
-        with revision('0a8964d'):
+        with revision('stable_1_x'):
             call(['mvn', 'clean'])
+            call(['pip', 'install', '-r', 'requirements.txt'])
             call([
                     'env',
                     'bamboo_mpac_staging_username=atlassian-connect-bot@atlassian.com',
