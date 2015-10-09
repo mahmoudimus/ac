@@ -306,6 +306,10 @@
                     <groupId>com.atlassian.selenium</groupId>
                     <artifactId>atlassian-webdriver-core</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpmime</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
