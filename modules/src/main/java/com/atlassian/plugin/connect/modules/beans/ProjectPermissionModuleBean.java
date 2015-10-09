@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Add the project permission to the project permission list in the JIRA's setting page.
- * This permission could be later used in conditions in your addon.
+ * Pluggable project permissions can not be used in conditions yet.
  *
  * @exampleJson {@link ConnectJsonExamples#PROJECT_PERMISSION_EXAMPLE}
  * @schemaTitle Project Permission

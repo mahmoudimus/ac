@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
  * Add the global permission to the global permission list in the JIRA's setting page.
- * This permission could be later used in conditions in your addon.
+ * Global permissions can not be used in conditions yet.
  *
  * @exampleJson {@link ConnectJsonExamples#GLOBAL_PERMISSION_EXAMPLE}
  * @schemaTitle Global Permission
