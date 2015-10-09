@@ -14,6 +14,7 @@
     <modules>
         <module>jira-reference-plugin</module>
         <module>jira-integration-tests</module>
+        <module>jira-support</module>
     </modules>
 
 </project>

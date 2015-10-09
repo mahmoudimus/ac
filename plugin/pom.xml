@@ -42,12 +42,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.atlassian.jira.compat</groupId>
-            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -139,6 +133,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-confluence-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-jira-support</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -607,7 +606,7 @@
                             com.github.fge.jsonschema.messages*;version="${json.schema.validator.version}",
                             com.github.fge.jsonschema.messages.*;version="${json.schema.validator.version}",
                             com.github.fge.jsonschema.processors*;version="${json.schema.validator.version}",
-                            com.github.fge.jsonschema.processors.*;version="${json.schema.validator.version}",
+                            com.github.fge.jsonschema.processors.*  ,
                             com.github.fge.msgsimple*;version="1.1.2-atlassian",
                             com.github.fge.msgsimple.*;version="1.1.2-atlassian",
                             com.atlassian.jira.bc.user;resolution:=optional,

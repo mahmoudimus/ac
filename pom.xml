@@ -28,7 +28,7 @@
         <module>modules</module>
         <module>plugin</module>
         <module>confluence</module>
-        <module>jira/jira-reference-plugin</module>
+        <module>jira</module>
         <module>tests/test-support-plugin</module>
         <module>docs</module>
         <module>crowd-support</module>
