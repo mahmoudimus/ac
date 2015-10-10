@@ -544,6 +544,7 @@
                     <enableDevToolbox>false</enableDevToolbox>
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
+                    <extractDependencies>true</extractDependencies>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <testBundleExcludes>
                         <testBundleExclude>
