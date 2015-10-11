@@ -333,7 +333,7 @@ public class AddonValidationTest
     public void installedMalformedJSONDescriptorResultsInCorrespondingErrorCode() throws Exception
     {
         installExpectingUpmErrorCode(TestFileReader.readAddonTestFile("malformedDescriptor.json"),
-                "connect.invalid.descriptor.malformed.json", applicationProperties.getDisplayName());
+                "connect.invalid.descriptor.malformed.json");
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()
