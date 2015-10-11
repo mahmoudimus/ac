@@ -3,17 +3,10 @@ package com.atlassian.plugin.connect.spi;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
-import com.atlassian.plugin.Plugin;
-import com.google.common.base.Supplier;
 import org.springframework.beans.factory.DisposableBean;
-
-import java.net.URI;
 
 public interface DefaultRemotablePluginAccessorFactory extends RemotablePluginAccessorFactory, DisposableBean
 {
-
-    @Deprecated
-    RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl);
 
     void onApplicationLinkCreated(ApplicationLinkAddedEvent event);
 

@@ -1,12 +1,16 @@
 package com.atlassian.plugin.connect.plugin.threeleggedauth;
 
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -14,41 +18,45 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ThreeLeggedAuthFilterTest
 {
 
-    private final ThreeLeggedAuthFilter filter;
-    private final ThreeLeggedAuthService threeLeggedAuthServiceMock;
-    private final ConnectAddonManager connectAddonManagerMock;
-    private final UserManager userManagerMock;
-    private final AuthenticationListener authenticationListenerMock;
-    private final JwtApplinkFinder jwtApplinkFinderMock;
-    private final ConnectUserService connectUserServiceMock;
-    private final I18nResolver i18nResolverMock;
-    private final HttpServletRequest httpServletRequestMock;
-    private final HttpServletResponse httpServletResponseMock;
-    private final FilterChain filterChainMock;
+    @InjectMocks
+    private ThreeLeggedAuthFilter filter;
 
-    public ThreeLeggedAuthFilterTest()
-    {
-        threeLeggedAuthServiceMock = mock(ThreeLeggedAuthService.class);
-        connectAddonManagerMock = mock(ConnectAddonManager.class);
-        userManagerMock = mock(UserManager.class);
-        authenticationListenerMock = mock(AuthenticationListener.class);
-        jwtApplinkFinderMock = mock(JwtApplinkFinder.class);
-        connectUserServiceMock = mock(ConnectUserService.class);
-        i18nResolverMock = mock(I18nResolver.class);
-        filter = new ThreeLeggedAuthFilter(threeLeggedAuthServiceMock,
-                connectAddonManagerMock, userManagerMock, connectUserServiceMock, authenticationListenerMock, jwtApplinkFinderMock, i18nResolverMock);
+    @Mock
+    private ThreeLeggedAuthService threeLeggedAuthServiceMock;
 
-        httpServletRequestMock = mock(HttpServletRequest.class);
-        httpServletResponseMock = mock(HttpServletResponse.class);
-        filterChainMock = mock(FilterChain.class);
-    }
+    @Mock
+    private ConnectAddonAccessor addonAccessorMock;
+
+    @Mock
+    private UserManager userManagerMock;
+
+    @Mock
+    private AuthenticationListener authenticationListenerMock;
+
+    @Mock
+    private JwtApplinkFinder jwtApplinkFinderMock;
+
+    @Mock
+    private ConnectUserService connectUserServiceMock;
+
+    @Mock
+    private I18nResolver i18nResolverMock;
+
+    @Mock
+    private HttpServletRequest httpServletRequestMock;
+
+    @Mock
+    private HttpServletResponse httpServletResponseMock;
+
+    @Mock
+    private FilterChain filterChainMock;
 
     @Test
     public void shouldSkipIfNotStarted() throws IOException, ServletException
@@ -60,11 +68,11 @@ public class ThreeLeggedAuthFilterTest
     }
 
     @Test
-    public void shouldNotAccessAddonRegistryForNonJwtRequest() throws IOException, ServletException
+    public void shouldNotInvokeAddonAccessorForNonJwtRequest() throws IOException, ServletException
     {
         filter.onStart();
         filter.doFilter(httpServletRequestMock, httpServletResponseMock, filterChainMock);
         verify(filterChainMock).doFilter(httpServletRequestMock, httpServletResponseMock);
-        verifyNoMoreInteractions(connectAddonManagerMock);
+        verifyNoMoreInteractions(addonAccessorMock);
     }
 }

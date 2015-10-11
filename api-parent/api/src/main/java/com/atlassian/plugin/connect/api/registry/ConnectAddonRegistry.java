@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.api.registry;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+
+import java.util.Collection;
 
 
 /**
@@ -34,7 +34,7 @@ public interface ConnectAddonRegistry
 
     boolean hasAddons();
 
-    Iterable<ConnectAddonBean> getAllAddonBeans();
+    Collection<AddonSettings> getAllAddonSettings();
 
     void storeRestartState(String pluginKey, PluginState state);
 
@@ -45,6 +45,4 @@ public interface ConnectAddonRegistry
     AddonSettings getAddonSettings(String pluginKey);
 
     boolean hasAddonWithKey(String pluginKey);
-
-    Option<ConnectAddonBean> getAddonBean(String pluginKey);
 }

@@ -5,18 +5,19 @@ import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
 import com.atlassian.plugin.connect.plugin.rest.data.RestHost;
 import com.atlassian.plugin.connect.plugin.rest.data.RestInternalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -35,6 +36,7 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -73,6 +75,9 @@ public class AddonsResourceGetAddonTest
     @Mock
     private ProductAccessor productAccessor;
 
+    @Mock
+    private ConnectAddonAccessor addonAccessor;
+
     private Class<? extends RestLimitedAddon> expectedEntityClass;
 
     private final boolean isSystemAdmin;
@@ -94,7 +99,7 @@ public class AddonsResourceGetAddonTest
     {
         this.resource = new AddonsResource(this.addonRegistry, this.licenseRetriever, this.connectApplinkManager,
                 this.connectAddonManager, this.connectAddOnInstaller, this.applicationProperties, this.userManager,
-                this.productAccessor);
+                this.productAccessor, addonAccessor);
     }
 
     @Parameterized.Parameters
@@ -142,7 +147,7 @@ public class AddonsResourceGetAddonTest
         when(licenseMock.isEvaluation()).thenReturn(isEvaluationLicense);
         when(licenseMock.getSupportEntitlementNumber()).thenReturn(com.atlassian.upm.api.util.Option.some(supportEntitlementNumber));
 
-        when(addonRegistry.getAddonBean(key)).thenReturn(Option.some(beanMock));
+        when(addonAccessor.getAddon(key)).thenReturn(Optional.of(beanMock));
         when(addonRegistry.getRestartState(key)).thenReturn(state);
         when(productAccessor.getProductLicense()).thenReturn(Option.option(productLicenseMock));
         when(applicationProperties.getDisplayName()).thenReturn(productName);

@@ -14,7 +14,7 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
@@ -85,7 +85,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     private final UserAccessor userAccessor;
     private final UserManager userManager;
     private final EventPublisher eventPublisher;
-    private final ConnectAddonRegistry connectAddonRegistry;
+    private final ConnectAddonAccessor connectAddonAccessor;
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
@@ -95,7 +95,8 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
                                                   UserAccessor userAccessor,
                                                   UserManager userManager,
                                                   EventPublisher eventPublisher,
-                                                  ConnectAddonRegistry connectAddonRegistry, TransactionTemplate transactionTemplate)
+                                                  ConnectAddonAccessor connectAddonAccessor,
+                                                  TransactionTemplate transactionTemplate)
     {
         this.confluencePermissionManager = confluencePermissionManager;
         this.spacePermissionManager = spacePermissionManager;
@@ -103,7 +104,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         this.userAccessor = userAccessor;
         this.userManager = userManager;
         this.eventPublisher = eventPublisher;
-        this.connectAddonRegistry = connectAddonRegistry;
+        this.connectAddonAccessor = connectAddonAccessor;
         this.transactionTemplate = transactionTemplate;
         eventPublisher.register(this);
     }
@@ -351,7 +352,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     private Iterable<ConnectAddonBean> fetchAddonsWithSpaceAdminScope()
     {
-        return filter(connectAddonRegistry.getAllAddonBeans(), new Predicate<ConnectAddonBean>()
+        return filter(connectAddonAccessor.getAllAddons(), new Predicate<ConnectAddonBean>()
         {
             @Override
             public boolean apply(@Nullable ConnectAddonBean addon)

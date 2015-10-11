@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPath;
@@ -11,20 +11,20 @@ import com.atlassian.plugin.connect.spi.scope.ApiScope;
 import com.atlassian.plugin.connect.spi.scope.helper.RestApiScopeHelper;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserKey;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
@@ -34,20 +34,14 @@ import static com.google.common.collect.Iterables.any;
 public final class AddOnScopeManagerImpl implements AddOnScopeManager
 {
     private final Collection<AddOnScope> allScopes;
-    private final ConnectAddonRegistry connectAddonRegistry;
-    private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final AddOnScope addOnPropertyScope;
+    private final ConnectAddonAccessor addonAccessor;
 
     @Autowired
-    @VisibleForTesting
-    public AddOnScopeManagerImpl(
-            ScopeService scopeService,
-            ConnectAddonRegistry connectAddonRegistry,
-            ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
+    public AddOnScopeManagerImpl(ScopeService scopeService, ConnectAddonAccessor addonAccessor) throws IOException
     {
         this.allScopes = scopeService.build();
-        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
-        this.connectAddonBeanFactory = checkNotNull(connectAddonBeanFactory);
+        this.addonAccessor = addonAccessor;
         this.addOnPropertyScope = createAddOnPropertyScope();
     }
 
@@ -74,14 +68,12 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
 
     private Set<ScopeName> getScopeReferences(String pluginKey)
     {
-        final String descriptor = connectAddonRegistry.getDescriptor(pluginKey);
-
-        if (null == descriptor)
+        Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
+        if (!optionalAddon.isPresent())
         {
             throw new NullPointerException(String.format("The Connect Add-on Registry has no descriptor for add-on '%s' and therefore we cannot compute its scopes!", pluginKey));
         }
-
-        return connectAddonBeanFactory.fromJsonSkipValidation(descriptor).getScopes();
+        return optionalAddon.get().getScopes();
     }
 
     private static final class IsInApiScopePredicate implements Predicate<ApiScope>

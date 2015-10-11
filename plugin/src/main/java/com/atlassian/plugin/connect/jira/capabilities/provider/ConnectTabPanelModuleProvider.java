@@ -12,13 +12,11 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@JiraComponent
 public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectModuleProvider<ConnectTabPanelModuleBean>
 {
     protected final PluginRetrievalService pluginRetrievalService;

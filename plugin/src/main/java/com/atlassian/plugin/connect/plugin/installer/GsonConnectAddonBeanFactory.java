@@ -15,6 +15,7 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @ExportAsDevService
 @Component
@@ -39,6 +41,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     private final PluginRetrievalService pluginRetrievalService;
     private final PluginAccessor pluginAccessor;
     private final IsDevModeService isDevModeService;
+    private Map<String, ConnectAddonBean> descriptorCache = Maps.newConcurrentMap();
 
     @Autowired
     public GsonConnectAddonBeanFactory(ConnectJsonSchemaValidator descriptorSchemaValidator,
@@ -59,15 +62,44 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     @Override
     public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException
     {
-        validateDescriptorAgainstSchema(jsonDescriptor);
-        ConnectAddonBean addon = fromJsonSkipValidation(jsonDescriptor);
-        addOnBeanValidatorService.validate(addon);
+        return descriptorCache.computeIfAbsent(jsonDescriptor, new Function<String, ConnectAddonBean>()
+        {
 
-        return addon;
+            @Override
+            public ConnectAddonBean apply(String descriptor)
+            {
+                return fromJsonImpl(descriptor);
+            }
+        });
     }
 
     @Override
-    public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor)
+    public void remove(String jsonDescriptor)
+    {
+        descriptorCache.remove(jsonDescriptor);
+    }
+
+    @Override
+    public void removeAll()
+    {
+        descriptorCache.clear();
+    }
+
+    private ConnectAddonBean fromJsonImpl(final String jsonDescriptor) throws InvalidDescriptorException
+    {
+        validateDescriptorAgainstSchema(jsonDescriptor);
+        ConnectAddonBean addon = deserializeDescriptor(jsonDescriptor);
+        addOnBeanValidatorService.validate(addon);
+        return addon;
+    }
+
+    private void validateDescriptorAgainstSchema(String jsonDescriptor)
+    {
+        ConnectJsonSchemaValidationResult result = descriptorSchemaValidator.validate(jsonDescriptor, getShallowSchemaUrl());
+        assertValidDescriptorValidationResult(result);
+    }
+
+    private ConnectAddonBean deserializeDescriptor(final String jsonDescriptor)
     {
         try
         {
@@ -83,12 +115,6 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
             log.error(exceptionMessage);
             throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
         }
-    }
-
-    private void validateDescriptorAgainstSchema(String jsonDescriptor)
-    {
-        ConnectJsonSchemaValidationResult result = descriptorSchemaValidator.validate(jsonDescriptor, getShallowSchemaUrl());
-        assertValidDescriptorValidationResult(result);
     }
 
     private URL getShallowSchemaUrl()

@@ -1,14 +1,11 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,15 +19,12 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.DefaultConnectAddonRegistry.ADDON_KEY_PREFIX;
 import static com.atlassian.plugin.connect.plugin.DefaultConnectAddonRegistry.ADDON_LIST_KEY;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,7 +49,7 @@ public class DefaultConnectAddonRegistryTest
     {
         when(pluginSettingsFactory.createGlobalSettings()).thenReturn(pluginSettings);
 
-        this.registry = new DefaultConnectAddonRegistry(pluginSettingsFactory, connectAddonBeanFactory);
+        this.registry = new DefaultConnectAddonRegistry(pluginSettingsFactory);
     }
 
     @Test
@@ -75,46 +69,6 @@ public class DefaultConnectAddonRegistryTest
         when(pluginSettings.get(any(String.class))).thenReturn(keyList);
         assertThat(this.registry.getAllAddonKeys(), containsInAnyOrder(keys));
         assertThat(this.registry.hasAddons(), is(true));
-    }
-
-    @Test
-    public void shouldReturnAddonBeans()
-    {
-        String[] keys = new String[]{"foo", "bar"};
-        String[] jsonDescriptors = new String[]{"foo-json", "bar-json"};
-        List<String> keyList = Arrays.asList(keys);
-        List<ConnectAddonBean> beans = Lists.newArrayList(
-                mock(ConnectAddonBean.class),
-                mock(ConnectAddonBean.class)
-        );
-        List<AddonSettings> settings = Lists.newArrayList(
-                this.createAddonSettingsForDescriptor(jsonDescriptors[0]),
-                this.createAddonSettingsForDescriptor(jsonDescriptors[1])
-        );
-
-        when(pluginSettings.get(any(String.class))).thenReturn(
-                keyList,
-                toJson(settings.get(0)),
-                toJson(settings.get(1))
-        );
-        when(connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptors[0])).thenReturn(beans.get(0));
-        when(connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptors[1])).thenReturn(beans.get(1));
-
-        assertThat(this.registry.getAllAddonBeans(), contains(beans.toArray(new ConnectAddonBean[beans.size()])));
-    }
-
-    @Test
-    public void shouldReturnAddonBean()
-    {
-        String key = "foo";
-        String jsonDescriptor = "foo-json";
-        ConnectAddonBean bean = mock(ConnectAddonBean.class);
-        AddonSettings settings = this.createAddonSettingsForDescriptor(jsonDescriptor);
-
-        when(pluginSettings.get(any(String.class))).thenReturn(toJson(settings));
-        when(connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor)).thenReturn(bean);
-
-        assertThat(this.registry.getAddonBean(key), equalTo(Option.some(bean)));
     }
 
     @Test
@@ -146,13 +100,6 @@ public class DefaultConnectAddonRegistryTest
 
         verify(pluginSettings, never()).put(eq(ADDON_KEY_PREFIX) + addonKey, any());
         verify(pluginSettings, never()).put(eq(ADDON_LIST_KEY), any());
-    }
-
-    private AddonSettings createAddonSettingsForDescriptor(String descriptor)
-    {
-        AddonSettings settings = new AddonSettings();
-        settings.setDescriptor(descriptor);
-        return settings;
     }
 
     private String toJson(Object object)

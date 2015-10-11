@@ -30,11 +30,6 @@ public class ConnectAddonToPluginFactory
         this.beanToModuleRegistrar = beanToModuleRegistrar;
     }
 
-    public Plugin create(ConnectAddonBean addon)
-    {
-        return create(addon,PluginState.DISABLED);
-    }
-
     public Plugin create(ConnectAddonBean addon, PluginState state)
     {
         ConnectAddonPlugin plugin = new ConnectAddonPlugin(beanToModuleRegistrar.getRegisteredDescriptorsForAddon(addon.getKey()));

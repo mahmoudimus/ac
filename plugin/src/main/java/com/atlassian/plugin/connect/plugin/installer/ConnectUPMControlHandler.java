@@ -1,23 +1,23 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.PluginRestartState;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.spi.PluginControlHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @ExportAsService(PluginControlHandler.class)
 @Named
@@ -25,12 +25,16 @@ public class ConnectUPMControlHandler implements PluginControlHandler
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectUPMControlHandler.class);
 
+    private ConnectAddonAccessor addonAccessor;
     private final ConnectAddonManager connectAddonManager;
     private final ConnectAddonToPluginFactory addonToPluginFactory;
 
     @Inject
-    public ConnectUPMControlHandler(ConnectAddonManager connectAddonManager, ConnectAddonToPluginFactory addonToPluginFactory)
+    public ConnectUPMControlHandler(ConnectAddonAccessor addonAccessor,
+            ConnectAddonManager connectAddonManager,
+            ConnectAddonToPluginFactory addonToPluginFactory)
     {
+        this.addonAccessor = addonAccessor;
         this.connectAddonManager = connectAddonManager;
         this.addonToPluginFactory = addonToPluginFactory;
     }
@@ -53,7 +57,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     @Override
     public boolean isPluginEnabled(String pluginKey)
     {
-        return connectAddonManager.isAddonEnabled(pluginKey);
+        return addonAccessor.isAddonEnabled(pluginKey);
     }
 
     @Override
@@ -74,12 +78,11 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     {
         Plugin plugin = null;
 
-        ConnectAddonBean addon = connectAddonManager.getExistingAddon(pluginKey);
-
-        if(null != addon)
+        Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
+        if (optionalAddon.isPresent())
         {
             PluginState state = (isPluginEnabled(pluginKey)) ? PluginState.ENABLED : PluginState.DISABLED;
-            plugin = addonToPluginFactory.create(addon,state);
+            plugin = addonToPluginFactory.create(optionalAddon.get(), state);
         }
 
         return plugin;
