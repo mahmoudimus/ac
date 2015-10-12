@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
  * and make it look like a simple field on the content object.
  *
  * You can further improve the field definition by including
- * <a href="../fragment/ui-support.html">UI support</a>.
+ * <a href="../fragment/user-interface-support.html">UI support</a>.
  *
  * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a> documentation for
  * a complete example.

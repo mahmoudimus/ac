@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
  * 1. Define the
  * <a href="../fragment/content-property-index-key-configuration.html">content property</a>, its
  * <a href="../fragment/content-property-index-extraction-configuration.html">extractions</a>, and optionally an
- * alias and <a href="../fragment/ui-support.html">UI support</a> in your add-on's descriptor.
+ * alias and <a href="../fragment/user-interface-support.html">UI support</a> in your add-on's descriptor.
  * See the <a href="../fragment/content-property-index-key-configuration.html">content property</a> documentation
  * for an example.
  * 1. Use <a href="https://developer.atlassian.com/display/CONFDEV/Advanced+Searching+using+CQL">CQL</a>
