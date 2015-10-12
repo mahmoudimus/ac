@@ -70,17 +70,6 @@ public class EntityPropertyIndexDocumentModuleBeanTest
         assertThat(actualKeyConfigurationBean.getExtractions(), containsInAnyOrder(expectedKeyConfigurationBean.getExtractions().toArray()));
     }
 
-    @Test
-    public void addOnWithEntityPropertyParsed() throws IOException
-    {
-        ConnectAddonBean bean = createAddOnBean();
-        ModuleListDeserializer deserializer = new ModuleListDeserializer(new StaticAvailableModuleTypes(new EntityPropertyModuleMeta()));
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
-        String expectedJson = gson.toJson(bean, ConnectAddonBean.class);
-
-        assertThat(readTestFile("entityPropertyAddon.json"), is(sameJSONAs(expectedJson)));
-    }
-
     private static EntityPropertyModuleBean createModuleBean()
     {
         List<EntityPropertyIndexExtractionConfigurationBean> extractions = Lists.newArrayList(
