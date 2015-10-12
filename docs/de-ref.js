@@ -1,21 +1,31 @@
 
-var _ = require('lodash');
-var jsonPath = require('JSONPath').eval;
-var fs = require('fs-extra');
+var _ = require('lodash'),
+    jsonPath = require('JSONPath').eval,
+    fs = require('fs-extra'),
+    schemaMerger = require('atlassian-connect-json-schema-utils/merge-schemas.js');
 
-var sourceSchemaDirectory = "../plugin/target/classes/";
-var targetSchemaDirectory = "schema/";
+var sourceDirectory = "../plugin/target/classes/";
+var targetDirectory = "target/";
 
-var files = {
-    shallowSchema:    'schema/shallow-schema.json',
-    commonSchema:     'schema/common-schema.json',
-    jiraSchema:       'schema/jira-schema.json',
-    confluenceSchema: 'schema/confluence-schema.json',
-    jiraScopes:       'com/atlassian/connect/jira/scopes.jira.json',
-    agileScopes:      'com/atlassian/connect/jira/scopes.jiraagile.json',
-    confluenceScopes: 'com/atlassian/connect/confluence/scopes.confluence.json',
-    commonScopes:     'com/atlassian/connect/scopes.common.json'
-};
+var sourceSchemaSubDirectory = "schema/";
+var targetSchemaSubDirectory = sourceSchemaSubDirectory;
+
+var sourceScopeSubDirectory = "com/atlassian/connect/";
+var targetScopeSubDirectory = "scope/";
+
+var schemaFiles = [
+    'shallow-schema.json',
+    'common-schema.json',
+    'jira-schema.json',
+    'confluence-schema.json'
+];
+
+var scopeFiles = [
+    'jira/scopes.jira.json',
+    'jira/scopes.jiraagile.json',
+    'confluence/scopes.confluence.json',
+    'scopes.common.json'
+];
 
 function renamePropertyShortClassNameToId(object) {
     if (object == null) return;
@@ -65,20 +75,28 @@ function dereference(object, objectRoot, path) {
     }
 }
 
+var importSchemas = function() {
+    _.forEach(schemaFiles, function(file) {
+        var sourceJson = fs.readJsonSync(sourceDirectory + sourceSchemaSubDirectory + file);
+        fs.outputJsonSync(targetDirectory + targetSchemaSubDirectory + file, sourceJson);
+
+        renamePropertyShortClassNameToId(sourceJson);
+        dereference(sourceJson, sourceJson, "$");
+        delete sourceJson.definitions;
+        fs.outputJsonSync(targetDirectory + targetSchemaSubDirectory + "deref-" + file, sourceJson);
+    });
+
+    schemaMerger.mergeSchemas();
+}
+
+var importScopes = function() {
+    _.forEach(scopeFiles, function(file) {
+        var sourceJson = fs.readJsonSync(sourceDirectory + sourceScopeSubDirectory + file);
+        fs.outputJsonSync(targetDirectory + targetScopeSubDirectory + file, sourceJson);
+    });
+}
+
 exports.run = function() {
-    for (var file in files) {
-        var source = sourceSchemaDirectory + files[file];
-        var target = targetSchemaDirectory + files[file];
-
-        var sourceJson = fs.readJsonSync(source);
-
-        // only need to dereference the schemas, save a few ms on the step
-        if (file.match(/Schema$/)) {
-            renamePropertyShortClassNameToId(sourceJson);
-            dereference(sourceJson, sourceJson, "$");
-            delete sourceJson.definitions;
-        }
-
-        fs.outputJsonSync(target, sourceJson);
-    }
+    importSchemas();
+    importScopes();
 }

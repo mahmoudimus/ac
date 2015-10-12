@@ -18,17 +18,24 @@ var genSrcPrefix = buildDir + "/gensrc";
 
 var srcFiles = ["public", "package.json"];
 
-var jiraSchemaSourcePath =       '../plugin/target/classes/schema/jira-schema.json';
-var confluenceSchemaSourcePath = '../plugin/target/classes/schema/confluence-schema.json';
+var watchedSchemaFiles = [
+    '../plugin/target/classes/schema/shallow-schema.json',
+    '../plugin/target/classes/schema/common-schema.json',
+    '../plugin/target/classes/schema/jira-schema.json',
+    '../plugin/target/classes/schema/confluence-schema.json'
+];
+var shallowSchemaPath =       'target/schema/deref-shallow-schema.json';
+var commonSchemaPath =       'target/schema/deref-common-schema.json';
+var jiraSchemaPath =       'target/schema/deref-jira-schema.json';
+var confluenceSchemaPath = 'target/schema/deref-confluence-schema.json';
 
-var shallowSchemaPath =       'schema/schema/shallow-schema.json';
-var commonSchemaPath =       'schema/schema/common-schema.json';
-var jiraSchemaPath =       'schema/schema/jira-schema.json';
-var confluenceSchemaPath = 'schema/schema/confluence-schema.json';
-var jiraScopesPath =       'schema/com/atlassian/connect/jira/scopes.jira.json';
-var agileScopesPath =      'schema/com/atlassian/connect/jira/scopes.jiraagile.json';
-var confluenceScopesPath = 'schema/com/atlassian/connect/confluence/scopes.confluence.json';
-var commonScopesPath =     'schema/com/atlassian/connect/scopes.common.json';
+var jiraGlobalSchemaPath = 'target/schema/jira-global-schema.json'
+var confluenceGlobalSchemaPath = 'target/schema/confluence-global-schema.json';
+
+var commonScopesPath =     'target/scope/scopes.common.json';
+var jiraScopesPath =       'target/scope/jira/scopes.jira.json';
+var agileScopesPath =      'target/scope/jira/scopes.jiraagile.json';
+var confluenceScopesPath = 'target/scope/confluence/scopes.confluence.json';
 
 program
   .option('-s, --serve', 'Serve and automatically watch for changes')
@@ -224,8 +231,8 @@ function findRootEntities(schemas) {
     // exclude the module lists, they're rendered separately in findJiraModules etc.
     entities = _.filter(entities, function(entity) {return entity.id !== "moduleList";});
     // add the descriptor root itself (and make it the index.html for modules)
-    schemas.jira.pageName = "index";
-    entities.unshift(schemas.jira);
+    schemas.shallow.pageName = "index";
+    entities.unshift(schemas.shallow);
     return entitiesToModel(entities);
 }
 
@@ -458,6 +465,8 @@ function rebuildHarpSite() {
 
     copyToGenSrc(srcFiles);
     copyToGenSrc("node_modules");
+    fs.copySync(jiraGlobalSchemaPath, genSrcPrefix + '/public/schema/jira-global-schema.json');
+    fs.copySync(confluenceGlobalSchemaPath, genSrcPrefix + '/public/schema/confluence-global-schema.json');
 
     var entityLinks = writeEntitiesToDisk(entities, {
         root: "modules",
@@ -512,7 +521,7 @@ function startHarpServerAndWatchSrcFiles() {
 
     harpServer = startHarpServer();
 
-    var watchedFiles = srcFiles.concat(jiraSchemaSourcePath, confluenceSchemaSourcePath);
+    var watchedFiles = srcFiles.concat(watchedSchemaFiles);
 
     var watcher = chokidar.watch(watchedFiles, {
         persistent: true,

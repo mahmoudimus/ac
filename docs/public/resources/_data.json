@@ -11,6 +11,10 @@
     "filename": "deprecations.html",
     "title": "Deprecation notices"
   },
+  "descriptor-schemas": {
+    "filename": "descriptor-schemas.html",
+    "title": "Descriptor schemas"
+  },
   "samples": {
     "filename": "samples.html",
     "title": "Sample add-ons"

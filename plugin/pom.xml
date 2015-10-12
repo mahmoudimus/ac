@@ -1056,8 +1056,7 @@
                         </goals>
                         <configuration>
                             <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
-                            <ignoreFilter>shallow</ignoreFilter>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
