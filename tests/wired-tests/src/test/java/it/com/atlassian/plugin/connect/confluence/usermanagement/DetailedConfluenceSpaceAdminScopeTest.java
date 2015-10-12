@@ -30,6 +30,8 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +64,6 @@ import static org.junit.Assert.assertTrue;
 public class DetailedConfluenceSpaceAdminScopeTest
 {
     private static final Logger log = LoggerFactory.getLogger(DetailedConfluenceSpaceAdminScopeTest.class);
-    private static final String JEDI_SPACE_KEY = "JEDI" + System.currentTimeMillis();
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
     private final SpaceManager spaceManager;
@@ -73,9 +74,9 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
-    private Space jediSpace;
 
     private List<Plugin> installedAddonPlugins;
+    private List<Space> createdSpaceList;
 
     public DetailedConfluenceSpaceAdminScopeTest(SpaceManager spaceManager,
             SpacePermissionManager spacePermissionManager,
@@ -100,24 +101,14 @@ public class DetailedConfluenceSpaceAdminScopeTest
     public void setUp() throws IOException
     {
         installedAddonPlugins = Lists.newArrayList();
+        createdSpaceList = Lists.newArrayList();
         testAuthenticator.authenticateUser("admin");
     }
 
     @After
     public void cleanup() throws IOException
     {
-        if (jediSpace != null)
-        {
-            try
-            {
-                spaceManager.removeSpace(jediSpace);
-                jediSpace = null;
-            }
-            catch (Exception e)
-            {
-                log.error("Could not delete space", e);
-            }
-        }
+        removeSavedSpaces();
 
         for (Plugin plugin : installedAddonPlugins)
         {
@@ -204,6 +195,23 @@ public class DetailedConfluenceSpaceAdminScopeTest
         assertNonReadPermissionsRemoved(key);
     }
 
+    @Test
+    public void ignoresStaticAddonAddsAllOthersForNewSpaces() throws Exception
+    {
+        ConnectAddonBeanBuilder addonBeanBuilderDynamic1 = createAddonBean(ScopeName.SPACE_ADMIN);
+        installConnectAddon(addonBeanBuilderDynamic1.build());
+
+        ConnectAddonBeanBuilder addonBeanBuilderStatic = createAddonBean(ScopeName.SPACE_ADMIN);
+        addonBeanBuilderStatic.withAuthentication(AuthenticationBean.none());
+        installConnectAddon(addonBeanBuilderStatic.build());
+
+        ConnectAddonBeanBuilder addonBeanBuilderDynamic2 = createAddonBean(ScopeName.SPACE_ADMIN);
+        installConnectAddon(addonBeanBuilderDynamic2.build());
+
+        assertIsSpaceAdminOfNewSpace(addonBeanBuilderDynamic1.getKey());
+        assertIsSpaceAdminOfNewSpace(addonBeanBuilderDynamic2.getKey());
+    }
+
     private void installAddonThenChangeScope(ConnectAddonBeanBuilder addonBeanBuilder, ScopeName upgradedScope)
             throws Exception
     {
@@ -279,13 +287,11 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
     private void assertIsSpaceAdminOfNewSpace(String addonKey)
     {
-        ConfluenceUser admin = FindUserHelper.getUserByUsername("admin");
-
-        jediSpace = spaceManager.createSpace(JEDI_SPACE_KEY, "Knights of the Old Republic", "It's a trap!", admin);
+        Space space = createSpace();
 
         final ConfluenceUser addonUser = getAddonUser(addonKey);
 
-        final List<String> permissionErrors = checkIsSpaceAdminOnSpace(jediSpace, addonUser, true);
+        final List<String> permissionErrors = checkIsSpaceAdminOnSpace(space, addonUser, true);
 
         assertTrue(StringUtils.join(permissionErrors, '\n'), permissionErrors.isEmpty());
     }
@@ -365,6 +371,36 @@ public class DetailedConfluenceSpaceAdminScopeTest
         catch (Exception e)
         {
             log.debug("Failed to removed user from group '" + groupKey + "' . Note user may not have been in group", e);
+        }
+    }
+
+    private Space createSpace()
+    {
+        ConfluenceUser admin = FindUserHelper.getUserByUsername("admin");
+
+        Space space = spaceManager.createSpace(RandomStringUtils.randomAlphanumeric(20).toLowerCase(), "Knights of the Old Republic", "It's a trap!", admin);
+        createdSpaceList.add(space);
+        return space;
+    }
+
+    private void removeSavedSpaces()
+    {
+        for (Space space : createdSpaceList)
+        {
+            removeSpace(space);
+        }
+        createdSpaceList.clear();
+    }
+
+    private void removeSpace(Space space)
+    {
+        try
+        {
+            spaceManager.removeSpace(space);
+        }
+        catch (Exception e)
+        {
+            log.error("Could not delete space {}", space.getName(), e);
         }
     }
 }

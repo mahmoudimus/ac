@@ -343,8 +343,18 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         final Iterable<ConnectAddonBean> connectAddonBeans = fetchAddonsWithSpaceAdminScope();
         for (ConnectAddonBean connectAddonBean : connectAddonBeans)
         {
-            String username =  ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey());
-            grantAddonUserSpaceAdmin(getConfluenceUser(username));
+            if (ConnectAddOnUserUtil.addOnRequiresUser(connectAddonBean))
+            {
+                String username = ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey());
+                try
+                {
+                    grantAddonUserSpaceAdmin(getConfluenceUser(username));
+                }
+                catch (Exception e)
+                {
+                    log.error("Could not add user '{}' to new spaces", username, e);
+                }
+            }
         }
 
     }
