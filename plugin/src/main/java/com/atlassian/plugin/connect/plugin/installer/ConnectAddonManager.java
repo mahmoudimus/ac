@@ -73,6 +73,7 @@ import java.util.Set;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
+import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.addOnRequiresUser;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Arrays.asList;
@@ -243,7 +244,7 @@ public class ConnectAddonManager
 
     public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
     {
-        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
+        return addOnRequiresUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
@@ -261,7 +262,7 @@ public class ConnectAddonManager
             {
                 beanToModuleRegistrar.registerDescriptorsForBeans(addon);
 
-                if (addOnNeedsAUser(addon))
+                if (addOnRequiresUser(addon))
                 {
                     enableAddOnUser(addon);
                 }
@@ -708,10 +709,5 @@ public class ConnectAddonManager
             throw exception;
         }
 
-    }
-
-    private static boolean addOnNeedsAUser(ConnectAddonBean addOn)
-    {
-        return null != addOn.getAuthentication() && !AuthenticationType.NONE.equals(addOn.getAuthentication().getType());
     }
 }

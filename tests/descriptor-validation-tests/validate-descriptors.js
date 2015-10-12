@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-var marketplace = require('./marketplace'),
-    downloader = require('./download-descriptors'),
+var marketplace = require('atlassian-connect-marketplace-scripts/marketplace.js'),
+    downloader = require('atlassian-connect-marketplace-scripts/download-descriptors.js'),
     validator = require('atlassian-connect-validator'),
     _ = require('lodash'),
     fs = require('fs'),
@@ -9,22 +9,22 @@ var marketplace = require('./marketplace'),
     colors = require('colors'),
     util = require('util');
 
-var baseSchemaFile = '../../plugin/target/classes/schema/shallow-schema.json',
+var baseSchemaFile = 'target/schema/shallow-schema.json',
     commonModuleSchemaFiles = [
-        '../../plugin/target/classes/schema/common-schema.json'
+        'target/schema/common-schema.json'
     ],
     productConfigurations = {
         confluence: {
             moduleSchemaFiles: [
-                '../../plugin/target/classes/schema/confluence-schema.json'
+                'target/schema/confluence-schema.json'
             ],
-            outputSchemaFile: '../../plugin/target/classes/schema/confluence-global-schema.json'
+            outputSchemaFile: 'target/schema/confluence-global-schema.json'
         },
         jira: {
             moduleSchemaFiles: [
-                '../../plugin/target/classes/schema/jira-schema.json'
+                'target/schema/jira-schema.json'
             ],
-            outputSchemaFile: '../../plugin/target/classes/schema/jira-global-schema.json'
+            outputSchemaFile: 'target/schema/jira-global-schema.json'
         }
     };
 
@@ -173,4 +173,3 @@ process.on('exit', function() {
       }
   }
 });
-
