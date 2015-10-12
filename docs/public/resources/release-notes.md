@@ -33,6 +33,13 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.55](../release-notes/1-1-0.html#1.1.55)
+* Added `post-install-page` module for add-ons to provide a page with information on getting started [AC-1579](https://ecosystem.atlassian.net/browse/AC-1579)
+* Confluence: Added fields to the `confluenceContentProperties` module to allow add-ons to provide aliases for content properties [CE-155](https://ecosystem.atlassian.net/browse/CE-155)
+* Confluence: Added support for content property aliases in the UI of the CQL builder [CE-156](https://ecosystem.atlassian.net/browse/CE-156)
+* REST endpoint `/secure/viewavatar` accessible with READ scope [AC-1748](https://ecosystem.atlassian.net/browse/AC-1748)
+* JIRA: Added field to `data-options` which hides the footer on an add-on provided page [ACJIRA-220](https://ecosystem.atlassian.net/browse/ACJIRA-220)
+
 ## [1.1.52](../release-notes/1-1-0.html#1.1.52)
 * Reduce required scope for JIRA project properties to WRITE [AC-1686](https://ecosystem.atlassian.net/browse/AC-1686)
 
