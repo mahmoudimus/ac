@@ -207,14 +207,23 @@ public class DetailedConfluenceSpaceAdminScopeTest
     @Test
     public void ignoresStaticAddonAddsAllOthersForNewSpaces() throws Exception
     {
+        ConnectAddonBeanBuilder addonBeanBuilderDynamic1 = createAddonBean(ScopeName.SPACE_ADMIN);
+        installConnectAddon(addonBeanBuilderDynamic1.build());
+
         ConnectAddonBeanBuilder addonBeanBuilderStatic = createAddonBean(ScopeName.SPACE_ADMIN);
         addonBeanBuilderStatic.withAuthentication(AuthenticationBean.none());
         installConnectAddon(addonBeanBuilderStatic.build());
 
-        ConnectAddonBeanBuilder addonBeanBuilderDynamic = createAddonBean(ScopeName.SPACE_ADMIN);
-        installConnectAddon(addonBeanBuilderDynamic.build());
+        ConnectAddonBeanBuilder addonBeanBuilderDynamic2 = createAddonBean(ScopeName.SPACE_ADMIN);
+        installConnectAddon(addonBeanBuilderDynamic2.build());
 
-        assertIsSpaceAdminOfNewSpace(addonBeanBuilderDynamic.getKey());
+        assertIsSpaceAdminOfNewSpace(addonBeanBuilderDynamic1.getKey());
+        List<String> permissionErrors = checkIsSpaceAdminOnSpace(
+                        spaceManager.getSpace(JEDI_SPACE_KEY),
+                        getAddonUser(addonBeanBuilderDynamic2.getKey()),
+                        true
+        );
+        assertTrue(StringUtils.join(permissionErrors, '\n'), permissionErrors.isEmpty());
     }
 
     private void installAddonThenChangeScope(ConnectAddonBeanBuilder addonBeanBuilder, ScopeName upgradedScope)
