@@ -204,6 +204,19 @@ public class DetailedConfluenceSpaceAdminScopeTest
         assertNonReadPermissionsRemoved(key);
     }
 
+    @Test
+    public void ignoresStaticAddonAddsAllOthersForNewSpaces() throws Exception
+    {
+        ConnectAddonBeanBuilder addonBeanBuilderStatic = createAddonBean(ScopeName.SPACE_ADMIN);
+        addonBeanBuilderStatic.withAuthentication(AuthenticationBean.none());
+        installConnectAddon(addonBeanBuilderStatic.build());
+
+        ConnectAddonBeanBuilder addonBeanBuilderDynamic = createAddonBean(ScopeName.SPACE_ADMIN);
+        installConnectAddon(addonBeanBuilderDynamic.build());
+
+        assertIsSpaceAdminOfNewSpace(addonBeanBuilderDynamic.getKey());
+    }
+
     private void installAddonThenChangeScope(ConnectAddonBeanBuilder addonBeanBuilder, ScopeName upgradedScope)
             throws Exception
     {
