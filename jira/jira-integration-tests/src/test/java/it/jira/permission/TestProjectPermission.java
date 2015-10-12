@@ -5,7 +5,6 @@ import com.atlassian.jira.pageobjects.project.permissions.Permission;
 import com.atlassian.jira.pageobjects.project.permissions.PermissionGroup;
 import com.atlassian.jira.pageobjects.project.permissions.ProjectPermissionPageTab;
 import com.atlassian.jira.util.json.JSONException;
-import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionCategory;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -35,7 +34,6 @@ import static org.junit.Assert.assertThat;
 public class TestProjectPermission extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
-    private static final String userGroup = "jira-users";
     private static final String permissionKey = "plugged-project-permission";
     private static final String permissionName = "Custom connect project permission";
     private static final String description = "Custom connect global permission";
@@ -44,12 +42,10 @@ public class TestProjectPermission extends JiraWebDriverTestBase
     public static final String projectKey = "TEST";
 
     private static ConnectRunner remotePlugin;
-    private static JSONObject property;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        property = new JSONObject().put("value", "true");
         remotePlugin = new ConnectRunner(product.environmentData().getBaseUrl().toString(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(

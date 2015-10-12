@@ -9,8 +9,8 @@ import com.google.common.base.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * Add the project permission to the project permission list in the JIRA's setting page.
- * Pluggable project permissions can not be used in conditions yet.
+ * Add the permission to the project permission list in JIRA's setting page.
+ * Project permissions can not be used in conditions yet.
  *
  * @exampleJson {@link ConnectJsonExamples#PROJECT_PERMISSION_EXAMPLE}
  * @schemaTitle Project Permission
@@ -25,15 +25,7 @@ public class ProjectPermissionModuleBean extends BeanWithKeyAndParamsAndConditio
     private I18nProperty description;
 
     /**
-     * Category of the project permission. On it depends in which section permission will be displayed.
-     * Currently JIRA support those categories:
-     * * `projects`
-     * * `issues`
-     * * `voters.and.watchers`
-     * * `comments`
-     * * `attachments`
-     * * `time.tracking`
-     * * `other`
+     * The category of the project permission. This determines in which section the permission will be displayed.
      */
     @CommonSchemaAttributes (defaultValue = "other")
     private ProjectPermissionCategory category;

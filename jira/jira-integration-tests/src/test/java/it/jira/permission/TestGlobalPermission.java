@@ -1,7 +1,6 @@
 package it.jira.permission;
 
 import com.atlassian.jira.pageobjects.pages.admin.GlobalPermissionsPage;
-import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -15,7 +14,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
@@ -42,7 +40,7 @@ public class TestGlobalPermission extends JiraWebDriverTestBase
                                 .withKey(permissionKey)
                                 .withName(new I18nProperty(permissionName, null))
                                 .withDescription(new I18nProperty(description, null))
-                                .withAnonymusAllowed(true)
+                                .withAnonymousAllowed(true)
                                 .build()
                 )
                 .start();

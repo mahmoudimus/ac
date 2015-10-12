@@ -1,16 +1,11 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor.permission;
 
-import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptor;
-import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.jira.plugin.permission.GlobalPermissionModuleDescriptor;
 import com.atlassian.jira.plugin.permission.GlobalPermissionModuleDescriptorImpl;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -19,7 +14,8 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class GlobalPermissionModuleDescriptorFactory  implements ConnectModuleDescriptorFactory<GlobalPermissionModuleBean, GlobalPermissionModuleDescriptor>
+public class GlobalPermissionModuleDescriptorFactory
+        implements ConnectModuleDescriptorFactory<GlobalPermissionModuleBean, GlobalPermissionModuleDescriptor>
 {
     public static final String DESCRIPTOR_NAME = "global-permission";
 
@@ -48,5 +44,4 @@ public class GlobalPermissionModuleDescriptorFactory  implements ConnectModuleDe
 
         return descriptor;
     }
-
 }

@@ -22,7 +22,7 @@ public class GlobalPermissionModuleBeanTest
                 .withKey("jira-global-permission")
                 .withName(new I18nProperty("Name", "name.i18n"))
                 .withDescription(new I18nProperty("Description", "description.i18n"))
-                .withAnonymusAllowed(false)
+                .withAnonymousAllowed(false)
                 .build()));
     }
 

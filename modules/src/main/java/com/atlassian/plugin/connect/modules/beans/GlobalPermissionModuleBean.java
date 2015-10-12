@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.GlobalPermissionModule
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
- * Add the global permission to the global permission list in the JIRA's setting page.
+ * Add the permission to the global permission list in JIRA's setting page.
  * Global permissions can not be used in conditions yet.
  *
  * @exampleJson {@link ConnectJsonExamples#GLOBAL_PERMISSION_EXAMPLE}
@@ -25,7 +25,7 @@ public class GlobalPermissionModuleBean extends RequiredKeyBean
     private I18nProperty description;
 
     /**
-     * Specify if an anonymous can be assigned to this permission.
+     * Specifies if this permission can be granted to anonymous users.
      */
     @CommonSchemaAttributes (defaultValue = "true")
     private Boolean anonymousAllowed;

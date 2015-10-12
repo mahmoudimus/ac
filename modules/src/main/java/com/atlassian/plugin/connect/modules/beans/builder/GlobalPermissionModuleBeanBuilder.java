@@ -1,25 +1,25 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
-public class GlobalPermissionModuleBeanBuilder extends RequiredKeyBeanBuilder<GlobalPermissionModuleBeanBuilder, GlobalPermissionModuleBean>
+public class GlobalPermissionModuleBeanBuilder
+        extends RequiredKeyBeanBuilder<GlobalPermissionModuleBeanBuilder, GlobalPermissionModuleBean>
 {
     private I18nProperty description;
-    private Boolean anonymusAllowed;
+    private Boolean anonymousAllowed;
 
     public GlobalPermissionModuleBeanBuilder()
     {
         this.description = I18nProperty.empty();
-        this.anonymusAllowed = true;
+        this.anonymousAllowed = true;
     }
 
     public GlobalPermissionModuleBeanBuilder(GlobalPermissionModuleBean globalPermissionModuleBean)
     {
         super(globalPermissionModuleBean);
         this.description = globalPermissionModuleBean.getDescription();
-        this.anonymusAllowed = globalPermissionModuleBean.getAnonymousAllowed();
+        this.anonymousAllowed = globalPermissionModuleBean.getAnonymousAllowed();
     }
 
     public GlobalPermissionModuleBeanBuilder withDescription(I18nProperty description)
@@ -28,9 +28,9 @@ public class GlobalPermissionModuleBeanBuilder extends RequiredKeyBeanBuilder<Gl
         return this;
     }
 
-    public GlobalPermissionModuleBeanBuilder withAnonymusAllowed(Boolean anonymusAllowed)
+    public GlobalPermissionModuleBeanBuilder withAnonymousAllowed(Boolean anonymousAllowed)
     {
-        this.anonymusAllowed = anonymusAllowed;
+        this.anonymousAllowed = anonymousAllowed;
         return this;
     }
 

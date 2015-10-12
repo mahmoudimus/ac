@@ -383,7 +383,7 @@ public class ConnectJsonExamples
                 .withKey("my-global-permission")
                 .withName(i18nProperty("My Global Permission"))
                 .withDescription(i18nProperty("Custom global permission for my add-on"))
-                .withAnonymusAllowed(false)
+                .withAnonymousAllowed(false)
                 .build();
 
         return gson.toJson(createModuleArray("jiraGlobalPermissions", globalPermissionModuleBean));
