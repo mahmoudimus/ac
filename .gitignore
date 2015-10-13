@@ -1,6 +1,7 @@
 .DS_Store
 target
 .idea
+.stashconfig.yml
 *.iml
 *.ipr
 *.iws
@@ -15,11 +16,11 @@ debuglog.txt
 dependency-reduced-pom.xml
 .cache
 apps
+node
 node_modules
 
 build-number.txt
 docs/target
-plugin/node
 plugin/src/main/resources/js/core
 plugin/src/main/resources/css/core
 .vagrant

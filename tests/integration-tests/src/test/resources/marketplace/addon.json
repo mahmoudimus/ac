@@ -42,11 +42,11 @@
             "compatibilities": [
                 {
                     "application": "jira",
-                    "cloud": true
+                    "hosting": { "cloud": true }
                 },
                 {
                     "application": "confluence",
-                    "cloud": true
+                    "hosting": { "cloud": true }
                 }
             ],
             "media": {},

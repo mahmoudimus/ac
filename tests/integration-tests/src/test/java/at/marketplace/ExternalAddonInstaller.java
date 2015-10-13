@@ -14,7 +14,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
@@ -54,6 +53,12 @@ public class ExternalAddonInstaller
     private String screenshotAsset;
     private String thumbnailAsset;
     private String descriptorUrl;
+
+    private enum ImageType
+    {
+        THUMBNAIL,
+        FULL_SIZE
+    }
 
     public ExternalAddonInstaller(String productBaseUrl, TestUser user)
     {
@@ -110,8 +115,8 @@ public class ExternalAddonInstaller
         {
             if (!addonExists())
             {
-                screenshotAsset = createScreenshotAsset(false);
-                thumbnailAsset = createScreenshotAsset(true);
+                screenshotAsset = createScreenshotAsset(ImageType.FULL_SIZE);
+                thumbnailAsset = createScreenshotAsset(ImageType.THUMBNAIL);
                 submitAddonToMarketplace();
             }
 
@@ -134,13 +139,13 @@ public class ExternalAddonInstaller
         }
     }
 
-    private String createScreenshotAsset(boolean thumbnail) throws IOException
+    private String createScreenshotAsset(ImageType imageType) throws IOException
     {
         FileBody fileBody;
         try
         {
             File file = new File(getClass().getClassLoader().getResource("marketplace/screenshot.png").toURI());
-            fileBody = new FileBody(file, ContentType.create("image/png"), "screenshot.png");
+            fileBody = new FileBody(file);
         }
         catch (URISyntaxException e)
         {
@@ -151,25 +156,21 @@ public class ExternalAddonInstaller
                 .addPart("file", fileBody)
                 .build();
 
-        HttpPost screenshotPost = new HttpPost(mpacUrl + IMAGE_REST_PATH + "screenshot" + (thumbnail ? "-thumbnail" : ""));
+        HttpPost screenshotPost = new HttpPost(mpacUrl + IMAGE_REST_PATH + "screenshot" + (imageType == ImageType.THUMBNAIL ? "-thumbnail" : ""));
         screenshotPost.setEntity(body);
 
-        log.info("Uploading a dummy " + (thumbnail ? "thumbnail " : "") + "screenshot for our test add-on");
+        log.info("Uploading a dummy " + (imageType == ImageType.THUMBNAIL ? "thumbnail " : "") + "screenshot for our test add-on");
         {
-            return transformResponse(screenshotPost, new HashSet<>(singletonList(200)), "Could not create screenshots for the add-on", new Function<CloseableHttpResponse, String>()
+            return transformResponse(screenshotPost, new HashSet<>(singletonList(200)), "Could not create screenshots for the add-on", response ->
             {
-                @Override
-                public String apply(CloseableHttpResponse response)
+                try
                 {
-                    try
-                    {
-                        String entity = EntityUtils.toString(response.getEntity());
-                        return JPath.evaluate(entity, "_links/image").toString();
-                    }
-                    catch (IOException | ParserException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
+                    String entity = EntityUtils.toString(response.getEntity());
+                    return JPath.evaluate(entity, "_links/image").toString();
+                }
+                catch (IOException | ParserException e)
+                {
+                    throw new RuntimeException(e);
                 }
             }, false);
         }
@@ -203,14 +204,7 @@ public class ExternalAddonInstaller
                 get,
                 new HashSet<>(asList(200, 404)),
                 "Error checking for existence of add-on",
-                new Function<CloseableHttpResponse, Boolean>()
-                {
-                    @Override
-                    public Boolean apply(CloseableHttpResponse response)
-                    {
-                        return response.getStatusLine().getStatusCode() == 200;
-                    }
-                }, true);
+                response -> response.getStatusLine().getStatusCode() == 200, true);
         log.info(addonFound ? "Found an existing instance of the add-on" : "Didn't find an existing instance of the add-on");
         return addonFound;
     }
@@ -225,26 +219,22 @@ public class ExternalAddonInstaller
                 get,
                 new HashSet<>(asList(200, 404)),
                 "Error trying to retrieve descriptor href for add-on",
-                new Function<CloseableHttpResponse, String>()
+                response ->
                 {
-                    @Override
-                    public String apply(CloseableHttpResponse response)
+                    if (response.getStatusLine().getStatusCode() != 200)
                     {
-                        if (response.getStatusLine().getStatusCode() != 200)
-                        {
-                            return null;
-                        }
+                        return null;
+                    }
 
-                        try
-                        {
-                            String entity = EntityUtils.toString(response.getEntity());
-                            Value hrefValue = JPath.evaluate(entity, "_embedded/artifact/_links/binary/href");
-                            return (hrefValue == null) ? null : hrefValue.getString();
-                        }
-                        catch (ParserException | IOException e)
-                        {
-                            throw new RuntimeException("Error parsing out existing descriptor url", e);
-                        }
+                    try
+                    {
+                        String entity = EntityUtils.toString(response.getEntity());
+                        Value hrefValue = JPath.evaluate(entity, "_embedded/artifact/_links/binary/href");
+                        return (hrefValue == null) ? null : hrefValue.getString();
+                    }
+                    catch (ParserException | IOException e)
+                    {
+                        throw new RuntimeException("Error parsing out existing descriptor url", e);
                     }
                 }, true));
     }
@@ -259,14 +249,7 @@ public class ExternalAddonInstaller
                 get,
                 new HashSet<>(asList(200, 404)),
                 "Error checking for existence of vendor",
-                new Function<CloseableHttpResponse, Boolean>()
-                {
-                    @Override
-                    public Boolean apply(CloseableHttpResponse response)
-                    {
-                        return response.getStatusLine().getStatusCode() == 200;
-                    }
-                }, true);
+                response -> response.getStatusLine().getStatusCode() == 200, true);
         return vendorFound;
     }
 
