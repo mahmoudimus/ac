@@ -3,8 +3,6 @@ package it.jira.jsapi;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
-import javax.servlet.http.HttpServlet;
-
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
 import com.atlassian.jira.pageobjects.elements.GlobalMessage;
 import com.atlassian.pageobjects.elements.query.Poller;
@@ -21,8 +19,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.servlet.iframe.MustacheServlet;
+import it.jira.servlet.JiraAppServlets;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
@@ -56,17 +53,8 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
                                 .withUrl("/pg?project_id={project.id}&project_key={project.key}")
                                 .withWeight(1234)
                                 .build())
-                .addRoute("/pg", quickCreateIssueServlet())
+                .addRoute("/pg", JiraAppServlets.quickCreateIssueServlet())
                 .start();
-    }
-
-    /**
-     * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
-     */
-    public static HttpServlet quickCreateIssueServlet()
-    {
-        return ConnectAppServlets.wrapContextAwareServlet(
-                new MustacheServlet("jira/iframe-quick-issue-create.mu"));
     }
 
     @AfterClass

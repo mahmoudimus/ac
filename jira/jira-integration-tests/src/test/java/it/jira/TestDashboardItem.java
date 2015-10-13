@@ -3,7 +3,6 @@ package it.jira;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServlet;
 
 import com.atlassian.jira.pageobjects.gadgets.GadgetContainer;
 import com.atlassian.jira.pageobjects.pages.AddDashboardPage;
@@ -35,10 +34,8 @@ import org.openqa.selenium.WebElement;
 import it.com.atlassian.gadgets.pages.AddGadgetDialog;
 import it.com.atlassian.gadgets.pages.Gadget;
 import it.com.atlassian.gadgets.pages.GadgetMenu;
+import it.jira.servlet.JiraAppServlets;
 import it.jira.servlet.condition.DashboardItemConditionServlet;
-import it.servlet.ConnectAppServlets;
-import it.servlet.TestServletContextExtractor;
-import it.servlet.iframe.MustacheServlet;
 import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
@@ -61,8 +58,6 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     private static final String NON_CONFIGURABLE_DASHBOARD_ITEM_TITLE = "Dashboard item title non configurable";
 
     private static final String VENDOR_NAME = "Atlassian";
-    private static final String DASHBOARD_ITEM_ID_QUERY_PARAM = "dashboardItemId";
-    private static final String DASHBOARD_ID_QUERY_PARAM = "dashboardId";
     private static final TestUser TEST_USER = new TestUser("admin");
     private static ConnectRunner addon;
 
@@ -77,16 +72,9 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                 .addModules("jiraDashboardItems",
                         buildDashboardItemModule(DASHBOARD_ITEM_TITLE, DASHBOARD_ITEM_KEY, true),
                         buildDashboardItemModule(NON_CONFIGURABLE_DASHBOARD_ITEM_TITLE, NON_CONFIGURABLE_DASHBOARD_ITEM_KEY, false))
-                .addRoute("/dashboard-item-test", dashboardItemServlet())
+                .addRoute("/dashboard-item-test", JiraAppServlets.dashboardItemServlet())
                 .addScopes(ScopeName.READ, ScopeName.WRITE, ScopeName.DELETE)
                 .start();
-    }
-
-    private static HttpServlet dashboardItemServlet()
-    {
-        return ConnectAppServlets.wrapContextAwareServlet(new MustacheServlet("jira/dashboardItem/dashboard-item.mu"), Lists.newArrayList(
-                new TestServletContextExtractor(DASHBOARD_ITEM_ID_QUERY_PARAM),
-                new TestServletContextExtractor(DASHBOARD_ID_QUERY_PARAM)));
     }
 
     @AfterClass
@@ -277,7 +265,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                                 .withKey(moduleKey)
                                 .configurable(true)
                                 .build())
-                .addRoute("/item-with-condition", dashboardItemServlet())
+                .addRoute("/item-with-condition", JiraAppServlets.dashboardItemServlet())
                 .addRoute(DashboardItemConditionServlet.DASHBOARD_ITEM_CONDITION_URL,
                         conditionServlet)
                 .addScopes(ScopeName.READ, ScopeName.WRITE, ScopeName.DELETE)

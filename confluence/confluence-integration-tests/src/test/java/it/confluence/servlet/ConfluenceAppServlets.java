@@ -10,7 +10,7 @@ import it.servlet.iframe.MustacheServlet;
 import static it.servlet.ConnectAppServlets.wrapContextAwareServlet;
 
 /**
- * Utility methods for creating test servlets suitable for serving Confluence-specific iframes.
+ * Utility methods for creating test servlets suitable for serving Confluence-specific Connect iframes.
  */
 public class ConfluenceAppServlets
 {
