@@ -48,6 +48,12 @@
                 <module>integration-tests</module>
             </modules>
         </profile>
+        <profile>
+            <id>descriptorValidation</id>
+            <modules>
+                <module>descriptor-validation-tests</module>
+            </modules>
+        </profile>
     </profiles>
 
 </project>

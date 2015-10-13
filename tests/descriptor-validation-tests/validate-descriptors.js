@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-var marketplace = require('./marketplace'),
-    downloader = require('./download-descriptors'),
+var marketplace = require('atlassian-connect-marketplace-scripts/marketplace.js'),
+    downloader = require('atlassian-connect-marketplace-scripts/download-descriptors.js'),
     validator = require('atlassian-connect-validator'),
     _ = require('lodash'),
     fs = require('fs'),
@@ -9,8 +9,8 @@ var marketplace = require('./marketplace'),
     colors = require('colors'),
     util = require('util');
 
-var jiraSchemaPath = '../../plugin/target/classes/schema/jira-schema.json',
-    confluenceSchemaPath = '../../plugin/target/classes/schema/confluence-schema.json',
+var jiraSchemaPath = 'target/schema/jira-schema.json',
+    confluenceSchemaPath = 'target/schema/confluence-schema.json',
     jiraSchema,
     confluenceSchema;
 
