@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  *
@@ -50,12 +49,6 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
 
     @Override
     public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException
-    {
-        return fromJson(jsonDescriptor,null);
-    }
-
-    @Override
-    public ConnectAddonBean fromJson(String jsonDescriptor, Map<String, String> i18nCollector) throws InvalidDescriptorException
     {
         final String schema;
         try
@@ -93,7 +86,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
             throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
         }
 
-        ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
+        ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor);
         addOnBeanValidatorService.validate(addOn);
 
         return addOn;
@@ -102,22 +95,16 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     @Override
     public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor)
     {
-        return fromJsonSkipValidation(jsonDescriptor,null);
-    }
-
-    @Override
-    public ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor, Map<String, String> i18nCollector)
-    {
         try
         {
-            return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector);
+            return ConnectModulesGsonFactory.addonFromJson(jsonDescriptor);
         }
         catch (Exception e)
         {
             String exceptionMessage = "Invalid connect descriptor: " + e.getMessage();
             log.error(exceptionMessage);
             throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
-        }    
+        }
     }
 
     @Override

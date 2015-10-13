@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
@@ -99,15 +101,6 @@ public class GsonConnectAddonBeanFactoryTest
 
     private void assertFromJsonReturnsErrorMessage(String i18nKey, Serializable... params)
     {
-        try
-        {
-            addonBeanFactory.fromJson("fake-descriptor", Maps.<String, String>newHashMap());
-        }
-        catch (InvalidDescriptorException e)
-        {
-            assertThat(e.getI18nMessageProperties().get().first(), equalTo(i18nKey));
-            assertThat(e.getI18nMessageProperties().get().second(), equalTo(params));
-            throw e;
-        }
+        addonBeanFactory.fromJson("fake-descriptor");
     }
 }
