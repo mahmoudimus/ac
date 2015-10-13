@@ -867,6 +867,7 @@
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>
+        <jsonij.version>0.2.11</jsonij.version>
         <skipITs>true</skipITs>
 
         <!-- BUILD STUFF -->

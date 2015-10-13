@@ -17,7 +17,6 @@ import org.json.simple.JSONValue;
 
 import it.servlet.ContextServlet;
 import it.servlet.InstallHandlerServlet;
-import it.servlet.macro.BodyHandler;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

@@ -341,7 +341,7 @@
         <dependency>
             <groupId>cc.plural</groupId>
             <artifactId>jsonij</artifactId>
-            <version>0.2.11</version>
+            <version>${jsonij.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

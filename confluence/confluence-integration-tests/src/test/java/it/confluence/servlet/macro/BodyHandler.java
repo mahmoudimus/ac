@@ -1,4 +1,4 @@
-package it.servlet.macro;
+package it.confluence.servlet.macro;
 
 import java.io.IOException;
 import java.util.Map;

@@ -1,10 +1,6 @@
 package it.confluence.macro;
 
-import java.io.IOException;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
@@ -31,10 +27,10 @@ import org.openqa.selenium.By;
 
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.MacroStorageFormatBuilder;
+import it.confluence.servlet.macro.BodyHandler;
 import it.confluence.servlet.macro.MacroBodyServlet;
 import it.servlet.HttpContextServlet;
 import it.servlet.InstallHandlerServlet;
-import it.servlet.macro.BodyHandler;
 import junit.framework.TestCase;
 
 /**
@@ -87,25 +83,17 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
         String addonKey = AddonTestUtils.randomAddOnKey();
         String baseUrl = product.getProductInstance().getBaseUrl();
-        BodyHandler dynamicMacroBodyHandler = new BodyHandler()
-        {
-            public void processBody(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context, String body) throws IOException
-            {
-                Map<String, Object> data = Maps.newHashMap(context);
-                data.put("body", body);
-                HttpUtils.renderHtml(resp, "it/confluence/macro/dynamic-macro-body.mu", data);
-            }
+        BodyHandler dynamicMacroBodyHandler = (req, resp, context, body) -> {
+            Map<String, Object> data = Maps.newHashMap(context);
+            data.put("body", body);
+            HttpUtils.renderHtml(resp, "it/confluence/macro/dynamic-macro-body.mu", data);
         };
-        BodyHandler staticMacroBodyHandler = new BodyHandler()
-        {
-            public void processBody(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context, String body) throws IOException
-            {
-                resp.setContentType("text/html");
-                byte[] bytes = body.getBytes();
-                resp.setContentLength(bytes.length);
-                resp.getOutputStream().write(bytes);
-                resp.getOutputStream().close();
-            }
+        BodyHandler staticMacroBodyHandler = (req, resp, context, body) -> {
+            resp.setContentType("text/html");
+            byte[] bytes = body.getBytes();
+            resp.setContentLength(bytes.length);
+            resp.getOutputStream().write(bytes);
+            resp.getOutputStream().close();
         };
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .addJWT(installHandlerServlet)
