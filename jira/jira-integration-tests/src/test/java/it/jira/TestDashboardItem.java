@@ -1,5 +1,9 @@
 package it.jira;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import com.atlassian.jira.pageobjects.gadgets.GadgetContainer;
 import com.atlassian.jira.pageobjects.pages.AddDashboardPage;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
@@ -13,17 +17,10 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import it.com.atlassian.gadgets.pages.AddGadgetDialog;
-import it.com.atlassian.gadgets.pages.Gadget;
-import it.com.atlassian.gadgets.pages.GadgetMenu;
-import it.servlet.ConnectAppServlets;
-import it.servlet.TestServletContextExtractor;
-import it.servlet.condition.DashboardItemConditionServlet;
-import it.util.TestUser;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
@@ -34,9 +31,13 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import javax.inject.Inject;
-import java.util.List;
-import java.util.concurrent.Callable;
+import it.com.atlassian.gadgets.pages.AddGadgetDialog;
+import it.com.atlassian.gadgets.pages.Gadget;
+import it.com.atlassian.gadgets.pages.GadgetMenu;
+import it.jira.servlet.condition.DashboardItemConditionServlet;
+import it.servlet.ConnectAppServlets;
+import it.servlet.TestServletContextExtractor;
+import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -364,36 +365,19 @@ public class TestDashboardItem extends JiraWebDriverTestBase
 
         public Iterable<PageElement> getAllGadgets()
         {
-            return Iterables.filter(dashboard.findAll(By.className("dashboard-item-title")), new Predicate<PageElement>()
-            {
-                @Override
-                public boolean apply(final PageElement pageElement)
-                {
-                    return !pageElement.getAttribute("id").isEmpty();
-                }
-            });
+            return Iterables.filter(dashboard.findAll(By.className("dashboard-item-title")), pageElement -> !pageElement.getAttribute("id").isEmpty());
         }
 
         public Iterable<ConnectDashboardItemElement> getDashboardItems(final String addOnKey, final String moduleKey)
         {
             final List<PageElement> iFrameContainers = elementFinder.findAll(By.className("iframe-init"));
-            final Iterable<PageElement> gadgetsContainers = Iterables.filter(iFrameContainers, new Predicate<PageElement>()
-            {
-                @Override
-                public boolean apply(final PageElement pageElement)
-                {
-                    return pageElement.getAttribute("id").contains(ModuleKeyUtils.addonAndModuleKey(addOnKey, moduleKey));
-                }
+            final Iterable<PageElement> gadgetsContainers = Iterables.filter(iFrameContainers, pageElement -> {
+                return pageElement.getAttribute("id").contains(ModuleKeyUtils.addonAndModuleKey(addOnKey, moduleKey));
             });
-            return Iterables.transform(gadgetsContainers, new Function<PageElement, ConnectDashboardItemElement>()
-            {
-                @Override
-                public ConnectDashboardItemElement apply(final PageElement pageElement)
-                {
-                    final String id = pageElement.getAttribute("id");
-                    final String pageKey = id.substring(id.indexOf(moduleKey));
-                    return pageBinder.bind(ConnectDashboardItemElement.class, addOnKey, pageKey);
-                }
+            return Iterables.transform(gadgetsContainers, pageElement -> {
+                final String id = pageElement.getAttribute("id");
+                final String pageKey = id.substring(id.indexOf(moduleKey));
+                return pageBinder.bind(ConnectDashboardItemElement.class, addOnKey, pageKey);
             });
         }
     }
@@ -435,27 +419,17 @@ public class TestDashboardItem extends JiraWebDriverTestBase
 
         public void assertEditClicked()
         {
-            runInFrame(new Callable<Void>()
-            {
-                @Override
-                public Void call() throws Exception
-                {
-                    Poller.waitUntilTrue(elementFinder.find(By.id("editBox")).timed().isVisible());
-                    return null;
-                }
+            runInFrame(() -> {
+                Poller.waitUntilTrue(elementFinder.find(By.id("editBox")).timed().isVisible());
+                return null;
             });
         }
 
         public void changeTitle()
         {
-            runInFrame(new Callable<Void>()
-            {
-                @Override
-                public Void call() throws Exception
-                {
-                    elementFinder.find(By.id("set-title")).click();
-                    return null;
-                }
+            runInFrame(() -> {
+                elementFinder.find(By.id("set-title")).click();
+                return null;
             });
         }
     }

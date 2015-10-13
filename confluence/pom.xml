@@ -16,4 +16,19 @@
         <module>confluence-support</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <id>it</id>
+            <modules>
+                <module>confluence-integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>freezer-release-profile</id>
+            <modules>
+                <module>confluence-integration-tests</module>
+            </modules>
+        </profile>
+    </profiles>
+
 </project>

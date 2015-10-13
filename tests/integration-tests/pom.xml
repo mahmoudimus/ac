@@ -453,7 +453,9 @@
                             <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
-                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>
+                                    ${addonconfig.maxpropertiesperplugin}
+                                </com.atlassian.plugin.connect.add_on_properties.max_properties>
                                 <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
@@ -529,7 +531,9 @@
                             </log4jProperties>
                             <systemPropertyVariables>
                                 <product>confluence</product>
-                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>
+                                    ${addonconfig.maxpropertiesperplugin}
+                                </com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -586,6 +590,7 @@
 
                     <testGroups>
 
+                        <!-- Still required for the time being, until we split out JIRA Wired tests -->
                         <testGroup>
                             <id>confluence</id>
                             <productIds>
@@ -599,7 +604,6 @@
                             </excludes>
                         </testGroup>
                         <testGroup>
-                            <!-- Still required for the time being, until we split out JIRA Wired tests -->
                             <id>jira</id>
                             <productIds>
                                 <productId>jira</productId>
@@ -614,7 +618,6 @@
                         </testGroup>
 
                         <!-- Tests of cross-product functionality on Confluence -->
-
                         <testGroup>
                             <id>confluence-common-misc</id>
                             <productIds>
@@ -656,76 +659,6 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
-                            </includes>
-                        </testGroup>
-
-                        <!-- Tests of Confluence-specific functionality -->
-
-                        <testGroup>
-                            <id>confluence-misc</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/confluence/iframe/*.java</exclude>
-                                <exclude>it/confluence/item/*.java</exclude>
-                                <exclude>it/confluence/jsapi/*.java</exclude>
-                                <exclude>it/confluence/macro/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-iframe</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-item</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/item/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-jsapi</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/jsapi/*.java</include>
-                                <include>it/confluence/jsapi/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-macro</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/macro/*.java</include>
                             </includes>
                         </testGroup>
 

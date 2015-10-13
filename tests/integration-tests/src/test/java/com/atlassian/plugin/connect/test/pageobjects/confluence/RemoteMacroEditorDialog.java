@@ -14,7 +14,7 @@ import org.openqa.selenium.WebDriver;
 public class RemoteMacroEditorDialog extends RemotePluginDialog
 {
 
-    public static final String TEMPLATE_PATH = "confluence/macro/editor.mu";
+    public static final String TEMPLATE_PATH = "it/confluence/macro/editor.mu";
 
     private static final String CLOSE_EDITOR_BUTTON_ID = "macro-editor-close-button";
 

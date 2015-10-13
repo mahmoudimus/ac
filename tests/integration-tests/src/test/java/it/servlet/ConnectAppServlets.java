@@ -199,7 +199,7 @@ public class ConnectAppServlets
 
     public static HttpServlet macroBodyEditor(String newMacroBody)
     {
-        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("confluence/macro/editor-macro-body.mu"));
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("it/confluence/macro/editor-macro-body.mu"));
         contextServlet.getBaseContext().put("newMacroBody", newMacroBody);
         return contextServlet;
     }
@@ -241,6 +241,6 @@ public class ConnectAppServlets
 
     public static HttpServlet dynamicMacroStaticServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("confluence/macro/dynamic-macro-static.mu"));
+        return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/dynamic-macro-static.mu"));
     }
 }
