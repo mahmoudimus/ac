@@ -1,0 +1,11 @@
+{
+  "release-notes": {
+    "filename": "release-notes.html",
+    "title": "Release notes"
+  },
+  "updates": {
+    "filename": "updates.html",
+    "title": "Get Notified",
+    "new": "true"
+  }
+}
