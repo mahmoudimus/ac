@@ -1,14 +1,15 @@
 package it.servlet;
 
+import javax.servlet.http.HttpServlet;
+
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
-import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteRefreshIssuePageWebPanel;
+
 import com.google.common.collect.Lists;
+
 import it.servlet.condition.ParameterCapturingServlet;
 import it.servlet.iframe.CustomMessageServlet;
 import it.servlet.iframe.MustacheServlet;
-
-import javax.servlet.http.HttpServlet;
 
 /**
  * Utility methods for creating test servlets suitable for serving Connect iframes.
@@ -69,39 +70,6 @@ public class ConnectAppServlets
     }
 
     /**
-     * @return a servlet that provides a button to trigger refreshing a JIRA issue page
-     */
-    public static HttpServlet refreshIssuePageButtonServlet()
-    {
-        return wrapContextAwareServlet(new MustacheServlet(RemoteRefreshIssuePageWebPanel.TEMPLATE_PATH));
-    }
-
-    /**
-     * @return a servlet that will create a workflow post function
-     */
-    public static HttpServlet workflowPostFunctionServlet()
-    {
-        return wrapContextAwareServlet(new MustacheServlet("jira/iframe-workflow-post-function.mu"));
-    }
-
-    /**
-     * @return a servlet that will create a workflow post function that will fail validation
-     */
-    public static HttpServlet failValidateWorkflowPostFunctionServlet()
-    {
-        return wrapContextAwareServlet(new MustacheServlet("jira/iframe-fail-validate-workflow-post-function.mu"));
-    }
-
-    /**
-     * @return a servlet that which displays dashboard item properties, changes the title and reacts to edit event
-     */
-    public static HttpServlet dashboardItemServlet(Iterable<TestServletContextExtractor> extractors)
-    {
-        return wrapContextAwareServlet(new MustacheServlet("jira/dashboardItem/dashboard-item.mu"), extractors);
-    }
-
-
-    /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
      *
      * @param message the message to display
@@ -138,15 +106,6 @@ public class ConnectAppServlets
     {
         return new ParameterCapturingServlet(simpleInlineDialogServlet());
     }
-
-    /**
-     * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
-     */
-    public static HttpServlet quickCreateIssueServlet()
-    {
-        return wrapContextAwareServlet(new MustacheServlet("jira/iframe-quick-issue-create.mu"));
-    }
-
 
     /**
      * @return a servlet that opens a dialog
@@ -187,23 +146,6 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new MustacheServlet("iframe-cookie.mu"));
     }
 
-    public static HttpServlet macroEditor()
-    {
-        return wrapContextAwareServlet(new MustacheServlet(RemoteMacroEditorDialog.TEMPLATE_PATH));
-    }
-
-    public static HttpServlet blueprintTemplateServlet()
-    {
-        return wrapContextAwareServlet(new MustacheServlet("confluence/test-blueprint.xml"));
-    }
-
-    public static HttpServlet macroBodyEditor(String newMacroBody)
-    {
-        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("it/confluence/macro/editor-macro-body.mu"));
-        contextServlet.getBaseContext().put("newMacroBody", newMacroBody);
-        return contextServlet;
-    }
-
     public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
     {
         return wrapContextAwareServlet(servlet, Lists.<TestServletContextExtractor>newArrayList());
@@ -242,5 +184,17 @@ public class ConnectAppServlets
     public static HttpServlet dynamicMacroStaticServlet()
     {
         return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/dynamic-macro-static.mu"));
+    }
+
+    public static HttpServlet macroEditor()
+    {
+        return wrapContextAwareServlet(new MustacheServlet(RemoteMacroEditorDialog.TEMPLATE_PATH));
+    }
+
+    public static HttpServlet macroBodyEditor(String newMacroBody)
+    {
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("it/confluence/macro/editor-macro-body.mu"));
+        contextServlet.getBaseContext().put("newMacroBody", newMacroBody);
+        return contextServlet;
     }
 }

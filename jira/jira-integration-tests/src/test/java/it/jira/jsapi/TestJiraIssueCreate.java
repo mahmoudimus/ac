@@ -1,5 +1,10 @@
 package it.jira.jsapi;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
+import javax.servlet.http.HttpServlet;
+
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
 import com.atlassian.jira.pageobjects.elements.GlobalMessage;
 import com.atlassian.pageobjects.elements.query.Poller;
@@ -8,20 +13,18 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteQuickCreateIssueGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+import it.servlet.iframe.MustacheServlet;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -53,8 +56,17 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
                                 .withUrl("/pg?project_id={project.id}&project_key={project.key}")
                                 .withWeight(1234)
                                 .build())
-                .addRoute("/pg", ConnectAppServlets.quickCreateIssueServlet())
+                .addRoute("/pg", quickCreateIssueServlet())
                 .start();
+    }
+
+    /**
+     * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
+     */
+    public static HttpServlet quickCreateIssueServlet()
+    {
+        return ConnectAppServlets.wrapContextAwareServlet(
+                new MustacheServlet("jira/iframe-quick-issue-create.mu"));
     }
 
     @AfterClass

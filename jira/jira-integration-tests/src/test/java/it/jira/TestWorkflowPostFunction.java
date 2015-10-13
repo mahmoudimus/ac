@@ -1,5 +1,7 @@
 package it.jira;
 
+import javax.servlet.http.HttpServlet;
+
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionFunctionParamsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowSteps;
@@ -18,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import it.servlet.ConnectAppServlets;
+import it.servlet.iframe.MustacheServlet;
 
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -63,11 +66,31 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                 )
                 .addRoute("/wpf-view", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/wpf-edit", ConnectAppServlets.helloWorldServlet())
-                .addRoute("/wpf-create", ConnectAppServlets.workflowPostFunctionServlet())
-                .addRoute("/wpf-invalid-create", ConnectAppServlets.failValidateWorkflowPostFunctionServlet())
+                .addRoute("/wpf-create", workflowPostFunctionServlet())
+                .addRoute("/wpf-invalid-create", failValidateWorkflowPostFunctionServlet())
                 .start();
 
         ensureDefaultWorkflowActivated();
+    }
+
+    /**
+     * @return a servlet that will create a workflow post function
+     */
+    public static HttpServlet workflowPostFunctionServlet()
+    {
+        return ConnectAppServlets.wrapContextAwareServlet(
+                new MustacheServlet("jira/iframe-workflow-post-function.mu"));
+    }
+
+
+
+    /**
+     * @return a servlet that will create a workflow post function that will fail validation
+     */
+    public static HttpServlet failValidateWorkflowPostFunctionServlet()
+    {
+        return ConnectAppServlets.wrapContextAwareServlet(
+                new MustacheServlet("jira/iframe-fail-validate-workflow-post-function.mu"));
     }
 
     @AfterClass

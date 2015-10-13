@@ -1,5 +1,9 @@
 package it.confluence;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServlet;
+
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
@@ -8,15 +12,16 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.servlet.ConnectAppServlets;
-import it.servlet.InstallHandlerServlet;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.io.IOException;
+import it.servlet.ConnectAppServlets;
+import it.servlet.InstallHandlerServlet;
+import it.servlet.iframe.MustacheServlet;
+import redstone.xmlrpc.XmlRpcFault;
 
 /**
  * Integration test that loads a blueprint addon and uses it in confluence.
@@ -44,10 +49,16 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
                                         .withUrl("/template.xml")
                                         .build())
                                 .build())
-                .addRoute("/template.xml", ConnectAppServlets.blueprintTemplateServlet())
+                .addRoute("/template.xml", blueprintTemplateServlet())
                 .addScope(ScopeName.READ)
                 .start();
     }
+
+    public static HttpServlet blueprintTemplateServlet()
+    {
+        return ConnectAppServlets.wrapContextAwareServlet(new MustacheServlet("confluence/test-blueprint.xml"));
+    }
+
 
     @AfterClass
     public static void stopConnectAddOn() throws Exception
