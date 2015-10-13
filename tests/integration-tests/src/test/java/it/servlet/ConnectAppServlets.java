@@ -3,7 +3,6 @@ package it.servlet;
 import javax.servlet.http.HttpServlet;
 
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
 
 import com.google.common.collect.Lists;
 
@@ -179,22 +178,5 @@ public class ConnectAppServlets
     private static ContextServlet simpleInlineDialogServlet()
     {
         return new MustacheServlet("iframe-inline-dialog.mu");
-    }
-
-    public static HttpServlet dynamicMacroStaticServlet()
-    {
-        return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/dynamic-macro-static.mu"));
-    }
-
-    public static HttpServlet macroEditor()
-    {
-        return wrapContextAwareServlet(new MustacheServlet(RemoteMacroEditorDialog.TEMPLATE_PATH));
-    }
-
-    public static HttpServlet macroBodyEditor(String newMacroBody)
-    {
-        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("it/confluence/macro/editor-macro-body.mu"));
-        contextServlet.getBaseContext().put("newMacroBody", newMacroBody);
-        return contextServlet;
     }
 }

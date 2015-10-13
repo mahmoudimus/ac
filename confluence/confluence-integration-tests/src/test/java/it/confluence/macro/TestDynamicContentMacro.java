@@ -45,6 +45,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 import it.confluence.MacroStorageFormatBuilder;
+import it.confluence.servlet.ConfluenceAppServlets;
 import it.matcher.ParamMatchers;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
@@ -180,9 +181,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         dynamicMacroWithFallback
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
-                .addRoute("/render-editor", ConnectAppServlets.macroEditor())
-                .addRoute("/macro-body-editor", ConnectAppServlets.macroBodyEditor(EDITED_MACRO_BODY))
-                .addRoute("/macro-body-editor-script", ConnectAppServlets.macroBodyEditor(EDITED_MACRO_BODY_SCRIPT))
+                .addRoute("/render-editor", ConfluenceAppServlets.macroEditor())
+                .addRoute("/macro-body-editor", ConfluenceAppServlets.macroBodyEditor(EDITED_MACRO_BODY))
+                .addRoute("/macro-body-editor-script", ConfluenceAppServlets.macroBodyEditor(EDITED_MACRO_BODY_SCRIPT))
                 .addRoute("/echo/params", ConnectAppServlets.echoQueryParametersServlet())
                 .addRoute("/render-no-resize-macro", ConnectAppServlets.noResizeServlet())
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
@@ -190,7 +191,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .addRoute("/render-macro-in-table-macro", ConnectAppServlets.apRequestServlet())
                 .addRoute("/slow-macro", new SlowMacroServlet(22))
                 .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
-                .addRoute("/dynamic-macro-static", ConnectAppServlets.dynamicMacroStaticServlet())
+                .addRoute("/dynamic-macro-static", ConfluenceAppServlets.dynamicMacroStaticServlet())
                 .start();
     }
 

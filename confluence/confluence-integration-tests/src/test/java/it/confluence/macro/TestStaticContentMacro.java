@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import it.confluence.MacroStorageFormatBuilder;
+import it.confluence.servlet.ConfluenceAppServlets;
 import it.matcher.ParamMatchers;
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
@@ -107,7 +108,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         counterMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
-                .addRoute("/render-editor", ConnectAppServlets.macroEditor())
+                .addRoute("/render-editor", ConfluenceAppServlets.macroEditor())
                 .addRoute("/echo/params", ConnectAppServlets.echoQueryParametersServlet())
                 .addRoute("/render-context", ConnectAppServlets.wrapContextAwareServlet(contextServlet))
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))

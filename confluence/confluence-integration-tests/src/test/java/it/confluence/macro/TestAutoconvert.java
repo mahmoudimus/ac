@@ -18,8 +18,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -32,6 +31,10 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.confluence.servlet.ConfluenceAppServlets;
+import it.servlet.ConnectAppServlets;
 
 /**
  * Integration tests that create a Connect Addon that uses the autoconvert feature and exercise its usage in Confluence pages.
@@ -96,7 +99,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                 .addModules("dynamicContentMacros", dynamicMacroWithAutoconvert)
                 .addModules("staticContentMacros", staticMacroWithAutoconvert)
                 .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
-                .addRoute("/static-macro", ConnectAppServlets.dynamicMacroStaticServlet())
+                .addRoute("/static-macro", ConfluenceAppServlets.dynamicMacroStaticServlet())
                 .start();
     }
 

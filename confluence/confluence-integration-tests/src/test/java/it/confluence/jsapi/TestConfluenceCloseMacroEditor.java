@@ -4,14 +4,15 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.macro.AbstractContentMacroTest;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.confluence.macro.AbstractContentMacroTest;
+import it.confluence.servlet.ConfluenceAppServlets;
+import it.servlet.ConnectAppServlets;
 
 /**
  * Integration tests for the JavaScript API method confluence.closeMacroEditor().
@@ -30,7 +31,7 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .setAuthenticationToNone()
                 .addModules("staticContentMacros", editorMacroModuleBean)
-                .addRoute("/render-editor", ConnectAppServlets.macroEditor())
+                .addRoute("/render-editor", ConfluenceAppServlets.macroEditor())
                 .addRoute("/echo/params", ConnectAppServlets.echoQueryParametersServlet())
                 .start();
     }
