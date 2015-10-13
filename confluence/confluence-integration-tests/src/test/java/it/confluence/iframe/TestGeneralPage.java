@@ -11,8 +11,8 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
+import com.atlassian.connect.test.jira.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.jira.pageobjects.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 

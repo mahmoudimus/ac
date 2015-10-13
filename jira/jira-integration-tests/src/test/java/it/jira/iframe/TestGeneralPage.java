@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import it.jira.JiraWebDriverTestBase;
@@ -47,7 +47,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
-    
+
     private static ConnectRunner remotePlugin;
 
     private static String addonKey;
@@ -100,7 +100,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
         this.contextPageModuleKey = addonAndModuleKey(addonKey,KEY_MY_CONTEXT_PAGE);
     }
-    
+
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {

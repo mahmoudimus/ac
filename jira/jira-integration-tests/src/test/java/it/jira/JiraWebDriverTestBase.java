@@ -7,20 +7,19 @@ import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitio
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
-import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
+import com.atlassian.connect.test.jira.pageobjects.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.util.ConnectTestUserFactory;
-import it.util.JiraTestUserFactory;
+import it.jira.util.JiraTestUserFactory;
 import it.util.TestProject;
 import it.util.TestUser;
-import org.apache.commons.lang.RandomStringUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.concurrent.Callable;
 
 public class JiraWebDriverTestBase

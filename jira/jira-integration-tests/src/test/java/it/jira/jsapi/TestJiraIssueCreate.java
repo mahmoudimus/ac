@@ -8,8 +8,8 @@ import com.atlassian.jira.pageobjects.elements.GlobalMessage;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteQuickCreateIssueGeneralPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.RemoteQuickCreateIssueGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.junit.AfterClass;

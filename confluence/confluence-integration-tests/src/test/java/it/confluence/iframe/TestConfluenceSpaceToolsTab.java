@@ -9,30 +9,30 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
-import com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider;
+import com.atlassian.plugin.connect.confluence.web.spacetools.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-<<<<<<< HEAD:tests/integration-tests/src/test/java/it/confluence/iframe/TestConfluenceSpaceToolsTab.java
-import com.atlassian.plugin.connect.confluence.web.spacetools.SpaceToolsTabModuleProvider;
-=======
->>>>>>> ACDEV-1999 Create confluence-integration-tests module:confluence/confluence-integration-tests/src/test/java/it/confluence/iframe/TestConfluenceSpaceToolsTab.java
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Supplier;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+
 /**
- * Tests for Space Tools Tab module. Note that when we refer to "Space Tools" we're referring to the post-5.0
- * Space Tools area. When we refer to "Space Admin", we're referring to the pre-5.0 (doctheme) Space Admin area.
+ * Tests for Space Tools Tab module. Note that when we refer to "Space Tools"
+ * we're referring to the post-5.0 Space Tools area. When we refer to "Space
+ * Admin", we're referring to the pre-5.0 (doctheme) Space Admin area.
  */
 public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
 {
@@ -45,12 +45,12 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("spaceToolsTabs", SpaceToolsTabModuleBean.newSpaceToolsTabBean()
-                        .withName(new I18nProperty("AC Space Tab", null))
-                        .withKey(TAB_MODULE_KEY)
-                        .withLocation("overview")
-                        .withWeight(1)
-                        .withUrl("/pg")
-                        .build()
+                                .withName(new I18nProperty("AC Space Tab", null))
+                                .withKey(TAB_MODULE_KEY)
+                                .withLocation("overview")
+                                .withWeight(1)
+                                .withUrl("/pg")
+                                .build()
                 )
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                 .start();
@@ -78,8 +78,8 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Option.<String>none(), pageKey);
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
-                    RemoteWebPanel.class,
-                    ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
+                RemoteWebPanel.class,
+                ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
         );
 
         Poller.waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), addonContentsPage::containsHelloWorld));
@@ -99,9 +99,11 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
                 ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
         );
 
-        Poller.waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>() {
+        Poller.waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
+        {
             @Override
-            public Boolean get() {
+            public Boolean get()
+            {
                 return addonContentsPage.containsHelloWorld();
             }
         }));

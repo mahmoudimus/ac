@@ -3,7 +3,7 @@ package it.jira.item;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.jira.JiraWebDriverTestBase;
@@ -166,5 +166,5 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     private String getModuleKey(String module)
     {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
-    }    
+    }
 }

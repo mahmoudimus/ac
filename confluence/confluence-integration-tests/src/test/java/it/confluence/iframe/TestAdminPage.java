@@ -11,8 +11,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
+import com.atlassian.connect.test.jira.pageobjects.ConfluenceAdminPage;
+import com.atlassian.connect.test.jira.pageobjects.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 

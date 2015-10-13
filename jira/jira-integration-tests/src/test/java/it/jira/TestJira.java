@@ -1,5 +1,9 @@
 package it.jira;
 
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
@@ -12,18 +16,17 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Optional;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
@@ -96,7 +99,6 @@ public class TestJira extends JiraWebDriverTestBase
         login(user);
         // ensure one issue
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for dialog action cog test");
-        
 
         final ShifterDialog shifterDialog = product.getPageBinder()
                 .navigateToAndBind(IssueDetailPage.class, issue.key)

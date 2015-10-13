@@ -1,5 +1,9 @@
 package it.confluence.item;
 
+import java.util.Map;
+
+import com.atlassian.connect.test.jira.pageobjects.ConfluenceEditPage;
+import com.atlassian.connect.test.jira.pageobjects.ConfluenceOps;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -12,16 +16,10 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Optional;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.matcher.IsLong;
-import it.matcher.ParamMatchers;
-import it.servlet.condition.CheckUsernameConditionServlet;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
+
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.collection.IsMapContaining;
 import org.hamcrest.core.IsEqual;
@@ -30,7 +28,12 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Map;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.matcher.IsLong;
+import it.matcher.ParamMatchers;
+import it.servlet.condition.CheckUsernameConditionServlet;
+import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 
 public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {

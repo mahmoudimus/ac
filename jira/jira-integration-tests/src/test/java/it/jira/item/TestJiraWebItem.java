@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteInlineDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.jira.JiraWebDriverTestBase;

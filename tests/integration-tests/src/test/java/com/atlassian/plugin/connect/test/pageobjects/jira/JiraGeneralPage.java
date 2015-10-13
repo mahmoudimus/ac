@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
+import javax.inject.Inject;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
@@ -9,14 +11,14 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil;
 import com.atlassian.webdriver.AtlassianWebDriver;
+
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
@@ -84,7 +86,7 @@ public final class JiraGeneralPage implements GeneralPage
                     {
                         l.click();
                         logger.debug("Link '{}' was found and clicked.", l);
-                        
+
                         return null;
                     }
                 }

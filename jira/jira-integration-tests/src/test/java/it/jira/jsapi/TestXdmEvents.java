@@ -4,7 +4,7 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;

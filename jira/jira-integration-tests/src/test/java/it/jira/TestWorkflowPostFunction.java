@@ -8,8 +8,8 @@ import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.JiraEditWorkflowTransitionFunctionParamsPage;
+import com.atlassian.connect.test.jira.pageobjects.workflow.ExtendedViewWorkflowTransitionPage;
+import com.atlassian.connect.test.jira.pageobjects.workflow.JiraEditWorkflowTransitionFunctionParamsPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.apache.commons.lang.RandomStringUtils;

@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.connect.test.jira.pageobjects.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.util.TestUser;

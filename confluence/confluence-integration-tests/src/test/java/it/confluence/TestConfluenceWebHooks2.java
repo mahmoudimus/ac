@@ -3,7 +3,7 @@ package it.confluence;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.connect.test.jira.pageobjects.ConfluenceOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;

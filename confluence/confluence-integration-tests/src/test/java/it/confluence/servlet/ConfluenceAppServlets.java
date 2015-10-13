@@ -2,7 +2,7 @@ package it.confluence.servlet;
 
 import javax.servlet.http.HttpServlet;
 
-import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
+import com.atlassian.connect.test.jira.pageobjects.RemoteMacroEditorDialog;
 
 import it.servlet.HttpContextServlet;
 import it.servlet.iframe.MustacheServlet;

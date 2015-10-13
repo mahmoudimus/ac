@@ -7,7 +7,7 @@ import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
+import com.atlassian.connect.test.jira.pageobjects.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.hamcrest.Description;

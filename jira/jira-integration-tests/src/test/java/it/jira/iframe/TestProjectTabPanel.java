@@ -3,11 +3,12 @@ package it.jira.iframe;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectSummaryPageWithAddonTab;
+import com.atlassian.connect.test.jira.pageobjects.JiraProjectSummaryPageWithAddonTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;

@@ -4,12 +4,11 @@ import com.atlassian.jira.pageobjects.components.menu.JiraAuiDropdownMenu;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

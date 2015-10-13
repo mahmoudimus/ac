@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog;
 import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;
@@ -51,7 +50,7 @@ public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
 
     public boolean hasChrome()
     {
-    	try 
+    	try
     	{
     		return submitButton != null && submitButton.isVisible();
     	}
@@ -66,8 +65,8 @@ public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
         return titleElement.getText();
     }
 
-    /**
-     * @see AbstractDialog#waitUntilAUIBlanketHidden()
+    /*
+     * see also: com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog#waitUntilAUIBlanketHidden()
      */
     protected void waitUntilAUIBlanketHidden() {
         Poller.waitUntilFalse("Blanket should be hidden after closing the dialog", this.auiBlanket.timed().isVisible());
