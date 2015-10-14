@@ -19,7 +19,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `configurePage` - used to configure the addon itself. A "Configure" button will link to this page from the addon's entry in _Manage Add-ons_.
  * * `postInstallPage` - used to provide information about the add-on after it is installed. A "Get Started" button will link to this page from the addon's entry in _Manage Add-ons_.
  *
- * Note that unlike other module types, an add-on may only define a single `configurePage` and a single `postInstallPage`.
+ * <p>Note that unlike other module types, an add-on may only define a single `configurePage` and a single `postInstallPage`.
+ * They should each be defined in the descriptor as a single JSON object, not as a JSON array like other modules. See the examples below.</p>
  *
  * <!-- ## Seamless iframes -->
  *
