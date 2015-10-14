@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@VisibleForTesting
 public class StaticAvailableModuleTypes implements AvailableModuleTypes
 {    
     private final Set<ConnectModuleMeta> moduleMetas;

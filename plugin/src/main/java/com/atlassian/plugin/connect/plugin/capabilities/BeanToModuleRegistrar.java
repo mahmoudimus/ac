@@ -176,7 +176,6 @@ public class BeanToModuleRegistrar
             {
                 return Optional.of(provider);
             }
-
         }
         return Optional.absent();
     }

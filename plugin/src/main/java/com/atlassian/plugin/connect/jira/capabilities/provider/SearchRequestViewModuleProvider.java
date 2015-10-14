@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.jira.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -33,6 +32,12 @@ public class SearchRequestViewModuleProvider extends AbstractJiraConnectModulePr
     }
 
     @Override
+    public ConnectModuleMeta<SearchRequestViewModuleBean> getMeta()
+    {
+        return META;
+    }
+
+    @Override
     public List<ModuleDescriptor> createPluginModuleDescriptors(List<SearchRequestViewModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> moduleDescriptors = new ArrayList<>();
@@ -45,11 +50,5 @@ public class SearchRequestViewModuleProvider extends AbstractJiraConnectModulePr
         }
 
         return moduleDescriptors;
-    }
-
-    @Override
-    public ConnectModuleMeta<SearchRequestViewModuleBean> getMeta()
-    {
-        return META;
     }
 }

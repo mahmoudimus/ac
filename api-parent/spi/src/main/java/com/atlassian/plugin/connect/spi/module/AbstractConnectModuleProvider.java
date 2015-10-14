@@ -14,9 +14,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A base class for providers of feature modules for Atlassian Connect.
+ *
+ * @param <T> the type of the add-on descriptor module representation
+ */
 public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> implements ConnectModuleProvider<T>
 {
 
+    /**
+     * Deserializes the given JSON module list entry as a JSON object or array of JSON objects based on the metadata of
+     * the module type.
+     *
+     * @param jsonModuleListEntry the string representation of the module list entry JSON element
+     * @param descriptor the add-on descriptor (without the module list)
+     * @return the module beans deserialized from the module list entry
+     * @throws ConnectModuleValidationException if the syntax or semantics of the module list entry is invalid
+     */
     @Override
     public List<T> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
@@ -41,6 +55,15 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
         return beans;
     }
 
+    /**
+     * Validates the given JSON module list entry against the given JSON schema and asserts that the result is valid.
+     *
+     * @param jsonModuleListEntry the string representation of the module list entry JSON element
+     * @param schemaUrl the URL of the JSON schema resource
+     * @param schemaValidator the JSON schema validator to use
+     * @throws IllegalStateException if a valid JSON schema cannot be read from the provided URL
+     * @throws ConnectModuleSchemaValidationException if the module list entry was not well-formed or did not match the schema
+     */
     protected void assertDescriptorValidatesAgainstSchema(String jsonModuleListEntry, URL schemaUrl,
             ConnectJsonSchemaValidator schemaValidator) throws ConnectModuleSchemaValidationException
     {
@@ -52,6 +75,11 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
         }
     }
 
+    /**
+     * Asserts that the module type accepts multiple modules.
+     *
+     * @throws ConnectModuleValidationException if the assertion fails
+     */
     private void assertMultipleModulesAllowed() throws ConnectModuleValidationException
     {
         if (!getMeta().multipleModulesAllowed())
@@ -60,6 +88,11 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
         }
     }
 
+    /**
+     * Asserts that the module type only accepts a single module.
+     *
+     * @throws ConnectModuleValidationException if the assertion fails
+     */
     private void assertMultipleModulesNotAllowed() throws ConnectModuleValidationException
     {
         if (getMeta().multipleModulesAllowed())

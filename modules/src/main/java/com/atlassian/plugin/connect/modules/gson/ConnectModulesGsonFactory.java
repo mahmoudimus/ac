@@ -22,12 +22,11 @@ import java.util.Map;
  */
 public class ConnectModulesGsonFactory
 {
-    private static Type moduleJsonType = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
 
-    public static Type getModuleJsonType()
-    {
-        return moduleJsonType;
-    }
+    private ConnectModulesGsonFactory()
+    {}
+
+    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
 
     public static GsonBuilder getGsonBuilder()
     {
@@ -61,15 +60,15 @@ public class ConnectModulesGsonFactory
     public static Map<String, Supplier<List<ModuleBean>>> moduleListFromJson(JsonElement addonJson, 
                                                                              JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
     {
-        GsonBuilder builder = getGsonBuilder().registerTypeAdapter(moduleJsonType, moduleDeserializer);
+        GsonBuilder builder = getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, moduleDeserializer);
         JsonElement modulesJson = addonJson.getAsJsonObject().get("modules");
-        return builder.create().fromJson(modulesJson, moduleJsonType);
+        return builder.create().fromJson(modulesJson, JSON_MODULE_LIST_TYPE);
         
     }
 
     public static String addonBeanToJson(ConnectAddonBean bean)
     {
-        Gson gson = getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer()).create();
+        Gson gson = getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, new DefaultModuleSerializer()).create();
         return gson.toJson(bean);
     }
 }

@@ -20,11 +20,6 @@
     <component-import key="webItemModuleDescriptorFactory" interface="com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory"/>
     <component-import key="pageConditionsFactory" interface="com.atlassian.plugin.connect.spi.condition.PageConditionsFactory"/>
 
-    <connect-module
-            key="testJiraModules"
-            class="com.atlassian.plugin.connect.JiraModuleProviderForTests"
-            name="Test Jira Module Provider">
-        <description>...</description>
-    </connect-module>
+    <connect-module key="testJiraModules" class="com.atlassian.plugin.connect.JiraModuleProviderForTests"/>
 
 </atlassian-plugin>

@@ -40,6 +40,14 @@ public class ConnectAddonBean extends ShallowConnectAddonBean
         return new ConnectAddonBeanBuilder(defaultBean);
     }
 
+    /**
+     * Returns the map of modules, indexed by key. Module types that only accept a single entry are represented by a
+     * list with at most one element.
+     *
+     * NOTE: Modules are loaded lazily, and this operation may be very expensive the first time it is invoked.
+     *
+     * @return the list of modules
+     */
     public Map<String, List<ModuleBean>> getModules()
     {
         Map<String, List<ModuleBean>> modules = new HashMap<>();

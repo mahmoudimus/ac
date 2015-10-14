@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.jira.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ConnectReportModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -37,6 +36,12 @@ public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<Repo
     }
 
     @Override
+    public ConnectModuleMeta<ReportModuleBean> getMeta()
+    {
+        return META;
+    }
+
+    @Override
     public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
     {
         return Lists.transform(modules, new Function<ReportModuleBean, ModuleDescriptor>()
@@ -48,11 +53,5 @@ public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<Repo
                         pluginRetrievalService.getPlugin(), bean);
             }
         });
-    }
-
-    @Override
-    public ConnectModuleMeta<ReportModuleBean> getMeta()
-    {
-        return META;
     }
 }

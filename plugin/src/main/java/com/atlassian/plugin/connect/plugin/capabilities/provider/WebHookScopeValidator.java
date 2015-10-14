@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -34,9 +33,8 @@ public class WebHookScopeValidator
     {
         if (webhooks != null)
         {
-            for (ModuleBean moduleBean : webhooks)
+            for (WebHookModuleBean webHookModuleBean : webhooks)
             {
-                WebHookModuleBean webHookModuleBean = (WebHookModuleBean) moduleBean;
                 final ScopeName requiredScope = webHookScopeService.getRequiredScope(webHookModuleBean.getEvent());
 
                 if (!Iterables.any(addon.getScopes(), new ImpliedScopePredicate(requiredScope)))

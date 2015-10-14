@@ -19,9 +19,12 @@ import com.atlassian.plugin.connect.plugin.installer.StaticAvailableModuleTypes;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 import it.servlet.ConnectAppServlets;
 import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
@@ -42,11 +45,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,6 +72,8 @@ public class ConnectRunner
     private static final String REGISTRATION_ROUTE = "/register";
 
     private static final Logger log = LoggerFactory.getLogger(ConnectRunner.class);
+
+    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
 
     private final String productBaseUrl;
     private final AtlassianConnectRestClient installer;
@@ -412,15 +419,22 @@ public class ConnectRunner
         private Gson getGson()
         {
             GsonBuilder builder = ConnectModulesGsonFactory.getGsonBuilder();
+            builder = builder.registerTypeAdapter(JSON_MODULE_LIST_TYPE, getModuleListDeserializer());
+            return builder.create();
+        }
+
+        private JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> getModuleListDeserializer()
+        {
+            JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> moduleListDeserializer;
             if (moduleTypes.hasMetas())
             {
-                builder = builder.registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new ModuleListDeserializer(moduleTypes));
+                moduleListDeserializer = new ModuleListDeserializer(moduleTypes);
             }
             else
             {
-                builder = builder.registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer());
+                moduleListDeserializer = new DefaultModuleSerializer();
             }
-            return builder.create();
+            return moduleListDeserializer;
         }
     }
 }
