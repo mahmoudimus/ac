@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -41,19 +40,9 @@ public class ConnectModulesGsonFactory
         return getGsonBuilder().create();
     }
 
-    public static ConnectAddonBean addonFromJsonWithI18nCollector(String json,Map<String,String> i18nCollector)
+    public static ConnectAddonBean addonFromJson(String json)
     {
-        Gson gson;
-        if(null != i18nCollector)
-        {
-            gson = getGsonBuilder().registerTypeAdapter(I18nProperty.class,new I18nCollectingDeserializer(i18nCollector)).create();
-        }
-        else
-        {
-            gson = getGson();
-        }
-        
-        return gson.fromJson(json,ConnectAddonBean.class);
+        return getGson().fromJson(json, ConnectAddonBean.class);
     }
     
     public static String addonBeanToJson(ConnectAddonBean bean)

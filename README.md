@@ -115,10 +115,7 @@ To run integration tests:
 
 To run add-on descriptor validation tests:
 
-    mvn clean install
-    (cd bin/marketplace; npm install)
-    node bin/marketplace/validate-descriptors.js --type json --testReport=plugin/src/test/resources/descriptor/descriptor-validation-results.json
-    mvn -pl plugin test -DdescriptorValidation=true
+    mvn -pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -am
 
 ### Updating developer documentation
 
