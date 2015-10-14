@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.atlassian.crowd.model.user.User;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -57,6 +59,16 @@ public class ConnectAddOnUserUtil
     public static boolean validAddOnEmailAddress(User user)
     {
         return Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress());
+    }
+
+    /**
+     * Checks the add-on bean to return whether the add-on requires a user
+     * @param addOn the ConnectAddonBean that represents the add-on
+     * @return true if the addOn requires a user to function correctly
+     */
+    public static boolean addOnRequiresUser(ConnectAddonBean addOn)
+    {
+        return null != addOn.getAuthentication() && !AuthenticationType.NONE.equals(addOn.getAuthentication().getType());
     }
 
     public static class Constants

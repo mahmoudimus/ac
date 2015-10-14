@@ -2,7 +2,7 @@
 var descriptor;
 
 try {
-    var f = window.__html__['src/test/resources/descriptor/descriptor-validation-results.json'];
+    var f = window.__html__['target/descriptor-validation-results.json'];
     console.log(f);
     descriptor = JSON.parse(f);
 } catch (e) {
