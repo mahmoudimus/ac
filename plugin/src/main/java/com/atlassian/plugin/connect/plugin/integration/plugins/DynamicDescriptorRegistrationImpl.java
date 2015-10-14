@@ -5,7 +5,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.StateAware;
 import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,17 +26,12 @@ import static java.util.Arrays.asList;
 public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegistration
 {
     private final BundleContext bundleContext;
-    private final ConnectAddonI18nManager connectAddonI18nManager;
     private static final Logger log = LoggerFactory.getLogger(DynamicDescriptorRegistrationImpl.class);
 
     @Autowired
-    public DynamicDescriptorRegistrationImpl(
-                                         BundleContext bundleContext,
-                                         ConnectAddonI18nManager connectAddonI18nManager
-    )
+    public DynamicDescriptorRegistrationImpl(BundleContext bundleContext)
     {
         this.bundleContext = bundleContext;
-        this.connectAddonI18nManager = connectAddonI18nManager;
     }
 
     /**
@@ -79,18 +72,6 @@ public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegis
             log.debug("Registering descriptor {}", descriptor.getClass().getName());
             registrations.add(bundleContext.registerService(ModuleDescriptor.class.getName(),
                     descriptor, null));
-
-            if (reg.getI18nProperties() != null)
-            {
-                try
-                {
-                    connectAddonI18nManager.add(plugin.getKey(), reg.getI18nProperties());
-                }
-                catch (IOException e)
-                {
-                    log.error("Unable to register I18n properties for descriptor: " + descriptor.getCompleteKey(), e);
-                }
-            }
         }
         return new Registration()
         {
