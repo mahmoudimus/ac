@@ -1,11 +1,11 @@
 <application key="confluence">
 
-    <connect-module key="blueprint-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.BlueprintModuleProviderImpl"/>
-    <connect-module key="content-property-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.ContentPropertyModuleProvider"/>
-    <connect-module key="dynamic-content-macro-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.DynamicContentMacroModuleProvider"/>
-    <connect-module key="profile-page-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.ProfilePageModuleProvider"/>
-    <connect-module key="space-tools-tab-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider"/>
-    <connect-module key="static-content-macro-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.StaticContentMacroModuleProvider"/>
+    <connect-module key="blueprint-module" class="com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProviderImpl"/>
+    <connect-module key="content-property-module" class="com.atlassian.plugin.connect.confluence.property.ContentPropertyModuleProvider"/>
+    <connect-module key="dynamic-content-macro-module" class="com.atlassian.plugin.connect.confluence.macro.DynamicContentMacroModuleProvider"/>
+    <connect-module key="profile-page-module" class="com.atlassian.plugin.connect.confluence.web.ProfilePageModuleProvider"/>
+    <connect-module key="space-tools-tab-module" class="com.atlassian.plugin.connect.confluence.web.spacetools.SpaceToolsTabModuleProvider"/>
+    <connect-module key="static-content-macro-module" class="com.atlassian.plugin.connect.confluence.macro.StaticContentMacroModuleProvider"/>
 
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
@@ -46,12 +46,12 @@
     <web-resource key="atlassian-connect-autoconvert-resources" name="Connect resources for autoconvert">
         <resource type="download" name="autoconvert.js" location="/js/confluence/macro/autoconvert.js" />
         <resource type="download" name="autoconvert-init.js" location="/js/confluence/macro/autoconvert-init.js" />
-        <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.AutoconvertWebResourceDataProvider" />
+        <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.confluence.macro.AutoconvertWebResourceDataProvider" />
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
         <context>editor</context>
         <context>viewcontent</context>
     </web-resource>
-    <module-type key="autoconvert" class="com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.AutoconvertModuleDescriptor" />
+    <module-type key="autoconvert" class="com.atlassian.plugin.connect.confluence.macro.AutoconvertModuleDescriptor" />
 
     <!-- JavaScript API Core -->
 

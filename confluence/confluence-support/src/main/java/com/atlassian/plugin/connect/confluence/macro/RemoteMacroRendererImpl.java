@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.confluence.capabilities.provider.DynamicContentMacroModuleProvider.CONTENT_CLASSIFIER;
+import static com.atlassian.plugin.connect.confluence.macro.DynamicContentMacroModuleProvider.CONTENT_CLASSIFIER;
 
 @ConfluenceComponent
 public class RemoteMacroRendererImpl implements RemoteMacroRenderer
