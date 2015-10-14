@@ -3,7 +3,7 @@ package it.com.atlassian.plugin.connect.confluence;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;

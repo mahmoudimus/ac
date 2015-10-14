@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect.jira;
 
 import com.atlassian.jira.project.Project;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;

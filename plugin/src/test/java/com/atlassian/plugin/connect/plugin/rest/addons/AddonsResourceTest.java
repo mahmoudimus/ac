@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
+import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;

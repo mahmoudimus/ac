@@ -12,7 +12,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
-import it.com.atlassian.plugin.connect.plugin.scopes.ScopeTestBase;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestBase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

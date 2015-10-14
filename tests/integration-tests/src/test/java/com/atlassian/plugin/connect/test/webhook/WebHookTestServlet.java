@@ -6,7 +6,7 @@ import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
+import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.apache.commons.io.IOUtils;

@@ -7,7 +7,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
-import it.com.atlassian.plugin.connect.plugin.usermanagement.AdminScopeTestBase;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.AdminScopeTestBase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

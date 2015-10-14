@@ -29,7 +29,7 @@ import org.springframework.beans.factory.DisposableBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * we have our own version of this because we can't use the test support installer due to it's dependency on connect modules
+ * we have our own version of this because we can't use the test support lifecycle due to it's dependency on connect modules
  */
 public class LifecyclePluginInstaller implements DisposableBean
 {
