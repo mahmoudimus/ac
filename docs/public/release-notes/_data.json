@@ -3,9 +3,13 @@
     "filename": "release-notes.html",
     "title": "Release notes"
   },
+  "deprecations": {
+    "filename": "deprecations.html",
+    "title": "Deprecation notices"
+  },
   "updates": {
     "filename": "updates.html",
-    "title": "Get Notified",
+    "title": "Change notifications",
     "new": "true"
   }
 }
