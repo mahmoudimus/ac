@@ -15,7 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * * `generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.
  * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
- * * `profilePages` - (__Confluence only__) displayed as sections inside user profiles. Like admin pages, they appear with all the necessary components around them (such as menus).
+ * * `profilePages` - (__Confluence only__) displayed as sections inside user profiles.
  * * `configurePage` - used to configure the addon itself. A link to the page is displayed in the add-on's entry in
  * _Manage Add-ons_. Unlike the other page modules, an add-on may only define a single `configurePage`.
  *
