@@ -296,24 +296,24 @@ public class ConnectJsonExamples
 
     private static String createTabPanelExample()
     {
-        ConnectTabPanelModuleBean issueTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+        JsonElement issueTabPanelBean = createJsonArrayWithSingleObject(ConnectTabPanelModuleBean.newTabPanelBean()
                 .withName(i18nProperty("My Issue Tab Panel"))
                 .withKey("my-issue-tab")
                 .withUrl("/my-issue-tab")
                 .withWeight(100)
-                .build();
-        ConnectTabPanelModuleBean projectTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+                .build());
+        JsonElement projectTabPanelBean = createJsonArrayWithSingleObject(ConnectTabPanelModuleBean.newTabPanelBean()
                 .withName(i18nProperty("My Project Tab Panel"))
                 .withKey("my-project-tab")
                 .withUrl("/my-project-tab")
                 .withWeight(100)
-                .build();
-        ConnectTabPanelModuleBean userProfileTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+                .build());
+        JsonElement userProfileTabPanelBean = createJsonArrayWithSingleObject(ConnectTabPanelModuleBean.newTabPanelBean()
                 .withName(i18nProperty("My Profile Tab Panel"))
                 .withKey("my-profile-tab")
                 .withUrl("/my-profile-tab")
                 .withWeight(100)
-                .build();
+                .build());
         JsonObject object = createModuleArray(ImmutableMap.of(
                 "jiraIssueTabPanels", issueTabPanelBean,
                 "jiraProjectTabPanels", projectTabPanelBean,
