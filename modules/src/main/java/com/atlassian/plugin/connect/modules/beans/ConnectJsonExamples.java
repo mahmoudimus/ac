@@ -37,6 +37,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -217,33 +218,34 @@ public class ConnectJsonExamples
 
     private static String createPageExample()
     {
-        ConnectPageModuleBean generalPageModuleBean = ConnectPageModuleBean.newPageBean()
+        JsonElement generalPageModuleBean = createJsonArrayWithSingleObject(ConnectPageModuleBean.newPageBean()
                 .withName(i18nProperty("My General Page"))
                 .withKey("my-general-page")
                 .withUrl("/my-general-page")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
-                .build();
-        ConnectPageModuleBean adminPageModuleBean = ConnectPageModuleBean.newPageBean()
+                .build());
+        JsonElement adminPageModuleBean = createJsonArrayWithSingleObject(ConnectPageModuleBean.newPageBean()
                 .withName(i18nProperty("My Admin Page"))
                 .withKey("my-admin-page")
                 .withUrl("/my-admin-page")
-                .build();
-        ConnectPageModuleBean configurePageModuleBean = ConnectPageModuleBean.newPageBean()
+                .build());
+        JsonElement configurePageModuleBean = gson.toJsonTree(ConnectPageModuleBean.newPageBean()
                 .withName(i18nProperty("My Configure Page"))
                 .withKey("my-config-page")
                 .withUrl("/my-config-page")
-                .build();
-        ConnectPageModuleBean postInstallPageModuleBean = ConnectPageModuleBean.newPageBean()
+                .build());
+        JsonElement postInstallPageModuleBean = gson.toJsonTree(ConnectPageModuleBean.newPageBean()
                 .withName(new I18nProperty("My Post-Install Page", "mypostinstallpage.name"))
                 .withKey("my-post-install-page")
                 .withUrl("/my-post-install-page")
-                .build();
-        ConnectPageModuleBean userProfilePageModuleBean = ConnectPageModuleBean.newPageBean()
+                .build());
+        JsonElement userProfilePageModuleBean = createJsonArrayWithSingleObject(ConnectPageModuleBean.newPageBean()
                 .withName(i18nProperty("My Confluence User Profile Page"))
                 .withKey("my-confluence-user-profile-page")
                 .withUrl("/my-confluence-user-profile-page")
-                .build();
+                .build());
 
+        
         JsonObject object = createModuleArray(ImmutableMap.of(
                 "generalPages", generalPageModuleBean,
                 "adminPages", adminPageModuleBean,
@@ -549,7 +551,7 @@ public class ConnectJsonExamples
                 .withValues("Map", "Satellite")
                 .build();
 
-        return gson.toJson(createJsonArray("parameters", macroParameterBean));
+        return gson.toJson(createJsonObjectContainingArray("parameters", macroParameterBean));
     }
 
     private static String createSpaceToolsTabExample()
@@ -755,7 +757,7 @@ public class ConnectJsonExamples
                 .withKeyConfiguration(issueAttachmentIndexConfiguration)
                 .build();
 
-        return gson.toJson(createJsonArray("jiraEntityProperties", entityPropertyModuleBean));
+        return gson.toJson(createJsonObjectContainingArray("jiraEntityProperties", entityPropertyModuleBean));
     }
 
     private static String createEntityPropertyIndexExtractionConfigurationExample()
@@ -872,7 +874,7 @@ public class ConnectJsonExamples
 
     private static String createContentPropertyExample()
     {
-        return gson.toJson(createJsonArray("confluenceContentProperties", createContentPropertyExampleBean()));
+        return gson.toJson(createJsonObjectContainingArray("confluenceContentProperties", createContentPropertyExampleBean()));
     }
 
     private static String createDashboardItemExample()
@@ -886,16 +888,23 @@ public class ConnectJsonExamples
                 .configurable(true)
                 .build();
 
-        return gson.toJson(createJsonArray("jiraDashboardItems", dashboardItemExample));
+        return gson.toJson(createJsonObjectContainingArray("jiraDashboardItems", dashboardItemExample));
     }
 
-    private static JsonObject createJsonArray(String name, ModuleBean bean)
+    private static JsonObject createJsonObjectContainingArray(String name, ModuleBean bean)
     {
         JsonObject obj = new JsonObject();
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
         obj.add(name, arr);
         return obj;
+    }
+    
+    private static JsonArray createJsonArrayWithSingleObject(Object bean)
+    {
+        JsonArray arr = new JsonArray();
+        arr.add(gson.toJsonTree(bean));
+        return arr;
     }
 
     private static JsonObject createJsonObject(String name, Object bean)
@@ -908,16 +917,16 @@ public class ConnectJsonExamples
     private static JsonObject createModuleArray(String name, ModuleBean bean)
     {
         JsonObject modules = new JsonObject();
-        modules.add("modules", createJsonArray(name, bean));
+        modules.add("modules", createJsonObjectContainingArray(name, bean));
         return modules;
     }
 
-    private static JsonObject createModuleArray(ImmutableMap<String, ? extends ModuleBean> modules)
+    private static JsonObject createModuleArray(ImmutableMap<String, ? extends JsonElement> modules)
     {
         JsonObject modulesObject = new JsonObject();
-        for (Map.Entry<String, ? extends ModuleBean> module : modules.entrySet())
+        for (Map.Entry<String, ? extends JsonElement> module : modules.entrySet())
         {
-            modulesObject.add(module.getKey(), gson.toJsonTree(module.getValue()));
+            modulesObject.add(module.getKey(), module.getValue());
         }
         JsonObject obj = new JsonObject();
         obj.add("modules", modulesObject);
