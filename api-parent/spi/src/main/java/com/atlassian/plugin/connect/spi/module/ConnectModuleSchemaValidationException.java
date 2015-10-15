@@ -1,12 +1,26 @@
 package com.atlassian.plugin.connect.spi.module;
 
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+
 /**
  * An exception thrown when JSON schema validation of a descriptor module fails.
  */
 public class ConnectModuleSchemaValidationException extends ConnectModuleValidationException
 {
-    public ConnectModuleSchemaValidationException(String moduleType, String reportResult, String json)
+
+    private final ConnectJsonSchemaValidationResult validationResult;
+
+    public ConnectModuleSchemaValidationException(ConnectModuleMeta moduleMeta, ConnectJsonSchemaValidationException e)
     {
-        super(moduleType, "Modules failed to validate against the schema. " + reportResult + "\n provided JSON was " + json);
+        super(moduleMeta, e.getMessage(), e.getI18nKey(), e.getI18nParameters());
+        validationResult = e.getValidationResult();
+        initCause(e);
+    }
+
+    public ConnectJsonSchemaValidationResult getValidationResult()
+    {
+        return validationResult;
     }
 }

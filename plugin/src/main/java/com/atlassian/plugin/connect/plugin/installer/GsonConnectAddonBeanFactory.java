@@ -1,9 +1,8 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
@@ -11,9 +10,9 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilde
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -36,26 +34,20 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     private static final Logger log = LoggerFactory.getLogger(GsonConnectAddonBeanFactory.class);
 
     private final ConnectJsonSchemaValidator descriptorSchemaValidator;
-    private final ApplicationProperties applicationProperties;
     private final AddOnBeanValidatorService addOnBeanValidatorService;
     private final PluginRetrievalService pluginRetrievalService;
     private final PluginAccessor pluginAccessor;
-    private final IsDevModeService isDevModeService;
     private Map<String, ConnectAddonBean> descriptorCache = Maps.newConcurrentMap();
 
     @Autowired
     public GsonConnectAddonBeanFactory(ConnectJsonSchemaValidator descriptorSchemaValidator,
             AddOnBeanValidatorService addOnBeanValidatorService,
-            ApplicationProperties applicationProperties,
             PluginRetrievalService pluginRetrievalService,
-            PluginAccessor pluginAccessor,
-            IsDevModeService isDevModeService)
+            PluginAccessor pluginAccessor)
     {
         this.descriptorSchemaValidator = descriptorSchemaValidator;
         this.addOnBeanValidatorService = addOnBeanValidatorService;
         this.pluginRetrievalService = pluginRetrievalService;
-        this.applicationProperties = applicationProperties;
-        this.isDevModeService = isDevModeService;
         this.pluginAccessor = pluginAccessor;
     }
 
@@ -90,75 +82,51 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
         validateDescriptorAgainstSchema(jsonDescriptor);
         ConnectAddonBean addon = deserializeDescriptor(jsonDescriptor);
         addOnBeanValidatorService.validate(addon);
+        validateModules(addon);
         return addon;
     }
 
     private void validateDescriptorAgainstSchema(String jsonDescriptor)
     {
-        ConnectJsonSchemaValidationResult result = descriptorSchemaValidator.validate(jsonDescriptor, getShallowSchemaUrl());
-        assertValidDescriptorValidationResult(result);
+        try
+        {
+            descriptorSchemaValidator.assertValidDescriptor(jsonDescriptor, getShallowSchemaUrl());
+        } catch (ConnectJsonSchemaValidationException e)
+        {
+            throw new InvalidDescriptorException(e.getMessage(), e.getI18nKey(), e.getI18nParameters());
+        }
     }
 
     private ConnectAddonBean deserializeDescriptor(final String jsonDescriptor)
     {
+        JsonElement element = new JsonParser().parse(jsonDescriptor);
+        ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJson(element);
+        ModuleListDeserializer moduleDeserializer = new ModuleListDeserializer(new PluginAvailableModuleTypes(pluginAccessor, shallowBean));
+
+        Map<String, Supplier<List<ModuleBean>>> moduleList;
+        moduleList = ConnectModulesGsonFactory.moduleListFromJson(element, moduleDeserializer);
+
+        return new ConnectAddonBeanBuilder(shallowBean).withModuleList(moduleList).build();
+    }
+
+    private void validateModules(ConnectAddonBean addon)
+    {
         try
         {
-            JsonElement element = new JsonParser().parse(jsonDescriptor);
-            ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJson(element);
-            ModuleListDeserializer moduleDeserializer = new ModuleListDeserializer(new PluginAvailableModuleTypes(pluginAccessor, shallowBean));
-            Map<String, Supplier<List<ModuleBean>>> moduleList = ConnectModulesGsonFactory.moduleListFromJson(element, moduleDeserializer);
-            return new ConnectAddonBeanBuilder(shallowBean).withModuleList(moduleList).build();
+            addon.getModules();
         }
-        catch (Exception e)
+        catch (ConnectModuleValidationRuntimeException e)
         {
-            String exceptionMessage = "Invalid connect descriptor: " + e.getMessage();
-            log.error(exceptionMessage);
-            throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
+            ConnectModuleValidationException cause = e.getCause();
+            InvalidDescriptorException exception = new InvalidDescriptorException(cause.getMessage(),
+                    cause.getI18nKey(), cause.getI18nParameters());
+            exception.initCause(cause);
+            throw exception;
         }
     }
 
     private URL getShallowSchemaUrl()
     {
         return pluginRetrievalService.getPlugin().getResource("/schema/shallow-schema.json");
-    }
-
-    private void assertValidDescriptorValidationResult(ConnectJsonSchemaValidationResult result)
-    {
-        if (!result.isWellformed())
-        {
-            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getReportAsString(), "connect.invalid.descriptor.malformed.json");
-        }
-        if (!result.isValid())
-        {
-            String exceptionMessage = "Invalid connect descriptor: " + result.getReportAsString();
-            log.error(exceptionMessage);
-
-            String i18nKey;
-            Serializable[] params;
-            if (isDevModeService.isDevMode())
-            {
-                i18nKey = "connect.install.error.remote.descriptor.validation.dev";
-                String validationMessage = buildErrorMessage(result);
-                params = new Serializable[] {validationMessage};
-            }
-            else
-            {
-                i18nKey = "connect.install.error.remote.descriptor.validation";
-                params = new Serializable[] {applicationProperties.getDisplayName()};
-            }
-            throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
-        }
-    }
-
-    private String buildErrorMessage(ConnectJsonSchemaValidationResult result)
-    {
-        StringBuilder messageBuilder = new StringBuilder("<ul>");
-        for (String message : result.getReportMessages())
-        {
-            messageBuilder.append("<li>");
-            messageBuilder.append(message);
-        }
-        messageBuilder.append("</ul>");
-        return messageBuilder.toString();
     }
 }

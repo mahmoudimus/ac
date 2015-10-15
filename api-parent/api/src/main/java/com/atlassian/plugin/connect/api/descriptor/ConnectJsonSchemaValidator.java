@@ -16,5 +16,14 @@ public interface ConnectJsonSchemaValidator
      * @return the descriptor schema validation result
      * @throws IllegalStateException if an exception occurs loading the schema
      */
-    ConnectJsonSchemaValidationResult validate(String descriptor, URL schemaUrl);
+    ConnectJsonSchemaValidationResult validateDescriptor(String descriptor, URL schemaUrl);
+
+    /**
+     * Validates the given JSON descriptor against the given JSON schema.
+     *
+     * @param descriptor the JSON descriptor
+     * @param schemaUrl the resource URL of a valid JSON schema
+     * @throws IllegalStateException if an exception occurs loading the schema
+     */
+    void assertValidDescriptor(String descriptor, URL schemaUrl) throws ConnectJsonSchemaValidationException;
 }

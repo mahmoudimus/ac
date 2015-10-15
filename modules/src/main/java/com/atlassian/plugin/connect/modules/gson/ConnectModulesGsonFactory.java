@@ -7,6 +7,8 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.google.common.base.Supplier;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -23,10 +25,10 @@ import java.util.Map;
 public class ConnectModulesGsonFactory
 {
 
+    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
+
     private ConnectModulesGsonFactory()
     {}
-
-    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
 
     public static GsonBuilder getGsonBuilder()
     {
@@ -34,6 +36,7 @@ public class ConnectModulesGsonFactory
         Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
 
         return new GsonBuilder()
+                .setExclusionStrategies(new ShallowModuleListExclusionStrategy())
                 .registerTypeAdapterFactory(new ConditionalBeanTypeAdapterFactory(conditionalListType))
                 .registerTypeAdapter(LifecycleBean.class, new LifecycleSerializer())
                 .registerTypeHierarchyAdapter(List.class, new IgnoredEmptyCollectionSerializer())
@@ -69,5 +72,21 @@ public class ConnectModulesGsonFactory
     {
         Gson gson = getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, new DefaultModuleSerializer()).create();
         return gson.toJson(bean);
+    }
+
+    private static class ShallowModuleListExclusionStrategy implements ExclusionStrategy
+    {
+
+        @Override
+        public boolean shouldSkipField(FieldAttributes f)
+        {
+            return f.getDeclaringClass().equals(ShallowConnectAddonBean.class) && f.getName().equals("modules");
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> clazz)
+        {
+            return false;
+        }
     }
 }

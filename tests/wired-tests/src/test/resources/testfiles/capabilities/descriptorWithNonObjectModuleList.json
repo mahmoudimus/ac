@@ -4,11 +4,5 @@
   "authentication": {
     "type": "none"
   },
-  "modules": {
-    "unknownModuleType": [
-      {
-        "key": "test"
-      }
-    ]
-  }
+  "modules": false
 }

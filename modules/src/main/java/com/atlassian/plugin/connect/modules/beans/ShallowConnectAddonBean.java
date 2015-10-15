@@ -1,20 +1,15 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
-import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.json.schema.annotation.SchemaIgnore;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.google.common.base.Supplier;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -163,7 +158,12 @@ public class ShallowConnectAddonBean extends BaseModuleBean
      * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SCOPES_EXAMPLE}
      */
     private Set<ScopeName> scopes;
-    
+
+    /**
+     * The list of modules this add-on provides.
+     */
+    private Map<String, ?> modules; // Only used for shallow schema generation
+
     public ShallowConnectAddonBean()
     {
         this.key = "";

@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -15,9 +18,12 @@ import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringReader;
 import java.net.URL;
 
 @Component
@@ -26,12 +32,17 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
 {
 
     private final JsonSchemaFactory factory;
+    private final ApplicationProperties applicationProperties;
+    private final IsDevModeService isDevModeService;
 
-    public ConnectJsonSchemaValidatorImpl()
+    @Autowired
+    public ConnectJsonSchemaValidatorImpl(ApplicationProperties applicationProperties, IsDevModeService isDevModeService)
     {
         this.factory = JsonSchemaFactory.newBuilder()
                 .setReportProvider(new ListReportProvider(LogLevel.ERROR, LogLevel.FATAL))
                 .freeze();
+        this.applicationProperties = applicationProperties;
+        this.isDevModeService = isDevModeService;
     }
 
     @Override
@@ -48,14 +59,14 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
     }
 
     @Override
-    public ConnectJsonSchemaValidationResult validate(String descriptor, URL schemaUrl)
+    public ConnectJsonSchemaValidationResult validateDescriptor(String descriptor, URL schemaUrl)
     {
         JsonSchema jsonSchema = loadSchema(schemaUrl);
 
         ConnectJsonSchemaValidationResult result;
         try
         {
-            JsonNode descriptorNode = JsonLoader.fromString(descriptor);
+            JsonNode descriptorNode = JsonLoader.fromReader(new JsonDescriptorStringReader(descriptor));
             result = validate(descriptorNode, jsonSchema);
         }
         catch (IOException e)
@@ -64,6 +75,35 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
         }
 
         return result;
+    }
+
+    @Override
+    public void assertValidDescriptor(String descriptor, URL schemaUrl) throws ConnectJsonSchemaValidationException
+    {
+        ConnectJsonSchemaValidationResult result = validateDescriptor(descriptor, schemaUrl);
+        if (!result.isWellformed())
+        {
+            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getReportAsString(), "connect.invalid.descriptor.malformed.json", result.getReportAsString());
+        }
+        if (!result.isValid())
+        {
+            String exceptionMessage = "Invalid connect descriptor: " + result.getReportAsString();
+
+            String i18nKey;
+            Serializable[] params;
+            if (isDevModeService.isDevMode())
+            {
+                i18nKey = "connect.install.error.remote.descriptor.validation.dev";
+                String validationMessage = buildHtmlErrorMessage(result);
+                params = new Serializable[] {validationMessage};
+            }
+            else
+            {
+                i18nKey = "connect.install.error.remote.descriptor.validation";
+                params = new Serializable[] {applicationProperties.getDisplayName()};
+            }
+            throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
+        }
     }
 
     private JsonSchema loadSchema(URL schemaUrl)
@@ -106,5 +146,45 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
             result = new DescriptorValidationResult(true, false, e.getProcessingMessage().asJson().toString(), e.getProcessingMessage().toString());
         }
         return result;
+    }
+
+    private String buildHtmlErrorMessage(ConnectJsonSchemaValidationResult result)
+    {
+        StringBuilder messageBuilder = new StringBuilder("<ul>");
+        for (String message : result.getReportMessages())
+        {
+            messageBuilder.append("<li>");
+            messageBuilder.append(message);
+        }
+        messageBuilder.append("</ul>");
+        return messageBuilder.toString();
+    }
+
+    /**
+     * A string reader with a custom string representation, for sensible Jackson error messages.
+     */
+    private static class JsonDescriptorStringReader extends StringReader
+    {
+
+        /**
+         * Creates a new string reader.
+         *
+         * @param s String providing the character stream.
+         */
+        public JsonDescriptorStringReader(String s)
+        {
+            super(s);
+        }
+
+        /**
+         * Returns an empty string (to avoid the {@link Object#toString()} behavior inherited by {@link StringReader}.
+         *
+         * @return an empty string
+         */
+        @Override
+        public String toString()
+        {
+            return "";
+        }
     }
 }

@@ -13,7 +13,9 @@ import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -28,6 +30,7 @@ public class AbstractConnectPageModuleProviderTest
 {
 
     private static final String VALID_CONDITION = "user_is_logged_in";
+    private static final String INVALID_CONDITION = "user_is_project_admin";
 
     private AbstractConnectPageModuleProvider provider;
 
@@ -45,6 +48,9 @@ public class AbstractConnectPageModuleProviderTest
 
     @Mock
     private PageConditionsFactory pageConditionsFactory;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp()
@@ -84,17 +90,19 @@ public class AbstractConnectPageModuleProviderTest
         provider.validateConditions(Collections.singletonList(newPage(condition)));
     }
 
-    @Test(expected = ConnectModuleValidationException.class)
+    @Test
     public void invalidConditionFails() throws ConnectModuleValidationException
     {
-        SingleConditionBean condition = newCondition("user_is_project_admin");
+        expectValidationException(INVALID_CONDITION);
+        SingleConditionBean condition = newCondition(INVALID_CONDITION);
         provider.validateConditions(Collections.singletonList(newPage(condition)));
     }
 
-    @Test(expected = ConnectModuleValidationException.class)
+    @Test
     public void invalidNestedConditionFails() throws ConnectModuleValidationException
     {
-        CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition("user_is_project_admin"))
+        expectValidationException(INVALID_CONDITION);
+        CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition(INVALID_CONDITION))
                 .withType(CompositeConditionType.AND).build();
         provider.validateConditions(Collections.singletonList(newPage(condition)));
     }
@@ -107,6 +115,12 @@ public class AbstractConnectPageModuleProviderTest
     private ConnectPageModuleBean newPage(ConditionalBean condition)
     {
         return ConnectPageModuleBean.newPageBean().withConditions(condition).build();
+    }
+
+    private void expectValidationException(String conditionName)
+    {
+        expectedException.expect(ConnectModuleValidationException.class);
+        expectedException.expectMessage(String.format("The add-on includes a Page Module with an unsupported condition (%s)", conditionName));
     }
 
     private static class AbstractConnectPageModuleProviderForTesting extends AbstractConnectPageModuleProvider

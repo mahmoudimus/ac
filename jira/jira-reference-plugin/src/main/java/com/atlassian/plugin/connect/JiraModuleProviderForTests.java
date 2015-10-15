@@ -41,7 +41,7 @@ public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvide
         List<ConnectPageModuleBean> beans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         if (beans.get(0).getRawKey().equals("bad"))
         {
-            throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Key is bad!");
+            throw new ConnectModuleValidationException(getMeta(), "Key is bad!");
         }
         return beans;
     }

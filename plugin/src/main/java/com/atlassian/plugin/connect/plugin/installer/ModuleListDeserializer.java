@@ -34,23 +34,9 @@ public class ModuleListDeserializer implements JsonDeserializer<Map<String, Supp
 
         for (final Map.Entry<String, JsonElement> rawModuleEntry : json.getAsJsonObject().entrySet())
         {
-            if (!providers.validModuleType(rawModuleEntry.getKey()))
-            {
-                // TODO pass an i18n key here?
-                throw new InvalidDescriptorException("Module type " + rawModuleEntry.getKey() + " listed in the descriptor is not valid.");
-            }
-
-            Supplier<List<ModuleBean>> moduleBeanSupplier = Suppliers.memoize(() -> {
-                try
-                {
-                    return providers.deserializeModulesOfSameType(rawModuleEntry);
-                }
-                catch (ConnectModuleValidationException e)
-                {
-                    throw new ModuleDeserializationException(e.getMessage());
-                }
-            });
-            moduleBeanListSuppliers.put(rawModuleEntry.getKey(), moduleBeanSupplier);
+            String descriptorKey = rawModuleEntry.getKey();
+            assertValidModuleType(descriptorKey);
+            moduleBeanListSuppliers.put(descriptorKey, createModuleBeanListSupplier(rawModuleEntry));
         }
 
         return moduleBeanListSuppliers;
@@ -77,4 +63,25 @@ public class ModuleListDeserializer implements JsonDeserializer<Map<String, Supp
         return object;
     }
 
+    private void assertValidModuleType(String descriptorKey)
+    {
+        if (!providers.validModuleType(descriptorKey))
+        {
+            throw new InvalidDescriptorException("No provider found for module type " + descriptorKey + " referenced in the descriptor",
+                    "connect.install.error.unknown.module", descriptorKey);
+        }
+    }
+
+    private Supplier<List<ModuleBean>> createModuleBeanListSupplier(Map.Entry<String, JsonElement> rawModuleEntry)
+    {
+        return Suppliers.memoize(() -> {
+            try
+            {
+                return providers.deserializeModulesOfSameType(rawModuleEntry);
+            } catch (ConnectModuleValidationException e)
+            {
+                throw new ConnectModuleValidationRuntimeException(e);
+            }
+        });
+    }
 }

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.spi.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -167,8 +166,8 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     {
         if (!pageConditionsFactory.getConditionNames().contains(conditionString) && !isRemoteCondition(conditionString))
         {
-            String exceptionMessage = String.format("The add-on (%s) includes a Page Module with an unsupported condition (%s)", page.getRawKey(), conditionString);
-            throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), exceptionMessage);
+            String exceptionMessage = String.format("The add-on includes a Page Module with an unsupported condition (%s)", conditionString);
+            throw new ConnectModuleValidationException(getMeta(), exceptionMessage, "connect.install.error.page.with.invalid.condition", conditionString);
         }
     }
 }

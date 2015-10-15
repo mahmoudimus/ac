@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.spi.module;
 
-import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
@@ -68,10 +68,12 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
             ConnectJsonSchemaValidator schemaValidator) throws ConnectModuleSchemaValidationException
     {
         String modules = String.format("{\"%s\": %s}", getMeta().getDescriptorKey(), jsonModuleListEntry);
-        ConnectJsonSchemaValidationResult result = schemaValidator.validate(modules, schemaUrl);
-        if (!result.isValid())
+        try
         {
-            throw new ConnectModuleSchemaValidationException(getMeta().getDescriptorKey(), result.getReportAsString(), modules);
+            schemaValidator.assertValidDescriptor(modules, schemaUrl);
+        } catch (ConnectJsonSchemaValidationException e)
+        {
+            throw new ConnectModuleSchemaValidationException(getMeta(), e);
         }
     }
 
@@ -84,7 +86,7 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
     {
         if (!getMeta().multipleModulesAllowed())
         {
-            throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Modules should be provided as a JSON array of objects.");
+            throw new ConnectModuleValidationException(getMeta(), "Modules should be provided as a JSON array of objects.");
         }
     }
 
@@ -97,7 +99,7 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
     {
         if (getMeta().multipleModulesAllowed())
         {
-            throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "A single module should be provided as a JSON object.");
+            throw new ConnectModuleValidationException(getMeta(), "A single module should be provided as a JSON object.");
         }
     }
 }
