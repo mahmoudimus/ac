@@ -19,8 +19,7 @@ import com.atlassian.crowd.exception.UserNotFoundException;
 
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.application.ApplicationRole;
-import com.atlassian.jira.application.ApplicationRoleAdminService;
-import com.atlassian.jira.bc.ServiceOutcome;
+import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.permission.ProjectPermission;
@@ -97,7 +96,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final PermissionManager jiraProjectPermissionManager;
     private final ConnectCrowdPermissions connectCrowdPermissions;
     private final ApplicationAuthorizationService applicationAuthorizationService;
-    private final ApplicationRoleAdminService applicationRoleAdminService;
+    private final ApplicationRoleManager applicationRoleManager;
 
     @Inject
     public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager,
@@ -110,7 +109,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             PermissionManager jiraProjectPermissionManager,
             ApplicationAuthorizationService applicationAuthorizationService,
             ConnectCrowdPermissions connectCrowdPermissions,
-            ApplicationRoleAdminService applicationRoleAdminService)
+            ApplicationRoleManager applicationRoleManager)
     {
         this.jiraProjectPermissionManager = jiraProjectPermissionManager;
         this.connectCrowdPermissions = connectCrowdPermissions;
@@ -122,7 +121,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
         this.transactionTemplate = transactionTemplate;
         this.applicationAuthorizationService = applicationAuthorizationService;
-        this.applicationRoleAdminService = applicationRoleAdminService;
+        this.applicationRoleManager = applicationRoleManager;
     }
 
     @Override
@@ -140,10 +139,10 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
 
         Set<String> groupSet = new HashSet<>();
-        ServiceOutcome<Set<ApplicationRole>> applicationRolesOutcome = applicationRoleAdminService.getRoles();
-        if (applicationRolesOutcome.isValid())
+        Set<ApplicationRole> applicationRoles = applicationRoleManager.getRoles();
+        if (!applicationRoles.isEmpty())
         {
-            for (ApplicationRole applicationRole : applicationRolesOutcome.get())
+            for (ApplicationRole applicationRole : applicationRoles)
             {
                 for (Group group : applicationRole.getDefaultGroups())
                 {
@@ -151,10 +150,10 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                 }
             }
         }
-        else
+
+        if (applicationRoles.isEmpty() || groupSet.isEmpty())
         {
-            ErrorCollection errorCollection = applicationRolesOutcome.getErrorCollection();
-            throw new ConnectAddOnUserInitException("An error occurred while getting application roles: " + errorCollection.getErrorMessages());
+            throw new ConnectAddOnUserInitException("No application roles were present, we expect at least one to be on an instance");
         }
         return groupSet;
     }

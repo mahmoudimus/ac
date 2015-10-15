@@ -10,8 +10,7 @@ import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.application.ApplicationRole;
-import com.atlassian.jira.application.ApplicationRoleAdminService;
-import com.atlassian.jira.bc.ServiceOutcome;
+import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
@@ -64,9 +63,8 @@ public class JiraAddOnUserProvisioningServiceTest
     @Mock private ApplicationAuthorizationService applicationAuthorizationService;
     @Mock private Group group;
     @Mock private ConnectCrowdPermissions connectCrowdPermissions;
-    @Mock private ApplicationRoleAdminService applicationRoleAdminService;
+    @Mock private ApplicationRoleManager applicationRoleManager;
     @Mock private ApplicationRole applicationRole;
-    @Mock private ServiceOutcome<Set<ApplicationRole>> serviceOutcomeApplicationRole;
 
     private TransactionTemplate transactionTemplate = new TransactionTemplate()
     {
@@ -92,7 +90,7 @@ public class JiraAddOnUserProvisioningServiceTest
                 jiraProjectPermissionManager,
                 applicationAuthorizationService,
                 connectCrowdPermissions,
-                applicationRoleAdminService);
+                applicationRoleManager);
 
         groups = newHashSet();
         groups.add(group);
@@ -165,9 +163,7 @@ public class JiraAddOnUserProvisioningServiceTest
     public void testGetDefaultProductGroupsOneOrMoreExpectedRenaissance()
     {
         when(applicationAuthorizationService.rolesEnabled()).thenReturn(true);
-        when(serviceOutcomeApplicationRole.isValid()).thenReturn(true);
-        when(serviceOutcomeApplicationRole.get()).thenReturn(newHashSet(applicationRole));
-        when(applicationRoleAdminService.getRoles()).thenReturn(serviceOutcomeApplicationRole);
+        when(applicationRoleManager.getRoles()).thenReturn(newHashSet(applicationRole));
         when(applicationRole.getDefaultGroups()).thenReturn(groups);
 
         assertThat(provisioningService.getDefaultProductGroupsOneOrMoreExpected(), containsInAnyOrder(REN_GROUP));
@@ -179,7 +175,7 @@ public class JiraAddOnUserProvisioningServiceTest
         when(applicationAuthorizationService.rolesEnabled()).thenReturn(false);
 
         assertThat(provisioningService.getDefaultProductGroupsOneOrMoreExpected(), containsInAnyOrder("jira-users", "users"));
-        verify(applicationRoleAdminService, never()).getRoles();
+        verify(applicationRoleManager, never()).getRoles();
     }
 
     @Test
