@@ -782,7 +782,7 @@
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>2.5.6</spring.version>
         <webdriver.browser>firefox</webdriver.browser>
-        <plugin.testrunner.version>1.2.3</plugin.testrunner.version>
+        <plugin.testrunner.version>1.2.3-bamboo-5</plugin.testrunner.version>
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>
