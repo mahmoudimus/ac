@@ -42,7 +42,6 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
-                .setPrettyPrinting()
                 .disableHtmlEscaping()
                 ;
     }

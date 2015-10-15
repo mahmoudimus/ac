@@ -63,7 +63,7 @@ import static java.util.Arrays.asList;
 @SuppressWarnings("UnusedDeclaration")
 public class ConnectJsonExamples
 {
-    private static final Gson gson = ConnectModulesGsonFactory.getGson();
+    private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
 
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
