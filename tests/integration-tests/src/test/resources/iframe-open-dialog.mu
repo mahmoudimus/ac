@@ -9,10 +9,12 @@
     <div>
       <button class="aui-button" id="dialog-open-button-key">Open dialog via key</button>
       <button class="aui-button" id="dialog-open-button-url">Open dialog via URL</button>
+      <button class="aui-button" id="dialog-open-button-for-multiple-dialogs">Open dialog that opens another dialog with a custom button</button>
       <br>
       Dialog Close Data: <span id="dialog-close-data"></span>
     </div>
     <script>
+
       // TODO: remove when XML descriptor support is gone (it tests opening a dialog by arbitrary URL)
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-open-button-url").bind("click", function() {
@@ -25,6 +27,7 @@
           });
         });
       });
+
       // test opening a dialog by module key
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-open-button-key").bind("click", function() {
@@ -35,6 +38,31 @@
           }).on("close", function (data) {
             $("#dialog-close-data")[0].innerHTML = data;
           });
+        });
+      });
+
+      // test opening a dialog
+      AP.require(["_dollar", "dialog"], function($, dialog) {
+        $("#dialog-open-button-for-multiple-dialogs").bind("click", function() {
+          dialog.create({
+                width: "400px",
+                height: "300px",
+                key: "{{dialogKey}}",
+                chrome: "true"
+          }).on("close", function (data) {
+            $("#dialog-close-data")[0].innerHTML = data;
+          });
+
+          function createFullPageDialog() {
+              dialog.create({
+                  key: "full-page-dialog",
+                  size: "maximum"
+              });
+          }
+
+          dialog.createButton("open full page dialog");
+          dialog.getButton("open full page dialog").bind(createFullPageDialog);
+
         });
       });
     </script>

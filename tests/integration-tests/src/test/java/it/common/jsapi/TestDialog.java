@@ -30,6 +30,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     private static final String ADDON_DIALOG = "my-dialog";
     private static final String ADDON_GENERALPAGE_WEBITEM_DIALOG = "general-page-opening-webitem-dialog";
     private static final String ADDON_WEBITEM_DIALOG = "my-webitem-dialog";
+    private static final String ADDON_FULL_PAGE_DIALOG = "full-page-dialog";
 
     private static ConnectRunner runner;
 
@@ -58,6 +59,11 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                 .withUrl("/general-page")
                                 .withKey(ADDON_GENERALPAGE_WEBITEM_DIALOG)
                                 .withLocation(getGloballyVisibleLocation())
+                                .build(),
+                        newPageBean()
+                                .withName(new I18nProperty("EE", null))
+                                .withUrl("/full-page-dialog")
+                                .withKey(ADDON_FULL_PAGE_DIALOG)
                                 .build()
                 )
                 .addModules("webItems",
