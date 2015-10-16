@@ -33,17 +33,35 @@ public class RemotePageUtil
     public static <T> T runInFrame(AtlassianWebDriver driver, WebElement containerDiv, Callable<T> callable)
     {
         toIframe(driver, containerDiv);
-        T result = null;
+        boolean successful = false;
         try
         {
-            result = callable.call();
+            T result = callable.call();
+            successful = true;
+            return result;
         }
         catch (Exception e)
         {
             throw new RuntimeException("Nested operation in iframe failed", e);
         }
-        outIframe(driver);
-        return result;
+        finally
+        {
+            try
+            {
+                // make sure we exit the iframe even if an exception was thrown
+                outIframe(driver);
+            }
+            catch (Throwable e)
+            {
+                // if something happens exiting the iframe, give precedence to the original error
+                if (successful)
+                {
+                    //noinspection ThrowFromFinallyBlock
+                    throw e;
+                }
+                log.error("Failed to exit iframe while throwing exception", e);
+            }
+        }
     }
 
     public static String waitForValue(final AtlassianWebDriver driver, final WebElement containerDiv, final String key)
