@@ -3,14 +3,6 @@
     "url": "https://developer.atlassian.com/display/MARKET/Atlassian+Connect+Status",
     "title": "Atlassian Connect status"
   },
-  "release-notes": {
-    "filename": "release-notes.html",
-    "title": "Release notes"
-  },
-  "deprecations": {
-    "filename": "deprecations.html",
-    "title": "Deprecation notices"
-  },
   "samples": {
     "filename": "samples.html",
     "title": "Sample add-ons"
