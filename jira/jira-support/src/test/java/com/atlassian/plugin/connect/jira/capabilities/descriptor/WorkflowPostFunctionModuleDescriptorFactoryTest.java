@@ -9,13 +9,12 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.workflow.WorkflowPostFunctionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.jira.capabilities.util.DelegatingComponentAccessor;
-import com.atlassian.plugin.connect.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.ConnectContainerUtilForTests;
 import com.atlassian.plugin.elements.ResourceDescriptor;
@@ -23,7 +22,6 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -31,25 +29,19 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_TYPE_VELOCITY;
-import static com.atlassian.plugin.connect.jira.capabilities.bean.matchers.IFrameContextMatchers.hasIFramePath;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
@@ -312,24 +304,5 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
 
         ResourceDescriptor resource = descriptor.getResourceDescriptor(RESOURCE_TYPE_VELOCITY, RESOURCE_NAME_VIEW);
         assertEquals("/view", resource.getLocation());
-    }
-
-    @Test
-    @Ignore("TODO tim to fix")
-    public void verifyIFrameURL() throws Exception
-    {
-        WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .withView(new UrlBean("/view"))
-                                                                            .build();
-
-        UUID uuid = UUID.randomUUID();
-        Map<String, String> startingParams = Collections.singletonMap(RemoteWorkflowFunctionPluginFactory.STORED_POSTFUNCTION_ID, uuid.toString());
-
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
-
-        descriptor.getHtml(RESOURCE_NAME_VIEW, startingParams);
-        verify(iFrameRenderer).render(argThat(hasIFramePath("/view")), anyString(), anyMap(), anyString(), anyMap());
     }
 }

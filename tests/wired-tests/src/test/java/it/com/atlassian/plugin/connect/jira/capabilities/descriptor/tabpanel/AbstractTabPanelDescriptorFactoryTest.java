@@ -16,7 +16,6 @@ import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,14 +138,6 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     public void createsElementWithCorrectName()
     {
         assertEquals(MODULE_NAME, descriptor.getName());
-    }
-
-    @Ignore
-    @Test
-    public void createsElementWithCorrectUrl()
-    {
-        //assertEquals(MODULE_URL,((TabPanelModuleDescriptor)descriptor)..get());
-        //verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementUrl(ADDON_URL)));
     }
 
     protected Plugin getConnectPlugin()

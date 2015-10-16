@@ -10,31 +10,24 @@ import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBui
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
-import com.atlassian.plugin.web.Condition;
-import com.atlassian.plugin.web.conditions.AndCompositeCondition;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.testsupport.util.matcher.ConditionMatchers.isCompositeConditionContainingSimpleName;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class WebSectionDescriptorFactoryTest
@@ -159,27 +152,6 @@ public class WebSectionDescriptorFactoryTest
     public void i18nKeyIsCorrect()
     {
         assertThat(descriptor.getI18nNameKey(), is(MODULE_NAME_KEY));
-    }
-
-    @Ignore("I18n names won't work in confluence until we get them to change the way they load resource bundles")
-    @Test
-    public void nameIsCorrect() throws IOException
-    {
-        //note, we need to use an actual installed plugin so i18n props are loaded
-        WebSectionModuleDescriptor liveDescriptor = getDescriptorFromInstalledPlugin();
-        String label = liveDescriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>());
-        assertThat(label, is(MODULE_NAME));
-    }
-
-    @Ignore("stupid hamcrest matchers. this fails due to hamcrest even though the actual and excpected match.")
-    @Test
-    public void conditionIsCorrect() throws IOException
-    {
-        //note, we need to use an actual installed plugin so conditions are loaded properly
-        WebSectionModuleDescriptor liveDescriptor = getDescriptorFromInstalledPlugin();
-        
-        Condition condition = liveDescriptor.getCondition();
-        assertThat(condition, isCompositeConditionContainingSimpleName(AndCompositeCondition.class, "UserLoggedInCondition"));
     }
 
     protected Plugin getConnectPlugin()
