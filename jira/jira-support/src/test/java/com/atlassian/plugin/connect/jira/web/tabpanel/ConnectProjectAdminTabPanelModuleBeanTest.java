@@ -3,13 +3,12 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.opensymphony.util.FileUtils;
 import org.junit.Test;
-import org.springframework.core.io.DefaultResourceLoader;
 
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
+import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -44,6 +43,6 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
 
     private static String expectedJson() throws IOException
     {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/projectAdminTabAddon.json").getFile());
+        return readAddonTestFile("projectAdminTabAddon.json");
     }
 }

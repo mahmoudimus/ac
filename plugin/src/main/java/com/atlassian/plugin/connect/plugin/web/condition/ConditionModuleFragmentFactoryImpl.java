@@ -6,15 +6,13 @@ import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFrag
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.plugin.web.condition.AddOnCondition;
-import com.atlassian.plugin.connect.plugin.web.condition.ConnectCondition;
-import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionContext;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.base.Strings;
-import org.apache.log4j.Logger;
 import org.dom4j.dom.DOMElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +25,7 @@ import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteC
 @Component
 public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragmentFactory
 {
-    private static final Logger log = Logger.getLogger(ConditionModuleFragmentFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(ConditionModuleFragmentFactory.class);
     private static final String TYPE_KEY = "type";
 
     private final ProductAccessor productAccessor;

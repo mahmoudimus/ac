@@ -1,20 +1,16 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.auth.jwt.JwtAuthorizationGenerator;
-import com.atlassian.plugin.connect.plugin.auth.jwt.JwtSigningRemotablePluginAccessor;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
-import com.atlassian.plugin.connect.plugin.auth.jwt.TestJwtService;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.UriBuilder;
@@ -136,7 +132,7 @@ public class JwtSigningInteroperabilityTest
     @Before
     public void setup()
     {
-        when(consumerService.getConsumer()).thenReturn(Consumer.key("jira:1234-5678-9000").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
+        when(consumerService.getConsumer()).thenReturn(Consumer.key("jira:1234-5678-9000").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).build());
         when(userManager.getRemoteUserKey()).thenReturn(new UserKey("123456789"));
         when(applicationLink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME)).thenReturn(SHARED_SECRET);
         when(connectApplinkManager.getAppLink(anyString())).thenReturn(applicationLink);

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
 import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImpl;
@@ -21,6 +20,7 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
