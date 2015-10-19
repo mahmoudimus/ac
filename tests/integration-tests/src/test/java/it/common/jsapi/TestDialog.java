@@ -1,5 +1,6 @@
 package it.common.jsapi;
 
+import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -13,7 +14,10 @@ import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
@@ -82,6 +86,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
                 .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
                 .addRoute("/general-page", ConnectAppServlets.openDialogServlet(ADDON_WEBITEM_DIALOG))
                 .addRoute("/my-webitem-dialog", ConnectAppServlets.closeDialogServlet())
+                .addRoute("/full-page-dialog", ConnectAppServlets.closeDialogServlet())
                 .start();
     }
 
@@ -120,6 +125,31 @@ public class TestDialog extends MultiProductWebDriverTestBase
     public void testWebItemDialogOpenByKey() throws Exception
     {
         testOpenAndClose(ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_WEBITEM_DIALOG);
+    }
+
+    @Test
+    public void testDialogWithCustomButtonOpensAnotherDialog()
+    {
+        // the confluence page
+        RemoteDialogOpeningPage pageToOpenDialogFrom = loginAndVisit(testUserFactory.basicUser(),
+                RemoteDialogOpeningPage.class, runner.getAddon().getKey(), ADDON_GENERALPAGE_WEBITEM_DIALOG);
+
+        // open a dialog and bind
+        RemoteCloseDialogPage theOpenedDialog = pageToOpenDialogFrom.clickToOpenDialog("dialog-open-button-for-multiple-dialogs", ADDON_WEBITEM_DIALOG);
+
+        // asserts on the first dialog
+        assertThat(theOpenedDialog.getIFrameSize().getWidth(), is(400));
+        assertThat(theOpenedDialog.getIFrameSize().getHeight(), is(300));
+
+        // click the custom button to open another dialog
+        pageToOpenDialogFrom.clickButtonByClassName("ap-dialog-custom-button");
+
+        // bind full screen dialog to a rcdp
+        RemoteCloseDialogPage fullPageDialog = theOpenedDialog.bind(ADDON_FULL_PAGE_DIALOG);
+
+        // asserts on the full screen dialog
+        assertThat(fullPageDialog.getIFrameSize().getWidth(), is(1920));
+        assertThat(fullPageDialog.getIFrameSize().getHeight(), is(1080));
     }
 
     private void testOpenAndCloseWithPrependedAddOnKey(String pageKey, String dialogKey)
