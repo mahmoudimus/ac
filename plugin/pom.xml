@@ -489,59 +489,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <configuration>
-                        <tags>
-                            <tag>
-                                <name>response.representation.200.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.200.mediaType</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.201.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.201.mediaType</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.204.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.400.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.401.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.404.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                        </tags>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>com.atlassian.maven.plugins</groupId>
-                    <artifactId>maven-clover2-plugin</artifactId>
-                    <configuration combine.self="override">
-                        <excludes>
-                            <exclude>**/test/**/*.java</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
@@ -941,23 +888,8 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>clover</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.atlassian.clover</groupId>
-                    <artifactId>clover</artifactId>
-                    <version>${clover.libversion}</version>
-                    <scope>compile</scope>
-                </dependency>
-            </dependencies>
-         </profile>
-    </profiles>
 
     <properties>
         <product>jira</product>
