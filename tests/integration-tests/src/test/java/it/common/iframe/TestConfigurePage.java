@@ -16,8 +16,6 @@ import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -37,9 +35,6 @@ public class TestConfigurePage extends AbstractPageTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        logger.debug("TestConfigurePageDebug");
-        logger.info("TestConfigurePageInfo");
-        logger.error("TestConfigurePageError");
         startConnectAddOn("configurePage");
     }
 
@@ -100,9 +95,8 @@ public class TestConfigurePage extends AbstractPageTestBase
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(MY_AWESOME_PAGE));
 
-        logger.error("MAX_ATTEMPTS: " + RetryTestBase.MAX_ATTEMPTS + "\n");
+        // Testing Retry rule - DO NOT MERGE
         boolean pass = ( ( Math.random() * 10 ) > 8 );
-        logger.error("flakyTest() pass: " + pass + "\n");
         if (!pass) assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("FailFailFail"));
     }
 }
