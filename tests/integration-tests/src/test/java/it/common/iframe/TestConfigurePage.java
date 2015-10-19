@@ -30,8 +30,6 @@ import static org.junit.Assert.assertThat;
 @Retry(maxAttempts= RetryTestBase.MAX_ATTEMPTS)
 public class TestConfigurePage extends AbstractPageTestBase
 {
-    private static final Logger logger = LoggerFactory.getLogger(TestConfigurePage.class);
-
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
