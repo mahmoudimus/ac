@@ -2,16 +2,15 @@ package com.atlassian.plugin.connect.plugin.lifecycle.upm;
 
 import com.atlassian.plugin.connect.api.ConnectAddonLicenseAccessor;
 import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
-import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.google.common.annotations.VisibleForTesting;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@JiraComponent
+@Component
 @ExportAsService(ConnectAddonLicenseAccessor.class)
 public class ConnectAddonLicenseAccessorFactory implements ServiceFactory<ConnectAddonLicenseAccessor>
 {
