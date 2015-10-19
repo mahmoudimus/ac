@@ -19,7 +19,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-public abstract class MultiProductWebDriverTestBase
+public abstract class MultiProductWebDriverTestBase extends RetryTestBase
 {
     protected static TestedProduct<WebDriverTester> product = TestedProductProvider.getTestedProduct();
 

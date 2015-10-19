@@ -9,11 +9,15 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.PluginManagerPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.testutils.annotations.Retry;
 import com.atlassian.upm.pageobjects.PluginManager;
+import it.common.RetryTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -25,11 +29,17 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of addon configure page in Confluence
  */
+@Retry(maxAttempts= RetryTestBase.MAX_ATTEMPTS)
 public class TestConfigurePage extends AbstractPageTestBase
 {
+    private static final Logger logger = LoggerFactory.getLogger(TestConfigurePage.class);
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        logger.debug("TestConfigurePageDebug");
+        logger.info("TestConfigurePageInfo");
+        logger.error("TestConfigurePageError");
         startConnectAddOn("configurePage");
     }
 
@@ -89,5 +99,10 @@ public class TestConfigurePage extends AbstractPageTestBase
                 pluginKey, MY_AWESOME_PAGE_KEY);
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(MY_AWESOME_PAGE));
+
+        logger.error("MAX_ATTEMPTS: " + RetryTestBase.MAX_ATTEMPTS + "\n");
+        boolean pass = ( ( Math.random() * 10 ) > 8 );
+        logger.error("flakyTest() pass: " + pass + "\n");
+        if (!pass) assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("FailFailFail"));
     }
 }

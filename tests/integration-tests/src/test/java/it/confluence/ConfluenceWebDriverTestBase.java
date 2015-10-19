@@ -35,6 +35,7 @@ import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import it.common.RetryTestBase;
 import it.util.ConfluenceTestUserFactory;
 import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
@@ -56,7 +57,7 @@ import java.util.concurrent.Callable;
  * without forcing us to create "Fixed" versions of them that simply override a
  * wait condition.
  */
-public class ConfluenceWebDriverTestBase
+public class ConfluenceWebDriverTestBase extends RetryTestBase
 {
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
