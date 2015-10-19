@@ -11,8 +11,10 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.testutils.annotations.Retry;
 import com.google.common.base.Supplier;
 import it.common.MultiProductWebDriverTestBase;
+import it.common.RetryTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.util.TestUser;
@@ -26,6 +28,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Retry(maxAttempts= RetryTestBase.MAX_ATTEMPTS)
 public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
 {
     private static final String ONLY_BETTY_PAGE_KEY = "onlyBetty";
