@@ -1,10 +1,12 @@
 package it.jira;
 
+import com.atlassian.jira.functest.framework.backdoor.Backdoor;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
 import com.atlassian.jira.pageobjects.pages.EditPermissionsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
@@ -23,6 +25,8 @@ import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
+import static junit.framework.TestCase.assertTrue;
+
 public class JiraWebDriverTestBase
 {
 
@@ -39,6 +43,9 @@ public class JiraWebDriverTestBase
     private static final int JIRA_PERMISSION_BROWSE_PROJECTS = 10;
     private static final String JIRA_GROUP_ANYONE = "";
 
+    private static final JiraTestedProduct jira = TestedProductFactory.create(JiraTestedProduct.class);
+    private static final Backdoor backdoor = jira.backdoor();
+
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
@@ -48,6 +55,7 @@ public class JiraWebDriverTestBase
     @BeforeClass
     public static void beforeClass() throws RemoteException
     {
+        assertTrue("JIRA should be after setup", backdoor.dataImport().isSetUp());
         testUserFactory = new JiraTestUserFactory(product);
 
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
