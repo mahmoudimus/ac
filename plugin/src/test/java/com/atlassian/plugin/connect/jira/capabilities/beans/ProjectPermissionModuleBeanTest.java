@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.capabilities.beans;
 
+import com.atlassian.plugin.connect.modules.beans.ProjectPermissionCategory;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
@@ -9,9 +10,11 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public class ProjectPermissionModuleBeanTest
@@ -36,6 +39,17 @@ public class ProjectPermissionModuleBeanTest
                         .withDescription(new I18nProperty("Description2", "description2.i18n"))
                         .build()
         ));
+    }
+
+    @Test
+    public void connectModuleProjectPermissionCategoriesShouldCorrespondToCategoriesInJira()
+    {
+        List<String> jiraCategories = Arrays.asList(com.atlassian.jira.permission.ProjectPermissionCategory.values())
+                .stream().map(Enum::toString).collect(Collectors.toList());
+        List<String> connectCategories = Arrays.asList(ProjectPermissionCategory.values())
+                .stream().map(Enum::toString).collect(Collectors.toList());
+
+        assertThat(jiraCategories, contains(connectCategories.toArray()));
     }
 
     private static ProjectPermissionModuleBean[] readTestFile() throws IOException
