@@ -4,17 +4,17 @@
     },
     "source": {
         "include": [
-            "../plugin/node_modules/atlassian-connect-js/src/js/iframe/plugin/dialog.js",
-            "../plugin/src/main/resources/js/iframe/plugin/confluence.js",
-            "../plugin/src/main/resources/js/iframe/plugin/jira.js",
-            "../plugin/src/main/resources/js/iframe/plugin/user.js",
-            "../plugin/node_modules/atlassian-connect-js/src/js/iframe/plugin/events.js",
-            "../plugin/node_modules/atlassian-connect-js/src/js/iframe/plugin/request.js",
-            "../plugin/node_modules/atlassian-connect-js/src/js/iframe/plugin/env.js",
-            "../plugin/node_modules/atlassian-connect-js/src/js/iframe/plugin/inline-dialog.js",
-            "../plugin/node_modules/atlassian-connect-js/src/js/iframe/plugin/messages.js",
-            "../plugin/node_modules/atlassian-connect-js/src/js/iframe/plugin/cookie.js",
-            "../plugin/node_modules/atlassian-connect-js/src/js/iframe/plugin/history.js"
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/dialog.js",
+            "../jsapi/src/main/resources/js/iframe/plugin/confluence.js",
+            "../jsapi/src/main/resources/js/iframe/plugin/jira.js",
+            "../jsapi/src/main/resources/js/iframe/plugin/user.js",
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/events.js",
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/request.js",
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/env.js",
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/inline-dialog.js",
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/messages.js",
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/cookie.js",
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/history.js"
         ]
     },
     "plugins": ["plugins/markdown"],
