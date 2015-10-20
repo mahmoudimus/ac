@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.56-SNAPSHOT</version>
+        <version>1.1.57-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -125,6 +125,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-confluence-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-jira-support</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -598,6 +603,7 @@
                             com.github.fge.msgsimple*;version="1.1.2-atlassian",
                             com.github.fge.msgsimple.*;version="1.1.2-atlassian",
                             com.atlassian.jira.bc.user;resolution:=optional,
+                            com.atlassian.extras.api.confluence;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>

@@ -2,17 +2,13 @@ package com.atlassian.plugin.connect.jira.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.installer.ModuleListDeserializer;
-import com.atlassian.plugin.connect.plugin.installer.StaticAvailableModuleTypes;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -26,7 +22,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class EntityPropertyIndexDocumentModuleBeanTest
 {
