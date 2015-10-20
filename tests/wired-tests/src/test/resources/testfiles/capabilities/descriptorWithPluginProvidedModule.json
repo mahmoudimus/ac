@@ -1,5 +1,5 @@
 {
-  "key" : "my-plugin",
+  "key" : "my-plugin-with-provided-module",
   "name": "My Plugin",
   "version": "1.0",
   "description": "a cool addon",
@@ -18,7 +18,7 @@
   "modules": {
     "jiraTestModules": [
       {
-        "key": "test"
+        "key": "test-provided-module"
       }
     ]
   }
