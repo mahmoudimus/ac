@@ -240,14 +240,14 @@ public class ModuleList extends BaseModuleBean
 
     /**
      * Add global permission to JIRA.
-     * @schemaTitle Global Permissions
+     * @schemaTitle Global Permission
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.GlobalPermissionModuleProvider", products = {ProductFilter.JIRA})
     private List<GlobalPermissionModuleBean> jiraGlobalPermissions;
 
     /**
      * Add project permission to JIRA.
-     * @schemaTitle Project Permissions
+     * @schemaTitle Project Permission
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ProjectPermissionModuleProvider", products = {ProductFilter.JIRA})
     private List<ProjectPermissionModuleBean> jiraProjectPermissions;
