@@ -1,52 +1,45 @@
 package it.jira.permission;
 
 import com.atlassian.jira.config.properties.APKeys;
-import com.atlassian.jira.pageobjects.project.permissions.Permission;
-import com.atlassian.jira.pageobjects.project.permissions.PermissionGroup;
-import com.atlassian.jira.pageobjects.project.permissions.ProjectPermissionPageTab;
-import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionCategory;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.util.TestUser;
-import org.elasticsearch.common.base.Predicate;
-import org.elasticsearch.common.collect.Iterables;
-import org.hamcrest.Matchers;
+import it.jira.JiraTestBase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.Map;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static it.jira.permission.PermissionJsonBean.PermissionType.PROJECT;
+import static it.jira.permission.PermissionJsonBeanMatcher.isPermission;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class TestProjectPermission extends JiraWebDriverTestBase
+public class TestProjectPermission extends JiraTestBase
 {
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String pluginKey = AddonTestUtils.randomAddOnKey();
     private static final String permissionKey = "plugged-project-permission";
+    private static final String fullPermissionKey = ModuleKeyUtils.addonAndModuleKey(pluginKey, permissionKey);
     private static final String permissionName = "Custom connect project permission";
     private static final String description = "Custom connect global permission";
-    public static final ProjectPermissionCategory PERMISSION_CATEGORY = ProjectPermissionCategory.ISSUES;
-    public static final String PERMISSION_CATEGORY_NAME = "Issue Permissions";
-    public static final String projectKey = "TEST";
+    private static final ProjectPermissionCategory permissionCategory = ProjectPermissionCategory.ISSUES;
+    private static final String projectKey = "TEST";
 
+    private static MyPermissionRestClient myPermissionRestClient;
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.environmentData().getBaseUrl().toString(), PLUGIN_KEY)
+        myPermissionRestClient = new MyPermissionRestClient(product);
+        remotePlugin = new ConnectRunner(product.environmentData().getBaseUrl().toString(), pluginKey)
                 .setAuthenticationToNone()
                 .addModule(
                         "jiraProjectPermissions",
@@ -54,7 +47,7 @@ public class TestProjectPermission extends JiraWebDriverTestBase
                                 .withKey(permissionKey)
                                 .withName(new I18nProperty(permissionName, null))
                                 .withDescription(new I18nProperty(description, null))
-                                .withCategory(PERMISSION_CATEGORY)
+                                .withCategory(permissionCategory)
                                 .withConditions(SingleConditionBean.newSingleConditionBean()
                                         .withCondition("voting_enabled")
                                         .build())
@@ -85,51 +78,24 @@ public class TestProjectPermission extends JiraWebDriverTestBase
     }
 
     @Test
-    public void pluggableProjectPermissionShouldDisplayOnTheProjectPermission()
+    public void pluggableProjectPermissionShouldDisplayOnTheProjectPermission() throws Exception
     {
-        ProjectPermissionPageTab projectPermissionPageTab = goToProjectPermissionPage();
-        Permission permission = projectPermissionPageTab.getPermissionByName(permissionName);
-        assertThat(permission, notNullValue());
+        Map<String, PermissionJsonBean> myPermissions = myPermissionRestClient.getMyPermissions();
+
+        PermissionJsonBean permission = myPermissions.get(fullPermissionKey);
+        assertThat(permission, isPermission(fullPermissionKey, PROJECT, permissionName, description));
     }
 
     @Test
-    public void pluggableProjectPermissionShouldAppearInProperCategory()
-    {
-        ProjectPermissionPageTab projectPermissionPageTab = goToProjectPermissionPage();
-        List<PermissionGroup> permissionGroups = projectPermissionPageTab.getPermissionGroups();
-        PermissionGroup issueGroup = Iterables.find(permissionGroups, new Predicate<PermissionGroup>()
-        {
-            @Override
-            public boolean apply(final PermissionGroup permissionGroup)
-            {
-                return permissionGroup.getName().equals(PERMISSION_CATEGORY_NAME);
-            }
-        });
-
-        assertThat(issueGroup.getPermissions(), Matchers.<Permission>hasItem(
-                Matchers.allOf(
-                        hasProperty("name", is(permissionName)),
-                        hasProperty("description", is(description)),
-                        hasProperty("entities", empty())
-                )
-        ));
-    }
-
-    @Test
-    public void pluggableProjectPermissionShouldNotDisplayIfConditionsAreNotFulfilled() throws JSONException
+    public void pluggableProjectPermissionShouldNotDisplayIfConditionsAreNotFulfilled() throws Exception
     {
         product.backdoor().applicationProperties().setOption(APKeys.JIRA_OPTION_VOTING, false);
 
-        ProjectPermissionPageTab projectPermissionPageTab = goToProjectPermissionPage();
-        Permission permission = projectPermissionPageTab.getPermissionByName(permissionName);
+        Map<String, PermissionJsonBean> myPermissions = myPermissionRestClient.getMyPermissions();
 
+        PermissionJsonBean permission = myPermissions.get(fullPermissionKey);
         assertThat(permission, nullValue());
 
         product.backdoor().applicationProperties().setOption(APKeys.JIRA_OPTION_VOTING, true);
-    }
-
-    private ProjectPermissionPageTab goToProjectPermissionPage()
-    {
-        return loginAndVisit(new TestUser("admin"), ProjectPermissionPageTab.class, projectKey);
     }
 }

@@ -1,37 +1,35 @@
 package it.jira.permission;
 
-import com.atlassian.jira.pageobjects.pages.admin.GlobalPermissionsPage;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.util.TestUser;
-import org.hamcrest.Matchers;
+import it.jira.JiraTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.Map;
 
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static it.jira.permission.PermissionJsonBean.PermissionType.GLOBAL;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TestGlobalPermission extends JiraWebDriverTestBase
+public class TestGlobalPermission extends JiraTestBase
 {
     private static final String pluginKey = AddonTestUtils.randomAddOnKey();
-    private static final String userGroup = "jira-users";
 
-    private static ConnectRunner remotePlugin;
     private static final String permissionKey = "plugged-global-permission";
+    private static final String fullPermissionKey = ModuleKeyUtils.addonAndModuleKey(pluginKey, permissionKey);
     private static final String permissionName = "Custom connect global permission anonymus allowed";
     private static final String description = "Custom connect global permission where anonymous are allowed";
+    private static MyPermissionRestClient myPermissionRestClient;
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        myPermissionRestClient = new MyPermissionRestClient(product);
         remotePlugin = new ConnectRunner(product.environmentData().getBaseUrl().toString(), pluginKey)
                 .setAuthenticationToNone()
                 .addModule(
@@ -56,14 +54,11 @@ public class TestGlobalPermission extends JiraWebDriverTestBase
     }
 
     @Test
-    public void pluggableGlobalPermissionShouldAppearOnTheGlobalPermissionList()
+    public void pluggableGlobalPermissionShouldAppearOnTheGlobalPermissionList() throws Exception
     {
-        GlobalPermissionsPage globalPermissionsPage = loginAndVisit(new TestUser("admin"), GlobalPermissionsPage.class);
-        List<GlobalPermissionsPage.GlobalPermissionRow> globalPermissions = globalPermissionsPage.getGlobalPermissions();
-        assertThat(globalPermissions, Matchers.<GlobalPermissionsPage.GlobalPermissionRow>hasItem(Matchers.allOf(
-                hasProperty("permissionName", is(permissionName)),
-                hasProperty("secondaryText", is(description)),
-                hasProperty("groupsAndUsers", Matchers.emptyIterable())
-        )));
+        Map<String, PermissionJsonBean> myPermissions = myPermissionRestClient.getMyPermissions();
+
+        PermissionJsonBean customPermission = myPermissions.get(fullPermissionKey);
+        assertThat(customPermission, PermissionJsonBeanMatcher.isPermission(fullPermissionKey, GLOBAL, permissionName, description));
     }
 }
