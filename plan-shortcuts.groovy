@@ -113,33 +113,15 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            mavenTask(
-                    description: 'Build Plugin',
-                    goal: 'install -DskipTests',
-            )
-            task(
-                    type: 'npm',
-                    description: 'Install Node.js Dependencies for Marketplace Scripts',
-                    command: 'install',
-                    executable: 'Node.js 0.10',
-                    workingSubDirectory: 'bin/marketplace'
-            )
-            task(
-                    type: 'nodejs',
-                    description: 'Generate Validator Test Output',
-                    arguments: '--type json --testReport=plugin/src/test/resources/descriptor/descriptor-validation-results.json',
-                    script: 'bin/marketplace/validate-descriptors.js',
-                    executable: 'Node.js 0.10'
-            )
             setupVncTask()
             mavenTestTask(
                     description: 'Run Add-On Descriptor Validation Tests',
-                    goal: '-pl plugin test -DdescriptorValidation=true -DskipTests',
+                    goal: '-pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -am',
                     environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
             )
             artifactDefinition(
                     name: 'Validator output',
-                    location: 'plugin/src/test/resources/descriptor',
+                    location: 'tests/descriptor-validation-tests/target',
                     pattern: '*.json',
                     shared: 'false'
             )
@@ -476,7 +458,7 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
     task(
             type: 'maven3',
             description: '#description',
-            goal: '#goal -B -nsu -e',
+            goal: '#goal -B -e',
             buildJdk: 'JDK 1.8',
             mavenExecutable: 'Maven 3.2',
             environmentVariables: '#environmentVariables',

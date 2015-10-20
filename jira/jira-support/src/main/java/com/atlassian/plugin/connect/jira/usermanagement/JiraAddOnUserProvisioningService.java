@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
@@ -19,6 +18,7 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 
 import com.atlassian.jira.application.ApplicationAuthorizationService;
+import com.atlassian.jira.application.ApplicationRole;
 import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.PermissionSchemeManager;
@@ -108,8 +108,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             TransactionTemplate transactionTemplate,
             PermissionManager jiraProjectPermissionManager,
             ApplicationAuthorizationService applicationAuthorizationService,
-            ApplicationRoleManager applicationRoleManager,
-            ConnectCrowdPermissions connectCrowdPermissions)
+            ConnectCrowdPermissions connectCrowdPermissions,
+            ApplicationRoleManager applicationRoleManager)
     {
         this.jiraProjectPermissionManager = jiraProjectPermissionManager;
         this.connectCrowdPermissions = connectCrowdPermissions;
@@ -139,12 +139,21 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
 
         Set<String> groupSet = new HashSet<>();
-        for(ApplicationKey applicationKey : applicationRoleManager.getDefaultApplicationKeys())
+        Set<ApplicationRole> applicationRoles = applicationRoleManager.getRoles();
+        if (!applicationRoles.isEmpty())
         {
-            for (Group group : applicationRoleManager.getDefaultGroups(applicationKey))
+            for (ApplicationRole applicationRole : applicationRoles)
             {
-                groupSet.add(group.getName());
+                for (Group group : applicationRole.getDefaultGroups())
+                {
+                    groupSet.add(group.getName());
+                }
             }
+        }
+
+        if (applicationRoles.isEmpty() || groupSet.isEmpty())
+        {
+            throw new ConnectAddOnUserInitException("No application roles were present, we expect at least one to be on an instance");
         }
         return groupSet;
     }
