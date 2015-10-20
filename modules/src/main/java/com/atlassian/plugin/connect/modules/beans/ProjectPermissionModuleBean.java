@@ -2,11 +2,8 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.ProjectPermissionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.google.common.base.Objects;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Add the permission to the project permission list in JIRA's setting page.

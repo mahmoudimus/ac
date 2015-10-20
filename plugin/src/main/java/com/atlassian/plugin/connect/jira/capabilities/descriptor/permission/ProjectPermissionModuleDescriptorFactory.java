@@ -43,7 +43,8 @@ public class ProjectPermissionModuleDescriptorFactory
         projectPermissionElement.addAttribute("i18n-name-key", bean.getName().getI18nOrValue());
         projectPermissionElement.addAttribute("i18n-description-key", bean.getDescription().getI18nOrValue());
         projectPermissionElement.addAttribute("category", bean.getCategory().toString());
-        if (!bean.getConditions().isEmpty()) {
+        if (!bean.getConditions().isEmpty())
+        {
             projectPermissionElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         }
 

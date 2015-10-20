@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionCategory;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
-public class ProjectPermissionModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<ProjectPermissionModuleBeanBuilder, ProjectPermissionModuleBean>
+public class ProjectPermissionModuleBeanBuilder
+        extends BeanWithKeyParamsAndConditionsBuilder<ProjectPermissionModuleBeanBuilder, ProjectPermissionModuleBean>
 {
     private I18nProperty description;
     private ProjectPermissionCategory category;

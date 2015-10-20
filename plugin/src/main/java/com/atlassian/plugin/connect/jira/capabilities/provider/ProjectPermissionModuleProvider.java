@@ -2,9 +2,7 @@ package com.atlassian.plugin.connect.jira.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.permission.GlobalPermissionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.permission.ProjectPermissionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;

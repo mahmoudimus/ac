@@ -2,9 +2,6 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.json.schema.annotation.StringSchemaAttributes;
-import com.atlassian.plugin.connect.modules.beans.BeanWithKeyAndParamsAndConditions;
-import com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples;
 import com.atlassian.plugin.connect.modules.beans.builder.GlobalPermissionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
@@ -36,7 +33,6 @@ public class GlobalPermissionModuleBean extends RequiredKeyBean
         this.description = I18nProperty.empty();
         this.anonymousAllowed = true;
     }
-
 
     public GlobalPermissionModuleBean(GlobalPermissionModuleBeanBuilder builder)
     {

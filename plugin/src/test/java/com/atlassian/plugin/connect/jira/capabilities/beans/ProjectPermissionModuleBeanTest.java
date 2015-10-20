@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public class ProjectPermissionModuleBeanTest
