@@ -84,7 +84,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run QUnit Tests using Karma',
-                    goal: 'package -Pkarma-tests -DskipUnits',
+                    goal: '-pl jsapi package -Pkarma-tests',
                     environmentVariables: ''
             )
             artifactDefinition(
