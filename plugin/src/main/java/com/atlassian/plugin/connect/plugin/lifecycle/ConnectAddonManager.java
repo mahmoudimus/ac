@@ -63,6 +63,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 import javax.ws.rs.core.MediaType;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
@@ -73,8 +75,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.addOnRequiresUser;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Arrays.asList;
@@ -571,13 +573,18 @@ public class ConnectAddonManager
             log.error("Error contacting remote application at " + callbackUri + "  [" + e.getMessage() + "]", e);
             String message = "Error contacting remote application [" + e.getMessage() + "]";
 
-            if (e.getCause() instanceof UnknownHostException)
+            Throwable cause = e.getCause();
+            if (cause instanceof UnknownHostException)
             {
                 throw new LifecycleCallbackException(message, "connect.install.error.remote.host.bad.domain", callbackUri.getHost());
             }
-            else if (e.getCause() instanceof SocketTimeoutException)
+            else if (cause instanceof SocketTimeoutException)
             {
                 throw new LifecycleCallbackException(message, "connect.install.error.remote.host.timeout", removeQuery(callbackUri));
+            }
+            else if (cause instanceof SSLException)
+            {
+                throw new LifecycleCallbackException(message, "connect.install.error.remote.host.ssl", removeQuery(callbackUri), cause.getMessage());
             }
 
             throw new LifecycleCallbackException(message, "connect.remote.upm.install.exception");
