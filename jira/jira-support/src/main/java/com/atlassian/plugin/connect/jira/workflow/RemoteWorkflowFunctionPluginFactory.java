@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.jira.workflow;
 
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
-import com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter;
+import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFilter;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;

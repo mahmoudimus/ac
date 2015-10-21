@@ -6,7 +6,7 @@ import java.util.Map;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
-import com.atlassian.plugin.connect.jira.JiraRestBeanMarshaler;
+import com.atlassian.plugin.connect.jira.webhook.JiraRestBeanMarshaler;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
