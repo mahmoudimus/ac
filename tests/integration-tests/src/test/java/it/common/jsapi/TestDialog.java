@@ -128,7 +128,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void testDialogWithCustomButtonOpensAnotherDialog()
+    public void testCanCreateCustomButtonInDialog()
     {
         // the confluence page
         RemoteDialogOpeningPage pageToOpenDialogFrom = loginAndVisit(testUserFactory.basicUser(),
@@ -137,19 +137,26 @@ public class TestDialog extends MultiProductWebDriverTestBase
         // open a dialog and bind
         RemoteCloseDialogPage theOpenedDialog = pageToOpenDialogFrom.clickToOpenDialog("dialog-open-button-for-multiple-dialogs", ADDON_WEBITEM_DIALOG);
 
-        // asserts on the first dialog
-        assertThat(theOpenedDialog.getIFrameSize().getWidth(), is(400));
-        assertThat(theOpenedDialog.getIFrameSize().getHeight(), is(300));
+        // get the custom button to open another dialog
+        PageElement button = pageToOpenDialogFrom.getButtonByClassName("ap-dialog-custom-button");
 
-        // click the custom button to open another dialog
-        pageToOpenDialogFrom.clickButtonByClassName("ap-dialog-custom-button");
+        assertEquals("open full page dialog", button.getText());
+    }
 
-        // bind full screen dialog to a rcdp
-        RemoteCloseDialogPage fullPageDialog = theOpenedDialog.bind(ADDON_FULL_PAGE_DIALOG);
+    @Test
+    public void testCanCreateMultipleDialogs()
+    {
+        // the confluence page
+        RemoteDialogOpeningPage pageToOpenDialogFrom = loginAndVisit(testUserFactory.basicUser(),
+                RemoteDialogOpeningPage.class, runner.getAddon().getKey(), ADDON_GENERALPAGE_WEBITEM_DIALOG);
 
-        // asserts on the full screen dialog
-        assertThat(fullPageDialog.getIFrameSize().getWidth(), is(1920));
-        assertThat(fullPageDialog.getIFrameSize().getHeight(), is(1080));
+        // open a dialog and bind
+        RemoteCloseDialogPage theOpenedDialog = pageToOpenDialogFrom.clickToOpenDialog("dialog-open-button-for-multiple-dialogs", ADDON_WEBITEM_DIALOG);
+
+        // get the custom button to open another dialog
+        PageElement button = pageToOpenDialogFrom.getButtonByClassName("ap-dialog-custom-button");
+
+        assertEquals("open full page dialog", button.getText());
     }
 
     private void testOpenAndCloseWithPrependedAddOnKey(String pageKey, String dialogKey)

@@ -67,10 +67,15 @@ public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
         });
     }
 
-    public void clickButtonByClassName(final String className)
-    {
+    public PageElement getButtonByClassName(final String className) {
         PageElement element = elementFinder.find(By.className(className));
         waitUntilTrue(element.timed().isVisible());
+        return element;
+    }
+
+    public void clickButtonByClassName(final String className)
+    {
+        PageElement element = getButtonByClassName(className);
         element.click();
     }
 
