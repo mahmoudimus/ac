@@ -120,6 +120,12 @@ runTestsStage() {
                     environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
             )
             artifactDefinition(
+                    name: 'Global schema',
+                    location: 'tests/descriptor-validation-tests/target/schema',
+                    pattern: '*-global-schema.json',
+                    shared: 'false'
+            )
+            artifactDefinition(
                     name: 'Validator output',
                     location: 'tests/descriptor-validation-tests/target',
                     pattern: '*.json',

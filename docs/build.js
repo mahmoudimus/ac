@@ -18,15 +18,24 @@ var genSrcPrefix = buildDir + "/gensrc";
 
 var srcFiles = ["public", "package.json"];
 
-var jiraSchemaSourcePath =       '../plugin/target/classes/schema/jira-schema.json';
-var confluenceSchemaSourcePath = '../plugin/target/classes/schema/confluence-schema.json';
+var watchedSchemaFiles = [
+    '../plugin/target/classes/schema/shallow-schema.json',
+    '../plugin/target/classes/schema/common-schema.json',
+    '../plugin/target/classes/schema/jira-schema.json',
+    '../plugin/target/classes/schema/confluence-schema.json'
+];
+var shallowSchemaPath =       'target/schema/deref-shallow-schema.json';
+var commonSchemaPath =       'target/schema/deref-common-schema.json';
+var jiraSchemaPath =       'target/schema/deref-jira-schema.json';
+var confluenceSchemaPath = 'target/schema/deref-confluence-schema.json';
 
-var jiraSchemaPath =       'schema/schema/jira-schema.json';
-var confluenceSchemaPath = 'schema/schema/confluence-schema.json';
-var jiraScopesPath =       'schema/com/atlassian/connect/jira/scopes.jira.json';
-var agileScopesPath =      'schema/com/atlassian/connect/jira/scopes.jiraagile.json';
-var confluenceScopesPath = 'schema/com/atlassian/connect/confluence/scopes.confluence.json';
-var commonScopesPath =     'schema/com/atlassian/connect/scopes.common.json';
+var jiraGlobalSchemaPath = 'target/schema/jira-global-schema.json'
+var confluenceGlobalSchemaPath = 'target/schema/confluence-global-schema.json';
+
+var commonScopesPath =     'target/scope/scopes.common.json';
+var jiraScopesPath =       'target/scope/jira/scopes.jira.json';
+var agileScopesPath =      'target/scope/jira/scopes.jiraagile.json';
+var confluenceScopesPath = 'target/scope/confluence/scopes.confluence.json';
 
 program
   .option('-s, --serve', 'Serve and automatically watch for changes')
@@ -222,51 +231,30 @@ function findRootEntities(schemas) {
     // exclude the module lists, they're rendered separately in findJiraModules etc.
     entities = _.filter(entities, function(entity) {return entity.id !== "moduleList";});
     // add the descriptor root itself (and make it the index.html for modules)
-    schemas.jira.pageName = "index";
-    entities.unshift(schemas.jira);
+    schemas.shallow.pageName = "index";
+    entities.unshift(schemas.shallow);
     return entitiesToModel(entities);
 }
 
 /**
  * Find module types supported by a particular product (webItemModuleBean, staticContentMacroModuleBean, etc.)
  */
-function findProductModules(schemas, productId, productDisplayName) {
-    // find product modules
-    var productModules = jsonPath(schemas, "$." + productId + ".properties.modules.properties.*");
+function findModules(schemas, productDisplayName) {
+    var productModules = jsonPath(schemas, "$.properties.*");
+
     // unwrap array types
     productModules = _.map(productModules, function (moduleOrArray) {
         return moduleOrArray.type === "array" ? moduleOrArray.items : moduleOrArray;
     });
-    var moduleList = schemas[productId].properties.modules;
-    // the module list serves as our landing page for each product's modules
-    moduleList.pageName = "index";
-    moduleList.title = productDisplayName + " Modules";
-    // make the module list the first entry
-    productModules.unshift(moduleList);
-    return productModules;
-}
 
-function moduleArraysIntersection(modules1, modules2) {
-    return _.filter(modules1, function(module1) {
-        return _.any(modules2, function(module2) {
-            return module1.id === module2.id && module1.title === module2.title;
-        });
-    });
-}
-
-function moduleArraysDifference(modules1, modules2) {
-    return _.reject(modules1, function(module1) {
-        return _.any(modules2, function(module2) {
-            return module1.id === module2.id && module1.title === module2.title;
-        });
-    });
+    return entitiesToModel(productModules);
 }
 
 /**
  * Find JSON fragments that only exist nested inside other module types.
  */
 function findFragmentEntities(schemas) {
-    var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties..*");
+    var entities = jsonPath(schemas, "$.*.properties.*.items.properties..*");
     entities = _.filter(entities, function(obj) {
         // object must have an id and not be a primitive array
         return obj && typeof obj === "object" && obj.id && obj.type === "object";
@@ -436,21 +424,17 @@ function rebuildHarpSite() {
     compileJsDocs();
 
     var schemas = {
+        shallow: fs.readJsonSync(shallowSchemaPath),
+        common: fs.readJsonSync(commonSchemaPath),
         jira: fs.readJsonSync(jiraSchemaPath),
         confluence: fs.readJsonSync(confluenceSchemaPath)
     };
 
-    var jiraModules = findProductModules(schemas, "jira", "JIRA");
-    var confluenceModules = findProductModules(schemas, "confluence", "Confluence");
-    var commonModules = moduleArraysIntersection(jiraModules, confluenceModules);
-    jiraModules = moduleArraysDifference(jiraModules, commonModules);
-    confluenceModules = moduleArraysDifference(confluenceModules, commonModules);
-
     var entities = {
         root: findRootEntities(schemas),
-        common: entitiesToModel(commonModules),
-        jira: entitiesToModel(jiraModules),
-        confluence: entitiesToModel(confluenceModules),
+        common: findModules(schemas.common, "Common"),
+        jira: findModules(schemas.jira, "JIRA"),
+        confluence: findModules(schemas.confluence, "Confluence"),
         fragment: findFragmentEntities(schemas)
     };
 
@@ -481,6 +465,8 @@ function rebuildHarpSite() {
 
     copyToGenSrc(srcFiles);
     copyToGenSrc("node_modules");
+    fs.copySync(jiraGlobalSchemaPath, genSrcPrefix + '/public/schema/jira-global-schema.json');
+    fs.copySync(confluenceGlobalSchemaPath, genSrcPrefix + '/public/schema/confluence-global-schema.json');
 
     var entityLinks = writeEntitiesToDisk(entities, {
         root: "modules",
@@ -535,7 +521,7 @@ function startHarpServerAndWatchSrcFiles() {
 
     harpServer = startHarpServer();
 
-    var watchedFiles = srcFiles.concat(jiraSchemaSourcePath, confluenceSchemaSourcePath);
+    var watchedFiles = srcFiles.concat(watchedSchemaFiles);
 
     var watcher = chokidar.watch(watchedFiles, {
         persistent: true,

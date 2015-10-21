@@ -1,10 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import javax.annotation.Nullable;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
@@ -21,13 +18,11 @@ import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
-import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-
-import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +76,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         String pluginKey = null;
         Plugin addonPluginWrapper;
         ConnectAddonBean addOn;
-        Option<ConnectAddonBean> maybePreviousAddon = Option.none();
         AddonSettings previousSettings = new AddonSettings();
         PluginState targetState = null;
         Option<ApplicationLink> maybePreviousApplink = Option.none();
@@ -95,15 +89,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         try
         {
             //until we ensure we no longer have xml or mirror plugins, we need to call removeOldPlugin, which is why we marshal here just to get the plugin key
-            ConnectAddonBean nonValidatedAddon = connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor);
+            ConnectAddonBean nonValidatedAddon = connectAddonBeanFactory.fromJson(jsonDescriptor);
 
             pluginKey = nonValidatedAddon.getKey();
             maybePreviousApplink = Option.option(connectApplinkManager.getAppLink(pluginKey));
-            maybePreviousAddon = findAddon(pluginKey);
             previousSettings = addonRegistry.getAddonSettings(pluginKey);
-            targetState = PluginState.valueOf(previousSettings.getRestartState()); // don't go back to the registry unnecessarily; it will just return the same previousSettings
+            targetState = PluginState.valueOf(previousSettings.getRestartState());
 
-            if (maybePreviousApplink.isDefined() && maybePreviousAddon.isDefined())
+            if (maybePreviousApplink.isDefined() && !Strings.isNullOrEmpty(previousSettings.getDescriptor()))
             {
                 ApplicationLink applink = maybePreviousApplink.get();
                 baseUrl = applink.getRpcUrl().toString();
@@ -135,14 +128,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             if (null != pluginKey)
             {
                 eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage()));
-                if (maybePreviousAddon.isDefined()
+                if (!Strings.isNullOrEmpty(previousSettings.getDescriptor())
                     && maybePreviousApplink.isDefined()
                     && maybePreviousAuthType.isDefined())
                 {
                     log.error("An exception occurred while installing the plugin '["
                               + pluginKey
                               + "]. Restoring previous version...", e);
-                    ConnectAddonBean previousAddon = maybePreviousAddon.get();
+                    ConnectAddonBean previousAddon = connectAddonBeanFactory.fromJson(previousSettings.getDescriptor());
                     String addonUserKey = this.connectUserService.getOrCreateAddOnUserName(pluginKey,
                             previousAddon.getName());
                     addonRegistry.storeAddonSettings(pluginKey, previousSettings);
@@ -159,7 +152,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     {
                         throw new ConnectAddOnInstallException("Could not disable add", caude);
                     }
-                    addonPluginWrapper = addonToPluginFactory.create(previousAddon);
                 }
                 else
                 {
@@ -187,19 +179,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
         return addonPluginWrapper;
-    }
-
-    private Option<ConnectAddonBean> findAddon(final String pluginKey)
-    {
-        Iterable<ConnectAddonBean> allAddons = addonRegistry.getAllAddonBeans();
-        return Iterables.findFirst(allAddons, new Predicate<ConnectAddonBean>()
-        {
-            @Override
-            public boolean apply(@Nullable ConnectAddonBean input)
-            {
-                return input != null && pluginKey.equals(input.getKey());
-            }
-        });
     }
 
     private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddOnUserDisableException

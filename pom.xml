@@ -222,6 +222,11 @@
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
+            <plugin>
+                <groupId>external.atlassian.json</groupId>
+                <artifactId>json-schemagen-maven-plugin</artifactId>
+                <version>${schema.generator.version}</version>
+            </plugin>
         </plugins>
     </build>
     <reporting>
@@ -624,9 +629,27 @@
                 <version>${gson.version}</version>
             </dependency>
             <dependency>
+                <groupId>external.atlassian.json</groupId>
+                <artifactId>json-schemagen-core</artifactId>
+                <version>${schema.generator.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.github.fge</groupId>
                 <artifactId>json-schema-validator</artifactId>
                 <version>${json.schema.validator.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.fge</groupId>
+                        <artifactId>msg-simple</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.bundles</groupId>
+                <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                <version>${atlassian.json.schema.validator.version}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -750,7 +773,7 @@
         <atlassian.selenium.version>2.2.1-m01-jira-1</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
         <atlassian.connect-js.version>3.1.7</atlassian.connect-js.version>
-        <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
+        <atlassian.connect-js.path>git+ssh://git@bitbucket.org:atlassian/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
 
         <atlassian.upm.version>2.20</atlassian.upm.version>
@@ -767,7 +790,6 @@
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
         <quickreload.version>1.28</quickreload.version>
         <frontend.plugin.version>0.0.25</frontend.plugin.version>
-        <atlassian.jira.cross.compat.version>0.48</atlassian.jira.cross.compat.version>
 
         <!-- TEST STUFF -->
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
@@ -805,9 +827,9 @@
         <schema.generator.version>1.0.0</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
-        <npm.version>1.4.3</npm.version>
+        <npm.version>2.3.0</npm.version>
         <node.download.root>https://nodejs.org/dist/</node.download.root>
-        <npm.download.root>https://nodejs.org/dist/npm/</npm.download.root>
+        <npm.download.root>http://registry.npmjs.org/npm/-/</npm.download.root>
         <blueprints.version>5.2.3</blueprints.version>
         <skipNpm>false</skipNpm>
         <clover.libversion>4.0.3</clover.libversion>

@@ -4,13 +4,14 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 
 /**
- * Validates and unmarshalls Connect addon JSON descriptors.
- *
- * @since 1.0
+ * Validates and unmarshalls Connect add-on JSON descriptors.
  */
 public interface ConnectAddonBeanFactory
 {
+
     ConnectAddonBean fromJson(String jsonDescriptor) throws InvalidDescriptorException;
 
-    ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor);
+    void remove(String jsonDescriptor);
+
+    void removeAll();
 }

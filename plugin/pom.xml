@@ -31,7 +31,6 @@
         <dependency>
             <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
-            <version>${schema.generator.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -47,12 +46,6 @@
             <groupId>com.github.fge</groupId>
             <artifactId>json-schema-validator</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.fge</groupId>
-                    <artifactId>msg-simple</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -68,7 +61,6 @@
         <dependency>
             <groupId>com.atlassian.bundles</groupId>
             <artifactId>json-schema-validator-atlassian-bundle</artifactId>
-            <version>${atlassian.json.schema.validator.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -480,6 +472,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -868,7 +861,6 @@
             <plugin>
                 <groupId>external.atlassian.json</groupId>
                 <artifactId>json-schemagen-maven-plugin</artifactId>
-                <version>${schema.generator.version}</version>
                 <executions>
                     <execution>
                         <id>schema-support</id>
@@ -883,14 +875,28 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>common-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.plugin.descriptor.CommonModuleList</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>jira-schema</id>
                         <phase>process-classes</phase>
                         <goals>
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.jira.JiraSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.JiraModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
@@ -903,8 +909,8 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.confluence.ConfluenceSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.confluence.ConfluenceModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
@@ -917,9 +923,8 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
-                            <ignoreFilter>shallow</ignoreFilter>
+                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>

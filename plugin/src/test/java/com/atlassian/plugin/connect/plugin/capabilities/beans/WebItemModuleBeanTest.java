@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.modules.beans.*;
-import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
@@ -10,14 +12,9 @@ import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertThat;
@@ -30,12 +27,11 @@ public class WebItemModuleBeanTest
         Gson gson = ConnectModulesGsonFactory.getGson();
 
         WebItemModuleBean webItemBean = createWebItemBeanBuilder().build();
-        ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("defaultWebItemTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        WebItemModuleBean deserializedBean = gson.fromJson(json, WebItemModuleBean.class);
 
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(webItemBean));
     }
 
     @Test
@@ -46,12 +42,11 @@ public class WebItemModuleBeanTest
         WebItemModuleBean webItemBean = createWebItemBeanBuilder()
                 .withContext(AddOnUrlContext.product)
                 .build();
-        ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("productContextWebItemTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        WebItemModuleBean deserializedBean = gson.fromJson(json, WebItemModuleBean.class);
 
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(webItemBean));
     }
 
     @Test
@@ -62,16 +57,14 @@ public class WebItemModuleBeanTest
         WebItemTargetBean target = newWebItemTargetBean()
                 .withType(WebItemTargetType.dialog)
                 .build();
-        WebItemModuleBean webItemBuilder = createWebItemBeanBuilder()
+        WebItemModuleBean webItemBean = createWebItemBeanBuilder()
                 .withTarget(target)
-                .build();
-        ConnectAddonBean addon = createAddonBeanBuilder(webItemBuilder)
                 .build();
 
         String json = readTestFile("dialogWebItemTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        WebItemModuleBean deserializedBean = gson.fromJson(json, WebItemModuleBean.class);
 
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(webItemBean));
     }
 
     @Test
@@ -85,31 +78,11 @@ public class WebItemModuleBeanTest
         WebItemModuleBean webItemBean = createWebItemBeanBuilder()
                 .withTarget(target)
                 .build();
-        ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("inlineDialogWebItemTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        WebItemModuleBean deserializedBean = gson.fromJson(json, WebItemModuleBean.class);
 
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
-    }
-
-    private ConnectAddonBeanBuilder createAddonBeanBuilder(WebItemModuleBean webItemBean)
-    {
-        Map<String, String> links = new HashMap<String,String>();
-        links.put("self","http://www.example.com/capabilities");
-        links.put("homepage","http://www.example.com");
-
-        return newConnectAddonBean()
-                .withName("My Plugin")
-                .withKey("my-plugin")
-                .withVersion("1.0")
-                .withLinks(links)
-                .withBaseurl("http://www.example.com")
-                .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule("webItems", webItemBean)
-                .withAuthentication(
-                        newAuthenticationBean()
-                                .withType(AuthenticationType.JWT).build());
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(webItemBean));
     }
 
     private WebItemModuleBeanBuilder createWebItemBeanBuilder()

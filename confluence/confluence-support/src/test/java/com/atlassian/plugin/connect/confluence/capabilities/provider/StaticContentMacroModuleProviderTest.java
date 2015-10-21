@@ -26,8 +26,9 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
         StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
                 absoluteAddOnUrlConverter, remoteMacroRenderer);
 
-        return new StaticContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
-                hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
+        return new StaticContentMacroModuleProvider(pluginRetrievalService, schemaValidator, macroModuleDescriptorFactory,
+                webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry,
+                iFrameRenderStrategyBuilderFactory);
     }
 
     @Override
@@ -35,5 +36,4 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
     {
         return newStaticContentMacroModuleBean();
     }
-
 }

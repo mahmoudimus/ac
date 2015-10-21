@@ -1,5 +1,15 @@
 <application key="jira">
 
+    <connect-module key="jiraDashboardItems" class="com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider"/>
+    <connect-module key="jiraEntityProperties" class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"/>
+    <connect-module key="jiraIssueTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.IssueTabPanelModuleProvider"/>
+    <connect-module key="jiraProjectTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ProjectTabPanelModuleProvider"/>
+    <connect-module key="jiraProjectAdminTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider"/>
+    <connect-module key="jiraProfileTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ProfileTabPanelModuleProvider"/>
+    <connect-module key="jiraReports" class="com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider"/>
+    <connect-module key="jiraSearchRequestViews" class="com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider"/>
+    <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.capabilities.provider.WorkflowPostFunctionModuleProviderImpl"/>
+
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

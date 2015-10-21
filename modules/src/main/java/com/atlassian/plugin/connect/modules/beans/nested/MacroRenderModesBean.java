@@ -51,9 +51,7 @@ public class MacroRenderModesBean extends BaseModuleBean
     private EmbeddedStaticContentMacroBean defaultFallback;
 
     protected MacroRenderModesBean()
-    {
-        super();
-    }
+    {}
 
     public MacroRenderModesBean(BaseModuleBeanBuilder builder)
     {

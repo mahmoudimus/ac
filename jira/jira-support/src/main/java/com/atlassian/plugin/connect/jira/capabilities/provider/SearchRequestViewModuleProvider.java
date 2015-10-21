@@ -1,37 +1,51 @@
 package com.atlassian.plugin.connect.jira.capabilities.provider;
 
+import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.jira.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleMeta;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 @JiraComponent
-public class SearchRequestViewModuleProvider implements ConnectModuleProvider<SearchRequestViewModuleBean>
+public class SearchRequestViewModuleProvider extends AbstractJiraConnectModuleProvider<SearchRequestViewModuleBean>
 {
+
+    private static final SearchRequestViewModuleMeta META = new SearchRequestViewModuleMeta();
+
     private final SearchRequestViewModuleDescriptorFactory searchRequestViewModuleDescriptorFactory;
 
     @Autowired
-    public SearchRequestViewModuleProvider(SearchRequestViewModuleDescriptorFactory searchRequestViewModuleDescriptorFactory)
+    public SearchRequestViewModuleProvider(PluginRetrievalService pluginRetrievalService,
+            ConnectJsonSchemaValidator schemaValidator,
+            SearchRequestViewModuleDescriptorFactory searchRequestViewModuleDescriptorFactory)
     {
+        super(pluginRetrievalService, schemaValidator);
         this.searchRequestViewModuleDescriptorFactory = searchRequestViewModuleDescriptorFactory;
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<SearchRequestViewModuleBean> beans)
+    public ConnectModuleMeta<SearchRequestViewModuleBean> getMeta()
+    {
+        return META;
+    }
+
+    @Override
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SearchRequestViewModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> moduleDescriptors = new ArrayList<>();
 
-        for (SearchRequestViewModuleBean bean : beans)
+        for (SearchRequestViewModuleBean bean : modules)
         {
-            ModuleDescriptor descriptor = searchRequestViewModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
+            ModuleDescriptor descriptor = searchRequestViewModuleDescriptorFactory.createModuleDescriptor(
+                    moduleProviderContext, pluginRetrievalService.getPlugin(), bean);
             moduleDescriptors.add(descriptor);
         }
 

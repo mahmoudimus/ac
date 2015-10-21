@@ -3,12 +3,13 @@ package it.com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectViewProfilePanelModuleDescriptor;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ProfileTabPanelModuleProvider;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
+import com.atlassian.plugin.connect.modules.beans.ProfileTabPanelModuleMeta;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -24,9 +25,15 @@ public class ProfileTabPanelDescriptorFactoryTest extends AbstractTabPanelDescri
     }
 
     @Override
+    protected String getModuleFieldName()
+    {
+        return new ProfileTabPanelModuleMeta().getDescriptorKey();
+    }
+
+    @Override
     protected TabPanelDescriptorHints getDescriptorHints()
     {
-        return ConnectTabPanelModuleProvider.FIELD_TO_HINTS.get(ConnectTabPanelModuleProvider.PROFILE_TAB_PANELS);
+        return ProfileTabPanelModuleProvider.HINTS;
     }
 
     @Test

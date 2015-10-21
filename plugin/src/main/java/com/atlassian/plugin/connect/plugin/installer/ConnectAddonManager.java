@@ -12,6 +12,7 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
@@ -99,6 +100,7 @@ public class ConnectAddonManager
     private final IsDevModeService isDevModeService;
     private final UserManager userManager;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final ConnectAddonAccessor connectAddonAccessor;
     private HttpClient httpClient;
     private final ConnectAddonRegistry addonRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
@@ -124,11 +126,13 @@ public class ConnectAddonManager
                                ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
                                SharedSecretService sharedSecretService,
                                ConnectHttpClientFactory connectHttpClientFactory,
-                               DarkFeatureManager darkFeatureManager)
+                               DarkFeatureManager darkFeatureManager,
+                               ConnectAddonAccessor connectAddonAccessor)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
+        this.connectAddonAccessor = connectAddonAccessor;
         this.httpClient = connectHttpClientFactory.getInstance();
         this.addonRegistry = addonRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
@@ -252,7 +256,7 @@ public class ConnectAddonManager
         //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (addonRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
+            ConnectAddonBean addon = connectAddonAccessor.getAddon(pluginKey).get();
 
             if (null != addon)
             {
@@ -324,12 +328,6 @@ public class ConnectAddonManager
         }
     }
 
-    public boolean isAddonEnabled(String pluginKey)
-    {
-        boolean isEnabled = beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
-        return isEnabled;
-    }
-
     public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
     {
         uninstallConnectAddon(pluginKey, true);
@@ -354,11 +352,12 @@ public class ConnectAddonManager
         long startTime = System.currentTimeMillis();
         if (addonRegistry.hasDescriptor(pluginKey))
         {
+            String descriptor = addonRegistry.getDescriptor(pluginKey);
             Option<String> maybeSharedSecret = Option.none();
 
             try
             {
-                ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
+                ConnectAddonBean addon = connectAddonAccessor.getAddon(pluginKey).get();
 
                 disableConnectAddon(pluginKey, false, sendEvent);
 
@@ -411,6 +410,7 @@ public class ConnectAddonManager
             finally
             {
                 addonRegistry.removeAll(pluginKey);
+                connectAddonBeanFactory.remove(descriptor);
 
                 // if the add-on had a shared secret then store it so that we can sign an installed callback
                 // in DefaultConnectAddOnInstaller.install(java.lang.String)() if the user turns around and re-installs the add-on
@@ -426,17 +426,6 @@ public class ConnectAddonManager
 
         long endTime = System.currentTimeMillis();
         log.info("Connect addon '" + pluginKey + "' uninstalled in " + (endTime - startTime) + "ms");
-    }
-
-    public ConnectAddonBean getExistingAddon(String pluginKey)
-    {
-        if (!addonRegistry.hasDescriptor(pluginKey))
-        {
-            return null;
-        }
-
-        String descriptor = addonRegistry.getDescriptor(pluginKey);
-        return connectAddonBeanFactory.fromJsonSkipValidation(descriptor);
     }
 
     // first install: no previous shared secret, no signing
@@ -635,15 +624,6 @@ public class ConnectAddonManager
         return builder.toUri().toJavaUri();
     }
 
-    /**
-     * @param pluginKey the key of a Connect addon
-     * @return a {@link ConnectAddonBean} if there is a corresponding descriptor stored in the registry, otherwise null
-     */
-    private ConnectAddonBean unmarshallDescriptor(final String pluginKey)
-    {
-        return ConnectModulesGsonFactory.getGson().fromJson(addonRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
-    }
-
     @VisibleForTesting
     String createEventData(String pluginKey, String eventType)
     {
@@ -682,7 +662,7 @@ public class ConnectAddonManager
 
         ConnectAddonEventData data = dataBuilder.build();
 
-        return ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(data);
+        return ConnectModulesGsonFactory.getGson().toJson(data);
     }
 
     private String getConnectPluginVersion()

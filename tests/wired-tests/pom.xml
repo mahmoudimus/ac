@@ -60,6 +60,10 @@
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
             </exclusions>
             <scope>provided</scope>
         </dependency>
@@ -76,6 +80,10 @@
                 <exclusion>
                     <groupId>commons-httpclient</groupId>
                     <artifactId>commons-httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -105,17 +113,24 @@
             <artifactId>atlassian-connect-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-modules</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -165,6 +180,12 @@
             <artifactId>confluence</artifactId>
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -177,12 +198,6 @@
             <groupId>com.github.fge</groupId>
             <artifactId>json-schema-validator</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.fge</groupId>
-                    <artifactId>msg-simple</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

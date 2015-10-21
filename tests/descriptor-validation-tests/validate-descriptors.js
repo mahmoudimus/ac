@@ -3,36 +3,14 @@
 var marketplace = require('atlassian-connect-marketplace-scripts/marketplace.js'),
     downloader = require('atlassian-connect-marketplace-scripts/download-descriptors.js'),
     validator = require('atlassian-connect-validator'),
+    schemaMerger = require('atlassian-connect-json-schema-utils/merge-schemas.js'),
     _ = require('lodash'),
     fs = require('fs'),
-    path = require('path'),
     colors = require('colors'),
     util = require('util');
 
-var jiraSchemaPath = 'target/schema/jira-schema.json',
-    confluenceSchemaPath = 'target/schema/confluence-schema.json',
-    jiraSchema,
-    confluenceSchema;
-
-var schemaExists = function(schemaPath) {
-    return fs.existsSync(path.resolve(__dirname, schemaPath));
-};
-
-var loadSchema = function(schemaPath) {
-    return JSON.parse(fs.readFileSync(path.resolve(__dirname, schemaPath), 'utf8'));
-}
-
-if (!schemaExists(jiraSchemaPath) || !schemaExists(confluenceSchemaPath)) {
-    console.error("No schema found in path. Please build Atlassian Connect.");
-    process.exit();
-} else {
-    jiraSchema = loadSchema(jiraSchemaPath);
-    confluenceSchema = loadSchema(confluenceSchemaPath);
-}
-
-var warned = false,
-    validationResults = [],
-    counter = 0;
+var validationResults = [],
+    schemas = schemaMerger.mergeSchemas();
 
 function validate(opts, addonKey, descriptorFilename, descriptor, schema, callback) {
     validator.validateDescriptor(descriptor, schema, function (errors) {
@@ -114,7 +92,7 @@ downloader.run({
 
         var app = _.pluck(compatibleApps, "key")[0];
 
-        var schema = (app === "confluence" ? confluenceSchema : jiraSchema);
+        var schema = (app === "confluence" ? schemas.confluence : schemas.jira);
 
         marketplace.requestQueue().push({
             self: this,
@@ -132,4 +110,3 @@ process.on('exit', function() {
       }
   }
 });
-

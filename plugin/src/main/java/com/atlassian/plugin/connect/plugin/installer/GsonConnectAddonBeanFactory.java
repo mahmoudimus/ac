@@ -1,134 +1,132 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
-import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.Serializable;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
-/**
- *
- */
+@ExportAsDevService
 @Component
-public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, DisposableBean, InitializingBean
+public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
 {
     private static final Logger log = LoggerFactory.getLogger(GsonConnectAddonBeanFactory.class);
 
-    private final JsonDescriptorValidator jsonDescriptorValidator;
-    private final ConnectSchemaLocator connectSchemaLocator;
-    private final ApplicationProperties applicationProperties;
+    private final ConnectJsonSchemaValidator descriptorSchemaValidator;
     private final AddOnBeanValidatorService addOnBeanValidatorService;
-    private final IsDevModeService isDevModeService;
+    private final PluginRetrievalService pluginRetrievalService;
+    private final PluginAccessor pluginAccessor;
+    private Map<String, ConnectAddonBean> descriptorCache = Maps.newConcurrentMap();
 
     @Autowired
-    public GsonConnectAddonBeanFactory(final JsonDescriptorValidator jsonDescriptorValidator,
-            final AddOnBeanValidatorService addOnBeanValidatorService, final ConnectSchemaLocator connectSchemaLocator,
-            final ApplicationProperties applicationProperties,
-            IsDevModeService isDevModeService)
+    public GsonConnectAddonBeanFactory(ConnectJsonSchemaValidator descriptorSchemaValidator,
+            AddOnBeanValidatorService addOnBeanValidatorService,
+            PluginRetrievalService pluginRetrievalService,
+            PluginAccessor pluginAccessor)
     {
-        this.jsonDescriptorValidator = jsonDescriptorValidator;
+        this.descriptorSchemaValidator = descriptorSchemaValidator;
         this.addOnBeanValidatorService = addOnBeanValidatorService;
-        this.connectSchemaLocator = connectSchemaLocator;
-        this.applicationProperties = applicationProperties;
-        this.isDevModeService = isDevModeService;
+        this.pluginRetrievalService = pluginRetrievalService;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @Override
     public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException
     {
-        final String schema;
-        try
+        return descriptorCache.computeIfAbsent(jsonDescriptor, new Function<String, ConnectAddonBean>()
         {
-            schema = connectSchemaLocator.getSchemaForCurrentProduct();
-        }
-        catch (IOException e)
-        {
-            throw new IllegalStateException("Failed to read JSON schema for descriptor", e);
-        }
 
-        DescriptorValidationResult result = jsonDescriptorValidator.validate(jsonDescriptor, schema);
-        if (!result.isWellformed())
-        {
-            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getReportAsString(), "connect.invalid.descriptor.malformed.json");
-        }
-        if (!result.isValid())
-        {
-            String exceptionMessage = "Invalid connect descriptor: " + result.getReportAsString();
-            log.error(exceptionMessage);
-
-            String i18nKey;
-            Serializable[] params;
-            if (isDevModeService.isDevMode())
+            @Override
+            public ConnectAddonBean apply(String descriptor)
             {
-                i18nKey = "connect.install.error.remote.descriptor.validation.dev";
-                String validationMessage = buildErrorMessage(result);
-                params = new Serializable[] {validationMessage};
+                return fromJsonImpl(descriptor);
             }
-            else
-            {
-                i18nKey = "connect.install.error.remote.descriptor.validation";
-                params = new Serializable[] {applicationProperties.getDisplayName()};
-            }
-            throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
-        }
-
-        ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor);
-        addOnBeanValidatorService.validate(addOn);
-
-        return addOn;
+        });
     }
 
     @Override
-    public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor)
+    public void remove(String jsonDescriptor)
+    {
+        descriptorCache.remove(jsonDescriptor);
+    }
+
+    @Override
+    public void removeAll()
+    {
+        descriptorCache.clear();
+    }
+
+    private ConnectAddonBean fromJsonImpl(final String jsonDescriptor) throws InvalidDescriptorException
+    {
+        validateDescriptorAgainstSchema(jsonDescriptor);
+        ConnectAddonBean addon = deserializeDescriptor(jsonDescriptor);
+        addOnBeanValidatorService.validate(addon);
+        validateModules(addon);
+        return addon;
+    }
+
+    private void validateDescriptorAgainstSchema(String jsonDescriptor)
     {
         try
         {
-            return ConnectModulesGsonFactory.addonFromJson(jsonDescriptor);
-        }
-        catch (Exception e)
+            descriptorSchemaValidator.assertValidDescriptor(jsonDescriptor, getShallowSchemaUrl());
+        } catch (ConnectJsonSchemaValidationException e)
         {
-            String exceptionMessage = "Invalid connect descriptor: " + e.getMessage();
-            log.error(exceptionMessage);
-            throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
+            throw new InvalidDescriptorException(e.getMessage(), e.getI18nKey(), e.getI18nParameters());
         }
     }
 
-    @Override
-    public void destroy() throws Exception
+    private ConnectAddonBean deserializeDescriptor(final String jsonDescriptor)
     {
-        //JDEV-29184 -  we need to explicitly clean up threads in the underlying msg-simple library provided by the json-schema-validator
-        LoadingMessageSourceProvider.shutdown();
+        JsonElement element = new JsonParser().parse(jsonDescriptor);
+        ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJson(element);
+        ModuleListDeserializer moduleDeserializer = new ModuleListDeserializer(new PluginAvailableModuleTypes(pluginAccessor, shallowBean));
+
+        Map<String, Supplier<List<ModuleBean>>> moduleList;
+        moduleList = ConnectModulesGsonFactory.moduleListFromJson(element, moduleDeserializer);
+
+        return new ConnectAddonBeanBuilder(shallowBean).withModuleList(moduleList).build();
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception
+    private void validateModules(ConnectAddonBean addon)
     {
-        LoadingMessageSourceProvider.restartIfNeeded();
-    }
-
-    private String buildErrorMessage(DescriptorValidationResult result)
-    {
-        StringBuilder messageBuilder = new StringBuilder("<ul>");
-        for (String message : result.getReportMessages())
+        try
         {
-            messageBuilder.append("<li>");
-            messageBuilder.append(message);
+            addon.getModules();
         }
-        messageBuilder.append("</ul>");
-        return messageBuilder.toString();
+        catch (ConnectModuleValidationRuntimeException e)
+        {
+            ConnectModuleValidationException cause = e.getCause();
+            InvalidDescriptorException exception = new InvalidDescriptorException(cause.getMessage(),
+                    cause.getI18nKey(), cause.getI18nParameters());
+            exception.initCause(cause);
+            throw exception;
+        }
+    }
+
+    private URL getShallowSchemaUrl()
+    {
+        return pluginRetrievalService.getPlugin().getResource("/schema/shallow-schema.json");
     }
 }

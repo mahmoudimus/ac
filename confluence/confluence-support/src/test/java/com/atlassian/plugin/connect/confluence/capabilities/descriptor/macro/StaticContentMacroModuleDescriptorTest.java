@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.confluence.macro.RemoteMacroRendererImpl;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.sal.api.user.UserManager;

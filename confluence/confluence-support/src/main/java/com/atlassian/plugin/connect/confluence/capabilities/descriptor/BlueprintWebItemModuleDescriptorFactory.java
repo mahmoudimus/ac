@@ -4,7 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;

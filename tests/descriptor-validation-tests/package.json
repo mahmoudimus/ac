@@ -5,6 +5,7 @@
   "dependencies": {
     "atlassian-connect-marketplace-scripts": "git+ssh://git@stash.atlassian.com:7997/ac/marketplace-scripts.git#0.1",
     "atlassian-connect-validator": "0.0.5",
+    "atlassian-connect-json-schema-utils": "../../docs/json-schema-utils",
     "async": "~0.6.2",
     "request": "~2.33.0",
     "nomnom": "~1.6.1",

@@ -43,15 +43,15 @@ public class ConnectConditionMarshallingTest
                         instanceOf(CompositeConditionBean.class)));
 
         assertThat(((SingleConditionBean) conditionList.get(0)).getParams(), hasEntry("someParam","woot"));
-        assertThat((CompositeConditionBean)conditionList.get(2), both(hasProperty("type", is(CompositeConditionType.AND))).and(hasProperty("conditions", hasSize(2))));
-        assertThat((CompositeConditionBean)conditionList.get(3), both(hasProperty("type", is(CompositeConditionType.OR))).and(hasProperty("conditions", hasSize(2))));
+        assertThat(conditionList.get(2), both(hasProperty("type", is(CompositeConditionType.AND))).and(hasProperty("conditions", hasSize(2))));
+        assertThat(conditionList.get(3), both(hasProperty("type", is(CompositeConditionType.OR))).and(hasProperty("conditions", hasSize(2))));
 
     }
 
     @Test
     public void verifySerializationWorks() throws Exception
     {
-        String expected = "[{\"condition\":\"some_condition\",\"invert\":false},{\"and\":[{\"condition\":\"some_condition2\",\"invert\":false},{\"or\":[{\"condition\":\"some_condition3\",\"invert\":false}]}]}]";
+        String expected = readAddonTestFile("conditionUnmarshalling.json");
 
         Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
         List<ConditionalBean> conditionList = newArrayList();
@@ -69,7 +69,7 @@ public class ConnectConditionMarshallingTest
                         .build()
         );
 
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(conditionList, conditionalType);
 
         assertEquals(expected, json);

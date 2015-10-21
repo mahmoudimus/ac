@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.util.WaitUntil;
@@ -107,7 +107,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -129,7 +129,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -151,7 +151,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -173,7 +173,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -270,7 +270,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -304,8 +304,8 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext,
-                    getConnectPlugin(), "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext
+            );
 
             assertEquals(1, descriptors.size());
 
@@ -357,8 +357,8 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(
-                    moduleProviderContext, getConnectPlugin(), "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(
+                    newArrayList(bean), moduleProviderContext);
 
             assertEquals(1, descriptors.size());
 
@@ -409,8 +409,8 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext,
-                    getConnectPlugin(), "webItems", newArrayList(bean, bean2));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean, bean2), moduleProviderContext
+            );
 
             assertEquals(2, descriptors.size());
 

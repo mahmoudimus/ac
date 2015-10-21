@@ -1,28 +1,16 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
-import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
 import com.atlassian.annotations.PublicApi;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.extras.api.Contact;
 import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilter;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
@@ -35,6 +23,7 @@ import com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugins.rest.common.Link;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -44,14 +33,24 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.ResourceFilters;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDON_KEY_PATH_PARAMETER;
 
@@ -75,11 +74,12 @@ public class AddonsResource
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
     private final ProductAccessor productAccessor;
+    private ConnectAddonAccessor addonAccessor;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
             ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
-            UserManager userManager, ProductAccessor productAccessor)
+            UserManager userManager, ProductAccessor productAccessor, ConnectAddonAccessor addonAccessor)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -89,6 +89,7 @@ public class AddonsResource
         this.applicationProperties = applicationProperties;
         this.userManager = userManager;
         this.productAccessor = productAccessor;
+        this.addonAccessor = addonAccessor;
     }
 
     @GET
@@ -131,10 +132,10 @@ public class AddonsResource
     {
         try
         {
-            ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
-            if (addonBean != null)
+            Optional<ConnectAddonBean> optionalAddonBean = addonAccessor.getAddon(addonKey);
+            if (optionalAddonBean.isPresent())
             {
-                RestMinimalAddon addon = new RestMinimalAddon(addonKey, addonBean.getVersion());
+                RestMinimalAddon addon = new RestMinimalAddon(addonKey, optionalAddonBean.get().getVersion());
                 connectAddonManager.uninstallConnectAddon(addonKey);
                 return Response.ok().entity(addon).build();
             }
@@ -158,8 +159,8 @@ public class AddonsResource
     {
         try
         {
-            ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
-            if (addonBean != null)
+            Optional<ConnectAddonBean> optionalAddonBean = addonAccessor.getAddon(addonKey);
+            if (optionalAddonBean.isPresent())
             {
                 String descriptor = addonRegistry.getDescriptor(addonKey);
 
@@ -183,20 +184,18 @@ public class AddonsResource
 
     private RestAddons getAddonResources()
     {
-        List<RestMinimalAddon> result = Lists.newArrayList();
-        for (ConnectAddonBean addonBean : addonRegistry.getAllAddonBeans())
-        {
-            result.add(createJsonAddonRest(addonBean));
-        }
-        return new RestAddons<RestMinimalAddon>(result);
+        Collection<ConnectAddonBean> addons = addonAccessor.getAllAddons();
+        Iterable<RestLimitedAddon> restAddons = Iterables.transform(addons, addon -> createJsonAddonRest(addon));
+        return new RestAddons<>(Lists.newArrayList(restAddons));
     }
 
     private RestMinimalAddon getRestAddonByKey(String addonKey)
     {
         RestMinimalAddon restAddon = null;
-        for (ConnectAddonBean addonBean : addonRegistry.getAddonBean(addonKey))
+        Optional<ConnectAddonBean> optionalAddonBean = addonAccessor.getAddon(addonKey);
+        if (optionalAddonBean.isPresent())
         {
-            restAddon = createJsonAddonRest(addonBean);
+            restAddon = createJsonAddonRest(optionalAddonBean.get());
         }
         return restAddon;
     }

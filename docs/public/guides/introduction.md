@@ -12,7 +12,7 @@ language and web framework.
 
 Fundamentally, Atlassian Connect add-ons have three major capabilities:
 
-1. Insert content in [certain defined places](../modules/jira/index.html) in the Atlassian application's UI.
+1. Insert content in certain defined places in the Atlassian application's UI.
 2. Make calls to the Atlassian application's [REST API](../rest-apis/index.html).
 3. Listen and respond to [WebHooks](../modules/common/webhook.html) fired by the Atlassian application.
 
@@ -28,8 +28,7 @@ called modules.
 There are modules for [general pages](../modules/common/page.html) in the application
 or more specific locations, like [panels](../modules/common/web-panel.html) in JIRA issues
 or [macros](../modules/confluence/dynamic-content-macro.html) in Confluence pages. 
-Refer to the full module lists for [JIRA](../modules/jira/index.html) 
-and [Confluence](../modules/confluence/index.html).
+Refer to the full module lists for JIRA and Confluence.
 - **Request appropriate scopes.** Your add-on must specify what type of access it needs from the Atlassian
 application. You declare required scopes for the add-on in the add-on descriptor file. Scopes determine which REST API
 resources the add-on can use.

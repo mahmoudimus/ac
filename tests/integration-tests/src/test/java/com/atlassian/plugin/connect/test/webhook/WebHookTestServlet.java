@@ -119,7 +119,7 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .setAuthenticationToNone()
                 .addEnableLifecycle()
-                .addModule("webItems",randomWebItemBean())
+                .addModule("webItems", randomWebItemBean())
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
@@ -171,7 +171,7 @@ public final class WebHookTestServlet extends HttpServlet
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
-                .addModule("webItems",randomWebItemBean())
+                .addModule("webItems", randomWebItemBean())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 

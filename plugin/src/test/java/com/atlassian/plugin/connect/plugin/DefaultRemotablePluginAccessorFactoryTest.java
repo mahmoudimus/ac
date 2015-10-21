@@ -9,24 +9,22 @@ import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
-import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Supplier;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,9 +35,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @Ignore("convert to wired test")
@@ -61,9 +66,9 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private JwtService jwtService;
     @Mock private ConsumerService consumerService;
     @Mock private UserManager userManager;
-    @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
+    @Mock private ConnectAddonAccessor addonAccessor;
 
-    private DefaultRemotablePluginAccessorFactory factory;
+    private DefaultRemotablePluginAccessorFactoryImpl factory;
 
     private Plugin plugin;
 
@@ -74,7 +79,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        factory = new DefaultRemotablePluginAccessorFactoryImpl(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager, connectAddonBeanFactory);
+        factory = new DefaultRemotablePluginAccessorFactoryImpl(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager, addonAccessor);
     }
 
     @Test

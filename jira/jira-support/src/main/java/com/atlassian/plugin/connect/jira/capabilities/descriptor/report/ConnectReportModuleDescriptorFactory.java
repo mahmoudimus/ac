@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;

@@ -1,47 +1,28 @@
-{
-    "key": "my-plugin",
-    "name": "My Plugin",
-    "version": "1.0",
-    "vendor": {
-        "name": "Atlassian",
-        "url": "http://www.atlassian.com"
-    },
-    "links": {
-        "self": "http://www.example.com/capabilities",
-        "homepage": "http://www.example.com"
-    },
-    "baseUrl": "http://www.example.com",
-    "authentication" : {
-        "type" : "jwt",
-        "publicKey": "S0m3Publ1cK3y"
-    },
-    "modules": {
-        "jiraReports": [{
-            "key" : "jira-report",
-            "name" : {
-                "value" : "report",
-                "i18n" : "report i18n"
-            },
-            "description" : {
-                "value" : "description",
-                "i18n" : "description i18n"
-            },
-            "url" : "/report?projectId=${project.id}",
-            "weight" : 5,
-            "reportCategory" : "agile",
-            "thumbnailUrl" : "/report-thumbnail.jpg"
-        }, {
-            "key" : "jira-report-2",
-            "name" : {
-                "value" : "report-2",
-                "i18n" : "report i18n"
-            },
-            "description" : {
-                "value" : "description 2",
-                "i18n" : "description i18n"
-            },
-            "url" : "/report?projectId=${project.id}"
-        }]
-    },
-    "scopes" : []
-}
+[
+    {
+        "key" : "jira-report",
+        "name" : {
+            "value" : "report",
+            "i18n" : "report i18n"
+        },
+        "description" : {
+            "value" : "description",
+            "i18n" : "description i18n"
+        },
+        "url" : "/report?projectId=${project.id}",
+        "weight" : 5,
+        "reportCategory" : "agile",
+        "thumbnailUrl" : "/report-thumbnail.jpg"
+    }, {
+        "key" : "jira-report-2",
+        "name" : {
+            "value" : "report-2",
+            "i18n" : "report i18n"
+        },
+        "description" : {
+            "value" : "description 2",
+            "i18n" : "description i18n"
+        },
+        "url" : "/report?projectId=${project.id}"
+    }
+]

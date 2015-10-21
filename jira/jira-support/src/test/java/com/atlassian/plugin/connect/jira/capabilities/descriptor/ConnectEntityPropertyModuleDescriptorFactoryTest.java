@@ -16,7 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyC
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matchers;

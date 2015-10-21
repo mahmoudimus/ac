@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.jira.capabilities.beans;
 
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -11,10 +9,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -25,9 +20,9 @@ public class SearchRequestViewModuleBeanTest
     @Test
     public void producesCorrectJSON() throws Exception
     {
-        ConnectAddonBean bean = createBean();
+        SearchRequestViewModuleBean bean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = gson.toJson(bean, ConnectAddonBean.class);
+        String json = gson.toJson(bean, SearchRequestViewModuleBean.class);
         String expectedJson = readTestFile();
 
         assertThat(json, is(sameJSONAs(expectedJson)));
@@ -38,8 +33,8 @@ public class SearchRequestViewModuleBeanTest
     {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
-        ConnectAddonBean bean = createBean();
+        SearchRequestViewModuleBean deserializedBean = gson.fromJson(json, SearchRequestViewModuleBean.class);
+        SearchRequestViewModuleBean bean = createBean();
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
     }
@@ -47,33 +42,25 @@ public class SearchRequestViewModuleBeanTest
     @Test
     public void roundTrippingIsPreserving()
     {
-        ConnectAddonBean originalBean = createBean();
+        SearchRequestViewModuleBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = gson.toJson(originalBean, ConnectAddonBean.class);
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        String json = gson.toJson(originalBean, SearchRequestViewModuleBean.class);
+        SearchRequestViewModuleBean deserializedBean = gson.fromJson(json, SearchRequestViewModuleBean.class);
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }
 
-    private static ConnectAddonBean createBean()
+    private static SearchRequestViewModuleBean createBean()
     {
-        return newConnectAddonBean()
-                .withName("My Add-On")
-                .withKey("my-add-on")
-                .withVersion("2.0")
-                .withBaseurl("http://www.example.com")
-                .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule("jiraSearchRequestViews", SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
-                        .withName(new I18nProperty("My Search Request View", "my.searchRequestView"))
-                        .withKey("jira-search-request-view")
-                        .withDescription(new I18nProperty("My description", "my.searchRequestView.desc"))
-                        .withUrl("/search-request.csv")
-                        .withWeight(10)
-                        .withParam("delimiter", ",")
-                        .withConditions(newSingleConditionBean().withCondition("user_is_logged_in").build())
-                        .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT).build())
-                .build();
+        return SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
+            .withName(new I18nProperty("My Search Request View", "my.searchRequestView"))
+            .withKey("jira-search-request-view")
+            .withDescription(new I18nProperty("My description", "my.searchRequestView.desc"))
+            .withUrl("/search-request.csv")
+            .withWeight(10)
+            .withParam("delimiter", ",")
+            .withConditions(newSingleConditionBean().withCondition("user_is_logged_in").build())
+            .build();
     }
 
     private static String readTestFile() throws IOException

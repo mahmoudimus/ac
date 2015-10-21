@@ -23,7 +23,7 @@ language and web framework.
 
 Fundamentally, Connect add-ons have three major capabilities:
 
-1. Insert content in [certain defined places](./modules/jira/index.html) in the Atlassian application's UI.
+1. Insert content in certain defined places in the Atlassian application's UI.
 2. Make calls to the Atlassian application's [REST API](./rest-apis/index.html).
 3. Listen and respond to [WebHooks](./modules/common/webhook.html) fired by the Atlassian application.
 

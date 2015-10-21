@@ -2,6 +2,8 @@ package it.com.atlassian.plugin.connect.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
@@ -9,12 +11,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.spi.iframe.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,7 +26,6 @@ import java.net.URISyntaxException;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl.IFrameRenderStrategyImpl;
@@ -81,9 +80,6 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withModules("jiraWorkflowPostFunctions", bean)
                 .build();
 
-        // simulate a descriptor that includes an absolute url
-        addon = ConnectModulesGsonFactory.addonFromJson(ConnectModulesGsonFactory.addonBeanToJson(addon).replace("/view", BASE_URL + "/view"));
-
         plugin = testPluginInstaller.installAddon(addon);
     }
 
@@ -102,13 +98,6 @@ public class WorkflowPostFunctionModuleProviderTest
     {
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_INPUT_PARAMETERS, "/create");
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void absoluteWorkflowLinksAreRejected() throws Exception
-    {
-        // Url's must be relative
-        checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
     }
 
     @Test
