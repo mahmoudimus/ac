@@ -163,6 +163,12 @@ public class ConnectAppServlets
         return contextServlet;
     }
 
+    public static HttpServlet openMultipleDialogsServlet()
+    {
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("iframe-open-multiple-dialogs.mu"));
+        return contextServlet;
+    }
+
     /**
      * @return a servlet that closes a dialog
      */

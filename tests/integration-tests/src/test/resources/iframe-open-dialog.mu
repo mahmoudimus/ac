@@ -9,7 +9,7 @@
     <div>
       <button class="aui-button" id="dialog-open-button-key">Open dialog via key</button>
       <button class="aui-button" id="dialog-open-button-url">Open dialog via URL</button>
-      <button class="aui-button" id="dialog-open-button-for-multiple-dialogs">Open dialog that opens another dialog with a custom button</button>
+      <button class="aui-button" id="dialog-open-button-for-custom-button-dialog">Open dialog with a custom button</button>
       <br>
       Dialog Close Data: <span id="dialog-close-data"></span>
     </div>
@@ -41,9 +41,9 @@
         });
       });
 
-      // test opening a dialog
+      // test opening a dialog with a custom button
       AP.require(["_dollar", "dialog"], function($, dialog) {
-        $("#dialog-open-button-for-multiple-dialogs").bind("click", function() {
+        $("#dialog-open-button-for-custom-button-dialog").bind("click", function() {
           dialog.create({
                 width: "400px",
                 height: "300px",
@@ -56,7 +56,8 @@
           function createFullPageDialog() {
               dialog.create({
                   key: "full-page-dialog",
-                  size: "maximum"
+                  width: "800",
+                  height: "400"
               });
           }
 

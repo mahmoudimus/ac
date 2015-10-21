@@ -35,6 +35,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     private static final String ADDON_GENERALPAGE_WEBITEM_DIALOG = "general-page-opening-webitem-dialog";
     private static final String ADDON_WEBITEM_DIALOG = "my-webitem-dialog";
     private static final String ADDON_FULL_PAGE_DIALOG = "full-page-dialog";
+    private static final String ADDON_GENERALPAGE_WEBITEM_MULTIPLE_DIALOGS = "general-page-opening-webitem-multiple-dialogs";
 
     private static ConnectRunner runner;
 
@@ -65,6 +66,12 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                 .withLocation(getGloballyVisibleLocation())
                                 .build(),
                         newPageBean()
+                                .withName(new I18nProperty("DD", null))
+                                .withUrl("/general-page-creates-two-dialogs")
+                                .withKey(ADDON_GENERALPAGE_WEBITEM_MULTIPLE_DIALOGS)
+                                .withLocation(getGloballyVisibleLocation())
+                                .build(),
+                        newPageBean()
                                 .withName(new I18nProperty("EE", null))
                                 .withUrl("/full-page-dialog")
                                 .withKey(ADDON_FULL_PAGE_DIALOG)
@@ -72,7 +79,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
                 )
                 .addModules("webItems",
                         newWebItemBean()
-                                .withName(new I18nProperty("DD", null))
+                                .withName(new I18nProperty("FF", null))
                                 .withUrl("/my-webitem-dialog?myuserid={user.id}")
                                 .withKey(ADDON_WEBITEM_DIALOG)
                                 .withLocation("none")
@@ -86,6 +93,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
                 .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
                 .addRoute("/general-page", ConnectAppServlets.openDialogServlet(ADDON_WEBITEM_DIALOG))
                 .addRoute("/my-webitem-dialog", ConnectAppServlets.closeDialogServlet())
+                .addRoute("/general-page-creates-two-dialogs", ConnectAppServlets.openMultipleDialogsServlet())
                 .addRoute("/full-page-dialog", ConnectAppServlets.closeDialogServlet())
                 .start();
     }
@@ -135,12 +143,13 @@ public class TestDialog extends MultiProductWebDriverTestBase
                 RemoteDialogOpeningPage.class, runner.getAddon().getKey(), ADDON_GENERALPAGE_WEBITEM_DIALOG);
 
         // open a dialog and bind
-        RemoteCloseDialogPage theOpenedDialog = pageToOpenDialogFrom.clickToOpenDialog("dialog-open-button-for-multiple-dialogs", ADDON_WEBITEM_DIALOG);
+        RemoteCloseDialogPage theOpenedDialog = pageToOpenDialogFrom.clickToOpenDialog("dialog-open-button-for-custom-button-dialog", ADDON_WEBITEM_DIALOG);
 
         // get the custom button to open another dialog
         PageElement button = pageToOpenDialogFrom.getButtonByClassName("ap-dialog-custom-button");
 
         assertEquals("open full page dialog", button.getText());
+        assertEquals("test dialog close data", closeTheDialog(pageToOpenDialogFrom, theOpenedDialog));
     }
 
     @Test
@@ -148,15 +157,16 @@ public class TestDialog extends MultiProductWebDriverTestBase
     {
         // the confluence page
         RemoteDialogOpeningPage pageToOpenDialogFrom = loginAndVisit(testUserFactory.basicUser(),
-                RemoteDialogOpeningPage.class, runner.getAddon().getKey(), ADDON_GENERALPAGE_WEBITEM_DIALOG);
+                RemoteDialogOpeningPage.class, runner.getAddon().getKey(), ADDON_GENERALPAGE_WEBITEM_MULTIPLE_DIALOGS);
 
-        // open a dialog and bind
-        RemoteCloseDialogPage theOpenedDialog = pageToOpenDialogFrom.clickToOpenDialog("dialog-open-button-for-multiple-dialogs", ADDON_WEBITEM_DIALOG);
+        // open a dialog which will open a second dialog. We test for the top one
+        RemoteCloseDialogPage theOpenedDialog = pageToOpenDialogFrom.clickToOpenDialog("dialog-open-button-for-multiple-dialogs", ADDON_FULL_PAGE_DIALOG);
 
-        // get the custom button to open another dialog
-        PageElement button = pageToOpenDialogFrom.getButtonByClassName("ap-dialog-custom-button");
+        assertThat(theOpenedDialog.getIFrameSize().getWidth(), is(800));
+        assertThat(theOpenedDialog.getIFrameSize().getHeight(), is(400));
+        assertEquals("test dialog close data", closeTheDialog(pageToOpenDialogFrom, theOpenedDialog));
 
-        assertEquals("open full page dialog", button.getText());
+        // maybe check the one below was closed?
     }
 
     private void testOpenAndCloseWithPrependedAddOnKey(String pageKey, String dialogKey)
