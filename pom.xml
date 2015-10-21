@@ -32,6 +32,7 @@
         <module>tests</module>
         <module>docs</module>
         <module>crowd-support</module>
+        <module>jsapi</module>
     </modules>
 
     <scm>

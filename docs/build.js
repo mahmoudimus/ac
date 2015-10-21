@@ -556,10 +556,10 @@ function mergeFiles(toFile, filesToMerge){
 
 function compileJsDocs() {
     fs.copySync('./node_modules/atlassian-connect-js/dist/all-debug.js', 'target/gensrc/public/assets/js/connect-client.js');
-    fs.copySync('../plugin/src/main/resources/js/iframe/host/user.js', 'target/gensrc/public/assets/js/connect-user.js');
+    fs.copySync('../jsapi/src/main/resources/js/iframe/host/user.js', 'target/gensrc/public/assets/js/connect-user.js');
     // concatenate into the final host file
     var pluginFiles = [
-        '../plugin/src/main/resources/js/iframe/plugin/user.js'
+        '../jsapi/src/main/resources/js/iframe/plugin/user.js'
     ],
     hostFiles = [
         './node_modules/atlassian-connect-js/dist/connect-host.js',
