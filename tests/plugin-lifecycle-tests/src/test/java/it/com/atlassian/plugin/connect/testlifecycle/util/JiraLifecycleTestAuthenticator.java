@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.testlifecycle;
+package it.com.atlassian.plugin.connect.testlifecycle.util;
 
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;

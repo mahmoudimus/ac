@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.testlifecycle;
+package it.com.atlassian.plugin.connect.testlifecycle.util;
 
 /**
  * we have our own version of this because we can't use the test support installer due to it's dependency on connect modules
