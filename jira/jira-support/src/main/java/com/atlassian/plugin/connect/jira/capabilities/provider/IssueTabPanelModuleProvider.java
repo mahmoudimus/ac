@@ -52,6 +52,6 @@ public class IssueTabPanelModuleProvider extends ConnectTabPanelModuleProvider
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("issue-tab-page",
                 ConnectIssueTabPanelModuleDescriptor.class, ConnectIFrameIssueTabPanel.class);
 
-        return provideModules(moduleProviderContext, pluginRetrievalService.getPlugin(), modules, hints);
+        return provideModules(moduleProviderContext, modules, hints);
     }
 }

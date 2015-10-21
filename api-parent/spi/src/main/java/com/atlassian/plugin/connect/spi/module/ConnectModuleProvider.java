@@ -12,7 +12,7 @@ import java.util.List;
  *
  * A module provider defines an entry in the <pre>modules</pre> field of the Atlassian Connect add-on JSON descriptor.
  * The provider is responsible for validating the syntax and semantics of this descriptor entry, as well as for
- * mapping each descriptor module into one or several plugin modules.
+ * mapping each descriptor module into one or more plugin modules.
  *
  * @param <T> the type of the add-on descriptor module representation
  */

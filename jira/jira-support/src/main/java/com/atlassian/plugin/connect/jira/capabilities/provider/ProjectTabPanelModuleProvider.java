@@ -52,6 +52,6 @@ public class ProjectTabPanelModuleProvider extends ConnectTabPanelModuleProvider
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("project-tab-page",
                 ConnectProjectTabPanelModuleDescriptor.class, ConnectIFrameProjectTabPanel.class);
 
-        return provideModules(moduleProviderContext, pluginRetrievalService.getPlugin(), modules, hints);
+        return provideModules(moduleProviderContext, modules, hints);
     }
 }

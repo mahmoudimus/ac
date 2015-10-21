@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface AvailableModuleTypes
 {
-    abstract boolean validModuleType(String moduleType);
+    boolean validModuleType(String moduleType);
 
-    abstract boolean multipleModulesAllowed(String moduleType);
+    boolean multipleModulesAllowed(String moduleType);
 
-    abstract List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules) throws ConnectModuleValidationException;
+    List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules) throws ConnectModuleValidationException;
 }

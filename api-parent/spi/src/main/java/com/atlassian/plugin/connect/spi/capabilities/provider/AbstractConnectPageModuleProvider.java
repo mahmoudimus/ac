@@ -157,12 +157,12 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
         {
             for (SingleConditionBean condition : ConditionUtils.getSingleConditionsRecursively(page.getConditions()))
             {
-                assertValidPageCondition(page, condition.getCondition());
+                assertValidPageCondition(condition.getCondition());
             }
         }
     }
 
-    private void assertValidPageCondition(ConnectPageModuleBean page, String conditionString) throws ConnectModuleValidationException
+    private void assertValidPageCondition(String conditionString) throws ConnectModuleValidationException
     {
         if (!pageConditionsFactory.getConditionNames().contains(conditionString) && !isRemoteCondition(conditionString))
         {

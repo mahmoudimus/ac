@@ -52,6 +52,6 @@ public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("profile-tab-page",
                 ConnectViewProfilePanelModuleDescriptor.class, ConnectIFrameProfileTabPanel.class);
 
-        return provideModules(moduleProviderContext, pluginRetrievalService.getPlugin(), modules, hints);
+        return provideModules(moduleProviderContext, modules, hints);
     }
 }

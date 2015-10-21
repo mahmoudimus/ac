@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.jira.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
@@ -38,7 +37,7 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectM
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }
 
-    protected List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints)
+    protected List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (ConnectTabPanelModuleBean bean : beans)
