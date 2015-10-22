@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.56-SNAPSHOT</version>
+        <version>1.1.57-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -93,6 +93,17 @@
     </profiles>
 
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-test-support-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.atlassian</groupId>
             <artifactId>atlassian-test-categories</artifactId>

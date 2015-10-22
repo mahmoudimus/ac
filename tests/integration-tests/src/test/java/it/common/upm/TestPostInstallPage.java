@@ -1,5 +1,6 @@
 package it.common.upm;
 
+import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
 import com.atlassian.upm.pageobjects.PluginManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class TestPostInstallPage extends AbstractUpmPageTest
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        startConnectAddOn(MODULE_NAME);
+        startConnectAddOn(MODULE_NAME, new PostInstallPageModuleMeta());
     }
 
     @Test

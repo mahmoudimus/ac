@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@ExportAsDevService
 public class IFrameRenderStrategyBuilderFactoryImpl implements IFrameRenderStrategyBuilderFactory
 {
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;

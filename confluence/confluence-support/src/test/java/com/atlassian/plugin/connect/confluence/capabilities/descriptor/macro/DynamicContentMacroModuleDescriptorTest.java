@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.confluence.macro.MacroModuleContextExtractor
 import com.atlassian.plugin.connect.confluence.macro.RemoteMacroRendererImpl;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import org.junit.runner.RunWith;

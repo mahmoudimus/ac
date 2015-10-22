@@ -3,16 +3,12 @@ package it.jira.iframe;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
@@ -56,7 +52,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
-                .addModule(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
+                .addModule("jiraProjectAdminTabPanels", newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(PROJECT_CONFIG_TAB_NAME, null))
                         .withKey(PROJECT_CONFIG_MODULE_KEY)
                         .withUrl("/pct")

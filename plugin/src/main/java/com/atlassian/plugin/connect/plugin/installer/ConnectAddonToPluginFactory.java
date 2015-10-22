@@ -4,8 +4,10 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
+import com.atlassian.plugin.connect.modules.beans.ConfigurePageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.google.common.base.Strings;
 
@@ -28,11 +30,6 @@ public class ConnectAddonToPluginFactory
         this.beanToModuleRegistrar = beanToModuleRegistrar;
     }
 
-    public Plugin create(ConnectAddonBean addon)
-    {
-        return create(addon,PluginState.DISABLED);
-    }
-
     public Plugin create(ConnectAddonBean addon, PluginState state)
     {
         ConnectAddonPlugin plugin = new ConnectAddonPlugin(beanToModuleRegistrar.getRegisteredDescriptorsForAddon(addon.getKey()));
@@ -53,7 +50,6 @@ public class ConnectAddonToPluginFactory
         pluginInfo.setVendorUrl(addon.getVendor().getUrl());
         pluginInfo.setVersion(addon.getVersion());
 
-
         pluginInfo.addParameter(ATLASSIAN_CONNECT_INFO_PARAM, "true");
 
         if (addon.getEnableLicensing())
@@ -61,18 +57,21 @@ public class ConnectAddonToPluginFactory
             pluginInfo.addParameter(ATLASSIAN_LICENSING_ENABLED, "true");
         }
 
-        ConnectPageModuleBean configurePage = addon.getModules().getConfigurePage();
-        if (null != configurePage && !Strings.isNullOrEmpty(configurePage.getUrl()))
-        {
-            pluginInfo.addParameter(CONFIGURE_URL, ConnectIFrameServletPath.forModule(addon.getKey(), configurePage.getRawKey()));
-        }
+        addPluginInfoParameterForPageIfDeclared(pluginInfo, CONFIGURE_URL, addon, new ConfigurePageModuleMeta().getDescriptorKey());
+        addPluginInfoParameterForPageIfDeclared(pluginInfo, POST_INSTALL_URL, addon, new PostInstallPageModuleMeta().getDescriptorKey());
 
-        ConnectPageModuleBean postInstallPage = addon.getModules().getPostInstallPage();
-        if (null != postInstallPage && !Strings.isNullOrEmpty(postInstallPage.getUrl()))
-        {
-            pluginInfo.addParameter(POST_INSTALL_URL, ConnectIFrameServletPath.forModule(addon.getKey(), postInstallPage.getRawKey()));
-        }
-        
         return pluginInfo;
+    }
+
+    private void addPluginInfoParameterForPageIfDeclared(PluginInformation pluginInfo, String parameterKey, ConnectAddonBean addon, String descriptorKey)
+    {
+        if (addon.getModules() != null && addon.getModules().get(descriptorKey) != null)
+        {
+            ConnectPageModuleBean page = (ConnectPageModuleBean) addon.getModules().get(descriptorKey).get(0);
+            if (null != page && !Strings.isNullOrEmpty(page.getUrl()))
+            {
+                pluginInfo.addParameter(parameterKey, ConnectIFrameServletPath.forModule(addon.getKey(), page.getRawKey()));
+            }
+        }
     }
 }

@@ -4,9 +4,9 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.core.http.auth.SimplePrincipal;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.atlassian.jwt.JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION;
@@ -46,7 +47,6 @@ import static java.lang.Boolean.getBoolean;
 public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
 {
     private final ThreeLeggedAuthService threeLeggedAuthService;
-    private final ConnectAddonManager connectAddonManager;
     private final AuthenticationListener authenticationListener;
     private final JwtApplinkFinder jwtApplinkFinder;
     private final UserManager userManager;
@@ -55,11 +55,12 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
     private static final String MSG_FORMAT_NOT_ALLOWING_IMPERSONATION = "Add-on '%s' disallowed to impersonate user '%s'";
+    private final ConnectAddonAccessor addonAccessor;
     private AtomicBoolean started = new AtomicBoolean(false);
 
     @Autowired
     public ThreeLeggedAuthFilter(ThreeLeggedAuthService threeLeggedAuthService,
-                                 ConnectAddonManager connectAddonManager,
+                                 ConnectAddonAccessor addonAccessor,
                                  UserManager userManager,
                                  ConnectUserService userService,
                                  AuthenticationListener authenticationListener,
@@ -67,7 +68,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
                                  I18nResolver i18nResolver)
     {
         this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService, "threeLeggedAuthService");
-        this.connectAddonManager = checkNotNull(connectAddonManager, "connectAddOnManager");
+        this.addonAccessor = addonAccessor;
         this.userManager = checkNotNull(userManager, "userManager");
         this.userService = checkNotNull(userService, "userService");
         this.authenticationListener = checkNotNull(authenticationListener, "authenticationListener");
@@ -106,10 +107,10 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
 
         if (!StringUtils.isEmpty(addOnKey))
         {
-            final ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addOnKey);
-            if (isJsonJwtAddon(addonBean))
+            final Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(addOnKey);
+            if (optionalAddon.isPresent() && isJsonJwtAddon(optionalAddon.get()))
             {
-                processAddOnRequest(filterChain, request, response, addonBean);
+                processAddOnRequest(filterChain, request, response, optionalAddon.get());
             }
             else
             {
@@ -151,7 +152,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
 
     private boolean isJsonJwtAddon(ConnectAddonBean addonBean)
     {
-        return addonBean != null && addonBean.getAuthentication() != null && addonBean.getAuthentication().getType() == AuthenticationType.JWT;
+        return addonBean.getAuthentication() != null && addonBean.getAuthentication().getType() == AuthenticationType.JWT;
     }
 
     private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, ConnectAddonBean addOnBean) throws IOException, ServletException

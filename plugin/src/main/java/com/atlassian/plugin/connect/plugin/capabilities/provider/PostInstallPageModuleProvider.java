@@ -1,52 +1,67 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PostInstallPageModuleDescriptor;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.google.common.collect.ImmutableList;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Component
 public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProvider
 {
+
+    private static final PostInstallPageModuleMeta META = new PostInstallPageModuleMeta();
+
     @Autowired
-    public PostInstallPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                         IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                         WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                         ProductAccessor productAccessor)
+    public PostInstallPageModuleProvider(PluginRetrievalService pluginRetrievalService,
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            PageConditionsFactory pageConditionsFactory,
+            ProductAccessor productAccessor,
+            ConnectJsonSchemaValidator schemaValidator)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
-                productAccessor);
+        super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
+                webItemModuleDescriptorFactory, pageConditionsFactory, schemaValidator, productAccessor);
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<ConnectPageModuleBean> beans)
+    public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        super.provideModules(moduleProviderContext, theConnectPlugin, jsonFieldName, beans);
+        return META;
+    }
 
-        if(null != beans && !beans.isEmpty())
+    @Override
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    {
+        super.createPluginModuleDescriptors(modules, moduleProviderContext);
+
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
+        Iterator<ConnectPageModuleBean> iterator = modules.iterator();
+        if (iterator.hasNext())
         {
-            ConnectPageModuleBean postInstallBean = beans.get(0);
-
+            ConnectPageModuleBean postInstallPage = iterator.next();
             ModuleDescriptor descriptor = new PostInstallPageModuleDescriptor();
-            descriptor.init(theConnectPlugin, new DOMElement("connectPostInstallPage").addAttribute("key",
-                    postInstallBean.getKey(moduleProviderContext.getConnectAddonBean())));
-
-            return ImmutableList.of(descriptor);
+            descriptor.init(pluginRetrievalService.getPlugin(), new DOMElement("connectPostInstallPage").addAttribute("key",
+                    postInstallPage.getKey(moduleProviderContext.getConnectAddonBean())));
+            descriptors.add(descriptor);
         }
-
-        return Collections.EMPTY_LIST;
+        return descriptors;
     }
 
     @Override

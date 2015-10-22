@@ -1,12 +1,15 @@
 package it.com.atlassian.plugin.connect.jira;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
-import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.google.common.base.Strings;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,6 +21,7 @@ import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newA
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean.newSearchRequestViewModuleBean;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class SearchRequestViewTest
@@ -55,11 +59,13 @@ public class SearchRequestViewTest
 
         try
         {
-            assertEquals(url, new com.google.gson.JsonParser().parse(connectAddonRegistry.getDescriptor(key)).getAsJsonObject()
-                    .get("modules").getAsJsonObject()
-                    .get("jiraSearchRequestViews").getAsJsonArray()
-                    .get(0).getAsJsonObject()
-                    .get("url").getAsString());
+            String descriptor = connectAddonRegistry.getDescriptor(key);
+            assertFalse(Strings.isNullOrEmpty(descriptor));
+
+            JsonNode descriptorNode = new ObjectMapper().readTree(descriptor);
+            JsonNode urlNode = descriptorNode.path("modules").path("jiraSearchRequestViews").path(0).path("url");
+            assertFalse(urlNode.isMissingNode());
+            assertEquals(url, urlNode.asText());
         }
         finally
         {

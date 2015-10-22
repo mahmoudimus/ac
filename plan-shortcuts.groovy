@@ -84,7 +84,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run QUnit Tests using Karma',
-                    goal: 'package -Pkarma-tests -DskipUnits',
+                    goal: '-pl jsapi package -Pkarma-tests',
                     environmentVariables: ''
             )
             artifactDefinition(
@@ -118,6 +118,12 @@ runTestsStage() {
                     description: 'Run Add-On Descriptor Validation Tests',
                     goal: '-pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -am',
                     environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
+            )
+            artifactDefinition(
+                    name: 'Global schema',
+                    location: 'tests/descriptor-validation-tests/target/schema',
+                    pattern: '*-global-schema.json',
+                    shared: 'false'
             )
             artifactDefinition(
                     name: 'Validator output',

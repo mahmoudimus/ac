@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.web.api.WebItem;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.util.ConnectTestUserFactory;
 import it.util.TestUser;

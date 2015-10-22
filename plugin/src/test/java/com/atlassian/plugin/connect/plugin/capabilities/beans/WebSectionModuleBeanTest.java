@@ -1,23 +1,19 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
-import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebSectionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertThat;
@@ -28,20 +24,17 @@ public class WebSectionModuleBeanTest
     public void producesCorrectBean() throws Exception
     {
         Gson gson = ConnectModulesGsonFactory.getGson();
-
         WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
-        ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean).build();
-
         String json = readTestFile("defaultWebSectionTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
-
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
+        WebSectionModuleBean deserializedBean = gson.fromJson(json, WebSectionModuleBean.class);
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(webSectionBean));
     }
 
     @Test
     public void producesCorrectBeanWithFunkyWebSections() throws Exception
     {
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        final GsonBuilder gsonBuilder = ConnectModulesGsonFactory.getGsonBuilder();
+        Gson gson = gsonBuilder.create();
 
         WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
 
@@ -58,33 +51,12 @@ public class WebSectionModuleBeanTest
                         .withLocation("recipes")
                         .withTooltip(new I18nProperty("Chickpeas and hummous", "falafel.ingredients"))
                         .build();
-
-        ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean, hiddenSpoonSection, falafelSection).build();
+        
+        List<WebSectionModuleBean> beans = new ArrayList<>(Arrays.asList(webSectionBean, hiddenSpoonSection, falafelSection));
 
         String json = readTestFile("funkyWebSectionTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
-
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
-    }
-
-    private ConnectAddonBeanBuilder createAddonBeanBuilder(WebSectionModuleBean... webSectionBeans)
-    {
-        Map<String, String> links = ImmutableMap.of(
-                "self", "http://www.example.com/capabilities",
-                "homepage", "http://www.example.com"
-        );
-
-        return newConnectAddonBean()
-                .withName("My Plugin")
-                .withKey("my-plugin")
-                .withVersion("1.0")
-                .withLinks(links)
-                .withBaseurl("http://www.example.com")
-                .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModules("webSections", webSectionBeans)
-                .withAuthentication(
-                        newAuthenticationBean()
-                                .withType(AuthenticationType.JWT).build());
+        List<WebSectionModuleBean> deserializedBeans = gson.fromJson(json, List.class);
+        assertThat(deserializedBeans, sameDeepPropertyValuesAs(beans));
     }
 
     private WebSectionModuleBeanBuilder createWebSectionBeanBuilder()

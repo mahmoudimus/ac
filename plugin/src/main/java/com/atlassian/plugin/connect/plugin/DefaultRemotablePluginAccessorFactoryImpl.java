@@ -10,11 +10,11 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -51,7 +52,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
     private final JwtService jwtService;
     private final ConsumerService consumerService;
     private final UserManager userManager;
-    private final ConnectAddonBeanFactory connectAddonBeanFactory;
+    private ConnectAddonAccessor addonAccessor;
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
@@ -67,8 +68,8 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
                                                  EventPublisher eventPublisher,
                                                  JwtService jwtService,
                                                  ConsumerService consumerService,
-                                                 UserManager userManager, 
-                                                 ConnectAddonBeanFactory connectAddonBeanFactory)
+                                                 UserManager userManager,
+                                                 ConnectAddonAccessor addonAccessor)
     {
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddonRegistry = connectAddonRegistry;
@@ -79,9 +80,9 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         this.eventPublisher = eventPublisher;
         this.consumerService = consumerService;
         this.userManager = userManager;
-        this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.eventPublisher.register(this);
         this.jwtService = jwtService;
+        this.addonAccessor = addonAccessor;
 
         this.accessors = CopyOnWriteMap.newHashMap();
     }
@@ -123,11 +124,12 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
     public RemotablePluginAccessor get(String pluginKey)
     {
-        if(connectAddonRegistry.hasDescriptor(pluginKey))
+        Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
+        if (optionalAddon.isPresent())
         {
-            return get(connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(pluginKey)));
+            return get(optionalAddon.get());
         }
-        
+
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         return get(plugin, pluginKey);
     }
@@ -327,7 +329,6 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @deprecated use {@code create(ConnectAddonBean addon, Supplier<URI> displayUrl)} instead
      */
     @Deprecated
-    @Override
     public RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl)
     {
         
@@ -350,7 +351,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
         if (AuthenticationMethod.JWT.equals(authenticationMethod))
         {
-            final ConnectAddonBean addon = connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(pluginKey));
+            ConnectAddonBean addon = addonAccessor.getAddon(pluginKey).get();
             return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtService, consumerService,
                     connectApplinkManager, httpContentRetriever, userManager);
         }

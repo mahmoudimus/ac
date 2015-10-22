@@ -1,0 +1,22 @@
+{
+    "conditions": [
+        {
+            "condition": "user_is_logged_in",
+            "invert": false
+        }
+    ],
+    "description": {
+        "i18n": "my.searchRequestView.desc",
+        "value": "My description"
+    },
+    "name": {
+        "i18n": "my.searchRequestView",
+        "value": "My Search Request View"
+    },
+    "key":"jira-search-request-view",
+    "params": {
+        "delimiter": ","
+    },
+    "url": "/search-request.csv",
+    "weight": 10
+}

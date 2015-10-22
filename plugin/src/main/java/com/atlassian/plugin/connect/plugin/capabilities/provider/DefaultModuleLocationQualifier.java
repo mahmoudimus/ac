@@ -1,10 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 import com.atlassian.plugin.connect.spi.module.ModuleLocationQualifier;
 import com.google.common.base.Function;
@@ -15,6 +12,12 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
 {
@@ -30,41 +33,26 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
     public DefaultModuleLocationQualifier(final ConnectAddonBean addonBean)
     {
         this.addonBean = addonBean;
-        this.keyMapSupplier = Suppliers.memoize(new Supplier<Map<String, String>>()
-        {
-            @Override
-            public Map<String, String> get()
-            {
-                return ImmutableMap.<String, String>builder()
-                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().getWebItems()))
-                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().getWebSections()))
-                        .build();
-            }
-        });
+        this.keyMapSupplier = Suppliers.memoize(() -> ImmutableMap.<String, String>builder()
+                .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webItems")))
+                .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webSections")))
+                .build());
     }
 
-
-    private <T extends RequiredKeyBean> Map<String, String> createKeyToQualifiedKeyMap(List<T> beans)
+    private Map<String, String> createKeyToQualifiedKeyMap(@Nullable List<ModuleBean> modules)
     {
-        final ImmutableMap<String, T> map = Maps.uniqueIndex(beans, new Function<T, String>()
+        if (modules == null)
         {
-            @Override
-            public String apply(@Nullable T bean)
-            {
-                return bean.getRawKey();
-            }
-        });
+            return new HashMap<>();
+        }
 
-        return Maps.transformValues(map, new Function<T, String>()
-        {
-            @Override
-            public String apply(@Nullable T bean)
-            {
-                return bean.getKey(addonBean);
-            }
-        });
+        List<RequiredKeyBean> requiredKeyBeans = modules.stream()
+                .filter((module) -> module instanceof RequiredKeyBean)
+                .map(RequiredKeyBean.class::cast)
+                .collect(Collectors.toList());
+        ImmutableMap<String, RequiredKeyBean> rawKeyMap = Maps.uniqueIndex(requiredKeyBeans, RequiredKeyBean::getRawKey);
+        return Maps.transformValues(rawKeyMap, (requiredKeyBean) -> requiredKeyBean.getKey(addonBean));
     }
-
 
     @Override
     public String processLocation(String location)

@@ -1,26 +1,30 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
-import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
-import java.util.Collections;
-
-public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectPageModuleProvider
+public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectCorePageModuleProvider
 {
-    public static final String ATL_GENERAL_DECORATOR = "atl.general";
-    private final ProductAccessor productAccessor;
 
-    public AbstractGeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                             ProductAccessor productAccessor)
+    private static final String ATL_GENERAL_DECORATOR = "atl.general";
+
+    protected final ProductAccessor productAccessor;
+
+    public AbstractGeneralPageModuleProvider(PluginRetrievalService pluginRetrievalService,
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            PageConditionsFactory pageConditionsFactory,
+            ConnectJsonSchemaValidator schemaValidator,
+            ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+        super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
+                webItemModuleDescriptorFactory, pageConditionsFactory, schemaValidator);
         this.productAccessor = productAccessor;
     }
 

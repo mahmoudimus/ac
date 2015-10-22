@@ -1,37 +1,33 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPathBuilder;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.AdditionalMatchers.not;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
@@ -40,18 +36,14 @@ public class AddOnScopeManagerImplTest
 {
     private static final String PLUGIN_KEY = "a plugin key";
 
-    private AddOnScopeManager addOnScopeManager;
+    @InjectMocks
+    private AddOnScopeManagerImpl addOnScopeManager;
 
     @Mock
-    private PluginAccessor pluginAccessor;
-    @Mock
-    private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    @Mock
     private ScopeService scopeService;
+
     @Mock
-    private ConnectAddonRegistry connectAddonRegistry;
-    @Mock
-    private ConnectAddonBeanFactory connectAddonBeanFactory;
+    private ConnectAddonAccessor addonAccessor;
 
     @Mock
     private HttpServletRequest request;
@@ -63,26 +55,24 @@ public class AddOnScopeManagerImplTest
     @Before
     public void beforeEachTest() throws IOException
     {
-        when(jsonConnectAddOnIdentifierService.isConnectAddOn(not(eq(PLUGIN_KEY)))).thenThrow(new IllegalArgumentException("Only " + PLUGIN_KEY + " is to be used as a plugin key"));
-        when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user");
         when(request.getContextPath()).thenReturn("/jira");
         when(request.getMethod()).thenReturn("GET");
         when(scopeService.build()).thenReturn(buildTestScopes());
-        addOnScopeManager = new AddOnScopeManagerImpl(scopeService, connectAddonRegistry, connectAddonBeanFactory);
+        addOnScopeManager = new AddOnScopeManagerImpl(scopeService, addonAccessor);
     }
 
     @Test
     public void validJsonDescriptorScopeIsInScopeInProdMode()
     {
-        setup().withScope(ScopeName.READ);
+        when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.READ)));
         assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
     @Test
     public void invalidJsonDescriptorScopeIsOutOfScope()
     {
-        setup();
+        when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes()));
         assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -91,7 +81,7 @@ public class AddOnScopeManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
-        setup().withScope(ScopeName.WRITE);
+        when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.WRITE)));
         assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
@@ -100,7 +90,7 @@ public class AddOnScopeManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
-        setup().withScope(ScopeName.READ);
+        when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.READ)));
         assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -109,7 +99,7 @@ public class AddOnScopeManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
-        setup().withScope(ScopeName.DELETE);
+        when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.DELETE)));
         assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
@@ -118,7 +108,7 @@ public class AddOnScopeManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
-        setup().withScope(ScopeName.WRITE);
+        when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.WRITE)));
         assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -130,7 +120,7 @@ public class AddOnScopeManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
         when(request.getMethod()).thenReturn("GET");
-        setup().withScope(ScopeName.READ);
+        when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.READ)));
         assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -139,46 +129,18 @@ public class AddOnScopeManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
         when(request.getMethod()).thenReturn("GET");
-        setup().withScope(ScopeName.READ);
+        when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.READ)));
         assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
-    private Setup setup()
+    private ConnectAddonBean buildAddOnBeanWithScopes(ScopeName... scopeNames)
     {
-        return new Setup();
-    }
-
-    private class Setup
-    {
-        private Setup()
-        {
-            when(jsonConnectAddOnIdentifierService.isConnectAddOn(PLUGIN_KEY)).thenReturn(true);
-
-            final String mockDescriptor = buildMockDescriptor();
-            when(connectAddonRegistry.getDescriptor(PLUGIN_KEY)).thenReturn(mockDescriptor);
-            when(connectAddonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(buildAddOnBean(Collections.<ScopeName>emptySet()));
-        }
-
-        Setup withScope(ScopeName scopeName)
-        {
-            when(connectAddonBeanFactory.fromJsonSkipValidation(buildMockDescriptor())).thenReturn(buildAddOnBean(new HashSet<>(asList(scopeName))));
-            return this;
-        }
-
-        private String buildMockDescriptor()
-        {
-            return String.format("~~ mock descriptor for add-on %s ~~", PLUGIN_KEY);
-        }
-
-        private ConnectAddonBean buildAddOnBean(Set<ScopeName> scopeNames)
-        {
-            return ConnectAddonBean.newConnectAddonBean()
-                    .withKey(PLUGIN_KEY)
-                    .withName("Mock add-on " + PLUGIN_KEY)
-                    .withBaseurl("https://example.com/" + PLUGIN_KEY)
-                    .withScopes(scopeNames)
-                    .build();
-        }
+        return ConnectAddonBean.newConnectAddonBean()
+                .withKey(PLUGIN_KEY)
+                .withName("Mock add-on " + PLUGIN_KEY)
+                .withBaseurl("https://example.com/" + PLUGIN_KEY)
+                .withScopes(Sets.newHashSet(scopeNames))
+                .build();
     }
 
     private Collection<AddOnScope> buildTestScopes()

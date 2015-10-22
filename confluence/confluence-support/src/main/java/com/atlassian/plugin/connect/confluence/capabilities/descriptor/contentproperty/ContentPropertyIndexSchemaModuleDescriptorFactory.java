@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExt
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 

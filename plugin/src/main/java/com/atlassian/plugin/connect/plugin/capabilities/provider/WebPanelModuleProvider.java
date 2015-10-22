@@ -2,71 +2,76 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelModuleBean>
+public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<WebPanelModuleBean>
 {
+
+    private static final WebPanelModuleMeta META = new WebPanelModuleMeta();
+
     private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Autowired
-    public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory,
+    public WebPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
+            ConnectJsonSchemaValidator schemaValidator,
+            WebPanelConnectModuleDescriptorFactory webPanelFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
+        super(pluginRetrievalService, schemaValidator);
         this.webPanelFactory = webPanelFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<WebPanelModuleBean> beans)
+    public ConnectModuleMeta<WebPanelModuleBean> getMeta()
+    {
+        return META;
+    }
+
+    @Override
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
-
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (WebPanelModuleBean bean : beans)
+        for (WebPanelModuleBean webPanel : modules)
         {
-            // register an iframe rendering strategy
-            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(connectAddonBean.getKey())
-                    .module(bean.getKey(connectAddonBean))
-                    .genericBodyTemplate()
-                    .urlTemplate(bean.getUrl())
-                    .title(bean.getDisplayName())
-                    .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
-                    .build();
-            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
-
-            // construct a module descriptor that will supply a web panel to the product
-            descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
+            registerIframeRenderStrategy(webPanel, moduleProviderContext.getConnectAddonBean());
+            descriptors.add(webPanelFactory.createModuleDescriptor(moduleProviderContext,
+                    pluginRetrievalService.getPlugin(), webPanel));
         }
-
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectModuleProviderContext moduleProviderContext,
-                                                                     Plugin theConnectPlugin, WebPanelModuleBean bean)
+    private void registerIframeRenderStrategy(WebPanelModuleBean webPanel, ConnectAddonBean descriptor)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
-
-        descriptors.add(webPanelFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
-
-        return descriptors;
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                .addOn(descriptor.getKey())
+                .module(webPanel.getKey(descriptor))
+                .genericBodyTemplate()
+                .urlTemplate(webPanel.getUrl())
+                .title(webPanel.getDisplayName())
+                .dimensions(webPanel.getLayout().getWidth(), webPanel.getLayout().getHeight())
+                .build();
+        iFrameRenderStrategyRegistry.register(descriptor.getKey(), webPanel.getRawKey(), renderStrategy);
     }
+
 }

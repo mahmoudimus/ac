@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.confluence.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -13,13 +14,15 @@ import com.atlassian.plugin.connect.confluence.iframe.context.SpaceToolsContextI
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -40,8 +43,9 @@ import static com.google.common.collect.Lists.newArrayList;
  * The other web item is for the legacy Space Admin section, which appears for Documentation Theme spaces.
  */
 @ConfluenceComponent
-public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceToolsTabModuleBean>
+public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModuleProvider<SpaceToolsTabModuleBean>
 {
+
     @VisibleForTesting
     public static final String SPACE_TOOLS_SECTION = "system.space.tools";
     @VisibleForTesting
@@ -53,6 +57,8 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     @VisibleForTesting
     public static final String SPACE_ADMIN_KEY_SUFFIX = "-legacy-space-admin";
 
+    private static final SpaceToolsTabModuleMeta META = new SpaceToolsTabModuleMeta();
+
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final XWorkActionDescriptorFactory xWorkActionDescriptorFactory;
     private final ProductAccessor productAccessor;
@@ -60,11 +66,14 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Autowired
-    public SpaceToolsTabModuleProvider(final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            final XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor,
+    public SpaceToolsTabModuleProvider(PluginRetrievalService pluginRetrievalService,
+            ConnectJsonSchemaValidator schemaValidator,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
+        super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.xWorkActionDescriptorFactory = xWorkActionDescriptorFactory;
         this.productAccessor = productAccessor;
@@ -73,14 +82,21 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
+    public ConnectModuleMeta<SpaceToolsTabModuleBean> getMeta()
+    {
+        return META;
+    }
+
+    @Override
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SpaceToolsTabModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
     {
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        List<ModuleDescriptor> modules = newArrayList();
-        for (SpaceToolsTabModuleBean bean : beans)
+        Plugin plugin = pluginRetrievalService.getPlugin();
+        List<ModuleDescriptor> moduleDescriptors = newArrayList();
+        for (SpaceToolsTabModuleBean bean : modules)
         {
             XWorkActionModuleBean actionBean = createActionBean(connectAddonBean, bean);
-            modules.add(xWorkActionDescriptorFactory.create(connectAddonBean, theConnectPlugin, actionBean));
+            moduleDescriptors.add(xWorkActionDescriptorFactory.create(connectAddonBean, plugin, actionBean));
 
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
@@ -94,11 +110,11 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
             {
-                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin,
+                moduleDescriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin,
                         webItemModuleBean));
             }
         }
-        return modules;
+        return moduleDescriptors;
     }
 
     private XWorkActionModuleBean createActionBean(ConnectAddonBean addon, SpaceToolsTabModuleBean bean)
@@ -119,7 +135,6 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
                         .build())
                 .withVelocityResult("success", "/velocity/confluence/space-tab-page.vm")
                 .build();
-
     }
 
     private List<WebItemModuleBean> createWebItemBeans(SpaceToolsTabModuleBean bean, String actionUrl)

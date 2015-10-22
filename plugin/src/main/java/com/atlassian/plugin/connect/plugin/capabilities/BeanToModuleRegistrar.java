@@ -1,65 +1,58 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleList;
-import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.modules.util.ProductFilter;
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.descriptor.ConnectModuleProviderModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
-import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
-import com.atlassian.plugin.module.ContainerAccessor;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
-import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
 
 @Component
 public class BeanToModuleRegistrar
 {
-    private static final String WEBHOOKS_FIELD = "webhooks";
 
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 
     private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
     private final ContainerManagedPlugin theConnectPlugin;
-    private final ApplicationProperties applicationProperties;
+    private final PluginAccessor pluginAccessor;
 
     @Autowired
     public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
                                  PluginRetrievalService pluginRetrievalService,
-                                 ApplicationProperties applicationProperties)
+                                 PluginAccessor pluginAccessor)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.applicationProperties = applicationProperties;
         this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
         this.registrations = new ConcurrentHashMap<>();
+        this.pluginAccessor = pluginAccessor;
     }
 
     public synchronized void registerDescriptorsForBeans(ConnectAddonBean addon) throws InvalidDescriptorException
@@ -70,16 +63,14 @@ public class BeanToModuleRegistrar
             return;
         }
 
-        List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
+        List<DescriptorToRegister> descriptorsToRegister = new ArrayList<>();
+        ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
+        getDescriptorsToRegisterForModules(addon.getModules(), theConnectPlugin, moduleProviderContext, descriptorsToRegister);
 
-        BeanTransformContext ctx = new BeanTransformContext(theConnectPlugin, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
-
-        //we MUST add in the lifecycle webhooks first
-        ModuleList moduleList = getCapabilitiesWithLifecycleWebhooks(addon);
-
-        //now process the module fields
-        processFields(addon, moduleList, ctx, descriptorsToRegister);
-
+        List<ModuleBean> lifecycleWebhooks = getLifecycleWebhooks(addon.getLifecycle());
+        Map<String, List<ModuleBean>> lifecycleWebhookModuleList
+                = Collections.singletonMap(new WebHookModuleMeta().getDescriptorKey(), lifecycleWebhooks);
+        getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, theConnectPlugin, moduleProviderContext, descriptorsToRegister);
 
         if (!descriptorsToRegister.isEmpty())
         {
@@ -115,7 +106,7 @@ public class BeanToModuleRegistrar
             return reg.getRegisteredDescriptors();
         }
         
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
     
     public boolean descriptorsAreRegistered(String pluginKey)
@@ -123,132 +114,69 @@ public class BeanToModuleRegistrar
         return registrations.containsKey(pluginKey);
     }
 
-    private ModuleList getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
+    private List<ModuleBean> getLifecycleWebhooks(LifecycleBean lifecycle)
     {
-        LifecycleBean lifecycle = addon.getLifecycle();
-        ConnectAddonBeanBuilder builder = newConnectAddonBean(addon);
-
+        List<ModuleBean> webhooks = new ArrayList<>();
         if (!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
-            //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
+            webhooks.add(newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getDisabled()))
         {
-            //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
+            webhooks.add(newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
         {
-            //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
+            webhooks.add(newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
         }
-
-        return builder.build().getModules();
+        return webhooks;
     }
 
-    private void processFields(ConnectAddonBean addon, ModuleList moduleList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
+    private void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
+                                                    ContainerManagedPlugin theConnectPlugin,
+                                                    ConnectModuleProviderContext moduleProviderContext,
+                                                    List<DescriptorToRegister> descriptorsToRegister)
     {
-        for (Field field : moduleList.getClass().getDeclaredFields())
+        for (Map.Entry<String, List<ModuleBean>> entry : moduleList.entrySet())
         {
-            if (field.isAnnotationPresent(ConnectModule.class))
+            List<ModuleBean> beans = entry.getValue();
+            ConnectModuleProvider provider = findProvider(entry.getKey());
+            List<ModuleDescriptor> descriptors = provider.createPluginModuleDescriptors(beans, moduleProviderContext);
+            List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
-                try
+                @Override
+                public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
                 {
-                    ConnectModule anno = field.getAnnotation(ConnectModule.class);
-                    field.setAccessible(true);
-
-                    Type fieldType = field.getGenericType();
-
-                    List<? extends ModuleBean> beanList;
-
-                    if (isParameterizedListWithType(fieldType, ModuleBean.class))
-                    {
-                        beanList = (List<? extends ModuleBean>) field.get(moduleList);
-                    }
-                    else
-                    {
-                        ModuleBean moduleBean = (ModuleBean) field.get(moduleList);
-                        beanList = moduleBean == null ? Collections.EMPTY_LIST : Collections.singletonList(moduleBean);
-                    }
-
-                    List<DescriptorToRegister> registerMe = getDescriptors(addon, ctx, field.getName(), anno, beanList);
-                    descriptorsToRegister.addAll(registerMe);
+                    return new DescriptorToRegister(input);
                 }
-                catch (IllegalAccessException e)
-                {
-                    //ignore. this should never happen
-                }
-            }
+            });
+            descriptorsToRegister.addAll(theseDescriptors);
         }
     }
 
-
-    private List<DescriptorToRegister> getDescriptors(ConnectAddonBean addon, BeanTransformContext ctx, String jsonFieldName, ConnectModule providerAnnotation, List<? extends ModuleBean> beans)
+    private ConnectModuleProvider findProvider(String descriptorKey)
     {
-        List<ProductFilter> products = Arrays.asList(providerAnnotation.products());
-        if (products.contains(ProductFilter.ALL) || (null != ctx.getAppFilter() && products.contains(ctx.getAppFilter())))
+        Collection<ConnectModuleProvider> providers = pluginAccessor.getModules(
+                new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
+        Optional<ConnectModuleProvider> providerOptional = findProvider(descriptorKey, providers);
+        if (!providerOptional.isPresent())
         {
-            Class<? extends ConnectModuleProvider> theProviderClass = null;
-            try
-            {
-                theProviderClass = (Class<? extends ConnectModuleProvider>) Class.forName(providerAnnotation.value());
-            }
-            catch (ClassNotFoundException e)
-            {
-                throw new ModuleProviderNotFoundException("Unable to load module provider for class [" + providerAnnotation.value() + "]", e);
-            }
-
-            ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
-            Collection<? extends ConnectModuleProvider> providers = accessor.getBeansOfType(theProviderClass);
-
-
-            if (!providers.isEmpty())
-            {
-                ConnectModuleProvider provider = providers.iterator().next();
-
-                List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon),
-                        ctx.getTheConnectPlugin(), jsonFieldName, beans);
-                
-                return Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
-                {
-                    @Override
-                    public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
-                    {
-                        return new DescriptorToRegister(input);
-                    }
-                });
-            }
-            else
-            {
-                return Collections.EMPTY_LIST;
-            }
+            // Shouldn't happen, descriptor deserialization should have failed
+            throw new IllegalStateException("Could not find module provider for descriptor registration");
         }
-        else
-        {
-            return Collections.EMPTY_LIST;
-        }
+        return providerOptional.get();
     }
 
-    private class BeanTransformContext
+    private Optional<ConnectModuleProvider> findProvider(String descriptorKey, Collection<ConnectModuleProvider> providers)
     {
-        private final Plugin theConnectPlugin;
-        private final ProductFilter appFilter;
-
-        private BeanTransformContext(Plugin theConnectPlugin, ProductFilter appFilter)
+        // return Iterables.tryFind(providers, (provider) -> provider.getMeta().getDescriptorKey().equals(descriptorKey));
+        for (ConnectModuleProvider provider : providers)
         {
-            this.theConnectPlugin = theConnectPlugin;
-            this.appFilter = appFilter;
+            if (provider.getMeta().getDescriptorKey().equals(descriptorKey))
+            {
+                return Optional.of(provider);
+            }
         }
-
-        private Plugin getTheConnectPlugin()
-        {
-            return theConnectPlugin;
-        }
-
-        private ProductFilter getAppFilter()
-        {
-            return appFilter;
-        }
+        return Optional.absent();
     }
 }

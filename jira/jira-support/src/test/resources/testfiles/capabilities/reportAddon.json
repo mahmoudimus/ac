@@ -1,0 +1,28 @@
+[
+    {
+        "key" : "jira-report",
+        "name" : {
+            "value" : "report",
+            "i18n" : "report i18n"
+        },
+        "description" : {
+            "value" : "description",
+            "i18n" : "description i18n"
+        },
+        "url" : "/report?projectId=${project.id}",
+        "weight" : 5,
+        "reportCategory" : "agile",
+        "thumbnailUrl" : "/report-thumbnail.jpg"
+    }, {
+        "key" : "jira-report-2",
+        "name" : {
+            "value" : "report-2",
+            "i18n" : "report i18n"
+        },
+        "description" : {
+            "value" : "description 2",
+            "i18n" : "description i18n"
+        },
+        "url" : "/report?projectId=${project.id}"
+    }
+]
