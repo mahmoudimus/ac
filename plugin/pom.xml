@@ -896,7 +896,7 @@
                         </goals>
                         <configuration>
                             <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.JiraModuleList</rootClassName>
+                            <rootClassName>com.atlassian.plugin.connect.jira.JiraModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
