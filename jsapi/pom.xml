@@ -40,7 +40,6 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <arguments>install ${atlassian.connect-js.path}</arguments>
-                            <skip>${skipNpm}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -51,7 +50,6 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <arguments>install</arguments>
-                            <skip>${skipNpm}</skip>
                         </configuration>
                     </execution>
                 </executions>
