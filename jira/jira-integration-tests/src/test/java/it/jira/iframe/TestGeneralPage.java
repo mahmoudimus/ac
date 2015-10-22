@@ -15,7 +15,6 @@ import it.servlet.condition.ParameterCapturingConditionServlet;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -34,7 +33,6 @@ import static it.servlet.condition.ToggleableConditionServlet.toggleableConditio
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -141,31 +139,5 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, addonKey, moduleKeyOnly(awesomePageModuleKey));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(PAGE_NAME));
-    }
-
-    @Ignore("figure out why the context is being set")
-    @Test
-    public void remoteConditionWithParamsIsCorrect() throws Exception
-    {
-        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
-
-        remotePlugin.setToggleableConditionShouldDisplay(false);
-        
-        product.visit(JiraViewProjectPage.class, project.getKey());
-
-        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, contextPageModuleKey, addonKey);
-
-        URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira" + IframeUtils.iframeServletPath("my-plugin", KEY_MY_CONTEXT_PAGE)));
-
-        PARAMETER_CAPTURING_SERVLET.clearParams();
-
-        PARAMETER_CAPTURING_SERVLET.setConditionReturnValue("false");
-        
-        viewProjectPage.clickRemotePluginLinkWithoutBinding();
-
-        Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-
-        assertThat(conditionParams, hasEntry(equalTo("project_key"), equalTo(project.getKey())));
     }
 }

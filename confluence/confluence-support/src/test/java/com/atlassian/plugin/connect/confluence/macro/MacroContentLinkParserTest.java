@@ -4,7 +4,6 @@ import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
@@ -99,16 +98,6 @@ public class MacroContentLinkParserTest
     {
         assertThat(parseMacroAndSignUrl("<img src='sign://Macintosh.local:3000'>Edit Sport</a>", EMPTY),
                 is("<img src='" + SIGNED_URL + "'>Edit Sport</a>"));
-    }
-
-
-    @Ignore // Current code clips it instead of either throwing error or ignoring it. Dangerous and flakey. Fix
-    @Test
-    public void ignoresSignUrlsWithWrongAuthority()
-    {
-        // TODO: should we throw an error instead
-        String macroWithWrongAuthority = "<a href='sign://Windows.local:3000/viewSport/10?foo=bar'>Edit Sport</a>";
-        assertThat(macroContentLinkParser.parse(remotablePluginAccessor, macroWithWrongAuthority, EMPTY), is(macroWithWrongAuthority));
     }
 
     @Test
