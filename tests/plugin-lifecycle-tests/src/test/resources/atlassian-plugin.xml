@@ -10,17 +10,17 @@
     <component-import key="pluginAccessor" interface="com.atlassian.plugin.PluginAccessor" />
     <component-import key="pluginController" interface="com.atlassian.plugin.PluginController" />
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
-    <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
+    <component-import key="pluginRetrievalService" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService"/>
 
-    <component key="testPluginInstaller" class="it.com.atlassian.plugin.connect.testlifecycle.LifecyclePluginInstaller" />
+    <component key="testPluginInstaller" class="it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginInstaller" />
 
     <component key="jiraTestAuthenticator"
-               class="it.com.atlassian.plugin.connect.testlifecycle.JiraLifecycleTestAuthenticator"
-               interface="it.com.atlassian.plugin.connect.testlifecycle.LifecycleTestAuthenticator"
+               class="it.com.atlassian.plugin.connect.testlifecycle.util.JiraLifecycleTestAuthenticator"
+               interface="it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthenticator"
                application="jira" />
     <component key="confluenceTestAuthenticator"
-               class="it.com.atlassian.plugin.connect.testlifecycle.ConfluenceLifecycleTestAuthenticator"
-               interface="it.com.atlassian.plugin.connect.testlifecycle.LifecycleTestAuthenticator"
+               class="it.com.atlassian.plugin.connect.testlifecycle.util.ConfluenceLifecycleTestAuthenticator"
+               interface="it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthenticator"
                application="confluence" />
 
 </atlassian-plugin>

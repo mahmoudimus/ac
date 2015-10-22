@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.testlifecycle;
+package it.com.atlassian.plugin.connect.testlifecycle.util;
 
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;

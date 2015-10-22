@@ -1,30 +1,38 @@
-package it.com.atlassian.plugin.connect.testlifecycle;
+package it.com.atlassian.plugin.connect.testlifecycle.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.SecureRandom;
-
-import javax.annotation.Nullable;
-
-import com.atlassian.plugin.*;
+import com.atlassian.plugin.DefaultPluginArtifactFactory;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.PluginArtifact;
+import com.atlassian.plugin.PluginArtifactFactory;
+import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginControlHandler;
 import com.atlassian.upm.spi.PluginInstallHandler;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.springframework.beans.factory.DisposableBean;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.SecureRandom;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -33,23 +41,32 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class LifecyclePluginInstaller implements DisposableBean
 {
+
     public static final String FILTER_MAPPING = "/ac-test-addon";
     public static final String DESCRIPTOR_PREFIX = "connect-descriptor-";
+
     private ServiceTracker installServiceTracker;
     private ServiceTracker controlServiceTracker;
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
     private final BundleContext bundleContext;
+    private PluginRetrievalService pluginRetrievalService;
     private PluginArtifactFactory pluginArtifactFactory = new DefaultPluginArtifactFactory();
     private static final SecureRandom random = new SecureRandom();
+    private Map<String, File> jarDependencies = Maps.newConcurrentMap();
 
-    public LifecyclePluginInstaller(PluginController pluginController, PluginAccessor pluginAccessor, ApplicationProperties applicationProperties, BundleContext bundleContext)
+    public LifecyclePluginInstaller(PluginController pluginController,
+            PluginAccessor pluginAccessor,
+            ApplicationProperties applicationProperties,
+            BundleContext bundleContext,
+            PluginRetrievalService pluginRetrievalService)
     {
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
         this.applicationProperties = applicationProperties;
         this.bundleContext = bundleContext;
+        this.pluginRetrievalService = pluginRetrievalService;
     }
 
     public Plugin installAddon(ConnectAddonBean bean) throws IOException
@@ -69,11 +86,22 @@ public class LifecyclePluginInstaller implements DisposableBean
         return handler.installPlugin(descriptor, Option.<String>some("application/json")).getPlugin();
     }
 
-    public Plugin installPlugin(File jarFile) throws IOException
+    public Plugin installConnectPlugin() throws IOException, URISyntaxException
     {
+        return installPlugin(getConnectPluginJarFilename());
+    }
+
+    public Plugin installJiraReferencePlugin() throws IOException, URISyntaxException
+    {
+        return installPlugin(getJiraReferencePluginJarFilename());
+    }
+
+    public Plugin installPlugin(String jarFilename) throws IOException, URISyntaxException
+    {
+        File jarFile = getJarFile(jarFilename);
         PluginArtifact artifact = pluginArtifactFactory.create(jarFile.toURI());
-        String key = pluginController.installPlugins(artifact).iterator().next();
-        return pluginAccessor.getPlugin(key);
+        String pluginKey = pluginController.installPlugins(artifact).iterator().next();
+        return pluginAccessor.getPlugin(pluginKey);
     }
 
     public void uninstallAddon(Plugin plugin) throws IOException
@@ -240,6 +268,48 @@ public class LifecyclePluginInstaller implements DisposableBean
         {
             installServiceTracker.close();
         }
+    }
+
+    private String getConnectPluginJarFilename() throws IOException
+    {
+        return getPluginDependencyFilename("atlassian-connect-plugin");
+    }
+
+    private String getJiraReferencePluginJarFilename() throws IOException
+    {
+        return getPluginDependencyFilename("atlassian-connect-jira-reference-plugin");
+    }
+
+    private String getPluginDependencyFilename(String artifactId) throws IOException
+    {
+        return String.format("/%s-%s.jar", artifactId, getPluginVersion());
+    }
+
+    private File getJarFile(String jarFilename)
+    {
+        return jarDependencies.computeIfAbsent(jarFilename, new java.util.function.Function<String, File>()
+        {
+            @Override
+            public File apply(String filename)
+            {
+                try
+                {
+                    File tempFile = File.createTempFile(filename, ".jar");
+                    URL jarResource = getClass().getResource("/" + filename);
+                    FileUtils.copyURLToFile(jarResource, tempFile);
+                    return tempFile;
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
+    private String getPluginVersion()
+    {
+        return pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
     }
 
     public static String randomName(String base)
