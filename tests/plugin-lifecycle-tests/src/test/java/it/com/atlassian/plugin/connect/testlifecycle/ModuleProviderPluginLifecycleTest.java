@@ -1,12 +1,12 @@
 package it.com.atlassian.plugin.connect.testlifecycle;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginInstaller;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthenticator;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -23,19 +23,16 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     private static final Logger log = LoggerFactory.getLogger(AbstractPluginLifecycleTest.class);
 
     private final PluginController pluginController;
-    private final PluginAccessor pluginAccessor;
 
     private Plugin jiraReferencePlugin;
     private Plugin addon;
 
     public ModuleProviderPluginLifecycleTest(LifecyclePluginInstaller testPluginInstaller,
             LifecycleTestAuthenticator testAuthenticator,
-            PluginController pluginController,
-            PluginAccessor pluginAccessor)
+            PluginController pluginController)
     {
         super(testAuthenticator, testPluginInstaller);
         this.pluginController = pluginController;
-        this.pluginAccessor = pluginAccessor;
     }
 
     @After
@@ -57,7 +54,6 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
         }
 
-
         if (null != jiraReferencePlugin)
         {
             try
@@ -74,8 +70,10 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
         }
     }
+
     @Test
-    public void shouldBadThingsHappenWhenConnectReenabled() throws Exception
+    @Ignore
+    public void shouldDescriptorValidationBreakWhenConnectReenabledWithAddonMissingProviderPlugin() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
         jiraReferencePlugin = testPluginInstaller.installJiraReferencePlugin();
@@ -91,6 +89,25 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
         {
             assertEquals("com.atlassian.plugin.connect.plugin.descriptor", e.getClass().getCanonicalName());
             assertEquals("No provider found for module type jiraTestModules referenced in the descriptor", e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldModuleRegistrationBreakWhenAddonMissingProviderPluginIsReenabled() throws Exception
+    {
+        theConnectPlugin = testPluginInstaller.installConnectPlugin();
+        jiraReferencePlugin = testPluginInstaller.installJiraReferencePlugin();
+        addon = installAndEnableAddon(ADDON_DESCRIPTOR);
+        testPluginInstaller.disableAddon(addon.getKey());
+        pluginController.disablePlugin(jiraReferencePlugin.getKey());
+
+        try
+        {
+            testPluginInstaller.enableAddon(addon.getKey());
+        }
+        catch (IllegalStateException e)
+        {
+            assertEquals("Could not find module provider for descriptor registration", e.getMessage());
         }
     }
 }
