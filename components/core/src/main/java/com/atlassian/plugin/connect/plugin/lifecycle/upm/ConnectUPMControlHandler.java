@@ -51,7 +51,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     {
         for (String key : pluginKeys)
         {
-            enablePlugin(key);
+            connectAddonManager.enableConnectAddon(key);
         }
     }
 
@@ -130,8 +130,4 @@ public class ConnectUPMControlHandler implements PluginControlHandler
         return PluginRestartState.NONE;
     }
 
-    private void enablePlugin(String pluginKey)
-    {
-        connectAddonManager.enableConnectAddon(pluginKey);
-    }
 }
