@@ -18,7 +18,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 
-public class TestJiraSpecificConditions extends JiraWebDriverTestBase
+public class TestJiraWebItemWithProductCondition extends JiraWebDriverTestBase
 {
 
     private static final String ITEM_KEY = "admin-mode-only-item";
@@ -55,7 +55,7 @@ public class TestJiraSpecificConditions extends JiraWebDriverTestBase
     }
 
     @Test
-    public void shouldDisplayItemWithAdminModeCondition()
+    public void shouldPerformActionForWebItemWithAdminModeCondition()
     {
         loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
         RemoteWebItem webItem = connectPageOperations.findWebItem(addonAndModuleKey(addon.getAddon().getKey(), ITEM_KEY),
