@@ -3,6 +3,8 @@
     <connect-module key="jiraDashboardItems" class="com.atlassian.plugin.connect.jira.web.dashboard.DashboardItemModuleProvider"/>
     <connect-module key="jiraEntityProperties" class="com.atlassian.plugin.connect.jira.property.EntityPropertyModuleProvider"/>
     <connect-module key="jiraIssueTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.IssueTabPanelModuleProvider"/>
+    <connect-module key="jiraGlobalPermissions" class="com.atlassian.plugin.connect.jira.permission.GlobalPermissionModuleProvider"/>
+    <connect-module key="jiraProjectPermissions" class="com.atlassian.plugin.connect.jira.permission.ProjectPermissionModuleProvider"/>
     <connect-module key="jiraProjectTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ProjectTabPanelModuleProvider"/>
     <connect-module key="jiraProjectAdminTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ConnectProjectAdminTabPanelModuleProvider"/>
     <connect-module key="jiraProfileTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ProfileTabPanelModuleProvider"/>

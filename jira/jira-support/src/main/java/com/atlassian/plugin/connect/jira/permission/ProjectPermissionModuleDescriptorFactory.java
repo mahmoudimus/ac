@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.capabilities.descriptor.permission;
+package com.atlassian.plugin.connect.jira.permission;
 
 import com.atlassian.jira.plugin.permission.ProjectPermissionModuleDescriptor;
 import com.atlassian.jira.plugin.permission.ProjectPermissionModuleDescriptorImpl;
@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -34,7 +34,6 @@ public class ProjectPermissionModuleDescriptorFactory
     @Override
     public ProjectPermissionModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, ProjectPermissionModuleBean bean)
     {
-        ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
         Element projectPermissionElement = new DOMElement(DESCRIPTOR_NAME);
 
         ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
@@ -45,7 +44,7 @@ public class ProjectPermissionModuleDescriptorFactory
         projectPermissionElement.addAttribute("category", bean.getCategory().toString());
         if (!bean.getConditions().isEmpty())
         {
-            projectPermissionElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
+            projectPermissionElement.add(conditionModuleFragmentFactory.createFragment(connectAddonBean.getKey(), bean.getConditions()));
         }
 
         ProjectPermissionModuleDescriptor descriptor = autowireUtil.createBean(ProjectPermissionModuleDescriptorImpl.class);

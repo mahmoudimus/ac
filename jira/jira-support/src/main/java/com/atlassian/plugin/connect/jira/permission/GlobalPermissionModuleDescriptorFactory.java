@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.capabilities.descriptor.permission;
+package com.atlassian.plugin.connect.jira.permission;
 
 import com.atlassian.jira.plugin.permission.GlobalPermissionModuleDescriptor;
 import com.atlassian.jira.plugin.permission.GlobalPermissionModuleDescriptorImpl;
@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
