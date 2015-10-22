@@ -274,7 +274,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         if (editor.hasEditTitle())
         {
             editTitleElement.addAttribute("value", editor.getEditTitle().getValue());
-        } else
+        }
+        else
         {
             editTitleElement.addAttribute("value", macroBean.getDisplayName());
             editTitleElement.addAttribute("i18n-key", "macro.browser.edit.macro.title");

@@ -40,7 +40,7 @@ public class JiraModuleProviderTest extends AbstractConnectAddonTest
     }
 
     @Test
-    public void goodThingsHappen() throws IOException
+    public void shouldInstallAddonWithPluginProvidedModule() throws IOException
     {
         String json = readAddonTestFile("descriptorWithPluginProvidedModule.json");
         testPluginInstaller.installAddon(json);

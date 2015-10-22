@@ -18,7 +18,7 @@ public class ConnectModuleValidationRuntimeException extends RuntimeException
     }
 
     @Override
-    public synchronized ConnectModuleValidationException getCause()
+    public ConnectModuleValidationException getCause()
     {
         return cause;
     }

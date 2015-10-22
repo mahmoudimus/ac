@@ -63,12 +63,12 @@ public class BeanToModuleRegistrar
 
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<>();
         ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
-        getDescriptorsToRegisterForModules(addon.getModules(), theConnectPlugin, moduleProviderContext, descriptorsToRegister);
+        getDescriptorsToRegisterForModules(addon.getModules(), moduleProviderContext, descriptorsToRegister);
 
         List<ModuleBean> lifecycleWebhooks = getLifecycleWebhooks(addon.getLifecycle());
         Map<String, List<ModuleBean>> lifecycleWebhookModuleList
                 = Collections.singletonMap(new WebHookModuleMeta().getDescriptorKey(), lifecycleWebhooks);
-        getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, theConnectPlugin, moduleProviderContext, descriptorsToRegister);
+        getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, moduleProviderContext, descriptorsToRegister);
 
         if (!descriptorsToRegister.isEmpty())
         {
@@ -131,9 +131,8 @@ public class BeanToModuleRegistrar
     }
 
     private void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
-                                                    ContainerManagedPlugin theConnectPlugin,
-                                                    ConnectModuleProviderContext moduleProviderContext,
-                                                    List<DescriptorToRegister> descriptorsToRegister)
+            ConnectModuleProviderContext moduleProviderContext,
+            List<DescriptorToRegister> descriptorsToRegister)
     {
         for (Map.Entry<String, List<ModuleBean>> entry : moduleList.entrySet())
         {
