@@ -5,11 +5,4 @@ http://www.springframework.org/schema/osgi http://www.springframework.org/schema
 
     <bean id="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
 
-    <!-- note, this has to be in here since we can't use the ExportAsService annotation in the modules project -->
-    <beans:bean id="connectDescriptorValidator" autowire="default" class="com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator"/>
-    <osgi:service id="connectDescriptorValidator_osgiService" ref="connectDescriptorValidator">
-        <osgi:interfaces>
-            <beans:value>com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator</beans:value>
-        </osgi:interfaces>
-    </osgi:service>
 </beans:beans>

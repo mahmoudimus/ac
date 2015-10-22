@@ -1,0 +1,8 @@
+{
+  "name": "atlassian-connect-json-schema-utils",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "lodash": "~2.4.1"
+  }
+}

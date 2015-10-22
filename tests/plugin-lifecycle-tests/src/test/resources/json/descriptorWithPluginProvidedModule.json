@@ -1,0 +1,14 @@
+{
+  "key" : "my-plugin-with-provided-module",
+  "baseUrl" : "http://www.example.com",
+  "authentication": {
+    "type": "none"
+  },
+  "modules": {
+    "jiraTestModules": [
+      {
+        "key": "test-provided-module"
+      }
+    ]
+  }
+}

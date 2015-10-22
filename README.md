@@ -9,7 +9,7 @@ products based on [`atlassian-plugins`](https://bitbucket.org/atlassian/atlassia
 
 ## Dependencies
 
-* JDK 7
+* JDK 8
 * Maven 3.2
 
 ## Usage
@@ -63,13 +63,15 @@ Contributions are encouraged!
 * `docs` - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
 * `jira` - the parent of all JIRA-specific modules
 	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
-	* `jira-integration-tests` - jira-specific integration tests for the plugin
+	* `jira-integration-tests` - JIRA-specific integration tests for the plugin
+* `jsapi` - builds the JavaScript API based on [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js)
 * `modules` - bean representations of add-on JSON descriptor elements
-* `plugin` - groups the other modules and [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js) into a plugin
+* `plugin` - groups the other modules into a plugin
 * `tests` - the parent of all non-product-specific test modules
+    * `descriptor-validation-tests` - JSON schema validation of all public add-ons for JIRA and Confluence on Atlassian Marketplace
     * `integration-tests` - integration tests for the plugin
     * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
-    * `test-support-plugin` - a collection of utility classes for unit and integration testing
+    * `test-support-plugin` - a collection of test utility classes
     * `wired-tests` - wired tests for the plugin
 
 ### Branches
@@ -85,10 +87,10 @@ To build the plugin:
 
     mvn clean install
 
-The plugin build includes a Node.js project for building the JavaScript API from [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js).
-To skip invoking the Node.js build, append the following parameter to the command.
+To speed up subsequent builds, the `-` prefix can be used with the `-pl` option to exclude specific modules,
+e.g. the `jsapi` module which invokes a time-consuming Node.js build.
 
-    -DskipNpm
+    mvn clean install -pl -jsapi
 
 ### Running tests
 

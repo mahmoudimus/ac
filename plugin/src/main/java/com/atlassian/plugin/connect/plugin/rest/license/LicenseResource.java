@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.rest.license;
 
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;

@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -16,6 +13,7 @@ import com.google.gson.Gson;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,9 +21,6 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
 
 @Named
 @ExportAsDevService
@@ -36,17 +31,14 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 
     private final PluginSettings settings;
 
-    private final ConnectAddonBeanFactory connectAddonBeanFactory;
-
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private final Lock write = readWriteLock.writeLock();
     private final Lock read = readWriteLock.readLock();
 
     @Inject
-    public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory, ConnectAddonBeanFactory connectAddonBeanFactory)
+    public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory)
     {
         this.settings = pluginSettingsFactory.createGlobalSettings();
-        this.connectAddonBeanFactory = connectAddonBeanFactory;
     }
 
     @Override
@@ -139,11 +131,11 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
-    public Iterable<ConnectAddonBean> getAllAddonBeans()
+    public Collection<AddonSettings> getAllAddonSettings()
     {
         Gson gson = new Gson();
 
-        ImmutableList.Builder<ConnectAddonBean> addons = ImmutableList.builder();
+        ImmutableList.Builder<AddonSettings> allAddonSettings = ImmutableList.builder();
 
         read.lock();
         try
@@ -152,10 +144,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
             {
                 final String json = getRawAddonSettings(addonKey);
                 final AddonSettings addonSettings = deserializeAddonSettings(gson, json);
-                for (ConnectAddonBean addonBean : this.getAddonBeanFromSettings(addonSettings))
-                {
-                    addons.add(addonBean);
-                }
+                allAddonSettings.add(addonSettings);
             }
         }
         finally
@@ -163,7 +152,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
             read.unlock();
         }
 
-        return addons.build();
+        return allAddonSettings.build();
     }
 
     @Override
@@ -261,13 +250,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         return getAddonSettings(pluginKey, new Gson());
     }
 
-    @Override
-    public Option<ConnectAddonBean> getAddonBean(String pluginKey)
-    {
-        AddonSettings addonSettings = getAddonSettings(pluginKey);
-        return getAddonBeanFromSettings(addonSettings);
-    }
-
     private AddonSettings getAddonSettings(String pluginKey, Gson gson)
     {
         AddonSettings addonSettings = new AddonSettings();
@@ -298,21 +280,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private String getRawAddonSettings(String pluginKey)
     {
         return (String)settings.get(addonStorageKey(pluginKey));
-    }
-
-    private Option<ConnectAddonBean> getAddonBeanFromSettings(AddonSettings addonSettings)
-    {
-        Option<ConnectAddonBean> beanOption;
-        String descriptor = addonSettings.getDescriptor();
-        if (!Strings.isNullOrEmpty(descriptor))
-        {
-            beanOption = some(connectAddonBeanFactory.fromJsonSkipValidation(addonSettings.getDescriptor()));
-        }
-        else
-        {
-            beanOption = none(ConnectAddonBean.class);
-        }
-        return beanOption;
     }
 
     @Override

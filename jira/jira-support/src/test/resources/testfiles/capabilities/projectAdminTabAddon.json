@@ -1,0 +1,9 @@
+{
+    "url": "/my-general-page",
+    "weight": 100,
+    "name": {
+        "value": "My ProjectAdmin Tab Page",
+        "i18n": "my.projectAdminTabPage"
+    },
+    "location" : "a-location"
+}

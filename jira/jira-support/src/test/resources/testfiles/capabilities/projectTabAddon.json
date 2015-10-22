@@ -1,0 +1,8 @@
+{
+    "url": "/my-general-page",
+    "weight": 100,
+    "name": {
+        "value": "My Project Tab Page",
+        "i18n": "my.projectTabPage"
+    }
+}

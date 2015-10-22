@@ -1,1 +1,0 @@
-${project.build.testOutputDirectory}/atlassian-connect-plugin-1.0-m30.1.jar

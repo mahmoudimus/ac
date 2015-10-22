@@ -6,7 +6,7 @@ import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
+import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.apache.commons.io.IOUtils;
@@ -119,7 +119,7 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .setAuthenticationToNone()
                 .addEnableLifecycle()
-                .addModule("webItems",randomWebItemBean())
+                .addModule("webItems", randomWebItemBean())
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
@@ -171,7 +171,7 @@ public final class WebHookTestServlet extends HttpServlet
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
-                .addModule("webItems",randomWebItemBean())
+                .addModule("webItems", randomWebItemBean())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 
