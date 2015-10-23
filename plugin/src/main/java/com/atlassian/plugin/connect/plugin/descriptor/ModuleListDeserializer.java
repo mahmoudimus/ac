@@ -35,7 +35,7 @@ public class ModuleListDeserializer implements JsonDeserializer<Map<String, Supp
         {
             String descriptorKey = rawModuleEntry.getKey();
             assertValidModuleType(descriptorKey);
-            moduleBeanListSuppliers.put(descriptorKey, createModuleBeanListSupplier(rawModuleEntry));
+            moduleBeanListSuppliers.put(descriptorKey, createModuleBeanListSupplier(descriptorKey, rawModuleEntry.getValue()));
         }
 
         return moduleBeanListSuppliers;
@@ -71,12 +71,12 @@ public class ModuleListDeserializer implements JsonDeserializer<Map<String, Supp
         }
     }
 
-    private Supplier<List<ModuleBean>> createModuleBeanListSupplier(Map.Entry<String, JsonElement> rawModuleEntry)
+    private Supplier<List<ModuleBean>> createModuleBeanListSupplier(String moduleTypeKey, JsonElement modules)
     {
         return Suppliers.memoize(() -> {
             try
             {
-                return providers.deserializeModulesOfSameType(rawModuleEntry);
+                return providers.deserializeModules(moduleTypeKey, modules);
             } catch (ConnectModuleValidationException e)
             {
                 throw new ConnectModuleValidationRuntimeException(e);

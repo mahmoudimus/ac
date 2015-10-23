@@ -77,7 +77,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     {
         String pluginKey = null;
         Plugin addonPluginWrapper;
-        ConnectAddonBean addOn;
         AddonSettings previousSettings = new AddonSettings();
         PluginState targetState = null;
         Option<ApplicationLink> maybePreviousApplink = Option.none();
@@ -90,10 +89,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
         try
         {
-            //until we ensure we no longer have xml or mirror plugins, we need to call removeOldPlugin, which is why we marshal here just to get the plugin key
-            ConnectAddonBean nonValidatedAddon = connectAddonBeanFactory.fromJson(jsonDescriptor);
+            ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
 
-            pluginKey = nonValidatedAddon.getKey();
+            pluginKey = addOn.getKey();
             maybePreviousApplink = Option.option(connectApplinkManager.getAppLink(pluginKey));
             previousSettings = addonRegistry.getAddonSettings(pluginKey);
             targetState = PluginState.valueOf(previousSettings.getRestartState());
@@ -120,7 +118,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             removeOldPlugin(pluginKey);
 
-            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState, maybePreviousPublicKeyOrSharedSecret, reusePreviousPublicKeyOrSharedSecret);
+            connectAddonManager.installConnectAddon(jsonDescriptor, targetState, maybePreviousPublicKeyOrSharedSecret, reusePreviousPublicKeyOrSharedSecret);
 
             PluginState actualState = addonRegistry.getRestartState(pluginKey);
             addonPluginWrapper = addonToPluginFactory.create(addOn, actualState);
