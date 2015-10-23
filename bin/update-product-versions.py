@@ -32,7 +32,7 @@ def new_version_for_product(product_name, env_json):
     product_list = filter(lambda x: x["name"] == product_name,
                           env_json["products"])
     if len(product_list) != 1:
-        print "Expected 1 " + product_name + " to be found, got" + len(
+        print "Expected 1 " + product_name + " to be found, got " + len(
             product_list)
         exit(2)
     return product_list[0]["version"]
@@ -56,7 +56,7 @@ def get_product_version_from_manifest(product_dict, envs_json):
 def get_latest_version(version_list):
     latest = version_list.pop()
     for version in version_list:
-        if not is_first_version_greater(latest, version):
+        if is_first_version_greater(version, latest):
             latest = version
     return latest
 
@@ -88,11 +88,10 @@ def set_new_versions(product_dict):
     start_tag = "<" + inner_tag + ">"
     end_tag = "<\/" + inner_tag + ">"
 
-    sed_system_call = "sed 's/" + start_tag + product_dict[
+    sed_system_call = "sed -i '' 's/" + start_tag + product_dict[
         "old_version"] + end_tag + "/" + start_tag + product_dict[
-                          "new_version"] + end_tag + "/' pom.xml > " + new_file_name
+                          "new_version"] + end_tag + "/' pom.xml"
     os.system(sed_system_call)
-    os.system("mv " + new_file_name + " pom.xml")
     print product_dict["name"] + ": " + product_dict["old_version"] + " -> " + \
           product_dict["new_version"]
 
@@ -110,7 +109,7 @@ def main():
         print WARN_PATH
         exit(2)
 
-    products = map(product_dictionary, product_names)
+    products = [ product_dictionary(p) for p in product_names]
 
     xml_properties = root.find(maven_pom_prepend + "properties")
 
@@ -118,9 +117,14 @@ def main():
     json_body = response.json()
     envs_json = json_body['environments']
 
-    map(lambda x: old_version_for_product(x, xml_properties), products)
-    map(lambda x: get_product_version_from_manifest(x, envs_json), products)
-    map(lambda x: set_new_versions(x), products)
+    for product_tuple in products:
+        old_version_for_product(product_tuple, xml_properties)
+
+    for product_tuple in products:
+        get_product_version_from_manifest(product_tuple, envs_json)
+
+    for product_tuple in products:
+        set_new_versions(product_tuple)
 
 
 if __name__ == "__main__":
