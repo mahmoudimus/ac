@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.property;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.google.common.base.Function;

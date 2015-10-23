@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
-import static it.com.atlassian.plugin.connect.plugin.installer.AbstractAddonLifecycleTest.DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY;
+import static it.com.atlassian.plugin.connect.plugin.lifecycle.AbstractAddonLifecycleTest.DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

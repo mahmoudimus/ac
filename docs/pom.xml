@@ -75,7 +75,6 @@
                         <phase>pre-site</phase>
                         <configuration>
                             <arguments>install ${atlassian.connect-js.path}</arguments>
-                            <skip>${skipNpm}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -86,7 +85,6 @@
                         <phase>pre-site</phase>
                         <configuration>
                             <arguments>install</arguments>
-                            <skip>${skipNpm}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -97,7 +95,6 @@
                         <phase>site</phase>
                         <configuration>
                             <arguments>run-script build</arguments>
-                            <skip>${skipNpm}</skip>
                         </configuration>
                     </execution>
                 </executions>

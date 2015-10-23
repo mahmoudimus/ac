@@ -2,7 +2,7 @@ package it.com.atlassian.plugin.connect.jira;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
@@ -40,7 +40,7 @@ public class JiraModuleProviderTest extends AbstractConnectAddonTest
     }
 
     @Test
-    public void goodThingsHappen() throws IOException
+    public void shouldInstallAddonWithPluginProvidedModule() throws IOException
     {
         String json = readAddonTestFile("descriptorWithPluginProvidedModule.json");
         testPluginInstaller.installAddon(json);

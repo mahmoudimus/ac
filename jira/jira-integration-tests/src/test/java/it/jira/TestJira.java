@@ -1,7 +1,6 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
-import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
@@ -14,13 +13,14 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
-import com.atlassian.plugin.connect.test.pageobjects.jira.PlainTextView;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ViewChangingSearchResult;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
@@ -29,7 +29,8 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TestJira extends JiraWebDriverTestBase
 {
@@ -122,27 +123,6 @@ public class TestJira extends JiraWebDriverTestBase
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
                         JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.key, addOnKey);
                 Assert.assertEquals("Success", page.getMessage());
-                return null;
-            }
-        });
-    }
-
-    @Test
-    @Ignore("This test breaks with JIRA 5.2 because of stale page objects. I'm not sure what it tests at all (if anything) so disabling for now.")
-    public void testSearchRequestViewPage() throws Exception
-    {
-        testLoggedInAndAnonymous(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
-                product.visit(AdvancedSearch.class).enterQuery("project = " + project.getKey()).submit();
-
-                PlainTextView plainTextView = product.getPageBinder()
-                        .bind(ViewChangingSearchResult.class)
-                        .openView("Raw Keys", PlainTextView.class);
-                assertTrue(plainTextView.getContent().contains(issue.key));
                 return null;
             }
         });

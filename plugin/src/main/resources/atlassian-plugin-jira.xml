@@ -1,14 +1,14 @@
 <application key="jira">
 
-    <connect-module key="jiraDashboardItems" class="com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider"/>
-    <connect-module key="jiraEntityProperties" class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"/>
-    <connect-module key="jiraIssueTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.IssueTabPanelModuleProvider"/>
-    <connect-module key="jiraProjectTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ProjectTabPanelModuleProvider"/>
-    <connect-module key="jiraProjectAdminTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider"/>
-    <connect-module key="jiraProfileTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ProfileTabPanelModuleProvider"/>
-    <connect-module key="jiraReports" class="com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider"/>
-    <connect-module key="jiraSearchRequestViews" class="com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider"/>
-    <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.capabilities.provider.WorkflowPostFunctionModuleProviderImpl"/>
+    <connect-module key="jiraDashboardItems" class="com.atlassian.plugin.connect.jira.web.dashboard.DashboardItemModuleProvider"/>
+    <connect-module key="jiraEntityProperties" class="com.atlassian.plugin.connect.jira.property.EntityPropertyModuleProvider"/>
+    <connect-module key="jiraIssueTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.IssueTabPanelModuleProvider"/>
+    <connect-module key="jiraProjectTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ProjectTabPanelModuleProvider"/>
+    <connect-module key="jiraProjectAdminTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ConnectProjectAdminTabPanelModuleProvider"/>
+    <connect-module key="jiraProfileTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ProfileTabPanelModuleProvider"/>
+    <connect-module key="jiraReports" class="com.atlassian.plugin.connect.jira.report.ReportModuleProvider"/>
+    <connect-module key="jiraSearchRequestViews" class="com.atlassian.plugin.connect.jira.search.SearchRequestViewModuleProvider"/>
+    <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionModuleProviderImpl"/>
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
@@ -33,7 +33,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-create-issue-dialog</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="atlassian-connect-dashboard-item-resources" name="Connect resources for dashboard page.">
@@ -42,7 +42,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-atlassian-connect-resources</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-dashboard-item</dependency>
 
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <!-- JavaScript API Core -->
@@ -50,7 +50,7 @@
     <web-resource key="ap-core">
         <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
         <dependency>jira.webresources:almond</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="ap-extensions">
@@ -63,13 +63,13 @@
         <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-iframe-host-js</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="ap-user">
         <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="iframe-host-js">
@@ -77,13 +77,13 @@
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="remote-condition">
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <!-- JIRA specific javascript modules -->
@@ -93,7 +93,7 @@
         <resource type="download" name="workflow-post-function-rpc.js" location="js/jira/workflow-post-function/workflow-post-function-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="dashboard-item">
@@ -101,7 +101,7 @@
 
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="create-issue-dialog">
@@ -109,7 +109,7 @@
         <resource type="download" name="create-issue-dialog-rpc.js" location="/js/jira/issue/issue-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="events">
@@ -117,11 +117,11 @@
         <resource type="download" name="jira-events-rpc.js" location="/js/jira/events/events-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <url-reading-web-resource-transformer key="connect-report-transformer" name="Connect report transformer"
-                                          class="com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ReportModuleCssTransformer"/>
+                                          class="com.atlassian.plugin.connect.jira.report.ReportModuleCssTransformer"/>
 
     <web-resource key="connect-report-thumbnails">
         <context>jira.browse.project</context>
@@ -130,11 +130,11 @@
         <transformation extension="css">
             <transformer key="jira-connect-report-transformer"/>
         </transformation>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <listener name="JIRA License Change Listener" key="jiraLicenseChangeListener"
-              class="com.atlassian.plugin.connect.crowd.usermanagement.JiraLicenseChangeListener" >
+              class="com.atlassian.plugin.connect.jira.auth.JiraLicenseChangeListener" >
         <description>Listens to changes to the JIRA license so addon users can be granted access to new applications</description>
     </listener>
 

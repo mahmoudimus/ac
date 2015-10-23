@@ -6,7 +6,6 @@ import java.util.Map;
 import com.atlassian.jira.event.JiraEvent;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
-import com.atlassian.plugin.connect.jira.JiraRestBeanMarshaler;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

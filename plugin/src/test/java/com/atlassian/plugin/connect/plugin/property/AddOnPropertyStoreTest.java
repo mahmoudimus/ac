@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.property;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import net.java.ao.EntityManager;

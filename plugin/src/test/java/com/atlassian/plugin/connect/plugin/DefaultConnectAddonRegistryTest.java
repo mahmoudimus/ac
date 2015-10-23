@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
+import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.collect.ImmutableList;
