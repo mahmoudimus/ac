@@ -27,6 +27,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.auth.SharedSecretService;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
@@ -259,11 +260,28 @@ public class ConnectAddonManager
         //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (addonRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = connectAddonAccessor.getAddon(pluginKey).get();
+            ConnectAddonBean addon;
+            try
+            {
+                addon = connectAddonAccessor.getAddon(pluginKey).get();
+            }
+            catch (InvalidDescriptorException e)
+            {
+                log.error(String.format("Descriptor validation failed while enabling add-on %s, skipping", pluginKey), e);
+                return;
+            }
 
             if (null != addon)
             {
-                beanToModuleRegistrar.registerDescriptorsForBeans(addon);
+                try
+                {
+                    beanToModuleRegistrar.registerDescriptorsForBeans(addon);
+                }
+                catch (ConnectModuleRegistrationException e)
+                {
+                    log.error(String.format("Module registration failed while enabling add-on %s, skipping", pluginKey), e);
+                    return;
+                }
 
                 if (addOnRequiresUser(addon))
                 {

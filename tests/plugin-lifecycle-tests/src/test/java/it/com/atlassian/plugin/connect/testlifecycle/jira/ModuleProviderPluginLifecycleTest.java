@@ -1,9 +1,10 @@
-package it.com.atlassian.plugin.connect.testlifecycle;
+package it.com.atlassian.plugin.connect.testlifecycle.jira;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.PluginState;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import it.com.atlassian.plugin.connect.testlifecycle.AbstractPluginLifecycleTest;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginInstaller;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthenticator;
 import org.junit.After;
@@ -12,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTest
@@ -23,19 +24,16 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     private static final Logger log = LoggerFactory.getLogger(AbstractPluginLifecycleTest.class);
 
     private final PluginController pluginController;
-    private final PluginAccessor pluginAccessor;
 
     private Plugin jiraReferencePlugin;
     private Plugin addon;
 
     public ModuleProviderPluginLifecycleTest(LifecyclePluginInstaller testPluginInstaller,
             LifecycleTestAuthenticator testAuthenticator,
-            PluginController pluginController,
-            PluginAccessor pluginAccessor)
+            PluginController pluginController)
     {
         super(testAuthenticator, testPluginInstaller);
         this.pluginController = pluginController;
-        this.pluginAccessor = pluginAccessor;
     }
 
     @After
@@ -57,7 +55,6 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
         }
 
-
         if (null != jiraReferencePlugin)
         {
             try
@@ -74,23 +71,36 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
         }
     }
+
     @Test
-    public void shouldBadThingsHappenWhenConnectReenabled() throws Exception
+    public void shouldSkipAddonEnablementWhenDescriptorValidationFails() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
         jiraReferencePlugin = testPluginInstaller.installJiraReferencePlugin();
         addon = installAndEnableAddon(ADDON_DESCRIPTOR);
         pluginController.disablePlugin(jiraReferencePlugin.getKey());
         pluginController.disablePlugin(theConnectPlugin.getKey());
+        pluginController.enablePlugins(theConnectPlugin.getKey());
+        assertFalse(testPluginInstaller.isAddonEnabled(addon.getKey()));
 
-        try
-        {
-            pluginController.enablePlugins(theConnectPlugin.getKey());
-        }
-        catch (Exception e)
-        {
-            assertEquals("com.atlassian.plugin.connect.plugin.descriptor", e.getClass().getCanonicalName());
-            assertEquals("No provider found for module type jiraTestModules referenced in the descriptor", e.getMessage());
-        }
+        pluginController.enablePlugins(jiraReferencePlugin.getKey());
+        testPluginInstaller.enableAddon(addon.getKey());
+        assertStateAndModuleCount(addon, PluginState.ENABLED, 1, "With module provider plugin enabled");
+    }
+
+    @Test
+    public void shouldSkipAddonEnablementWhenModuleRegistrationFails() throws Exception
+    {
+        theConnectPlugin = testPluginInstaller.installConnectPlugin();
+        jiraReferencePlugin = testPluginInstaller.installJiraReferencePlugin();
+        addon = installAndEnableAddon(ADDON_DESCRIPTOR);
+        testPluginInstaller.disableAddon(addon.getKey());
+        pluginController.disablePlugin(jiraReferencePlugin.getKey());
+        testPluginInstaller.enableAddon(addon.getKey());
+        assertStateAndModuleCount(addon, PluginState.DISABLED, 0, "With module provider plugin disabled");
+
+        pluginController.enablePlugins(jiraReferencePlugin.getKey());
+        testPluginInstaller.enableAddon(addon.getKey());
+        assertStateAndModuleCount(addon, PluginState.ENABLED, 1, "With module provider plugin enabled");
     }
 }

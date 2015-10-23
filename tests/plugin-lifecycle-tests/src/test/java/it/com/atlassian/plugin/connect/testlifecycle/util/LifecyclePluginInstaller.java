@@ -118,6 +118,15 @@ public class LifecyclePluginInstaller implements DisposableBean
         pluginController.uninstall(plugin);
     }
 
+    public boolean isAddonEnabled(String pluginKey) throws IOException
+    {
+        PluginControlHandler handler = getControlHandler();
+
+        checkNotNull(handler);
+
+        return handler.isPluginEnabled(pluginKey);
+    }
+
     public void disableAddon(String pluginKey) throws IOException
     {
         PluginControlHandler handler = getControlHandler();
