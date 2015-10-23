@@ -3,14 +3,13 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
 import com.google.gson.Gson;
-import com.opensymphony.util.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.io.IOException;
@@ -39,15 +38,10 @@ public class AnalyticsWhitelistTest
          || eventName.startsWith("connect.addon.dialog");
     }
 
-    private static String loadResource(String path) throws IOException
-    {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/" + path).getFile());
-    }
-
     @Parameterized.Parameters(name = "Event {0}")
     public static Collection<Object[]> testData() throws IOException
     {
-        String json = loadResource("whitelist/connect_whitelist.json");
+        String json = IOUtils.toString(ClassLoader.class.getResourceAsStream("/whitelist/connect_whitelist.json"));
         Map<String, List<String>> whiteList = new Gson().fromJson(json, Map.class);
 
         Collection<Object[]> toTest = new ArrayList<Object[]>();

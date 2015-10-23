@@ -25,6 +25,7 @@
 
     <modules>
         <module>api-parent</module>
+        <module>components</module>
         <module>modules</module>
         <module>plugin</module>
         <module>confluence</module>
@@ -252,6 +253,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>jsr311-api</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.selenium</groupId>
                 <artifactId>atlassian-webdriver-core</artifactId>
                 <version>${atlassian.selenium.version}</version>
@@ -318,14 +325,33 @@
                 <version>${json-simple.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.extras</groupId>
+                <artifactId>atlassian-extras-api</artifactId>
+                <version>3.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.plugins</groupId>
                 <artifactId>atlassian-plugins-schema</artifactId>
                 <version>${atlassian.plugins.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-servlet</artifactId>
+                <version>4.0.4</version>
+                <!-- <version>${atlassian.plugins.version}</version> -->
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.templaterenderer</groupId>
                 <artifactId>atlassian-template-renderer-api</artifactId>
                 <version>${atlassian.templaterenderer.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <artifactId>soy-template-renderer-api</artifactId>
+                <groupId>com.atlassian.soy</groupId>
+                <version>${atlassian.soy.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -539,6 +565,18 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.activeobjects</groupId>
+                <artifactId>activeobjects-plugin</artifactId>
+                <version>${ao.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.activeobjects</groupId>
+                <artifactId>activeobjects-test</artifactId>
+                <version>${ao.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.osgi</groupId>
                 <artifactId>atlassian-osgi</artifactId>
                 <version>0.2</version>
@@ -745,6 +783,12 @@
                 <version>1.9</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>1.8.0.5</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -788,6 +832,8 @@
         <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
+        <atlassian.soy.version>4.1.3</atlassian.soy.version>
+        <ao.version>0.29.3</ao.version>
         <quickreload.version>1.28</quickreload.version>
         <frontend.plugin.version>0.0.25</frontend.plugin.version>
 

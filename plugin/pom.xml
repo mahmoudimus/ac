@@ -24,8 +24,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.8.1</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -120,6 +119,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -485,59 +489,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <configuration>
-                        <tags>
-                            <tag>
-                                <name>response.representation.200.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.200.mediaType</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.201.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.201.mediaType</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.204.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.400.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.401.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                            <tag>
-                                <name>response.representation.404.doc</name>
-                                <placement>f</placement>
-                            </tag>
-                        </tags>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>com.atlassian.maven.plugins</groupId>
-                    <artifactId>maven-clover2-plugin</artifactId>
-                    <configuration combine.self="override">
-                        <excludes>
-                            <exclude>**/test/**/*.java</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
@@ -817,33 +768,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <id>copy-plugin-info</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                    <includes>
-                                        <include>build.properties</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
                 <version>${atlassian.spring.scanner.version}</version>
@@ -964,23 +888,8 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>clover</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.atlassian.clover</groupId>
-                    <artifactId>clover</artifactId>
-                    <version>${clover.libversion}</version>
-                    <scope>compile</scope>
-                </dependency>
-            </dependencies>
-         </profile>
-    </profiles>
 
     <properties>
         <product>jira</product>
@@ -991,7 +900,6 @@
         <test.plugin.artifact> </test.plugin.artifact>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
-        <ao.version>0.29.3</ao.version>
         <od.testing.configuration>
             use-java,8
             use-maven,3
