@@ -7,9 +7,9 @@ import java.util.Collection;
 
 public interface DynamicDescriptorRegistration
 {
-    Registration registerDescriptors(Plugin plugin, DescriptorToRegister... descriptors);
+    Registration registerDescriptors(ModuleDescriptor<?>... descriptors);
 
-    Registration registerDescriptors(final Plugin plugin, Iterable<DescriptorToRegister> descriptors);
+    Registration registerDescriptors(Iterable<ModuleDescriptor<?>> descriptors);
 
     public static interface Registration
     {

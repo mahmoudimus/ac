@@ -6,15 +6,15 @@ import com.atlassian.jira.plugin.report.ReportModuleDescriptor;
 import com.atlassian.jira.plugin.report.ReportModuleDescriptorImpl;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParametersImpl;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
@@ -69,7 +69,7 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
     public void enabled()
     {
         super.enabled();
-        this.registration = dynamicDescriptorRegistration.registerDescriptors(plugin, getReportDescriptor());
+        this.registration = dynamicDescriptorRegistration.registerDescriptors(getReportDescriptor());
     }
 
     @Override
@@ -82,11 +82,11 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
         super.disabled();
     }
 
-    private DescriptorToRegister getReportDescriptor()
+    private ModuleDescriptor<Report> getReportDescriptor()
     {
         ReportModuleDescriptor moduleDescriptor = new ModuleDescriptorImpl(iFrameRenderStrategyRegistry, descriptor, urlVariableSubstitutor, moduleContextFilter, ConnectReportModuleDescriptor.this, thumbnailUrl);
         moduleDescriptor.init(plugin, descriptor);
-        return new DescriptorToRegister(moduleDescriptor);
+        return moduleDescriptor;
     }
 
     @Override

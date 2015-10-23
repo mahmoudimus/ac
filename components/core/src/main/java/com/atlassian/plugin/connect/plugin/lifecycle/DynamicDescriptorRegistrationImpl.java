@@ -1,9 +1,7 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.StateAware;
-import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
 import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
@@ -25,8 +23,10 @@ import static java.util.Arrays.asList;
 @Component
 public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegistration
 {
-    private final BundleContext bundleContext;
+
     private static final Logger log = LoggerFactory.getLogger(DynamicDescriptorRegistrationImpl.class);
+
+    private final BundleContext bundleContext;
 
     @Autowired
     public DynamicDescriptorRegistrationImpl(BundleContext bundleContext)
@@ -39,42 +39,39 @@ public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegis
      * these descriptors are not proxies created by the p3 plugin, as it will cause ServiceProxyDestroyed
      * exceptions when the p3 plugin is upgraded.</strong>
      *
-     * @param plugin the plugin for which to register descriptors
      * @param descriptors the module descriptors of the plugin
      * @return a representation of the descriptor registration
      */
     @Override
-    public Registration registerDescriptors(Plugin plugin, DescriptorToRegister... descriptors)
+    public Registration registerDescriptors(ModuleDescriptor<?>... descriptors)
     {
-        return registerDescriptors(plugin, asList(descriptors));
+        return registerDescriptors(asList(descriptors));
     }
 
     /**
      * Registers descriptors.  
      *
-     * @param plugin the plugin for which to register descriptors
      * @param descriptors the module descriptors of the plugin
      * @return a representation of the descriptor registration
      */
     @Override
-    public Registration registerDescriptors(final Plugin plugin, Iterable<DescriptorToRegister> descriptors)
+    public Registration registerDescriptors(Iterable<ModuleDescriptor<?>> descriptors)
     {
         final List<ServiceRegistration> registrations = newArrayList();
-        for (DescriptorToRegister reg : descriptors)
+        for (ModuleDescriptor<?> descriptor : descriptors)
         {
-            ModuleDescriptor descriptor = reg.getDescriptor();
-            ModuleDescriptor<?> existingDescriptor = plugin.getModuleDescriptor(descriptor.getKey());
+            ModuleDescriptor<?> existingDescriptor = descriptor.getPlugin().getModuleDescriptor(descriptor.getKey());
             if (existingDescriptor != null)
             {
                 log.error("Duplicate key '" + descriptor.getKey() + "' detected, disabling previous instance");
                 ((StateAware)existingDescriptor).disabled();
             }
             log.debug("Registering descriptor {}", descriptor.getClass().getName());
-            registrations.add(bundleContext.registerService(ModuleDescriptor.class.getName(),
-                    descriptor, null));
+            registrations.add(bundleContext.registerService(ModuleDescriptor.class.getName(), descriptor, null));
         }
         return new Registration()
         {
+
             @Override
             public void unregister()
             {
@@ -93,7 +90,7 @@ public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegis
                 {
                     ModuleDescriptor descriptor = (ModuleDescriptor) bundleContext.getService(reg.getReference());
                     
-                    if(null != descriptor)
+                    if (null != descriptor)
                     {
                         listBuilder.add(descriptor);
                     }
