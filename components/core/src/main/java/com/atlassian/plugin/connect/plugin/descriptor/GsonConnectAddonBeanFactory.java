@@ -74,14 +74,14 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
 
     private ConnectAddonBean fromJsonImpl(final String jsonDescriptor) throws InvalidDescriptorException
     {
-        validateDescriptorAgainstSchema(jsonDescriptor);
+        validateDescriptorAgainstShallowSchema(jsonDescriptor);
         ConnectAddonBean addon = deserializeDescriptor(jsonDescriptor);
         addOnBeanValidatorService.validate(addon);
         validateModules(addon);
         return addon;
     }
 
-    private void validateDescriptorAgainstSchema(String jsonDescriptor)
+    private void validateDescriptorAgainstShallowSchema(String jsonDescriptor)
     {
         try
         {

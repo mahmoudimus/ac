@@ -172,10 +172,9 @@ public class ConnectAddonManager
      * @param targetState  the intended state of the add-on after a successful installation
      * @param maybePreviousSharedSecret   optionally, the previous shared secret (used for signing)
      * @param reusePreviousPublicKeyOrSharedSecret   toggle whether or not we issue a new secret/key if the previous one is defined
-     * @return a {@link ConnectAddonBean} representation of the add-on
      */
     @VisibleForTesting
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, Option<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret)
+    public void installConnectAddon(String jsonDescriptor, PluginState targetState, Option<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret)
     {
         long startTime = System.currentTimeMillis();
 
@@ -242,8 +241,6 @@ public class ConnectAddonManager
         {
             enableConnectAddon(pluginKey);
         }
-
-        return addOn;
     }
 
     public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)

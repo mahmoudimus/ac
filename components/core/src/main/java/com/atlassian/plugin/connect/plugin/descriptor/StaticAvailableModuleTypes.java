@@ -36,19 +36,18 @@ public class StaticAvailableModuleTypes implements AvailableModuleTypes
     }
 
     @Override
-    public List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules)
+    public List<ModuleBean> deserializeModules(String moduleTypeKey, JsonElement modules)
     {
         Gson deserializer = ConnectModulesGsonFactory.getGson();
         List<ModuleBean> beans = new ArrayList<>();
-        Class<? extends ModuleBean> beanClass = getModuleMeta(modules.getKey()).getBeanClass();
-        if (modules.getValue().isJsonObject())
+        Class<? extends ModuleBean> beanClass = getModuleMeta(moduleTypeKey).getBeanClass();
+        if (modules.isJsonObject())
         {
-            beans.add(deserializer.fromJson(modules.getValue(), beanClass));
+            beans.add(deserializer.fromJson(modules, beanClass));
         }
         else
         {
-            JsonArray moduleArray = modules.getValue().getAsJsonArray();
-
+            JsonArray moduleArray = modules.getAsJsonArray();
             for (int i = 0; i < moduleArray.size(); i++)
             {
                 JsonElement module = moduleArray.get(i);
@@ -56,7 +55,6 @@ public class StaticAvailableModuleTypes implements AvailableModuleTypes
             }
         }
         return beans;
-        
     }
     
     public ConnectModuleMeta getModuleMeta(String type)

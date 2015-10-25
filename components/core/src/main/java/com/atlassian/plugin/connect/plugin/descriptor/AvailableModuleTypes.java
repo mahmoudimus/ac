@@ -13,5 +13,5 @@ public interface AvailableModuleTypes
 
     boolean multipleModulesAllowed(String moduleType);
 
-    List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules) throws ConnectModuleValidationException;
+    List<ModuleBean> deserializeModules(String moduleTypeKey, JsonElement modules) throws ConnectModuleValidationException;
 }
