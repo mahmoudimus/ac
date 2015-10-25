@@ -36,10 +36,10 @@ public class PluginAvailableModuleTypes implements AvailableModuleTypes
     }
 
     @Override
-    public List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> moduleEntry) throws ConnectModuleValidationException
+    public List<ModuleBean> deserializeModules(String moduleTypeKey, JsonElement modules) throws ConnectModuleValidationException
     {
-        final ConnectModuleProvider moduleProvider = moduleProviders.get(moduleEntry.getKey());
-        return moduleProvider.deserializeAddonDescriptorModules(moduleEntry.getValue().toString(), addonBean);
+        final ConnectModuleProvider moduleProvider = moduleProviders.get(moduleTypeKey);
+        return moduleProvider.deserializeAddonDescriptorModules(modules.toString(), addonBean);
     }
     
     @Override
