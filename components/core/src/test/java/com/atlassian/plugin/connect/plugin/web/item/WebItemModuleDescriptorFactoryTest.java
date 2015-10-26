@@ -7,21 +7,18 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.web.condition.ConditionModuleFragmentFactoryImpl;
-import com.atlassian.plugin.connect.plugin.web.item.IconModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.web.ParamsModuleFragmentFactoryImpl;
-import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleDescriptorFactoryImpl;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
+import com.atlassian.plugin.connect.plugin.web.ParamsModuleFragmentFactoryImpl;
+import com.atlassian.plugin.connect.plugin.web.condition.ConditionModuleFragmentFactoryImpl;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
-import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleDescriptorFactoryForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebIcon;
@@ -47,8 +44,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -101,7 +102,7 @@ public class WebItemModuleDescriptorFactoryTest
                 }
         );
 
-        when(webFragmentHelper.loadCondition(anyString(), any(Plugin.class))).thenReturn(new DynamicMarkerCondition());
+        when(webFragmentHelper.loadCondition(anyString(), any(Plugin.class))).thenReturn(new AlwaysDisplayCondition());
     }
 
     @Test
