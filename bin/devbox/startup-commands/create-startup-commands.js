@@ -33,6 +33,7 @@ var downloadQueue = async.queue(function (task, callback) {
 var plugins = {
     'jwt-plugin': 'com.atlassian.jwt:jwt-plugin',
     'json-schema-validator-atlassian-bundle': 'com.atlassian.bundles:json-schema-validator-atlassian-bundle',
+    'atlassian-universal-plugin-manager-plugin': 'com.atlassian.upm:atlassian-universal-plugin-manager-plugin'
 };
 
 var connectPlugin = 'com.atlassian.plugins:atlassian-connect-plugin';
