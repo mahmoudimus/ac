@@ -1,12 +1,12 @@
 package it.jira.iframe;
 
 import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
+import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import it.jira.JiraWebDriverTestBase;
@@ -74,7 +74,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(testUserFactory.admin(), JiraAdministrationHomePage.class);
+        loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -88,7 +88,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(testUserFactory.admin(), JiraAdministrationHomePage.class);
+        loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 

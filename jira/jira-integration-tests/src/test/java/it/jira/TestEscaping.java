@@ -2,6 +2,7 @@ package it.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
+import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Sidebar;
@@ -15,7 +16,6 @@ import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectSummaryPageWithAddonTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
@@ -202,7 +202,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     @Test
     public void testAdminPage() throws Exception
     {
-        product.quickLoginAsAdmin(JiraAdministrationHomePage.class);
+        product.quickLoginAsAdmin(ViewGeneralConfigurationPage.class);
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
