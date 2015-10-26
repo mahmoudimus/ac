@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
@@ -11,22 +10,20 @@ import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.plugin.request.webhook.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
-import com.atlassian.plugin.module.ContainerManagedPlugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -36,20 +33,16 @@ import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWe
 public class BeanToModuleRegistrar
 {
 
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
+    private static final Logger log = LoggerFactory.getLogger(BeanToModuleRegistrar.class);
 
-    private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
-    private final ContainerManagedPlugin theConnectPlugin;
+    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final PluginAccessor pluginAccessor;
+    private final ConcurrentMap<String, DynamicDescriptorRegistration.Registration> registrations = new ConcurrentHashMap<>();
 
     @Autowired
-    public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
-                                 PluginRetrievalService pluginRetrievalService,
-                                 PluginAccessor pluginAccessor)
+    public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration, PluginAccessor pluginAccessor)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
-        this.registrations = new ConcurrentHashMap<>();
         this.pluginAccessor = pluginAccessor;
     }
 
@@ -69,12 +62,12 @@ public class BeanToModuleRegistrar
         Map<String, List<ModuleBean>> lifecycleWebhookModuleList
                 = Collections.singletonMap(new WebHookModuleMeta().getDescriptorKey(), lifecycleWebhooks);
 
-        List<DescriptorToRegister> descriptorsToRegister = new ArrayList<>();
+        List<ModuleDescriptor<?>> descriptorsToRegister = new ArrayList<>();
         getDescriptorsToRegisterForModules(addon.getModules(), moduleProviderContext, moduleProviders, descriptorsToRegister);
         getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, moduleProviderContext, moduleProviders, descriptorsToRegister);
         if (!descriptorsToRegister.isEmpty())
         {
-            registrations.putIfAbsent(addon.getKey(), dynamicDescriptorRegistration.registerDescriptors(theConnectPlugin, descriptorsToRegister));
+            registrations.putIfAbsent(addon.getKey(), dynamicDescriptorRegistration.registerDescriptors(descriptorsToRegister));
         }
     }
 
@@ -92,12 +85,12 @@ public class BeanToModuleRegistrar
                 }
                 catch (IllegalStateException e)
                 {
-                    //service was already unregistered, just ignore
+                    log.warn(String.format("Attempted to unregister dynamic descriptors for add-on %s but failed", addonKey), e);
                 }
             }
         }
     }
-    
+
     public Collection<ModuleDescriptor<?>> getRegisteredDescriptorsForAddon(String addonKey)
     {
         if (registrations.containsKey(addonKey))
@@ -135,22 +128,14 @@ public class BeanToModuleRegistrar
     private void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
             ConnectModuleProviderContext moduleProviderContext,
             Collection<ConnectModuleProvider> moduleProviders,
-            List<DescriptorToRegister> descriptorsToRegister) throws ConnectModuleRegistrationException
+            List<ModuleDescriptor<?>> descriptorsToRegister) throws ConnectModuleRegistrationException
     {
         for (Map.Entry<String, List<ModuleBean>> entry : moduleList.entrySet())
         {
             List<ModuleBean> beans = entry.getValue();
             ConnectModuleProvider provider = findProviderOrThrow(entry.getKey(), moduleProviders);
-            List<ModuleDescriptor> descriptors = provider.createPluginModuleDescriptors(beans, moduleProviderContext);
-            List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
-            {
-                @Override
-                public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
-                {
-                    return new DescriptorToRegister(input);
-                }
-            });
-            descriptorsToRegister.addAll(theseDescriptors);
+            List<ModuleDescriptor<?>> descriptors = provider.createPluginModuleDescriptors(beans, moduleProviderContext);
+            descriptorsToRegister.addAll(descriptors);
         }
     }
 
