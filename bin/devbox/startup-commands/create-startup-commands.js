@@ -30,6 +30,8 @@ var downloadQueue = async.queue(function (task, callback) {
     task.executor.apply(task.self || this, args);
 }, 3);
 
+var tomcatVersion = 'tomcat7x';
+
 var plugins = {
     'jwt-plugin': 'com.atlassian.jwt:jwt-plugin',
     'json-schema-validator-atlassian-bundle': 'com.atlassian.bundles:json-schema-validator-atlassian-bundle',
@@ -37,11 +39,9 @@ var plugins = {
 };
 
 var connectPlugin = 'com.atlassian.plugins:atlassian-connect-plugin';
-var baseCommand = 'atlas-run-standalone --container {{tomcatVersion}} --product {{product}} ' +
+var baseCommand = 'atlas-run-standalone --container ' + tomcatVersion + ' --product {{product}} ' +
     '--version {{productVersion}} --data-version {{dataVersion}} --bundled-plugins {{bundledPlugins}} ' +
     '--jvmargs -Datlassian.upm.on.demand=true';
-
-var tomcatVersion = 'tomcat7x';
 
 var versionOverrides = {
     'prd': {
@@ -166,7 +166,6 @@ function createEnvironment(env) {
 
 function createProductRunCommand(product, env) {
     return baseCommand
-        .replace('{{tomcatVersion}}', tomcatVersion)
         .replace('{{product}}', product)
         .replace('{{productVersion}}', versions[env][product])
         .replace('{{dataVersion}}', versions[env][product])
