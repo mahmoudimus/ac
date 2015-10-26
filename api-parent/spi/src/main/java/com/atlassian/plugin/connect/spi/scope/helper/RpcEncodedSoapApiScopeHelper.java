@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.spi.scope.helper;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
+import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
-import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.readDocument;
+import static com.atlassian.plugin.connect.api.util.Dom4jUtils.readDocument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Collections2.transform;
 

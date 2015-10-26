@@ -1,16 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.web.item.ConnectWebSectionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.web.item.DefaultConnectWebSectionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.web.item.WebSectionModuleDescriptorFactoryForTests;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.Condition;

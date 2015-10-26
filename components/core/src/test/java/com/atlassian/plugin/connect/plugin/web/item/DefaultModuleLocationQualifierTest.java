@@ -4,8 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.web.item.DefaultModuleLocationQualifier;
-import com.atlassian.plugin.connect.spi.module.ModuleLocationQualifier;
+import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import org.junit.Before;
 import org.junit.Test;
 

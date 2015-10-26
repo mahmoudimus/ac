@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 import org.slf4j.Logger;

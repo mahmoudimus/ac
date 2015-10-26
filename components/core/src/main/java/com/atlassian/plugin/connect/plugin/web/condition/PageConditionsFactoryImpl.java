@@ -1,11 +1,9 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
-import com.atlassian.plugin.connect.api.condition.ConnectEntityPropertyEqualToCondition;
-import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
-import com.atlassian.plugin.connect.spi.condition.UserIsLoggedInCondition;
-import com.atlassian.plugin.connect.spi.condition.UserIsSysAdminCondition;
-import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
+import com.atlassian.plugin.connect.api.web.condition.ConnectEntityPropertyEqualToCondition;
+import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
+import com.atlassian.plugin.connect.api.web.condition.UserIsAdminCondition;
+import com.atlassian.plugin.connect.spi.web.condition.ConditionClassResolver;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.features.DarkFeatureEnabledCondition;
 import org.springframework.stereotype.Component;

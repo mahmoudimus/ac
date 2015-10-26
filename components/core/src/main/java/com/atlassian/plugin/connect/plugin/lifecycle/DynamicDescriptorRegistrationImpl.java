@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.StateAware;
-import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.api.lifecycle.DynamicDescriptorRegistration;
 import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;

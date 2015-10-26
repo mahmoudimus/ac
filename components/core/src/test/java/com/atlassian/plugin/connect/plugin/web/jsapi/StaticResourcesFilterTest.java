@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.jsapi;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
-import com.atlassian.plugin.connect.plugin.web.jsapi.StaticResourcesFilter;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;

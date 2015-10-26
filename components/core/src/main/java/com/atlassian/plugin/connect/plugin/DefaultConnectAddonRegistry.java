@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.PluginState;
-import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -119,7 +117,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
-    public Iterable<String> getAllAddonKeys()
+    public Collection<String> getAllAddonKeys()
     {
         return getAddonKeySet();
     }

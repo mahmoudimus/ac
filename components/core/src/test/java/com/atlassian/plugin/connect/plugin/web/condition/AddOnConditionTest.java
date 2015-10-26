@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImpl;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
@@ -10,13 +10,10 @@ import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImpl;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.AddOnConditionEvent;
-import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
-import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;

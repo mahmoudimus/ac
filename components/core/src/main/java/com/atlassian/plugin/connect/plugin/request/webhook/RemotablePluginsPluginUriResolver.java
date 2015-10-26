@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.request.webhook;
 
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.PluginUriResolver;
 import com.google.common.base.Optional;

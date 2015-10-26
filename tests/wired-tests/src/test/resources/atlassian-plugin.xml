@@ -27,15 +27,15 @@
     <!-- CONNECT COMPONENTS -->
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager" />
     <component-import key="connectAddonBeanFactory" interface="com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory" />
-    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry"/>
-    <component-import key="connectAddonService" interface="com.atlassian.plugin.connect.spi.user.ConnectUserService"/>
+    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.ConnectAddonRegistry"/>
+    <component-import key="connectAddonService" interface="com.atlassian.plugin.connect.spi.auth.user.ConnectUserService"/>
     <component-import key="connectCrowdService" interface="com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService"/>
-    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService" />
-    <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry" />
+    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService" />
+    <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
     <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.plugin.auth.user.ThreeLeggedAuthService" />
     <component-import key="addOnService" interface="com.atlassian.plugin.connect.api.ConnectAddonAccessor" />
-    <component-import key="addOnScopeManager" interface="com.atlassian.plugin.connect.api.scopes.AddOnScopeManager" />
+    <component-import key="addOnScopeManager" interface="com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager" />
     <component-import key="upmControlHandler" interface="com.atlassian.upm.spi.PluginControlHandler" />
 
     <!-- CONNECT MODULE PROVIDERS -->

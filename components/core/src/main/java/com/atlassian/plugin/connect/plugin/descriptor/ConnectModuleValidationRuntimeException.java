@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
-import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 
 /**
  * A run-time exception wrapper around {@link ConnectModuleValidationException} to enable throwing out of Gson

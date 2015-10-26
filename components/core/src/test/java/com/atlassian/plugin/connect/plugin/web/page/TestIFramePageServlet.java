@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
-import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.iframe.page.IFramePageRenderer;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
+import com.atlassian.plugin.connect.api.web.iframe.PageInfo;
+import com.atlassian.plugin.connect.api.web.page.IFramePageRenderer;
 import com.atlassian.plugin.connect.spi.module.page.IFramePageServlet;
-import com.atlassian.plugin.connect.spi.module.page.PageInfo;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
@@ -25,7 +25,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TestIFramePageServlet
 {

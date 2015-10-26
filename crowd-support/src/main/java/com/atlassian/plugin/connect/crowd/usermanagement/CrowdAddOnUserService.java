@@ -8,14 +8,14 @@ import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
+import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.host.HostProperties;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.user.ConnectUserService;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
+import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -23,13 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants;
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.Constants;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.usernameForAddon;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService

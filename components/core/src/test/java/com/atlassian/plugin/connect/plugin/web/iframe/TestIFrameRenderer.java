@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.plugin.connect.plugin.web.iframe.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
-import com.atlassian.plugin.connect.spi.module.page.IFrameContextImpl;
-import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameParams;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameParams;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;

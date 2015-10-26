@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.auth.applinks;
 
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;

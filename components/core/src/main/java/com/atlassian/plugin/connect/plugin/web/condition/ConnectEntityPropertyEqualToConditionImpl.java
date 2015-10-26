@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.web.condition;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.condition.ConnectEntityPropertyEqualToCondition;
+import com.atlassian.plugin.connect.api.web.condition.ConnectEntityPropertyEqualToCondition;
 import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
 import com.atlassian.sal.api.user.UserManager;

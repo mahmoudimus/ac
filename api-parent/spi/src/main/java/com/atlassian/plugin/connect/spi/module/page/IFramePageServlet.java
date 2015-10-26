@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.spi.module.page;
 
-import com.atlassian.plugin.connect.spi.iframe.page.IFramePageRenderer;
-import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
+import com.atlassian.plugin.connect.api.web.iframe.PageInfo;
+import com.atlassian.plugin.connect.api.web.page.IFramePageRenderer;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.annotations.VisibleForTesting;

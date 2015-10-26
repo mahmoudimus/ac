@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.jira.web;
 
-import com.atlassian.plugin.connect.api.capabilities.provider.ModuleTemplate;
+import com.atlassian.plugin.connect.api.web.ModuleTemplate;
 import com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionResource;
 
 public class JiraTemplateHelper

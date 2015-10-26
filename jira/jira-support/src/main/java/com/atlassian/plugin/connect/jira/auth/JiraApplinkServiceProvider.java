@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.jira.auth;
 
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
-import com.atlassian.plugin.connect.spi.applinks.MutatingApplicationLinkServiceProvider;
+import com.atlassian.plugin.connect.spi.auth.applinks.MutatingApplicationLinkServiceProvider;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import javax.inject.Inject;

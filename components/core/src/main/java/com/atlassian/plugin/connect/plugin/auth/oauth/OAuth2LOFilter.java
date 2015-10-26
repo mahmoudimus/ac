@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
 import com.atlassian.oauth.util.Check;
-import com.atlassian.plugin.connect.spi.product.WebSudoService;
+import com.atlassian.plugin.connect.spi.auth.WebSudoService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.auth.AuthenticationController;

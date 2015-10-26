@@ -7,9 +7,9 @@ import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.LinkBeanBuilder;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.base.Strings;
@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class BlueprintModuleDescriptorFactory
         implements ConnectModuleDescriptorFactory<BlueprintModuleBean, BlueprintModuleDescriptor>
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectModuleDescriptorFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(BlueprintModuleDescriptorFactory.class);
     private final ModuleFactory moduleFactory;
 
     @Autowired

@@ -2,11 +2,11 @@ package com.atlassian.plugin.connect.plugin.web.page;
 
 import com.atlassian.plugin.connect.plugin.web.iframe.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.iframe.page.IFramePageRenderer;
-import com.atlassian.plugin.connect.spi.module.page.PageInfo;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.api.web.page.IFramePageRenderer;
+import com.atlassian.plugin.connect.api.web.iframe.PageInfo;
+import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;

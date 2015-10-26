@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
-import com.atlassian.plugin.connect.spi.module.websection.ProductSpecificWebSectionModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebSectionModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;

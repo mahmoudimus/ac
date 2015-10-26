@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.lifecycle.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
@@ -45,6 +43,12 @@ public class ConnectAddonAccessorImpl implements ConnectAddonAccessor
     public Optional<ConnectAddonBean> getAddon(String addonKey)
     {
         return getAddonForDescriptor(addonRegistry.getDescriptor(addonKey));
+    }
+
+    @Override
+    public Collection<String> getAllAddonKeys()
+    {
+        return addonRegistry.getAllAddonKeys();
     }
 
     @Override

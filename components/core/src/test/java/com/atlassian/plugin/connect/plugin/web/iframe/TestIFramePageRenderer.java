@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.plugin.connect.plugin.web.page.IFramePageRendererImpl;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.iframe.page.IFramePageRenderer;
-import com.atlassian.plugin.connect.spi.module.page.PageInfo;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.api.web.page.IFramePageRenderer;
+import com.atlassian.plugin.connect.api.web.iframe.PageInfo;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.conditions.InvertedCondition;
 import com.atlassian.templaterenderer.TemplateRenderer;

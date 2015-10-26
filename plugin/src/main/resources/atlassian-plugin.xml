@@ -96,7 +96,7 @@
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
                                    class="com.atlassian.plugin.connect.plugin.auth.applinks.RemotePluginContainerApplicationTypeImpl"
-                                   interface="com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType">
+                                   interface="com.atlassian.plugin.connect.plugin.auth.applinks.RemotePluginContainerApplicationType">
             <manifest-producer class="com.atlassian.plugin.connect.plugin.auth.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 

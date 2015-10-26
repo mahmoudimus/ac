@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.api;
 
+import com.atlassian.annotations.PublicApi;
 import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 
 /**
@@ -7,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
  *
  * @since 1.1.37
  */
+@PublicApi
 public interface ConnectAddonLicenseAccessor
 {
 

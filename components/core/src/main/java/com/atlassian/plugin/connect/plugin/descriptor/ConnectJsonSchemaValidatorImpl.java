@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.fasterxml.jackson.databind.JsonNode;

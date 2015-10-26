@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.plugin.connect.spi.module.context.ContextMapParameterExtractor;
-import com.atlassian.plugin.connect.spi.module.context.ParameterSerializer;
+import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Autowired;

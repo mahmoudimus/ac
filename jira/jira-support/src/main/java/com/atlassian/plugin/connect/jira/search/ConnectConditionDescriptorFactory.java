@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.jira.search;
 
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactory;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.condition.ConditionElementParserFactory;
+import com.atlassian.plugin.connect.api.web.condition.ConditionElementParserFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.ConditionElementParser;

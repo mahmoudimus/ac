@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.plugin.lifecycle.upm;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
-import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstallException;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;

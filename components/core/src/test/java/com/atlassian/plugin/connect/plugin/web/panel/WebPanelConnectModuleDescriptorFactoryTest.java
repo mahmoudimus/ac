@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.web.panel.WebPanelConnectModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.web.panel.WebPanelConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.ModuleLocationQualifier;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
 import org.dom4j.Element;
 import org.hamcrest.Description;

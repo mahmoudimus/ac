@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import org.hamcrest.Matcher;
