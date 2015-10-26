@@ -52,20 +52,22 @@ Contributions are encouraged!
 
 ### Repository structure
 
-* `api-parent` - the parent of all modules containing public interfaces
-	* `api` - a draft application programming interface for the plugin
-	* `spi` - a draft service provider interface for the plugin
 * `bin` - utility scripts
+* `components` - the shared components of the plugin
+	* `api` - a draft application programming interface for the plugin
+	* `core` - the core cross-product implementation
+	* `modules` - bean representations of add-on JSON descriptor elements
+	* `spi` - a draft service provider interface for the plugin
 * `confluence` - the parent of all Confluence-specific modules
-	* `confluence-support` - support for Atlassian Connect in Confluence
 	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
+	* `confluence-support` - support for Atlassian Connect in Confluence
 * `crowd-support` - support for Atlassian Connect in products that use Atlassian Crowd
-* `docs` - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
+* [`docs`](docs) - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
 * `jira` - the parent of all JIRA-specific modules
-	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
 	* `jira-integration-tests` - JIRA-specific integration tests for the plugin
-* `jsapi` - builds the JavaScript API based on [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js)
-* `modules` - bean representations of add-on JSON descriptor elements
+	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
+	* `jira-support` - support for Atlassian Connect in JIRA
+* [`jsapi`](jsapi) - builds the JavaScript API based on [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js)
 * `plugin` - groups the other modules into a plugin
 * `tests` - the parent of all non-product-specific test modules
     * `descriptor-validation-tests` - JSON schema validation of all public add-ons for JIRA and Confluence on Atlassian Marketplace
@@ -90,7 +92,11 @@ To build the plugin:
 To speed up subsequent builds, the `-` prefix can be used with the `-pl` option to exclude specific modules,
 e.g. the `jsapi` module which invokes a time-consuming Node.js build.
 
-    mvn clean install -pl -jsapi
+    mvn -pl -jsapi clean install
+
+Conversely, once the project has been built, it can be rebuilt with changes only from specific modules:
+
+    mvn -pl jsapi,plugin clean install
 
 ### Running tests
 
