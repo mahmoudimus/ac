@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.util.fixture;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 
 /**
  * @since 1.0

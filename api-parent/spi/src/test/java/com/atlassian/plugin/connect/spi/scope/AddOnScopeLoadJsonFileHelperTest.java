@@ -10,11 +10,11 @@ import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.spi.scope.helper.AddOnScopeLoadJsonFileHelper.combineProductScopes;
 import static org.hamcrest.MatcherAssert.assertThat;

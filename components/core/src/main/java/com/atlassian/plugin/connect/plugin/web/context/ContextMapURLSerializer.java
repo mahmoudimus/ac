@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import com.atlassian.plugin.connect.spi.module.context.ContextMapParameterExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
 import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

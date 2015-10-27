@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 

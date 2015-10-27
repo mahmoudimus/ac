@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.request.url;
 
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.uri.UriBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

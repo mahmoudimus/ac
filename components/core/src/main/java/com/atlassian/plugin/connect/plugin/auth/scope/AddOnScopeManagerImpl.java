@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.scope.AddOnScope;

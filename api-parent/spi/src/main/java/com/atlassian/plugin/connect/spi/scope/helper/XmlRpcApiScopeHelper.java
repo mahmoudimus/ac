@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.spi.scope.helper;
 
+import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
-import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.readDocument;
+import static com.atlassian.plugin.connect.api.util.Dom4jUtils.readDocument;
 import static com.google.common.collect.Iterables.transform;
 
 /**

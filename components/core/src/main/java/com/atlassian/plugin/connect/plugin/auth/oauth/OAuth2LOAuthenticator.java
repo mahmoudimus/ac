@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.auth.DefaultMessage;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;

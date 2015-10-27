@@ -590,7 +590,13 @@
             <dependency>
                 <groupId>com.atlassian.security</groupId>
                 <artifactId>atlassian-secure-random</artifactId>
-                <version>1.0</version>
+                <version>${atlassian.security.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.security</groupId>
+                <artifactId>atlassian-secure-xml</artifactId>
+                <version>${atlassian.security.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -744,6 +750,12 @@
 
             <!-- tests -->
             <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
                 <version>${hamcrest.version}</version>
@@ -819,6 +831,7 @@
         <atlassian.connect-js.version>3.1.7</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@bitbucket.org:atlassian/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
+        <atlassian.security.version>3.2.4</atlassian.security.version>
 
         <atlassian.upm.version>2.20</atlassian.upm.version>
 

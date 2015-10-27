@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web;
 
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFragmentFactory;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 

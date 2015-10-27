@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
@@ -18,7 +18,6 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * REST endpoint for add-on properties

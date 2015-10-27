@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.jira.web.condition;
 
-import com.atlassian.plugin.connect.api.condition.ConnectEntityPropertyEqualToCondition;
-import com.atlassian.plugin.connect.spi.condition.ConditionsProvider;
-import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
+import com.atlassian.plugin.connect.api.web.condition.ConnectEntityPropertyEqualToCondition;
+import com.atlassian.plugin.connect.spi.web.condition.ConditionsProvider;
+import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
+import com.atlassian.plugin.connect.spi.web.condition.ConditionClassResolver;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 

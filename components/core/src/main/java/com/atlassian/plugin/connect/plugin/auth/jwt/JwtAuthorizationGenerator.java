@@ -10,8 +10,8 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
-import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 

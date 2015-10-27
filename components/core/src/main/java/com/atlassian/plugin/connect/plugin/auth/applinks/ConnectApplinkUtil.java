@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.auth.applinks;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.spi.AuthenticationMethod;
+import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

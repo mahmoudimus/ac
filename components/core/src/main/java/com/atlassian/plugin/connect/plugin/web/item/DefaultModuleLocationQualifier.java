@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.item;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
-import com.atlassian.plugin.connect.spi.module.ModuleLocationQualifier;
+import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;

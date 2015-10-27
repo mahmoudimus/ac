@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Suppliers;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.TransactionAction;
 import com.atlassian.sal.api.message.I18nResolver;

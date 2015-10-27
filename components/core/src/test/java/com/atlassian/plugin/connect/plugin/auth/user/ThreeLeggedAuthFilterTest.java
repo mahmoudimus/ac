@@ -2,9 +2,7 @@ package com.atlassian.plugin.connect.plugin.auth.user;
 
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.plugin.auth.user.ThreeLeggedAuthFilter;
-import com.atlassian.plugin.connect.plugin.auth.user.ThreeLeggedAuthService;
-import com.atlassian.plugin.connect.spi.user.ConnectUserService;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;

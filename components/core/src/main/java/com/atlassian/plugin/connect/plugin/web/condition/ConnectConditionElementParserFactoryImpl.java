@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.condition.ConditionElementParserFactory;
+import com.atlassian.plugin.connect.api.web.condition.ConditionElementParserFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;

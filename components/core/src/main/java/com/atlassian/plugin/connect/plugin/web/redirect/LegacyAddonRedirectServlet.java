@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
-import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.uri.Uri;
 import org.apache.commons.lang.Validate;
 import org.apache.http.HttpStatus;

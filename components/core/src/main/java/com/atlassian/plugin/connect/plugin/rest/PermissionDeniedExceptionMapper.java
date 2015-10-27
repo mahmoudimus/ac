@@ -4,7 +4,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

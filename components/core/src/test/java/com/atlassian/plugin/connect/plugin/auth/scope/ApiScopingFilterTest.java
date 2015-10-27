@@ -2,12 +2,8 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.core.Clock;
-import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
-import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
-import com.atlassian.plugin.connect.spi.event.ScopedRequestEvent;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import org.hamcrest.Description;

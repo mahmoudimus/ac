@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
-import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImpl;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 

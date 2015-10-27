@@ -2,13 +2,13 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
 

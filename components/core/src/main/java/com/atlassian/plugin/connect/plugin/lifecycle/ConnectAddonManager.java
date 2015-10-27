@@ -13,11 +13,11 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
-import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.plugin.AddonSettings;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -32,19 +32,18 @@ import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonEnableFailedEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstallFailedEvent;
-import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
-import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.user.ConnectUserService;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonDisabledEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonEnableFailedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonEnabledEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonInstalledEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonUninstallFailedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonUninstalledEvent;
+import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
+import com.atlassian.plugin.connect.spi.ProductAccessor;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -65,7 +64,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLHandshakeException;
 import javax.ws.rs.core.MediaType;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
@@ -76,7 +74,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.addOnRequiresUser;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.addOnRequiresUser;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -166,7 +164,7 @@ public class ConnectAddonManager
 
     /**
      * This method is public for test visibility. In preference, please use
-     * {@link com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller#install(String)}
+     * {@link ConnectAddOnInstaller#install(String)}
      *
      * @param jsonDescriptor the json descriptor of the add-on to install
      * @param targetState  the intended state of the add-on after a successful installation

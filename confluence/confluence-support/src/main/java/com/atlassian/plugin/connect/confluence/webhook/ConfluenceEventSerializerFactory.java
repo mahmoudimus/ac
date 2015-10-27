@@ -34,7 +34,7 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
     {
         // This list is deliberately ordered. More-specific mappers such as PageMoveEventMapper must appear in the
         // list _before_ less-specific mappers such as PageEventMapper, or else they will never get invoked.
-        mappers = ImmutableList.<EventMapper<ConfluenceEvent>>of(
+        mappers = ImmutableList.of(
                 new LabelEventMapper(userManager, confluenceSettingsManager),
                 new UserStatusEventMapper(userManager, confluenceSettingsManager),
                 new UserEventMapper(userManager, confluenceSettingsManager),

@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Supplier;

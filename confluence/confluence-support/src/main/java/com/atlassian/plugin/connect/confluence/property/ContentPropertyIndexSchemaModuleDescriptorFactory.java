@@ -8,9 +8,9 @@ import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
 import org.dom4j.Element;

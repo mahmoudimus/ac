@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect;
 
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
-import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectPageModuleProvider;
+import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

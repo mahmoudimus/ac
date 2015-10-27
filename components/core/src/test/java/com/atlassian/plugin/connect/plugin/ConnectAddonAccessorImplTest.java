@@ -1,9 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.ConnectAddonAccessorImpl;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.google.common.collect.Lists;
 import org.junit.Test;

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

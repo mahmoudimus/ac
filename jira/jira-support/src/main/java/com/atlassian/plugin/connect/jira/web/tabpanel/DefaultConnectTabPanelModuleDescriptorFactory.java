@@ -2,11 +2,11 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.apache.commons.lang.StringEscapeUtils;

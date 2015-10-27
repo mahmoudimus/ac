@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 
 import javax.inject.Inject;
 import javax.inject.Named;

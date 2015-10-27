@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.plugin.web.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.spi.web.condition.ConditionClassResolver;
+import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.base.Strings;
 import org.dom4j.dom.DOMElement;

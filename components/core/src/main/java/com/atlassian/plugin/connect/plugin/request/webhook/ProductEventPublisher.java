@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.plugin.request.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.spi.event.product.PluginsUpgradedEvent;
-import com.atlassian.plugin.connect.spi.event.product.ServerUpgradedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.analytics.PluginsUpgradedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ServerUpgradedEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;

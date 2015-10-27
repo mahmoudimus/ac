@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;

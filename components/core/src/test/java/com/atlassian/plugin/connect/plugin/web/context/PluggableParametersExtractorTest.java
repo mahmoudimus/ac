@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.plugin.web.context.PluggableParametersExtractorImpl;
-import com.atlassian.plugin.connect.spi.iframe.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
-import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
-import com.atlassian.plugin.connect.spi.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.module.ModuleFactory;

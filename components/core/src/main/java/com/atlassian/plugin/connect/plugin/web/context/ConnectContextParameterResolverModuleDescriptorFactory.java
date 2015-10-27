@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.osgi.external.ListableModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.external.SingleModuleDescriptorFactory;

@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilder;
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
 
 import org.osgi.framework.BundleContext;

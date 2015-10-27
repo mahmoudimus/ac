@@ -15,7 +15,7 @@ import com.atlassian.applinks.spi.manifest.ManifestNotFoundException;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
-import com.atlassian.plugin.connect.spi.applinks.MutatingApplicationLinkServiceProvider;
+import com.atlassian.plugin.connect.spi.auth.applinks.MutatingApplicationLinkServiceProvider;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.ResponseException;
 import org.slf4j.Logger;
