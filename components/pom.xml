@@ -12,7 +12,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>api</module>
         <module>core</module>
+        <module>modules</module>
+        <module>spi</module>
     </modules>
 
 </project>
