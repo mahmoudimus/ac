@@ -24,16 +24,14 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>api-parent</module>
         <module>components</module>
-        <module>modules</module>
-        <module>plugin</module>
         <module>confluence</module>
-        <module>jira</module>
-        <module>tests</module>
-        <module>docs</module>
         <module>crowd-support</module>
+        <module>docs</module>
+        <module>jira</module>
         <module>jsapi</module>
+        <module>plugin</module>
+        <module>tests</module>
     </modules>
 
     <scm>
