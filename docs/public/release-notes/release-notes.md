@@ -34,8 +34,8 @@ or Confluence Cloud with Atlassian Connect as follows:
 </div>
 
 ## [1.1.57](../release-notes/1-1-0.html#1.1.57)
-* Fixed web item actions being broken by certain conditions
-* More specific error messages shown for SSL-related installation errors
+* Fixed web item actions being broken by certain conditions [AC-1640](https://ecosystem.atlassian.net/browse/AC-1640)
+* More specific error messages shown for SSL-related installation errors [AC-1216](https://ecosystem.atlassian.net/browse/AC-1216)
 
 ## [1.1.55](../release-notes/1-1-0.html#1.1.55)
 * Added `post-install-page` module for add-ons to provide a page with information on getting started [AC-1579](https://ecosystem.atlassian.net/browse/AC-1579)
