@@ -182,7 +182,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
- * @schemaTitle Webhooks
+ * @schemaTitle Webhook
  * @since 1.0
  */
 @SchemaDefinition("webhook")
