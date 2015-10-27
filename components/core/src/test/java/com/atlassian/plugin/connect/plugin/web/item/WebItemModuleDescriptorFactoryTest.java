@@ -13,12 +13,12 @@ import com.atlassian.plugin.connect.plugin.web.condition.ConditionModuleFragment
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebIcon;
@@ -102,7 +102,7 @@ public class WebItemModuleDescriptorFactoryTest
                 }
         );
 
-        when(webFragmentHelper.loadCondition(anyString(), any(Plugin.class))).thenReturn(new DynamicMarkerCondition());
+        when(webFragmentHelper.loadCondition(anyString(), any(Plugin.class))).thenReturn(new AlwaysDisplayCondition());
     }
 
     @Test
@@ -144,23 +144,6 @@ public class WebItemModuleDescriptorFactoryTest
 
         assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()), startsWith("http://www.google.com"));
     }
-
-    /*
-
-    TODO in ACDEV-494: comment in the following 2 tests and fix URL variable substitution.
-
-    @Test
-    public void urlIsCorrectWhenThereIsNoContext()
-    {
-        assertThat(descriptor.getUrl().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()), is("http://www.google.com?my_project_id=&my_project_key="));
-    }
-
-    @Test
-    public void urlIsCorrectWhenThereIsContext()
-    {
-        assertThat(descriptor.getUrl().getDisplayableUrl(mock(HttpServletRequest.class), TestContextBuilder.buildContextMap()), is(String.format("http://www.google.com?my_project_id=%d&my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY)));
-    }
-    */
 
     @Test
     public void weightIsCorrect()
