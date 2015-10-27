@@ -21,6 +21,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SPACE_TOOLS_TAB_EXAMPLE}
+ * @schemaTitle Space Tools Tab
  * @since 1.0
  */
 @SchemaDefinition("spaceTools")
