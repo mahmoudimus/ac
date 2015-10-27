@@ -33,6 +33,10 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.57](../release-notes/1-1-0.html#1.1.57)
+* Fixed web item actions being broken by certain conditions
+* More specific error messages shown for SSL-related installation errors
+
 ## [1.1.55](../release-notes/1-1-0.html#1.1.55)
 * Added `post-install-page` module for add-ons to provide a page with information on getting started [AC-1579](https://ecosystem.atlassian.net/browse/AC-1579)
 * Confluence: Added fields to the `confluenceContentProperties` module to allow add-ons to provide aliases for content properties [CE-155](https://ecosystem.atlassian.net/browse/CE-155)
