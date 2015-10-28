@@ -248,6 +248,7 @@
                             <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
+                                <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>

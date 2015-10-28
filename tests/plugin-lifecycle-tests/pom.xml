@@ -151,6 +151,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>

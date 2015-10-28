@@ -454,6 +454,7 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
+                                <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
