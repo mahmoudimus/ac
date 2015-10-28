@@ -28,6 +28,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -280,6 +281,6 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     protected String getAddonKey()
     {
-        return getClass().getSimpleName() + '-' + System.currentTimeMillis();
+        return getClass().getSimpleName() + '-' + AddonUtil.randomPluginKey();
     }
 }
