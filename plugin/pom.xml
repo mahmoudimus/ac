@@ -794,7 +794,7 @@
                         </goals>
                         <configuration>
                             <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
-                            <sourcepath>src/main/java:../modules/src/main/java</sourcepath>
+                            <sourcepath>src/main/java:../components/modules/src/main/java</sourcepath>
                             <debug>${debugSchemaGen}</debug>
                         </configuration>
                     </execution>
@@ -873,8 +873,8 @@
                 </executions>
                 <configuration>
                     <additionalSourceDirectories>
-                        <additionalSourceDirectory>../modules/src/main/java/</additionalSourceDirectory>
-                        <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
+                        <additionalSourceDirectory>../components/modules/src/main/java/</additionalSourceDirectory>
+                        <additionalSourceDirectory>../components/spi/src/main/java/</additionalSourceDirectory>
                     </additionalSourceDirectories>
                 </configuration>
             </plugin>
