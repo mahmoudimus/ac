@@ -616,11 +616,6 @@
                                     <version>${atlassian.httpclient.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.atlassian.gadgets</groupId>
-                                    <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
-                                    <version>3.2.0-m8</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
                                     <artifactId>jwt-plugin</artifactId>
                                     <version>${atlassian.jwt.version}</version>
