@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
@@ -78,7 +79,7 @@ public abstract class ScopeTestBase
     @BeforeClass
     public void setup() throws IOException
     {
-        final String key = getClass().getSimpleName() + '-' + System.currentTimeMillis();
+        final String key = getClass().getSimpleName() + '-' + AddonUtil.randomPluginKey();
         ConnectAddonBeanBuilder connectAddonBeanBuilder = newConnectAddonBean()
                 .withKey(key)
                 .withName(key)

@@ -25,6 +25,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilde
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.ImmutableSet;
@@ -335,7 +336,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
     private ConnectAddonBeanBuilder createAddonBean(ScopeName scope)
     {
-        String key = "ac-test-" + System.currentTimeMillis();
+        String key = "ac-test-" + AddonUtil.randomPluginKey();
         return ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withDescription(getClass().getCanonicalName())

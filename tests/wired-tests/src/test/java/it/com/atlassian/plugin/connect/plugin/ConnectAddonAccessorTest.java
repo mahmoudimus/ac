@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ public class ConnectAddonAccessorTest
     @Test
     public void testIsAddOnEnabled() throws IOException
     {
-        final String addonKey = "ac-test-" + System.currentTimeMillis();
+        final String addonKey = "ac-test-" + AddonUtil.randomPluginKey();
         installPlugin(addonKey);
 
         assertTrue("ConnectAddonAccessor is expected to return true for enabled add-ons", addOnService.isAddonEnabled(addonKey));
@@ -43,13 +44,13 @@ public class ConnectAddonAccessorTest
     @Test
     public void testAddOnIsNotEnabled()
     {
-        assertFalse("ConnectAddonAccessor is expected to return false for not installed add-ons", addOnService.isAddonEnabled("some-random-key" + System.currentTimeMillis()));
+        assertFalse("ConnectAddonAccessor is expected to return false for not installed add-ons", addOnService.isAddonEnabled("some-random-key" + AddonUtil.randomPluginKey()));
     }
 
     @Test
     public void testAddonIsInstalledButNotEnabled() throws IOException
     {
-        final String addonKey = "ac-test-" + System.currentTimeMillis();
+        final String addonKey = "ac-test-" + AddonUtil.randomPluginKey();
         installPlugin(addonKey);
 
         testPluginInstaller.disableAddon(addonKey);

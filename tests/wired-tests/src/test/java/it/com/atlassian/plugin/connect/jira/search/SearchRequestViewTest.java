@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.base.Strings;
@@ -40,7 +41,7 @@ public class SearchRequestViewTest
     @Test
     public void canInstallWithQuoteInUrl() throws IOException
     {
-        final String key = getClass().getSimpleName() + '-' + System.currentTimeMillis();
+        final String key = getClass().getSimpleName() + '-' + AddonUtil.randomPluginKey();
         final String url = "/page\"";
         Plugin addon = testPluginInstaller.installAddon(newConnectAddonBean()
                         .withKey(key)

@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilde
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
-import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,9 +71,9 @@ public class ScopeTestHelperImpl implements ScopeTestHelper
     {
         if (scopeName == null)
         {
-            return "NO_SCOPE" + '-' + System.currentTimeMillis();
+            return "NO_SCOPE" + '-' + AddonUtil.randomPluginKey();
         }
-        return scopeName.toString() + '-' + System.currentTimeMillis();
+        return scopeName.toString() + '-' + AddonUtil.randomPluginKey();
     }
 
     private ConnectAddonBean createAddOnBeanWithScope(ScopeName scopeName)

@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -296,7 +297,7 @@ public class AddonValidationTest
     private ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()
     {
         return new ConnectAddonBeanBuilder()
-                .withKey("ac-test-" + System.currentTimeMillis())
+                .withKey("ac-test-" + AddonUtil.randomPluginKey())
                 .withModule("webItems", randomWebItemBean())
                 .withBaseurl("https://example.com/");
     }
