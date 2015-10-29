@@ -91,9 +91,9 @@ public class LifecyclePluginInstaller implements DisposableBean
         return installPlugin(getConnectPluginJarFilename());
     }
 
-    public Plugin installJiraReferencePlugin() throws IOException, URISyntaxException
+    public Plugin installGeneralReferencePlugin() throws IOException, URISyntaxException
     {
-        return installPlugin(getJiraReferencePluginJarFilename());
+        return installPlugin(getGeneralReferencePluginJarFilename());
     }
 
     public Plugin installPlugin(String jarFilename) throws IOException, URISyntaxException
@@ -284,9 +284,9 @@ public class LifecyclePluginInstaller implements DisposableBean
         return getPluginDependencyFilename("atlassian-connect-plugin");
     }
 
-    private String getJiraReferencePluginJarFilename() throws IOException
+    private String getGeneralReferencePluginJarFilename() throws IOException
     {
-        return getPluginDependencyFilename("atlassian-connect-jira-reference-plugin");
+        return getPluginDependencyFilename("atlassian-connect-general-reference-plugin");
     }
 
     private String getPluginDependencyFilename(String artifactId) throws IOException

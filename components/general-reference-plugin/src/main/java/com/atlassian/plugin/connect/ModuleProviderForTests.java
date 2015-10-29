@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
+import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
@@ -16,23 +17,27 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvider
+public class ModuleProviderForTests extends AbstractConnectPageModuleProvider
 {
+    protected final ProductAccessor productAccessor;
+
     @Autowired
-    public JiraModuleProviderForTests(PluginRetrievalService pluginRetrievalService,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            PageConditionsFactory pageConditionsFactory)
+    public ModuleProviderForTests(PluginRetrievalService pluginRetrievalService,
+                                  IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                  IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                  WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                  PageConditionsFactory pageConditionsFactory,
+                                  ProductAccessor productAccessor)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
                 webItemModuleDescriptorFactory, pageConditionsFactory);
+        this.productAccessor = productAccessor;
     }
 
     @Override
     public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new ConnectModuleMeta<ConnectPageModuleBean>("jiraTestModules", ConnectPageModuleBean.class) {};
+        return new ConnectModuleMeta<ConnectPageModuleBean>("testModules", ConnectPageModuleBean.class) {};
     }
 
     @Override
@@ -55,7 +60,7 @@ public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvide
     @Override
     protected String getDefaultSection()
     {
-        return "system.top.navigation.bar";
+        return productAccessor.getPreferredGeneralSectionKey();
     }
 
     @Override

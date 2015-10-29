@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-connect-jira-reference-plugin</artifactId>
+            <artifactId>atlassian-connect-general-reference-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

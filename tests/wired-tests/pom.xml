@@ -311,6 +311,11 @@
                                     <artifactId>atlassian-connect-jira-reference-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-connect-general-reference-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
@@ -377,6 +382,11 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
                                     <artifactId>atlassian-connect-confluence-reference-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-connect-general-reference-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>

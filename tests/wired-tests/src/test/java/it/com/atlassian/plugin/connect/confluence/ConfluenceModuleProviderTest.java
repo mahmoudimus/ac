@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.jira;
+package it.com.atlassian.plugin.connect.confluence;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -22,17 +22,17 @@ import static it.com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTe
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-@Application("jira")
+@Application("confluence")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraModuleProviderTest extends AbstractConnectAddonTest
+public class ConfluenceModuleProviderTest extends AbstractConnectAddonTest
 {
     private final TestPluginInstaller testPluginInstaller;
     private final PluginControlHandler pluginControlHandler;
 
-    public JiraModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
-            TestPluginInstaller testPluginInstaller,
-            TestAuthenticator testAuthenticator,
-            PluginControlHandler pluginControlHandler)
+    public ConfluenceModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
+                                        TestPluginInstaller testPluginInstaller,
+                                        TestAuthenticator testAuthenticator,
+                                        PluginControlHandler pluginControlHandler)
     {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
         this.testPluginInstaller = testPluginInstaller;
