@@ -61,7 +61,7 @@ project administration pages.
 
 Furthermore JIRA Agile supports these context variables.
  * `board.id`, `board.type`
- * `board.mode` (available for plugin points that are displayed on different board view modes)
+ * `board.view.mode` (available for plugin points that are displayed in multiple board view modes (plan, work, report))
  * `sprint.id`, `sprint.state`
  
 ## <a name="additional-parameters-confluence"></a>Confluence
