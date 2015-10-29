@@ -12,7 +12,7 @@ RUNNER_BRANCH = 'stable_1_x'
 def build(includeNpm):
     maven_args = ['mvn', 'clean', 'install', '-DskipTests', '-Pfreezer-release-profile']
     if not includeNpm:
-        maven_args.append('-pl -jsapi')
+        maven_args += ['-pl', 'jsapi']
     return call(maven_args)
 
 def clone(path):
