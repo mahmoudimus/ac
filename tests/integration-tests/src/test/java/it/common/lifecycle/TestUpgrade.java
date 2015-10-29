@@ -12,11 +12,11 @@ import org.junit.Test;
 
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
+import it.common.spi.TestedProductAccessor;
 import it.servlet.ConnectAppServlets;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static it.matcher.ValueMatchers.hasProperty;
 import static it.matcher.ValueMatchers.isArrayMatching;
 import static org.hamcrest.Matchers.hasItem;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestUpgrade
 {
-    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
+    private final String baseUrl = TestedProductAccessor.get().getTestedProduct().getProductInstance().getBaseUrl();
 
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String KEY_PAGE_ONE = "page-one";

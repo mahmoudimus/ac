@@ -1,18 +1,19 @@
 package it.confluence.macro;
 
+import java.net.MalformedURLException;
+
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,9 +22,13 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
 import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 
 public class TestCompatibility extends ConfluenceWebDriverTestBase
 {
@@ -85,7 +90,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     @Test
     public void testAliasIsNotPersisted() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
         selectMacroAndSave(editorPage, MACRO_NAME_2);
         ViewPage page = editorPage.save();

@@ -589,7 +589,6 @@
                                 <include>it/common/lifecycle/*.java</include>
                             </includes>
                         </testGroup>
-
                         <testGroup>
                             <id>jira-jsapi</id>
                             <productIds>
@@ -605,6 +604,7 @@
 
                     </testGroups>
                 </configuration>
+
                 <dependencies>
                     <dependency>
                         <artifactId>junit</artifactId>

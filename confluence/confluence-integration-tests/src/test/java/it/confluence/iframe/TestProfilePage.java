@@ -50,7 +50,7 @@ public class TestProfilePage extends AbstractPageTestBase<ConfluenceUserProfileP
 
         // web item should not be displayed
         loginAndVisit(testUserFactory.basicUser(), ConfluenceUserProfilePage.class);
-        assertThat("Expected web-item for page to NOT be present", connectPageOperations
+        assertThat("Expected web-item for page to NOT be present", connectPageOperations()
                 .existsWebItem(MY_AWESOME_PAGE_KEY), is(false));
 
         // directly retrieving page should result in access denied

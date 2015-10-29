@@ -96,7 +96,7 @@ public class AbstractPageTestBase<T extends Page> extends MultiProductWebDriverT
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);
 
-        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(mode, id, Option.<String>none(),
+        LinkedRemoteContent addonPage = connectPageOperations().findConnectPage(mode, id, Option.<String>none(),
                 awesomePageModuleKey);
 
         ConnectAddOnEmbeddedTestPage addonContentPage = addonPage.click();

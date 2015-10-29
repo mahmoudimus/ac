@@ -21,13 +21,13 @@ import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDrop
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
  * It works with the AC test DB and default host/port. Installing the 'scripts
@@ -58,7 +60,7 @@ import java.util.concurrent.Callable;
  */
 public class ConfluenceWebDriverTestBase
 {
-    protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
+    protected static final ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
     protected static ConnectTestUserFactory testUserFactory;
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
@@ -125,7 +127,7 @@ public class ConfluenceWebDriverTestBase
     public static void confluenceTestSetup() throws Exception
     {
         testUserFactory = new ConfluenceTestUserFactory(product, rpc);
-        rpc.logIn(testUserFactory.admin().confUser());
+        rpc.logIn(toConfluenceUser(testUserFactory.admin()));
         installTestPlugins(rpc);
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
@@ -147,7 +149,7 @@ public class ConfluenceWebDriverTestBase
     @AfterClass
     public static void confluenceTestTeardown() throws Exception
     {
-        rpc.logIn(testUserFactory.admin().confUser());
+        rpc.logIn(toConfluenceUser(testUserFactory.admin()));
         rpc.getDarkFeaturesHelper().disableSiteFeature("webdriver.test.mode");
     }
 
@@ -165,7 +167,7 @@ public class ConfluenceWebDriverTestBase
         PluginHelper pluginHelper = rpc.getPluginHelper();
         if (!pluginHelper.isPluginEnabled(FUNCTEST_RPC_PLUGIN_HOLDER.get()))
         {
-            new WebTestPluginHelper(rpc.getBaseUrl(), testUserFactory.admin().confUser()).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
+            new WebTestPluginHelper(rpc.getBaseUrl(), toConfluenceUser(testUserFactory.admin())).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
         }
 
         if (!pluginHelper.isPluginEnabled(SCRIPTS_FINISHED_PLUGIN_HOLDER.get()))
@@ -302,7 +304,7 @@ public class ConfluenceWebDriverTestBase
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
         logout();
-        return product.login(user.confUser(), page, args);
+        return product.login(toConfluenceUser(user), page, args);
     }
 
     public static <T> T runWithAnonymousUsePermission(Callable<T> test) throws Exception

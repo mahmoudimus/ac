@@ -39,6 +39,8 @@ import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
 import it.servlet.EchoQueryParametersServlet;
 
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
@@ -130,7 +132,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, createPageWithStorageFormatMacro());
+        ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, createPageWithStorageFormatMacro());
         String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         Assert.assertThat(content, CoreMatchers.endsWith("Storage Format Content"));
     }

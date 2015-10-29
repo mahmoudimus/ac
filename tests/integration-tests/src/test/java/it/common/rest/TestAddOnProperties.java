@@ -1,15 +1,24 @@
 package it.common.rest;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import it.servlet.InstallHandlerServlet;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,15 +34,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collection;
+import it.common.spi.TestedProductAccessor;
+import it.servlet.InstallHandlerServlet;
 
-import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -47,7 +50,7 @@ public class TestAddOnProperties
     private final static Gson gson = new Gson();
 
     private final String addOnKey = "testAddOnPropertyAddOnKey";
-    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
+    private final String baseUrl = TestedProductAccessor.get().getTestedProduct().getProductInstance().getBaseUrl();
     private final String restPath = baseUrl + "/rest/atlassian-connect/1/addons/" + addOnKey;
 
     private ConnectRunner runner = null;

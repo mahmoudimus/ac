@@ -13,6 +13,7 @@ import com.atlassian.confluence.api.model.longtasks.LongTaskStatus;
 import com.atlassian.confluence.api.model.longtasks.LongTaskSubmission;
 import com.atlassian.confluence.api.model.pagination.PageResponse;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
@@ -23,7 +24,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
@@ -78,7 +78,7 @@ public class TestConfluenceContentProperties
     private static String baseUrl;
     private static List<Exception> setupFailure = new ArrayList<>();
     private static ConnectRunner runner;
-    private static ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
+    private static ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
     private static ConfluenceRestClient restClient = new ConfluenceRestClient(product, "admin", "admin");
 
     private Promise<Content> contentToFind;
@@ -93,7 +93,7 @@ public class TestConfluenceContentProperties
 
         try
         {
-            baseUrl = TestedProductProvider.getConfluenceTestedProduct().getProductInstance().getBaseUrl();
+            baseUrl = new ConfluenceTestedProductAccessor().getConfluenceProduct().getProductInstance().getBaseUrl();
 
             ContentPropertyModuleBean moduleBean = ContentPropertyModuleBean.newContentPropertyModuleBean()
                     .withKey("content-prop-module-key")

@@ -10,14 +10,15 @@ import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 import org.junit.Before;
 import org.junit.Test;
 
+import it.common.spi.TestedProductAccessor;
+
 import static com.atlassian.plugin.connect.test.AddonTestUtils.randomWebItemBean;
-import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class TestLifecycle
 {
-    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
+    private final String baseUrl = TestedProductAccessor.get().getTestedProduct().getProductInstance().getBaseUrl();
     private String pluginKey;
 
     @Before

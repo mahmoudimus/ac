@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.pageobjects.confluence;
+package com.atlassian.connect.test.confluence.pageobjects;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.pageobjects.Defaults;

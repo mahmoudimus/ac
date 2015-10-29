@@ -3,6 +3,8 @@ package it.confluence.iframe;
 import java.net.URI;
 
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceAdminPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
@@ -11,8 +13,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.connect.test.jira.pageobjects.ConfluenceAdminPage;
-import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 

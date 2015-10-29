@@ -2,24 +2,24 @@ package it.common;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
+import it.common.spi.TestedProductAccessor;
+import it.util.ConnectTestUserFactory;
+import it.util.TestUser;
+
 public abstract class MultiProductWebDriverTestBase
 {
-    protected static TestedProduct<WebDriverTester> product = TestedProductProvider.getTestedProduct();
-
     protected static ConnectTestUserFactory testUserFactory;
+    private static TestedProductAccessor testedProductAccessor;
+    protected static TestedProduct<WebDriverTester> product;
 
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
@@ -27,24 +27,17 @@ public abstract class MultiProductWebDriverTestBase
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
-    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
-            product.getTester().getDriver());
+    protected static ConnectPageOperations connectPageOperations()
+    {
+        return new ConnectPageOperations(product.getPageBinder(), product.getTester().getDriver());
+    }
 
     @BeforeClass
     public static void createTestUserFactory()
     {
-        if (product instanceof JiraTestedProduct)
-        {
-            testUserFactory = new JiraTestUserFactory((JiraTestedProduct)product);
-        }
-        else if (product instanceof ConfluenceTestedProduct)
-        {
-            testUserFactory = new ConfluenceTestUserFactory((ConfluenceTestedProduct)product);
-        }
-        else
-        {
-            throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
-        }
+        testedProductAccessor = TestedProductAccessor.get();
+        product = testedProductAccessor.getTestedProduct();
+        testUserFactory = testedProductAccessor.getUserFactory();
     }
 
     @BeforeClass
@@ -57,56 +50,17 @@ public abstract class MultiProductWebDriverTestBase
     protected void login(TestUser user)
     {
         logout();
-        if (product instanceof JiraTestedProduct)
-        {
-            JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
-            jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword());
-        }
-        else if (product instanceof ConfluenceTestedProduct)
-        {
-            product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
-        }
-        else
-        {
-            throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
-        }
+        testedProductAccessor.login(user);
     }
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
         logout();
-
-        if (product instanceof JiraTestedProduct)
-        {
-            JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
-            return jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword(), page, args);
-        }
-        else if (product instanceof ConfluenceTestedProduct)
-        {
-            ConfluenceTestedProduct confluenceTestedProduct = (ConfluenceTestedProduct) product;
-            return confluenceTestedProduct.login(user.confUser(), page, args);
-        }
-        else
-        {
-            throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
-        }
+        return testedProductAccessor.loginAndVisit(user, page, args);
     }
 
     protected static String getGloballyVisibleLocation()
     {
-        String location;
-        if (product instanceof JiraTestedProduct)
-        {
-            location = "system.top.navigation.bar";
-        }
-        else if (product instanceof ConfluenceTestedProduct)
-        {
-            location = "system.header/left";
-        }
-        else
-        {
-            throw new UnsupportedOperationException("Sorry, I don't recognize " + product.getClass().getCanonicalName());
-        }
-        return location;
+        return testedProductAccessor.getGloballyVisibleLocation();
     }
 }

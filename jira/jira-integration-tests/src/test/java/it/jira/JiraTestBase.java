@@ -3,8 +3,8 @@ package it.jira;
 import java.rmi.RemoteException;
 import java.util.Locale;
 
+import com.atlassian.connect.test.jira.pageobjects.JiraTestedProductAccessor;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
@@ -19,7 +19,7 @@ public class JiraTestBase
 
     private static final String PROJECT_TEMPLATE_KEY_DARK_AGES = "com.atlassian.jira-core-project-templates:jira-issuetracking";
 
-    protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
+    protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
     protected static TestProject project;
 

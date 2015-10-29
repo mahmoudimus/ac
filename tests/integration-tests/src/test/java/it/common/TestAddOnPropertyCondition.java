@@ -105,6 +105,6 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
     private boolean webPageIsVisible()
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        return connectPageOperations.existsWebItem(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
+        return connectPageOperations().existsWebItem(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
     }
 }

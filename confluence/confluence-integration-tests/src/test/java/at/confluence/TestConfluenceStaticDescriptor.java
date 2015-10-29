@@ -2,8 +2,8 @@ package at.confluence;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 
 import com.google.common.base.Optional;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import at.marketplace.ExternalAddonInstaller;
 import it.util.TestUser;
 
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 
 @Category (OnDemandAcceptanceTest.class)
@@ -27,7 +28,7 @@ public class TestConfluenceStaticDescriptor
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceStaticDescriptor.class);
     private static final TestUser ADMIN = new TestUser("admin");
 
-    private final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
+    private final ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
     private final ExternalAddonInstaller externalAddonInstaller =
             new ExternalAddonInstaller(product.getProductInstance().getBaseUrl(), ADMIN);
     private final ConnectPageOperations connectPageOperations = new ConnectPageOperations(
@@ -43,7 +44,7 @@ public class TestConfluenceStaticDescriptor
     @Test
     public void testAcDashboardWebItemIsPresent()
     {
-        product.login(ADMIN.confUser(), DashboardPage.class);
+        product.login(toConfluenceUser(ADMIN), DashboardPage.class);
         connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
     }
 

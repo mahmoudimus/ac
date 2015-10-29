@@ -1,8 +1,8 @@
 package it.confluence;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
@@ -15,7 +15,6 @@ import it.confluence.util.ConfluenceTestUserFactory;
 import it.util.TestUser;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getConfluenceTestedProduct;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInRunner;
 import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.junit.Assert.assertNotNull;
@@ -23,10 +22,9 @@ import static org.junit.Assert.assertThat;
 
 public class TestConfluenceWebHooks
 {
-    protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
+    protected static final ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
 
-    private final String baseUrl = getConfluenceTestedProduct().getProductInstance().getBaseUrl();
-
+    private final String baseUrl = new ConfluenceTestedProductAccessor().getConfluenceProduct().getProductInstance().getBaseUrl();
     private final ConfluenceTestUserFactory testUserFactory;
 
     private ConfluenceOps confluenceOps;

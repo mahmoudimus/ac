@@ -50,6 +50,9 @@ import it.matcher.ParamMatchers;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
+
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
     private static final String SMALL_INLINE_MACRO_NAME = "Small Inline Macro";
@@ -207,7 +210,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, createPageWithStorageFormatMacro());
+        ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, createPageWithStorageFormatMacro());
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         Assert.assertThat(renderedMacro.getIFrameElementText("hello-world-message"), CoreMatchers.is("Hello world"));
@@ -335,7 +338,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDescriptionShowsInMacroBrowser() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(ModuleKeyUtils.randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, SMALL_INLINE_MACRO_KEY);
 
@@ -355,7 +358,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDescriptionDoesNotExposeXss() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(ModuleKeyUtils.randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, CLIENT_SIDE_BODY_MACRO_KEY);
         try
@@ -406,7 +409,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroEditorSavesParameters() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(ModuleKeyUtils.randomName("Macro Editor"));
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
 
@@ -440,7 +443,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String macroBody = "cat pictures go here";
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(ModuleKeyUtils.randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
-        EditContentPage editorPage = getProduct().loginAndEdit(testUserFactory.basicUser().confUser(), new Page(page.getId().asLong()));
+        EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
         try
@@ -460,7 +463,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).build();
         Content page = createPage(ModuleKeyUtils.randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
-        EditContentPage editorPage = getProduct().loginAndEdit(testUserFactory.basicUser().confUser(), new Page(page.getId().asLong()));
+        EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
         dialog.submitAndWaitUntilHidden();
         editorPage.save();
@@ -475,7 +478,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY).build();
         Content page = createPage(ModuleKeyUtils.randomName(CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME), body);
-        EditContentPage editorPage = getProduct().loginAndEdit(testUserFactory.basicUser().confUser(), new Page(page.getId().asLong()));
+        EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
         dialog.submitAndWaitUntilHidden();

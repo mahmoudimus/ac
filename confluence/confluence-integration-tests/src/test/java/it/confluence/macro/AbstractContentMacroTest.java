@@ -27,6 +27,8 @@ import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
 
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static java.lang.String.format;
 
 public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBase
@@ -253,7 +255,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroIsListed() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
         try
@@ -270,7 +272,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testParameterTypes() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, ALL_PARAMETER_TYPES_MACRO_NAME);
 
         try
@@ -294,7 +296,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testParameterLabel() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(ModuleKeyUtils.randomName("Parameter Page"));
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
@@ -315,7 +317,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testFeaturedMacro() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editorPage);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
@@ -332,7 +334,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testImagePlaceholder() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(ModuleKeyUtils.randomName("Image Placeholder Macro"));
         selectMacroAndSave(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
@@ -350,7 +352,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroEditorShowsAddOnContent() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
         {
@@ -380,7 +382,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroEditorCancels() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogCanceller(EDITOR_MACRO_KEY));
         cancelEditor(editorPage);
     }
@@ -388,7 +390,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroEditorCustomTitle() throws Exception
     {
-        final CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        final CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         selectMacro(editorPage, CUSTOM_TITLE_EDITOR_MACRO_NAME, new Runnable()
         {
@@ -417,7 +419,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroEditorDefaultTitle() throws Exception
     {
-        final CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        final CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
         {
@@ -446,7 +448,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroEditorSubmits() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         try
         {
             selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
@@ -460,7 +462,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testHiddenMacro() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, HIDDEN_MACRO_NAME);
 
         try

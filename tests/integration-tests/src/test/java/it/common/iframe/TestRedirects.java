@@ -18,13 +18,14 @@ import org.apache.http.HttpStatus;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import it.common.spi.TestedProductAccessor;
+
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static org.junit.Assert.assertEquals;
 
 public class TestRedirects
 {
-    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
+    private final String baseUrl = TestedProductAccessor.get().getTestedProduct().getProductInstance().getBaseUrl();
 
     @BeforeClass
     public static void setupUrlHandlers()

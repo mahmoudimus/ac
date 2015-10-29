@@ -1,31 +1,32 @@
 package it.jira;
 
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraTestedProductAccessor;
+import com.atlassian.connect.test.jira.pageobjects.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
 import com.atlassian.jira.pageobjects.pages.EditPermissionsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
-import com.atlassian.connect.test.jira.pageobjects.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import it.util.ConnectTestUserFactory;
-import it.jira.util.JiraTestUserFactory;
-import it.util.TestProject;
-import it.util.TestUser;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
+import it.jira.util.JiraTestUserFactory;
+import it.util.ConnectTestUserFactory;
+import it.util.TestProject;
+import it.util.TestUser;
 
 public class JiraWebDriverTestBase
 {
 
-    protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
+    protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
     protected static TestProject project;
 

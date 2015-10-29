@@ -14,6 +14,9 @@ import it.confluence.macro.AbstractContentMacroTest;
 import it.confluence.servlet.ConfluenceAppServlets;
 import it.servlet.ConnectAppServlets;
 
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
+
 /**
  * Integration tests for the JavaScript API method confluence.closeMacroEditor().
  */
@@ -48,7 +51,7 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
     @Test
     public void shouldCloseMacroEditorWhenInsertingMacroOnNewPage()
     {
-        CreatePage createPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        CreatePage createPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         selectMacro(createPage, editorMacroModuleBean.getName().getRawValue(), new Runnable()
         {
 

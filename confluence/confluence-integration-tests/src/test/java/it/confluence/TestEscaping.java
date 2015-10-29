@@ -1,35 +1,48 @@
 package it.confluence;
 
+import java.net.MalformedURLException;
+
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceAdminPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.connect.test.jira.pageobjects.ConfluenceAdminPage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
-import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
+
 import com.google.common.base.Optional;
-import it.servlet.ConnectAppServlets;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.CoreMatchers;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.servlet.ConnectAppServlets;
 import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
-
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static org.junit.Assert.assertEquals;
 
 public class TestEscaping extends ConfluenceWebDriverTestBase
@@ -173,7 +186,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroTitle() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
 
@@ -191,7 +204,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroEditorTitle() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
@@ -209,7 +222,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroParameter() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 

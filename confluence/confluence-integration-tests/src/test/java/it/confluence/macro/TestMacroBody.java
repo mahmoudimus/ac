@@ -33,6 +33,9 @@ import it.servlet.HttpContextServlet;
 import it.servlet.InstallHandlerServlet;
 import junit.framework.TestCase;
 
+import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static java.lang.String.valueOf;
+
 /**
  * This test case will collect the macro body from confluence in all the different ways possible.  It will check
  * both static and dynamic macros being collected by hash or id.
@@ -144,7 +147,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     private void testDynamicMacro(final String macroKey) throws Exception
     {
         final Content page = createPageWithRichTextMacroAndBody(macroKey, "<h1>Hello world</h1>");
-        ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, String.valueOf(page.getId().asLong()));
+        ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, valueOf(page.getId().asLong()));
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
         String content1 = renderedMacro.getIFrameElement("body");
