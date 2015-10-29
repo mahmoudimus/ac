@@ -118,6 +118,14 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.gadgets</groupId>
+            <artifactId>atlassian-gadgets-api</artifactId>
+            <version>${atlassian.gadgets.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
             <groupId>com.atlassian.crowd</groupId>
             <artifactId>crowd-integration-client-rest</artifactId>
             <scope>provided</scope>
