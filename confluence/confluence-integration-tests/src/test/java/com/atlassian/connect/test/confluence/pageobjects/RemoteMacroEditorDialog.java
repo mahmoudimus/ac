@@ -1,4 +1,4 @@
-package com.atlassian.connect.test.jira.pageobjects;
+package com.atlassian.connect.test.confluence.pageobjects;
 
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;

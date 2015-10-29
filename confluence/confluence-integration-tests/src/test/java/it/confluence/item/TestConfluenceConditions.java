@@ -2,8 +2,8 @@ package it.confluence.item;
 
 import java.util.Map;
 
-import com.atlassian.connect.test.jira.pageobjects.ConfluenceEditPage;
-import com.atlassian.connect.test.jira.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;

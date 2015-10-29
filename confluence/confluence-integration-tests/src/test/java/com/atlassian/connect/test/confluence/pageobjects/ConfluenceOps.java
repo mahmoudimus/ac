@@ -1,4 +1,4 @@
-package com.atlassian.connect.test.jira.pageobjects;
+package com.atlassian.connect.test.confluence.pageobjects;
 
 import com.atlassian.fugue.Option;
 import com.google.common.base.Function;

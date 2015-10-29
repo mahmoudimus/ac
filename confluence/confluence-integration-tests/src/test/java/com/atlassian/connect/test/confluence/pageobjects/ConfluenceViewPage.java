@@ -1,15 +1,15 @@
-package com.atlassian.connect.test.jira.pageobjects;
+package com.atlassian.connect.test.confluence.pageobjects;
 
 import com.atlassian.pageobjects.Page;
 
 /**
- * Edit Confluence pages.
+ * View confluence pages.
  */
-public class ConfluenceEditPage implements Page
+public class ConfluenceViewPage implements Page
 {
     private final String pageId;
 
-    public ConfluenceEditPage(final String pageId)
+    public ConfluenceViewPage(final String pageId)
     {
         this.pageId = pageId;
     }
@@ -17,7 +17,7 @@ public class ConfluenceEditPage implements Page
     @Override
     public String getUrl()
     {
-        return "/pages/editpage.action?pageId=" + pageId;
+        return "/pages/viewpage.action?pageId=" + pageId;
     }
 
     public String getPageId()

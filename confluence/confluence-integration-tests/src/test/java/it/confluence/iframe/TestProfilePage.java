@@ -3,7 +3,7 @@ package it.confluence.iframe;
 import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.connect.test.jira.pageobjects.ConfluenceUserProfilePage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
 import it.common.iframe.AbstractPageTestBase;
 import it.util.TestUser;
 import org.junit.BeforeClass;
