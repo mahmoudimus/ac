@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import it.util.ConfluenceTestUserFactory;
+import it.confluence.util.ConfluenceTestUserFactory;
 import it.util.TestUser;
 
 import static com.atlassian.fugue.Option.some;

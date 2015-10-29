@@ -35,7 +35,7 @@ import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.sun.jersey.api.client.UniformInterfaceException;
-import it.util.ConfluenceTestUserFactory;
+import it.confluence.util.ConfluenceTestUserFactory;
 import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;

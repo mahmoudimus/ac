@@ -34,9 +34,4 @@ public class TestUser
     {
         return email;
     }
-
-    public com.atlassian.confluence.it.User confUser()
-    {
-        return new com.atlassian.confluence.it.User(username, password, displayName, email);
-    }
 }

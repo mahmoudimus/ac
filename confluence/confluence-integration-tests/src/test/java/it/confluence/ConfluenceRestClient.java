@@ -6,7 +6,7 @@ import com.atlassian.confluence.rest.client.authentication.AuthenticatedWebResou
 import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import it.util.ConfluenceTestUserFactory;
+import it.confluence.util.ConfluenceTestUserFactory;
 import it.util.TestUser;
 
 import java.util.concurrent.Executors;

@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-import it.util.ConfluenceTestUserFactory;
+import it.confluence.util.ConfluenceTestUserFactory;
 import org.junit.Assert;
 import org.junit.Test;
 

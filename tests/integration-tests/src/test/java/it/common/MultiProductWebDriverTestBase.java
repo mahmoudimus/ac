@@ -1,7 +1,5 @@
 package it.common;
 
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
@@ -11,9 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import it.util.ConfluenceTestUserFactory;
 import it.util.ConnectTestUserFactory;
-import it.util.JiraTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
