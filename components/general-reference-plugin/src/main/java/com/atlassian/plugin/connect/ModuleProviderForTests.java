@@ -19,19 +19,15 @@ import java.util.List;
 @Component
 public class ModuleProviderForTests extends AbstractConnectPageModuleProvider
 {
-    protected final ProductAccessor productAccessor;
-
     @Autowired
     public ModuleProviderForTests(PluginRetrievalService pluginRetrievalService,
                                   IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                   IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                   WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                  PageConditionsFactory pageConditionsFactory,
-                                  ProductAccessor productAccessor)
+                                  PageConditionsFactory pageConditionsFactory)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
                 webItemModuleDescriptorFactory, pageConditionsFactory);
-        this.productAccessor = productAccessor;
     }
 
     @Override
@@ -54,13 +50,13 @@ public class ModuleProviderForTests extends AbstractConnectPageModuleProvider
     @Override
     protected String getDecorator()
     {
-        return "atl.general";
+        return "placeholder";
     }
 
     @Override
     protected String getDefaultSection()
     {
-        return productAccessor.getPreferredGeneralSectionKey();
+        return "placeholder";
     }
 
     @Override

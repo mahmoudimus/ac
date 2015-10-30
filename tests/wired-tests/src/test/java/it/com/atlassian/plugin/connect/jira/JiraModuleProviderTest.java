@@ -58,7 +58,6 @@ public class JiraModuleProviderTest extends AbstractConnectAddonTest
 
     private static class ModuleDescriptorHasCompleteKey extends TypeSafeMatcher<ModuleDescriptor>
     {
-
         private String completeModuleKey;
 
         public ModuleDescriptorHasCompleteKey(String completeModuleKey)

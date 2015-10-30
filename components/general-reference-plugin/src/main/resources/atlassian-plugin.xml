@@ -11,6 +11,6 @@
     <component-import key="webItemModuleDescriptorFactory" interface="com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory"/>
     <component-import key="pageConditionsFactory" interface="com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory"/>
 
-    <connect-module key="testModules" class="com.atlassian.plugin.connect.ModuleProviderForTests"/>
+    <connect-module key="test-module" class="com.atlassian.plugin.connect.ModuleProviderForTests"/>
 
 </atlassian-plugin>
