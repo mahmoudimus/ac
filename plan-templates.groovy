@@ -73,7 +73,7 @@ plan(
 plan(
         projectKey: 'CONNECT',
         key: 'CJM',
-        name: 'Cloud Plugin - SNAPSHOT JIRA - Renaissance',
+        name: 'Cloud Plugin - SNAPSHOT JIRA',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
