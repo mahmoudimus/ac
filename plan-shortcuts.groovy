@@ -295,7 +295,7 @@ testJobsForJIRA(['mavenProductParameters']) {
             testGroup: 'jira-jsapi',
             groupName: 'JS API FF',
             additionalMavenParameters: '#mavenProductParameters',
-            project: 'tests/integration-tests,jira/jira-integration-tests'
+            project: 'tests/core-integration-tests,jira/jira-integration-tests'
     )
     projectIntegrationTestJob(
             key: 'JITJC',
@@ -303,7 +303,7 @@ testJobsForJIRA(['mavenProductParameters']) {
             testGroup: 'jira-jsapi',
             groupName: 'JS API Chrome',
             additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome',
-            project: 'tests/integration-tests,jira/jira-integration-tests'
+            project: 'tests/core-integration-tests,jira/jira-integration-tests'
     )
 }
 
@@ -368,7 +368,7 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMaven
         testGroup: '#testGroup',
         groupName: '#groupName',
         additionalMavenParameters: '#additionalMavenParameters',
-        project: 'tests/integration-tests'
+        project: 'tests/core-integration-tests'
     )
 }
 
