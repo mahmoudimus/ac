@@ -37,6 +37,9 @@
                 },
                 "artifact": {
                     "href": "<%=descriptor url goes here=>"
+                },
+                "license": {
+                    "href": "/rest/2.0-beta/licenseTypes/asl"
                 }
             },
             "compatibilities": [
