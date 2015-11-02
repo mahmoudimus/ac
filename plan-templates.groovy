@@ -72,18 +72,18 @@ plan(
 
 plan(
         projectKey: 'CONNECT',
-        key: 'CJMR',
-        name: 'Cloud Plugin - SNAPSHOT JIRA - Renaissance',
+        key: 'CJM',
+        name: 'Cloud Plugin - SNAPSHOT JIRA',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.0.0-DA-SNAPSHOT',
+            productVersion: '7.1.0-SNAPSHOT',
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Djvmargs="-Datlassian.darkfeature.com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED=true"'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
         )
     }
 }

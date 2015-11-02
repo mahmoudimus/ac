@@ -9,7 +9,7 @@ products based on [`atlassian-plugins`](https://bitbucket.org/atlassian/atlassia
 
 ## Dependencies
 
-* JDK 7
+* JDK 8
 * Maven 3.2
 
 ## Usage
@@ -52,24 +52,28 @@ Contributions are encouraged!
 
 ### Repository structure
 
-* `api-parent` - the parent of all modules containing public interfaces
-	* `api` - a draft application programming interface for the plugin
-	* `spi` - a draft service provider interface for the plugin
 * `bin` - utility scripts
+* `components` - the shared components of the plugin
+	* `api` - a draft application programming interface for the plugin
+	* `core` - the core cross-product implementation
+	* `modules` - bean representations of add-on JSON descriptor elements
+	* `spi` - a draft service provider interface for the plugin
 * `confluence` - the parent of all Confluence-specific modules
-	* `confluence-support` - support for Atlassian Connect in Confluence
 	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
+	* `confluence-support` - support for Atlassian Connect in Confluence
 * `crowd-support` - support for Atlassian Connect in products that use Atlassian Crowd
-* `docs` - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
+* [`docs`](docs) - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
 * `jira` - the parent of all JIRA-specific modules
+	* `jira-integration-tests` - JIRA-specific integration tests for the plugin
 	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
-	* `jira-integration-tests` - jira-specific integration tests for the plugin
-* `modules` - bean representations of add-on JSON descriptor elements
-* `plugin` - groups the other modules and [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js) into a plugin
+	* `jira-support` - support for Atlassian Connect in JIRA
+* [`jsapi`](jsapi) - builds the JavaScript API based on [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js)
+* `plugin` - groups the other modules into a plugin
 * `tests` - the parent of all non-product-specific test modules
+    * `descriptor-validation-tests` - JSON schema validation of all public add-ons for JIRA and Confluence on Atlassian Marketplace
     * `integration-tests` - integration tests for the plugin
     * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
-    * `test-support-plugin` - a collection of utility classes for unit and integration testing
+    * `test-support-plugin` - a collection of test utility classes
     * `wired-tests` - wired tests for the plugin
 
 ### Branches
@@ -85,10 +89,14 @@ To build the plugin:
 
     mvn clean install
 
-The plugin build includes a Node.js project for building the JavaScript API from [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js).
-To skip invoking the Node.js build, append the following parameter to the command.
+To speed up subsequent builds, the `-` prefix can be used with the `-pl` option to exclude specific modules,
+e.g. the `jsapi` module which invokes a time-consuming Node.js build.
 
-    -DskipNpm
+    mvn -pl -jsapi clean install
+
+Conversely, once the project has been built, it can be rebuilt with changes only from specific modules:
+
+    mvn -pl jsapi,plugin clean install
 
 ### Running tests
 

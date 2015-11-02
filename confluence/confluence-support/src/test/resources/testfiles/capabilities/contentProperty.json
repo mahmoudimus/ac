@@ -1,0 +1,38 @@
+{
+  "keyConfigurations": [
+    {
+      "propertyKey": "attachment",
+      "extractions": [
+        {
+          "objectName": "attachment.size",
+          "type": "number"
+        },
+        {
+          "objectName": "attachment.type",
+          "type": "string",
+          "alias": "contentType",
+          "uiSupport": {
+            "defaultOperator": "~",
+            "name": {
+              "value": "Content Type",
+              "i18n": "attachment.type.name"
+            },
+            "tooltip": {
+              "value": "Content Type Tooltip",
+              "i18n": "attachment.type.tooltip"
+            },
+            "dataUri": "/data/content-types",
+            "valueType": "string"
+          }
+        },
+        {
+          "objectName": "attachment.updated",
+          "type": "date"
+        }
+      ]
+    }
+  ],
+  "name": {
+    "value": "Attachment Index Document"
+  }
+}

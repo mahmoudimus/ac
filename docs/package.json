@@ -1,6 +1,7 @@
 {
   "name": "atlassian-connect-docs",
   "version": "0.0.1",
+  "private": true,
   "description": "Documentation for Atlassian Connect",
   "dependencies": {
     "harp": "~0.14.0",
@@ -10,7 +11,8 @@
     "chokidar": "~0.8.1",
     "JSONPath": "~0.9.1",
     "commander": "~2.1.0",
-    "jsdoc": "~3.3.0-beta1"
+    "jsdoc": "~3.3.0-beta1",
+    "atlassian-connect-json-schema-utils": "./json-schema-utils"
   },
   "scripts": {
     "start": "./build.js --serve",

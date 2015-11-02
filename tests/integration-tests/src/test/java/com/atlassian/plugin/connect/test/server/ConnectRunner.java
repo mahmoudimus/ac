@@ -1,21 +1,30 @@
 package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
+import com.atlassian.plugin.connect.plugin.descriptor.ModuleListDeserializer;
+import com.atlassian.plugin.connect.plugin.descriptor.StaticAvailableModuleTypes;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 import it.servlet.ConnectAppServlets;
 import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
@@ -36,11 +45,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,6 +73,8 @@ public class ConnectRunner
 
     private static final Logger log = LoggerFactory.getLogger(ConnectRunner.class);
 
+    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
+
     private final String productBaseUrl;
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
@@ -71,6 +84,7 @@ public class ConnectRunner
     private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
+    private StaticAvailableModuleTypes moduleTypes = new StaticAvailableModuleTypes();
 
     private int port;
     private Server server;
@@ -242,6 +256,12 @@ public class ConnectRunner
         addonBuilder.withModules(fieldName, beans);
         return this;
     }
+    
+    public ConnectRunner addModuleMeta(ConnectModuleMeta meta)
+    {
+        moduleTypes.addModuleMeta(meta);
+        return this;
+    }
 
     public ConnectRunner addRoute(String path, HttpServlet servlet)
     {
@@ -390,10 +410,31 @@ public class ConnectRunner
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
-            String json = ConnectModulesGsonFactory.getGson().toJson(addon);
+            String json = getGson().toJson(addon);
             response.setContentType(MediaType.APPLICATION_JSON);
             response.getWriter().write(json);
             response.getWriter().close();
+        }
+        
+        private Gson getGson()
+        {
+            GsonBuilder builder = ConnectModulesGsonFactory.getGsonBuilder();
+            builder = builder.registerTypeAdapter(JSON_MODULE_LIST_TYPE, getModuleListDeserializer());
+            return builder.create();
+        }
+
+        private JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> getModuleListDeserializer()
+        {
+            JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> moduleListDeserializer;
+            if (moduleTypes.hasMetas())
+            {
+                moduleListDeserializer = new ModuleListDeserializer(moduleTypes);
+            }
+            else
+            {
+                moduleListDeserializer = new DefaultModuleSerializer();
+            }
+            return moduleListDeserializer;
         }
     }
 }

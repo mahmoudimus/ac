@@ -5,16 +5,17 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.features.DarkFeatureManager;
-import com.google.gson.JsonParser;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.request.RequestUtil;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
-import static it.com.atlassian.plugin.connect.plugin.installer.AbstractAddonLifecycleTest.DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY;
+import static it.com.atlassian.plugin.connect.plugin.lifecycle.AbstractAddonLifecycleTest.DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -110,7 +111,10 @@ public class AddonsResourceReinstallTest
         }
     }
 
-    private String getSharedSecret(final String installPayload) {return new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();}
+    private String getSharedSecret(final String installPayload) throws IOException
+    {
+        return new ObjectMapper().readTree(installPayload).path(SHARED_SECRET_FIELD_NAME).asText();
+    }
 
     private RequestUtil.Response getAddonByKey(String addonKey) throws IOException
     {
@@ -126,7 +130,7 @@ public class AddonsResourceReinstallTest
 
     private ConnectAddonBean createAddonBean() throws IOException
     {
-        String key = "ac-test-json-" + System.currentTimeMillis();
+        String key = "ac-test-json-" + AddonUtil.randomPluginKey();
         return ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))

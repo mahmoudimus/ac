@@ -57,8 +57,8 @@ used to generate a documentation page for each module with [JSDoc](http://usejsd
 
 #### REST and RPC API scopes
 
-As part of documentation generation, the JSON files defining the required scope for each REST and RPC API method from
-`plugin` and used to generate a documentation page for each product API.
+As part of documentation generation, the JSON files defining the required scope for each REST and RPC API method are
+copied from `plugin` and used to generate a documentation page for each product API.
 
 #### Other pages
 

@@ -1,0 +1,14 @@
+{
+  "key" : "my-plugin",
+  "baseUrl" : "https://www.example.com",
+  "authentication": {
+    "type": "none"
+  },
+  "modules": {
+    "unknownModuleType": [
+      {
+        "key": "test"
+      }
+    ]
+  }
+}

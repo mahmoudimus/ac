@@ -51,7 +51,6 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     public Plugin installAddon(String jsonDescriptor) throws IOException
     {
         File descriptor = createTempDescriptor(jsonDescriptor);
-
         PluginInstallHandler handler = getInstallHandler();
 
         checkNotNull(handler);
