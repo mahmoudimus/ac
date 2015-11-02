@@ -1,14 +1,14 @@
 <application key="jira">
 
-    <connect-module key="dashboard-item-module" class="com.atlassian.plugin.connect.jira.web.dashboard.DashboardItemModuleProvider"/>
-    <connect-module key="entity-property-module" class="com.atlassian.plugin.connect.jira.property.EntityPropertyModuleProvider"/>
-    <connect-module key="issue-tab-panel-module" class="com.atlassian.plugin.connect.jira.web.tabpanel.IssueTabPanelModuleProvider"/>
-    <connect-module key="project-tab-panel-module" class="com.atlassian.plugin.connect.jira.web.tabpanel.ProjectTabPanelModuleProvider"/>
-    <connect-module key="project-admin-tab-panel-module" class="com.atlassian.plugin.connect.jira.web.tabpanel.ConnectProjectAdminTabPanelModuleProvider"/>
-    <connect-module key="profile-tab-panel-module" class="com.atlassian.plugin.connect.jira.web.tabpanel.ProfileTabPanelModuleProvider"/>
-    <connect-module key="report-module" class="com.atlassian.plugin.connect.jira.report.ReportModuleProvider"/>
-    <connect-module key="search-request-view-module" class="com.atlassian.plugin.connect.jira.search.SearchRequestViewModuleProvider"/>
-    <connect-module key="workflow-post-function-module" class="com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionModuleProviderImpl"/>
+    <connect-module key="jiraDashboardItems" class="com.atlassian.plugin.connect.jira.web.dashboard.DashboardItemModuleProvider"/>
+    <connect-module key="jiraEntityProperties" class="com.atlassian.plugin.connect.jira.property.EntityPropertyModuleProvider"/>
+    <connect-module key="jiraIssueTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.IssueTabPanelModuleProvider"/>
+    <connect-module key="jiraProjectTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ProjectTabPanelModuleProvider"/>
+    <connect-module key="jiraProjectAdminTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ConnectProjectAdminTabPanelModuleProvider"/>
+    <connect-module key="jiraProfileTabPanels" class="com.atlassian.plugin.connect.jira.web.tabpanel.ProfileTabPanelModuleProvider"/>
+    <connect-module key="jiraReports" class="com.atlassian.plugin.connect.jira.report.ReportModuleProvider"/>
+    <connect-module key="jiraSearchRequestViews" class="com.atlassian.plugin.connect.jira.search.SearchRequestViewModuleProvider"/>
+    <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionModuleProviderImpl"/>
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
