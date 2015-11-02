@@ -1,14 +1,15 @@
 package it.common.upm;
 
-import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
-import com.atlassian.upm.pageobjects.PluginManager;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
-import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
+import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
+import com.atlassian.upm.pageobjects.PluginManager;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 
 public class TestPostInstallPage extends AbstractUpmPageTest
 {

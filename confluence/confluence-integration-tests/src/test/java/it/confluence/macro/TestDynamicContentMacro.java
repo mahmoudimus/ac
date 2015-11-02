@@ -13,6 +13,7 @@ import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -22,13 +23,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.Utils;
-import com.atlassian.plugin.connect.test.client.WebDriverSessionAwareDownloader;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluencePageWithRemoteMacro;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.client.WebDriverSessionAwareDownloader;
+import com.atlassian.plugin.connect.test.common.matcher.ParamMatchers;
+import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
+import com.atlassian.plugin.connect.test.common.util.Utils;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
@@ -46,11 +49,8 @@ import org.openqa.selenium.WebDriver;
 
 import it.confluence.MacroStorageFormatBuilder;
 import it.confluence.servlet.ConfluenceAppServlets;
-import it.matcher.ParamMatchers;
-import it.servlet.ConnectAppServlets;
-import it.servlet.InstallHandlerServlet;
 
-import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest

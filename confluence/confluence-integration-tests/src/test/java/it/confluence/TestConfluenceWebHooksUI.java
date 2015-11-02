@@ -2,16 +2,15 @@ package it.confluence;
 
 import com.atlassian.confluence.pageobjects.page.SearchResultPage;
 import com.atlassian.pageobjects.elements.query.Poller;
-import com.atlassian.plugin.connect.test.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
-import com.atlassian.plugin.connect.test.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import it.util.TestUser;
 
 public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
 {

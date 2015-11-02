@@ -5,12 +5,10 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
-import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnPage;
+import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
 import org.openqa.selenium.By;
 

@@ -1,8 +1,10 @@
 package it.common.lifecycle;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
 
 import com.google.common.collect.Lists;
 
@@ -12,8 +14,6 @@ import org.junit.Test;
 
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
-import it.common.spi.TestedProductAccessor;
-import it.servlet.ConnectAppServlets;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;

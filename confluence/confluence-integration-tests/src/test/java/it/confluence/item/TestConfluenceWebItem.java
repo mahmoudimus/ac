@@ -1,5 +1,10 @@
 package it.confluence.item;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
@@ -10,27 +15,25 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts;
+import com.atlassian.plugin.connect.test.common.matcher.IsInteger;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import com.google.common.base.Optional;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.matcher.IsInteger;
-import it.modules.ConnectAsserts;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.CheckUsernameConditionServlet;
-import it.util.TestUser;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import it.confluence.ConfluenceWebDriverTestBase;
+import redstone.xmlrpc.XmlRpcFault;
 
 
 /**

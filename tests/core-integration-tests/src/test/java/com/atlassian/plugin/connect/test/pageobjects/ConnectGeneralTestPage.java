@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
-public class ConnectGeneralTestPage extends ConnectAddOnEmbeddedTestPage implements Page
+public class ConnectGeneralTestPage extends ConnectAddOnEmbeddedTestPage
+        implements Page
 {
 
     public ConnectGeneralTestPage(String addonKey, String moduleKey)

@@ -9,14 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
+import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
-import it.servlet.ContextServlet;
-import it.servlet.InstallHandlerServlet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

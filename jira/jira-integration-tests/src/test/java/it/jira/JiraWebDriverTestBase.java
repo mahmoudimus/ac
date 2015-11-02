@@ -3,14 +3,17 @@ package it.jira;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
-import com.atlassian.connect.test.jira.pageobjects.JiraTestedProductAccessor;
 import com.atlassian.connect.test.jira.pageobjects.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
 import com.atlassian.jira.pageobjects.pages.EditPermissionsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.jira.util.JiraTestUserFactory;
+import com.atlassian.plugin.connect.test.product.JiraTestedProductAccessor;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
@@ -18,10 +21,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import it.jira.util.JiraTestUserFactory;
-import it.util.ConnectTestUserFactory;
-import it.util.TestProject;
-import it.util.TestUser;
+import it.jira.project.TestProject;
 
 public class JiraWebDriverTestBase
 {

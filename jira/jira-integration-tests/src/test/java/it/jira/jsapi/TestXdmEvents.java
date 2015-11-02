@@ -1,18 +1,20 @@
 package it.jira.jsapi;
 
+import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
-import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteXdmEventPanel;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import it.jira.JiraWebDriverTestBase;
+
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.test.server.ConnectRunner.newServlet;
+import static com.atlassian.plugin.connect.test.common.servlet.ConnectRunner.newServlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

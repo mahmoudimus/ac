@@ -1,22 +1,24 @@
 package it.confluence;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.product.ConfluenceTestedProductAccessor;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import it.confluence.util.ConfluenceTestUserFactory;
-import it.util.TestUser;
-
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInRunner;
-import static it.matcher.ParamMatchers.isVersionNumber;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
+import static com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet.runInRunner;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 

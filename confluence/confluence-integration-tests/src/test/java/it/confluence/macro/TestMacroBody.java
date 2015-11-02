@@ -10,10 +10,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.HttpUtils;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
+import com.atlassian.plugin.connect.test.common.servlet.HttpUtils;
+import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 
 import com.google.common.collect.Maps;
 
@@ -29,11 +31,9 @@ import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.MacroStorageFormatBuilder;
 import it.confluence.servlet.macro.BodyHandler;
 import it.confluence.servlet.macro.MacroBodyServlet;
-import it.servlet.HttpContextServlet;
-import it.servlet.InstallHandlerServlet;
 import junit.framework.TestCase;
 
-import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static java.lang.String.valueOf;
 
 /**

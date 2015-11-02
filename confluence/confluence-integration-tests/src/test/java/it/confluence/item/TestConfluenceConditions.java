@@ -13,10 +13,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
+import com.atlassian.plugin.connect.test.common.matcher.IsLong;
+import com.atlassian.plugin.connect.test.common.matcher.ParamMatchers;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
+import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 import com.google.common.base.Optional;
 
@@ -29,11 +34,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import it.confluence.ConfluenceWebDriverTestBase;
-import it.matcher.IsLong;
-import it.matcher.ParamMatchers;
-import it.servlet.condition.CheckUsernameConditionServlet;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
 
 public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {

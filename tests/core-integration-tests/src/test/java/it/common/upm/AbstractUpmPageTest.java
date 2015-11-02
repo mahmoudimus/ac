@@ -1,9 +1,11 @@
 package it.common.upm;
 
-import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.upm.pageobjects.PluginManager;
-import it.common.iframe.AbstractPageTestBase;
+
 import org.junit.Test;
+
+import it.common.iframe.AbstractPageTestBase;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;

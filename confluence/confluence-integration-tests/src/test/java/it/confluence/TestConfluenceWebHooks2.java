@@ -2,17 +2,16 @@ package it.confluence;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.test.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
-import com.atlassian.plugin.connect.test.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
+import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import it.confluence.util.ConfluenceTestUserFactory;
 
 public class TestConfluenceWebHooks2
 {
@@ -33,9 +32,11 @@ public class TestConfluenceWebHooks2
     @Test
     public void testSearchPerformedWebHookFired() throws Exception
     {
-        WebHookTestServlet.runInJsonRunner(baseUrl, "search_performed", new WebHookTester() {
+        WebHookTestServlet.runInJsonRunner(baseUrl, "search_performed", new WebHookTester()
+        {
             @Override
-            public void test(WebHookWaiter waiter) throws Exception {
+            public void test(WebHookWaiter waiter) throws Exception
+            {
                 final String testQuery = "test";
                 String results = String.valueOf(
                         confluenceOps.search(Option.some(testUserFactory.basicUser()), testQuery));

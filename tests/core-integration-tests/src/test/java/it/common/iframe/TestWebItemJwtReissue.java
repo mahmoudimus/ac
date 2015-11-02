@@ -1,5 +1,12 @@
 package it.common.iframe;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nonnull;
+
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.core.reader.JwtIssuerValidator;
@@ -14,31 +21,27 @@ import com.atlassian.jwt.reader.JwtReader;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteDialog;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteInlineDialog;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.common.MultiProductWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.servlet.InstallHandlerServlet;
-import it.servlet.condition.ParameterCapturingServlet;
+import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteInlineDialog;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
+import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.annotation.Nonnull;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import it.common.MultiProductWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyIframeURLHasVersionNumber;
 import static org.junit.Assert.assertTrue;
 
 public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase

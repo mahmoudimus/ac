@@ -1,9 +1,10 @@
 package it.confluence.jsapi;
 
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
-import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteMacroEditorDialog;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -12,9 +13,8 @@ import org.junit.Test;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.macro.AbstractContentMacroTest;
 import it.confluence.servlet.ConfluenceAppServlets;
-import it.servlet.ConnectAppServlets;
 
-import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 
 /**

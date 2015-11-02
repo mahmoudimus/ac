@@ -2,7 +2,7 @@ package it.common;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
@@ -11,9 +11,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import it.common.spi.TestedProductAccessor;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
+import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 public abstract class MultiProductWebDriverTestBase
 {

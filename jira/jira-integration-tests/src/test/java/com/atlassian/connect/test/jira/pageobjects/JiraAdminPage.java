@@ -1,19 +1,21 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
+import javax.inject.Inject;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.pageobjects.AdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.AdminPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
+
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 
 import static com.atlassian.fugue.Option.some;
 import static java.lang.String.format;

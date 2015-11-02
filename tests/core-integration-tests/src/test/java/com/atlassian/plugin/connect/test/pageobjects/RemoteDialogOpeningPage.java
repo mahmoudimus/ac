@@ -1,17 +1,19 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
+
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteCloseDialogPage;
+import com.atlassian.plugin.connect.test.common.util.IframeUtils;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 

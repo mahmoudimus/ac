@@ -1,19 +1,21 @@
 package it.confluence.iframe;
 
+import java.net.MalformedURLException;
+
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ToggleableConditionServlet;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -22,9 +24,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
+import it.confluence.ConfluenceWebDriverTestBase;
+import redstone.xmlrpc.XmlRpcFault;
 
 public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 {

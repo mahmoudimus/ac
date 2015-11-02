@@ -1,20 +1,15 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
-import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
-import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.elements.PageElement;
-import com.atlassian.pageobjects.elements.query.Poller;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
-import com.atlassian.webdriver.AtlassianWebDriver;
-import com.google.common.base.Function;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
-import java.util.concurrent.Callable;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnPage;
+
+import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnPage;
+import com.atlassian.plugin.connect.test.common.util.IframeUtils;
+import com.atlassian.webdriver.AtlassianWebDriver;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**

@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -27,7 +27,7 @@ import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
 
-import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static java.lang.String.format;
 

@@ -14,9 +14,10 @@ import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -36,7 +37,6 @@ import it.com.atlassian.gadgets.pages.Gadget;
 import it.com.atlassian.gadgets.pages.GadgetMenu;
 import it.jira.servlet.JiraAppServlets;
 import it.jira.servlet.condition.DashboardItemConditionServlet;
-import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.google.common.collect.Iterables.getOnlyElement;

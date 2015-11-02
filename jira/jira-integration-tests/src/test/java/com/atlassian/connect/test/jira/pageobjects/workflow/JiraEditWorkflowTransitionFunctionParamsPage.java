@@ -1,7 +1,7 @@
 package com.atlassian.connect.test.jira.pageobjects.workflow;
 
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 import org.openqa.selenium.By;
 

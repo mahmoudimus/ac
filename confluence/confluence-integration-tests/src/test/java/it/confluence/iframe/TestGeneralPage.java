@@ -3,18 +3,22 @@ package it.confluence.iframe;
 import java.net.URI;
 import java.util.Map;
 
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGeneralPage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet;
+import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.IframeUtils;
+import com.atlassian.plugin.connect.test.confluence.pageobjects.ConfluenceGeneralPage;
 
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
@@ -26,10 +30,6 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import it.confluence.ConfluenceWebDriverTestBase;
-import it.modules.ConnectAsserts;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.servlet.condition.ToggleableConditionServlet;
 
 /**
  * Test of general page in Confluence

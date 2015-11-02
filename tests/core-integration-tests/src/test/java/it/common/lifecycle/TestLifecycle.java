@@ -1,18 +1,18 @@
 package it.common.lifecycle;
 
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.plugin.connect.test.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
-import com.atlassian.plugin.connect.test.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import it.common.spi.TestedProductAccessor;
-
-import static com.atlassian.plugin.connect.test.AddonTestUtils.randomWebItemBean;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

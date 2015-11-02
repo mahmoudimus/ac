@@ -7,10 +7,12 @@ import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBui
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.client.AddOnPropertyClient;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import com.google.common.base.Supplier;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;

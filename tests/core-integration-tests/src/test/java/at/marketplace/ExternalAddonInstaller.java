@@ -1,13 +1,20 @@
 package at.marketplace;
 
-import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.Value;
-import cc.plural.jsonij.parser.ParserException;
-import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.atlassian.plugin.connect.test.common.client.AtlassianConnectRestClient;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import it.util.TestUser;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -24,16 +31,12 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
+import cc.plural.jsonij.JPath;
+import cc.plural.jsonij.Value;
+import cc.plural.jsonij.parser.ParserException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.StringUtils.replace;
 
 public class ExternalAddonInstaller
 {
@@ -304,13 +307,13 @@ public class ExternalAddonInstaller
     private StringEntity addonDetails() throws IOException
     {
         String addonEntity = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("marketplace/addon.json"));
-        addonEntity = (replace(addonEntity, "<%=vendor id goes here=>", addon.getVendorId()));
-        addonEntity = replace(addonEntity, "<%=key goes here=>", addon.getKey());
-        addonEntity = replace(addonEntity, "<%=name goes here=>", addon.getName());
-        addonEntity = replace(addonEntity, "<%=descriptor url goes here=>", addon.getDescriptorUrl());
-        addonEntity = replace(addonEntity, "<%=logo url goes here=>", addon.getLogoUrl());
-        addonEntity = replace(addonEntity, "<%=screenshot asset goes here=>", screenshotAsset);
-        addonEntity = replace(addonEntity, "<%=thumbnail asset goes here=>", thumbnailAsset);
+        addonEntity = (StringUtils.replace(addonEntity, "<%=vendor id goes here=>", addon.getVendorId()));
+        addonEntity = StringUtils.replace(addonEntity, "<%=key goes here=>", addon.getKey());
+        addonEntity = StringUtils.replace(addonEntity, "<%=name goes here=>", addon.getName());
+        addonEntity = StringUtils.replace(addonEntity, "<%=descriptor url goes here=>", addon.getDescriptorUrl());
+        addonEntity = StringUtils.replace(addonEntity, "<%=logo url goes here=>", addon.getLogoUrl());
+        addonEntity = StringUtils.replace(addonEntity, "<%=screenshot asset goes here=>", screenshotAsset);
+        addonEntity = StringUtils.replace(addonEntity, "<%=thumbnail asset goes here=>", thumbnailAsset);
         log.info("Add-on entity: {}", addonEntity);
         return new StringEntity(addonEntity);
     }

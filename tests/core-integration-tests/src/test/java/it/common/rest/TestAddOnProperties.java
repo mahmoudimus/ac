@@ -10,9 +10,11 @@ import java.util.Collection;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
+import com.atlassian.plugin.connect.test.common.servlet.SignedRequestHandler;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -33,9 +35,6 @@ import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import it.common.spi.TestedProductAccessor;
-import it.servlet.InstallHandlerServlet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;

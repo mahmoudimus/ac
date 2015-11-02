@@ -94,6 +94,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-connect-integration-tests-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpcomponents.version}</version>
@@ -130,11 +137,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <artifactId>itextpdf</artifactId>
-            <groupId>com.itextpdf</groupId>
-            <version>5.5.3</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -246,7 +248,7 @@
         <dependency>
             <groupId>com.samskivert</groupId>
             <artifactId>jmustache</artifactId>
-            <version>1.3</version>
+            <version>${jmustache.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -3,7 +3,7 @@ package com.atlassian.connect.test.jira.pageobjects;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test;
 
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

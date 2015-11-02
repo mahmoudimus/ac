@@ -12,14 +12,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluencePageWithRemoteMacro;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluencePageWithRemoteMacro;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.matcher.ParamMatchers;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.EchoContextServlet;
+import com.atlassian.plugin.connect.test.common.servlet.EchoQueryParametersServlet;
 
 import com.google.common.collect.Lists;
 
@@ -34,12 +38,8 @@ import org.openqa.selenium.WebElement;
 
 import it.confluence.MacroStorageFormatBuilder;
 import it.confluence.servlet.ConfluenceAppServlets;
-import it.matcher.ParamMatchers;
-import it.servlet.ConnectAppServlets;
-import it.servlet.EchoContextServlet;
-import it.servlet.EchoQueryParametersServlet;
 
-import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {

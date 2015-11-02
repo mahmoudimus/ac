@@ -3,11 +3,10 @@ package it.confluence.servlet;
 import javax.servlet.http.HttpServlet;
 
 import com.atlassian.connect.test.confluence.pageobjects.RemoteMacroEditorDialog;
+import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
+import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
 
-import it.servlet.HttpContextServlet;
-import it.servlet.iframe.MustacheServlet;
-
-import static it.servlet.ConnectAppServlets.wrapContextAwareServlet;
+import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.wrapContextAwareServlet;
 
 /**
  * Utility methods for creating test servlets suitable for serving Confluence-specific Connect iframes.

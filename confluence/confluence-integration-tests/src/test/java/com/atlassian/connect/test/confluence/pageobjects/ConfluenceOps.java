@@ -2,7 +2,7 @@ package com.atlassian.connect.test.confluence.pageobjects;
 
 import com.atlassian.fugue.Option;
 import com.google.common.base.Function;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
 import org.apache.commons.codec.binary.Base64;
 import redstone.xmlrpc.XmlRpcArray;
 import redstone.xmlrpc.XmlRpcClient;

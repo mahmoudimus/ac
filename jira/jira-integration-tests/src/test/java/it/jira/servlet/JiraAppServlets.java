@@ -3,13 +3,12 @@ package it.jira.servlet;
 import javax.servlet.http.HttpServlet;
 
 import com.atlassian.connect.test.jira.pageobjects.RemoteRefreshIssuePageWebPanel;
+import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
+import com.atlassian.plugin.connect.test.common.servlet.TestServletContextExtractor;
 
 import com.google.common.collect.Lists;
 
-import it.servlet.TestServletContextExtractor;
-import it.servlet.iframe.MustacheServlet;
-
-import static it.servlet.ConnectAppServlets.wrapContextAwareServlet;
+import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.wrapContextAwareServlet;
 
 /**
  * Utility methods for creating test servlets suitable for serving JIRA-Specific Connect iframes.

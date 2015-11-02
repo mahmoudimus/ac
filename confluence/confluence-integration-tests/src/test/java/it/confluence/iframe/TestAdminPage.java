@@ -10,11 +10,13 @@ import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
 import com.google.common.base.Supplier;
 
@@ -27,8 +29,6 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ToggleableConditionServlet;
 
 /**
  * Test of general page in Confluence

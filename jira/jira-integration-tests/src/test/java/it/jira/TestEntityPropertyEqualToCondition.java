@@ -1,5 +1,8 @@
 package it.jira;
 
+import java.rmi.RemoteException;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
 import com.atlassian.jira.util.json.JSONException;
@@ -8,16 +11,14 @@ import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBui
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.rmi.RemoteException;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

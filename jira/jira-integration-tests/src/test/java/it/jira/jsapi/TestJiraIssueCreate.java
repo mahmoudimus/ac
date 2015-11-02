@@ -3,14 +3,14 @@ package it.jira.jsapi;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.RemoteQuickCreateIssueGeneralPage;
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
 import com.atlassian.jira.pageobjects.elements.GlobalMessage;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
-import com.atlassian.connect.test.jira.pageobjects.RemoteQuickCreateIssueGeneralPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

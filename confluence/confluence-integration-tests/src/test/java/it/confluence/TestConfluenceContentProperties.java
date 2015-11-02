@@ -13,7 +13,6 @@ import com.atlassian.confluence.api.model.longtasks.LongTaskStatus;
 import com.atlassian.confluence.api.model.longtasks.LongTaskSubmission;
 import com.atlassian.confluence.api.model.pagination.PageResponse;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
@@ -23,8 +22,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFie
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
 

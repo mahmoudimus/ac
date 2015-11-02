@@ -21,13 +21,13 @@ import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDrop
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor;
+import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
@@ -35,9 +35,9 @@ import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.sun.jersey.api.client.UniformInterfaceException;
-import it.confluence.util.ConfluenceTestUserFactory;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
+import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 
-import static com.atlassian.connect.test.confluence.pageobjects.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
