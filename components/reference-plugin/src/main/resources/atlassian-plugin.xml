@@ -5,19 +5,12 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <connect-context-parameters-resolver key="test-connect-context-parameters-resolver">
-        <extractors>
-            <extractor class="com.atlassian.plugin.connect.TestJiraContextParametersExtractor"/>
-        </extractors>
-        <validators>
-            <validator class="com.atlassian.plugin.connect.TestJiraContextParametersValidator"/>
-        </validators>
-    </connect-context-parameters-resolver>
-
     <component-import key="pluginRetrievalService" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService"/>
     <component-import key="iFrameRenderStrategyBuilderFactory" interface="com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory"/>
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry"/>
     <component-import key="webItemModuleDescriptorFactory" interface="com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory"/>
     <component-import key="pageConditionsFactory" interface="com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory"/>
+
+    <connect-module key="test-module" class="com.atlassian.plugin.connect.ModuleProviderForTests"/>
 
 </atlassian-plugin>

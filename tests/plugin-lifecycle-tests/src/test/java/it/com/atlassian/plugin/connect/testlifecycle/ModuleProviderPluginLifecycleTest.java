@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.testlifecycle.jira;
+package it.com.atlassian.plugin.connect.testlifecycle;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginController;
@@ -25,7 +25,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
 
     private final PluginController pluginController;
 
-    private Plugin jiraReferencePlugin;
+    private Plugin generalReferencePlugin;
     private Plugin addon;
 
     public ModuleProviderPluginLifecycleTest(LifecyclePluginInstaller testPluginInstaller,
@@ -55,11 +55,11 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
         }
 
-        if (null != jiraReferencePlugin)
+        if (null != generalReferencePlugin)
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(jiraReferencePlugin);
+                testPluginInstaller.uninstallPlugin(generalReferencePlugin);
             }
             catch (Exception e)
             {
@@ -67,7 +67,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
             finally
             {
-                jiraReferencePlugin = null;
+                generalReferencePlugin = null;
             }
         }
     }
@@ -76,14 +76,14 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     public void shouldSkipAddonEnablementWhenDescriptorValidationFails() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
-        jiraReferencePlugin = testPluginInstaller.installJiraReferencePlugin();
+        generalReferencePlugin = testPluginInstaller.installGeneralReferencePlugin();
         addon = installAndEnableAddon(ADDON_DESCRIPTOR);
-        pluginController.disablePlugin(jiraReferencePlugin.getKey());
+        pluginController.disablePlugin(generalReferencePlugin.getKey());
         pluginController.disablePlugin(theConnectPlugin.getKey());
         pluginController.enablePlugins(theConnectPlugin.getKey());
         assertFalse(testPluginInstaller.isAddonEnabled(addon.getKey()));
 
-        pluginController.enablePlugins(jiraReferencePlugin.getKey());
+        pluginController.enablePlugins(generalReferencePlugin.getKey());
         testPluginInstaller.enableAddon(addon.getKey());
         assertStateAndModuleCount(addon, PluginState.ENABLED, 1, "With module provider plugin enabled");
     }
@@ -92,14 +92,14 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     public void shouldSkipAddonEnablementWhenModuleRegistrationFails() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
-        jiraReferencePlugin = testPluginInstaller.installJiraReferencePlugin();
+        generalReferencePlugin = testPluginInstaller.installGeneralReferencePlugin();
         addon = installAndEnableAddon(ADDON_DESCRIPTOR);
         testPluginInstaller.disableAddon(addon.getKey());
-        pluginController.disablePlugin(jiraReferencePlugin.getKey());
+        pluginController.disablePlugin(generalReferencePlugin.getKey());
         testPluginInstaller.enableAddon(addon.getKey());
         assertStateAndModuleCount(addon, PluginState.DISABLED, 0, "With module provider plugin disabled");
 
-        pluginController.enablePlugins(jiraReferencePlugin.getKey());
+        pluginController.enablePlugins(generalReferencePlugin.getKey());
         testPluginInstaller.enableAddon(addon.getKey());
         assertStateAndModuleCount(addon, PluginState.ENABLED, 1, "With module provider plugin enabled");
     }

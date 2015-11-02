@@ -56,6 +56,7 @@ Contributions are encouraged!
 * `components` - the shared components of the plugin
 	* `api` - a draft application programming interface for the plugin
 	* `core` - the core cross-product implementation
+	* `reference-plugin` - a cross-product reference implementation of some SPI interfaces
 	* `modules` - bean representations of add-on JSON descriptor elements
 	* `spi` - a draft service provider interface for the plugin
 * `confluence` - the parent of all Confluence-specific modules

@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.jira;
+package it.com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -22,14 +22,13 @@ import static it.com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTe
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-@Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraModuleProviderTest extends AbstractConnectAddonTest
+public class ConnectModuleProviderTest extends AbstractConnectAddonTest
 {
     private final TestPluginInstaller testPluginInstaller;
     private final PluginControlHandler pluginControlHandler;
 
-    public JiraModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
+    public ConnectModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
             TestPluginInstaller testPluginInstaller,
             TestAuthenticator testAuthenticator,
             PluginControlHandler pluginControlHandler)
@@ -52,7 +51,7 @@ public class JiraModuleProviderTest extends AbstractConnectAddonTest
     {
         Plugin addon = pluginControlHandler.getPlugin(addonKey);
         Collection<ModuleDescriptor<?>> moduleDescriptors = addon.getModuleDescriptors();
-        String completeModuleKey = "com.atlassian.plugins.atlassian-connect-jira-reference-plugin:" + addonAndModuleKey(addonKey, moduleKey);
+        String completeModuleKey = "com.atlassian.plugins.atlassian-connect-reference-plugin:" + addonAndModuleKey(addonKey, moduleKey);
         assertThat(moduleDescriptors, hasItem(new ModuleDescriptorHasCompleteKey(completeModuleKey)));
     }
 
