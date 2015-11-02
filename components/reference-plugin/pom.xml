@@ -7,8 +7,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>atlassian-connect-general-reference-plugin</artifactId>
-    <name>Atlassian Connect - Cross-Product Reference Plugin</name>
+    <artifactId>atlassian-connect-reference-plugin</artifactId>
+    <name>Atlassian Connect - Reference Plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
@@ -22,12 +22,6 @@
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-connect-api</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.confluence</groupId>
-            <artifactId>confluence</artifactId>
-            <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -76,7 +70,7 @@
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-jira-plugin</artifactId>
+                <artifactId>maven-amps-plugin</artifactId>
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
             </plugin>
@@ -98,6 +92,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

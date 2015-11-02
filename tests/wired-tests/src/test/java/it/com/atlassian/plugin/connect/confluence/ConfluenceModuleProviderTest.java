@@ -52,7 +52,7 @@ public class ConfluenceModuleProviderTest extends AbstractConnectAddonTest
     {
         Plugin addon = pluginControlHandler.getPlugin(addonKey);
         Collection<ModuleDescriptor<?>> moduleDescriptors = addon.getModuleDescriptors();
-        String completeModuleKey = "com.atlassian.plugins.atlassian-connect-general-reference-plugin:" + addonAndModuleKey(addonKey, moduleKey);
+        String completeModuleKey = "com.atlassian.plugins.atlassian-connect-reference-plugin:" + addonAndModuleKey(addonKey, moduleKey);
         assertThat(moduleDescriptors, hasItem(new ModuleDescriptorHasCompleteKey(completeModuleKey)));
     }
 

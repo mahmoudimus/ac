@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-connect-general-reference-plugin</artifactId>
+            <artifactId>atlassian-connect-reference-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -306,7 +306,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>atlassian-connect-plugin,atlassian-connect-general-reference-plugin</includeArtifactIds>
+                            <includeArtifactIds>atlassian-connect-plugin,atlassian-connect-reference-plugin</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
                         </configuration>

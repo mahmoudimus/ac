@@ -313,7 +313,7 @@
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-connect-general-reference-plugin</artifactId>
+                                    <artifactId>atlassian-connect-reference-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
@@ -386,7 +386,7 @@
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-connect-general-reference-plugin</artifactId>
+                                    <artifactId>atlassian-connect-reference-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>

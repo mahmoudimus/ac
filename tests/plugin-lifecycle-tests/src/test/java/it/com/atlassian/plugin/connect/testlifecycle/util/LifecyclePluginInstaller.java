@@ -286,7 +286,7 @@ public class LifecyclePluginInstaller implements DisposableBean
 
     private String getGeneralReferencePluginJarFilename() throws IOException
     {
-        return getPluginDependencyFilename("atlassian-connect-general-reference-plugin");
+        return getPluginDependencyFilename("atlassian-connect-reference-plugin");
     }
 
     private String getPluginDependencyFilename(String artifactId) throws IOException
