@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.confluence;
+package it.com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -22,17 +22,16 @@ import static it.com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTe
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 
-@Application("confluence")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ConfluenceModuleProviderTest extends AbstractConnectAddonTest
+public class ConnectModuleProviderTest extends AbstractConnectAddonTest
 {
     private final TestPluginInstaller testPluginInstaller;
     private final PluginControlHandler pluginControlHandler;
 
-    public ConfluenceModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
-                                        TestPluginInstaller testPluginInstaller,
-                                        TestAuthenticator testAuthenticator,
-                                        PluginControlHandler pluginControlHandler)
+    public ConnectModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
+            TestPluginInstaller testPluginInstaller,
+            TestAuthenticator testAuthenticator,
+            PluginControlHandler pluginControlHandler)
     {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
         this.testPluginInstaller = testPluginInstaller;
