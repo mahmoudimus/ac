@@ -1,14 +1,11 @@
-package com.atlassian.plugin.connect.plugin.request.webhook;
+package com.atlassian.plugin.connect.plugin.lifecycle.event;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.plugin.lifecycle.analytics.PluginsUpgradedEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ServerUpgradedEvent;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import org.osgi.framework.BundleContext;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -24,18 +21,19 @@ public class ProductEventPublisher implements LifecycleAware
     private final EventPublisher eventPublisher;
     private final ApplicationProperties applicationProperties;
     private final PluginSettingsFactory pluginSettingsFactory;
-    private final BundleContext bundleContext;
+    private PluginRetrievalService pluginRetrievalService;
     private volatile boolean started = false;
 
     @Inject
     public ProductEventPublisher(EventPublisher eventPublisher,
             ApplicationProperties applicationProperties,
-            PluginSettingsFactory pluginSettingsFactory, BundleContext bundleContext)
+            PluginSettingsFactory pluginSettingsFactory,
+            PluginRetrievalService pluginRetrievalService)
     {
         this.eventPublisher = eventPublisher;
         this.applicationProperties = applicationProperties;
         this.pluginSettingsFactory = pluginSettingsFactory;
-        this.bundleContext = bundleContext;
+        this.pluginRetrievalService = pluginRetrievalService;
     }
 
     @Override
@@ -52,7 +50,7 @@ public class ProductEventPublisher implements LifecycleAware
             }
 
             String lastVersion = getLastVersion("plugins");
-            String currentVersion = getCurrentPluginsVersion();
+            String currentVersion = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
             if (!currentVersion.equals(lastVersion))
             {
                 eventPublisher.publish(new PluginsUpgradedEvent(lastVersion, currentVersion));
@@ -81,11 +79,6 @@ public class ProductEventPublisher implements LifecycleAware
     private String getCurrentServerVersion()
     {
         return applicationProperties.getBuildNumber();
-    }
-
-    private String getCurrentPluginsVersion()
-    {
-        return BundleUtil.getBundleVersion(bundleContext);
     }
 
     private String getLastVersion(String type)

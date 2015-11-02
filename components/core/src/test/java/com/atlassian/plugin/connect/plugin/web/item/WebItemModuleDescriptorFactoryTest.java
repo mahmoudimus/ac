@@ -1,16 +1,12 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.web.ParamsModuleFragmentFactoryImpl;
-import com.atlassian.plugin.connect.plugin.web.condition.ConditionModuleFragmentFactoryImpl;
-import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
@@ -18,7 +14,6 @@ import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebIcon;
@@ -58,17 +53,28 @@ import static org.mockito.Mockito.when;
 public class WebItemModuleDescriptorFactoryTest
 {
     private static final String ADDON_BASE_URL = "https://myapp.heroku.com/foo";
+
     @Mock
     private WebInterfaceManager webInterfaceManager;
+
     @Mock
     private WebFragmentHelper webFragmentHelper;
+
     @Mock
     private HttpServletRequest servletRequest;
+
+    @Mock
+    private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
+
+    @Mock
+    private ConnectModuleProviderContext moduleProviderContext;
+
+    @Mock
+    private ModuleLocationQualifier locationQualifier;
 
     private PluginForTests plugin;
     private WebItemModuleDescriptorFactory webItemFactory;
 
-    private ConnectModuleProviderContext moduleProviderContext;
     private ConnectAddonBean addon;
 
     @Before
@@ -76,15 +82,17 @@ public class WebItemModuleDescriptorFactoryTest
     {
         plugin = new PluginForTests("my-key", "My Plugin");
         this.addon = newConnectAddonBean().withKey("my-key").build();
-        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
 
-        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactoryImpl(mock(ProductAccessor.class), new ParamsModuleFragmentFactoryImpl());
 
         RemotablePluginAccessorFactoryForTests pluginAccessorFactory = new RemotablePluginAccessorFactoryForTests();
         pluginAccessorFactory.withBaseUrl(ADDON_BASE_URL);
         webItemFactory = new WebItemModuleDescriptorFactoryImpl(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
-                new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory,
-                new ParamsModuleFragmentFactoryImpl());
+                new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory
+        );
+
+        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
+        when(moduleProviderContext.getLocationQualifier()).thenReturn(locationQualifier);
+        when(locationQualifier.processLocation(any(String.class))).then((invocation) -> invocation.getArguments()[0]);
 
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
 
@@ -101,8 +109,6 @@ public class WebItemModuleDescriptorFactoryTest
                     }
                 }
         );
-
-        when(webFragmentHelper.loadCondition(anyString(), any(Plugin.class))).thenReturn(new AlwaysDisplayCondition());
     }
 
     @Test

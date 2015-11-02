@@ -21,9 +21,8 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 public class ConnectIFrameServlet extends HttpServlet
 {
-    public static final String CLASSIFIER = "classifier";
-    public static final String RAW_CLASSIFIER = "raw";
-    public static final String JSON_CLASSIFIER = "json";
+
+    private static final String CLASSIFIER_PARAMETER = "classifier";
 
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
 
@@ -76,12 +75,12 @@ public class ConnectIFrameServlet extends HttpServlet
 
     private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
     {
-        String classifier = req.getParameter(CLASSIFIER);
-        String lookupClassifier = JSON_CLASSIFIER.equals(classifier) ? null : classifier;
+        String classifier = req.getParameter(CLASSIFIER_PARAMETER);
+        String lookupClassifier = IFrameRenderStrategyRegistry.JSON_CLASSIFIER.equals(classifier) ? null : classifier;
 
         IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, lookupClassifier);
 
-        if (null != renderStrategy && JSON_CLASSIFIER.equals(classifier))
+        if (null != renderStrategy && IFrameRenderStrategyRegistry.JSON_CLASSIFIER.equals(classifier))
         {
             return renderStrategy.toJsonRenderStrategy();
         }

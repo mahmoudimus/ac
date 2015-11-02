@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
-
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +22,7 @@ public class IFrameUriBuilderFactoryImpl implements IFrameUriBuilderFactory
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
-    private final BundleContext bundleContext;
+    private PluginRetrievalService pluginRetrievalService;
 
     @Autowired
     public IFrameUriBuilderFactoryImpl(final UrlVariableSubstitutor urlVariableSubstitutor,
@@ -31,7 +30,7 @@ public class IFrameUriBuilderFactoryImpl implements IFrameUriBuilderFactory
                                        final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
                                        final LicenseRetriever licenseRetriever, final LocaleHelper localeHelper,
                                        final UserPreferencesRetriever userPreferencesRetriever,
-                                       final BundleContext bundleContext)
+                                       final PluginRetrievalService pluginRetrievalService)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.pluginAccessorFactory = pluginAccessorFactory;
@@ -40,13 +39,13 @@ public class IFrameUriBuilderFactoryImpl implements IFrameUriBuilderFactory
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
         this.userPreferencesRetriever = userPreferencesRetriever;
-        this.bundleContext = bundleContext;
+        this.pluginRetrievalService = pluginRetrievalService;
     }
 
     @Override
     public IFrameUriBuilder builder()
     {
         return new IFrameUriBuilderImpl(urlVariableSubstitutor, pluginAccessorFactory, userManager, hostApplicationInfo,
-                licenseRetriever, localeHelper, userPreferencesRetriever, bundleContext);
+                licenseRetriever, localeHelper, userPreferencesRetriever, pluginRetrievalService);
     }
 }

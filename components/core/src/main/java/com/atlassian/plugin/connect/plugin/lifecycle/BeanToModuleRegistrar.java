@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
-import com.atlassian.plugin.connect.plugin.request.webhook.PluginsWebHookProvider;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;

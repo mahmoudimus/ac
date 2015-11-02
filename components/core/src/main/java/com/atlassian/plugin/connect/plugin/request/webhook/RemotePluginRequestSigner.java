@@ -2,16 +2,14 @@ package com.atlassian.plugin.connect.plugin.request.webhook;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
-import com.atlassian.plugin.connect.plugin.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.plugin.ConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
-import org.osgi.framework.BundleContext;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,16 +26,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Named
 public class RemotePluginRequestSigner implements RequestSigner
 {
+
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final ConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    private final BundleContext bundleContext;
+    private final ConnectAddonAccessor addonAccessor;
+    private final PluginRetrievalService pluginRetrievalService;
 
     @Inject
-    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, BundleContext bundleContext)
+    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            ConnectAddonAccessor addonAccessor,
+            PluginRetrievalService pluginRetrievalService)
     {
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
-        this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
-        this.bundleContext = checkNotNull(bundleContext);
+        this.addonAccessor = addonAccessor;
+        this.pluginRetrievalService = pluginRetrievalService;
     }
 
     @Override
@@ -52,7 +53,7 @@ public class RemotePluginRequestSigner implements RequestSigner
             }
             //Webhooks SPI does not provide any other extension points for adding headers
             //to requests, so we'll just do it here
-            String version = BundleUtil.getBundleVersion(bundleContext);
+            String version = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
             request.setHeader(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
         }
     }
@@ -70,6 +71,6 @@ public class RemotePluginRequestSigner implements RequestSigner
     // return true if this is a Connect add-on
     private boolean canSign(final String pluginKey)
     {
-        return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey);
+        return addonAccessor.getAddon(pluginKey).isPresent();
     }
 }

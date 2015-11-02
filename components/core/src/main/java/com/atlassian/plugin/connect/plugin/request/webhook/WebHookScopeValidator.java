@@ -2,8 +2,9 @@ package com.atlassian.plugin.connect.plugin.request.webhook;
 
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -28,20 +29,21 @@ public class WebHookScopeValidator
         this.webHookScopeService = webHookScopeService;
     }
 
-    public void validate(final ShallowConnectAddonBean addon, List<WebHookModuleBean> webhooks) throws InvalidDescriptorException
+    public void validate(final ShallowConnectAddonBean addon, List<WebHookModuleBean> webhooks) throws ConnectModuleValidationException
     {
         if (webhooks != null)
         {
-            for (WebHookModuleBean webHookModuleBean : webhooks)
+            for (WebHookModuleBean webhook : webhooks)
             {
-                final ScopeName requiredScope = webHookScopeService.getRequiredScope(webHookModuleBean.getEvent());
+                final ScopeName requiredScope = webHookScopeService.getRequiredScope(webhook.getEvent());
 
                 if (!Iterables.any(addon.getScopes(), new ImpliedScopePredicate(requiredScope)))
                 {
                     String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
                                     + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
-                            webHookModuleBean.getEvent(), requiredScope);
-                    throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.missing.scope", requiredScope);
+                            webhook.getEvent(), requiredScope);
+                    throw new ConnectModuleValidationException(new WebHookModuleMeta(), exceptionMessage,
+                            "connect.install.error.missing.scope", requiredScope);
                 }
             }
         }

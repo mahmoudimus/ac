@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.web.iframe.ConnectIFrameServlet.RAW_CLASSIFIER;
 
 @Component
 @ExportAsDevService
@@ -123,7 +122,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
                     .build();
 
             iFrameRenderStrategyRegistry.register(descriptor.getKey(), webItem.getKey(descriptor), iFrameRenderStrategy);
-            iFrameRenderStrategyRegistry.register(descriptor.getKey(), webItem.getRawKey(), RAW_CLASSIFIER, iFrameRenderStrategy);
+            iFrameRenderStrategyRegistry.register(descriptor.getKey(), webItem.getRawKey(), IFrameRenderStrategyRegistry.RAW_CLASSIFIER, iFrameRenderStrategy);
             iFrameRenderStrategyRegistry.register(descriptor.getKey(), webItem.getRawKey(), iFrameRenderStrategy);
         }
     }

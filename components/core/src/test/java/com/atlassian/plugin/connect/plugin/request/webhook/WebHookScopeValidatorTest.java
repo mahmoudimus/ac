@@ -1,12 +1,10 @@
-package com.atlassian.plugin.connect.plugin.webhook;
+package com.atlassian.plugin.connect.plugin.request.webhook;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.request.webhook.WebHookScopeService;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.request.webhook.WebHookScopeValidator;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,36 +35,36 @@ public class WebHookScopeValidatorTest
     }
 
     @Test
-    public void shouldAcceptBeanWithoutWebhooks()
+    public void shouldAcceptBeanWithoutWebhooks() throws ConnectModuleValidationException
     {
         webHookScopeValidator.validate(ConnectAddonBean.newConnectAddonBean().build(), new ArrayList<>());
     }
 
-    @Test(expected = InvalidDescriptorException.class)
-    public void shouldRejectBeanWithoutRequiredScopesForWebhook()
+    @Test(expected = ConnectModuleValidationException.class)
+    public void shouldRejectBeanWithoutRequiredScopesForWebhook() throws ConnectModuleValidationException
     {
         validateAddonBean(ScopeName.READ, Collections.<ScopeName>emptySet());
     }
 
-    @Test(expected = InvalidDescriptorException.class)
-    public void shouldRejectBeanWithoutImpliedRequiredScopesForWebhook()
+    @Test(expected = ConnectModuleValidationException.class)
+    public void shouldRejectBeanWithoutImpliedRequiredScopesForWebhook() throws ConnectModuleValidationException
     {
         validateAddonBean(ScopeName.WRITE, ImmutableSet.of(ScopeName.READ));
     }
 
     @Test
-    public void shouldAcceptBeanWithImpliedRequiredScopesForWebhook()
+    public void shouldAcceptBeanWithImpliedRequiredScopesForWebhook() throws ConnectModuleValidationException
     {
         validateAddonBean(ScopeName.READ, ImmutableSet.of(ScopeName.WRITE));
     }
 
     @Test
-    public void shouldAcceptBeanWithRequiredScopesForWebhook()
+    public void shouldAcceptBeanWithRequiredScopesForWebhook() throws ConnectModuleValidationException
     {
         validateAddonBean(ScopeName.ADMIN, ImmutableSet.of(ScopeName.ADMIN));
     }
 
-    private void validateAddonBean(ScopeName requiredScope, Set<ScopeName> definedScopes)
+    private void validateAddonBean(ScopeName requiredScope, Set<ScopeName> definedScopes) throws ConnectModuleValidationException
     {
         String event = "fooCreated";
         WebHookModuleBean webHookModuleBean = new WebHookModuleBeanBuilder().withEvent(event).build();

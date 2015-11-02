@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.request.webhook;
 
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.PluginUriResolver;
@@ -17,20 +17,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class RemotablePluginsPluginUriResolver implements PluginUriResolver
 {
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final ConnectAddonRegistry connectAddonRegistry;
+    private final ConnectAddonAccessor addonAccessor;
 
     @Inject
     public RemotablePluginsPluginUriResolver(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            ConnectAddonRegistry connectAddonRegistry)
+            ConnectAddonAccessor addonAccessor)
     {
-        this.connectAddonRegistry = connectAddonRegistry;
+        this.addonAccessor = addonAccessor;
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
     }
 
     @Override
     public Optional<URI> getUri(String pluginKey, URI path)
     {
-        if (!path.isAbsolute() && connectAddonRegistry.hasAddonWithKey(pluginKey))
+        if (!path.isAbsolute() && addonAccessor.getAddon(pluginKey).isPresent())
         {
             return Optional.of(remotablePluginAccessorFactory.get(pluginKey).getTargetUrl(path));
         }

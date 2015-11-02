@@ -17,7 +17,7 @@ import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkUtil;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFactory;
 import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
-import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonInstallFailedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
