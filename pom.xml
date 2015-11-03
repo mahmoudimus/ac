@@ -575,6 +575,18 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.testutils</groupId>
+                <artifactId>atlassian-test-annotations</artifactId>
+                <version>${atlassian.testutils.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.testng</groupId>
+                        <artifactId>testng</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.osgi</groupId>
                 <artifactId>atlassian-osgi</artifactId>
                 <version>0.2</version>
@@ -851,6 +863,7 @@
 
         <!-- TEST STUFF -->
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
+        <atlassian.testutils.version>1.2-SNAPSHOT</atlassian.testutils.version>
         <aui.version>5.2</aui.version>
         <gson.version>2.2.2-atlassian-1</gson.version>
         <guava.version>11.0</guava.version>

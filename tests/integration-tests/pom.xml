@@ -406,6 +406,10 @@
             <version>1.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.testutils</groupId>
+            <artifactId>atlassian-test-annotations</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

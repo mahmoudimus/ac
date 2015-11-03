@@ -43,6 +43,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.testutils.annotations.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +58,7 @@ import java.util.concurrent.Callable;
  * without forcing us to create "Fixed" versions of them that simply override a
  * wait condition.
  */
+@Retry(maxAttempts=ConfluenceWebDriverTestBase.MAX_RETRY_ATTEMPTS)
 public class ConfluenceWebDriverTestBase
 {
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
@@ -120,6 +123,10 @@ public class ConfluenceWebDriverTestBase
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+
+    @Rule
+    public RetryRule retryRule = new RetryRule();
+    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     @BeforeClass
     public static void confluenceTestSetup() throws Exception
