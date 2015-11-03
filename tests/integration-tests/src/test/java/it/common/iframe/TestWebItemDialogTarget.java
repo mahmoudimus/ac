@@ -15,6 +15,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -72,14 +75,16 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void testLoadGeneralDialog()
+    public void testLoadGeneralDialog() throws MalformedURLException
     {
         login(testUserFactory.basicUser());
         HomePage homePage = product.visit(HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, REMOTE_PLUGIN_DIALOG_KEY, runner.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-        assertThat(remotePluginTest.getLocation(), endsWith(homePage.getUrl()));
+        String location = remotePluginTest.getLocation();
+        URL locationUrl = new URL(location);
+        assertThat(locationUrl.getPath(), endsWith(homePage.getUrl()));
 
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
