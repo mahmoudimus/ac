@@ -359,8 +359,29 @@
                         </tags>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-clover2-plugin</artifactId>
+                    <configuration combine.self="override">
+                        <excludes>
+                            <exclude>**/test/**/*.java</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
+    <profiles>
+        <profile>
+            <id>clover</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.atlassian.clover</groupId>
+                    <artifactId>clover</artifactId>
+                    <version>${clover.libversion}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+         </profile>
+    </profiles>
 </project>
