@@ -5,12 +5,12 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
-import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.upm.spi.PluginControlHandler;
 import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,6 +28,8 @@ public class ConnectModuleProviderTest extends AbstractConnectAddonTest
     private final TestPluginInstaller testPluginInstaller;
     private final PluginControlHandler pluginControlHandler;
 
+    private Plugin addon;
+
     public ConnectModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
             TestPluginInstaller testPluginInstaller,
             TestAuthenticator testAuthenticator,
@@ -38,11 +40,20 @@ public class ConnectModuleProviderTest extends AbstractConnectAddonTest
         this.pluginControlHandler = pluginControlHandler;
     }
 
+    @After
+    public void tearDown() throws IOException
+    {
+        if (addon != null)
+        {
+            testPluginInstaller.uninstallAddon(addon);
+        }
+    }
+
     @Test
     public void shouldInstallAddonWithPluginProvidedModule() throws IOException
     {
         String json = readAddonTestFile("descriptorWithPluginProvidedModule.json");
-        testPluginInstaller.installAddon(json);
+        addon = testPluginInstaller.installAddon(json);
 
         assertHasModuleDescriptor("my-plugin-with-provided-module", "test-provided-module");
     }
