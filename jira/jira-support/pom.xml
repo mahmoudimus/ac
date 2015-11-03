@@ -201,6 +201,21 @@
     <profiles>
         <profile>
             <id>clover</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.atlassian.maven.plugins</groupId>
+                            <artifactId>maven-clover2-plugin</artifactId>
+                            <configuration combine.self="override">
+                                <excludes>
+                                    <exclude>**/test/**/*.java</exclude>
+                                </excludes>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+	        </pluginManagement>
+            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.atlassian.clover</groupId>
