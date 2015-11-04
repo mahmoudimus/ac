@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.request.webhook;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.web.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -13,16 +12,16 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookModuleBean, WebHookModuleDescriptor>
 {
-    private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
     private final ConnectContainerUtil autowireUtil;
 
     @Autowired
-    public ConnectWebHookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory, ConnectContainerUtil autowireUtil)
+    public ConnectWebHookModuleDescriptorFactory(ConnectContainerUtil autowireUtil)
     {
-        this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
         this.autowireUtil = autowireUtil;
     }
 
@@ -34,8 +33,12 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
         webhookElement.addAttribute("key", ModuleKeyUtils.generateKey("webhook"));
         webhookElement.addAttribute("event", bean.getEvent());
         webhookElement.addAttribute("url", bean.getUrl());
-        paramsModuleFragmentFactory.addParamsToElement(webhookElement, bean.getParams());
-
+        for(Map.Entry<String,String> entry : bean.getParams().entrySet())
+        {
+            webhookElement.addElement("param")
+                    .addAttribute("name",entry.getKey())
+                    .addAttribute("value",entry.getValue());
+        }
 
         WebHookModuleDescriptor descriptor = autowireUtil.createBean(WebHookModuleDescriptor.class);
         descriptor.setWebhookPluginKey(moduleProviderContext.getConnectAddonBean().getKey());

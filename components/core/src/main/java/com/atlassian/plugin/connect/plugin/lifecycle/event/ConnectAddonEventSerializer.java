@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.request.webhook;
+package com.atlassian.plugin.connect.plugin.lifecycle.event;
 
 import com.atlassian.webhooks.spi.provider.EventSerializationException;
 import com.atlassian.webhooks.spi.provider.EventSerializer;

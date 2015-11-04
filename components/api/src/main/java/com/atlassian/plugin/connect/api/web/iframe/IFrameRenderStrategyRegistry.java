@@ -5,6 +5,11 @@ package com.atlassian.plugin.connect.api.web.iframe;
  */
 public interface IFrameRenderStrategyRegistry
 {
+
+    String RAW_CLASSIFIER = "raw";
+
+    String JSON_CLASSIFIER = "json";
+
     void register(String addonKey, String moduleKey, IFrameRenderStrategy renderStrategy);
 
     void register(String addonKey, String moduleKey, String classifier, IFrameRenderStrategy renderStrategy);

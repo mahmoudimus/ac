@@ -2,12 +2,11 @@ package com.atlassian.plugin.connect.plugin.web.condition;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.web.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.web.condition.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
+import com.atlassian.plugin.connect.spi.web.condition.ConditionClassResolver;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.base.Strings;
 import org.dom4j.dom.DOMElement;
@@ -19,24 +18,23 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 
 @Component
 public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragmentFactory
 {
+
     private static final Logger log = LoggerFactory.getLogger(ConditionModuleFragmentFactory.class);
     private static final String TYPE_KEY = "type";
 
     private final ProductAccessor productAccessor;
-    private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
 
     @Autowired
-    public ConditionModuleFragmentFactoryImpl(ProductAccessor productAccessor,
-            ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+    public ConditionModuleFragmentFactoryImpl(ProductAccessor productAccessor)
     {
         this.productAccessor = productAccessor;
-        this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
     }
 
     @Override
@@ -139,7 +137,12 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
             element.addAttribute("class", className);
             element.addAttribute("invert", Boolean.toString(bean.isInvert()));
 
-            paramsModuleFragmentFactory.addParamsToElement(element, contextBuilder.build().toMap());
+            for (Map.Entry<String,String> entry : contextBuilder.build().toMap().entrySet())
+            {
+                element.addElement("param")
+                        .addAttribute("name",entry.getKey())
+                        .addAttribute("value",entry.getValue());
+            }
         }
         else
         {
@@ -155,5 +158,4 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
         element.addAttribute("class", conditionClass.getName());
         return element;
     }
-
 }

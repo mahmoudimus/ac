@@ -65,7 +65,7 @@ public class AnalyticsWhitelistTest
 
         String[] eventPackages = new String[] {
                 "com.atlassian.plugin.connect.plugin.auth.scope",
-                "com.atlassian.plugin.connect.plugin.lifecycle.analytics",
+                "com.atlassian.plugin.connect.plugin.lifecycle.event",
                 "com.atlassian.plugin.connect.plugin.web.condition"
         };
         for (String eventPackage : eventPackages)

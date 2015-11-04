@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.lifecycle.analytics;
+package com.atlassian.plugin.connect.plugin.lifecycle.event;
 
 /**
  * Event type for version upgrades

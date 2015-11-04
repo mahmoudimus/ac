@@ -1,9 +1,5 @@
-package com.atlassian.plugin.connect.plugin.request.webhook;
+package com.atlassian.plugin.connect.plugin.lifecycle.event;
 
-import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonDisabledEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonEnabledEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonLifecycleEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.analytics.ConnectAddonLifecycleWithDataEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.EventMatcher;
 import com.atlassian.webhooks.spi.provider.EventSerializer;

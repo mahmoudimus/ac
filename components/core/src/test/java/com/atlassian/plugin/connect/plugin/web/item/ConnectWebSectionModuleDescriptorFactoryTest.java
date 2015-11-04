@@ -1,12 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
+import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -29,6 +30,7 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static com.atlassian.plugin.connect.testsupport.util.matcher.ConditionMatchers.isCompositeConditionContaining;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.eq;
@@ -50,6 +52,8 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Mock private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     @Mock private WebFragmentHelper webFragmentHelper;
     @Mock private Condition condition;
+    @Mock private ConnectModuleProviderContext moduleProviderContext;
+    @Mock private ModuleLocationQualifier locationQualifier;
 
     @Before
     public void beforeEachTest() throws Exception
@@ -73,7 +77,12 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
                 .build();
 
         final ConnectAddonBean addonBean = newConnectAddonBean().withKey("my-awesome-plugin").build();
-        descriptor = webSectionFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addonBean), plugin, bean);
+
+        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addonBean);
+        when(moduleProviderContext.getLocationQualifier()).thenReturn(locationQualifier);
+        when(locationQualifier.processLocation(any(String.class))).then((invocation) -> invocation.getArguments()[0]);
+
+        descriptor = webSectionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         descriptor.enabled();
     }
 

@@ -2,14 +2,13 @@ package com.atlassian.plugin.connect.plugin.web.item;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.web.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.Condition;
@@ -41,19 +40,16 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
     private final ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory;
 
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
-    private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     @Autowired
     public WebItemModuleDescriptorFactoryImpl(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory,
-                                          IconModuleFragmentFactory iconModuleFragmentFactory,
-                                          ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-                                          ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+            IconModuleFragmentFactory iconModuleFragmentFactory,
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
         this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
-        this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
     }
 
     @Override
@@ -153,7 +149,12 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
 
         final boolean isDialog = bean.getTarget().isDialogTarget() || bean.getTarget().isInlineDialogTarget();
 
-        paramsModuleFragmentFactory.addParamsToElement(webItemElement, bean.getParams());
+        for(Map.Entry<String,String> entry : bean.getParams().entrySet())
+        {
+            webItemElement.addElement("param")
+                    .addAttribute("name",entry.getKey())
+                    .addAttribute("value",entry.getValue());
+        }
 
         if (!styles.isEmpty())
         {

@@ -1,19 +1,22 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
-import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImpl;
-import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
-import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImpl;
-import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
-import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginInformation;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
+import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
+import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
+import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImpl;
+import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImpl;
+import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
+import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;
@@ -24,12 +27,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import javax.annotation.Nullable;
 import java.net.URI;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -37,9 +37,9 @@ import java.util.TimeZone;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.osgi.framework.Constants.BUNDLE_VERSION;
 
 @RunWith (MockitoJUnitRunner.class)
 public class AddOnConditionTest
@@ -122,13 +122,7 @@ public class AddOnConditionTest
     private EventPublisher eventPublisher;
 
     @Mock
-    private BundleContext bundleContext;
-
-    @Mock
-    private Bundle bundle;
-
-    @Mock
-    private Dictionary bundleHeaders;
+    private PluginRetrievalService pluginRetrievalService;
 
     private AddOnCondition addonCondition;
 
@@ -150,20 +144,25 @@ public class AddOnConditionTest
                         return TimeZone.getDefault();
                     }
                 },
-                bundleContext);
+                pluginRetrievalService);
 
         addonCondition = new AddOnCondition(remotablePluginAccessorFactory,
                 iFrameUriBuilderFactory,
                 webFragmentModuleContextExtractor,
                 eventPublisher,
-                bundleContext);
+                pluginRetrievalService);
 
         when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
         when(localeHelper.getLocaleTag()).thenReturn("foo");
-        when(bundleContext.getBundle()).thenReturn(bundle);
-        when(bundle.getHeaders()).thenReturn(bundleHeaders);
-        when(bundleHeaders.get(BUNDLE_VERSION)).thenReturn("1.2.3");
+
+        PluginInformation pluginInformation = mock(PluginInformation.class);
+        when(pluginInformation.getVersion()).thenReturn("1.2.3");
+
+        Plugin plugin = mock(Plugin.class);
+        when(plugin.getPluginInformation()).thenReturn(pluginInformation);
+
+        when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
     }
 
     @Test

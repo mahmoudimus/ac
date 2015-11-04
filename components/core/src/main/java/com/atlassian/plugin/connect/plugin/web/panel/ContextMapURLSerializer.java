@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.web.context;
+package com.atlassian.plugin.connect.plugin.web.panel;
 
 import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
 import com.google.common.base.Optional;

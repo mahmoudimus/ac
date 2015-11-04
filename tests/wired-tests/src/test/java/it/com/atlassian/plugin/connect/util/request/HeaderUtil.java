@@ -2,7 +2,7 @@ package it.com.atlassian.plugin.connect.util.request;
 
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
+import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
