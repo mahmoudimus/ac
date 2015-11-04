@@ -14,8 +14,9 @@
     <modules>
         <module>api</module>
         <module>core</module>
-        <module>reference-plugin</module>
+        <module>core-extensions</module>
         <module>modules</module>
+        <module>reference-plugin</module>
         <module>spi</module>
     </modules>
 

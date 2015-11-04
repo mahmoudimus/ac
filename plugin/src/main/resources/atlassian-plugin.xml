@@ -12,7 +12,7 @@
     <connect-module key="web-item-module" class="com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProviderImpl"/>
     <connect-module key="web-panel-module" class="com.atlassian.plugin.connect.plugin.web.panel.WebPanelModuleProvider"/>
     <connect-module key="web-section-module" class="com.atlassian.plugin.connect.plugin.web.item.WebSectionModuleProvider"/>
-    <connect-module key="webhook-module" class="com.atlassian.plugin.connect.plugin.request.webhook.WebHookModuleProvider"/>
+    <connect-module key="webhook-module" class="com.atlassian.plugin.connect.plugin.webhook.WebHookModuleProvider"/>
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
