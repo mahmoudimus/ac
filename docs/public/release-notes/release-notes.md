@@ -33,8 +33,9 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
-## [1.1.58](../release-notes/1-1-0.html#1.1.58)
+## [1.1.59](../release-notes/1-1-0.html#1.1.59)
  * JIRA: Make jira.openCreateIssueDialog() available on general admin and project admin pages [AC-1652](https://ecosystem.atlassian.net/browse/AC-1652)
+ * JIRA: Scope provisioning fails on installation of first add-on with ADMIN scope in JIRA [AC-1771](https://ecosystem.atlassian.net/browse/AC-1771)
 
 ## [1.1.57](../release-notes/1-1-0.html#1.1.57)
 * Fixed web item actions being broken by certain conditions [AC-1640](https://ecosystem.atlassian.net/browse/AC-1640)
