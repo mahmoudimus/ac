@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
@@ -15,30 +11,33 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.auth.applinks.DefaultConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.auth.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.connect.plugin.auth.jwt.JwtSigningRemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthSigningRemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.AuthenticationMethod;
+import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
-
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -198,7 +197,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
         if (!Strings.isNullOrEmpty(storedBaseUrl))
         {
-            return Suppliers.compose(URI::create,
+            return Suppliers.compose(ToUriFunction.INSTANCE,
                     new Supplier<String>()
                     {
                         @Override
@@ -211,7 +210,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         }
         else
         {
-            return Suppliers.compose(URI::create,
+            return Suppliers.compose(ToUriFunction.INSTANCE,
                     new Supplier<String>()
                     {
                         @Override
@@ -245,7 +244,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
         if (!Strings.isNullOrEmpty(storedBaseUrl))
         {
-            return Suppliers.compose(URI::create,
+            return Suppliers.compose(ToUriFunction.INSTANCE,
                     new Supplier<String>()
                     {
                         @Override
@@ -258,7 +257,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         }
         else
         {
-            return Suppliers.compose(URI::create,
+            return Suppliers.compose(ToUriFunction.INSTANCE,
                     new Supplier<String>()
                     {
                         @Override
@@ -380,5 +379,16 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
     public void destroy() throws Exception
     {
         eventPublisher.unregister(this);
+    }
+
+    private static enum ToUriFunction implements Function<String, URI>
+    {
+        INSTANCE;
+
+        @Override
+        public URI apply(String uri)
+        {
+            return URI.create(uri);
+        }
     }
 }
