@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.spi.scope.helper;
 
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
-import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -46,7 +45,7 @@ public final class JsonRpcApiScopeHelper
         });
     }
 
-    public boolean allow(HttpServletRequest request, UserKey user)
+    public boolean allow(HttpServletRequest request)
     {
         if (!httpMethod.equals(request.getMethod()))
         {

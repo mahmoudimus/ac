@@ -13,4 +13,6 @@
 
     <connect-module key="test-module" class="com.atlassian.plugin.connect.ModuleProviderForTests"/>
 
+    <connect-api-scope-whitelist key="test-api-scope-whitelist" resource="/scope/test-whitelist.json"/>
+
 </atlassian-plugin>

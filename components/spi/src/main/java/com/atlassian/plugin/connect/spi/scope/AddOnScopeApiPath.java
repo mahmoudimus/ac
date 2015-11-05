@@ -26,7 +26,7 @@ import static com.google.common.collect.Iterables.transform;
 
 public interface AddOnScopeApiPath
 {
-    boolean allow(HttpServletRequest request, @Nullable UserKey user);
+    boolean allow(HttpServletRequest request);
     Iterable<ApiResourceInfo> getApiResourceInfos();
 
     void addTo(Collection<RestApiScopeHelper.RestScope> restResources, Collection<RpcEncodedSoapApiScopeHelper> soapResources,
@@ -46,9 +46,9 @@ public interface AddOnScopeApiPath
         }
 
         @Override
-        public boolean allow(HttpServletRequest request, @Nullable UserKey user)
+        public boolean allow(HttpServletRequest request)
         {
-            return restApiScopeHelper.allow(request, user);
+            return restApiScopeHelper.allow(request);
         }
 
         @Override
@@ -110,11 +110,11 @@ public interface AddOnScopeApiPath
         }
 
         @Override
-        public boolean allow(HttpServletRequest request, @Nullable UserKey user)
+        public boolean allow(HttpServletRequest request)
         {
             for (RpcEncodedSoapApiScopeHelper soapRpcResource : soapRpcResources)
             {
-                if (soapRpcResource.allow(request, user))
+                if (soapRpcResource.allow(request))
                 {
                     return true;
                 }
@@ -187,11 +187,11 @@ public interface AddOnScopeApiPath
         }
 
         @Override
-        public boolean allow(HttpServletRequest request, @Nullable UserKey user)
+        public boolean allow(HttpServletRequest request)
         {
             for (JsonRpcApiScopeHelper jsonResource : jsonRpcResources)
             {
-                if (jsonResource.allow(request, user))
+                if (jsonResource.allow(request))
                 {
                     return true;
                 }
@@ -264,11 +264,11 @@ public interface AddOnScopeApiPath
         }
 
         @Override
-        public boolean allow(HttpServletRequest request, @Nullable UserKey user)
+        public boolean allow(HttpServletRequest request)
         {
             for (XmlRpcApiScopeHelper xmlResource : xmlRpcResources)
             {
-                if (xmlResource.allow(request, user))
+                if (xmlResource.allow(request))
                 {
                     return true;
                 }
@@ -341,14 +341,14 @@ public interface AddOnScopeApiPath
         }
 
         @Override
-        public boolean allow(final HttpServletRequest request, final @Nullable UserKey user)
+        public boolean allow(final HttpServletRequest request)
         {
             return any(paths, new Predicate<PathScopeHelper>()
             {
                 @Override
                 public boolean apply(@Nullable PathScopeHelper path)
                 {
-                    return null != path && path.allow(request, user);
+                    return null != path && path.allow(request);
                 }
             });
         }

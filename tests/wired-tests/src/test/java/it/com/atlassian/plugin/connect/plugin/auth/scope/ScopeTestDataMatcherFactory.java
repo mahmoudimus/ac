@@ -1,9 +1,8 @@
-package it.com.atlassian.plugin.connect.confluence.auth;
+package it.com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import org.apache.commons.io.IOUtils;
@@ -13,11 +12,11 @@ import org.hamcrest.TypeSafeMatcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,8 +24,6 @@ import static org.mockito.Mockito.when;
 public class ScopeTestDataMatcherFactory
 {
     final Map<ScopeName, Plugin> installedAddOns;
-
-    UserKey USER = null;
 
     public ScopeTestDataMatcherFactory(final Map<ScopeName, Plugin> installedAddOns)
     {
@@ -54,7 +51,7 @@ public class ScopeTestDataMatcherFactory
             {
                 try
                 {
-                    return scopeManager.isRequestInApiScope(setupRequest(data), installedAddOns.get(data.scope).getKey(), USER) == data.expectedOutcome;
+                    return scopeManager.isRequestInApiScope(setupRequest(data), installedAddOns.get(data.scope).getKey()) == data.expectedOutcome;
                 }
                 catch (IOException e)
                 {

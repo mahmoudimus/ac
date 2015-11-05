@@ -65,14 +65,14 @@ public class AddOnScopeManagerImplTest
     public void validJsonDescriptorScopeIsInScopeInProdMode()
     {
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.READ)));
-        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(true));
     }
 
     @Test
     public void invalidJsonDescriptorScopeIsOutOfScope()
     {
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes()));
-        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(false));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class AddOnScopeManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.WRITE)));
-        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(true));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class AddOnScopeManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.READ)));
-        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(false));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class AddOnScopeManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.DELETE)));
-        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(true));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class AddOnScopeManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.WRITE)));
-        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(false));
     }
 
     // This test exists to ensure that signingNotVulnerableToNormalizedUris is not returning a false
@@ -120,7 +120,7 @@ public class AddOnScopeManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
         when(request.getMethod()).thenReturn("GET");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.READ)));
-        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(false));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class AddOnScopeManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
         when(request.getMethod()).thenReturn("GET");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddOnBeanWithScopes(ScopeName.READ)));
-        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(false));
     }
 
     private ConnectAddonBean buildAddOnBeanWithScopes(ScopeName... scopeNames)

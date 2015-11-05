@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.confluence.auth;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 
 public class ConfluenceScopeTestUtil
 {

@@ -86,7 +86,7 @@ public class AddOnScopeLoadJsonFileHelperTest
                 when(request.getRequestURI()).thenReturn(url);
                 when(request.getContextPath()).thenReturn("");
                 when(request.getMethod()).thenReturn("GET");
-                return addOnScope.allow(request, null);
+                return addOnScope.allow(request);
             }
 
             @Override

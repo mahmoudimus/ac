@@ -88,7 +88,7 @@ public final class RpcEncodedSoapApiScopeHelper
         return Option.some(Pair.pair(namespace, name));
     }
 
-    public boolean allow(HttpServletRequest request, UserKey user)
+    public boolean allow(HttpServletRequest request)
     {
         if (!httpMethod.equals(request.getMethod()))
         {

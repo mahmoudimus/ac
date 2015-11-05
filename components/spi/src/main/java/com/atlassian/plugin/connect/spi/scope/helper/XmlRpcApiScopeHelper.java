@@ -67,7 +67,7 @@ public class XmlRpcApiScopeHelper
         return methodName.getTextTrim();
     }
 
-    public boolean allow(HttpServletRequest request, UserKey user)
+    public boolean allow(HttpServletRequest request)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))

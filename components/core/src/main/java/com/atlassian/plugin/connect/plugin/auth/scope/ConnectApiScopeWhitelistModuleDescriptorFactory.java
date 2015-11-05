@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.lifecycle;
+package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.osgi.external.ListableModuleDescriptorFactory;
@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 
 @ModuleType(ListableModuleDescriptorFactory.class)
 @Component
-public final class ConnectModuleProviderModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectModuleProviderModuleDescriptor>
+public class ConnectApiScopeWhitelistModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectApiScopeWhitelistModuleDescriptor>
 {
 
-    private static final String TYPE = "connect-module";
+    private static final String TYPE = "connect-api-scope-whitelist";
 
     @Autowired
-    public ConnectModuleProviderModuleDescriptorFactory(@Qualifier("hostContainer") final HostContainer hostContainer)
+    public ConnectApiScopeWhitelistModuleDescriptorFactory(@Qualifier("hostContainer") final HostContainer hostContainer)
     {
-        super(hostContainer, TYPE, ConnectModuleProviderModuleDescriptor.class);
+        super(hostContainer, TYPE, ConnectApiScopeWhitelistModuleDescriptor.class);
     }
 }

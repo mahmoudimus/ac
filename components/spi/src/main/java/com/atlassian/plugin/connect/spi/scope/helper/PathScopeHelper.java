@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.spi.scope.helper;
 
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
-import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -53,7 +52,7 @@ public final class PathScopeHelper
         this(isRegex, Lists.newArrayList(paths));
     }
 
-    public boolean allow(final HttpServletRequest request, UserKey user)
+    public boolean allow(final HttpServletRequest request)
     {
         if (!this.httpMethod.equalsIgnoreCase(request.getMethod()))
         {

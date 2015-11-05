@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.scope.AddOnScope;
-import com.atlassian.plugin.connect.spi.scope.helper.AddOnScopeLoadJsonFileHelper;
 import com.atlassian.plugin.connect.spi.scope.ProductScopeProvider;
+import com.atlassian.plugin.connect.spi.scope.helper.AddOnScopeLoadJsonFileHelper;
+import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,11 +23,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Component
 public class ScopeServiceImpl implements ScopeService
 {
+
+    private final PluginAccessor pluginAccessor;
     private final ProductScopeProvider productScopeProvider;
 
     @Autowired
-    public ScopeServiceImpl(ProductScopeProvider productScopeProvider)
+    public ScopeServiceImpl(PluginAccessor pluginAccessor, ProductScopeProvider productScopeProvider)
     {
+        this.pluginAccessor = pluginAccessor;
         this.productScopeProvider = checkNotNull(productScopeProvider);
     }
 
@@ -39,6 +44,13 @@ public class ScopeServiceImpl implements ScopeService
         AddOnScopeLoadJsonFileHelper.addProductScopesFromFile(scopes, resourceLocation("integration-test"));
 
         AddOnScopeLoadJsonFileHelper.combineProductScopes(scopes, productScopeProvider.getScopes());
+
+        Collection<ConnectApiScopeWhitelist> whitelists = pluginAccessor.getModules(
+                new ModuleDescriptorOfClassPredicate<>(ConnectApiScopeWhitelistModuleDescriptor.class));
+        for (ConnectApiScopeWhitelist whitelist : whitelists)
+        {
+            AddOnScopeLoadJsonFileHelper.combineProductScopes(scopes, whitelist.getScopes());
+        }
 
         List<AddOnScope> scopeList = new ArrayList<>(scopes.values());
         Collections.sort(scopeList);

@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.spi.scope.helper;
 
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
-import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -53,7 +52,7 @@ public final class RestApiScopeHelper
         }));
     }
 
-    public boolean allow(HttpServletRequest request, UserKey user)
+    public boolean allow(HttpServletRequest request)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         final String[] elements = StringUtils.split(pathInfo, '/');

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.spi.scope;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -39,14 +38,14 @@ public class AddOnScope implements ApiScope, Comparable<AddOnScope>
     }
 
     @Override
-    public boolean allow(final HttpServletRequest request, final @Nullable UserKey user)
+    public boolean allow(final HttpServletRequest request)
     {
         return any(paths, new Predicate<AddOnScopeApiPath>()
         {
             @Override
             public boolean apply(@Nullable AddOnScopeApiPath path)
             {
-                return null != path && path.allow(request, user);
+                return null != path && path.allow(request);
             }
         });
     }

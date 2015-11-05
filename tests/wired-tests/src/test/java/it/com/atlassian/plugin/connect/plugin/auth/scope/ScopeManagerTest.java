@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.confluence.auth;
+package it.com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
