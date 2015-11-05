@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.request.webhook;
+package com.atlassian.plugin.connect.plugin.webhook;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;

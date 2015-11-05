@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.web.item.DefaultModuleLocationQualifier;
 import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 

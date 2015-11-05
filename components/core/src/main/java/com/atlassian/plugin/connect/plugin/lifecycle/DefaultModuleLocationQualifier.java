@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.web.item;
+package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;

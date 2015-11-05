@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.descriptor;
+package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;

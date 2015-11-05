@@ -16,7 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.plugin.lifecycle.AbstractConnectCoreModuleProvider;
+import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;

@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.lifecycle;
+package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
