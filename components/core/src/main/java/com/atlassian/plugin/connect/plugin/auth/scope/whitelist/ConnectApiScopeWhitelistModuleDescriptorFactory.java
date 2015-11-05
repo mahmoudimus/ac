@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.auth.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.osgi.external.ListableModuleDescriptorFactory;

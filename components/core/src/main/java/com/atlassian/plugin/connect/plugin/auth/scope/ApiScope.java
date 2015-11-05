@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import javax.servlet.http.HttpServletRequest;
 

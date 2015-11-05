@@ -1,11 +1,6 @@
-package com.atlassian.plugin.connect.spi.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
-import com.atlassian.plugin.connect.spi.scope.helper.JsonRpcApiScopeHelper;
-import com.atlassian.plugin.connect.spi.scope.helper.PathScopeHelper;
-import com.atlassian.plugin.connect.spi.scope.helper.RestApiScopeHelper;
-import com.atlassian.plugin.connect.spi.scope.helper.RpcEncodedSoapApiScopeHelper;
-import com.atlassian.plugin.connect.spi.scope.helper.XmlRpcApiScopeHelper;
-import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.plugin.connect.plugin.auth.scope.ApiResourceInfo;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;

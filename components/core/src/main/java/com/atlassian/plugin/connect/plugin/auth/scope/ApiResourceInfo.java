@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

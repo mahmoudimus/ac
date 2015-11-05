@@ -1,6 +1,5 @@
-package com.atlassian.plugin.connect.spi.permission.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
-import com.atlassian.plugin.connect.spi.scope.helper.RestApiScopeHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

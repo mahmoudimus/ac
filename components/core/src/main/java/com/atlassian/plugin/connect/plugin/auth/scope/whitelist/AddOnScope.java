@@ -1,6 +1,8 @@
-package com.atlassian.plugin.connect.spi.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.ApiResourceInfo;
+import com.atlassian.plugin.connect.plugin.auth.scope.ApiScope;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang.builder.ToStringBuilder;

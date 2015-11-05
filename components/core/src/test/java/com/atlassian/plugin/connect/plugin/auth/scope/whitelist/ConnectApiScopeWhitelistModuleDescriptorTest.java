@@ -1,8 +1,10 @@
-package com.atlassian.plugin.connect.plugin.auth.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.ConnectApiScopeWhitelist;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.ConnectApiScopeWhitelistModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.util.validation.ValidationException;
 import com.google.common.collect.Sets;
@@ -99,7 +101,7 @@ public class ConnectApiScopeWhitelistModuleDescriptorTest
     @Test
     public void shouldReturnWhitelistForValidModule()
     {
-        String classFilename = "/com/atlassian/connect/scopes.test.json";
+        String classFilename = "/scope/test-whitelist.json";
 
         when(plugin.getResource(classFilename)).thenReturn(getClass().getResource(classFilename));
 

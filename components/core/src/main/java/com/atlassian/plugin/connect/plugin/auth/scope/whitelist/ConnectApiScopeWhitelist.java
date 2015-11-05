@@ -1,7 +1,6 @@
-package com.atlassian.plugin.connect.plugin.auth.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 
 import java.util.Map;
 

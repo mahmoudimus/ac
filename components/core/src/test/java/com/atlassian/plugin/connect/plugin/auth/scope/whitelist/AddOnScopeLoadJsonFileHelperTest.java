@@ -1,7 +1,6 @@
-package com.atlassian.plugin.connect.spi.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.helper.PathScopeHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Description;
@@ -16,7 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.spi.scope.helper.AddOnScopeLoadJsonFileHelper.combineProductScopes;
+import static com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScopeLoadJsonFileHelper.combineScopes;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,7 +29,7 @@ public class AddOnScopeLoadJsonFileHelperTest
         ImmutableList<ScopeName> scopeNamesAdding = ImmutableList.of(ScopeName.ADMIN, ScopeName.PROJECT_ADMIN);
 
         Map<ScopeName, AddOnScope> source = mapWithEmptyScopeFromScopeNames(scopeNamesSource);
-        combineProductScopes(
+        combineScopes(
                 source,
                 mapWithEmptyScopeFromScopeNames(scopeNamesAdding));
 
@@ -42,7 +41,7 @@ public class AddOnScopeLoadJsonFileHelperTest
     public void testCombineSameKeys() throws Exception
     {
         Map<ScopeName, AddOnScope> source = exampleScopeMapWithPath(ScopeName.READ, "a");
-        combineProductScopes(
+        combineScopes(
                 source,
                 exampleScopeMapWithPath(ScopeName.READ, "b"));
 

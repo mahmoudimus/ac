@@ -1,10 +1,8 @@
-package com.atlassian.plugin.connect.spi.scope.helper;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBeans;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.AddOnScope;
-import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPathBuilder;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 
@@ -28,7 +26,7 @@ public class AddOnScopeLoadJsonFileHelper
         }
     }
 
-    public static void combineProductScopes(final Map<ScopeName, AddOnScope> source, final Map<ScopeName, AddOnScope> addition)
+    public static void combineScopes(final Map<ScopeName, AddOnScope> source, final Map<ScopeName, AddOnScope> addition)
     {
         //TODO: use Map.merge when we will have Java 8
         for (ScopeName scopeName : addition.keySet())

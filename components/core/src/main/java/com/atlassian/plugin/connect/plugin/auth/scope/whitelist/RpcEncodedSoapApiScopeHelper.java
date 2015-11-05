@@ -1,10 +1,9 @@
-package com.atlassian.plugin.connect.spi.scope.helper;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.api.util.ServletUtils;
-import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
-import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.plugin.connect.plugin.auth.scope.ApiResourceInfo;
 import com.google.common.base.Function;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

@@ -1,10 +1,8 @@
-package com.atlassian.plugin.connect.plugin.auth.scope;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.AddOnScope;
-import com.atlassian.plugin.connect.spi.scope.helper.AddOnScopeLoadJsonFileHelper;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.util.validation.ValidationPattern;

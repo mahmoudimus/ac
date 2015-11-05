@@ -1,7 +1,7 @@
-package com.atlassian.plugin.connect.spi.scope.helper;
+package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.connect.api.util.ServletUtils;
-import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
+import com.atlassian.plugin.connect.plugin.auth.scope.ApiResourceInfo;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
