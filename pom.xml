@@ -107,7 +107,7 @@
                     <configuration>
                         <skip>true</skip>
                         <singleCloverDatabase>true</singleCloverDatabase>
-                        <outputDirectory>/tmp/clover</outputDirectory>
+                        <outputDirectory>${session.executionRootDirectory}/target/site/clover</outputDirectory>
                         <excludes>
                             <exclude>**/test/**/*.java</exclude>
                         </excludes>
