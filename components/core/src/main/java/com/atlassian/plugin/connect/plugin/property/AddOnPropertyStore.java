@@ -1,19 +1,22 @@
 package com.atlassian.plugin.connect.plugin.property;
 
+import java.util.Arrays;
+
+import javax.annotation.Nonnull;
+
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.sal.api.transaction.TransactionCallback;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-import net.java.ao.DBParam;
-import net.java.ao.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
-import java.util.Arrays;
+import net.java.ao.DBParam;
+import net.java.ao.Query;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,7 +31,8 @@ public class AddOnPropertyStore
 
     private static final String MAX_PROPERTIES_SYSTEM_PROPERTY = "com.atlassian.plugin.connect.add_on_properties.max_properties";
     private static final int MAX_PROPERTIES_DEFAULT = 100;
-    public static final int MAX_PROPERTIES_PER_ADD_ON = ConfigurationUtils.getIntSystemProperty(MAX_PROPERTIES_SYSTEM_PROPERTY, MAX_PROPERTIES_DEFAULT);
+    public static final int MAX_PROPERTIES_PER_ADD_ON = Integer.getInteger(MAX_PROPERTIES_SYSTEM_PROPERTY,
+        MAX_PROPERTIES_DEFAULT);
 
     @Autowired
     public AddOnPropertyStore(final ActiveObjects ao) {this.ao = checkNotNull(ao);}
