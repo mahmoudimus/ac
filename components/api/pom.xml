@@ -126,10 +126,8 @@
                         <plugin>
                             <groupId>com.atlassian.maven.plugins</groupId>
                             <artifactId>maven-clover2-plugin</artifactId>
-                            <configuration combine.self="override">
-                                <excludes>
-                                    <exclude>**/test/**/*.java</exclude>
-                                </excludes>
+                            <configuration>
+                                <skip>false</skip>
                             </configuration>
                         </plugin>
                     </plugins>

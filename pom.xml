@@ -106,6 +106,9 @@
                     <version>${clover.libversion}</version>
                     <configuration>
                         <skip>true</skip>
+                        <excludes>
+                            <exclude>**/test/**/*.java</exclude>
+                        </excludes>
                     </configuration>
                 </plugin>
             </plugins>
