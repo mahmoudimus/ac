@@ -351,7 +351,7 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'verify clover2:aggregate clover2:clover -pl tests/wired-tests -Pwired -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters',
+                goal: 'verify -pl tests/wired-tests -Pwired -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         mavenTask(
