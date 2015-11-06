@@ -314,6 +314,7 @@
                 </executions>
             </plugin>
 
+            <!-- Performance penalty, remove when not in separate profile-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
