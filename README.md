@@ -101,6 +101,8 @@ Conversely, once the project has been built, it can be rebuilt with changes only
 
 ### Running tests
 
+#### Unit tests
+
 To run unit tests:
 
     mvn test
@@ -109,9 +111,16 @@ To run JavaScript unit tests:
 
     mvn clean package -Pkarma-tests -DskipUnits
 
+#### Integration tests
+
+Before running integration tests, build the plugin.
+
+To speed up local development, all integration test modules are excluded by default. For these modules to be included
+in the build, such as when running `mvn clean` or `mvn verify`, a specific profile must be activated manually. See the
+commands below for the name of each profile.
+
 To run wired tests:
 
-    mvn clean install
     mvn -pl tests/wired-tests verify -am -Pwired
 
 To run plug-in lifecycle tests:
