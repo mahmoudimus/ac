@@ -2,9 +2,9 @@ package at.confluence;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
-import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 
 import com.google.common.base.Optional;
@@ -16,7 +16,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.atlassian.plugin.connect.test.common.util.TestUser;
+import at.marketplace.ExternalAddonInstaller;
 
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;

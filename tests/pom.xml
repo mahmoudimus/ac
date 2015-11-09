@@ -29,6 +29,7 @@
             <modules>
                 <module>core-integration-tests</module>
                 <module>integration-tests-common</module>
+                <module>marketplace-support</module>
             </modules>
         </profile>
         <profile>
@@ -48,6 +49,7 @@
             <modules>
                 <module>core-integration-tests</module>
                 <module>integration-tests-common</module>
+                <module>marketplace-support</module>
             </modules>
         </profile>
         <profile>

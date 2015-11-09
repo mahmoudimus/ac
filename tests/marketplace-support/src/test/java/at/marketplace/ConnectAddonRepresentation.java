@@ -1,6 +1,6 @@
 package at.marketplace;
 
-import static org.apache.commons.lang3.Validate.notNull;
+import org.apache.commons.lang3.Validate;
 
 public class ConnectAddonRepresentation
 {
@@ -12,11 +12,11 @@ public class ConnectAddonRepresentation
 
     public ConnectAddonRepresentation(Builder builder)
     {
-        this.descriptorUrl = notNull(builder.descriptorUrl);
-        this.vendorId = notNull(builder.vendorId);
-        this.key = notNull(builder.key);
-        this.name = notNull(builder.name);
-        this.logoUrl = notNull(builder.logo);
+        this.descriptorUrl = Validate.notNull(builder.descriptorUrl);
+        this.vendorId = Validate.notNull(builder.vendorId);
+        this.key = Validate.notNull(builder.key);
+        this.name = Validate.notNull(builder.name);
+        this.logoUrl = Validate.notNull(builder.logo);
     }
 
     public static Builder builder()
