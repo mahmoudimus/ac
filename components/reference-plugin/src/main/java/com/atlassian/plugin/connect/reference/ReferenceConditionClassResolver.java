@@ -16,8 +16,8 @@ public class ReferenceConditionClassResolver implements ConnectConditionClassRes
     public List<Entry> getEntries()
     {
         return ImmutableList.of(
-                newEntry("always-display", AlwaysDisplayCondition.class),
-                newEntry("never-display", NeverDisplayCondition.class)
+                newEntry("always-display", AlwaysDisplayCondition.class).build(),
+                newEntry("never-display", NeverDisplayCondition.class).build()
         );
     }
 }

@@ -1,10 +1,10 @@
-package com.atlassian.plugin.connect.plugin.web.condition;
+package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.web.condition.ConnectEntityPropertyEqualToCondition;
-import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
+import com.atlassian.plugin.connect.plugin.web.condition.ConnectCondition;
+import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionContext;
+import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
@@ -13,7 +13,7 @@ import com.google.common.base.Strings;
 import java.util.Map;
 
 @ConnectCondition
-public class ConnectEntityPropertyEqualToConditionImpl implements ConnectEntityPropertyEqualToCondition
+public class AddonEntityPropertyEqualToCondition implements Condition
 {
     private final AddOnPropertyService addOnPropertyService;
     private final UserManager userManager;
@@ -22,7 +22,7 @@ public class ConnectEntityPropertyEqualToConditionImpl implements ConnectEntityP
     private String propertyValue;
     private String addOnKey;
 
-    public ConnectEntityPropertyEqualToConditionImpl(final AddOnPropertyService addOnPropertyService, final UserManager userManager)
+    public AddonEntityPropertyEqualToCondition(final AddOnPropertyService addOnPropertyService, final UserManager userManager)
     {
         this.addOnPropertyService = addOnPropertyService;
         this.userManager = userManager;

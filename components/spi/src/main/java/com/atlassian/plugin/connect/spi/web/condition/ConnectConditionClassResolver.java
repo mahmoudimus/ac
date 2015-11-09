@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.web.Condition;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,50 +39,76 @@ public interface ConnectConditionClassResolver
      */
     final class Entry {
 
-        private String conditionName;
+        private final String conditionName;
 
-        private Class<? extends Condition> conditionClass;
+        private final Class<? extends Condition> conditionClass;
 
-        private List<Predicate<Map<String, String>>> parameterPredicates;
+        private final List<Predicate<Map<String, String>>> parameterPredicates;
 
-        private Entry(String conditionName, Class<? extends Condition> conditionClass, Predicate<Map<String, String>>... parameterPredicates)
+        private final boolean contextFree;
+
+        private Entry(Builder builder)
         {
-            this.conditionName = conditionName;
-            this.conditionClass = conditionClass;
-            this.parameterPredicates = Arrays.asList(parameterPredicates);
+            this.conditionName = builder.conditionName;
+            this.conditionClass = builder.conditionClass;
+            this.parameterPredicates = builder.parameterPredicates;
+            this.contextFree = builder.contextFree;
         }
 
         /**
-         * Creates an entry with the given fields.
+         * Creates a builder for an entry with the given fields.
          *
          * @param conditionName the symbolic name of the condition
          * @param conditionClass the condition class
-         * @param parameterPredicates predicates on the parameters of the condition that must be satisfied for the entry to be used
-         * @return the created resolver entry
+         * @return a resolver entry builder
          */
-        public static Entry newEntry(String conditionName, Class<? extends Condition> conditionClass, Predicate<Map<String, String>>... parameterPredicates)
+        public static Builder newEntry(String conditionName, Class<? extends Condition> conditionClass)
         {
-            return new Entry(conditionName, conditionClass, parameterPredicates);
+            return new Builder(conditionName, conditionClass);
         }
 
         /**
-         * Returns the condition class, if this entry applies to the given condition element.
+         * Returns a condition class for use <b>where the full host application context is available</b>, if this entry
+         * applies to the given condition element.
          *
          * @param conditionBean a condition element from an add-on descriptor
          * @return the condition class or {@link Optional#empty()}
          */
-        public Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean)
+        public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean)
         {
+            return getConditionClass(conditionBean, false);
+        }
 
+        /**
+         * Returns a condition class for use <b>where no context is available</b>, if this entry applies to the given
+         * condition element.
+         *
+         * @param conditionBean a condition element from an add-on descriptor
+         * @return the condition class or {@link Optional#empty()}
+         */
+        public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean)
+        {
+            return getConditionClass(conditionBean, true);
+        }
+
+        private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean, boolean requireContextFree)
+        {
             Optional<Class<? extends Condition>> optionalClass = Optional.empty();
-            if (this.conditionName.equals(conditionBean.getCondition()) && isApplicable(conditionBean.getParams()))
+            if (isApplicableToContext(requireContextFree)
+                    && this.conditionName.equals(conditionBean.getCondition())
+                    && isApplicableToParameters(conditionBean.getParams()))
             {
                 optionalClass = Optional.of(conditionClass);
             }
             return optionalClass;
         }
 
-        private boolean isApplicable(Map<String, String> conditionParameters)
+        private boolean isApplicableToContext(boolean requireContextFree)
+        {
+            return !requireContextFree || contextFree;
+        }
+
+        private boolean isApplicableToParameters(Map<String, String> conditionParameters)
         {
             return parameterPredicates.stream()
                     .reduce(new BinaryOperator<Predicate<Map<String, String>>>()
@@ -101,6 +128,61 @@ public interface ConnectConditionClassResolver
                         }
                     })
                     .orElse(true);
+        }
+
+        /**
+         * A builder for condition class resolver entries.
+         */
+        public static final class Builder {
+
+            private String conditionName;
+
+            private Class<? extends Condition> conditionClass;
+
+            private List<Predicate<Map<String, String>>> parameterPredicates = Collections.emptyList();
+
+            private boolean contextFree;
+
+            private Builder(String conditionName, Class<? extends Condition> conditionClass)
+            {
+                this.conditionName = conditionName;
+                this.conditionClass = conditionClass;
+            }
+
+            /**
+             * Adds the given parameter predicates to the builder. The predicates that must be satisfied for the entry
+             * to be used.
+             *
+             * @param parameterPredicates predicates on the parameters of the condition
+             * @return the builder
+             */
+            public Builder withPredicates(Predicate<Map<String, String>>... parameterPredicates)
+            {
+                this.parameterPredicates = Arrays.asList(parameterPredicates);
+                return this;
+            }
+
+            /**
+             * Marks the condition as being usable also where the full host application context is not available. These
+             * conditions should generally not access any fields from the context map.
+             *
+             * @return the builder
+             */
+            public Builder contextFree()
+            {
+                this.contextFree = true;
+                return this;
+            }
+
+            /**
+             * Builds the resolver entry.
+             *
+             * @return the resolver entry
+             */
+            public Entry build()
+            {
+                return new Entry(this);
+            }
         }
     }
 }

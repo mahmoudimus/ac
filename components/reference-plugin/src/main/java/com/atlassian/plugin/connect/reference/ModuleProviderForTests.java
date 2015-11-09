@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.reference;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -8,7 +9,6 @@ import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +25,10 @@ public class ModuleProviderForTests extends AbstractConnectPageModuleProvider
             @ComponentImport IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             @ComponentImport IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             @ComponentImport WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            @ComponentImport PageConditionsFactory pageConditionsFactory)
+            @ComponentImport PluginAccessor pluginAccessor)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pageConditionsFactory);
+                webItemModuleDescriptorFactory, pluginAccessor);
     }
 
     @Override

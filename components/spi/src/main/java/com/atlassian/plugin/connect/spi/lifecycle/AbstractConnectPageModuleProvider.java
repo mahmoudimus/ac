@@ -1,29 +1,33 @@
 package com.atlassian.plugin.connect.spi.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ConditionUtils;
-import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.web.Condition;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -38,19 +42,19 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
-    private final PageConditionsFactory pageConditionsFactory;
+    private final PluginAccessor pluginAccessor;
 
     public AbstractConnectPageModuleProvider(PluginRetrievalService pluginRetrievalService,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            PageConditionsFactory pageConditionsFactory)
+            PluginAccessor pluginAccessor)
     {
         this.pluginRetrievalService = pluginRetrievalService;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-        this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
-        this.pageConditionsFactory = pageConditionsFactory;
+        this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @Override
@@ -150,21 +154,56 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
 
     protected void validateConditions(List<ConnectPageModuleBean> pageBeans) throws ConnectModuleValidationException
     {
+        List<ConnectConditionClassResolver> conditionClassResolvers = pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class);
         for (ConnectPageModuleBean page : pageBeans)
         {
             for (SingleConditionBean condition : ConditionUtils.getSingleConditionsRecursively(page.getConditions()))
             {
-                assertValidPageCondition(condition.getCondition());
+                assertValidPageCondition(condition, conditionClassResolvers);
             }
         }
     }
 
-    private void assertValidPageCondition(String conditionString) throws ConnectModuleValidationException
+    private void assertValidPageCondition(SingleConditionBean conditionBean, List<ConnectConditionClassResolver> conditionClassResolvers) throws ConnectModuleValidationException
     {
-        if (!pageConditionsFactory.getConditionNames().contains(conditionString) && !isRemoteCondition(conditionString))
+        if (!isRemoteCondition(conditionBean.getCondition()) && !isContextFreeCondition(conditionBean, conditionClassResolvers))
         {
-            String exceptionMessage = String.format("The add-on includes a Page Module with an unsupported condition (%s)", conditionString);
-            throw new ConnectModuleValidationException(getMeta(), exceptionMessage, "connect.install.error.page.with.invalid.condition", conditionString);
+            String exceptionMessage = String.format("The add-on includes a Page Module with an unsupported condition (%s)", conditionBean.getCondition());
+            throw new ConnectModuleValidationException(getMeta(), exceptionMessage, "connect.install.error.page.with.invalid.condition", conditionBean.getCondition());
         }
+    }
+
+    private boolean isContextFreeCondition(SingleConditionBean conditionBean, List<ConnectConditionClassResolver> conditionClassResolvers)
+    {
+        return conditionClassResolvers.stream()
+                .flatMap(new Function<ConnectConditionClassResolver, Stream<ConnectConditionClassResolver.Entry>>()
+                {
+                    @Override
+                    public Stream<ConnectConditionClassResolver.Entry> apply(ConnectConditionClassResolver resolver)
+                    {
+                        return resolver.getEntries().stream();
+                    }
+                }).map(new Function<ConnectConditionClassResolver.Entry, Optional<Class<? extends Condition>>>()
+                {
+                    @Override
+                    public Optional<Class<? extends Condition>> apply(ConnectConditionClassResolver.Entry resolverEntry)
+                    {
+                        return resolverEntry.getConditionClassForNoContext(conditionBean);
+                    }
+                }).filter(new Predicate<Optional<Class<? extends Condition>>>()
+                {
+                    @Override
+                    public boolean test(Optional<Class<? extends Condition>> optionalConditionClass)
+                    {
+                        return optionalConditionClass.isPresent();
+                    }
+                }).map(new Function<Optional<Class<? extends Condition>>, Class<? extends Condition>>()
+                {
+                    @Override
+                    public Class<? extends Condition> apply(Optional<Class<? extends Condition>> optionalConditionClass)
+                    {
+                        return optionalConditionClass.get();
+                    }
+                }).findFirst().isPresent();
     }
 }
