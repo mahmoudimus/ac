@@ -64,7 +64,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run Unit Tests',
-                    goal: 'clover2:setup package clover2:clover',
+                    goal: 'clover2:setup package -Pclover clover2:aggregate clover2:clover',
                     environmentVariables: ''
             )
             cloverReportArtifact(
@@ -323,8 +323,12 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'clover2:setup verify -pl tests/plugin-lifecycle-tests -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters clover2:aggregate clover2:clover',
+                goal: 'verify -pl tests/plugin-lifecycle-tests -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
+        )
+        mavenTask(
+                description: 'Generate Clover Report',
+                goal: 'clover2:aggregate clover2:clover'
         )
         cloverReportArtifact(
                 name: '#product - Lifecycle Tests'
@@ -347,8 +351,12 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'clover2:setup verify -pl tests/wired-tests -Pwired,clover -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
+                goal: 'verify -pl tests/wired-tests -Pwired -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
+        )
+        mavenTask(
+                description: 'Generate Clover Report',
+                goal: 'clover2:aggregate clover2:clover'
         )
         cloverReportArtifact(
                 name: '#product - Wired Tests'
@@ -433,7 +441,7 @@ checkoutDefaultRepositoryTask() {
 mavenInstallTask() {
     mavenTask(
             description: 'Install',
-            goal: 'install -DskipUnits'
+            goal: 'clover2:setup install -Pclover -DskipUnits'
     )
 }
 
@@ -476,7 +484,7 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
 cloverReportArtifact(['name']) {
     artifactDefinition(
             name:'Clover Report (System) - #name',
-            location:'plugin/target/site/clover',
+            location:'target/site/clover',
             pattern:'**/*.*',
             shared:'true'
     )
@@ -497,7 +505,7 @@ cloverMiscConfiguration() {
         )
         clover(
             type:'custom',
-            path:'plugin/target/site/clover'
+            path:'target/site/clover'
         )
     }
 }
@@ -509,7 +517,7 @@ cloverBambooTask() {
             description:'',
             final:'true',
             format:'clover',
-            location:'**/clover.xml'
+            location:'target/site/clover/clover.xml'
     )
 }
 
