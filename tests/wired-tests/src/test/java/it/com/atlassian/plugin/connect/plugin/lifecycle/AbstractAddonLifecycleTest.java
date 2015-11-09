@@ -27,6 +27,9 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+import org.junit.Rule;
+import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.testutils.annotations.Retry;
 
 import java.io.IOException;
 
@@ -39,8 +42,6 @@ import static it.com.atlassian.plugin.connect.util.request.HeaderUtil.getVersion
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import com.atlassian.testutils.junit.RetryRule;
-import com.atlassian.testutils.annotations.Retry;
 
 @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
 public abstract class AbstractAddonLifecycleTest
