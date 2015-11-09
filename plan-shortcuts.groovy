@@ -190,42 +190,42 @@ testJobsForConfluence(['mavenProductParameters']) {
             groupName: 'Common Lifecycle',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    confluenceIntegrationTestJob(
             key: 'CITM',
             product: 'Confluence',
             testGroup: 'confluence-misc',
             groupName: 'Misc',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    confluenceIntegrationTestJob(
             key: 'CITI',
             product: 'Confluence',
             testGroup: 'confluence-iframe',
             groupName: 'iframe',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    confluenceIntegrationTestJob(
             key: 'CITT',
             product: 'Confluence',
             testGroup: 'confluence-item',
             groupName: 'Item',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    confluenceIntegrationTestJob(
             key: 'CITJ',
             product: 'Confluence',
             testGroup: 'confluence-jsapi',
             groupName: 'JS API FF',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    confluenceIntegrationTestJob(
             key: 'CITJC',
             product: 'Confluence',
             testGroup: 'confluence-jsapi',
             groupName: 'JS API Chrome',
             additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome'
     )
-    integrationTestJob(
+    confluenceIntegrationTestJob(
             key: 'CITA',
             product: 'Confluence',
             testGroup: 'confluence-macro',
@@ -378,8 +378,19 @@ jiraIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalM
             product: '#product',
             testGroup: '#testGroup',
             groupName: '#groupName',
-            additionalMavenParameters: '-am #additionalMavenParameters',
+            additionalMavenParameters: '#additionalMavenParameters',
             project: 'jira/jira-integration-tests'
+    )
+}
+
+confluenceIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
+    projectIntegrationTestJob(
+            key: '#key',
+            product: '#product',
+            testGroup: '#testGroup',
+            groupName: '#groupName',
+            additionalMavenParameters: '#additionalMavenParameters',
+            project: 'confluence/confluence-integration-tests'
     )
 }
 
