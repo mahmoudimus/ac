@@ -211,6 +211,12 @@
             <artifactId>json-schema-validator</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.testutils</groupId>
+            <artifactId>atlassian-test-annotations</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

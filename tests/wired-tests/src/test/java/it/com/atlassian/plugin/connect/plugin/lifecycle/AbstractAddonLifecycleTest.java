@@ -39,7 +39,10 @@ import static it.com.atlassian.plugin.connect.util.request.HeaderUtil.getVersion
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.testutils.annotations.Retry;
 
+@Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
 public abstract class AbstractAddonLifecycleTest
 {
     public static final String PLUGIN_KEY = "my-lifecycle-plugin";
@@ -99,6 +102,10 @@ public abstract class AbstractAddonLifecycleTest
         this.darkFeatureManager = darkFeatureManager;
         this.connectAddonRegistry = connectAddonRegistry;
     }
+
+    @Rule
+    public RetryRule retryRule = new RetryRule();
+    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     protected abstract boolean signCallbacksWithJwt();
 
