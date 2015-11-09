@@ -9,12 +9,8 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 /**
  * A simple SPI to be implemented by host-product-specific modules allowing
- * access to common functions such as:
- * <ul>
- *     <li>The TestedProduct instance</li>
- *     <li>User creation</li>
- *     <li>Login / logout</li>
- * </ul>
+ * access to common functions such as: <ul> <li>The TestedProduct instance</li>
+ * <li>User creation</li> <li>Login / logout</li> </ul>
  *
  * @since v1.1.58
  */
@@ -32,13 +28,12 @@ public interface TestedProductAccessor
 
     static TestedProductAccessor get()
     {
-        try
+        switch (System.getProperty("testedProduct", ""))
         {
-            return (TestedProductAccessor) Class.forName("it.common.product.ConfluenceTestedProductAccessor").getConstructor().newInstance();
-        }
-        catch (Exception e)
-        {
-            throw new UnsupportedOperationException("Could not retrieve a TestedProductAccessor!");
+            case "confluence":
+                return new ConfluenceTestedProductAccessor();
+            default:
+                return new JiraTestedProductAccessor();
         }
     }
 }
