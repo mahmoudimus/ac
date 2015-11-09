@@ -1,16 +1,16 @@
-package com.atlassian.plugin.connect;
+package com.atlassian.plugin.connect.reference;
 
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectPageModuleProvider;
-import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectPageModuleProvider;
+import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +20,12 @@ import java.util.List;
 public class ModuleProviderForTests extends AbstractConnectPageModuleProvider
 {
     @Autowired
-    public ModuleProviderForTests(PluginRetrievalService pluginRetrievalService,
-                                  IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                  IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                  WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                  PageConditionsFactory pageConditionsFactory)
+    public ModuleProviderForTests(
+            @ComponentImport PluginRetrievalService pluginRetrievalService,
+            @ComponentImport IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            @ComponentImport IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            @ComponentImport WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            @ComponentImport PageConditionsFactory pageConditionsFactory)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
                 webItemModuleDescriptorFactory, pageConditionsFactory);
@@ -33,7 +34,9 @@ public class ModuleProviderForTests extends AbstractConnectPageModuleProvider
     @Override
     public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new ConnectModuleMeta<ConnectPageModuleBean>("testModules", ConnectPageModuleBean.class) {};
+        return new ConnectModuleMeta<ConnectPageModuleBean>("testModules", ConnectPageModuleBean.class)
+        {
+        };
     }
 
     @Override

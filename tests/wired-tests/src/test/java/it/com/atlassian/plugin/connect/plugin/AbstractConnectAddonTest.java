@@ -42,10 +42,10 @@ public abstract class AbstractConnectAddonTest
     public static final String ADDON_PATH = "/my/addon";
 
     private final WebItemModuleProvider webItemModuleProvider;
-    private final TestPluginInstaller testPluginInstaller;
-    private final TestAuthenticator testAuthenticator;
+    protected final TestPluginInstaller testPluginInstaller;
+    protected final TestAuthenticator testAuthenticator;
     protected HttpServletRequest servletRequest;
-    private Plugin plugin;
+    protected Plugin plugin;
 
     public AbstractConnectAddonTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
