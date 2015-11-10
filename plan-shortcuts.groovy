@@ -2,19 +2,19 @@ commonPlanConfiguration() {
     permissions() {
         loggedInUser(permissions: 'read')
     }
-    notification(
-            type: 'All Builds Completed',
-            recipient: 'stash'
-    )
-    notification(
-            type: 'Change of Build Status',
-            recipient: 'watchers'
-    )
+//    notification(
+//            type: 'All Builds Completed',
+//            recipient: 'stash'
+//    )
+//    notification(
+//            type: 'Change of Build Status',
+//            recipient: 'watchers'
+//    )
 }
 
 productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
-    repository(name: 'Atlassian Connect (develop)')
+    repository(name: 'Atlassian Connect (develop) ACDEV-1999')
     variable(
             key: 'bamboo.product.version',
             value: '#productVersion'
@@ -23,7 +23,6 @@ productSnapshotPlanConfiguration(['productVersion']) {
             type: 'cron',
             cronExpression: '0 30 20 ? * 1,2,3,4,5'
     )
-    hipChatNotification()
 }
 
 pollingTrigger(['repositoryName']) {
@@ -379,7 +378,7 @@ jiraIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalM
             testGroup: '#testGroup',
             groupName: '#groupName',
             additionalMavenParameters: '#additionalMavenParameters',
-            project: 'jira/jira-integration-tests'
+            project: 'tests/marketplace-support,tests/integration-tests-common,jira/jira-integration-tests'
     )
 }
 
@@ -390,7 +389,7 @@ confluenceIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'addit
             testGroup: '#testGroup',
             groupName: '#groupName',
             additionalMavenParameters: '#additionalMavenParameters',
-            project: 'confluence/confluence-integration-tests'
+            project: 'tests/marketplace-support,tests/integration-tests-common,confluence/confluence-integration-tests'
     )
 }
 
