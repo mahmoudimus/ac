@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-integration-tests-common</artifactId>
-    <name>Atlassian Connect - Integration Tests Product Support</name>
+    <name>Atlassian Connect - Integration Tests Common</name>
 
     <build>
         <plugins>
