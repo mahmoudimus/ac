@@ -77,6 +77,16 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>atlassian-confluence-pageobjects</artifactId>
             <version>${atlassian.confluence.version}</version>
@@ -184,7 +194,7 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <log4jProperties>${basedir}/../../tests/integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../../tests/core-integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>
