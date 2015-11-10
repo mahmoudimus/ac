@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-marketplace-support</artifactId>
+    <name>Atlassian Connect - Marketplace Support</name>
 
     <build>
         <plugins>
