@@ -29,10 +29,10 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMa
 @Category (OnDemandAcceptanceTest.class)
 public class TestConfluenceStaticDescriptor
 {
-    public static final String DISABLE_ONBOARDING_DISABLED = "dashboard.onboarding.disabled";
     private static final String WEB_ITEM_TEXT = "AC Action";
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceStaticDescriptor.class);
     private static final TestUser ADMIN = new TestUser("admin");
+    public static final String DASHBOARD_ONBOARDING_DISABLED = "dashboard.onboarding.disabled";
 
     private final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
     private final ExternalAddonInstaller externalAddonInstaller =
@@ -64,7 +64,7 @@ public class TestConfluenceStaticDescriptor
     public void disableOnboarding()
     {
         rpc.logIn(SYS_ADMIN);
-        rpc.darkFeatures.enableSiteFeature(DISABLE_ONBOARDING_DISABLED);
+        rpc.darkFeatures.enableSiteFeature(DASHBOARD_ONBOARDING_DISABLED);
     }
 
     @Test
