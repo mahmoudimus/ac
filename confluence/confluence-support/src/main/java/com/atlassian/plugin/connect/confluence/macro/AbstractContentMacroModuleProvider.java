@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
+import com.atlassian.plugin.connect.modules.beans.nested.PropertyPanelBean;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
@@ -124,6 +125,12 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             descriptors.add(createEditorWebResource(addon, plugin, macroBean));
         }
 
+        if (macroBean.hasPropertyPanel())
+        {
+            createPropertyPanelIFrame(addon, macroBean);
+            descriptors.add(createPropertyPanelWebResource(addon, plugin, macroBean));
+        }
+
         return ImmutableList.copyOf(descriptors);
     }
 
@@ -201,6 +208,26 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), renderStrategy);
     }
 
+    private void createPropertyPanelIFrame(ConnectAddonBean addon, T macroBean)
+    {
+        PropertyPanelBean propertyPanel = macroBean.getPropertyPanel();
+        String width = StringUtils.isBlank(propertyPanel.getWidth()) ? "100%" : propertyPanel.getWidth();
+        String height = StringUtils.isBlank(propertyPanel.getHeight()) ? "100%" : propertyPanel.getHeight();
+
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                .addOn(addon.getKey())
+                .module(macroBean.getRawKey())
+                .dialogTemplate()
+                .urlTemplate(propertyPanel.getUrl())
+                .title(macroBean.getDisplayName())
+                .dimensions(width, height)
+                .simpleDialog(true)
+                .build();
+
+        String classifier = "property-panel";
+        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), classifier, renderStrategy);
+    }
+
     private ModuleDescriptor createEditorWebResource(ConnectAddonBean addon, Plugin plugin, T macroBean)
     {
         String macroKey = macroBean.getRawKey();
@@ -241,6 +268,76 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         createInsertTitle(macroBean, transformer);
         createEditTitle(macroBean, transformer);
+
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
+        jsDescriptor.init(plugin, webResource);
+
+        return jsDescriptor;
+    }
+
+    private ModuleDescriptor createPropertyPanelWebResource(ConnectAddonBean addon, Plugin plugin, T macroBean)
+    {
+        String macroKey = macroBean.getRawKey();
+
+        Element webResource = new DOMElement("web-resource")
+                .addElement("web-resource")
+                .addAttribute("key", macroKey + "-macro-property-panel-resources");
+
+        webResource.addElement("resource")
+                .addAttribute("type", "download")
+                .addAttribute("name", "overridePropertyPanel.js")
+                .addAttribute("location", "js/confluence/macro/overridePropertyPanel.js");
+
+        webResource.addElement("dependency")
+                .setText(ConnectPluginInfo.getPluginKey() + ":confluence-ap-core");
+
+        webResource.addElement("context")
+                .setText("editor");
+
+        Element transformation = webResource.addElement("transformation")
+                .addAttribute("extension", "js");
+
+        Element transformer = transformation
+                .addElement("transformer")
+                .addAttribute("key", "confluence-macroVariableTransformer")
+                .addElement("var")
+                .addAttribute("name", "MACRONAME")
+                .addAttribute("value", macroKey).getParent()
+                .addElement("var")
+                .addAttribute("name", "URL")
+                .addAttribute("value", ConnectIFrameServletPath.forModule(addon.getKey(), macroBean.getRawKey())).getParent()
+                .addElement("var")
+                .addAttribute("name", "WIDTH")
+                .addAttribute("value", macroBean.getEditor().getWidth()).getParent()
+                .addElement("var")
+                .addAttribute("name", "HEIGHT")
+                .addAttribute("value", macroBean.getEditor().getHeight()).getParent();
+
+        PropertyPanelBean propertyPanel = macroBean.getPropertyPanel();
+        Element insertTitleElement = transformer.addElement("var")
+                .addAttribute("name", "INSERT_TITLE");
+
+        if (propertyPanel.hasInsertTitle())
+        {
+            insertTitleElement.addAttribute("value", propertyPanel.getInsertTitle().getValue());
+        }
+        else
+        {
+            insertTitleElement.addAttribute("value", macroBean.getDisplayName());
+            insertTitleElement.addAttribute("i18n-key", "macro.browser.insert.macro.title");
+        }
+        Element editTitleElement = transformer.addElement("var")
+                .addAttribute("name", "EDIT_TITLE");
+
+        if (propertyPanel.hasEditTitle())
+        {
+            editTitleElement.addAttribute("value", propertyPanel.getEditTitle().getValue());
+        }
+        else
+        {
+            editTitleElement.addAttribute("value", macroBean.getDisplayName());
+            editTitleElement.addAttribute("i18n-key", "macro.browser.edit.macro.title");
+        }
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(plugin, webResource);

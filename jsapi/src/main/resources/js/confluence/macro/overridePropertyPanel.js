@@ -10,21 +10,21 @@ AJS.bind("init.rte", function () {
     // These parameters are injected contextually by the MacroVariableInjectorTransformer
     var macroName = "%%MACRONAME%%";
     var editorOpts = {
-      width: "%%WIDTH%%",
-      height: "%%HEIGHT%%",
-      editTitle: "%%EDIT_TITLE%%",
-      insertTitle: "%%INSERT_TITLE%%",
-      url: AJS.params.contextPath + "%%URL%%"
+        width: "%%WIDTH%%",
+        height: "%%HEIGHT%%",
+        editTitle: "%%EDIT_TITLE%%",
+        insertTitle: "%%INSERT_TITLE%%",
+        url: AJS.params.contextPath + "%%URL%%"
     };
-    require(["ac/confluence/macro/editor"], function(macroEditor) {
+    require(["ac/confluence/macro/property-panel"], function(propertyPanel) {
         var existing = AJS.MacroBrowser.getMacroJsOverride(macroName);
         if (existing == null) {
             existing = {};
         }
         $.extend(existing, {
-            opener: function(macroData) {
+            propertyPanelOpener: function(macroData) {
                 macroData = $.extend({name: macroName}, macroData);
-                macroEditor.openCustomEditor(macroData, editorOpts);
+                propertyPanel.openCustomPropertyPanel(macroData, editorOpts);
             }
         });
         AJS.MacroBrowser.setMacroJsOverride(macroName, existing);

@@ -177,6 +177,9 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
 
     private MacroEditorBean editor;
 
+    /** Custom property panel */
+    private PropertyPanelBean propertyPanel;
+
     /**
      * The image rendered in the editor as the macro placeholder. It can only be used with bodyless macros and will behave
      * just like a regular macro placeholder. Any parameter changes in the macro browser will cause the image
@@ -316,5 +319,15 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public boolean hasAutoConvert()
     {
         return (null != autoconvert);
+    }
+
+    public boolean hasPropertyPanel()
+    {
+        return propertyPanel != null;
+    }
+
+    public PropertyPanelBean getPropertyPanel()
+    {
+        return propertyPanel;
     }
 }
