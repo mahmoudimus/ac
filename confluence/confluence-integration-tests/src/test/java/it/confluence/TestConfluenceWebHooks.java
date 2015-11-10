@@ -2,16 +2,13 @@ package it.confluence;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.plugin.connect.test.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.common.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
 import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
+import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
 
 import org.junit.Assert;
 import org.junit.Test;

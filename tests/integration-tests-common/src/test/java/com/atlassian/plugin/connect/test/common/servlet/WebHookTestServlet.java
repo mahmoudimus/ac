@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
