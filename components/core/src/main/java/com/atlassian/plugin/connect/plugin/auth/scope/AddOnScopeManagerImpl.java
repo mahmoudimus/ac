@@ -8,6 +8,8 @@ import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScopeApiPat
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RestApiScopeHelper;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,14 +30,21 @@ import static com.google.common.collect.Iterables.any;
 @ExportAsDevService
 public final class AddOnScopeManagerImpl implements AddOnScopeManager
 {
-    private final Collection<AddOnScope> allScopes;
+    private final Supplier<Collection<AddOnScope>> allScopesSupplier;
     private final AddOnScope addOnPropertyScope;
     private final ConnectAddonAccessor addonAccessor;
 
     @Autowired
     public AddOnScopeManagerImpl(ScopeService scopeService, ConnectAddonAccessor addonAccessor) throws IOException
     {
-        this.allScopes = scopeService.build();
+        this.allScopesSupplier = Suppliers.memoize(new Supplier<Collection<AddOnScope>>()
+        {
+            @Override
+            public Collection<AddOnScope> get()
+            {
+                return scopeService.build();
+            }
+        });
         this.addonAccessor = addonAccessor;
         this.addOnPropertyScope = createAddOnPropertyScope();
     }
@@ -58,7 +67,7 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String addonKey)
     {
-        return Iterables.concat(StaticAddOnScopes.dereference(allScopes, getScopeReferences(addonKey)), Collections.singleton(addOnPropertyScope));
+        return Iterables.concat(StaticAddOnScopes.dereference(getAllScopes(), getScopeReferences(addonKey)), Collections.singleton(addOnPropertyScope));
     }
 
     private Set<ScopeName> getScopeReferences(String pluginKey)
@@ -69,6 +78,11 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
             throw new IllegalStateException(String.format("The Connect Add-on Registry has no descriptor for add-on '%s' and therefore we cannot compute its scopes!", pluginKey));
         }
         return optionalAddon.get().getScopes();
+    }
+
+    private Collection<AddOnScope> getAllScopes()
+    {
+        return allScopesSupplier.get();
     }
 
     private static final class IsInApiScopePredicate implements Predicate<ApiScope>
@@ -86,5 +100,4 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
             return null != scope && scope.allow(request);
         }
     }
-
 }
