@@ -78,7 +78,7 @@ def write_idea_config(url, mpac_password):
     test_run_config_tree = config_file_tree.getroot().find("component[@name='RunManager']")
     existing_at_config = test_run_config_tree.find("configuration[@name='Acceptance Tests']")
     if existing_at_config is not None:
-        test_run_config_tree.remove(existing_at_config) 
+        test_run_config_tree.remove(existing_at_config)
     test_run_config_tree.insert(0,ET.XML(config_fragment))
     config_file_tree.write(path, encoding='UTF-8', xml_declaration=True)
 
@@ -108,7 +108,7 @@ config_fragment_template = """
 """
 
 def config_vm_arguments(url, password):
-    return ' '.join(s.format(instance=url[8:], pw=password) for s in [
+    return ' '.join(s.format(instance=url.rstrip('/')[8:], pw=password) for s in [
         '-Dmpac.username=atlassian-connect-bot@atlassian.com',
         '-Dmpac.password={pw}',
         '-Dserver={instance}',
