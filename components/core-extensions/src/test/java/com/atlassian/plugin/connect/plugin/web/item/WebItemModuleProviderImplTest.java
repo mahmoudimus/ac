@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,11 +44,11 @@ public class WebItemModuleProviderImplTest
     @Before
     public void setUp()
     {
-        ConnectConditionClassResolver resolver = () -> ImmutableList.of(
+        ConnectConditionClassResolver resolver = () -> Lists.newArrayList(
                 ConnectConditionClassResolver.Entry.newEntry(VALID_CONDITION, Condition.class).contextFree().build(),
                 ConnectConditionClassResolver.Entry.newEntry(OTHER_VALID_CONDITION, Condition.class).contextFree().build()
         );
-        when(pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class)).thenReturn(ImmutableList.of(resolver));
+        when(pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class)).thenReturn(Collections.singletonList(resolver));
     }
 
     @Test
