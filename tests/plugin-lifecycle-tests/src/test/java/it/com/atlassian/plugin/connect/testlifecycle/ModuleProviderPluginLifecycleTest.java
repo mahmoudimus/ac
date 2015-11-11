@@ -10,6 +10,7 @@ import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthentic
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import com.atlassian.testutils.annotations.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void shouldSkipAddonEnablementWhenDescriptorValidationFails() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -89,6 +91,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void shouldSkipAddonEnablementWhenModuleRegistrationFails() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();

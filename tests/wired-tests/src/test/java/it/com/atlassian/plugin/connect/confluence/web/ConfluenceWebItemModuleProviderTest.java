@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import com.atlassian.testutils.annotations.Retry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class ConfluenceWebItemModuleProviderTest extends AbstractConnectAddonTes
     }
 
     @Test
+    @Retry(maxAttempts=AbstractConnectAddonTest.MAX_RETRY_ATTEMPTS)
     public void singleAddonLinkWithReplacement() throws Exception
     {
         WebItemModuleDescriptor descriptor = registerWebItem("mySpace={space.key}", "atl.admin/menu");

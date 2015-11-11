@@ -13,6 +13,7 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import com.atlassian.testutils.annotations.Retry;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -39,6 +40,7 @@ public class ConnectModuleProviderTest extends AbstractConnectAddonTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractConnectAddonTest.MAX_RETRY_ATTEMPTS)
     public void shouldInstallAddonWithPluginProvidedModule() throws IOException
     {
         String json = readAddonTestFile("descriptorWithPluginProvidedModule.json");

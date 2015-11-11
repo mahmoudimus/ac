@@ -9,8 +9,8 @@ import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthentic
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import com.atlassian.testutils.junit.RetryRule;
-import com.atlassian.testutils.annotations.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,6 @@ import java.util.Collection;
 
 import static org.junit.Assert.fail;
 
-@Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
 public class AbstractPluginLifecycleTest
 {
 

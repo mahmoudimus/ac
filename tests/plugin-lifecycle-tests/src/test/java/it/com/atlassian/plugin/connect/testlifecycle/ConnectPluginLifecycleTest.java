@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import com.atlassian.testutils.annotations.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +92,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void installConnectSucceeds() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -98,6 +100,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void installConnectWithAddonSucceeds() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -108,6 +111,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void disablingAddonSucceeds() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -119,6 +123,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void disablingThenEnablingAddonSucceeds() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -145,6 +150,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void disablingThenEnablingConnectDisablesAndEnablesAddon() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -160,6 +166,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void uninstallingAndThenInstallingConnectDisablesAndEnablesAddon() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -173,6 +180,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void upgradingConnectEnablesAddon() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -184,6 +192,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void disablingThenEnablingConnectDisablesAndEnablesMultipleAddons() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -202,6 +211,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void uninstallingAndThenInstallingConnectDisablesAndEnablesMultipleAddons() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
@@ -217,6 +227,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractPluginLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void upgradingConnectEnablesMultipleAddons() throws Exception
     {
         theConnectPlugin = testPluginInstaller.installConnectPlugin();
