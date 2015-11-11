@@ -5,6 +5,7 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.client.ConnectAddonInstallationException;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
@@ -16,7 +17,9 @@ import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.rmi.RemoteException;
 
@@ -43,6 +46,9 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     private static final String WEB_PANEL_WITH_CONDITION_KEY = "hip-chat-discussions";
 
     private static ConnectRunner runner;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -236,6 +242,24 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         product.visit(JiraViewProjectPage.class, project.getKey());
 
         assertThat("AddOn web panel should NOT be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(false));
+    }
+
+    @Test
+    public void installationOfAddOnWithIllegalWebPanelLocationFails() throws Exception
+    {
+        expectedException.expect(ConnectAddonInstallationException.class);
+        new ConnectRunner(product)
+                .setAuthenticationToNone()
+                .addModules(
+                        "webPanels",
+                        newWebPanelBean()
+                                .withKey("someKey")
+                                .withName(new I18nProperty("Web panel with illegal location", null))
+                                .withLocation("atl.header.after.scripts")
+                                .withUrl("/pcp?issue_id=${issue.id}&project_id=${project.id}")
+                                .build()
+                )
+                .start();
     }
 
     private String getModuleKey(ConnectRunner runner, String module)

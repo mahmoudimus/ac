@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
@@ -9,6 +10,7 @@ import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
+import com.atlassian.plugin.connect.spi.web.panel.WebPanelLocationValidator;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
@@ -22,14 +24,17 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 {
     private final ConnectContainerUtil connectContainerUtil;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
+    private final WebPanelLocationValidator webPanelLocationValidator;
 
     @Autowired
     public WebPanelConnectModuleDescriptorFactory(
             ConnectContainerUtil connectContainerUtil,
-            ConditionModuleFragmentFactory conditionModuleFragmentFactory)
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+            WebPanelLocationValidator webPanelLocationValidator)
     {
         this.connectContainerUtil = connectContainerUtil;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
+        this.webPanelLocationValidator = webPanelLocationValidator;
     }
 
     @Override
@@ -50,7 +55,13 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         Element webPanelElement = new DOMElement("remote-web-panel");
         webPanelElement.addAttribute("key", webPanelKey);
         webPanelElement.addAttribute("i18n-name-key", i18nKeyOrName);
-        webPanelElement.addAttribute("location", moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation()));
+
+        String location = moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation());
+        if (!webPanelLocationValidator.validateLocation(location))
+        {
+            throw new PluginParseException("WebPanel with key " + webPanelKey + " is set in location " + location + "which is not supported in Connect.");
+        }
+        webPanelElement.addAttribute("location", location);
 
         if (null != bean.getWeight())
         {
