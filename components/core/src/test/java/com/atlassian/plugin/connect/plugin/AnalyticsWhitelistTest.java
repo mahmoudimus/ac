@@ -41,7 +41,7 @@ public class AnalyticsWhitelistTest
     @Parameterized.Parameters(name = "Event {0}")
     public static Collection<Object[]> testData() throws IOException
     {
-        String json = IOUtils.toString(ClassLoader.class.getResourceAsStream("/whitelist/connect_whitelist.json"));
+        String json = IOUtils.toString(ClassLoader.class.getResourceAsStream("/analytics/connect-analytics-whitelist.json"));
         Map<String, List<String>> whiteList = new Gson().fromJson(json, Map.class);
 
         Collection<Object[]> toTest = new ArrayList<Object[]>();

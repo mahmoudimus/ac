@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.AddOnScope;
-import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPath;
-import com.atlassian.plugin.connect.spi.scope.helper.RestApiScopeHelper;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScopeApiPath;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RestApiScopeHelper;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;

@@ -32,10 +32,10 @@ var confluenceSchemaPath = 'target/schema/deref-confluence-schema.json';
 var jiraGlobalSchemaPath = 'target/schema/jira-global-schema.json'
 var confluenceGlobalSchemaPath = 'target/schema/confluence-global-schema.json';
 
-var commonScopesPath =     'target/scope/scopes.common.json';
-var jiraScopesPath =       'target/scope/jira/scopes.jira.json';
-var agileScopesPath =      'target/scope/jira/scopes.jiraagile.json';
-var confluenceScopesPath = 'target/scope/confluence/scopes.confluence.json';
+var commonScopesPath =     'target/scope/common-whitelist.json';
+var jiraScopesPath =       'target/scope/jira-whitelist.json';
+var agileScopesPath =      'target/scope/jira-agile-whitelist.json';
+var confluenceScopesPath = 'target/scope/confluence-whitelist.json';
 
 program
   .option('-s, --serve', 'Serve and automatically watch for changes')

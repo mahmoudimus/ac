@@ -10,6 +10,10 @@
     <connect-module key="jiraSearchRequestViews" class="com.atlassian.plugin.connect.jira.search.SearchRequestViewModuleProvider"/>
     <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionModuleProviderImpl"/>
 
+    <connect-api-scope-whitelist key="jira-api-scope-whitelist" resource="/scope/jira-whitelist.json"/>
+    <connect-api-scope-whitelist key="jira-agile-api-scope-whitelist" resource="/scope/jira-agile-whitelist.json"/>
+    <connect-api-scope-whitelist key="tempo-api-scope-whitelist" resource="/scope/tempo-whitelist.json"/>
+
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

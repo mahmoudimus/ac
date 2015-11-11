@@ -157,7 +157,7 @@ public class BeanToModuleRegistrar
                     @Override
                     public ConnectModuleRegistrationException get()
                     {
-                        return new ConnectModuleRegistrationException("Could not find module provider for descriptor registration");
+                        return new ConnectModuleRegistrationException(String.format("Could not find module provider %s for descriptor registration", descriptorKey));
                     }
                 });
     }

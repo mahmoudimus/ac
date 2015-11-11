@@ -13,9 +13,12 @@ import org.springframework.stereotype.Component;
 @Component
 public final class ConnectContextParameterResolverModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectContextParameterResolverModuleDescriptor>
 {
+
+    private static final String TYPE = "connect-context-parameters-resolver";
+
     @Autowired
     public ConnectContextParameterResolverModuleDescriptorFactory(@Qualifier ("hostContainer") final HostContainer hostContainer)
     {
-        super(hostContainer, "connect-context-parameters-resolver", ConnectContextParameterResolverModuleDescriptor.class);
+        super(hostContainer, TYPE, ConnectContextParameterResolverModuleDescriptor.class);
     }
 }
