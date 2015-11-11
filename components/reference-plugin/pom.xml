@@ -86,8 +86,11 @@
                             and isn't needed, so we need to explicitly set it as optional -->
                             org.springframework.osgi.*;resolution:="optional",
 
+                            <!-- Clover references classes it doesn't bundle so we need them to be optional -->
+                            *;resolution:=optional
+
                             <!-- Let bnd infer all other dependencies as mandatory -->
-                            *
+                            <!-- * -->
                         </Import-Package>
                     </instructions>
                 </configuration>
