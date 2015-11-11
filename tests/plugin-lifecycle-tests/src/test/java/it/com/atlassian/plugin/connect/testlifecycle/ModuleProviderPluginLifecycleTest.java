@@ -4,16 +4,18 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.testlifecycle.AbstractPluginLifecycleTest;
-import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginInstaller;
+import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginHelper;
+import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleUpmHelper;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthenticator;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTest
@@ -23,17 +25,15 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPluginLifecycleTest.class);
 
-    private final PluginController pluginController;
-
-    private Plugin generalReferencePlugin;
+    private Plugin referencePlugin;
     private Plugin addon;
 
-    public ModuleProviderPluginLifecycleTest(LifecyclePluginInstaller testPluginInstaller,
-            LifecycleTestAuthenticator testAuthenticator,
-            PluginController pluginController)
+    public ModuleProviderPluginLifecycleTest(PluginController pluginController,
+            LifecyclePluginHelper pluginHelper,
+            LifecycleUpmHelper upmHelper,
+            LifecycleTestAuthenticator testAuthenticator)
     {
-        super(testAuthenticator, testPluginInstaller);
-        this.pluginController = pluginController;
+        super(pluginController, pluginHelper, upmHelper, testAuthenticator);
     }
 
     @After
@@ -43,7 +43,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(addon);
+                pluginController.uninstall(addon);
             }
             catch (Exception e)
             {
@@ -55,11 +55,11 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
         }
 
-        if (null != generalReferencePlugin)
+        if (null != referencePlugin)
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(generalReferencePlugin);
+                pluginController.uninstall(referencePlugin);
             }
             catch (Exception e)
             {
@@ -67,7 +67,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
             finally
             {
-                generalReferencePlugin = null;
+                referencePlugin = null;
             }
         }
     }
@@ -75,32 +75,47 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     @Test
     public void shouldSkipAddonEnablementWhenDescriptorValidationFails() throws Exception
     {
-        theConnectPlugin = testPluginInstaller.installConnectPlugin();
-        generalReferencePlugin = testPluginInstaller.installGeneralReferencePlugin();
+        theConnectPlugin = pluginHelper.installConnectPlugin();
+        referencePlugin = pluginHelper.installGeneralReferencePlugin();
         addon = installAndEnableAddon(ADDON_DESCRIPTOR);
-        pluginController.disablePlugin(generalReferencePlugin.getKey());
+        pluginController.disablePlugin(referencePlugin.getKey());
         pluginController.disablePlugin(theConnectPlugin.getKey());
         pluginController.enablePlugins(theConnectPlugin.getKey());
-        assertFalse(testPluginInstaller.isAddonEnabled(addon.getKey()));
+        assertFalse(upmHelper.getUpmControlHandler().isPluginEnabled(addon.getKey()));
 
-        pluginController.enablePlugins(generalReferencePlugin.getKey());
-        testPluginInstaller.enableAddon(addon.getKey());
+        pluginController.enablePlugins(referencePlugin.getKey());
+        upmHelper.getUpmControlHandler().enablePlugins(addon.getKey());
         assertStateAndModuleCount(addon, PluginState.ENABLED, 1, "With module provider plugin enabled");
     }
 
     @Test
     public void shouldSkipAddonEnablementWhenModuleRegistrationFails() throws Exception
     {
-        theConnectPlugin = testPluginInstaller.installConnectPlugin();
-        generalReferencePlugin = testPluginInstaller.installGeneralReferencePlugin();
+        theConnectPlugin = pluginHelper.installConnectPlugin();
+        referencePlugin = pluginHelper.installGeneralReferencePlugin();
         addon = installAndEnableAddon(ADDON_DESCRIPTOR);
-        testPluginInstaller.disableAddon(addon.getKey());
-        pluginController.disablePlugin(generalReferencePlugin.getKey());
-        testPluginInstaller.enableAddon(addon.getKey());
+        upmHelper.getUpmControlHandler().disablePlugin(addon.getKey());
+        pluginController.disablePlugin(referencePlugin.getKey());
+        upmHelper.getUpmControlHandler().enablePlugins(addon.getKey());
         assertStateAndModuleCount(addon, PluginState.DISABLED, 0, "With module provider plugin disabled");
 
-        pluginController.enablePlugins(generalReferencePlugin.getKey());
-        testPluginInstaller.enableAddon(addon.getKey());
+        pluginController.enablePlugins(referencePlugin.getKey());
+        upmHelper.getUpmControlHandler().enablePlugins(addon.getKey());
         assertStateAndModuleCount(addon, PluginState.ENABLED, 1, "With module provider plugin enabled");
+    }
+
+    @Test
+    public void shouldReturnPluginToUpmWhenDescriptorValidationFails() throws Exception
+    {
+        theConnectPlugin = pluginHelper.installConnectPlugin();
+        referencePlugin = pluginHelper.installGeneralReferencePlugin();
+        addon = installAndEnableAddon(ADDON_DESCRIPTOR);
+        pluginController.disablePlugin(referencePlugin.getKey());
+        pluginController.disablePlugin(theConnectPlugin.getKey());
+        pluginController.enablePlugins(theConnectPlugin.getKey());
+        assertFalse(upmHelper.getUpmControlHandler().isPluginEnabled(addon.getKey()));
+
+        Plugin plugin = upmHelper.getUpmControlHandler().getPlugin(addon.getKey());
+        assertNotNull(plugin);
     }
 }
