@@ -22,9 +22,9 @@ AJS.bind("init.rte", function () {
             existing = {};
         }
         $.extend(existing, {
-            propertyPanelOpener: function(macroData) {
+            propertyPanelOpener: function(macroData, type, el, buttons, options) {
                 macroData = $.extend({name: macroName}, macroData);
-                propertyPanel.openCustomPropertyPanel(macroData, editorOpts);
+                propertyPanel.openCustomPropertyPanel(macroData, editorOpts, type, el, buttons, options);
             }
         });
         AJS.MacroBrowser.setMacroJsOverride(macroName, existing);
