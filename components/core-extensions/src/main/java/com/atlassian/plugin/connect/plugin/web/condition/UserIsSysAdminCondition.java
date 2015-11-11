@@ -4,10 +4,9 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

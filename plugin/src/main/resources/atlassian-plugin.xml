@@ -16,6 +16,11 @@
 
     <connect-api-scope-whitelist key="common-api-scope-whitelist" resource="/scope/common-whitelist.json"/>
 
+    <connect-condition-class-resolver key="common-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.plugin.web.condition.CommonConditionClassResolver"/>
+    <connect-condition-class-resolver key="addon-entity-property-equal-to-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.plugin.property.AddonEntityPropertyEqualToConditionClassResolver"/>
+
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.web.jsapi.StaticResourcesFilter"

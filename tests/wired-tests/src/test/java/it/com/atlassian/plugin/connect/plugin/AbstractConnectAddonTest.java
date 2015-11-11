@@ -45,7 +45,7 @@ public abstract class AbstractConnectAddonTest
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
     protected HttpServletRequest servletRequest;
-    private Plugin plugin;
+    protected Plugin plugin;
 
     public AbstractConnectAddonTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {

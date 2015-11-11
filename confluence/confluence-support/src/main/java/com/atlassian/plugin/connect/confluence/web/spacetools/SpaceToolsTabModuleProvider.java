@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.confluence.web.ConfluenceConditions;
+import com.atlassian.plugin.connect.confluence.web.ConfluenceConditionClassResolver;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
@@ -159,7 +159,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
                 .withContext(AddOnUrlContext.product)
                 .withLocation(SPACE_TOOLS_SECTION + "/" + location)
                 .withConditions(newSingleConditionBean()
-                        .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
+                        .withCondition(ConfluenceConditionClassResolver.SPACE_SIDEBAR)
                         .build())
                 .setNeedsEscaping(false)
                 .build();
@@ -170,7 +170,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
                 .withContext(AddOnUrlContext.product)
                 .withLocation(SPACE_ADMIN_SECTION + "/" + LEGACY_LOCATION)
                 .withConditions(newSingleConditionBean()
-                        .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
+                        .withCondition(ConfluenceConditionClassResolver.SPACE_SIDEBAR)
                         .withInvert(true)
                         .build())
                 .build();

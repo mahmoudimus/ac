@@ -9,6 +9,9 @@
 
     <connect-api-scope-whitelist key="confluence-api-scope-whitelist" resource="/scope/confluence-whitelist.json"/>
 
+    <connect-condition-class-resolver key="confluence-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.confluence.web.ConfluenceConditionClassResolver"/>
+
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
