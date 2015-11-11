@@ -33,7 +33,7 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
-## [1.1.59](../release-notes/1-1-0.html#1.1.59)
+## [1.1.60](../release-notes/1-1-0.html#1.1.60)
  * JIRA: Make jira.openCreateIssueDialog() available on general admin and project admin pages [AC-1652](https://ecosystem.atlassian.net/browse/AC-1652)
  * JIRA: Fixed issue when installing add-on with ADMIN scope, affecting some versions of upstream services [AC-1771](https://ecosystem.atlassian.net/browse/AC-1771)
 
