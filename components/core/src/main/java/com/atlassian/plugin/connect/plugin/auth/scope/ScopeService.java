@@ -13,5 +13,5 @@ public interface ScopeService
      * @return The scopes for the current product.
      * @throws IOException if an error occurred during scope loading
      */
-    Collection<AddOnScope> build() throws IOException;
+    Collection<AddOnScope> build();
 }

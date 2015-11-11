@@ -7,7 +7,6 @@ import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +27,7 @@ public class PluggableScopeService implements ScopeService
     }
 
     @Override
-    public Collection<AddOnScope> build() throws IOException
+    public Collection<AddOnScope> build()
     {
         Collection<ConnectApiScopeWhitelist> whitelists = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectApiScopeWhitelistModuleDescriptor.class));
