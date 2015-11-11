@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -15,6 +16,19 @@ public class ConnectAddonBean extends ShallowConnectAddonBean
      * The list of modules this add-on provides
      */
     private Map<String, Supplier<List<ModuleBean>>> modules;
+
+    /**
+     * A validity-aware abstraction of the list of modules this add-on provides
+     */
+    private transient Supplier<ModuleMultimap> moduleListMap = Suppliers.memoize(new Supplier<ModuleMultimap>()
+    {
+
+        @Override
+        public ModuleMultimap get()
+        {
+            return new ModuleMultimap(modules);
+        }
+    });
 
     public ConnectAddonBean()
     {
@@ -41,21 +55,13 @@ public class ConnectAddonBean extends ShallowConnectAddonBean
     }
 
     /**
-     * Returns the map of modules, indexed by key. Module types that only accept a single entry are represented by a
-     * list with at most one element.
+     * Returns a map of module types to lists of modules.
      *
-     * NOTE: Modules are loaded lazily, and this operation may be very expensive the first time it is invoked.
-     *
-     * @return the list of modules
+     * @return the module list map
      */
-    public Map<String, List<ModuleBean>> getModules()
+    public ModuleMultimap getModules()
     {
-        Map<String, List<ModuleBean>> modules = new HashMap<>();
-        for (Map.Entry<String, Supplier<List<ModuleBean>>> moduleListEntry : this.modules.entrySet())
-        {
-            modules.put(moduleListEntry.getKey(), moduleListEntry.getValue().get());
-        }
-        return modules;
+        return moduleListMap.get();
     }
 
     @Override

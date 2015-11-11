@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;

@@ -13,11 +13,11 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
+import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.AddonSettings;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -25,24 +25,23 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.AddonSettings;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.SharedSecretService;
-import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
-import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonEnableFailedEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonEnabledEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstalledEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonUninstallFailedEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonUninstalledEvent;
-import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
-import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
+import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -255,16 +254,7 @@ public class ConnectAddonManager
         //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (addonRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon;
-            try
-            {
-                addon = connectAddonAccessor.getAddon(pluginKey).get();
-            }
-            catch (InvalidDescriptorException e)
-            {
-                log.error(String.format("Descriptor validation failed while enabling add-on %s, skipping", pluginKey), e);
-                return;
-            }
+            ConnectAddonBean addon = connectAddonAccessor.getAddon(pluginKey).get();
 
             if (null != addon)
             {

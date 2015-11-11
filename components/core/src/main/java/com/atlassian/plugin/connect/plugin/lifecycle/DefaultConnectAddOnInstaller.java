@@ -9,15 +9,17 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.plugin.AddonSettings;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
+import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkUtil;
+import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFactory;
-import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstallFailedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFactory;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -88,6 +90,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         try
         {
             ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
+            validateModules(addOn);
 
             pluginKey = addOn.getKey();
             maybePreviousApplink = Option.option(connectApplinkManager.getAppLink(pluginKey));
@@ -177,6 +180,21 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
         return addonPluginWrapper;
+    }
+
+    private void validateModules(ConnectAddonBean addon) throws InvalidDescriptorException
+    {
+        try
+        {
+            addon.getModules().getModuleLists();
+        }
+        catch (ConnectModuleValidationException e)
+        {
+            InvalidDescriptorException exception = new InvalidDescriptorException(e.getMessage(),
+                    e.getI18nKey(), e.getI18nParameters());
+            exception.initCause(e);
+            throw exception;
+        }
     }
 
     private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddOnUserDisableException

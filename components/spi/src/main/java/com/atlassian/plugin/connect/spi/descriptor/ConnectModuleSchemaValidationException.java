@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.spi.descriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 
 /**
  * An exception thrown when JSON schema validation of a descriptor module fails.
