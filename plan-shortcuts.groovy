@@ -152,6 +152,12 @@ runTestsStage() {
                     pattern: '**/*.*',
                     shared: 'true'
             )
+            artifactDefinition(
+                name: 'Plugin JAR File',
+                location: 'plugin/target',
+                pattern: 'atlassian-connect-plugin.jar',
+                shared: 'false'
+            )
         }
     }
 }
@@ -312,12 +318,6 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
             key: '#key',
             name: '#product - Lifecycle Tests'
     ) {
-        artifactDefinition(
-                name: 'Plugin JAR File',
-                location: 'plugin/target',
-                pattern: 'atlassian-connect-plugin.jar',
-                shared: 'false'
-        )
         commonRequirements()
         checkoutDefaultRepositoryTask()
         mavenInstallTask()
