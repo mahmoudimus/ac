@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
-import com.atlassian.plugin.connect.modules.beans.builder.BlueprintModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.BlueprintTemplateBeanBuilder;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
@@ -24,6 +23,15 @@ public class BlueprintTemplateBean {
     @StringSchemaAttributes(format="url-template")
     private String url;
 
+    /**
+     * The URL of the add-on server resource that provides the blueprint template with the context variables required for rendering.
+     * This url will be POST'ed to during the creation of a blueprint with some data, and the expected return value is a
+     * json object whose keys are the variables found in the template, and and whose values are the values to be used
+     * in the substitution.
+     */
+    @StringSchemaAttributes(format="url-template")
+    private String context;
+
     public static BlueprintTemplateBeanBuilder newBlueprintTemplateBeanBuilder() {
         return new BlueprintTemplateBeanBuilder();
     }
@@ -36,4 +44,7 @@ public class BlueprintTemplateBean {
         return url;
     }
 
+    public String getContext() {
+        return context;
+    }
 }
