@@ -15,6 +15,7 @@ import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
+import com.opensymphony.util.TextUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -154,7 +155,7 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
         for (String message : result.getReportMessages())
         {
             messageBuilder.append("<li>");
-            messageBuilder.append(message);
+            messageBuilder.append(TextUtils.htmlEncode(message));
         }
         messageBuilder.append("</ul>");
         return messageBuilder.toString();
