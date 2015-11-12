@@ -815,6 +815,7 @@
                         <plugin>
                             <groupId>com.atlassian.maven.plugins</groupId>
                             <artifactId>maven-clover2-plugin</artifactId>
+                            <version>${clover.version}</version>
                             <configuration>
                                 <skip>false</skip>
                             </configuration>
@@ -822,14 +823,6 @@
                     </plugins>
 	        </pluginManagement>
             </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.atlassian.clover</groupId>
-                    <artifactId>clover</artifactId>
-                    <version>${clover.libversion}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
          </profile>
     </profiles>
     <properties>
@@ -920,7 +913,7 @@
         <node.download.root>https://nodejs.org/dist/</node.download.root>
         <npm.download.root>http://registry.npmjs.org/npm/-/</npm.download.root>
         <blueprints.version>5.2.3</blueprints.version>
-        <clover.libversion>4.0.3</clover.libversion>
+        <clover.version>4.0.3</clover.version>
     </properties>
 
     <repositories>
