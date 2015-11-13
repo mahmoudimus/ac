@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
 import java.net.URL;

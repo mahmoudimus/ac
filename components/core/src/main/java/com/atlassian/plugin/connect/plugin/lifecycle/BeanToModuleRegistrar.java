@@ -4,6 +4,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.lifecycle.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
@@ -54,16 +55,18 @@ public class BeanToModuleRegistrar
             return;
         }
 
+
         Collection<ConnectModuleProvider> moduleProviders = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
         ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
 
+        Map<String, List<ModuleBean>> moduleLists = getModuleLists(addon);
         List<ModuleBean> lifecycleWebhooks = getLifecycleWebhooks(addon.getLifecycle());
         Map<String, List<ModuleBean>> lifecycleWebhookModuleList
                 = Collections.singletonMap(new WebHookModuleMeta().getDescriptorKey(), lifecycleWebhooks);
 
         List<ModuleDescriptor<?>> descriptorsToRegister = new ArrayList<>();
-        getDescriptorsToRegisterForModules(addon.getModules(), moduleProviderContext, moduleProviders, descriptorsToRegister);
+        getDescriptorsToRegisterForModules(moduleLists, moduleProviderContext, moduleProviders, descriptorsToRegister);
         getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, moduleProviderContext, moduleProviders, descriptorsToRegister);
         if (!descriptorsToRegister.isEmpty())
         {
@@ -136,6 +139,18 @@ public class BeanToModuleRegistrar
             ConnectModuleProvider provider = findProviderOrThrow(entry.getKey(), moduleProviders);
             List<ModuleDescriptor<?>> descriptors = provider.createPluginModuleDescriptors(beans, moduleProviderContext);
             descriptorsToRegister.addAll(descriptors);
+        }
+    }
+
+    private Map<String, List<ModuleBean>> getModuleLists(ConnectAddonBean addon) throws ConnectModuleRegistrationException
+    {
+        try
+        {
+            return addon.getModules().getModuleLists();
+        }
+        catch (ConnectModuleValidationException e)
+        {
+            throw new ConnectModuleRegistrationException(String.format("Descriptor validation failed while enabling add-on %s, skipping", addon.getKey()), e);
         }
     }
 
