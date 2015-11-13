@@ -11,9 +11,12 @@ import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ActionTargetBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ControlPanelBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.nested.PropertyPanelBean;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -125,6 +128,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         handleParameters(bean, element);
         handleCategories(bean, element);
         handleAliases(bean, element);
+        handlePropertyPanel(bean, element);
 
         if (log.isDebugEnabled())
         {
@@ -177,6 +181,36 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
             for (String value : parameterBean.getAliases())
             {
                 parameter.addElement("alias").addAttribute("name", value);
+            }
+        }
+    }
+
+    private void handlePropertyPanel(B bean, DOMElement element)
+    {
+        if(!bean.hasPropertyPanel()) return;
+
+        Element propertyPanel = element.addElement("property-panel");
+        PropertyPanelBean propertyPanelBean = bean.getPropertyPanel();
+
+        for (ControlPanelBean controlPanelBean : propertyPanelBean.getControls())
+        {
+            Element item;
+            switch(controlPanelBean.getType()) {
+                case "button":
+                    item = propertyPanel.addElement("button");
+                    break;
+                default:
+                    continue;
+            }
+            //TODO: This might be inserted straight into the HTML. We need to sanitise this for prod.
+            item.addAttribute("id", controlPanelBean.getKey());
+            item.addAttribute("label", controlPanelBean.getText());
+
+            if(controlPanelBean.hasActionTarget()) {
+                ActionTargetBean actionTargetBean = controlPanelBean.getActionTarget();
+                if(actionTargetBean.hasOnClick()) {
+                    item.addAttribute("onClick", actionTargetBean.getOnClick());
+                }
             }
         }
     }

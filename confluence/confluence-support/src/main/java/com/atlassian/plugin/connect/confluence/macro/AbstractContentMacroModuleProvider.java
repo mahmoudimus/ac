@@ -222,6 +222,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .title(macroBean.getDisplayName())
                 .dimensions(width, height)
                 .simpleDialog(true)
+                .ensureUniqueNamespace(true)
                 .build();
 
         String classifier = "property-panel";

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
+import java.util.List;
+
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
@@ -77,6 +79,11 @@ public class PropertyPanelBean extends BaseModuleBean
      */
     private String height;
 
+    /**
+     * For controls in the property panel
+     */
+    private List<ControlPanelBean> controls;
+
     public PropertyPanelBean()
     {
         init();
@@ -107,6 +114,10 @@ public class PropertyPanelBean extends BaseModuleBean
     public String getUrl()
     {
         return url;
+    }
+
+    public List<ControlPanelBean> getControls() {
+        return controls;
     }
 
     public I18nProperty getEditTitle()

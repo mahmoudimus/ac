@@ -197,6 +197,9 @@
 
                 var arrow = addArrow(parent,shouldFlip);
 
+                //TODO: I've forgotten the important things I learnt about 'this'. Need to reread Sergio's slides.
+                var PropertyPanel = this;
+
                 this.current = {
                     anchor: anchor,
                     panel: parent,
