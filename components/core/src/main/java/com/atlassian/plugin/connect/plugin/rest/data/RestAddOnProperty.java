@@ -2,17 +2,20 @@ package com.atlassian.plugin.connect.plugin.rest.data;
 
 import java.io.IOException;
 
-import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import javax.annotation.concurrent.Immutable;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents an add-on property
@@ -36,24 +39,7 @@ public class RestAddOnProperty
 
     public static RestAddOnProperty valueOf(final AddOnProperty addOnProperty, final String baseURL)
     {
-        final Optional<JsonNode> potentialValue = parseJson(addOnProperty.getValue());
-        Preconditions.checkState(potentialValue.isPresent(), "The value for the property " + addOnProperty.getKey() + " was not valid JSON.");
-        return new RestAddOnProperty(addOnProperty.getKey(), potentialValue.get(), propertySelf(baseURL, addOnProperty.getKey()));
-    }
-
-    private static Optional<JsonNode> parseJson(String value) {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj;
-        try
-        {
-            actualObj = mapper.readTree(value);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return Optional.absent();
-        }
-        return Optional.of(actualObj);
+        return new RestAddOnProperty(addOnProperty.getKey(), addOnProperty.getValue(), propertySelf(baseURL, addOnProperty.getKey()));
     }
 
     public static String propertySelf(String baseURL, String propertyKey)

@@ -1,11 +1,16 @@
 package com.atlassian.plugin.connect.plugin.property;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.codehaus.jackson.JsonNode;
 
 import java.util.Iterator;
+
+import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.plugin.util.JsonCommon;
 
 /**
  * This class represents an add-on property iterable which consist of a key and a value.
@@ -60,7 +65,9 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
             @Override
             public AddOnProperty apply(final AddOnPropertyAO propertyAO)
             {
-                return new AddOnProperty(propertyAO.getPropertyKey(), propertyAO.getValue(), propertyAO.getID());
+                final Option<JsonNode> potentialValue = JsonCommon.parseStringToJson(propertyAO.getValue());
+                Preconditions.checkState(potentialValue.isDefined(), String.format("The value being read out of the property %s was not valid JSON: %s", propertyAO.getPropertyKey(), propertyAO.getValue()));
+                return new AddOnProperty(propertyAO.getPropertyKey(), potentialValue.get(), propertyAO.getID());
             }
         }));
     }
