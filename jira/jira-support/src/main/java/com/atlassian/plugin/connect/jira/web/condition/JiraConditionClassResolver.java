@@ -16,7 +16,6 @@ public class JiraConditionClassResolver implements ConnectConditionClassResolver
     public List<Entry> getEntries()
     {
         return ImmutableList.of(
-                newEntry("feature_flag", com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class).build(),
                 newEntry("has_selected_project", com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class).build(),
                 newEntry("is_admin_mode", com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class).build(),
                 newEntry("linking_enabled", com.atlassian.jira.plugin.webfragment.conditions.LinkingEnabledCondition.class).build(),

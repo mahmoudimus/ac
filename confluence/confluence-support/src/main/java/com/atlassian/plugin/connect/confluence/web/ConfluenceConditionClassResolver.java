@@ -25,7 +25,6 @@ public class ConfluenceConditionClassResolver implements ConnectConditionClassRe
                 newEntry("email_address_public", com.atlassian.confluence.plugin.descriptor.web.conditions.EmailAddressPublicCondition.class).build(),
                 newEntry("favourite_page", com.atlassian.confluence.plugin.descriptor.web.conditions.FavouritePageCondition.class).build(),
                 newEntry("favourite_space", com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class).build(),
-                newEntry("feature_flag", com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class).build(),
                 newEntry("following_target_user", com.atlassian.confluence.plugin.descriptor.web.conditions.user.FollowingTargetUserCondition.class).build(),
                 newEntry("has_attachment", com.atlassian.confluence.plugin.descriptor.web.conditions.HasAttachmentCondition.class).build(),
                 newEntry("has_blog_post", com.atlassian.confluence.plugin.descriptor.web.conditions.HasBlogPostCondition.class).build(),

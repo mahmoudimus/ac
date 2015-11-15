@@ -542,6 +542,7 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
+                                <include>it/jira/condition/*.java</include>
                                 <include>it/jira/item/*.java</include>
                             </includes>
                         </testGroup>
