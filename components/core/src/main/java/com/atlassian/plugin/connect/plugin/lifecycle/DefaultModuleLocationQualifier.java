@@ -1,9 +1,10 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
+import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
-import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
+import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
@@ -41,10 +43,11 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
     {
         ImmutableMap.Builder<String, String> keyMapBuilder = ImmutableMap.<String, String>builder();
 
-        Optional<List<ModuleBean>> optionalWebItems = addonBean.getModules().getValidModuleListOfType("webItems");
+        Consumer<Exception> moduleValidationExceptionHandler = new LoggingModuleValidationExceptionHandler();
+        Optional<List<ModuleBean>> optionalWebItems = addonBean.getModules().getValidModuleListOfType("webItems", moduleValidationExceptionHandler);
         optionalWebItems.ifPresent((webItems) -> keyMapBuilder.putAll(createKeyToQualifiedKeyMap(webItems)));
 
-        Optional<List<ModuleBean>> optionalWebSections = addonBean.getModules().getValidModuleListOfType("webSections");
+        Optional<List<ModuleBean>> optionalWebSections = addonBean.getModules().getValidModuleListOfType("webSections", moduleValidationExceptionHandler);
         optionalWebSections.ifPresent((webSections) -> keyMapBuilder.putAll(createKeyToQualifiedKeyMap(webSections)));
 
         return keyMapBuilder.build();

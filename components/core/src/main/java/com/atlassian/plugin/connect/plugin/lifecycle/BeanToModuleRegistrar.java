@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.lifecycle.DynamicDescriptorRegistration;
@@ -8,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationExcepti
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
+import com.atlassian.plugin.connect.plugin.descriptor.event.EventPublishingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
@@ -38,13 +40,18 @@ public class BeanToModuleRegistrar
 
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final PluginAccessor pluginAccessor;
+    private final EventPublisher eventPublisher;
+
     private final ConcurrentMap<String, DynamicDescriptorRegistration.Registration> registrations = new ConcurrentHashMap<>();
 
     @Autowired
-    public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration, PluginAccessor pluginAccessor)
+    public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            PluginAccessor pluginAccessor,
+            EventPublisher eventPublisher)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.pluginAccessor = pluginAccessor;
+        this.eventPublisher = eventPublisher;
     }
 
     public synchronized void registerDescriptorsForBeans(ConnectAddonBean addon) throws ConnectModuleRegistrationException
@@ -54,7 +61,6 @@ public class BeanToModuleRegistrar
         {
             return;
         }
-
 
         Collection<ConnectModuleProvider> moduleProviders = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
@@ -144,14 +150,18 @@ public class BeanToModuleRegistrar
 
     private Map<String, List<ModuleBean>> getModuleLists(ConnectAddonBean addon) throws ConnectModuleRegistrationException
     {
-        try
+        return addon.getModules().getValidModuleLists(new EventPublishingModuleValidationExceptionHandler(eventPublisher)
         {
-            return addon.getModules().getModuleLists();
-        }
-        catch (ConnectModuleValidationException e)
-        {
-            throw new ConnectModuleRegistrationException(String.format("Descriptor validation failed while enabling add-on %s, skipping", addon.getKey()), e);
-        }
+
+            @Override
+            protected void handleModuleValidationCause(ConnectModuleValidationException cause)
+            {
+                super.handleModuleValidationCause(cause);
+
+                String message = String.format("Descriptor validation failed while enabling add-on %s, skipping", addon.getKey());
+                throw new ConnectModuleRegistrationException(message, cause);
+            }
+        });
     }
 
     private ConnectModuleProvider findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider> moduleProviders)

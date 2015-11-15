@@ -34,6 +34,11 @@
   "connect.addon.disabled": [
     "pluginKey"
   ],
+  "connect.addon.moduleValidation.failedAfterInstall": [
+    "addonKey",
+    "moduleType",
+    "message"
+  ],
   "connect.addon.remotecondition.invoked": [
     "addonKey",
     "urlPath",
