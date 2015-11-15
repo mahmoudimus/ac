@@ -3,6 +3,7 @@ package it.common.rest;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.plugin.util.JsonCommon;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Function;
@@ -15,6 +16,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.eclipse.jetty.server.Response;
 import org.hamcrest.Description;
@@ -45,6 +47,8 @@ public class TestAddOnProperties
 {
     public static final int MAX_VALUE_SIZE = 1024 * 32;
     private final static Gson gson = new Gson();
+    private static final JsonNode JSON_ZERO = JsonCommon.parseStringToJson("0").get();
+    private static final JsonNode JSON_ONE = JsonCommon.parseStringToJson("1").get();
 
     private final String addOnKey = "testAddOnPropertyAddOnKey";
     private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
@@ -96,9 +100,9 @@ public class TestAddOnProperties
     public void testCreateAndGetProperty() throws Exception
     {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "0", getSelfForPropertyKey(propertyKey));
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, JSON_ZERO, getSelfForPropertyKey(propertyKey));
 
-        int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
+        int responseCode = executePutRequest(property.key, property.value.toString()).httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
@@ -113,10 +117,10 @@ public class TestAddOnProperties
     {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
-        String value = "\"κόσμε\"";
-        RestAddOnProperty property = new RestAddOnProperty(propertyKey, value, getSelfForPropertyKey(propertyKey));
+        final JsonNode jsonValue = JsonCommon.parseStringToJson("\"κόσμε\"").get();
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, jsonValue, getSelfForPropertyKey(propertyKey));
 
-        int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
+        int responseCode = executePutRequest(property.key, jsonValue.toString()).httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
@@ -130,9 +134,9 @@ public class TestAddOnProperties
     public void testCreateAndDeleteProperty() throws Exception
     {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "0", getSelfForPropertyKey(propertyKey));
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, JSON_ZERO, getSelfForPropertyKey(propertyKey));
 
-        int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
+        int responseCode = executePutRequest(property.key, property.value.toString()).httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
         assertDeleted(propertyKey);
@@ -151,12 +155,12 @@ public class TestAddOnProperties
     public void testUpdateAndGetProperty() throws Exception
     {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "0", getSelfForPropertyKey(propertyKey));
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, JSON_ZERO, getSelfForPropertyKey(propertyKey));
 
         int responseCode = executePutRequest(property.key, "1").httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
-        int responseCode2 = executePutRequest(property.key, property.value).httpStatusCode;
+        int responseCode2 = executePutRequest(property.key, property.value.toString()).httpStatusCode;
         assertEquals(Response.SC_OK, responseCode2);
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
@@ -246,9 +250,9 @@ public class TestAddOnProperties
     {
         // should clean all properties before running, else this test depends on previous test failures!
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "1", getSelfForPropertyKey(propertyKey));
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, JSON_ONE, getSelfForPropertyKey(propertyKey));
 
-        int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
+        int responseCode = executePutRequest(property.key, property.value.toString()).httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequestForPropertyList();
@@ -439,11 +443,11 @@ public class TestAddOnProperties
         @JsonProperty
         private final String key;
         @JsonProperty
-        private final String value;
+        private final JsonNode value;
         @JsonProperty
         private final String self;
 
-        public RestAddOnProperty(@JsonProperty ("key") final String key, @JsonProperty ("value") final String value, @JsonProperty ("self") final String self)
+        public RestAddOnProperty(@JsonProperty ("key") final String key, @JsonProperty ("value") final JsonNode value, @JsonProperty ("self") final String self)
         {
             this.key = key;
             this.value = value;
