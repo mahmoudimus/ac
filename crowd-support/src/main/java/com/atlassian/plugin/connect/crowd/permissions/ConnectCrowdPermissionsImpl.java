@@ -1,13 +1,14 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
-import com.atlassian.plugin.connect.spi.product.FeatureManager;
+import com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions;
+import com.atlassian.plugin.connect.spi.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.NO_REMOTE_GRANT_NEEDED;
-import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_FAILED;
-import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult.NO_REMOTE_GRANT_NEEDED;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_FAILED;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED;
 
 @JiraComponent
 public class ConnectCrowdPermissionsImpl implements ConnectCrowdPermissions

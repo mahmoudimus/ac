@@ -1,14 +1,5 @@
 package com.atlassian.plugin.connect.jira.auth;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
@@ -16,7 +7,6 @@ import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
-
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.application.ApplicationRole;
 import com.atlassian.jira.application.ApplicationRoleManager;
@@ -39,28 +29,34 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
-import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult;
+import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions;
+import com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_FAILED;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_FAILED;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 

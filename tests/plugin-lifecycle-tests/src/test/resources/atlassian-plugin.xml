@@ -12,7 +12,8 @@
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
     <component-import key="pluginRetrievalService" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService"/>
 
-    <component key="testPluginInstaller" class="it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginInstaller" />
+    <component key="lifecycleUpmHelper" class="it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleUpmHelper" />
+    <component key="lifecyclePluginHelper" class="it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginHelper" />
 
     <component key="jiraTestAuthenticator"
                class="it.com.atlassian.plugin.connect.testlifecycle.util.JiraLifecycleTestAuthenticator"

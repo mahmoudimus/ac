@@ -8,7 +8,7 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import org.apache.commons.lang.RandomStringUtils;

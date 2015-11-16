@@ -1,7 +1,8 @@
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 
 public class JiraScopeTestHelper
 {

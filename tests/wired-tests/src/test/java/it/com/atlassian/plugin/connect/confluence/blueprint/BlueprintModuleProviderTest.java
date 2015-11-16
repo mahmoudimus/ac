@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.CreateResultType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProvider;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;

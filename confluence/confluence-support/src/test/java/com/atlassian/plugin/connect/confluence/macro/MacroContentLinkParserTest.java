@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;

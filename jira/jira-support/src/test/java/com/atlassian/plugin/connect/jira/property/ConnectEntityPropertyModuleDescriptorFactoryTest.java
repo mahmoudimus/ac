@@ -8,8 +8,7 @@ import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescript
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
-import com.atlassian.plugin.connect.jira.property.ConnectEntityPropertyModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
@@ -17,7 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyC
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matchers;

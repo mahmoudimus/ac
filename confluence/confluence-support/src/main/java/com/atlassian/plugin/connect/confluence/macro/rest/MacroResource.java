@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.confluence.macro.rest;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.confluence.macro.MacroContentManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;

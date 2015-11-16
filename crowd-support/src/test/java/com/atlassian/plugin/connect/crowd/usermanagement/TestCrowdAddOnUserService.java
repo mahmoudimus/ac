@@ -2,10 +2,10 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
-import com.atlassian.plugin.connect.spi.host.HostProperties;
+import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil;
+import com.atlassian.plugin.connect.spi.HostProperties;
 
 import com.google.common.collect.Sets;
 
@@ -13,9 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.usernameForAddon;
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
 import static org.mockito.Matchers.any;

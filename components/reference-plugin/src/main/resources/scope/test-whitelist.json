@@ -1,0 +1,18 @@
+{
+  "scopes": [
+    {
+      "key": "READ",
+      "restPathKeys": ["testPaths"],
+      "methods": ["GET"]
+    }
+  ],
+  "restPaths": [
+    {
+      "key": "testPaths",
+      "name": "test-api",
+      "basePaths": ["/test-path"],
+      "versions": ["latest"],
+      "public": true
+    }
+  ]
+}

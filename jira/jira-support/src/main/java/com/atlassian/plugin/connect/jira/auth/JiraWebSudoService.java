@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.jira.auth;
 
 import com.atlassian.jira.security.websudo.InternalWebSudoManager;
-import com.atlassian.jira.web.SessionKeys;
-import com.atlassian.plugin.connect.spi.product.WebSudoService;
+import com.atlassian.plugin.connect.spi.auth.WebSudoService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import javax.servlet.http.HttpServletRequest;

@@ -14,10 +14,9 @@ import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.jira.license.MockLicensedApplications;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
 
-import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsers;
-import com.atlassian.plugin.connect.jira.auth.JiraLicenseChangeListener;
+import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUsers;
 import com.google.common.collect.ImmutableSet;
 
 import org.junit.Before;

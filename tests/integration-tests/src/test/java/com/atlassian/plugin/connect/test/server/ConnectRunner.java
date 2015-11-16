@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -14,8 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
-import com.atlassian.plugin.connect.plugin.descriptor.ModuleListDeserializer;
-import com.atlassian.plugin.connect.plugin.descriptor.StaticAvailableModuleTypes;
+import com.atlassian.plugin.connect.plugin.descriptor.StaticModuleListDeserializer;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
@@ -84,7 +83,7 @@ public class ConnectRunner
     private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
-    private StaticAvailableModuleTypes moduleTypes = new StaticAvailableModuleTypes();
+    private StaticModuleListDeserializer moduleListDeserializer = new StaticModuleListDeserializer();
 
     private int port;
     private Server server;
@@ -259,7 +258,7 @@ public class ConnectRunner
     
     public ConnectRunner addModuleMeta(ConnectModuleMeta meta)
     {
-        moduleTypes.addModuleMeta(meta);
+        moduleListDeserializer.addModuleMeta(meta);
         return this;
     }
 
@@ -425,16 +424,14 @@ public class ConnectRunner
 
         private JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> getModuleListDeserializer()
         {
-            JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> moduleListDeserializer;
-            if (moduleTypes.hasMetas())
+            if (moduleListDeserializer.hasMetas())
             {
-                moduleListDeserializer = new ModuleListDeserializer(moduleTypes);
+                return moduleListDeserializer;
             }
             else
             {
-                moduleListDeserializer = new DefaultModuleSerializer();
+                return new DefaultModuleSerializer();
             }
-            return moduleListDeserializer;
         }
     }
 }

@@ -7,7 +7,7 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.fugue.Option;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.usernameForAddon;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.collect.Sets.newHashSet;

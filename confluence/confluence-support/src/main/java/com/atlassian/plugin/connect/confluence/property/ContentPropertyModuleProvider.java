@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModulePr
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleMeta;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.collect.Lists;

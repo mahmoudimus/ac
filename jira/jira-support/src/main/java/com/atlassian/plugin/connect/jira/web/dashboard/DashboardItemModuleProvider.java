@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleMeta;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;

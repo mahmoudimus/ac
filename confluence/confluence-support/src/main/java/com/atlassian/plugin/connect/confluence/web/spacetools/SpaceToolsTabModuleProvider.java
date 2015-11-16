@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.confluence.web.spacetools;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.confluence.web.ConfluenceConditions;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.confluence.web.ConfluenceConditionClassResolver;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
@@ -16,9 +16,9 @@ import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.annotations.VisibleForTesting;
@@ -159,7 +159,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
                 .withContext(AddOnUrlContext.product)
                 .withLocation(SPACE_TOOLS_SECTION + "/" + location)
                 .withConditions(newSingleConditionBean()
-                        .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
+                        .withCondition(ConfluenceConditionClassResolver.SPACE_SIDEBAR)
                         .build())
                 .setNeedsEscaping(false)
                 .build();
@@ -170,7 +170,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
                 .withContext(AddOnUrlContext.product)
                 .withLocation(SPACE_ADMIN_SECTION + "/" + LEGACY_LOCATION)
                 .withConditions(newSingleConditionBean()
-                        .withCondition(ConfluenceConditions.SPACE_SIDEBAR)
+                        .withCondition(ConfluenceConditionClassResolver.SPACE_SIDEBAR)
                         .withInvert(true)
                         .build())
                 .build();

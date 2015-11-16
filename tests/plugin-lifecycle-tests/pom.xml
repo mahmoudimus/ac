@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.57-SNAPSHOT</version>
+        <version>1.1.61-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-connect-jira-reference-plugin</artifactId>
+            <artifactId>atlassian-connect-reference-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -151,6 +151,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -167,11 +168,6 @@
                                     <groupId>com.atlassian.httpclient</groupId>
                                     <artifactId>atlassian-httpclient-plugin</artifactId>
                                     <version>${atlassian.httpclient.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.gadgets</groupId>
-                                    <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
-                                    <version>3.2.0-m8</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
@@ -310,7 +306,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>atlassian-connect-plugin,atlassian-connect-jira-reference-plugin</includeArtifactIds>
+                            <includeArtifactIds>atlassian-connect-plugin,atlassian-connect-reference-plugin</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
                         </configuration>

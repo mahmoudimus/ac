@@ -1,6 +1,7 @@
 {
   "name": "atlassian-connect-docs",
   "version": "0.0.1",
+  "private": true,
   "description": "Documentation for Atlassian Connect",
   "dependencies": {
     "harp": "~0.14.0",

@@ -30,27 +30,26 @@ var downloadQueue = async.queue(function (task, callback) {
     task.executor.apply(task.self || this, args);
 }, 3);
 
+var tomcatVersion = 'tomcat7x';
+
 var plugins = {
     'jwt-plugin': 'com.atlassian.jwt:jwt-plugin',
     'json-schema-validator-atlassian-bundle': 'com.atlassian.bundles:json-schema-validator-atlassian-bundle',
-    'atlassian-universal-plugin-manager-plugin': 'com.atlassian.upm:atlassian-universal-plugin-manager-plugin',
-    'atlassian-webhooks-plugin': 'com.atlassian.webhooks:atlassian-webhooks-plugin'
+    'atlassian-universal-plugin-manager-plugin': 'com.atlassian.upm:atlassian-universal-plugin-manager-plugin'
 };
 
 var connectPlugin = 'com.atlassian.plugins:atlassian-connect-plugin';
-var baseCommand = 'atlas-run-standalone --product {{product}} ' +
+var baseCommand = 'atlas-run-standalone --container ' + tomcatVersion + ' --product {{product}} ' +
     '--version {{productVersion}} --data-version {{dataVersion}} --bundled-plugins {{bundledPlugins}} ' +
     '--jvmargs -Datlassian.upm.on.demand=true';
 
 var versionOverrides = {
     'prd': {
         jira: {
-            'atlassian-webhooks-plugin': '2.0.0'
         }
     },
     'dev': {
         jira: {
-            'atlassian-webhooks-plugin': '2.0.0'
         }
     }
 };

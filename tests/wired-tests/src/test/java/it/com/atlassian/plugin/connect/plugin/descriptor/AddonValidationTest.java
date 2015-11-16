@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -256,7 +257,7 @@ public class AddonValidationTest
     public void shouldFailInstallationWithDetailedMessageForInvalidShallowDescriptorInDevMode() throws Exception
     {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("invalidGenericDescriptor.json"),
-                "connect.install.error.remote.descriptor.validation.dev", "<ul><li>: object has missing required properties ([\"authentication\"])</ul>");
+                "connect.install.error.remote.descriptor.validation.dev", "<ul><li>: object has missing required properties ([&quot;authentication&quot;])</ul>");
     }
 
     @Test
@@ -264,7 +265,7 @@ public class AddonValidationTest
     public void shouldFailInstallationWithGeneralMessageForDescriptorWithNonObjectModuleList() throws Exception
     {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("descriptorWithNonObjectModuleList.json"),
-                "connect.install.error.remote.descriptor.validation.dev", "<ul><li>/modules: instance type (boolean) does not match any allowed primitive type (allowed: [\"object\"])</ul>");
+                "connect.install.error.remote.descriptor.validation.dev", "<ul><li>/modules: instance type (boolean) does not match any allowed primitive type (allowed: [&quot;object&quot;])</ul>");
     }
 
     @Test
@@ -287,16 +288,16 @@ public class AddonValidationTest
     {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("webitem/invalidStylesWebItemTest.json"),
                 "connect.install.error.remote.descriptor.validation.dev",
-                "<ul><li>/webItems/0/styleClasses/0: ECMA 262 regex \"^[_a-zA-Z]+[_a-zA-Z0-9-]*$\"" +
-                        " does not match input string \"webit%22\" ><script>alert(1);</script>\"" +
-                        "<li>/webItems/0/styleClasses/1: ECMA 262 regex \"^[_a-zA-Z]+[_a-zA-Z0-9-]*$\"" +
-                        " does not match input string \"webit%22%20onerror%22javascript:alert(1);%20\"</ul>");
+                "<ul><li>/webItems/0/styleClasses/0: ECMA 262 regex &quot;^[_a-zA-Z]+[_a-zA-Z0-9-]*$&quot;" +
+                        " does not match input string &quot;webit%22&quot; &gt;&lt;script&gt;alert(1);&lt;/script&gt;&quot;" +
+                        "<li>/webItems/0/styleClasses/1: ECMA 262 regex &quot;^[_a-zA-Z]+[_a-zA-Z0-9-]*$&quot;" +
+                        " does not match input string &quot;webit%22%20onerror%22javascript:alert(1);%20&quot;</ul>");
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()
     {
         return new ConnectAddonBeanBuilder()
-                .withKey("ac-test-" + System.currentTimeMillis())
+                .withKey("ac-test-" + AddonUtil.randomPluginKey())
                 .withModule("webItems", randomWebItemBean())
                 .withBaseurl("https://example.com/");
     }

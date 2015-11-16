@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;

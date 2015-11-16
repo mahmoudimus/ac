@@ -3,8 +3,8 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters;
 
 /**

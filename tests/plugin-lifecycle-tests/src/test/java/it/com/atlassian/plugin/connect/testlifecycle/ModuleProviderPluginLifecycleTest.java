@@ -1,18 +1,21 @@
 package it.com.atlassian.plugin.connect.testlifecycle;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.PluginState;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginInstaller;
+import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginHelper;
+import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleUpmHelper;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthenticator;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTest
@@ -22,20 +25,15 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPluginLifecycleTest.class);
 
-    private final PluginController pluginController;
-    private final PluginAccessor pluginAccessor;
-
-    private Plugin jiraReferencePlugin;
+    private Plugin referencePlugin;
     private Plugin addon;
 
-    public ModuleProviderPluginLifecycleTest(LifecyclePluginInstaller testPluginInstaller,
-            LifecycleTestAuthenticator testAuthenticator,
-            PluginController pluginController,
-            PluginAccessor pluginAccessor)
+    public ModuleProviderPluginLifecycleTest(PluginController pluginController,
+            LifecyclePluginHelper pluginHelper,
+            LifecycleUpmHelper upmHelper,
+            LifecycleTestAuthenticator testAuthenticator)
     {
-        super(testAuthenticator, testPluginInstaller);
-        this.pluginController = pluginController;
-        this.pluginAccessor = pluginAccessor;
+        super(pluginController, pluginHelper, upmHelper, testAuthenticator);
     }
 
     @After
@@ -45,7 +43,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(addon);
+                pluginController.uninstall(addon);
             }
             catch (Exception e)
             {
@@ -57,12 +55,11 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
         }
 
-
-        if (null != jiraReferencePlugin)
+        if (null != referencePlugin)
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(jiraReferencePlugin);
+                pluginController.uninstall(referencePlugin);
             }
             catch (Exception e)
             {
@@ -70,27 +67,55 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
             }
             finally
             {
-                jiraReferencePlugin = null;
+                referencePlugin = null;
             }
         }
     }
-    @Test
-    public void shouldBadThingsHappenWhenConnectReenabled() throws Exception
-    {
-        theConnectPlugin = testPluginInstaller.installConnectPlugin();
-        jiraReferencePlugin = testPluginInstaller.installJiraReferencePlugin();
-        addon = installAndEnableAddon(ADDON_DESCRIPTOR);
-        pluginController.disablePlugin(jiraReferencePlugin.getKey());
-        pluginController.disablePlugin(theConnectPlugin.getKey());
 
-        try
-        {
-            pluginController.enablePlugins(theConnectPlugin.getKey());
-        }
-        catch (Exception e)
-        {
-            assertEquals("com.atlassian.plugin.connect.plugin.descriptor", e.getClass().getCanonicalName());
-            assertEquals("No provider found for module type jiraTestModules referenced in the descriptor", e.getMessage());
-        }
+    @Test
+    public void shouldSkipAddonEnablementWhenDescriptorValidationFails() throws Exception
+    {
+        theConnectPlugin = pluginHelper.installConnectPlugin();
+        referencePlugin = pluginHelper.installGeneralReferencePlugin();
+        addon = installAndEnableAddon(ADDON_DESCRIPTOR);
+        pluginController.disablePlugin(referencePlugin.getKey());
+        pluginController.disablePlugin(theConnectPlugin.getKey());
+        pluginController.enablePlugins(theConnectPlugin.getKey());
+        assertFalse(upmHelper.getUpmControlHandler().isPluginEnabled(addon.getKey()));
+
+        pluginController.enablePlugins(referencePlugin.getKey());
+        upmHelper.getUpmControlHandler().enablePlugins(addon.getKey());
+        assertStateAndModuleCount(addon, PluginState.ENABLED, 1, "With module provider plugin enabled");
+    }
+
+    @Test
+    public void shouldSkipAddonEnablementWhenModuleRegistrationFails() throws Exception
+    {
+        theConnectPlugin = pluginHelper.installConnectPlugin();
+        referencePlugin = pluginHelper.installGeneralReferencePlugin();
+        addon = installAndEnableAddon(ADDON_DESCRIPTOR);
+        upmHelper.getUpmControlHandler().disablePlugin(addon.getKey());
+        pluginController.disablePlugin(referencePlugin.getKey());
+        upmHelper.getUpmControlHandler().enablePlugins(addon.getKey());
+        assertStateAndModuleCount(addon, PluginState.DISABLED, 0, "With module provider plugin disabled");
+
+        pluginController.enablePlugins(referencePlugin.getKey());
+        upmHelper.getUpmControlHandler().enablePlugins(addon.getKey());
+        assertStateAndModuleCount(addon, PluginState.ENABLED, 1, "With module provider plugin enabled");
+    }
+
+    @Test
+    public void shouldReturnPluginToUpmWhenDescriptorValidationFails() throws Exception
+    {
+        theConnectPlugin = pluginHelper.installConnectPlugin();
+        referencePlugin = pluginHelper.installGeneralReferencePlugin();
+        addon = installAndEnableAddon(ADDON_DESCRIPTOR);
+        pluginController.disablePlugin(referencePlugin.getKey());
+        pluginController.disablePlugin(theConnectPlugin.getKey());
+        pluginController.enablePlugins(theConnectPlugin.getKey());
+        assertFalse(upmHelper.getUpmControlHandler().isPluginEnabled(addon.getKey()));
+
+        Plugin plugin = upmHelper.getUpmControlHandler().getPlugin(addon.getKey());
+        assertNotNull(plugin);
     }
 }

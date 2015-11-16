@@ -1,17 +1,17 @@
 package com.atlassian.plugin.connect.confluence.web;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
-import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.spi.ProductAccessor;
+import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectPageModuleProvider;
+import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +34,12 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            PageConditionsFactory pageConditionsFactory,
+            PluginAccessor pluginAccessor,
             ConnectJsonSchemaValidator schemaValidator,
             ProductAccessor productAccessor)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pageConditionsFactory);
+                webItemModuleDescriptorFactory, pluginAccessor);
         this.pluginRetrievalService = pluginRetrievalService;
         this.schemaValidator = schemaValidator;
         this.productAccessor = productAccessor;

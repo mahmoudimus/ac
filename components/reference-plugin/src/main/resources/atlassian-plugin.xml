@@ -1,0 +1,15 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    </plugin-info>
+
+    <connect-module key="test-module" class="com.atlassian.plugin.connect.reference.ModuleProviderForTests"/>
+
+    <connect-condition-class-resolver key="reference-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.reference.ReferenceConditionClassResolver"/>
+
+    <connect-api-scope-whitelist key="test-api-scope-whitelist" resource="/scope/test-whitelist.json"/>
+
+</atlassian-plugin>

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
 import com.atlassian.jira.project.version.Version;
-import com.atlassian.plugin.connect.spi.module.context.ParameterSerializer;
+import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableMap;
 

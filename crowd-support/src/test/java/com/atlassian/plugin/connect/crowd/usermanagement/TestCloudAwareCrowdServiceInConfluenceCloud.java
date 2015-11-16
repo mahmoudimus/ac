@@ -9,9 +9,9 @@ import java.util.concurrent.TimeUnit;
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.spi.host.HostProperties;
-import com.atlassian.plugin.connect.spi.product.FeatureManager;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.HostProperties;
+import com.atlassian.plugin.connect.spi.FeatureManager;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;

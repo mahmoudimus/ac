@@ -5,22 +5,19 @@ import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.bc.license.JiraLicenseService;
 import com.atlassian.jira.license.LicenseDetails;
-import com.atlassian.plugin.connect.jira.web.condition.JiraConditions;
-import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
 {
-    private final JiraConditions jiraConditions;
+
     private final JiraLicenseService licenseService;
 
     @Autowired
-    public JiraProductAccessor(JiraConditions jiraConditions, JiraLicenseService licenseService)
+    public JiraProductAccessor(JiraLicenseService licenseService)
     {
-        this.jiraConditions = jiraConditions;
         this.licenseService = licenseService;
     }
 
@@ -64,12 +61,6 @@ public final class JiraProductAccessor implements ProductAccessor
     public String getPreferredProfileSectionKey()
     {
         return "system.user.options/personal";
-    }
-
-    @Override
-    public ConditionClassResolver getConditions()
-    {
-        return jiraConditions.getConditions();
     }
 
     @Override
