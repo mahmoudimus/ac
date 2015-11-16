@@ -1,17 +1,19 @@
-package com.atlassian.plugin.connect.plugin.web;
+package com.atlassian.plugin.connect.plugin.web.context;
 
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
 import com.atlassian.plugin.connect.spi.web.ConnectWebFragmentLocationBlacklistModuleDescriptor;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Named;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
-public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlacklist
+@Named
+public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlacklist, InitializingBean
 {
     private final PluginAccessor pluginAccessor;
 
@@ -41,5 +43,10 @@ public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlac
                 .map(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist::getWebItemBlacklistedLocations)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("hello");
     }
 }

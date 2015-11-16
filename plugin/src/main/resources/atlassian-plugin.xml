@@ -112,10 +112,4 @@
         <entity>com.atlassian.plugin.connect.plugin.property.AddOnPropertyAO</entity>
     </ao>
 
-    <connect-web-fragment-location-blacklist>
-        <web-panel-locations>
-            <location>atl.header.after.scripts</location>
-        </web-panel-locations>
-    </connect-web-fragment-location-blacklist>
-
 </atlassian-plugin>

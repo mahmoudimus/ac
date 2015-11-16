@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web;
 
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.web.ConnectWebFragmentLocationBlacklistModuleDescriptor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.osgi.external.ListableModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.external.SingleModuleDescriptorFactory;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 
 @ModuleType(ListableModuleDescriptorFactory.class)
 @Component
-public class ConnectWebFragmentLocationBlacklistModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectContextParameterResolverModuleDescriptor>
+public class ConnectWebFragmentLocationBlacklistModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectWebFragmentLocationBlacklistModuleDescriptor>
 {
     @Autowired
     public ConnectWebFragmentLocationBlacklistModuleDescriptorFactory(@Qualifier("hostContainer") final HostContainer hostContainer)
     {
-        super(hostContainer, "connect-web-fragment-location-blacklist", ConnectContextParameterResolverModuleDescriptor.class);
+        super(hostContainer, "connect-web-fragment-location-blacklist", ConnectWebFragmentLocationBlacklistModuleDescriptor.class);
     }
 }

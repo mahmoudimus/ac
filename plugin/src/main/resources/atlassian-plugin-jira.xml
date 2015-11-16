@@ -138,6 +138,12 @@
         <description>Listens to changes to the JIRA license so addon users can be granted access to new applications</description>
     </listener>
 
+    <connect-web-fragment-location-blacklist name="Blacklisted locations for JIRA" key="jira-web-fragment-blacklist">
+        <web-panel-locations>
+            <location>atl.header.after.scripts</location>
+        </web-panel-locations>
+    </connect-web-fragment-location-blacklist>
+
 </application>
 
 

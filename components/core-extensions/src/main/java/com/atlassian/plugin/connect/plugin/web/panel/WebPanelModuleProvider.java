@@ -6,22 +6,23 @@ import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<WebPanelModuleBean>
 {
-
     private static final WebPanelModuleMeta META = new WebPanelModuleMeta();
 
     private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
@@ -29,7 +30,6 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebFragmentLocationBlacklist webFragmentLocationBlacklist;
 
-    @Autowired
     public WebPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
                                   ConnectJsonSchemaValidator schemaValidator,
                                   WebPanelConnectModuleDescriptorFactory webPanelFactory,
