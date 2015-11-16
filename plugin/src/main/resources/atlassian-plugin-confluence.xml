@@ -13,7 +13,7 @@
         <label>Remote Plugins</label>
     </web-section>
 
-    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.connect.it.confluence.macro.MacroVariableInjectorTransformer"/>
+    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.connect.confluence.macro.MacroVariableInjectorTransformer"/>
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
