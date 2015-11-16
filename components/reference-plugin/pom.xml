@@ -87,7 +87,9 @@
                             org.springframework.osgi.*;resolution:="optional",
 
                             <!-- Clover references classes it doesn't bundle so we need them to be optional -->
+                            clover.*;resolution:="optional",
                             com_atlassian_clover.*;resolution:="optional",
+                            com.atlassian.clover.*;resolution:="optional",
 
                             <!-- Let bnd infer all other dependencies as mandatory -->
                             *
