@@ -1,4 +1,4 @@
-package it.jira.item;
+package it.jira.condition;
 
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -20,7 +20,7 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestJiraConditions extends JiraWebDriverTestBase
+public class TestCommonConditionsInJira extends JiraWebDriverTestBase
 {
 
     private static ConnectRunner runner;

@@ -1,4 +1,4 @@
-package it.jira.item;
+package it.jira.condition;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.jira.JiraWebDriverTestBase;
@@ -80,7 +80,7 @@ public class TestJiraConditionParameters extends JiraWebDriverTestBase
     private IssueCreateResponse navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(TestUser user) throws Exception
     {
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Nought but a test.");
-        JiraViewIssuePage viewIssuePage = loginAndVisit(user, JiraViewIssuePage.class, issue.key);
+        ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issue.key);
         String moduleKey = addonAndModuleKey(runner.getAddon().getKey(), CONTEXT_PARAMETERIZED_WEBITEM);
         RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);

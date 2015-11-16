@@ -4,7 +4,7 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
@@ -108,12 +108,12 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
         login(testUserFactory.basicUser());
 
         // tab panel should be present
-        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key());
+        ViewIssuePageWithAddonFragments page = product.visit(ViewIssuePageWithAddonFragments.class, issue.key());
         assertThat(page.isTabPanelPresent(completeKey), is(true));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        page = product.visit(JiraViewIssuePage.class, issue.key());
+        page = product.visit(ViewIssuePageWithAddonFragments.class, issue.key());
         assertThat(page.isTabPanelPresent(completeKey), is(false));
     }
 
