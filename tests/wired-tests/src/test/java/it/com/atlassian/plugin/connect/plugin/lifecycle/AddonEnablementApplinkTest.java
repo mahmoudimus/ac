@@ -23,7 +23,7 @@ import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebI
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class AddOnEnablementTest
+public class AddonEnablementApplinkTest
 {
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
@@ -31,7 +31,7 @@ public class AddOnEnablementTest
 
     private Plugin plugin;
 
-    public AddOnEnablementTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, JwtApplinkFinder jwtApplinkFinder)
+    public AddonEnablementApplinkTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, JwtApplinkFinder jwtApplinkFinder)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -75,7 +75,7 @@ public class AddOnEnablementTest
         String key = "ac-test-" + AddonUtil.randomPluginKey();
         ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
             .withKey(key)
-            .withDescription(AddOnEnablementTest.class.getCanonicalName())
+            .withDescription(AddonEnablementApplinkTest.class.getCanonicalName())
             .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
             .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
             .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
