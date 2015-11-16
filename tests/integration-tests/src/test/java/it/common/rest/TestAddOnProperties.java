@@ -1,16 +1,24 @@
 package it.common.rest;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.plugin.util.JsonCommon;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import it.servlet.InstallHandlerServlet;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +26,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.server.Response;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -27,13 +36,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collection;
+import it.servlet.InstallHandlerServlet;
 
 import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -46,7 +49,7 @@ import static org.junit.Assert.assertThat;
 public class TestAddOnProperties
 {
     public static final int MAX_VALUE_SIZE = 1024 * 32;
-    private final static Gson gson = new Gson();
+    private static final ObjectMapper JSON = new ObjectMapper();
     private static final JsonNode JSON_ZERO = JsonCommon.parseStringToJson("0").get();
     private static final JsonNode JSON_ONE = JsonCommon.parseStringToJson("1").get();
 
@@ -106,7 +109,7 @@ public class TestAddOnProperties
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
-        RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
+        final RestAddOnProperty result = JSON.readValue(response, RestAddOnProperty.class);
         assertThat(result, isEqualToIgnoringBaseUrl(property));
 
         assertDeleted(propertyKey);
@@ -124,7 +127,7 @@ public class TestAddOnProperties
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
-        RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
+        RestAddOnProperty result = JSON.readValue(response, RestAddOnProperty.class);
         assertThat(result, isEqualToIgnoringBaseUrl(property));
 
         assertDeleted(propertyKey);
@@ -164,7 +167,7 @@ public class TestAddOnProperties
         assertEquals(Response.SC_OK, responseCode2);
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
-        RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
+        RestAddOnProperty result = JSON.readValue(response, RestAddOnProperty.class);
         assertThat(result, isEqualToIgnoringBaseUrl(property));
 
         int responseCode3 = executeDeleteRequest(property.key);
@@ -256,7 +259,7 @@ public class TestAddOnProperties
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequestForPropertyList();
-        RestAddOnPropertiesBean result = gson.fromJson(response, RestAddOnPropertiesBean.class);
+        RestAddOnPropertiesBean result = JSON.readValue(response, RestAddOnPropertiesBean.class);
 
         RestAddOnPropertiesBean expected = RestAddOnPropertiesBean.fromRestAddOnProperties(property);
         assertThat(result, isEqualToIgnoringBaseUrl(expected));
