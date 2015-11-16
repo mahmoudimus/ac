@@ -15,8 +15,6 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
-import com.atlassian.testutils.junit.RetryRule;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -55,10 +53,6 @@ public abstract class AbstractConnectAddonTest
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
     }
-
-    @Rule
-    public RetryRule retryRule = new RetryRule();
-    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     @BeforeClass
     public void setup()

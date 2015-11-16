@@ -9,8 +9,6 @@ import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthentic
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Rule;
-import com.atlassian.testutils.junit.RetryRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +35,6 @@ public class AbstractPluginLifecycleTest
         this.testAuthenticator = testAuthenticator;
         this.testPluginInstaller = testPluginInstaller;
     }
-
-    @Rule
-    public RetryRule retryRule = new RetryRule();
-    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     @BeforeClass
     public void setupBeforeAllTests()

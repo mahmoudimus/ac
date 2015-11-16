@@ -12,7 +12,6 @@ import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import com.atlassian.testutils.annotations.Retry;
 
 import java.util.Map;
 
@@ -33,7 +32,6 @@ public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
     }
 
     @Test
-    @Retry(maxAttempts=AbstractConnectAddonTest.MAX_RETRY_ATTEMPTS)
     public void singleAddonLinkWithReplacement() throws Exception
     {
         Project project = jiraTestUtil.createProject();

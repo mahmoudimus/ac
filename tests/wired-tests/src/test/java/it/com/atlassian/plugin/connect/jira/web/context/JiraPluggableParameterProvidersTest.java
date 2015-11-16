@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import com.atlassian.testutils.annotations.Retry;
 
 import java.io.IOException;
 import java.util.Map;
@@ -29,7 +28,6 @@ public final class JiraPluggableParameterProvidersTest extends AbstractConnectAd
     }
 
     @Test
-    @Retry(maxAttempts=AbstractConnectAddonTest.MAX_RETRY_ATTEMPTS)
     public void parametersExtractedByPluginAreAvailableForWebItemsUrl() throws IOException
     {
         String url = registerWebItemWithProjectInContextAndGetUrl();
@@ -37,7 +35,6 @@ public final class JiraPluggableParameterProvidersTest extends AbstractConnectAd
     }
 
     @Test
-    @Retry(maxAttempts=AbstractConnectAddonTest.MAX_RETRY_ATTEMPTS)
     public void permissionChecksFromPluginsAreRespected() throws IOException
     {
         actAsAnonymous();
