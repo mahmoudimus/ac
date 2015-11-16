@@ -124,6 +124,10 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             descriptors.add(createEditorWebResource(addon, plugin, macroBean));
         }
 
+        //TODO: CE-256 add property panel render strategy to the registry, and add a web resource for transformed
+        // javascript to create the iframe.
+        //if (macroBean.hasPropertyPanel()) {}
+
         return ImmutableList.copyOf(descriptors);
     }
 
