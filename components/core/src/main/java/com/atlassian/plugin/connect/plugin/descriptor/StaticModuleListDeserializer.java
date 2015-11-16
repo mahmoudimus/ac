@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -62,7 +63,8 @@ public class StaticModuleListDeserializer extends ModuleListDeserializer
         }
         return beans;
     }
-
+    
+    @Nullable
     public ConnectModuleMeta getModuleMeta(String type)
     {
         for (ConnectModuleMeta moduleMeta : moduleMetas)
@@ -78,6 +80,14 @@ public class StaticModuleListDeserializer extends ModuleListDeserializer
     @Override
     public boolean multipleModulesAllowed(String moduleType)
     {
-        return getModuleMeta(moduleType).multipleModulesAllowed();
+        ConnectModuleMeta meta = getModuleMeta(moduleType);
+        if (meta != null)
+        {
+            return meta.multipleModulesAllowed();
+        }
+        else
+        {
+            return true;
+        }
     }
 }
