@@ -45,7 +45,7 @@ public class ModuleProviderForTests extends AbstractConnectPageModuleProvider
         List<ConnectPageModuleBean> beans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         if (beans.get(0).getRawKey().equals("bad"))
         {
-            throw new ConnectModuleValidationException(getMeta(), "Key is bad!");
+            throw new ConnectModuleValidationException(descriptor, getMeta(), "Key is bad!", null, null);
         }
         return beans;
     }

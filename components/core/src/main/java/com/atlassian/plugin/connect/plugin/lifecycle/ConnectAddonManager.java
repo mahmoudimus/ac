@@ -264,6 +264,7 @@ public class ConnectAddonManager
                 }
                 catch (ConnectModuleRegistrationException e)
                 {
+                    eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, e.getMessage()));
                     log.error(String.format("Module registration failed while enabling add-on %s, skipping", pluginKey), e);
                     return;
                 }

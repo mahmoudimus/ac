@@ -29,7 +29,7 @@ public abstract class AbstractJiraConnectModuleProvider<T extends BaseModuleBean
             throws ConnectModuleValidationException
     {
         URL schemaUrl = pluginRetrievalService.getPlugin().getResource(SCHEMA_PATH);
-        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, schemaUrl, schemaValidator);
+        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, descriptor, schemaUrl, schemaValidator);
         return super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
     }
 }

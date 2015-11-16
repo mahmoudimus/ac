@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
@@ -70,14 +71,14 @@ public class AbstractConnectPageModuleProviderTest
     public void validBuiltInConditionPasses() throws ConnectModuleValidationException
     {
         SingleConditionBean condition = newCondition(VALID_CONDITION);
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
     public void validRemoteConditionPasses() throws ConnectModuleValidationException
     {
         SingleConditionBean condition = newCondition("/remote-condition");
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
@@ -85,7 +86,7 @@ public class AbstractConnectPageModuleProviderTest
     {
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition(VALID_CONDITION))
                 .withType(CompositeConditionType.AND).build();
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class AbstractConnectPageModuleProviderTest
     {
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition("/remote-condition"))
                 .withType(CompositeConditionType.AND).build();
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
@@ -101,7 +102,7 @@ public class AbstractConnectPageModuleProviderTest
     {
         expectValidationException(INVALID_CONDITION);
         SingleConditionBean condition = newCondition(INVALID_CONDITION);
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
@@ -110,7 +111,7 @@ public class AbstractConnectPageModuleProviderTest
         expectValidationException(INVALID_CONDITION);
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition(INVALID_CONDITION))
                 .withType(CompositeConditionType.AND).build();
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     private SingleConditionBean newCondition(String condition)

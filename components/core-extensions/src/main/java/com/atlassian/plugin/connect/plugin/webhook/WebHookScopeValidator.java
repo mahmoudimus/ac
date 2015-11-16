@@ -42,7 +42,7 @@ public class WebHookScopeValidator
                     String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
                                     + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
                             webhook.getEvent(), requiredScope);
-                    throw new ConnectModuleValidationException(new WebHookModuleMeta(), exceptionMessage,
+                    throw new ConnectModuleValidationException(addon, new WebHookModuleMeta(), exceptionMessage,
                             "connect.install.error.missing.scope", requiredScope);
                 }
             }

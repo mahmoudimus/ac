@@ -16,13 +16,13 @@ import java.util.Map;
 
 public class PluggableModuleListDeserializer extends ModuleListDeserializer
 {
-    private final PluginAccessor pluginAccessor;
-    private final ShallowConnectAddonBean addonBean;
+
+    protected final PluginAccessor pluginAccessor;
 
     public PluggableModuleListDeserializer(PluginAccessor pluginAccessor, ShallowConnectAddonBean addonBean)
     {
+        super(addonBean);
         this.pluginAccessor = pluginAccessor;
-        this.addonBean = addonBean;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class PluggableModuleListDeserializer extends ModuleListDeserializer
         {
             throwUnknownModuleType(moduleTypeKey);
         }
-        return moduleProvider.deserializeAddonDescriptorModules(modules.toString(), addonBean);
+        return moduleProvider.deserializeAddonDescriptorModules(modules.toString(), addon);
     }
 
     @Override

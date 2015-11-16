@@ -8,21 +8,24 @@ import java.io.Serializable;
 public class ConnectModuleValidationException extends Exception
 {
 
+    private final ShallowConnectAddonBean addon;
     private final ConnectModuleMeta moduleMeta;
     private final String i18nKey;
     private final Serializable[] i18nParameters;
 
-    public ConnectModuleValidationException(ConnectModuleMeta moduleMeta, String message)
-    {
-        this(moduleMeta, message, null);
-    }
-
-    public ConnectModuleValidationException(ConnectModuleMeta moduleMeta, String message, String i18nKey, Serializable... i18nParameters)
+    public ConnectModuleValidationException(ShallowConnectAddonBean addon, ConnectModuleMeta moduleMeta, String message,
+            String i18nKey, Serializable... i18nParameters)
     {
         super(message);
+        this.addon = addon;
         this.moduleMeta = moduleMeta;
         this.i18nKey = i18nKey;
         this.i18nParameters = i18nParameters;
+    }
+
+    public ShallowConnectAddonBean getAddon()
+    {
+        return addon;
     }
 
     public ConnectModuleMeta getModuleMeta()
