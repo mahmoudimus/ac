@@ -12,33 +12,11 @@
     <artifactId>atlassian-connect-integration-tests-common</artifactId>
     <name>Atlassian Connect - Integration Tests Common</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>test-jar</id>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                        <configuration>
-                            <forceCreation>true</forceCreation>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-connect-api</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
@@ -49,54 +27,55 @@
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-connect-modules</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.functest</groupId>
+            <artifactId>functest-plugin</artifactId>
+            <version>${functest.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.webhooks</groupId>
+            <artifactId>atlassian-webhooks-plugin</artifactId>
+            <version>${atlassian.webhooks.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.jwt</groupId>
             <artifactId>jwt-api</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jwt</groupId>
             <artifactId>jwt-core</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>atlassian-confluence-pageobjects</artifactId>
             <version>${atlassian.confluence.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>atlassian-jira-pageobjects</artifactId>
             <version>${atlassian.jira.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.selenium</groupId>
             <artifactId>atlassian-webdriver-core</artifactId>
             <version>${atlassian.selenium.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpcomponents.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
             <version>${httpcomponents.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.samskivert</groupId>
             <artifactId>jmustache</artifactId>
             <version>${jmustache.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>cc.plural</groupId>

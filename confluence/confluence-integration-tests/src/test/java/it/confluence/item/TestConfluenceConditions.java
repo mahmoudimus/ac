@@ -35,6 +35,8 @@ import org.junit.Test;
 
 import it.confluence.ConfluenceWebDriverTestBase;
 
+import static org.hamcrest.core.CombinableMatcher.both;
+
 public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
@@ -276,7 +278,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("pageId"), IsEqual.equalTo(editPage.getPageId())));
         Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("spaceKey"), IsEqual.equalTo("ds")));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("spaceId"), CoreMatchers.both(CoreMatchers.not(IsEqual.equalTo(""))).and(CoreMatchers.not(CoreMatchers.nullValue()))));
+        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("spaceId"), both(CoreMatchers.not(IsEqual.equalTo(""))).and(CoreMatchers.not(CoreMatchers.nullValue()))));
         Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("spaceId"), IsLong.isLong()));
     }
 

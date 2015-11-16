@@ -17,8 +17,6 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import com.atlassian.plugin.connect.test.common.client.UserRequestSender;
-
 public final class AtlassianConnectRestClient
 {
     private final String baseUrl;

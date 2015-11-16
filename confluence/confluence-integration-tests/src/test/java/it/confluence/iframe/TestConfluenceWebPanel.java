@@ -28,6 +28,8 @@ import org.junit.rules.TestRule;
 import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
 
+import static org.junit.internal.matchers.StringContains.containsString;
+
 public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 {
     private static final String WEB_PANELS = "webPanels";
@@ -123,7 +125,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public void iFrameUrlIsCorrectOnEditPage() throws Exception
     {
         RemoteWebPanel webPanel = findEditPageWebPanel();
-        Assert.assertThat(webPanel.getIFrameSourceUrl(), CoreMatchers.containsString(IFRAME_URL_EDIT));
+        Assert.assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_EDIT));
     }
 
     @Test
@@ -176,7 +178,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public void iFrameUrlIsCorrectOnViewPage() throws Exception
     {
         RemoteWebPanel webPanel = findViewPageWebPanel();
-        Assert.assertThat(webPanel.getIFrameSourceUrl(), CoreMatchers.containsString(IFRAME_URL_VIEW));
+        Assert.assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_VIEW));
     }
 
     @Test
@@ -221,7 +223,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public void iFrameUrlIsCorrectOnProfilePage() throws Exception
     {
         RemoteWebPanel webPanel = findProfilePageWebPanel();
-        Assert.assertThat(webPanel.getIFrameSourceUrl(), CoreMatchers.containsString(IFRAME_URL_PROFILE));
+        Assert.assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_PROFILE));
     }
 
     @Test

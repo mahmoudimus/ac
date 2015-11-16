@@ -367,7 +367,7 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMaven
         testGroup: '#testGroup',
         groupName: '#groupName',
         additionalMavenParameters: '#additionalMavenParameters',
-        project: 'tests/core-integration-tests'
+        project: 'tests/integration-tests-common,tests/core-integration-tests'
     )
 }
 

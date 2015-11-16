@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.test.common.matcher;
 
+import java.util.regex.Pattern;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-
-import java.util.regex.Pattern;
 
 public class MatchesPattern extends TypeSafeDiagnosingMatcher<String>
 {

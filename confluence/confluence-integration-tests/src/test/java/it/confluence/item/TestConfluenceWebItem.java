@@ -35,6 +35,8 @@ import org.junit.Test;
 import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
 
+import static org.hamcrest.core.StringStartsWith.startsWith;
+
 
 /**
  * @since 1.0
@@ -129,7 +131,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
         Assert.assertNotNull("Web item should be found", webItem);
 
-        Assert.assertThat(webItem.getPath(), CoreMatchers.startsWith("http://www.google.com/?"));
+        Assert.assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
         Assert.assertThat(webItem.getFromQueryString("myPageId"), IsInteger.isInteger());
         Assert.assertThat(webItem.getFromQueryString("myContentId"), CoreMatchers.equalTo(webItem.getFromQueryString("myPageId")));
         Assert.assertThat(webItem.getFromQueryString("mySpaceKey"), CoreMatchers.equalTo("ds"));
@@ -147,7 +149,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         Assert.assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
         Assert.assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("content_id"));
         // web-item url mode is relative to the addon by default
-        Assert.assertThat(webItem.getPath(), CoreMatchers.startsWith(remotePlugin.getAddon().getBaseUrl()));
+        Assert.assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
 
         ConnectAsserts.verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
     }
@@ -163,7 +165,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         Assert.assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
         Assert.assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("content_id"));
-        Assert.assertThat(webItem.getPath(), CoreMatchers.startsWith(remotePlugin.getAddon().getBaseUrl()));
+        Assert.assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
 
         ConnectAsserts.verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
     }

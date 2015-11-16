@@ -1,8 +1,12 @@
 package it.confluence.macro;
 
+import java.net.MalformedURLException;
+
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
@@ -14,22 +18,21 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
-import it.confluence.ConfluenceWebDriverTestBase;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
+import it.confluence.ConfluenceWebDriverTestBase;
+import redstone.xmlrpc.XmlRpcFault;
 
 import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static java.lang.String.format;
+import static org.hamcrest.core.StringContains.containsString;
 
 public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBase
 {
@@ -431,7 +434,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 try
                 {
                     dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-                    Assert.assertThat(dialog.getTitle(), CoreMatchers.containsString(EDITOR_MACRO_NAME));
+                    Assert.assertThat(dialog.getTitle(), containsString(EDITOR_MACRO_NAME));
                 }
                 finally
                 {

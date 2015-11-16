@@ -52,6 +52,8 @@ import it.confluence.servlet.ConfluenceAppServlets;
 
 import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
+import static org.hamcrest.core.CombinableMatcher.both;
+import static org.hamcrest.core.StringContains.containsString;
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
@@ -249,7 +251,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             @Override
             public Void call() throws Exception
             {
-                Assert.assertThat(extractPDFText(viewPage), CoreMatchers.containsString("Hello world"));
+                Assert.assertThat(extractPDFText(viewPage), containsString("Hello world"));
                 return null;
             }
         });
@@ -271,7 +273,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             @Override
             public Void call() throws Exception
             {
-                Assert.assertThat(extractWordText(viewPage), CoreMatchers.containsString("Hello world"));
+                Assert.assertThat(extractWordText(viewPage), containsString("Hello world"));
                 return null;
             }
         });
@@ -403,7 +405,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(ModuleKeyUtils.randomName(SMALL_INLINE_MACRO_KEY), body + body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SMALL_INLINE_MACRO_KEY);
-        Assert.assertThat(renderedMacro.getIFrameSize(), CoreMatchers.both(HasPropertyWithValue.hasProperty("width", CoreMatchers.is(60))).and(HasPropertyWithValue.hasProperty("height", CoreMatchers.is(30))));
+        Assert.assertThat(renderedMacro.getIFrameSize(), both(HasPropertyWithValue.hasProperty("width", CoreMatchers.is(60))).and(HasPropertyWithValue.hasProperty("height", CoreMatchers.is(30))));
     }
 
     @Test

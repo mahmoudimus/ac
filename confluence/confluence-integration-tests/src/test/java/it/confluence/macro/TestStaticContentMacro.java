@@ -40,6 +40,9 @@ import it.confluence.MacroStorageFormatBuilder;
 import it.confluence.servlet.ConfluenceAppServlets;
 
 import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.hamcrest.core.StringEndsWith.endsWith;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
@@ -134,7 +137,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     {
         ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, createPageWithStorageFormatMacro());
         String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        Assert.assertThat(content, CoreMatchers.endsWith("Storage Format Content"));
+        Assert.assertThat(content, endsWith("Storage Format Content"));
     }
 
     @Test
@@ -143,7 +146,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         runWithAnonymousUsePermission(() -> {
             ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
             String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-            Assert.assertThat(content, CoreMatchers.endsWith("Storage Format Content"));
+            Assert.assertThat(content, endsWith("Storage Format Content"));
             return null;
         });
     }
@@ -201,7 +204,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         String version = maybeVersion.get().replaceFirst("cv:", "").trim();
         Assert.assertThat(version, ParamMatchers.isVersionNumber());
-        Assert.assertThat(commentBody.getText(), Matchers.allOf(CoreMatchers.startsWith("Hello world!!"), CoreMatchers.containsString("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
+        Assert.assertThat(commentBody.getText(), Matchers.allOf(startsWith("Hello world!!"), containsString("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
     }
 
     @Test

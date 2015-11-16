@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
-
 import com.google.common.base.Function;
 
 import org.openqa.selenium.WebDriver;
