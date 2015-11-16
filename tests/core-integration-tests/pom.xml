@@ -267,12 +267,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.functest</groupId>
-            <artifactId>functest-plugin</artifactId>
-            <version>${functest.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
             <scope>provided</scope>
