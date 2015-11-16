@@ -87,11 +87,15 @@
                             org.springframework.osgi.*;resolution:="optional",
 
                             <!-- Clover references classes it doesn't bundle so we need them to be optional -->
-                            *;resolution:=optional
+                            com_atlassian_clover.*;resolution:="optional",
 
                             <!-- Let bnd infer all other dependencies as mandatory -->
-                            <!-- * -->
+                            *
                         </Import-Package>
+                        <Embed-Dependency>
+                            <!-- Ensure the clover artifact is not embedded in the bundle -->
+                            artifactId=!clover
+                        </Embed-Dependency>
                     </instructions>
                 </configuration>
             </plugin>
