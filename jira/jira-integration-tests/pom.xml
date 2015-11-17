@@ -430,7 +430,7 @@
                         <product>
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
-                            <log4jProperties>${basedir}/../../tests/core-integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../../tests/integration-tests-common/src/main/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
