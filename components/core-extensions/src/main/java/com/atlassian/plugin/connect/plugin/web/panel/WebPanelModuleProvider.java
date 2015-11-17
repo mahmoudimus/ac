@@ -15,7 +15,6 @@ import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,8 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
 
         if (blacklistedLocationsUsed.size() > 0)
         {
-            throw new ConnectModuleValidationException(getMeta(), "WebPanels use locations which are not supported in Connect " + blacklistedLocationsUsed);
+            final String exceptionMsg = "WebPanels use locations which are not supported in Connect " + blacklistedLocationsUsed;
+            throw new ConnectModuleValidationException(getMeta(), exceptionMsg, "connect.invalid.webpanel.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
         }
         else
         {

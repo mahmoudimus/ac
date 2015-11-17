@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.web;
+package com.atlassian.plugin.connect.plugin.web.blacklist;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -82,7 +83,12 @@ public final class ConnectWebFragmentLocationBlacklistModuleDescriptor extends A
             // noinspection unchecked
             List<Element> locations = subElementWithLocations.elements();
             return ImmutableSet.copyOf(locations.stream()
-                    .map(Element::getText)
+                    .map(new Function<Element, String>() {
+                        @Override
+                        public String apply(Element element) {
+                            return element.getText();
+                        }
+                    })
                     .collect(Collectors.toSet()));
         }
         else
