@@ -43,6 +43,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.testutils.annotations.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,17 +58,18 @@ import java.util.concurrent.Callable;
  * without forcing us to create "Fixed" versions of them that simply override a
  * wait condition.
  */
+@Retry(maxAttempts=ConfluenceWebDriverTestBase.MAX_RETRY_ATTEMPTS)
 public class ConfluenceWebDriverTestBase
 {
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
+    protected static ConfluenceRestClient restClient;
     protected static ConnectTestUserFactory testUserFactory;
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
             product.getPageBinder(), product.getTester().getDriver());
     private final Logger logger = LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class);
 
     private boolean hasBeenFocused;
-    protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct(), testUserFactory.admin());
 
     public static class TestSpace
     {
@@ -121,11 +124,17 @@ public class ConfluenceWebDriverTestBase
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
+    @Rule
+    public RetryRule retryRule = new RetryRule();
+    public static final int MAX_RETRY_ATTEMPTS = 3;
+
     @BeforeClass
     public static void confluenceTestSetup() throws Exception
     {
         testUserFactory = new ConfluenceTestUserFactory(product, rpc);
-        rpc.logIn(testUserFactory.admin().confUser());
+        TestUser admin = testUserFactory.admin();
+        rpc.logIn(admin.confUser());
+        restClient = new ConfluenceRestClient(getProduct(), admin);
         installTestPlugins(rpc);
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
@@ -293,13 +302,13 @@ public class ConfluenceWebDriverTestBase
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
-    protected void login(TestUser user)
+    protected static void login(TestUser user)
     {
         logout();
         product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
     }
 
-    protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
+    protected static <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
         logout();
         return product.login(user.confUser(), page, args);
@@ -330,7 +339,7 @@ public class ConfluenceWebDriverTestBase
         }
     }
 
-    protected Content createPage(String title, String storageFormat)
+    protected static Content createPage(String title, String storageFormat)
     {
         Content content = Content.builder(ContentType.PAGE)
                 .space(TestSpace.DEMO.getKey())
@@ -339,5 +348,4 @@ public class ConfluenceWebDriverTestBase
                 .build();
         return restClient.content().create(content).claim();
     }
-
 }

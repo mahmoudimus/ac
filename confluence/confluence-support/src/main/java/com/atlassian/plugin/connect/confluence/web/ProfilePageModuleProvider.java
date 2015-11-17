@@ -56,7 +56,7 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
             ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
         URL schemaUrl = pluginRetrievalService.getPlugin().getResource("/schema/confluence-schema.json");
-        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, schemaUrl, schemaValidator);
+        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, descriptor, schemaUrl, schemaValidator);
         return super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
     }
 

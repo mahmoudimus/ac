@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonDeserializationContext;
@@ -22,8 +23,12 @@ import java.util.stream.Collectors;
 public abstract class ModuleListDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>, JsonSerializer<Map<String, Supplier<List<ModuleBean>>>>
 {
 
-    public ModuleListDeserializer()
-    {}
+    protected ShallowConnectAddonBean addon;
+
+    public ModuleListDeserializer(ShallowConnectAddonBean addon)
+    {
+        this.addon = addon;
+    }
 
     @Override
     public Map<String, Supplier<List<ModuleBean>>> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
@@ -63,6 +68,7 @@ public abstract class ModuleListDeserializer implements JsonDeserializer<Map<Str
     protected void throwUnknownModuleType(String moduleTypeKey) throws ConnectModuleValidationException
     {
         throw new ConnectModuleValidationException(
+                addon,
                 new ConnectModuleMeta(moduleTypeKey, ModuleBean.class) {},
                 "No provider found for module type " + moduleTypeKey + " referenced in the descriptor",
                 "connect.install.error.unknown.module",

@@ -1,19 +1,16 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * The modules of an add-on. Modules are loaded lazily and any validation errors are deferred to the first usage.
@@ -37,106 +34,40 @@ public class ModuleMultimap
     }
 
     /**
-     * Returns a map of module types to list of modules, excluding module types that produce validation errors.
+     * Returns a map of module types to list of modules, excluding module types where retrieval failed, typically due
+     * to validation errors.
      *
+     * @param exceptionHandler the exception handler to invoke if an error occurred
      * @return the valid module lists
      */
-    public Map<String, List<ModuleBean>> getValidModuleLists()
+    public Map<String, List<ModuleBean>> getValidModuleLists(Consumer<Exception> exceptionHandler)
     {
+        Optional<Consumer<Exception>> optionalExceptionHandler = Optional.of(exceptionHandler);
         for (String moduleType : moduleListSuppliers.keySet())
         {
-            loadValidModuleList(moduleType);
+            loadExistingModuleList(moduleType, optionalExceptionHandler);
         }
         return Collections.unmodifiableMap(validModules);
     }
 
     /**
-     * Returns a map of module types to list of modules.
-     *
-     * @return the valid module lists
-     * @throws ConnectModuleValidationException if a validation error occurs for any module type
-     */
-    public Map<String, List<ModuleBean>> getModuleLists() throws ConnectModuleValidationException
-    {
-        return rethrowModuleValidationCause(new Supplier<Map<String, List<ModuleBean>>>()
-        {
-
-            @Override
-            public Map<String, List<ModuleBean>> get()
-            {
-                return moduleListSuppliers.entrySet().stream()
-                        .map(new Function<Entry<String, Supplier<List<ModuleBean>>>, Entry<String, List<ModuleBean>>>()
-                        {
-
-                            @Override
-                            public Entry<String, List<ModuleBean>> apply(Entry<String, Supplier<List<ModuleBean>>> entry)
-                            {
-                                return new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue().get());
-                            }
-                        })
-                        .collect(Collectors.toMap(new Function<Entry<String, List<ModuleBean>>, String>()
-                        {
-
-                            @Override
-                            public String apply(Entry<String, List<ModuleBean>> entry)
-                            {
-                                return entry.getKey();
-                            }
-                        }, new Function<Entry<String, List<ModuleBean>>, List<ModuleBean>>()
-                        {
-
-                            @Override
-                            public List<ModuleBean> apply(Entry<String, List<ModuleBean>> entry)
-                            {
-                                return entry.getValue();
-                            }
-                        }));
-            }
-        });
-    }
-
-    /**
      * Returns a list of modules of the given type, unless a validation error occurred when retrieving it.
      *
-     * @return a list of modules, or {@link Optional#empty()} if a validation error occurred
+     * @param type the module type for which to return the list of modules
+     * @param exceptionHandler the exception handler to invoke if an error occurred
+     * @return a list of modules, or {@link Optional#empty()} if an error occurred
      */
-    public Optional<List<ModuleBean>> getValidModuleListOfType(String type)
+    public Optional<List<ModuleBean>> getValidModuleListOfType(String type, Consumer<Exception> exceptionHandler)
     {
-        return Optional.ofNullable(loadValidModuleList(type));
-    }
-
-    /**
-     * Returns a list of modules of the given type.
-     *
-     * @return a list of modules
-     * @throws ConnectModuleValidationException if a validation error occurs
-     */
-    public List<ModuleBean> getModuleListOfType(String type) throws ConnectModuleValidationException
-    {
-        return rethrowModuleValidationCause(new Supplier<List<ModuleBean>>()
+        Optional<List<ModuleBean>> optionalModuleList = Optional.empty();
+        if (moduleListSuppliers.containsKey(type))
         {
-
-            @Override
-            public List<ModuleBean> get()
-            {
-                return moduleListSuppliers.get(type).get();
-            }
-        });
-    }
-
-    private <T> T rethrowModuleValidationCause(Supplier<T> supplier) throws ConnectModuleValidationException
-    {
-        try
-        {
-            return supplier.get();
-        } catch (RuntimeException e)
-        {
-            Throwables.propagateIfInstanceOf(e.getCause(), ConnectModuleValidationException.class);
-            throw e;
+            return Optional.ofNullable(loadExistingModuleList(type, Optional.of(exceptionHandler)));
         }
+        return optionalModuleList;
     }
 
-    private List<ModuleBean> loadValidModuleList(String moduleType)
+    private List<ModuleBean> loadExistingModuleList(String moduleType, Optional<Consumer<Exception>> optionalExceptionHandler)
     {
         try
         {
@@ -149,9 +80,18 @@ public class ModuleMultimap
                     return moduleListSuppliers.get(type).get();
                 }
             });
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
-            // Skip
+            optionalExceptionHandler.ifPresent(new Consumer<Consumer<Exception>>()
+            {
+
+                @Override
+                public void accept(Consumer<Exception> exceptionConsumer)
+                {
+                    exceptionConsumer.accept(e);
+                }
+            });
             return null;
         }
     }
@@ -165,9 +105,17 @@ public class ModuleMultimap
         }
         ModuleMultimap other = (ModuleMultimap) otherObj;
 
+        Consumer<Exception> noopExceptionHandler = new Consumer<Exception>()
+        {
+
+            @Override
+            public void accept(Exception e)
+            {
+            }
+        };
         return new EqualsBuilder()
                 .append(moduleListSuppliers.keySet(), other.moduleListSuppliers.keySet())
-                .append(getValidModuleLists(), other.getValidModuleLists())
+                .append(getValidModuleLists(noopExceptionHandler), other.getValidModuleLists(noopExceptionHandler))
                 .isEquals();
     }
 
@@ -176,7 +124,13 @@ public class ModuleMultimap
     {
         return new HashCodeBuilder(41, 7)
                 .append(moduleListSuppliers.keySet())
-                .append(getValidModuleLists())
+                .append(getValidModuleLists(new Consumer<Exception>()
+                {
+
+                    @Override
+                    public void accept(Exception e)
+                    {}
+                }))
                 .build();
     }
 }

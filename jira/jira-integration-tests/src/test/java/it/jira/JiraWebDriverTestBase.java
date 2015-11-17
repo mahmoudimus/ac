@@ -14,15 +14,16 @@ import it.util.ConnectTestUserFactory;
 import it.util.JiraTestUserFactory;
 import it.util.TestProject;
 import it.util.TestUser;
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.testutils.annotations.Retry;
 
 import java.rmi.RemoteException;
-import java.util.Locale;
 import java.util.concurrent.Callable;
 
+@Retry(maxAttempts=JiraWebDriverTestBase.MAX_RETRY_ATTEMPTS)
 public class JiraWebDriverTestBase
 {
 
@@ -44,6 +45,10 @@ public class JiraWebDriverTestBase
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+
+    @Rule
+    public RetryRule retryRule = new RetryRule();
+    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     @BeforeClass
     public static void beforeClass() throws RemoteException
@@ -84,13 +89,13 @@ public class JiraWebDriverTestBase
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
-    protected void login(TestUser user)
+    protected static void login(TestUser user)
     {
         logout();
         product.quickLogin(user.getUsername(), user.getPassword());
     }
 
-    protected <T> T loginAndRun(TestUser user, Callable<T> test) throws Exception
+    protected static <T> T loginAndRun(TestUser user, Callable<T> test) throws Exception
     {
         logout();
         login(user);
@@ -103,13 +108,13 @@ public class JiraWebDriverTestBase
         }
     }
 
-    protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
+    protected static <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
         logout();
         return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
     }
 
-    public static <T> T runWithAnonymousUsePermission(Callable<T> test) throws Exception
+    protected static <T> T runWithAnonymousUsePermission(Callable<T> test) throws Exception
     {
         final AddPermissionPage addPermissionPage = product.quickLoginAsAdmin(AddPermissionPage.class,
                 DEFAULT_PERMISSION_SCHEMA, JIRA_PERMISSION_BROWSE_PROJECTS);
@@ -123,6 +128,5 @@ public class JiraWebDriverTestBase
             EditPermissionsPage editPermissionsPage = product.quickLoginAsAdmin(EditPermissionsPage.class, DEFAULT_PERMISSION_SCHEMA);
             editPermissionsPage.deleteForGroup("Browse Projects", JIRA_GROUP_ANYONE);
         }
-
     }
 }
