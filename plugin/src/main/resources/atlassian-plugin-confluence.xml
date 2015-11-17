@@ -19,7 +19,7 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.plugin.connect.plugin.rest</package>
-        <package>com.atlassian.plugin.connect.it.confluence.macro.rest</package>
+        <package>com.atlassian.plugin.connect.confluence.macro.rest</package>
     </rest>
 
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
