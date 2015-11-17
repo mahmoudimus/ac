@@ -17,8 +17,8 @@ import cc.plural.jsonij.Value;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.matcher.ValueMatchers.hasProperty;
-import static it.matcher.ValueMatchers.isArrayMatching;
+import static com.atlassian.plugin.connect.test.common.matcher.ValueMatchers.hasProperty;
+import static com.atlassian.plugin.connect.test.common.matcher.ValueMatchers.isArrayMatching;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 

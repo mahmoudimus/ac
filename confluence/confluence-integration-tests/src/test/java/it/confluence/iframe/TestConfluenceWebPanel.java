@@ -28,7 +28,7 @@ import org.junit.rules.TestRule;
 import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
 
-import static org.junit.internal.matchers.StringContains.containsString;
+import static org.hamcrest.core.StringContains.containsString;
 
 public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 {

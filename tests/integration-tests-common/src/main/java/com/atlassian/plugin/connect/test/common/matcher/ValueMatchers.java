@@ -1,4 +1,4 @@
-package it.matcher;
+package com.atlassian.plugin.connect.test.common.matcher;
 
 import cc.plural.jsonij.Value;
 import org.hamcrest.Description;
