@@ -157,6 +157,11 @@
             <version>3.1.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-spi</artifactId>
+            <version>${atlassian.upm.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

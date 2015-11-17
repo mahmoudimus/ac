@@ -56,6 +56,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.upm</groupId>-->
+            <!--<artifactId>upm-spi</artifactId>-->
+            <!--<version>${atlassian.upm.version}</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
