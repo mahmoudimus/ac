@@ -68,6 +68,11 @@ public class ConnectModulesGsonFactory
         return builder.create().fromJson(modulesJson, JSON_MODULE_LIST_TYPE);
     }
 
+    public static String addonBeanToJson(ConnectAddonBean bean)
+    {
+        return getGson().toJson(bean);
+    }
+
     private static class ShallowModuleListExclusionStrategy implements ExclusionStrategy
     {
 

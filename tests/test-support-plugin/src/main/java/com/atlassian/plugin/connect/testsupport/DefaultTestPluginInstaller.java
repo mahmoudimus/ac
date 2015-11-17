@@ -43,7 +43,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     @Override
     public Plugin installAddon(ConnectAddonBean bean) throws IOException
     {
-        String json = ConnectModulesGsonFactory.getGson().toJson(bean);
+        String json = ConnectModulesGsonFactory.addonBeanToJson(bean);
         return installAddon(json);
     }
 
