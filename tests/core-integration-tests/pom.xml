@@ -300,7 +300,7 @@
                         <product>
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
-                            <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../integration-tests-common/src/main/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>
@@ -377,8 +377,7 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <log4jProperties>src/test/resources/log4j-confluence.properties
-                            </log4jProperties>
+                            <log4jProperties>${basedir}/../integration-tests-common/src/main/resources/log4j-confluence.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>
