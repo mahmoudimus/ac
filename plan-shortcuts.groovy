@@ -288,7 +288,7 @@ testJobsForJIRA(['mavenProductParameters']) {
             groupName: 'Item',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    projectIntegrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITJ',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
@@ -296,7 +296,7 @@ testJobsForJIRA(['mavenProductParameters']) {
             additionalMavenParameters: '#mavenProductParameters',
             project: 'tests/core-integration-tests,jira/jira-integration-tests'
     )
-    projectIntegrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITJC',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
