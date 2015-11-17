@@ -56,6 +56,8 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
+        runner.setToggleableConditionShouldDisplay(true);
+
         TestUser user = testUserFactory.basicUser();
         login(user);
         ConnectAddOnEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(
