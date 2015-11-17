@@ -18,6 +18,7 @@ import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkUtil;
 import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFactory;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
@@ -184,17 +185,18 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     private void validateModules(ConnectAddonBean addon) throws InvalidDescriptorException
     {
-        try
+        addon.getModules().getValidModuleLists(new LoggingModuleValidationExceptionHandler()
         {
-            addon.getModules().getModuleLists();
-        }
-        catch (ConnectModuleValidationException e)
-        {
-            InvalidDescriptorException exception = new InvalidDescriptorException(e.getMessage(),
-                    e.getI18nKey(), e.getI18nParameters());
-            exception.initCause(e);
-            throw exception;
-        }
+
+            @Override
+            protected void handleModuleValidationCause(ConnectModuleValidationException e)
+            {
+                InvalidDescriptorException exception = new InvalidDescriptorException(e.getMessage(),
+                        e.getI18nKey(), e.getI18nParameters());
+                exception.initCause(e);
+                throw exception;
+            }
+        });
     }
 
     private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddOnUserDisableException

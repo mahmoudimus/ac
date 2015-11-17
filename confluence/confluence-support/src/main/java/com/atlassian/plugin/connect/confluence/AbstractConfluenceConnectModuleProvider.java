@@ -29,7 +29,7 @@ public abstract class AbstractConfluenceConnectModuleProvider<T extends BaseModu
     public List<T> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
         URL schemaUrl = pluginRetrievalService.getPlugin().getResource(SCHEMA_PATH);
-        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, schemaUrl, schemaValidator);
+        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, descriptor, schemaUrl, schemaValidator);
         return super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
     }
 }

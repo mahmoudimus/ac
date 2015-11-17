@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
+import com.atlassian.plugin.connect.plugin.descriptor.event.EventPublishingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.BeanToModuleRegistrar;
 import com.google.common.base.Strings;
 
@@ -28,11 +29,14 @@ public class ConnectAddonToPluginFactory
     private static final String PARAM_POST_INSTALL_URL = "post.install.url";
     
     private final BeanToModuleRegistrar beanToModuleRegistrar;
+    private Consumer<Exception> moduleValidationExceptionHandler;
 
     @Inject
-    public ConnectAddonToPluginFactory(BeanToModuleRegistrar beanToModuleRegistrar)
+    public ConnectAddonToPluginFactory(BeanToModuleRegistrar beanToModuleRegistrar,
+            EventPublishingModuleValidationExceptionHandler moduleValidationExceptionHandler)
     {
         this.beanToModuleRegistrar = beanToModuleRegistrar;
+        this.moduleValidationExceptionHandler = moduleValidationExceptionHandler;
     }
 
     public Plugin create(ConnectAddonBean addon, PluginState state)
@@ -70,7 +74,8 @@ public class ConnectAddonToPluginFactory
 
     private void addPluginInfoParameterForPageIfDeclared(PluginInformation pluginInfo, String parameterKey, ConnectAddonBean addon, String moduleType)
     {
-        Optional<List<ModuleBean>> optionalPages = addon.getModules().getValidModuleListOfType(moduleType);
+        Optional<List<ModuleBean>> optionalPages = addon.getModules().getValidModuleListOfType(
+                moduleType, moduleValidationExceptionHandler);
         optionalPages.ifPresent(new Consumer<List<ModuleBean>>()
         {
 

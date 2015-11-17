@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
@@ -20,8 +21,9 @@ public class StaticModuleListDeserializer extends ModuleListDeserializer
 {
     private final Set<ConnectModuleMeta> moduleMetas;
 
-    public StaticModuleListDeserializer(ConnectModuleMeta... moduleMetas)
+    public StaticModuleListDeserializer(ShallowConnectAddonBean addon, ConnectModuleMeta... moduleMetas)
     {
+        super(addon);
         this.moduleMetas = new HashSet<>(Arrays.asList(moduleMetas));
     }
 
