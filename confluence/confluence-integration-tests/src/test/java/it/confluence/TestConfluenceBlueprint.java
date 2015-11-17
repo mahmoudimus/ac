@@ -56,7 +56,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
 
     public static HttpServlet blueprintTemplateServlet()
     {
-        return ConnectAppServlets.wrapContextAwareServlet(new MustacheServlet("confluence/test-blueprint.xml"));
+        return ConnectAppServlets.wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/test-blueprint.xml"));
     }
 
 

@@ -426,7 +426,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroInOrderedTable() throws Exception
     {
         login(testUserFactory.basicUser());
-        Content page = createPage(ModuleKeyUtils.randomName(TABLE_MACRO_NAME), Utils.loadResourceAsString("confluence/test-page-table-macro.xhtml"));
+        Content page = createPage(ModuleKeyUtils.randomName(TABLE_MACRO_NAME), Utils.loadResourceAsString("it/confluence/macro/test-page-table-macro.xhtml"));
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
