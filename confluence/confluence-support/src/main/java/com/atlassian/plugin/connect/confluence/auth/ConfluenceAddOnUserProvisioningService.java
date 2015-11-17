@@ -349,7 +349,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
                 String username = ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey());
                 try
                 {
-                    grantAddonUserSpaceAdmin(getConfluenceUser(username));
+                    grantAddonUserAdminToSpace(spaceCreateEvent.getSpace(), getConfluenceUser(username));
                 }
                 catch (Exception e)
                 {
