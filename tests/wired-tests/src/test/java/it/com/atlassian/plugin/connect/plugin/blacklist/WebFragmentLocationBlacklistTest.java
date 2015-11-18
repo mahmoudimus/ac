@@ -28,7 +28,7 @@ public class WebFragmentLocationBlacklistTest
     @Test
     public void testShouldReturnBlacklistedWebPanels() throws Exception
     {
-        assertTrue(webFragmentLocationBlacklist.getBlacklistedWebItemLocations().contains("atl.header.webpanel.blacklisted"));
+        assertTrue(webFragmentLocationBlacklist.getBlacklistedWebPanelLocations().contains("atl.header.webpanel.blacklisted"));
     }
 
 }
