@@ -17,10 +17,13 @@ import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.testutils.annotations.Retry;
 
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+@Retry(maxAttempts=JiraWebDriverTestBase.MAX_RETRY_ATTEMPTS)
 public class JiraWebDriverTestBase
 {
 
@@ -42,6 +45,10 @@ public class JiraWebDriverTestBase
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+
+    @Rule
+    public RetryRule retryRule = new RetryRule();
+    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     @BeforeClass
     public static void beforeClass() throws RemoteException
