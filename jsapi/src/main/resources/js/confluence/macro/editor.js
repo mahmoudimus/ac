@@ -52,7 +52,7 @@
 
             /**
              * Constructs a new AUI dialog containing a custom editor proxied from a remote app. Should be passed to the
-             * MacroBrowser as a macro editor override. (See override.js for more details)
+             * MacroBrowser as a macro editor override. (See editor-override.js for more details)
              *
              * @param {Object} macroData Data associated with the macro being edited.
              * @param {String} [macroData.name] the macro's name.

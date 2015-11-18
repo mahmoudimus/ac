@@ -17,13 +17,17 @@ AJS.bind("init.rte", function () {
       url: AJS.params.contextPath + "%%URL%%"
     };
     require(["ac/confluence/macro/editor"], function(macroEditor) {
-        AJS.MacroBrowser.setMacroJsOverride(macroName, {
+        var existingOverride = AJS.MacroBrowser.getMacroJsOverride(macroName);
+        if (existingOverride == null) {
+            existingOverride = {};
+        }
+        $.extend(existingOverride, {
             opener: function(macroData) {
                 macroData = $.extend({name: macroName}, macroData);
                 macroEditor.openCustomEditor(macroData, editorOpts);
             }
         });
-
+        AJS.MacroBrowser.setMacroJsOverride(macroName, existingOverride);
     });
 
 });
