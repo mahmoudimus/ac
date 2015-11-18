@@ -216,19 +216,21 @@ testJobsForConfluence(['mavenProductParameters']) {
             groupName: 'Item',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    confluenceIntegrationTestJob(
+    projectIntegrationTestJob(
             key: 'CITJ',
             product: 'Confluence',
             testGroup: 'confluence-jsapi',
             groupName: 'JS API FF',
-            additionalMavenParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters',
+            project: 'tests/marketplace-support,tests/integration-tests-common,tests/core-integration-tests,confluence/confluence-integration-tests'
     )
-    confluenceIntegrationTestJob(
+    projectIntegrationTestJob(
             key: 'CITJC',
             product: 'Confluence',
             testGroup: 'confluence-jsapi',
             groupName: 'JS API Chrome',
-            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome'
+            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome',
+            project: 'tests/marketplace-support,tests/integration-tests-common,tests/core-integration-tests,confluence/confluence-integration-tests'
     )
     confluenceIntegrationTestJob(
             key: 'CITA',
@@ -294,19 +296,21 @@ testJobsForJIRA(['mavenProductParameters']) {
             groupName: 'Item',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    jiraIntegrationTestJob(
+    projectIntegrationTestJob(
             key: 'JITJ',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
             groupName: 'JS API FF',
-            additionalMavenParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters',
+            project: 'tests/marketplace-support,tests/integration-tests-common,tests/core-integration-tests,jira/jira-integration-tests'
     )
-    jiraIntegrationTestJob(
+    projectIntegrationTestJob(
             key: 'JITJC',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
             groupName: 'JS API Chrome',
-            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome'
+            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome',
+            project: 'tests/marketplace-support,tests/integration-tests-common,tests/core-integration-tests,jira/jira-integration-tests'
     )
 }
 

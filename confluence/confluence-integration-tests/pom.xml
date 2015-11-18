@@ -346,7 +346,6 @@
                                 <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
-                                <include>it/common/jsapi/*.java</include>
                                 <include>it/confluence/jsapi/*.java</include>
                             </includes>
                         </testGroup>

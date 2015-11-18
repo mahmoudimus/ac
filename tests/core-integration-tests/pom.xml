@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-integration-tests</artifactId>
-    <name>Atlassian Connect - Integration Tests</name>
+    <name>Atlassian Connect - Core Integration Tests</name>
     <packaging>atlassian-plugin</packaging>
 
     <licenses>
@@ -512,6 +512,18 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-jsapi</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProduct>confluence</testedProduct>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/jsapi/*.java</include>
                             </includes>
                         </testGroup>
 
