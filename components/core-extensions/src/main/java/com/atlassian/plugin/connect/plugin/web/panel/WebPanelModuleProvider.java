@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFa
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;

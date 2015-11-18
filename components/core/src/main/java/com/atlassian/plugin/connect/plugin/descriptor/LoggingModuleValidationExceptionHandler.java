@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ModuleMultimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

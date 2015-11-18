@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor.event;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ModuleMultimap;
 import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;

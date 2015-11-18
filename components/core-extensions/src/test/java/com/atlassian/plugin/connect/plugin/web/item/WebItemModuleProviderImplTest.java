@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.item;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;

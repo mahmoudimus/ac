@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor.event;
 
 import com.atlassian.analytics.api.annotations.EventName;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 
 @EventName("connect.addon.moduleValidation.failedAfterInstall")
 public class ConnectAddonModuleValidationFailedAfterInstallEvent

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;

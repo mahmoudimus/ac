@@ -1,4 +1,7 @@
-package com.atlassian.plugin.connect.modules.beans;
+package com.atlassian.plugin.connect.spi.descriptor;
+
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 
 import java.io.Serializable;
 
