@@ -3,6 +3,10 @@ package it.common;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
+import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
@@ -10,10 +14,6 @@ import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
-
-import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
-import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
-import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 public abstract class MultiProductWebDriverTestBase
 {
@@ -26,6 +26,10 @@ public abstract class MultiProductWebDriverTestBase
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+
+    @Rule
+    public RetryRule retryRule = new RetryRule();
+    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     protected static ConnectPageOperations connectPageOperations()
     {

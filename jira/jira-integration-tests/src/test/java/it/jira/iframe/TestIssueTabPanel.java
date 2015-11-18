@@ -3,8 +3,8 @@ package it.jira.iframe;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePage;
 import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePageWithRemotePluginIssueTab;
+import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -110,12 +110,12 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
         login(testUserFactory.basicUser());
 
         // tab panel should be present
-        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key());
+        ViewIssuePageWithAddonFragments page = product.visit(ViewIssuePageWithAddonFragments.class, issue.key());
         assertThat(page.isTabPanelPresent(completeKey), is(true));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        page = product.visit(JiraViewIssuePage.class, issue.key());
+        page = product.visit(ViewIssuePageWithAddonFragments.class, issue.key());
         assertThat(page.isTabPanelPresent(completeKey), is(false));
     }
 

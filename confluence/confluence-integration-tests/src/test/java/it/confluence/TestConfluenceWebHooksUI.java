@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
@@ -34,6 +35,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
     }
 
     @Test
+    @Ignore
     public void testSearchPerformedWebHookFired() throws Exception
     {
         WebHookTestServlet.runInJsonRunner(product.getProductInstance().getBaseUrl(), "search_performed", new WebHookTester()

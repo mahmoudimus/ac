@@ -1,9 +1,10 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
+import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
-import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
+import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -17,6 +18,8 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
@@ -33,10 +36,21 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
     public DefaultModuleLocationQualifier(final ConnectAddonBean addonBean)
     {
         this.addonBean = addonBean;
-        this.keyMapSupplier = Suppliers.memoize(() -> ImmutableMap.<String, String>builder()
-                .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webItems")))
-                .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webSections")))
-                .build());
+        this.keyMapSupplier = Suppliers.memoize(() -> buildKeyMap(addonBean));
+    }
+
+    private ImmutableMap<String, String> buildKeyMap(ConnectAddonBean addonBean)
+    {
+        ImmutableMap.Builder<String, String> keyMapBuilder = ImmutableMap.<String, String>builder();
+
+        Consumer<Exception> moduleValidationExceptionHandler = new LoggingModuleValidationExceptionHandler();
+        Optional<List<ModuleBean>> optionalWebItems = addonBean.getModules().getValidModuleListOfType("webItems", moduleValidationExceptionHandler);
+        optionalWebItems.ifPresent((webItems) -> keyMapBuilder.putAll(createKeyToQualifiedKeyMap(webItems)));
+
+        Optional<List<ModuleBean>> optionalWebSections = addonBean.getModules().getValidModuleListOfType("webSections", moduleValidationExceptionHandler);
+        optionalWebSections.ifPresent((webSections) -> keyMapBuilder.putAll(createKeyToQualifiedKeyMap(webSections)));
+
+        return keyMapBuilder.build();
     }
 
     private Map<String, String> createKeyToQualifiedKeyMap(@Nullable List<ModuleBean> modules)

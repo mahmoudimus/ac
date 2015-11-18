@@ -1,11 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
-import com.google.common.collect.Sets;
+import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
+import com.atlassian.plugin.web.Condition;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,12 +39,16 @@ public class WebItemModuleProviderImplTest
     private WebItemModuleProviderImpl provider;
 
     @Mock
-    private PageConditionsFactory pageConditionsFactory;
+    private PluginAccessor pluginAccessor;
 
     @Before
     public void setUp()
     {
-        when(pageConditionsFactory.getConditionNames()).thenReturn(Sets.newHashSet(VALID_CONDITION, OTHER_VALID_CONDITION));
+        ConnectConditionClassResolver resolver = () -> Lists.newArrayList(
+                ConnectConditionClassResolver.Entry.newEntry(VALID_CONDITION, Condition.class).contextFree().build(),
+                ConnectConditionClassResolver.Entry.newEntry(OTHER_VALID_CONDITION, Condition.class).contextFree().build()
+        );
+        when(pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class)).thenReturn(Collections.singletonList(resolver));
     }
 
     @Test

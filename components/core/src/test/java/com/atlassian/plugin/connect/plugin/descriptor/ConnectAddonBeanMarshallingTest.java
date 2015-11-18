@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
@@ -9,11 +10,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.descriptor.AvailableModuleTypes;
-import com.atlassian.plugin.connect.plugin.descriptor.ModuleListDeserializer;
-import com.atlassian.plugin.connect.plugin.descriptor.StaticAvailableModuleTypes;
 import com.google.common.base.Supplier;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
 
@@ -45,8 +45,6 @@ public class ConnectAddonBeanMarshallingTest
 {
 
     private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
-
-    private AvailableModuleTypes moduleTypes = new StaticAvailableModuleTypes(new WebItemModuleMeta());
 
     /**
      * Just verifies the basic marshalling of the core properties for the top-level add on bean
@@ -81,15 +79,14 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonNoCapabilitiesCompositeCondition.json");
 
-        ModuleListDeserializer deserializer = new ModuleListDeserializer(moduleTypes);
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, deserializer).create();
-        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean addOn = deserializeAddonWithModules(json);
 
-        assertThat(addOn.getModules().get("webItems"), contains(hasProperty("conditions", contains(
+        List<ModuleBean> moduleList = addOn.getModules().getValidModuleListOfType("webItems", (e) -> {}).get();
+        assertThat(moduleList, contains(hasProperty("conditions", contains(
                 both(instanceOf(CompositeConditionBean.class)).and(hasProperty("conditions", contains(
                         both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("can_attach_file_to_issue"))),
                         both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("is_issue_assigned_to_current_user")))
-                    ))).and(hasProperty("type", is(CompositeConditionType.OR))),
+                ))).and(hasProperty("type", is(CompositeConditionType.OR))),
                 both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("user_is_logged_in")))
         ))));
     }
@@ -143,11 +140,10 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonSingleCapability.json");
 
-        ModuleListDeserializer deserializer = new ModuleListDeserializer(moduleTypes);
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, deserializer).create();
-        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean addOn = deserializeAddonWithModules(json);
 
-        List<ModuleBean> moduleList = addOn.getModules().get("webItems");
+        List<ModuleBean> moduleList = addOn.getModules().getValidModuleListOfType("webItems", (e) -> {
+        }).get();
 
         assertEquals(1, moduleList.size());
 
@@ -165,26 +161,20 @@ public class ConnectAddonBeanMarshallingTest
     public void multiCapabilities() throws Exception
     {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
-
-        ModuleListDeserializer deserializer = new ModuleListDeserializer(moduleTypes);
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, deserializer).create();
-        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
-
-        List<ModuleBean> moduleList = addOn.getModules().get("webItems");
+        ConnectAddonBean addOn = deserializeAddonWithModules(json);
+        List<ModuleBean> moduleList = addOn.getModules().getValidModuleListOfType("webItems", (e) -> {}).get();
 
         assertEquals(2, moduleList.size());
         assertEquals("a web item", ((WebItemModuleBean)moduleList.get(0)).getName().getValue());
         assertEquals("another web item", ((WebItemModuleBean)moduleList.get(1)).getName().getValue());
-
         assertEquals("http://www.example.com", addOn.getBaseUrl());
     }
 
     @Test
     public void noScopes() throws IOException
     {
-        String json = readAddonTestFile("addonMultipleCapabilities.json");
-        ModuleListDeserializer deserializer = new ModuleListDeserializer(moduleTypes);
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, deserializer).create();
+        String json = readAddonTestFile("addonNoCapabilities.json");
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().create();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is(Collections.<ScopeName>emptySet()));
     }
@@ -212,5 +202,20 @@ public class ConnectAddonBeanMarshallingTest
         String json = readAddonTestFile("badScopeName.json");
         ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is(emptySet));
+    }
+
+    private ConnectAddonBean deserializeAddonWithModules(String json)
+    {
+        JsonElement element = new JsonParser().parse(json);
+        ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJson(element);
+
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE,
+                createDeserializer(shallowBean)).create();
+        return gson.fromJson(json, ConnectAddonBean.class);
+    }
+
+    private ModuleListDeserializer createDeserializer(ShallowConnectAddonBean descriptor)
+    {
+        return new StaticModuleListDeserializer(descriptor, new WebItemModuleMeta());
     }
 }

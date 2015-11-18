@@ -4,7 +4,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 
 import java.util.List;
 

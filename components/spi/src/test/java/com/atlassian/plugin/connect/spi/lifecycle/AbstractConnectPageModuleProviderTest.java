@@ -1,16 +1,20 @@
 package com.atlassian.plugin.connect.spi.lifecycle;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
-import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
+import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.web.Condition;
+import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,7 +50,7 @@ public class AbstractConnectPageModuleProviderTest
     private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Mock
-    private PageConditionsFactory pageConditionsFactory;
+    private PluginAccessor pluginAccessor;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -55,22 +59,26 @@ public class AbstractConnectPageModuleProviderTest
     public void setUp()
     {
         provider = new AbstractConnectPageModuleProviderForTesting(pluginRetrievalService, iFrameRenderStrategyBuilderFactory,
-                iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pageConditionsFactory);
-        when(pageConditionsFactory.getConditionNames()).thenReturn(Collections.singleton(VALID_CONDITION));
+                iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pluginAccessor);
+
+        ConnectConditionClassResolver resolver = () -> ImmutableList.of(
+                ConnectConditionClassResolver.Entry.newEntry(VALID_CONDITION, Condition.class).contextFree().build()
+        );
+        when(pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class)).thenReturn(ImmutableList.of(resolver));
     }
 
     @Test
     public void validBuiltInConditionPasses() throws ConnectModuleValidationException
     {
         SingleConditionBean condition = newCondition(VALID_CONDITION);
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
     public void validRemoteConditionPasses() throws ConnectModuleValidationException
     {
         SingleConditionBean condition = newCondition("/remote-condition");
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
@@ -78,7 +86,7 @@ public class AbstractConnectPageModuleProviderTest
     {
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition(VALID_CONDITION))
                 .withType(CompositeConditionType.AND).build();
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
@@ -86,7 +94,7 @@ public class AbstractConnectPageModuleProviderTest
     {
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition("/remote-condition"))
                 .withType(CompositeConditionType.AND).build();
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
@@ -94,7 +102,7 @@ public class AbstractConnectPageModuleProviderTest
     {
         expectValidationException(INVALID_CONDITION);
         SingleConditionBean condition = newCondition(INVALID_CONDITION);
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
@@ -103,7 +111,7 @@ public class AbstractConnectPageModuleProviderTest
         expectValidationException(INVALID_CONDITION);
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition(INVALID_CONDITION))
                 .withType(CompositeConditionType.AND).build();
-        provider.validateConditions(Collections.singletonList(newPage(condition)));
+        provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     private SingleConditionBean newCondition(String condition)
@@ -128,10 +136,10 @@ public class AbstractConnectPageModuleProviderTest
                 IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                 IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                 WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                PageConditionsFactory pageConditionsFactory)
+                PluginAccessor pluginAccessor)
         {
             super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                    webItemModuleDescriptorFactory, pageConditionsFactory);
+                    webItemModuleDescriptorFactory, pluginAccessor);
         }
 
         @Override

@@ -1,312 +1,138 @@
 package it.confluence.item;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
+import com.atlassian.confluence.api.model.content.Content;
+import com.atlassian.confluence.pageobjects.component.menu.AUIDropdownMenu;
+import com.atlassian.confluence.pageobjects.component.menu.ConfluenceMenuItem;
+import com.atlassian.confluence.pageobjects.component.menu.ToolsMenu;
+import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.confluence.security.SpacePermission;
+import com.atlassian.plugin.connect.confluence.web.ConfluenceConditionClassResolver;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
-import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.common.util.TestUser;
 
-import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 import it.confluence.ConfluenceWebDriverTestBase;
 
-import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static com.atlassian.plugin.connect.test.common.matcher.IsLong.isLong;
-import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isLocale;
-import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isTimeZone;
-import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
-import static org.hamcrest.CoreMatchers.both;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
+/**
+ * Tests class resolution, autowiring and evaluation of some conditions in {@link ConfluenceConditionClassResolver}.
+ */
 public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {
-    private static ConnectRunner remotePlugin;
 
-    private static String onlyBettyWebItem;
-    private static String bettyAndBarneyWebItem;
-    private static final String ADMIN_RIGHTS_WEBITEM = "admin-rights";
-    private static final String CONTEXT_PARAMETERIZED_WEBITEM = "context-parameterized";
-    private static final String SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL = CONTEXT_PARAMETERIZED_WEBITEM + "-space";
+    private static final List<String> CONDITION_NAMES = newArrayList(
+            "can_edit_space_styles",
+            "create_content",
+            "email_address_public",
+            "has_page",
+            "has_space",
+            "latest_version",
+            "not_personal_space",
+            "showing_page_attachments",
+            "space_function_permission",
+            "space_sidebar",
+            "threaded_comments",
+            "tiny_url_supported",
+            "user_can_create_personal_space",
+            "user_can_update_user_status",
+            "user_logged_in_editable",
+            "viewing_content"
+    );
 
-    private static String onlyBettyConditionUrl;
-    private static String onlyBarneyConditionUrl;
-    private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
+    private static final Map<String, Map<String, String>> CONDITION_PARAMETERS = ImmutableMap.of(
+            "create_content", ImmutableMap.of("content", "Page"),
+            "space_function_permission", ImmutableMap.of("permission", SpacePermission.VIEWSPACE_PERMISSION)
+    );
 
-    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
-    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET2 = new ParameterCapturingConditionServlet(); // a 2nd to receive condition requests on the same page
-
-    private static TestUser betty;
-    private static TestUser barney;
+    private static ConnectRunner addon;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startAddon() throws Exception
     {
-        betty = testUserFactory.admin();
-        barney = testUserFactory.basicUser();
-
-        onlyBettyWebItem = "only-" + betty.getDisplayName();
-        bettyAndBarneyWebItem = betty.getDisplayName() + "-and-" + barney.getDisplayName();
-        onlyBettyConditionUrl = "/only" + betty.getDisplayName() + "Condition";
-        onlyBarneyConditionUrl = "/only" + barney.getDisplayName() + "Condition";
-
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-                .setAuthenticationToNone()
-                .addModules("webItems",
-                        newWebItemBean()
-                                .withName(new I18nProperty("Only Betty", onlyBettyWebItem))
-                                .withKey(onlyBettyWebItem)
-                                .withLocation("system.browse")
-                                .withWeight(1)
-                                .withUrl("http://www.google.com")
-                                .withConditions(
-                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                        newSingleConditionBean().withCondition(onlyBettyConditionUrl).build()
-                                )
-                                .build(),
-                        newWebItemBean()
-                                .withName(new I18nProperty("Betty And Barney", bettyAndBarneyWebItem))
-                                .withKey(bettyAndBarneyWebItem)
-                                .withLocation("system.browse")
-                                .withWeight(1)
-                                .withUrl("http://www.google.com")
-                                .withConditions(
-                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                        newCompositeConditionBean()
-                                                .withType(CompositeConditionType.OR)
-                                                .withConditions(
-                                                        newSingleConditionBean().withCondition(onlyBettyConditionUrl).build(),
-                                                        newSingleConditionBean().withCondition(onlyBarneyConditionUrl).build()
-                                                ).build()
-                                ).build(),
-                        newWebItemBean()
-                                .withName(new I18nProperty("Admin Rights", ADMIN_RIGHTS_WEBITEM))
-                                .withKey(ADMIN_RIGHTS_WEBITEM)
-                                .withLocation("system.browse")
-                                .withWeight(1)
-                                .withUrl("http://www.google.com")
-                                .withConditions(
-                                        newSingleConditionBean().withCondition("user_is_confluence_administrator").build()
-                                )
-                                .build(),
-                        newWebItemBean()
-                                .withName(new I18nProperty("Context Parameterized", CONTEXT_PARAMETERIZED_WEBITEM))
-                                .withKey(CONTEXT_PARAMETERIZED_WEBITEM)
-                                .withLocation("system.browse")
-                                .withContext(AddOnUrlContext.addon)
-                                .withWeight(1)
-                                .withUrl("/somewhere")
-                                .withConditions(
-                                        newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
-                                                "?pageId={page.id}&spaceKey={space.key}").build()
-                                )
-                                .build())
-                .addModules("webPanels",
-                        newWebPanelBean()
-                                .withName(new I18nProperty("Space Context Parameterized", SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL))
-                                .withKey(SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL)
-                                .withLocation("atl.general") // this location needs testing for space params; see AC-1018
-                                .withUrl("/somewhere-else")
-                                .withConditions(
-                                        newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL + "/space" +
-                                                "?pageId={page.id}&spaceKey={space.key}&spaceId={space.id}").build()
-                                )
-                                .build())
-                .addRoute(onlyBarneyConditionUrl, new CheckUsernameConditionServlet(barney))
-                .addRoute(onlyBettyConditionUrl, new CheckUsernameConditionServlet(betty))
-                .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)
-                .addRoute(PARAMETER_CAPTURE_CONDITION_URL + "/space", PARAMETER_CAPTURING_SERVLET2)
-                .start();
+        addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+                .setAuthenticationToNone();
+        addWebItemsWithConditions();
+        addon.start();
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopAddon() throws Exception
     {
-        if (remotePlugin != null)
+        if (addon != null)
         {
-            remotePlugin.stopAndUninstall();
+            addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void bettyCanSeeBettyWebItem() throws Exception
+    public void shouldDisplayWebItemsWithEachCondition()
     {
-        login(betty);
+        Content page = createPage(randomName(TestConfluenceConditions.class.getSimpleName()), TestConfluenceConditions.class.getName());
+        String pageId = String.valueOf(page.getId().asLong());
 
-        visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(onlyBettyWebItem), Optional.of("help-menu-link"));
-        assertNotNull("Web item should be found", webItem);
+        ViewPage viewPage = loginAndVisit(testUserFactory.admin(), ViewPage.class, pageId);
+        ToolsMenu toolsMenu = viewPage.openToolsMenu();
+
+        List<String> passedConditions = CONDITION_NAMES.stream()
+                .filter((conditionName) -> isItemPresentInMenu(toolsMenu, getDisplayNameForCondition(conditionName)))
+                .collect(Collectors.toList());
+
+        assertThat(passedConditions, equalTo(CONDITION_NAMES));
     }
 
-    @Test
-    public void barneyCannotSeeBettyWebItem() throws Exception
+    private static void addWebItemsWithConditions()
     {
-        login(barney);
-
-        visitEditPage();
-        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
+        for (String conditionName : CONDITION_NAMES)
+        {
+            addon.addModules("webItems", newWebItemBeanWithCondition(conditionName));
+        }
     }
 
-    @Test
-    public void adminCannotSeeBettyWebItem() throws Exception
+    private static WebItemModuleBean newWebItemBeanWithCondition(String conditionName)
     {
-        login(testUserFactory.admin());
-
-        visitEditPage();
-        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
+        SingleConditionBeanBuilder conditionBeanBuilder = newSingleConditionBean().withCondition(conditionName);
+        if (CONDITION_PARAMETERS.containsKey(conditionName))
+        {
+            conditionBeanBuilder.withParams(CONDITION_PARAMETERS.get(conditionName));
+        }
+        return newWebItemBean()
+                .withKey(conditionName.replace('_', '-'))
+                .withUrl("/path-without-route")
+                .withLocation("system.content.action/primary")
+                .withWeight(CONDITION_NAMES.indexOf(conditionName))
+                .withName(new I18nProperty(getDisplayNameForCondition(conditionName), null))
+                .withConditions(conditionBeanBuilder.build())
+                .build();
     }
 
-    @Test
-    public void bettyCanSeeBettyAndBarneyWebItem() throws Exception
+    private static String getDisplayNameForCondition(String conditionName)
     {
-        login(betty);
-
-        visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
-        assertNotNull("Web item should be found", webItem);
+        return String.format("%d %s", CONDITION_NAMES.indexOf(conditionName), StringUtils.substring(conditionName, 0, 15));
     }
 
-    @Test
-    public void barneyCanSeeBettyAndBarneyWebItem() throws Exception
+    private boolean isItemPresentInMenu(AUIDropdownMenu menu, String displayNameForCondition)
     {
-        login(barney);
-
-        visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
-        assertNotNull("Web item should be found", webItem);
-    }
-
-    @Test
-    public void adminCannotSeeBettyAndBarneyWebItem() throws Exception
-    {
-        login(testUserFactory.admin());
-
-        visitEditPage();
-        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(bettyAndBarneyWebItem)));
-    }
-
-    @Test
-    public void bettyCanSeeAdminRightsWebItem() throws Exception
-    {
-        login(betty);
-
-        visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
-        assertNotNull("Web item should be found", webItem);
-    }
-
-    @Test
-    public void barneyCannotSeeAdminRightsWebItem() throws Exception
-    {
-        login(barney);
-        visitEditPage();
-        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
-    }
-
-    @Test
-    public void adminCanSeeAdminRightsWebItem() throws Exception
-    {
-        login(testUserFactory.admin());
-
-        visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
-        assertNotNull("Web item should be found", webItem);
-    }
-
-    private ConfluenceEditPage navigateToEditPageAndVerifyParameterCapturingWebItem(TestUser user) throws Exception
-    {
-        login(user);
-
-        ConfluenceEditPage editPage = visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.of("help-menu-link"));
-        assertNotNull("Web item should be found", webItem);
-        return editPage;
-    }
-
-    @Test
-    public void standardParametersArePassedToConditions() throws Exception
-    {
-        TestUser user = testUserFactory.basicUser();
-        navigateToEditPageAndVerifyParameterCapturingWebItem(user);
-
-        Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-
-        assertThat(conditionParams, hasEntry(equalTo("lic"), equalTo("none")));
-        assertThat(conditionParams, hasEntry(equalTo("cp"), equalTo("/confluence")));
-        assertThat(conditionParams, hasEntry(equalTo("tz"), isTimeZone()));
-        assertThat(conditionParams, hasEntry(equalTo("loc"), isLocale()));
-        assertThat(conditionParams, hasEntry(equalTo("user_id"), equalTo(user.getDisplayName())));
-    }
-
-    @Test
-    public void contextParametersArePassedToConditions() throws Exception
-    {
-        ConfluenceEditPage editPage = navigateToEditPageAndVerifyParameterCapturingWebItem(testUserFactory.basicUser());
-
-        Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-
-        assertThat(conditionParams, hasEntry(equalTo("pageId"), equalTo(editPage.getPageId())));
-        assertThat(conditionParams, hasEntry(equalTo("spaceKey"), equalTo("ds")));
-    }
-
-    @Test
-    public void spaceContextParametersArePassedToConditions() throws Exception
-    {
-        login(testUserFactory.basicUser());
-        ConfluenceEditPage editPage = visitEditPage();
-
-        connectPageOperations.findWebPanel(getModuleKey(SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL));
-        Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET2.getParamsFromLastRequest();
-
-        assertThat(conditionParams, hasEntry(equalTo("pageId"), equalTo(editPage.getPageId())));
-        assertThat(conditionParams, hasEntry(equalTo("spaceKey"), equalTo("ds")));
-        assertThat(conditionParams, hasEntry(equalTo("spaceId"), both(not(equalTo(""))).and(not(nullValue()))));
-        assertThat(conditionParams, hasEntry(equalTo("spaceId"), isLong()));
-    }
-
-    @Test
-    public void versionIsIncluded() throws Exception
-    {
-        navigateToEditPageAndVerifyParameterCapturingWebItem(testUserFactory.basicUser());
-
-        String version = PARAMETER_CAPTURING_SERVLET.getHttpHeaderFromLastRequest(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION).get();
-
-        assertThat(version, isVersionNumber());
-    }
-
-
-    private ConfluenceEditPage visitEditPage() throws Exception
-    {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "Page with webpanel", "some page content");
-
-        return product.visit(ConfluenceEditPage.class, pageData.getId());
-    }
-
-    private String getModuleKey(String module)
-    {
-        return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(),module);
+        ConfluenceMenuItem menuItem = menu.getMenuItem(By.linkText(displayNameForCondition));
+        return menuItem.isPresent();
     }
 }

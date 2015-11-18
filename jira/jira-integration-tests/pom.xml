@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-jira-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.60-SNAPSHOT</version>
+        <version>1.1.62-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -387,7 +387,10 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.atlassian.testutils</groupId>
+            <artifactId>atlassian-test-annotations</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -538,6 +541,7 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
+                                <include>it/jira/condition/*.java</include>
                                 <include>it/jira/item/*.java</include>
                             </includes>
                         </testGroup>

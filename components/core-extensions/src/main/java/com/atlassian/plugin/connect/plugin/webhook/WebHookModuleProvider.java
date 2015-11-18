@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
