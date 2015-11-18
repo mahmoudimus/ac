@@ -10,7 +10,7 @@ var targetDirectory = "target/";
 var sourceSchemaSubDirectory = "schema/";
 var targetSchemaSubDirectory = sourceSchemaSubDirectory;
 
-var sourceScopeSubDirectory = "com/atlassian/connect/";
+var sourceScopeSubDirectory = "scope/";
 var targetScopeSubDirectory = "scope/";
 
 var schemaFiles = [
@@ -21,10 +21,10 @@ var schemaFiles = [
 ];
 
 var scopeFiles = [
-    'jira/scopes.jira.json',
-    'jira/scopes.jiraagile.json',
-    'confluence/scopes.confluence.json',
-    'scopes.common.json'
+    'common-whitelist.json',
+    'confluence-whitelist.json',
+    'jira-whitelist.json',
+    'jira-agile-whitelist.json'
 ];
 
 function renamePropertyShortClassNameToId(object) {

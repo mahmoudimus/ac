@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
 /**
- * An exception thrown when JSON schema validation fails.
+ * An exception thrown when add-on module registration fails.
  */
-public class ConnectModuleRegistrationException extends Exception
+public class ConnectModuleRegistrationException extends RuntimeException
 {
 
     public ConnectModuleRegistrationException(String message)

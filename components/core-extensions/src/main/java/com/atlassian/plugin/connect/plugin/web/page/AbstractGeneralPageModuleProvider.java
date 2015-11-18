@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
+import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
 public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectCorePageModuleProvider
@@ -19,12 +19,12 @@ public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectC
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            PageConditionsFactory pageConditionsFactory,
+            PluginAccessor pluginAccessor,
             ConnectJsonSchemaValidator schemaValidator,
             ProductAccessor productAccessor)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pageConditionsFactory, schemaValidator);
+                webItemModuleDescriptorFactory, pluginAccessor, schemaValidator);
         this.productAccessor = productAccessor;
     }
 

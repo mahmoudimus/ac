@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.AddOnScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScopeLoadJsonFileHelper;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
@@ -11,7 +12,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -39,9 +43,9 @@ public class StaticAddOnScopesTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void readingABadResourceNameResultsInException() throws IOException
+    public void whitelistWithInvalidScopeNameResultsInException() throws IOException
     {
-        StaticAddOnScopes.buildFor(resourceLocation("bad_name"));
+        getTestScopes("bad-test");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -54,11 +58,23 @@ public class StaticAddOnScopesTest
 
     private Collection<AddOnScope> getTestScopes() throws IOException
     {
-        return StaticAddOnScopes.buildFor(resourceLocation("test"));
+        return getTestScopes("test");
     }
 
-    private static URL resourceLocation(String product)
+    private Collection<AddOnScope> getTestScopes(String whitelistName) throws IOException
     {
-        return StaticAddOnScopesTest.class.getResource("/com/atlassian/connect/scopes." + product + ".json");
+        Map<ScopeName, AddOnScope> keyToScope = new HashMap<>();
+        AddOnScopeLoadJsonFileHelper.addProductScopesFromFile(keyToScope, resourceLocation(whitelistName));
+
+        // copy element references into an ArrayList so that equals() comparisons work
+        // sort to protect against ordering throwing off ArrayList.equals() and to make toString() look nicer
+        ArrayList<AddOnScope> addOnScopes = new ArrayList<>(keyToScope.values());
+        Collections.sort(addOnScopes);
+        return addOnScopes;
+    }
+
+    private static URL resourceLocation(String whitelistName)
+    {
+        return StaticAddOnScopesTest.class.getResource(String.format("/scope/%s-whitelist.json", whitelistName));
     }
 }

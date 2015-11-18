@@ -14,8 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
-import com.atlassian.plugin.connect.plugin.descriptor.ModuleListDeserializer;
-import com.atlassian.plugin.connect.plugin.descriptor.StaticAvailableModuleTypes;
+import com.atlassian.plugin.connect.plugin.descriptor.StaticModuleListDeserializer;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
@@ -49,6 +48,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -78,13 +78,12 @@ public class ConnectRunner
     private final String productBaseUrl;
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
-    private final String pluginKey;
+    private final List<ConnectModuleMeta> moduleMetas = new ArrayList<>();
     private final Set<ScopeName> scopes = new HashSet<ScopeName>();
 
     private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
-    private StaticAvailableModuleTypes moduleTypes = new StaticAvailableModuleTypes();
 
     private int port;
     private Server server;
@@ -118,13 +117,10 @@ public class ConnectRunner
     public ConnectRunner(String productBaseUrl, String key)
     {
         this.productBaseUrl = checkNotNull(productBaseUrl);
-        this.pluginKey = checkNotNull(key);
-
         this.addonBuilder = newConnectAddonBean()
                 .withKey(key)
                 .withName(key)
                 .withVersion("1.0");
-
         this.installer = new AtlassianConnectRestClient(productBaseUrl, "admin", "admin");
     }
 
@@ -259,7 +255,7 @@ public class ConnectRunner
     
     public ConnectRunner addModuleMeta(ConnectModuleMeta meta)
     {
-        moduleTypes.addModuleMeta(meta);
+        moduleMetas.add(meta);
         return this;
     }
 
@@ -425,16 +421,15 @@ public class ConnectRunner
 
         private JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> getModuleListDeserializer()
         {
-            JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> moduleListDeserializer;
-            if (moduleTypes.hasMetas())
+            if (!moduleMetas.isEmpty())
             {
-                moduleListDeserializer = new ModuleListDeserializer(moduleTypes);
+                ConnectModuleMeta[] metas = moduleMetas.toArray(new ConnectModuleMeta[moduleMetas.size()]);
+                return new StaticModuleListDeserializer(addon, metas);
             }
             else
             {
-                moduleListDeserializer = new DefaultModuleSerializer();
+                return new DefaultModuleSerializer();
             }
-            return moduleListDeserializer;
         }
     }
 }

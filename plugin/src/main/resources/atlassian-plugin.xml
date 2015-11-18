@@ -14,6 +14,13 @@
     <connect-module key="web-section-module" class="com.atlassian.plugin.connect.plugin.web.item.WebSectionModuleProvider"/>
     <connect-module key="webhook-module" class="com.atlassian.plugin.connect.plugin.webhook.WebHookModuleProvider"/>
 
+    <connect-api-scope-whitelist key="common-api-scope-whitelist" resource="/scope/common-whitelist.json"/>
+
+    <connect-condition-class-resolver key="common-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.plugin.web.condition.CommonConditionClassResolver"/>
+    <connect-condition-class-resolver key="addon-entity-property-equal-to-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.plugin.property.AddonEntityPropertyEqualToConditionClassResolver"/>
+
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.web.jsapi.StaticResourcesFilter"
@@ -100,7 +107,7 @@
             <manifest-producer class="com.atlassian.plugin.connect.plugin.auth.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
-    <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>
+    <analytics-whitelist key="connect-analytics-whitelist" resource="analytics/connect-analytics-whitelist.json"/>
 
     <listener name="Crowd Sync Listener" key="crowdSyncListener"
               class="com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdSyncListener" >

@@ -76,7 +76,7 @@ public class ApiScopingFilterTest
     {
         whenIsAddonRequestWithAddonKey();
         apiScopingFilter.doFilter(request, response, chain);
-        verify(addOnScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
+        verify(addOnScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ApiScopingFilterTest
     {
         when(addOnKeyExtractor.isAddOnRequest(request)).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
-        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
+        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ApiScopingFilterTest
         when(addOnKeyExtractor.isAddOnRequest(request)).thenReturn(true);
         when(addOnKeyExtractor.getAddOnKeyFromHttpRequest(request)).thenReturn(null);
         apiScopingFilter.doFilter(request, response, chain);
-        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
+        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString());
     }
 
 
@@ -101,7 +101,7 @@ public class ApiScopingFilterTest
     public void testDeniedApiAccessPublishesDeniedEvent() throws Exception
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(isScopeRequestDeniedEvent()));
     }
@@ -109,7 +109,7 @@ public class ApiScopingFilterTest
     @Test
     public void testDeniedApiAccessDoesntPublishAllowedEvent() throws Exception
     {
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestAllowedEvent()));
     }
@@ -118,7 +118,7 @@ public class ApiScopingFilterTest
     public void testAllowedApiAccessPublishesEvent() throws Exception
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(isScopeRequestAllowedEvent()));
     }
@@ -127,7 +127,7 @@ public class ApiScopingFilterTest
     public void testAllowedApiAccessDoesntPublishDeniedEvent() throws Exception
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestDeniedEvent()));
     }
@@ -136,7 +136,7 @@ public class ApiScopingFilterTest
     public void testURIsAreTrimmedInDeniedEvents() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
@@ -146,7 +146,7 @@ public class ApiScopingFilterTest
     public void testURIsAreTrimmedInAllowedEvents() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
@@ -156,7 +156,7 @@ public class ApiScopingFilterTest
     public void testAllowedEventsADuration() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         Date start = new Date(0);
         Date end = new Date(101);
         when(clock.now()).thenReturn(start, end);
@@ -168,7 +168,7 @@ public class ApiScopingFilterTest
     public void testAllowedEventsHaveStatusCode() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         FilterChain wrappedChain = new FilterChainWrapper();
         apiScopingFilter.doFilter(request, response, wrappedChain);
         verify(eventPublisher).publish(argThat(hasResponseCode(200)));
@@ -188,7 +188,7 @@ public class ApiScopingFilterTest
     public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         doThrow(new IOException("Something went wrong")).when(chain).doFilter(any(HttpServletRequest.class),
                                                                               any(HttpServletResponse.class));
         try

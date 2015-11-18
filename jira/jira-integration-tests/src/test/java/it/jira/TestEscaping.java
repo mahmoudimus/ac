@@ -18,7 +18,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMen
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectSummaryPageWithAddonTab;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
@@ -269,7 +269,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "test web panel");
-        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key());
+        ViewIssuePageWithAddonFragments page = product.visit(ViewIssuePageWithAddonFragments.class, issue.key());
         Section section = page.getSection(getModuleKey(WEB_PANEL_KEY));
         assertIsEscaped(section.getTitle());
     }

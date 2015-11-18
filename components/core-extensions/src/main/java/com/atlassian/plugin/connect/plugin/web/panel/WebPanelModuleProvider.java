@@ -8,11 +8,11 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFa
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
-import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
@@ -78,7 +78,7 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
         if (blacklistedLocationsUsed.size() > 0)
         {
             String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
-            throw new ConnectModuleValidationException(getMeta(), exceptionMsg, "connect.invalid.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
+            throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.invalid.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
         }
         else
         {

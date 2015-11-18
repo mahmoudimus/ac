@@ -5,13 +5,12 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <component-import key="pluginRetrievalService" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService"/>
-    <component-import key="iFrameRenderStrategyBuilderFactory" interface="com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory"/>
-    <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry"/>
-    <component-import key="webItemModuleDescriptorFactory" interface="com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory"/>
-    <component-import key="pageConditionsFactory" interface="com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory"/>
+    <connect-module key="test-module" class="com.atlassian.plugin.connect.reference.ModuleProviderForTests"/>
 
-    <connect-module key="test-module" class="com.atlassian.plugin.connect.ModuleProviderForTests"/>
+    <connect-condition-class-resolver key="reference-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.reference.ReferenceConditionClassResolver"/>
+
+    <connect-api-scope-whitelist key="test-api-scope-whitelist" resource="/scope/test-whitelist.json"/>
 
     <connect-web-fragment-location-blacklist key="reference-blacklist">
         <web-panel-locations>

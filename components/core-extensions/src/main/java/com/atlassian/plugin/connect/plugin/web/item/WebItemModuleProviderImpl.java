@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.web.item;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
@@ -12,6 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
@@ -19,21 +21,23 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
-import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
+import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.plugin.web.Condition;
 import com.google.common.annotations.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 
@@ -49,8 +53,8 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     private final WebItemModuleDescriptorFactory webItemFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final PageConditionsFactory pageConditionsFactory;
     private final WebFragmentLocationBlacklist webFragmentLocationBlacklist;
+    private final PluginAccessor pluginAccessor;
 
     @Autowired
     public WebItemModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
@@ -58,15 +62,15 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             WebItemModuleDescriptorFactory webItemFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            PageConditionsFactory pageConditionsFactory,
-            WebFragmentLocationBlacklist webFragmentLocationBlacklist)
+            WebFragmentLocationBlacklist webFragmentLocationBlacklist,
+            PluginAccessor pluginAccessor)                                     
     {
         super(pluginRetrievalService, schemaValidator);
         this.webItemFactory = webItemFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-        this.pageConditionsFactory = pageConditionsFactory;
         this.webFragmentLocationBlacklist = webFragmentLocationBlacklist;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @Override
@@ -92,11 +96,11 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     {
         final List<WebItemModuleBean> webItemModuleBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
 
-        return verifyNoBlacklistedLocationUsed(webItemModuleBeans);
+        return verifyNoBlacklistedLocationUsed(descriptor, webItemModuleBeans);
     }
 
     @VisibleForTesting
-    List<WebItemModuleBean> verifyNoBlacklistedLocationUsed(List<WebItemModuleBean> webItemModuleBeans) throws ConnectModuleValidationException
+    List<WebItemModuleBean> verifyNoBlacklistedLocationUsed(ShallowConnectAddonBean descriptor, List<WebItemModuleBean> webItemModuleBeans) throws ConnectModuleValidationException
     {
         List<String> blacklistedLocationsUsed = webItemModuleBeans.stream()
                 .filter(new Predicate<WebItemModuleBean>()
@@ -120,7 +124,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         if (blacklistedLocationsUsed.size() > 0)
         {
             final String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
-            throw new ConnectModuleValidationException(getMeta(), exceptionMsg, "connect.invalid.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
+            throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.invalid.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
         }
         else
         {
@@ -179,13 +183,43 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     @VisibleForTesting
     List<ConditionalBean> getConditionsForIframe(WebItemModuleBean webItem)
     {
+        List<ConnectConditionClassResolver> conditionClassResolvers = pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class);
         return filterSingleConditionsRecursively(webItem.getConditions(), new Predicate<SingleConditionBean>()
         {
 
             @Override
             public boolean test(SingleConditionBean conditionalBean)
             {
-                return pageConditionsFactory.getConditionNames().contains(conditionalBean.getCondition());
+                return conditionClassResolvers.stream()
+                        .flatMap(new Function<ConnectConditionClassResolver, Stream<ConnectConditionClassResolver.Entry>>()
+                        {
+                            @Override
+                            public Stream<ConnectConditionClassResolver.Entry> apply(ConnectConditionClassResolver resolver)
+                            {
+                                return resolver.getEntries().stream();
+                            }
+                        }).map(new Function<ConnectConditionClassResolver.Entry, Optional<Class<? extends Condition>>>()
+                        {
+                            @Override
+                            public Optional<Class<? extends Condition>> apply(ConnectConditionClassResolver.Entry resolverEntry)
+                            {
+                                return resolverEntry.getConditionClassForNoContext(conditionalBean);
+                            }
+                        }).filter(new Predicate<Optional<Class<? extends Condition>>>()
+                        {
+                            @Override
+                            public boolean test(Optional<Class<? extends Condition>> optionalConditionClass)
+                            {
+                                return optionalConditionClass.isPresent();
+                            }
+                        }).map(new Function<Optional<Class<? extends Condition>>, Class<? extends Condition>>()
+                        {
+                            @Override
+                            public Class<? extends Condition> apply(Optional<Class<? extends Condition>> optionalConditionClass)
+                            {
+                                return optionalConditionClass.get();
+                            }
+                        }).findFirst().isPresent();
             }
         });
     }
