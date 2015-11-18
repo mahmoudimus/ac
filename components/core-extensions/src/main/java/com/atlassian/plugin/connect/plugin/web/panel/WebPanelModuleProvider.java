@@ -18,6 +18,8 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<WebPanelModuleBean>
@@ -55,14 +57,28 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
         List<WebPanelModuleBean> webPanelModuleBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
 
         List<String> blacklistedLocationsUsed = webPanelModuleBeans.stream()
-                .filter(webPanel -> webFragmentLocationBlacklist.blacklistedWebPanelLocations().contains(webPanel.getLocation()))
-                .map(WebPanelModuleBean::getLocation)
+                .filter(new Predicate<WebPanelModuleBean>()
+                {
+                    @Override
+                    public boolean test(WebPanelModuleBean webPanel)
+                    {
+                        return webFragmentLocationBlacklist.getBlacklistedWebPanelLocations().contains(webPanel.getLocation());
+                    }
+                })
+                .map(new Function<WebPanelModuleBean, String>()
+                {
+                    @Override
+                    public String apply(WebPanelModuleBean webPanelModuleBean)
+                    {
+                        return webPanelModuleBean.getLocation();
+                    }
+                })
                 .collect(Collectors.toList());
 
         if (blacklistedLocationsUsed.size() > 0)
         {
-            final String exceptionMsg = "WebPanels use locations which are not supported in Connect " + blacklistedLocationsUsed;
-            throw new ConnectModuleValidationException(getMeta(), exceptionMsg, "connect.invalid.webpanel.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
+            String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
+            throw new ConnectModuleValidationException(getMeta(), exceptionMsg, "connect.invalid.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
         }
         else
         {

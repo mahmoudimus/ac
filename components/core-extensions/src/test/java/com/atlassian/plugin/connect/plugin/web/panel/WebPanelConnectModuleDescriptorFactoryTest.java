@@ -14,9 +14,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -39,9 +37,6 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     private WebPanelConnectModuleDescriptorFactory descriptorFactory;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception

@@ -10,10 +10,10 @@ public interface WebFragmentLocationBlacklist
     /**
      * @return a set of web-panel locations which are blacklisted.
      */
-    Set<String> blacklistedWebPanelLocations();
+    Set<String> getBlacklistedWebPanelLocations();
 
     /**
      * @return a set of web-item locations which are blacklisted.
      */
-    Set<String> blacklistedWebItemLocations();
+    Set<String> getBlacklistedWebItemLocations();
 }

@@ -25,7 +25,7 @@ public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlac
     }
 
     @Override
-    public Set<String> blacklistedWebPanelLocations()
+    public Set<String> getBlacklistedWebPanelLocations()
     {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectWebFragmentLocationBlacklistModuleDescriptor.class)
                 .stream()
@@ -56,7 +56,7 @@ public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlac
     }
 
     @Override
-    public Set<String> blacklistedWebItemLocations()
+    public Set<String> getBlacklistedWebItemLocations()
     {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectWebFragmentLocationBlacklistModuleDescriptor.class)
                 .stream()

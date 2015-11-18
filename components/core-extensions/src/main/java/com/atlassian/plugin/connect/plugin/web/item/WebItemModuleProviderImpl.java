@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.item;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
@@ -11,12 +12,14 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
+import com.atlassian.plugin.connect.spi.descriptor.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.web.condition.PageConditionsFactory;
@@ -28,7 +31,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 
@@ -45,6 +50,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final PageConditionsFactory pageConditionsFactory;
+    private final WebFragmentLocationBlacklist webFragmentLocationBlacklist;
 
     @Autowired
     public WebItemModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
@@ -52,13 +58,15 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             WebItemModuleDescriptorFactory webItemFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            PageConditionsFactory pageConditionsFactory)
+            PageConditionsFactory pageConditionsFactory,
+            WebFragmentLocationBlacklist webFragmentLocationBlacklist)
     {
         super(pluginRetrievalService, schemaValidator);
         this.webItemFactory = webItemFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.pageConditionsFactory = pageConditionsFactory;
+        this.webFragmentLocationBlacklist = webFragmentLocationBlacklist;
     }
 
     @Override
@@ -77,6 +85,47 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             registerIframeRenderStrategy(bean, moduleProviderContext.getConnectAddonBean());
         }
         return descriptors;
+    }
+
+    @Override
+    public List<WebItemModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
+    {
+        final List<WebItemModuleBean> webItemModuleBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+
+        return verifyNoBlacklistedLocationUsed(webItemModuleBeans);
+    }
+
+    @VisibleForTesting
+    List<WebItemModuleBean> verifyNoBlacklistedLocationUsed(List<WebItemModuleBean> webItemModuleBeans) throws ConnectModuleValidationException
+    {
+        List<String> blacklistedLocationsUsed = webItemModuleBeans.stream()
+                .filter(new Predicate<WebItemModuleBean>()
+                {
+                    @Override
+                    public boolean test(WebItemModuleBean webItem)
+                    {
+                        return webFragmentLocationBlacklist.getBlacklistedWebItemLocations().contains(webItem.getLocation());
+                    }
+                })
+                .map(new Function<WebItemModuleBean, String>()
+                {
+                    @Override
+                    public String apply(WebItemModuleBean webItemModuleBean)
+                    {
+                        return webItemModuleBean.getLocation();
+                    }
+                })
+                .collect(Collectors.toList());
+
+        if (blacklistedLocationsUsed.size() > 0)
+        {
+            final String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
+            throw new ConnectModuleValidationException(getMeta(), exceptionMsg, "connect.invalid.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
+        }
+        else
+        {
+            return webItemModuleBeans;
+        }
     }
 
     private ModuleDescriptor beanToDescriptors(ConnectModuleProviderContext moduleProviderContext,
