@@ -4,18 +4,11 @@ import java.util.Map;
 
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.matcher.IsLong;
-import com.atlassian.plugin.connect.test.common.matcher.ParamMatchers;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
@@ -25,17 +18,29 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 import com.google.common.base.Optional;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.collection.IsMapContaining;
-import org.hamcrest.core.IsEqual;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import it.confluence.ConfluenceWebDriverTestBase;
 
-import static org.hamcrest.core.CombinableMatcher.both;
+import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.test.common.matcher.IsLong.isLong;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isLocale;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isTimeZone;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {
@@ -71,43 +76,43 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withName(new I18nProperty("Only Betty", onlyBettyWebItem))
                                 .withKey(onlyBettyWebItem)
                                 .withLocation("system.browse")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com")
                                 .withConditions(
-                                        SingleConditionBean.newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                        SingleConditionBean.newSingleConditionBean().withCondition(onlyBettyConditionUrl).build()
+                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                                        newSingleConditionBean().withCondition(onlyBettyConditionUrl).build()
                                 )
                                 .build(),
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withName(new I18nProperty("Betty And Barney", bettyAndBarneyWebItem))
                                 .withKey(bettyAndBarneyWebItem)
                                 .withLocation("system.browse")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com")
                                 .withConditions(
-                                        SingleConditionBean.newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                        CompositeConditionBean.newCompositeConditionBean()
+                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                                        newCompositeConditionBean()
                                                 .withType(CompositeConditionType.OR)
                                                 .withConditions(
-                                                        SingleConditionBean.newSingleConditionBean().withCondition(onlyBettyConditionUrl).build(),
-                                                        SingleConditionBean.newSingleConditionBean().withCondition(onlyBarneyConditionUrl).build()
+                                                        newSingleConditionBean().withCondition(onlyBettyConditionUrl).build(),
+                                                        newSingleConditionBean().withCondition(onlyBarneyConditionUrl).build()
                                                 ).build()
                                 ).build(),
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withName(new I18nProperty("Admin Rights", ADMIN_RIGHTS_WEBITEM))
                                 .withKey(ADMIN_RIGHTS_WEBITEM)
                                 .withLocation("system.browse")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com")
                                 .withConditions(
-                                        SingleConditionBean.newSingleConditionBean().withCondition("user_is_confluence_administrator").build()
+                                        newSingleConditionBean().withCondition("user_is_confluence_administrator").build()
                                 )
                                 .build(),
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withName(new I18nProperty("Context Parameterized", CONTEXT_PARAMETERIZED_WEBITEM))
                                 .withKey(CONTEXT_PARAMETERIZED_WEBITEM)
                                 .withLocation("system.browse")
@@ -115,18 +120,18 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                                 .withWeight(1)
                                 .withUrl("/somewhere")
                                 .withConditions(
-                                        SingleConditionBean.newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
+                                        newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
                                                 "?pageId={page.id}&spaceKey={space.key}").build()
                                 )
                                 .build())
                 .addModules("webPanels",
-                        WebPanelModuleBean.newWebPanelBean()
+                        newWebPanelBean()
                                 .withName(new I18nProperty("Space Context Parameterized", SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL))
                                 .withKey(SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL)
                                 .withLocation("atl.general") // this location needs testing for space params; see AC-1018
                                 .withUrl("/somewhere-else")
                                 .withConditions(
-                                        SingleConditionBean.newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL + "/space" +
+                                        newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL + "/space" +
                                                 "?pageId={page.id}&spaceKey={space.key}&spaceId={space.id}").build()
                                 )
                                 .build())
@@ -153,7 +158,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         visitEditPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(onlyBettyWebItem), Optional.of("help-menu-link"));
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
     }
 
     @Test
@@ -162,7 +167,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(barney);
 
         visitEditPage();
-        Assert.assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
@@ -171,7 +176,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(testUserFactory.admin());
 
         visitEditPage();
-        Assert.assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
@@ -181,7 +186,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         visitEditPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
     }
 
     @Test
@@ -191,7 +196,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         visitEditPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
     }
 
     @Test
@@ -200,7 +205,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(testUserFactory.admin());
 
         visitEditPage();
-        Assert.assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(bettyAndBarneyWebItem)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(bettyAndBarneyWebItem)));
     }
 
     @Test
@@ -210,7 +215,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         visitEditPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
     }
 
     @Test
@@ -218,7 +223,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     {
         login(barney);
         visitEditPage();
-        Assert.assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
     }
 
     @Test
@@ -228,7 +233,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         visitEditPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
     }
 
     private ConfluenceEditPage navigateToEditPageAndVerifyParameterCapturingWebItem(TestUser user) throws Exception
@@ -237,7 +242,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         ConfluenceEditPage editPage = visitEditPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.of("help-menu-link"));
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
         return editPage;
     }
 
@@ -249,11 +254,11 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("lic"), IsEqual.equalTo("none")));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("cp"), IsEqual.equalTo("/confluence")));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("tz"), ParamMatchers.isTimeZone()));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("loc"), ParamMatchers.isLocale()));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("user_id"), IsEqual.equalTo(user.getDisplayName())));
+        assertThat(conditionParams, hasEntry(equalTo("lic"), equalTo("none")));
+        assertThat(conditionParams, hasEntry(equalTo("cp"), equalTo("/confluence")));
+        assertThat(conditionParams, hasEntry(equalTo("tz"), isTimeZone()));
+        assertThat(conditionParams, hasEntry(equalTo("loc"), isLocale()));
+        assertThat(conditionParams, hasEntry(equalTo("user_id"), equalTo(user.getDisplayName())));
     }
 
     @Test
@@ -263,8 +268,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("pageId"), IsEqual.equalTo(editPage.getPageId())));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("spaceKey"), IsEqual.equalTo("ds")));
+        assertThat(conditionParams, hasEntry(equalTo("pageId"), equalTo(editPage.getPageId())));
+        assertThat(conditionParams, hasEntry(equalTo("spaceKey"), equalTo("ds")));
     }
 
     @Test
@@ -276,10 +281,10 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         connectPageOperations.findWebPanel(getModuleKey(SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL));
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET2.getParamsFromLastRequest();
 
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("pageId"), IsEqual.equalTo(editPage.getPageId())));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("spaceKey"), IsEqual.equalTo("ds")));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("spaceId"), both(CoreMatchers.not(IsEqual.equalTo(""))).and(CoreMatchers.not(CoreMatchers.nullValue()))));
-        Assert.assertThat(conditionParams, IsMapContaining.hasEntry(IsEqual.equalTo("spaceId"), IsLong.isLong()));
+        assertThat(conditionParams, hasEntry(equalTo("pageId"), equalTo(editPage.getPageId())));
+        assertThat(conditionParams, hasEntry(equalTo("spaceKey"), equalTo("ds")));
+        assertThat(conditionParams, hasEntry(equalTo("spaceId"), both(not(equalTo(""))).and(not(nullValue()))));
+        assertThat(conditionParams, hasEntry(equalTo("spaceId"), isLong()));
     }
 
     @Test
@@ -289,13 +294,13 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         String version = PARAMETER_CAPTURING_SERVLET.getHttpHeaderFromLastRequest(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION).get();
 
-        Assert.assertThat(version, ParamMatchers.isVersionNumber());
+        assertThat(version, isVersionNumber());
     }
 
 
     private ConfluenceEditPage visitEditPage() throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(Option.some(testUserFactory.basicUser()), "ds", "Page with webpanel", "some page content");
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "Page with webpanel", "some page content");
 
         return product.visit(ConfluenceEditPage.class, pageData.getId());
     }
