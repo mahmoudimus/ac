@@ -18,7 +18,10 @@ import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.testutils.annotations.Retry;
 
+@Retry(maxAttempts=MultiProductWebDriverTestBase.MAX_RETRY_ATTEMPTS)
 public abstract class MultiProductWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product = TestedProductProvider.getTestedProduct();
@@ -30,6 +33,10 @@ public abstract class MultiProductWebDriverTestBase
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+
+    @Rule
+    public RetryRule retryRule = new RetryRule();
+    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());

@@ -62,7 +62,7 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
             ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
         List<ConnectPageModuleBean> pageBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
-        validateConditions(pageBeans);
+        validateConditions(descriptor, pageBeans);
         return pageBeans;
     }
 
@@ -152,24 +152,25 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
 
     protected abstract int getDefaultWeight();
 
-    protected void validateConditions(List<ConnectPageModuleBean> pageBeans) throws ConnectModuleValidationException
+    protected void validateConditions(ShallowConnectAddonBean descriptor, List<ConnectPageModuleBean> pageBeans) throws ConnectModuleValidationException
     {
         List<ConnectConditionClassResolver> conditionClassResolvers = pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class);
         for (ConnectPageModuleBean page : pageBeans)
         {
             for (SingleConditionBean condition : ConditionUtils.getSingleConditionsRecursively(page.getConditions()))
             {
-                assertValidPageCondition(condition, conditionClassResolvers);
+                assertValidPageCondition(descriptor, condition, conditionClassResolvers);
             }
         }
     }
 
-    private void assertValidPageCondition(SingleConditionBean conditionBean, List<ConnectConditionClassResolver> conditionClassResolvers) throws ConnectModuleValidationException
+    private void assertValidPageCondition(ShallowConnectAddonBean descriptor, SingleConditionBean conditionBean, List<ConnectConditionClassResolver> conditionClassResolvers) throws ConnectModuleValidationException
     {
         if (!isRemoteCondition(conditionBean.getCondition()) && !isContextFreeCondition(conditionBean, conditionClassResolvers))
         {
             String exceptionMessage = String.format("The add-on includes a Page Module with an unsupported condition (%s)", conditionBean.getCondition());
-            throw new ConnectModuleValidationException(getMeta(), exceptionMessage, "connect.install.error.page.with.invalid.condition", conditionBean.getCondition());
+            throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMessage,
+                    "connect.install.error.page.with.invalid.condition", conditionBean.getCondition());
         }
     }
 

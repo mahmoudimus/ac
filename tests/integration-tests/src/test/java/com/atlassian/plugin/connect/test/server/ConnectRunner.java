@@ -48,6 +48,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -77,13 +78,12 @@ public class ConnectRunner
     private final String productBaseUrl;
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
-    private final String pluginKey;
+    private final List<ConnectModuleMeta> moduleMetas = new ArrayList<>();
     private final Set<ScopeName> scopes = new HashSet<ScopeName>();
 
     private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
-    private StaticModuleListDeserializer moduleListDeserializer = new StaticModuleListDeserializer();
 
     private int port;
     private Server server;
@@ -117,13 +117,10 @@ public class ConnectRunner
     public ConnectRunner(String productBaseUrl, String key)
     {
         this.productBaseUrl = checkNotNull(productBaseUrl);
-        this.pluginKey = checkNotNull(key);
-
         this.addonBuilder = newConnectAddonBean()
                 .withKey(key)
                 .withName(key)
                 .withVersion("1.0");
-
         this.installer = new AtlassianConnectRestClient(productBaseUrl, "admin", "admin");
     }
 
@@ -258,7 +255,7 @@ public class ConnectRunner
     
     public ConnectRunner addModuleMeta(ConnectModuleMeta meta)
     {
-        moduleListDeserializer.addModuleMeta(meta);
+        moduleMetas.add(meta);
         return this;
     }
 
@@ -424,9 +421,10 @@ public class ConnectRunner
 
         private JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> getModuleListDeserializer()
         {
-            if (moduleListDeserializer.hasMetas())
+            if (!moduleMetas.isEmpty())
             {
-                return moduleListDeserializer;
+                ConnectModuleMeta[] metas = moduleMetas.toArray(new ConnectModuleMeta[moduleMetas.size()]);
+                return new StaticModuleListDeserializer(addon, metas);
             }
             else
             {

@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URL;
 
@@ -84,26 +83,27 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
         ConnectJsonSchemaValidationResult result = validateDescriptor(descriptor, schemaUrl);
         if (!result.isWellformed())
         {
-            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getReportAsString(), "connect.invalid.descriptor.malformed.json", result.getReportAsString());
+            throw new ConnectJsonSchemaValidationException(result,
+                    "Malformed connect descriptor: " + result.getReportAsString(),
+                    "connect.invalid.descriptor.malformed.json",
+                    result.getReportAsString());
         }
         if (!result.isValid())
         {
-            String exceptionMessage = "Invalid connect descriptor: " + result.getReportAsString();
-
-            String i18nKey;
-            Serializable[] params;
             if (isDevModeService.isDevMode())
             {
-                i18nKey = "connect.install.error.remote.descriptor.validation.dev";
-                String validationMessage = buildHtmlErrorMessage(result);
-                params = new Serializable[] {validationMessage};
+                throw new ConnectJsonSchemaValidationException(result,
+                        "Invalid connect descriptor: " + result.getReportAsString(),
+                        "connect.install.error.remote.descriptor.validation.dev",
+                        buildHtmlErrorMessage(result));
             }
             else
             {
-                i18nKey = "connect.install.error.remote.descriptor.validation";
-                params = new Serializable[] {applicationProperties.getDisplayName()};
+                throw new ConnectJsonSchemaValidationException(result,
+                        "Invalid connect descriptor: " + result.getReportAsString(),
+                        "connect.install.error.remote.descriptor.validation",
+                        applicationProperties.getDisplayName());
             }
-            throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
         }
     }
 

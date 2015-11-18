@@ -1,4 +1,4 @@
-package it.jira;
+package it.jira.condition;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
@@ -8,8 +8,9 @@ import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBui
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -108,7 +109,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
 
     private boolean webPanelIsVisible(String panelKey, final IssueCreateResponse issue)
     {
-        product.visit(JiraViewIssuePage.class, issue.key());
+        product.visit(ViewIssuePageWithAddonFragments.class, issue.key());
         return connectPageOperations.existsWebPanel(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), panelKey));
     }
 

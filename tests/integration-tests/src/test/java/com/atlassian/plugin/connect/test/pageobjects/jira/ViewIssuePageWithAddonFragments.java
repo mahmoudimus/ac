@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
-import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -15,9 +14,8 @@ import javax.inject.Inject;
 /**
  * A ViewIssue page that is expected to have a panel provided by a remote plugin.
  */
-public class JiraViewIssuePage extends ViewIssuePage implements Page
+public class ViewIssuePageWithAddonFragments extends ViewIssuePage
 {
-    private String issueKey;
 
     @Inject
     private PageBinder pageBinder;
@@ -25,16 +23,9 @@ public class JiraViewIssuePage extends ViewIssuePage implements Page
     @Inject
     private PageElementFinder pageElementFinder;
 
-    public JiraViewIssuePage(String issueKey)
+    public ViewIssuePageWithAddonFragments(String issueKey)
     {
         super(issueKey);
-        this.issueKey = issueKey;
-    }
-
-    @Override
-    public String getUrl()
-    {
-        return "/browse/" + issueKey;
     }
 
     public RemoteWebPanel findWebPanel(String panelId)

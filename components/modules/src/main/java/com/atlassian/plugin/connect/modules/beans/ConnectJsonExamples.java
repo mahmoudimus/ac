@@ -185,12 +185,6 @@ public class ConnectJsonExamples
                 .withLicensing(true)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
                 .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
-                .withModules("webItems", WebItemModuleBean.newWebItemBean()
-                                .withName(i18nProperty("Web Item"))
-                                .withUrl("/my-web-item")
-                                .withKey("my-web-item")
-                                .withLocation("system.preset.filters").build()
-                )
                 .build();
 
         return gson.toJson(addonBean);
