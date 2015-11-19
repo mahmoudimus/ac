@@ -183,22 +183,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.confluence</groupId>
-            <artifactId>atlassian-confluence-pageobjects</artifactId>
-            <version>${atlassian.confluence.version}</version>
-            <scope>test</scope>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+            <version>${junit.version}</version>
             <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
                     <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-library</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -414,6 +405,21 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
+
+                <dependencies>
+                    <dependency>
+                        <artifactId>junit</artifactId>
+                        <groupId>junit</groupId>
+                        <version>4.10</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.hamcrest</groupId>
+                                <artifactId>hamcrest-core</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
