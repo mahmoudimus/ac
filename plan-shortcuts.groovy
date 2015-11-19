@@ -414,7 +414,7 @@ projectIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'addition
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
-                goal: 'verify -pl #project -Pit -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
+                goal: 'verify -pl #project -Pit -DtestGroups=#testGroup -DskipUnits -DskipITs=false -fae #additionalMavenParameters',
                 environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
         )
         defineWebDriverOutputArtefact(
