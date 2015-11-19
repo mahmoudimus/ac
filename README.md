@@ -73,7 +73,8 @@ Contributions are encouraged!
 * `plugin` - groups the other modules into a plugin
 * `tests` - the parent of all non-product-specific test modules
     * `descriptor-validation-tests` - JSON schema validation of all public add-ons for JIRA and Confluence on Atlassian Marketplace
-    * `integration-tests` - integration tests for the plugin
+    * `core-integration-tests` - integration tests for the plugin's core functionality
+    * `integration-tests-common` - classes and utilities useful to both core and product-specific integration test modules
     * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
     * `test-support-plugin` - a collection of test utility classes
     * `wired-tests` - wired tests for the plugin
@@ -114,7 +115,7 @@ To run JavaScript unit tests:
 
 #### Integration tests
 
-Before running integration tests, build the plugin.
+Before running integration tests, build the plugin with the it profile active (`-P it`)
 
 To speed up local development, all integration test modules are excluded by default. For these modules to be included
 in the build, such as when running `mvn clean` or `mvn verify`, a specific profile must be activated manually. See the
@@ -128,9 +129,9 @@ To run plug-in lifecycle tests:
 
     mvn -pl tests/plugin-lifecycle-tests verify -am -PpluginLifecycle
 
-To run integration tests:
+To run core integration tests:
 
-    mvn -pl tests/integration-tests verify -Pit -am [-DtestGroups=...]
+    mvn -pl tests/core-integration-tests verify -DskipITs=false -Pit -am [-DtestGroups=...]
 
 To run add-on descriptor validation tests:
 
