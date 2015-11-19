@@ -29,4 +29,10 @@ public class ConfluenceAppServlets
         contextServlet.getBaseContext().put("newMacroBody", newMacroBody);
         return contextServlet;
     }
+
+    public static HttpServlet blueprintTemplateServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/test-blueprint.xml"));
+    }
+
 }

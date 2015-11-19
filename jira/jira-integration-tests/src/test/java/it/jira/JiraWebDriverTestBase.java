@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperation
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.jira.util.JiraTestUserFactory;
-import com.atlassian.plugin.connect.test.product.JiraTestedProductAccessor;
+import com.atlassian.plugin.connect.test.jira.product.JiraTestedProductAccessor;
 import com.atlassian.testutils.annotations.Retry;
 import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;

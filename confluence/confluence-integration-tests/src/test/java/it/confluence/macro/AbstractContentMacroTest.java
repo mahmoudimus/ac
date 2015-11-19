@@ -29,10 +29,9 @@ import org.openqa.selenium.WebElement;
 import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
 
-import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static java.lang.String.format;
-import static org.hamcrest.core.StringContains.containsString;
 
 public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBase
 {
@@ -434,7 +433,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 try
                 {
                     dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-                    Assert.assertThat(dialog.getTitle(), containsString(EDITOR_MACRO_NAME));
+                    Assert.assertThat(dialog.getTitle(), CoreMatchers.containsString(EDITOR_MACRO_NAME));
                 }
                 finally
                 {

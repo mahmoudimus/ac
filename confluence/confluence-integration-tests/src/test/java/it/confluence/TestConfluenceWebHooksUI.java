@@ -8,10 +8,12 @@ import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
 {
@@ -46,10 +48,10 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
                 search(SEARCH_TERMS);
 
                 final WebHookBody body = waiter.waitForHook();
-                Assert.assertNotNull(body);
-                Assert.assertEquals(SEARCH_TERMS, body.find("query"));
-                Assert.assertEquals(user.getUsername(), body.find("user"));
-                Assert.assertEquals("conf_all", body.find("spaceCategories[0]"));
+                assertNotNull(body);
+                assertEquals(SEARCH_TERMS, body.find("query"));
+                assertEquals(user.getUsername(), body.find("user"));
+                assertEquals("conf_all", body.find("spaceCategories[0]"));
             }
         });
     }

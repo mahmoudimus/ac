@@ -2,26 +2,24 @@ package it.confluence;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServlet;
-
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
-import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
-import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import redstone.xmlrpc.XmlRpcFault;
+
+import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean.newBlueprintTemplateBeanBuilder;
+import static it.confluence.servlet.ConfluenceAppServlets.blueprintTemplateServlet;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Integration test that loads a blueprint addon and uses it in confluence.
@@ -42,10 +40,10 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
                 .addInstallLifecycle()
                 .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
                 .addModule("blueprints",
-                        BlueprintModuleBean.newBlueprintModuleBean()
+                        newBlueprintModuleBean()
                                 .withName(new I18nProperty("My Blueprint", null))
                                 .withKey(moduleKey)
-                                .withTemplate(BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
+                                .withTemplate(newBlueprintTemplateBeanBuilder()
                                         .withUrl("/template.xml")
                                         .build())
                                 .build())
@@ -53,12 +51,6 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
                 .addScope(ScopeName.READ)
                 .start();
     }
-
-    public static HttpServlet blueprintTemplateServlet()
-    {
-        return ConnectAppServlets.wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/test-blueprint.xml"));
-    }
-
 
     @AfterClass
     public static void stopConnectAddOn() throws Exception
@@ -82,7 +74,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         product.visit(DashboardPage.class).createDialog.click();
-        Assert.assertTrue("new page includes blueprint content",
+        assertTrue("new page includes blueprint content",
                 product.getPageBinder()
                         .bind(CreateContentDialog.class)
                         .createWithBlueprint(completeKey)

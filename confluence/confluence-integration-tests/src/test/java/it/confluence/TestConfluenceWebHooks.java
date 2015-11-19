@@ -7,15 +7,15 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
-import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
 import static com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet.runInRunner;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -49,8 +49,8 @@ public class TestConfluenceWebHooks
                         confluenceOps.search(some(testUserFactory.basicUser()), testQuery));
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-                Assert.assertEquals(testQuery, body.find("query"));
-                Assert.assertEquals(results, body.find("results"));
+                assertEquals(testQuery, body.find("query"));
+                assertEquals(results, body.find("results"));
             }
         });
     }
@@ -70,8 +70,8 @@ public class TestConfluenceWebHooks
                 ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "testxmlWebhooks", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-                Assert.assertEquals(pageData.getId(), body.find("page/id"));
-                Assert.assertEquals(pageData.getCreator(), body.find("page/creatorName"));
+                assertEquals(pageData.getId(), body.find("page/id"));
+                assertEquals(pageData.getCreator(), body.find("page/creatorName"));
             }
         });
     }
@@ -111,7 +111,7 @@ public class TestConfluenceWebHooks
                 confluenceOps.addEditRestrictionToPage(some(user), pageData.getId());
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-                Assert.assertEquals(pageData.getId(), body.find("content/id"));
+                assertEquals(pageData.getId(), body.find("content/id"));
             }
         });
     }

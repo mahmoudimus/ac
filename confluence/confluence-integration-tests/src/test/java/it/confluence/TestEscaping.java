@@ -12,27 +12,20 @@ import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminH
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
 import com.google.common.base.Optional;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
@@ -41,9 +34,19 @@ import org.slf4j.LoggerFactory;
 
 import redstone.xmlrpc.XmlRpcFault;
 
-import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class TestEscaping extends ConfluenceWebDriverTestBase
 {
@@ -70,14 +73,14 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModule("generalPages",
-                        ConnectPageModuleBean.newPageBean()
+                        newPageBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(GENERAL_PAGE_KEY)
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
                 .addModule("webItems",
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(WEB_ITEM_KEY)
                                 .withUrl(MODULE_URL)
@@ -88,19 +91,19 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
                                 .build()
                 )
                 .addModule("adminPages",
-                        ConnectPageModuleBean.newPageBean()
+                        newPageBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(ADMIN_PAGE_KEY)
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
                 .addModule("dynamicContentMacros",
-                        DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+                        newDynamicContentMacroModuleBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(MACRO_KEY)
                                 .withUrl(MODULE_URL)
                                 .withDescription(new I18nProperty(MODULE_NAME, null))
-                                .withParameters(MacroParameterBean.newMacroParameterBean()
+                                .withParameters(newMacroParameterBean()
                                         .withName(new I18nProperty(MODULE_NAME, null))
                                         .withDescription(new I18nProperty(MODULE_NAME, null))
                                         .withIdentifier("test")
@@ -108,13 +111,13 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
                                 .build()
                 )
                 .addModule("profilePages",
-                        ConnectPageModuleBean.newPageBean()
+                        newPageBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(PROFILE_PAGE_KEY)
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
-                .addModules("spaceToolsTabs", SpaceToolsTabModuleBean.newSpaceToolsTabBean()
+                .addModules("spaceToolsTabs", newSpaceToolsTabBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(SPACE_TOOLS_TAB_KEY)
                                 .withLocation("overview")
@@ -192,7 +195,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
 
         try
         {
-            Assert.assertNotNull(macroBrowserAndEditor.macro);
+            assertNotNull(macroBrowserAndEditor.macro);
             assertIsEscaped(macroBrowserAndEditor.macro.getTitle().byDefaultTimeout());
         }
         finally
@@ -210,7 +213,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
 
         try
         {
-            Assert.assertNotNull(macroBrowserAndEditor.macroForm);
+            assertNotNull(macroBrowserAndEditor.macroForm);
             assertEquals(MACRO_EDITOR_TITLE, macroBrowserAndEditor.macroForm.getTitle().byDefaultTimeout());
         }
         finally
@@ -228,8 +231,8 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
 
         try
         {
-            Assert.assertNotNull(macroBrowserAndEditor.macroForm);
-            Assert.assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
+            assertNotNull(macroBrowserAndEditor.macroForm);
+            assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
             WebElement label = connectPageOperations.findLabel("macro-param-test");
             assertIsEscaped(label.getText());
         }
@@ -262,7 +265,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
         // Confluence's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
         // Note that we're checking against the original name, not an escaped version, as getText() returns the
         // unescaped text. If markup was interpreted, the tags would be missing in the text.
-        Assert.assertThat(text, CoreMatchers.anyOf(CoreMatchers.is(MODULE_NAME), CoreMatchers.is(MODULE_NAME_CONF_ESCAPED)));
+        assertThat(text, anyOf(is(MODULE_NAME), is(MODULE_NAME_CONF_ESCAPED)));
     }
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception

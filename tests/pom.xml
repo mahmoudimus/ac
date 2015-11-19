@@ -21,6 +21,8 @@
 
     <modules>
         <module>test-support-plugin</module>
+        <module>marketplace-support</module>
+        <module>integration-tests-support</module>
     </modules>
 
     <profiles>
@@ -28,8 +30,6 @@
             <id>it</id>
             <modules>
                 <module>core-integration-tests</module>
-                <module>integration-tests-common</module>
-                <module>marketplace-support</module>
             </modules>
         </profile>
         <profile>
@@ -48,8 +48,6 @@
             <id>freezer-release-profile</id>
             <modules>
                 <module>core-integration-tests</module>
-                <module>integration-tests-common</module>
-                <module>marketplace-support</module>
             </modules>
         </profile>
         <profile>

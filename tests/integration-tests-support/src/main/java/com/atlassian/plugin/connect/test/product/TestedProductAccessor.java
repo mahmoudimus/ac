@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.test.product;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
+import com.atlassian.plugin.connect.test.jira.product.JiraTestedProductAccessor;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.Callable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,31 +19,35 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.matcher.ParamMatchers;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.EchoContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.EchoQueryParametersServlet;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import it.confluence.MacroStorageFormatBuilder;
-import it.confluence.servlet.ConfluenceAppServlets;
 
-import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
-import static org.hamcrest.core.StringContains.containsString;
-import static org.hamcrest.core.StringEndsWith.endsWith;
-import static org.hamcrest.core.StringStartsWith.startsWith;
+import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
+import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.echoQueryParametersServlet;
+import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.resourceServlet;
+import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.wrapContextAwareServlet;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static it.confluence.servlet.ConfluenceAppServlets.macroEditor;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.Matchers.allOf;
+import static org.junit.Assert.assertThat;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
@@ -63,30 +68,30 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        StaticContentMacroModuleBean simpleMacro = createSimpleMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean allParameterTypesMacro = createAllParametersMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean featuredMacro = createFeaturedMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean imagePlaceholderMacro = createImagePlaceholderMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean longBodyMacro = createLongBodyMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean shortBodyMacro = createShortBodyMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean parameterMacro = createParameterMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean editorMacro = createEditorMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
-        StaticContentMacroModuleBean hiddenMacro = createHiddenMacro(StaticContentMacroModuleBean.newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean simpleMacro = createSimpleMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean allParameterTypesMacro = createAllParametersMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean featuredMacro = createFeaturedMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean imagePlaceholderMacro = createImagePlaceholderMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean longBodyMacro = createLongBodyMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean parameterMacro = createParameterMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean editorMacro = createEditorMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean hiddenMacro = createHiddenMacro(newStaticContentMacroModuleBean());
 
-        StaticContentMacroModuleBean storageFormatMacro = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
+        StaticContentMacroModuleBean storageFormatMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-storage-format")
                 .withKey(STORAGE_FORMAT_MACRO_KEY)
                 .withName(new I18nProperty(STORAGE_FORMAT_MACRO_NAME, null))
                 .build();
 
-        StaticContentMacroModuleBean getMacro = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
+        StaticContentMacroModuleBean getMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-context")
                 .withKey(GET_MACRO_KEY)
                 .withName(new I18nProperty(GET_MACRO_NAME, null))
                 .build();
 
-        StaticContentMacroModuleBean counterMacro = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
+        StaticContentMacroModuleBean counterMacro = newStaticContentMacroModuleBean()
                 .withKey(COUNTER_MACRO_KEY)
                 .withUrl("/counter")
                 .withName(new I18nProperty(COUNTER_MACRO_NAME, null))
@@ -112,12 +117,12 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         hiddenMacro,
                         counterMacro
                 )
-                .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
-                .addRoute("/render-editor", ConfluenceAppServlets.macroEditor())
-                .addRoute("/echo/params", ConnectAppServlets.echoQueryParametersServlet())
-                .addRoute("/render-context", ConnectAppServlets.wrapContextAwareServlet(contextServlet))
-                .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
-                .addRoute("/render-storage-format", ConnectAppServlets.resourceServlet("it/confluence/macro/test-static-content-macro.xhtml", "application/xhtml+xml"))
+                .addRoute(DEFAULT_MACRO_URL, wrapContextAwareServlet(parameterServlet))
+                .addRoute("/render-editor", macroEditor())
+                .addRoute("/echo/params", echoQueryParametersServlet())
+                .addRoute("/render-context", wrapContextAwareServlet(contextServlet))
+                .addRoute("/images/placeholder.png", resourceServlet("atlassian-icon-16.png", "image/png"))
+                .addRoute("/render-storage-format", resourceServlet("confluence/test-static-content-macro.xhtml", "application/xhtml+xml"))
                 .addRoute("/counter", new CounterMacroServlet())
                 .addScope(ScopeName.WRITE)
                 .start();
@@ -137,17 +142,22 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     {
         ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, createPageWithStorageFormatMacro());
         String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        Assert.assertThat(content, endsWith("Storage Format Content"));
+        assertThat(content, endsWith("Storage Format Content"));
     }
 
     @Test
     public void testMacroIsRenderedForAnonymous() throws Exception
     {
-        runWithAnonymousUsePermission(() -> {
-            ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
-            String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-            Assert.assertThat(content, endsWith("Storage Format Content"));
-            return null;
+        runWithAnonymousUsePermission(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
+                String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+                assertThat(content, endsWith("Storage Format Content"));
+                return null;
+            }
         });
     }
 
@@ -156,10 +166,10 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     {
         login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(GET_MACRO_KEY).build();
-        Content page = createPage(ModuleKeyUtils.randomName(GET_MACRO_KEY), body);
+        Content page = createPage(randomName(GET_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
-        Assert.assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), CoreMatchers.is("GET"));
+        assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), is("GET"));
     }
 
     @Test
@@ -168,11 +178,11 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         login(testUserFactory.basicUser());
         String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
-        Content page = createPage(ModuleKeyUtils.randomName(SHORT_BODY_MACRO_KEY), body);
+        Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         String bodyParameter = parameterServlet.waitForQueryParameters().any("body").getValue();
-        Assert.assertThat(bodyParameter, CoreMatchers.is(macroBody));
+        assertThat(bodyParameter, is(macroBody));
     }
 
     @Test
@@ -181,18 +191,18 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         login(testUserFactory.basicUser());
         String parameterValue = "param value";
         String body = new MacroStorageFormatBuilder(PARAMETER_MACRO_KEY).parameter(SINGLE_PARAM_ID, parameterValue).build();
-        Content page = createPage(ModuleKeyUtils.randomName(PARAMETER_MACRO_KEY), body);
+        Content page = createPage(randomName(PARAMETER_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         String value = parameterServlet.waitForQueryParameters().any("param1").getValue();
-        Assert.assertThat(value, CoreMatchers.is("param value"));
+        assertThat(value, is("param value"));
     }
 
     @Test
     public void testMacroInComment() throws Exception
     {
         login(testUserFactory.basicUser());
-        String title = ModuleKeyUtils.randomName("The macro is in the comment!");
+        String title = randomName("The macro is in the comment!");
         Content page = createPage(title, "The macro is in the comment!");
         addCommentWithMacro(String.valueOf(page.getId().asLong()));
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -200,32 +210,39 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         String commentText = commentBody.getText();
         String[] lines = StringUtils.split(commentText, "\n");
 
-        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), line -> line.startsWith("cv:"));
+        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), new Predicate<String>()
+        {
+            @Override
+            public boolean apply(String line)
+            {
+                return line.startsWith("cv:");
+            }
+        });
 
         String version = maybeVersion.get().replaceFirst("cv:", "").trim();
-        Assert.assertThat(version, ParamMatchers.isVersionNumber());
-        Assert.assertThat(commentBody.getText(), Matchers.allOf(startsWith("Hello world!!"), containsString("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
+        assertThat(version, isVersionNumber());
+        assertThat(commentBody.getText(), allOf(startsWith("Hello world!!"), containsString("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
     }
 
     @Test
     public void testMacroCacheFlushes() throws Exception
     {
         String body = new MacroStorageFormatBuilder(COUNTER_MACRO_KEY).build();
-        String title = ModuleKeyUtils.randomName(COUNTER_MACRO_KEY);
+        String title = randomName(COUNTER_MACRO_KEY);
         Content page = createPage(title, body);
         String pageId = String.valueOf(page.getId().asLong());
         ConfluencePageWithRemoteMacro pageWithRemoteMacro = loginAndVisit(testUserFactory.basicUser(),
                 ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
-        Assert.assertThat(getCounter(pageWithRemoteMacro), CoreMatchers.is(0));
+        assertThat(getCounter(pageWithRemoteMacro), is(0));
 
         // stays the same on a new visit
         pageWithRemoteMacro = refreshConfluencePageWithMacro(title, COUNTER_MACRO_NAME);
-        Assert.assertThat(getCounter(pageWithRemoteMacro), CoreMatchers.is(0));
+        assertThat(getCounter(pageWithRemoteMacro), is(0));
 
         clearCaches();
 
         pageWithRemoteMacro = refreshConfluencePageWithMacro(title, COUNTER_MACRO_NAME);
-        Assert.assertThat(getCounter(pageWithRemoteMacro), CoreMatchers.is(1));
+        assertThat(getCounter(pageWithRemoteMacro), is(1));
     }
 
     private ConfluencePageWithRemoteMacro refreshConfluencePageWithMacro(String title, String counterMacroName)
@@ -260,7 +277,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     private String createPageWithStorageFormatMacro()
     {
         String body = new MacroStorageFormatBuilder(STORAGE_FORMAT_MACRO_KEY).build();
-        Content page = createPage(ModuleKeyUtils.randomName(STORAGE_FORMAT_MACRO_KEY), body);
+        Content page = createPage(randomName(STORAGE_FORMAT_MACRO_KEY), body);
         return String.valueOf(page.getId().asLong());
     }
 

@@ -16,36 +16,38 @@ import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
 
-import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import junit.framework.TestCase;
+import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.UISupportModuleBean.newUISupportModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean;
+import static com.google.common.collect.Lists.newArrayList;
+import static junit.framework.TestCase.assertFalse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Test for the Confluence ContentProperty module, utilizes the confluence rest client
@@ -54,7 +56,7 @@ import junit.framework.TestCase;
  */
 public class TestConfluenceContentProperties
 {
-    private static final Logger log = LoggerFactory.getLogger(TestConfluenceContentProperties.class);
+    private static final Logger log = getLogger(TestConfluenceContentProperties.class);
 
     private static final String PROPERTY_KEY = "basepropkey";
     private static final String TEXT_FIELD_OBJECT_KEY = "mytitle";
@@ -95,44 +97,44 @@ public class TestConfluenceContentProperties
         {
             baseUrl = new ConfluenceTestedProductAccessor().getConfluenceProduct().getProductInstance().getBaseUrl();
 
-            ContentPropertyModuleBean moduleBean = ContentPropertyModuleBean.newContentPropertyModuleBean()
+            ContentPropertyModuleBean moduleBean = newContentPropertyModuleBean()
                     .withKey("content-prop-module-key")
                     .withName(new I18nProperty("My Content Property Indexing module", null))
                     .withKeyConfiguration(
                             new ContentPropertyIndexKeyConfigurationBean(PROPERTY_KEY,
-                                    Lists.newArrayList(
-                                            ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean()
+                                    newArrayList(
+                                            newContentPropertyIndexExtractionConfigurationBean()
                                                     .withObjectName(TEXT_FIELD_OBJECT_KEY)
                                                     .withType(ContentPropertyIndexFieldType.text)
                                                     .build(),
-                                            ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean()
+                                            newContentPropertyIndexExtractionConfigurationBean()
                                                     .withObjectName(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
                                                     .withType(ContentPropertyIndexFieldType.number)
                                                     .withAlias(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
-                                                    .withUiSupport(UISupportModuleBean.newUISupportModuleBean()
+                                                    .withUiSupport(newUISupportModuleBean()
                                                             .withName(new I18nProperty("rank", "value"))
                                                             .withDataUri("/rest/test/rank")
                                                             .withDefaultOperator("=")
                                                             .withValueType(UISupportValueType.NUMBER)
                                                             .build())
                                                     .build(),
-                                            ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean()
+                                            newContentPropertyIndexExtractionConfigurationBean()
                                                     .withObjectName(DATE_FIELD_OBJECT_KEY)
                                                     .withType(ContentPropertyIndexFieldType.date)
                                                     .build(),
-                                            ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean()
+                                            newContentPropertyIndexExtractionConfigurationBean()
                                                     .withObjectName(NUMERIC_FIELD_OBJECT_KEY)
                                                     .withType(ContentPropertyIndexFieldType.number)
                                                     .build(),
-                                            ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean()
+                                            newContentPropertyIndexExtractionConfigurationBean()
                                                     .withObjectName(STRING_FIELD_OBJECT_KEY)
                                                     .withType(ContentPropertyIndexFieldType.string)
                                                     .build(),
-                                            ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean()
+                                            newContentPropertyIndexExtractionConfigurationBean()
                                                     .withObjectName(STRING_FIELD_OBJECT_ALIAS_KEY)
                                                     .withType(ContentPropertyIndexFieldType.string)
                                                     .withAlias(STRING_FIELD_OBJECT_ALIAS_KEY)
-                                                    .withUiSupport(UISupportModuleBean.newUISupportModuleBean()
+                                                    .withUiSupport(newUISupportModuleBean()
                                                             .withName(new I18nProperty("category", "value"))
                                                             .withDataUri("/rest/test/category")
                                                             .withDefaultOperator("=")
@@ -142,7 +144,7 @@ public class TestConfluenceContentProperties
                                     )))
                     .build();
 
-            TestCase.assertFalse("Key configurations should not be empty", moduleBean.getKeyConfigurations().isEmpty());
+            assertFalse("Key configurations should not be empty", moduleBean.getKeyConfigurations().isEmpty());
 
             runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
                     .setAuthenticationToNone()
@@ -245,7 +247,7 @@ public class TestConfluenceContentProperties
             Thread.sleep(50); // wait for the space deletion to finish
             longTaskStatus = restClient.longTasks().get(task.get().getId()).get();
             if (i > 100)
-                Assert.fail("Delete space long task has not yet completed after " + waitTime * retry);
+                fail("Delete space long task has not yet completed after " + waitTime * retry);
         }
     }
 
@@ -303,8 +305,8 @@ public class TestConfluenceContentProperties
 
     private void assertHasOneMatchingItem(PageResponse<Content> response, Promise<Content> content) throws Exception
     {
-        MatcherAssert.assertThat(response.getResults(), Matchers.hasSize(1));
-        MatcherAssert.assertThat(Iterables.first(response).get().getTitle(), Matchers.is(content.get().getTitle()));
+        assertThat(response.getResults(), hasSize(1));
+        assertThat(Iterables.first(response).get().getTitle(), is(content.get().getTitle()));
     }
 
     private PageResponse<Content> executeCql(String cql) throws Exception
@@ -328,7 +330,7 @@ public class TestConfluenceContentProperties
         {
             throw new RuntimeException("Could not execute :"+cql, ex);
         }
-        Assert.fail(String.format("Did not find any results after %d secs for query string : %s", retries * waitTime / 1000, cql));
+        fail(String.format("Did not find any results after %d secs for query string : %s", retries * waitTime / 1000, cql));
         return null;
     }
 }

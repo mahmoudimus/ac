@@ -61,6 +61,7 @@ Contributions are encouraged!
 	* `modules` - bean representations of add-on JSON descriptor elements
 	* `spi` - a draft service provider interface for the plugin
 * `confluence` - the parent of all Confluence-specific modules
+    * `confluence-integration-tests` - Confluence-specific integration tests for the plugin
 	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
 	* `confluence-support` - support for Atlassian Connect in Confluence
 * `crowd-support` - support for Atlassian Connect in products that use Atlassian Crowd
@@ -78,6 +79,7 @@ Contributions are encouraged!
     * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
     * `test-support-plugin` - a collection of test utility classes
     * `wired-tests` - wired tests for the plugin
+    * `marketplace-support` - utilities for working with Atlassian Marketplace in tests
 
 ### Branches
 
@@ -115,7 +117,7 @@ To run JavaScript unit tests:
 
 #### Integration tests
 
-Before running integration tests, build the plugin with the it profile active (`-P it`)
+Before running integration tests, build the plugin.
 
 To speed up local development, all integration test modules are excluded by default. For these modules to be included
 in the build, such as when running `mvn clean` or `mvn verify`, a specific profile must be activated manually. See the
@@ -123,19 +125,27 @@ commands below for the name of each profile.
 
 To run wired tests:
 
-    mvn -pl tests/wired-tests verify -am -Pwired
+    mvn -pl tests/wired-tests verify -Pwired -DskipITs=false
 
 To run plug-in lifecycle tests:
 
-    mvn -pl tests/plugin-lifecycle-tests verify -am -PpluginLifecycle
+    mvn -pl tests/plugin-lifecycle-tests verify -PpluginLifecycle
 
 To run core integration tests:
 
-    mvn -pl tests/core-integration-tests verify -DskipITs=false -Pit -am [-DtestGroups=...]
+    mvn -pl tests/core-integration-tests verify -Pit [-DtestGroups=...] -DskipITs=false 
+
+To run JIRA integration tests:
+
+    mvn -pl jira/jira-integration-tests verify -Pit [-DtestGroups=...] -DskipITs=false 
+    
+To run Confluence integration tests:
+
+    mvn -pl confluence/confluence-integration-tests verify -Pit [-DtestGroups=...] -DskipITs=false 
 
 To run add-on descriptor validation tests:
 
-    mvn -pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -am
+    mvn -pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -DskipITs=false
 
 ### Updating developer documentation
 

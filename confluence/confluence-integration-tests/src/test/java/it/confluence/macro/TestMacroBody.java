@@ -10,19 +10,18 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.HttpUtils;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 
 import com.google.common.collect.Maps;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -31,10 +30,14 @@ import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.MacroStorageFormatBuilder;
 import it.confluence.servlet.macro.BodyHandler;
 import it.confluence.servlet.macro.MacroBodyServlet;
-import junit.framework.TestCase;
 
-import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * This test case will collect the macro body from confluence in all the different ways possible.  It will check
@@ -47,7 +50,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        DynamicContentMacroModuleBean dynamicContentMacroById = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+        DynamicContentMacroModuleBean dynamicContentMacroById = newDynamicContentMacroModuleBean()
                 .withUrl("/render-dynamic-by-id?pageId={page.id}&pageVersion={page.version}&macroId={macro.id}")
                 .withDescription(new I18nProperty("Dynamic Content Macro By Id", null))
                 .withKey("dynamic-macro-by-id")
@@ -56,7 +59,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .build();
 
-        StaticContentMacroModuleBean staticContentMacroById = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
+        StaticContentMacroModuleBean staticContentMacroById = newStaticContentMacroModuleBean()
                 .withUrl("/render-static-by-id?pageId={page.id}&pageVersion={page.version}&macroId={macro.id}")
                 .withDescription(new I18nProperty("Static Content Macro By Id", null))
                 .withKey("static-macro-by-id")
@@ -65,7 +68,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .build();
 
-        DynamicContentMacroModuleBean dynamicContentMacroByHash = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+        DynamicContentMacroModuleBean dynamicContentMacroByHash = newDynamicContentMacroModuleBean()
                 .withUrl("/render-dynamic-by-hash?pageId={page.id}&pageVersion={page.version}&macroHash={macro.hash}")
                 .withDescription(new I18nProperty("Dynamic Content Macro By Hash", null))
                 .withKey("dynamic-macro-by-hash")
@@ -74,7 +77,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .build();
 
-        StaticContentMacroModuleBean staticContentMacroByHash = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
+        StaticContentMacroModuleBean staticContentMacroByHash = newStaticContentMacroModuleBean()
                 .withUrl("/render-static-by-hash?pageId={page.id}&pageVersion={page.version}&macroHash={macro.hash}")
                 .withDescription(new I18nProperty("Static Content Macro By Hash", null))
                 .withKey("static-macro-by-hash")
@@ -151,7 +154,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
         String content1 = renderedMacro.getIFrameElement("body");
-        Assert.assertThat(content1, CoreMatchers.is("<h1>Hello world</h1>"));
+        assertThat(content1, CoreMatchers.is("<h1>Hello world</h1>"));
     }
 
     @Test
@@ -173,12 +176,12 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         Content page = createPageWithRichTextMacroAndBody(macroKey, "<h1>" + headingText + "</h1>");
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         String headingTextFromPage = viewPage.getMainContent().find(By.tagName("h1")).getText();
-        TestCase.assertEquals(headingText, headingTextFromPage);
+        assertEquals(headingText, headingTextFromPage);
     }
 
     private Content createPageWithRichTextMacroAndBody(String macroKey, String macroBody)
     {
-        long tag = System.currentTimeMillis();
+        long tag = currentTimeMillis();
         String contentBody = new MacroStorageFormatBuilder(macroKey).richTextBody(macroBody).build();
         return createPage("test page - " + tag, contentBody);
     }

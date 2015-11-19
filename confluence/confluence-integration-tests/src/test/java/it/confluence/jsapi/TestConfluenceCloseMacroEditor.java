@@ -14,7 +14,7 @@ import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.macro.AbstractContentMacroTest;
 import it.confluence.servlet.ConfluenceAppServlets;
 
-import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 
 /**

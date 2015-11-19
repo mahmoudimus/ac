@@ -3,39 +3,44 @@ package it.confluence.item;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.ConfluencePageData;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
-import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts;
-import com.atlassian.plugin.connect.test.common.matcher.IsInteger;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 import com.google.common.base.Optional;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
 
-import static org.hamcrest.core.StringStartsWith.startsWith;
+import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
+import static com.atlassian.plugin.connect.test.common.matcher.IsInteger.isInteger;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -64,14 +69,14 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withName(new I18nProperty("AC General Web Item", null))
                                 .withKey(ADDON_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withUrl("/irwi?page_id={page.id}&content_id={content.id}")
                                 .build(),
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withContext(AddOnUrlContext.addon)
                                 .withName(new I18nProperty("AC Direct To Addon Web Item", null))
                                 .withKey(ADDON_DIRECT_WEBITEM)
@@ -79,7 +84,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withWeight(1)
                                 .withUrl("/irwi?page_id={page.id}&content_id={content.id}")
                                 .build(),
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
                                 .withName(new I18nProperty("Quick page link", null))
                                 .withKey(PRODUCT_WEBITEM)
@@ -87,17 +92,17 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withWeight(1)
                                 .withUrl("/pages/viewpage.action?pageId={page.id}&contentId={content.id}")
                                 .build(),
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withName(new I18nProperty("google link", null))
                                 .withKey(ABSOLUTE_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com?myPageId={page.id}&mySpaceKey={space.key}&myContentId={content.id}")
                                 .withConditions(
-                                        SingleConditionBean.newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                        SingleConditionBean.newSingleConditionBean().withCondition("/only" + betty.getDisplayName() + "Condition").build()
+                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                                        newSingleConditionBean().withCondition("/only" + betty.getDisplayName() + "Condition").build()
                                 ).build(),
-                        WebItemModuleBean.newWebItemBean()
+                        newWebItemBean()
                                 .withName(new I18nProperty("wikipedia link", null))
                                 .withKey(ADDON_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.content.metadata")
@@ -105,7 +110,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withContext(AddOnUrlContext.addon)
                                 .withUrl("http://www.wikipedia.org")
                                 .withTarget(
-                                        WebItemTargetBean.newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build()
+                                        newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build()
                                 )
                                 .build())
                 .addRoute("/only" + barney.getDisplayName() + "Condition", new CheckUsernameConditionServlet(barney))
@@ -129,12 +134,12 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         login(betty);
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
 
-        Assert.assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
-        Assert.assertThat(webItem.getFromQueryString("myPageId"), IsInteger.isInteger());
-        Assert.assertThat(webItem.getFromQueryString("myContentId"), CoreMatchers.equalTo(webItem.getFromQueryString("myPageId")));
-        Assert.assertThat(webItem.getFromQueryString("mySpaceKey"), CoreMatchers.equalTo("ds"));
+        assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
+        assertThat(webItem.getFromQueryString("myPageId"), isInteger());
+        assertThat(webItem.getFromQueryString("myContentId"), equalTo(webItem.getFromQueryString("myPageId")));
+        assertThat(webItem.getFromQueryString("mySpaceKey"), equalTo("ds"));
     }
 
     @Test
@@ -144,14 +149,14 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
 
-        Assert.assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
-        Assert.assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("content_id"));
+        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("content_id"));
         // web-item url mode is relative to the addon by default
-        Assert.assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
+        assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
 
-        ConnectAsserts.verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
+        verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
     }
 
     @Test
@@ -161,13 +166,13 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_DIRECT_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
 
-        Assert.assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
-        Assert.assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("content_id"));
-        Assert.assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
+        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("content_id"));
+        assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
 
-        ConnectAsserts.verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
+        verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
     }
 
     @Test
@@ -178,14 +183,14 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         ConfluenceViewPage viewPage = createAndVisitViewPage();
 
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(PRODUCT_WEBITEM), Optional.of("action-menu-link"));
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
 
         webItem.click();
 
         URL url = new URL(webItem.getPath());
-        Assert.assertThat(url.getPath(), CoreMatchers.is("/confluence/pages/viewpage.action"));
-        Assert.assertEquals(viewPage.getPageId(), webItem.getFromQueryString("pageId"));
-        Assert.assertEquals(viewPage.getPageId(), webItem.getFromQueryString("contentId"));
+        assertThat(url.getPath(), is("/confluence/pages/viewpage.action"));
+        assertEquals(viewPage.getPageId(), webItem.getFromQueryString("pageId"));
+        assertEquals(viewPage.getPageId(), webItem.getFromQueryString("contentId"));
     }
 
     @Test
@@ -195,7 +200,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
 
-        Assert.assertNotNull("Web item should be found", webItem);
+        assertNotNull("Web item should be found", webItem);
     }
 
     @Test
@@ -203,7 +208,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.admin());
         createAndVisitViewPage();
-        Assert.assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
     }
 
 
@@ -214,10 +219,10 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG));
         RemoteWebItem webItem = pageAndWebItem.right();
-        Assert.assertNotNull("Web item should be found", webItem);
-        Assert.assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
+        assertNotNull("Web item should be found", webItem);
+        assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.click();
-        Assert.assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
+        assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
     }
 
     private Pair<ConfluenceViewPage, RemoteWebItem> findViewPageWebItem(String webItemId) throws Exception
@@ -234,19 +239,19 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
     private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = createPage();
+        ConfluencePageData pageData = createPage();
         return product.visit(pageClass, pageData.getId());
     }
 
-    private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
+    private ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(Option.some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
+        return confluenceOps.setPage(some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
     }
 
 
     private String getModuleKey(String module)
     {
-        return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(),module);
+        return addonAndModuleKey(remotePlugin.getAddon().getKey(), module);
     }
 
 

@@ -6,19 +6,14 @@ import com.atlassian.confluence.it.admin.BundledTheme;
 import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.fugue.Option;
-import com.atlassian.pageobjects.elements.query.Poller;
-import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.confluence.web.spacetools.SpaceToolsTabModuleProvider;
-import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
-import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 
 import com.google.common.base.Supplier;
 
@@ -28,6 +23,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import it.confluence.ConfluenceWebDriverTestBase;
+
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
+import static com.atlassian.pageobjects.elements.query.Queries.forSupplier;
+import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 
 /**
  * Tests for Space Tools Tab module. Note that when we refer to "Space Tools"
@@ -44,7 +45,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
-                .addModules("spaceToolsTabs", SpaceToolsTabModuleBean.newSpaceToolsTabBean()
+                .addModules("spaceToolsTabs", newSpaceToolsTabBean()
                                 .withName(new I18nProperty("AC Space Tab", null))
                                 .withKey(TAB_MODULE_KEY)
                                 .withLocation("overview")
@@ -73,16 +74,16 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
         loginAndVisit(testUserFactory.admin(), SpaceTemplatesPage.class, space.getKey());
 
-        String pageKey = ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
+        String pageKey = addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
         String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Option.<String>none(), pageKey);
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
                 RemoteWebPanel.class,
-                ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
+                addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
         );
 
-        Poller.waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), addonContentsPage::containsHelloWorld));
+        waitUntilTrue(forSupplier(new DefaultTimeouts(), addonContentsPage::containsHelloWorld));
     }
 
     @Test
@@ -92,14 +93,14 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
 
         loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, space);
 
-        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY));
+        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY));
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
                 RemoteWebPanel.class,
-                ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
+                addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
         );
 
-        Poller.waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
+        waitUntilTrue(forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
         {
             @Override
             public Boolean get()

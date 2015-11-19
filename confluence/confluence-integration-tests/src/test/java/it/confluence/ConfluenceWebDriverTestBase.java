@@ -5,8 +5,6 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nullable;
 
 import com.atlassian.confluence.api.model.content.Content;
-import com.atlassian.confluence.api.model.content.ContentRepresentation;
-import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.maven.MavenDependencyHelper;
 import com.atlassian.confluence.it.maven.MavenUploadablePlugin;
@@ -36,8 +34,8 @@ import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperation
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
-import com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor;
 import com.atlassian.testutils.annotations.Retry;
 import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.util.concurrent.LazyReference;
@@ -54,7 +52,10 @@ import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.confluence.api.model.content.ContentRepresentation.STORAGE;
+import static com.atlassian.confluence.api.model.content.ContentType.PAGE;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
@@ -346,10 +347,10 @@ public class ConfluenceWebDriverTestBase
 
     protected static Content createPage(String title, String storageFormat)
     {
-        Content content = Content.builder(ContentType.PAGE)
-                .space(TestSpace.DEMO.getKey())
+        Content content = Content.builder(PAGE)
+                .space(DEMO.getKey())
                 .title(title)
-                .body(storageFormat, ContentRepresentation.STORAGE)
+                .body(storageFormat, STORAGE)
                 .build();
         return restClient.content().create(content).claim();
     }

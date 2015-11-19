@@ -13,12 +13,10 @@ import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,7 +24,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -34,10 +31,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.confluence.ConfluenceWebDriverTestBase;
-import it.confluence.servlet.ConfluenceAppServlets;
 
-import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
+import static it.confluence.servlet.ConfluenceAppServlets.dynamicMacroStaticServlet;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Integration tests that create a Connect Addon that uses the autoconvert feature and exercise its usage in Confluence pages.
@@ -52,12 +54,12 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+        DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
                 .withUrl("/dynamic-macro?url={url}")
                 .withKey("dynamic-macro-with-autoconvert")
                 .withName(new I18nProperty(DYNAMIC_MACRO_WITH_AUTOCONVERT, null))
                 .withParameters(
-                        MacroParameterBean.newMacroParameterBean()
+                        newMacroParameterBean()
                                 .withIdentifier("url")
                                 .withName(new I18nProperty("URL", null))
                                 .withType("string")
@@ -74,12 +76,12 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                         .build())
                 .build();
 
-        StaticContentMacroModuleBean staticMacroWithAutoconvert = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
+        StaticContentMacroModuleBean staticMacroWithAutoconvert = newStaticContentMacroModuleBean()
                 .withUrl("/static-macro?url={url}")
                 .withKey("static-macro-with-autoconvert")
                 .withName(new I18nProperty(STATIC_MACRO_WITH_AUTOCONVERT, null))
                 .withParameters(
-                        MacroParameterBean.newMacroParameterBean()
+                        newMacroParameterBean()
                                 .withIdentifier("url")
                                 .withName(new I18nProperty("URL", null))
                                 .withType("string")
@@ -96,13 +98,13 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                         .build())
                 .build();
 
-        remotePlugin = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), randomAddOnKey())
                 .setAuthenticationToNone()
                 .addScope(ScopeName.ADMIN) // for using ap.request
                 .addModules("dynamicContentMacros", dynamicMacroWithAutoconvert)
                 .addModules("staticContentMacros", staticMacroWithAutoconvert)
                 .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
-                .addRoute("/static-macro", ConfluenceAppServlets.dynamicMacroStaticServlet())
+                .addRoute("/static-macro", dynamicMacroStaticServlet())
                 .start();
     }
 
@@ -239,13 +241,13 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
             Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
             // check that the macro was created correctly
             Elements elements = doc.select("ac|structured-macro");
-            Assert.assertEquals(1, elements.size());
+            assertEquals(1, elements.size());
             Element macroElement = elements.get(0);
-            Assert.assertEquals(macroName, macroElement.attr("ac:name"));
+            assertEquals(macroName, macroElement.attr("ac:name"));
             Elements parameterElements = macroElement.select("ac|parameter");
-            Assert.assertEquals(1, parameterElements.size());
+            assertEquals(1, parameterElements.size());
             Element urlParameter = parameterElements.get(0);
-            Assert.assertEquals(link, urlParameter.text());
+            assertEquals(link, urlParameter.text());
         }
         finally
         {
@@ -260,6 +262,6 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
         Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
         // check that the macro was created correctly
         Elements elements = doc.select("ac|structured-macro");
-        Assert.assertEquals(0, elements.size());
+        assertEquals(0, elements.size());
     }
 }

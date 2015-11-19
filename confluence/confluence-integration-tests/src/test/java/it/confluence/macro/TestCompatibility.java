@@ -4,31 +4,31 @@ import java.net.MalformedURLException;
 
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.ConfluencePageData;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
 
-import static com.atlassian.plugin.connect.test.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.echoQueryParametersServlet;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
+import static org.junit.Assert.assertEquals;
 
 public class TestCompatibility extends ConfluenceWebDriverTestBase
 {
@@ -45,10 +45,10 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("dynamicContentMacros",
-                        DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+                        newDynamicContentMacroModuleBean()
                                 .withKey(MACRO_KEY)
                                 .withUrl("/maps?data={data}")
                                 .withName(new I18nProperty("Google Maps", null))
@@ -57,14 +57,14 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
                                         .withName(new I18nProperty("Data", null))
                                         .build())
                                 .build(),
-                        DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+                        newDynamicContentMacroModuleBean()
                                 .withKey(MACRO_KEY_2)
                                 .withAliases(MACRO_KEY)
                                 .withUrl("/maps")
                                 .withName(new I18nProperty(MACRO_NAME_2, null))
                                 .build()
                 )
-                .addRoute("/maps", ConnectAppServlets.echoQueryParametersServlet())
+                .addRoute("/maps", echoQueryParametersServlet())
                 .start();
     }
 
@@ -84,7 +84,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
         createAndVisitPage(STORAGE_FORMAT);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(MACRO_KEY);
         String macroParameter = renderedMacro.getIFrameElementText("data");
-        Assert.assertEquals("data: macro data", macroParameter);
+        assertEquals("data: macro data", macroParameter);
     }
 
     @Test
@@ -98,14 +98,14 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
         String content = rpc.getPageContent(page.getPageId());
         Document doc = Jsoup.parse(content);
         Elements elements = doc.select("ac|structured-macro");
-        Assert.assertEquals("only one macro found", 1, elements.size());
-        Assert.assertEquals("name set correct (not alias)", MACRO_KEY_2, elements.get(0).attr("ac:name"));
+        assertEquals("only one macro found", 1, elements.size());
+        assertEquals("name set correct (not alias)", MACRO_KEY_2, elements.get(0).attr("ac:name"));
     }
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(Option.some(testUserFactory.basicUser()),
-                TestSpace.DEMO.getKey(), "macro page", pageContent);
+        ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()),
+                DEMO.getKey(), "macro page", pageContent);
         product.visit(ConfluenceViewPage.class, pageData.getId());
     }
 }

@@ -63,7 +63,7 @@
 
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-connect-integration-tests-common</artifactId>
+            <artifactId>atlassian-connect-integration-tests-support</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

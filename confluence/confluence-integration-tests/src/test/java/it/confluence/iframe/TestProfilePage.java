@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
@@ -25,11 +24,12 @@ import org.junit.Test;
 
 import it.confluence.ConfluenceWebDriverTestBase;
 
-import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static com.atlassian.plugin.connect.test.common.matcher.IsNotBlank.isNotBlank;
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -88,7 +88,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
     public void beforeEachTest()
     {
         this.addonKey = runner.getAddon().getKey();
-        this.awesomePageModuleKey = ModuleKeyUtils.addonAndModuleKey(addonKey, MY_AWESOME_PAGE_KEY);
+        this.awesomePageModuleKey = addonAndModuleKey(addonKey, MY_AWESOME_PAGE_KEY);
     }
 
 

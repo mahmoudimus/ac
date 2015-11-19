@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.product;
+package com.atlassian.plugin.connect.test.jira.product;
 
 import com.atlassian.plugin.connect.test.jira.pageobjects.JiraAdminSummaryPage;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
@@ -10,6 +10,7 @@ import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.jira.pageobjects.JiraGeneralPage;
+import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 
 import com.atlassian.plugin.connect.test.jira.util.JiraTestUserFactory;

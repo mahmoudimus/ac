@@ -5,24 +5,16 @@ import java.util.Map;
 
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
-import com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.plugin.connect.test.confluence.pageobjects.ConfluenceGeneralPage;
 
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -30,6 +22,18 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import it.confluence.ConfluenceWebDriverTestBase;
+
+import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
+import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test of general page in Confluence
@@ -59,21 +63,21 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                 .setAuthenticationToNone()
                 .addModules(
                         "generalPages",
-                        ConnectPageModuleBean.newPageBean()
+                        newPageBean()
                                 .withName(new I18nProperty(PAGE_NAME, null))
                                 .withKey(KEY_MY_AWESOME_PAGE)
                                 .withUrl("/pg?page_id={page.id}&page_version={page.version}&page_type={page.type}")
                                 .withWeight(1234)
                                 .withLocation("system.header/left")
-                                .withConditions(ToggleableConditionServlet.toggleableConditionBean())
+                                .withConditions(toggleableConditionBean())
                                 .build(),
-                        ConnectPageModuleBean.newPageBean()
+                        newPageBean()
                                 .withName(new I18nProperty(CONTEXT_PAGE_NAME, null))
                                 .withKey(KEY_MY_CONTEXT_PAGE)
                                 .withUrl("/pg?page_id={page.id}")
                                 .withWeight(1234)
                                 .withLocation("system.header/left")
-                                .withConditions(SingleConditionBean.newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
+                                .withConditions(newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
                                         "?page_id={page.id}").build())
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
@@ -94,7 +98,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     public void beforeEachTest()
     {
         this.addonKey = runner.getAddon().getKey();
-        this.awesomePageModuleKey = ModuleKeyUtils.addonAndModuleKey(addonKey, KEY_MY_AWESOME_PAGE);
+        this.awesomePageModuleKey = addonAndModuleKey(addonKey, KEY_MY_AWESOME_PAGE);
     }
 
     @Test
@@ -106,18 +110,18 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, addonKey);
 
         URI url = new URI(generalPage.getRemotePluginLinkHref());
-        Assert.assertThat(url.getPath(), Matchers.is("/confluence" + IframeUtils.iframeServletPath(addonKey, KEY_MY_AWESOME_PAGE)));
+        assertThat(url.getPath(), is("/confluence" + IframeUtils.iframeServletPath(addonKey, KEY_MY_AWESOME_PAGE)));
 
         ConnectAddOnEmbeddedTestPage addonContentsPage = generalPage.clickAddOnLink();
 
-        Assert.assertThat(addonContentsPage.isFullSize(), Matchers.is(true));
+        assertThat(addonContentsPage.isFullSize(), is(true));
 
         // check iframe url params
         Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
-        ConnectAsserts.verifyContainsStandardAddOnQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
-        Assert.assertThat(iframeQueryParams, Matchers.hasEntry("page_id", createdPage.getPageId()));
-        Assert.assertThat(iframeQueryParams, Matchers.hasEntry("page_version", "1"));
-        Assert.assertThat(iframeQueryParams, Matchers.hasEntry("page_type", "page"));
+        verifyContainsStandardAddOnQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
+        assertThat(iframeQueryParams, hasEntry("page_id", createdPage.getPageId()));
+        assertThat(iframeQueryParams, hasEntry("page_version", "1"));
+        assertThat(iframeQueryParams, hasEntry("page_type", "page"));
     }
 
     @Test
@@ -129,17 +133,17 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
         // web item should not be displayed
         createAndVisitViewPage();
-        Assert.assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(awesomePageModuleKey), Matchers.is(false));
+        assertThat("Expected web-item for page to NOT be present", connectPageOperations.existsWebItem(awesomePageModuleKey), is(false));
 
         // directly retrieving page should result in access denied
-        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, addonKey, ModuleKeyUtils.moduleKeyOnly(awesomePageModuleKey));
-        Assert.assertThat(insufficientPermissionsPage.getErrorMessage(), Matchers.containsString("You do not have the correct permissions"));
-        Assert.assertThat(insufficientPermissionsPage.getErrorMessage(), Matchers.containsString(PAGE_NAME));
+        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, addonKey, moduleKeyOnly(awesomePageModuleKey));
+        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
+        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(PAGE_NAME));
     }
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(Option.some(testUserFactory.basicUser()), SPACE, "A test page", "some page content");
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), SPACE, "A test page", "some page content");
         return product.visit(ConfluenceViewPage.class, pageData.getId());
     }
 

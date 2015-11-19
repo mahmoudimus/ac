@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 
@@ -17,6 +15,8 @@ import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import static com.atlassian.plugin.connect.api.request.HttpMethod.GET;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.generateJwtSignature;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -78,7 +78,7 @@ public class MacroBodyServlet extends ContextServlet
             }
 
             String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
-            String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.GET,
+            String jwt = generateJwtSignature(GET,
                     url.toURI(),
                     addonKey,
                     sharedSecret,
