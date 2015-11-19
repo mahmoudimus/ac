@@ -18,7 +18,9 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import it.jira.JiraWebDriverTestBase;
 
@@ -45,6 +47,9 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     private static final String WEB_PANEL_WITH_CONDITION_KEY = "hip-chat-discussions";
 
     private static ConnectRunner runner;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception

@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -30,17 +31,15 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilde
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.plugin.descriptor.StaticModuleListDeserializer;
 import com.atlassian.plugin.connect.test.common.client.AtlassianConnectRestClient;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.Utils;
 
-import com.atlassian.plugin.connect.plugin.descriptor.StaticModuleListDeserializer;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import org.eclipse.jetty.server.Server;
@@ -50,8 +49,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.rules.TestRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
@@ -413,21 +410,9 @@ public class ConnectRunner
         private Gson getGson()
         {
             GsonBuilder builder = ConnectModulesGsonFactory.getGsonBuilder();
-            builder = builder.registerTypeAdapter(JSON_MODULE_LIST_TYPE, getModuleListDeserializer());
+            ConnectModuleMeta[] metas = moduleMetas.toArray(new ConnectModuleMeta[moduleMetas.size()]);
+            builder = builder.registerTypeAdapter(JSON_MODULE_LIST_TYPE, new StaticModuleListDeserializer(addon, metas));
             return builder.create();
-        }
-
-        private JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> getModuleListDeserializer()
-        {
-            if (!moduleMetas.isEmpty())
-            {
-                ConnectModuleMeta[] metas = moduleMetas.toArray(new ConnectModuleMeta[moduleMetas.size()]);
-                return new StaticModuleListDeserializer(addon, metas);
-            }
-            else
-            {
-                return new DefaultModuleSerializer();
-            }
         }
     }
 }

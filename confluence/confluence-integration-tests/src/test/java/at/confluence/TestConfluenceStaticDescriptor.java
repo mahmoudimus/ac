@@ -47,6 +47,7 @@ public class TestConfluenceStaticDescriptor
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+    private boolean dashboardOnboardingEnabled;
 
     @Before
     public void installAddon() throws Exception
@@ -65,7 +66,11 @@ public class TestConfluenceStaticDescriptor
     public void disableOnboarding()
     {
         rpc.logIn(SYS_ADMIN);
-        rpc.darkFeatures.enableSiteFeature(DASHBOARD_ONBOARDING_DISABLED);
+        dashboardOnboardingEnabled = !rpc.darkFeatures.isSiteFeatureEnabled(DASHBOARD_ONBOARDING_DISABLED);
+        if (dashboardOnboardingEnabled)
+        {
+            rpc.darkFeatures.enableSiteFeature(DASHBOARD_ONBOARDING_DISABLED);
+        }
     }
 
     @Test
@@ -73,6 +78,16 @@ public class TestConfluenceStaticDescriptor
     {
         product.login(toConfluenceUser(ADMIN), DashboardPage.class);
         connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
+    }
+
+    @After
+    public void restoreOnboarding()
+    {
+        rpc.logIn(SYS_ADMIN);
+        if (dashboardOnboardingEnabled)
+        {
+            rpc.darkFeatures.disableSiteFeature(DASHBOARD_ONBOARDING_DISABLED);
+        }
     }
 
     @After
