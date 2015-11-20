@@ -5,7 +5,7 @@ import com.google.common.base.Function;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Describes a <dialog-page> Remote Module - must be bound after the dialog has been opened.
+ * Describes a <tt>dialog-page</tt> Remote Module - must be bound after the dialog has been opened.
  */
 public class RemotePluginDialog extends RemoteDialog
 {

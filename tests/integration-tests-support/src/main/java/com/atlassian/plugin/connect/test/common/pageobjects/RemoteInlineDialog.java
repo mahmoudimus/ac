@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
 /**
- * Describes a <webitem> inline dialog - must be bound after the inline dialog has been opened.
+ * Describes a <tt>webitem</tt> inline dialog - must be bound after the inline dialog has been opened.
  */
 public class RemoteInlineDialog extends AbstractRemoteDialog<RemoteInlineDialog>
 {

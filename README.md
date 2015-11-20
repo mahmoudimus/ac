@@ -75,7 +75,7 @@ Contributions are encouraged!
 * `tests` - the parent of all non-product-specific test modules
     * `descriptor-validation-tests` - JSON schema validation of all public add-ons for JIRA and Confluence on Atlassian Marketplace
     * `core-integration-tests` - integration tests for the plugin's core functionality
-    * `integration-tests-common` - classes and utilities useful to both core and product-specific integration test modules
+    * `integration-tests-support` - classes and utilities useful to both core and product-specific integration test modules
     * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
     * `test-support-plugin` - a collection of test utility classes
     * `wired-tests` - wired tests for the plugin

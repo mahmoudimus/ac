@@ -6,7 +6,7 @@ import com.atlassian.pageobjects.elements.query.Poller;
 import org.openqa.selenium.NoSuchElementException;
 
 /**
- * Describes a <dialog-page> Remote Module - must be bound after the dialog has been opened.
+ * Describes a <tt>dialog-page</tt> module - must be bound after the dialog has been opened.
  */
 public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
 {

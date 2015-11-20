@@ -147,7 +147,7 @@
                         <product>
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests-common/src/main/resources/log4j-jira.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../integration-tests-support/src/main/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -213,7 +213,7 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests-common/src/main/resources/log4j-confluence.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../integration-tests-support/src/main/resources/log4j-confluence.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
