@@ -18,4 +18,8 @@ public class BlueprintUtils {
     public static String getContentTemplateKey(ConnectAddonBean addon, BlueprintModuleBean bean) {
         return bean.getKey(addon)+"-content-template";
     }
+
+    public static String getContextUrl(ConnectAddonBean addon, BlueprintModuleBean bean) {
+        return addon.getBaseUrl() + bean.getBlueprintTemplate().getContext();
+    }
 }

@@ -7,15 +7,21 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.ADDON_KEY;
+import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.CONTENT_TEMPLATE_KEY;
+import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.CONTEXT_URL_KEY;
 
 /**
  * The {@link com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean} to
@@ -53,7 +59,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         Element contentTemplateElement = new DOMElement("content-template");
         String contentTemplateKey = BlueprintUtils.getContentTemplateKey(addon, bean);
 
-        String i18nKeyOrName = !bean.getName().hasI18n() ? bean.getDisplayName() : bean.getName().getI18n();
+        String i18nKeyOrName = bean.getName().hasI18n() ? bean.getName().getI18n() : bean.getDisplayName();
         contentTemplateElement.addAttribute("key", contentTemplateKey);
         contentTemplateElement.addAttribute("i18n-name-key", i18nKeyOrName);
 
@@ -61,6 +67,22 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                 .addAttribute("name", "template")
                 .addAttribute("type", "download")
                 .addAttribute("location", createTemplateURL(addon.getBaseUrl(), bean.getBlueprintTemplate().getUrl()));
+
+        String contextUrl = BlueprintUtils.getContextUrl(addon, bean);
+        if (contextUrl != null)
+        {
+            Element contextProvider = contentTemplateElement.addElement("context-provider");
+            contextProvider.addAttribute("class", ConnectBlueprintContextProvider.class.getName());
+            contextProvider.addElement("param")
+                                  .addAttribute("name", CONTEXT_URL_KEY)
+                                  .addAttribute("value", contextUrl);
+            contextProvider.addElement("param")
+                                  .addAttribute("name", ADDON_KEY)
+                                  .addAttribute("value", addon.getKey());
+            contextProvider.addElement("param")
+                                  .addAttribute("name", CONTENT_TEMPLATE_KEY)
+                                  .addAttribute("value", contentTemplateKey);
+        }
 
         if (log.isDebugEnabled())
         {
