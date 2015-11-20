@@ -1,31 +1,34 @@
 package it.jira.condition;
 
+import java.util.Map;
+
+import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import com.google.common.base.Optional;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Map;
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.matcher.ParamMatchers.isLocale;
-import static it.matcher.ParamMatchers.isTimeZone;
-import static it.matcher.ParamMatchers.isVersionNumber;
-import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isLocale;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isTimeZone;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
+import static com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;

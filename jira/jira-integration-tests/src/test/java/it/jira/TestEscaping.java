@@ -1,5 +1,17 @@
 package it.jira;
 
+import javax.annotation.Nullable;
+
+import com.atlassian.connect.test.jira.pageobjects.IssueNavigatorViewsMenu;
+import com.atlassian.connect.test.jira.pageobjects.JiraAdminPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraAdvancedSearchPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraProjectSummaryPageWithAddonTab;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePageWithRemotePluginIssueTab;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.Section;
+import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
+import com.atlassian.connect.test.jira.pageobjects.workflow.JiraAddWorkflowTransitionPostFunctionPage;
+import com.atlassian.connect.test.jira.pageobjects.workflow.WorkflowPostFunctionEntry;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
@@ -11,30 +23,20 @@ import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectSummaryPageWithAddonTab;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
-import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.JiraAddWorkflowTransitionPostFunctionPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.WorkflowPostFunctionEntry;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import it.servlet.ConnectAppServlets;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import javax.annotation.Nullable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;

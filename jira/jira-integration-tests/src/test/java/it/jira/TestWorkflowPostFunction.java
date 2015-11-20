@@ -1,5 +1,7 @@
 package it.jira;
 
+import com.atlassian.connect.test.jira.pageobjects.workflow.ExtendedViewWorkflowTransitionPage;
+import com.atlassian.connect.test.jira.pageobjects.workflow.JiraEditWorkflowTransitionFunctionParamsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionFunctionParamsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowSteps;
@@ -7,17 +9,16 @@ import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitio
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.JiraEditWorkflowTransitionFunctionParamsPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.servlet.ConnectAppServlets;
+import it.jira.servlet.JiraAppServlets;
 
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -63,12 +64,13 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                 )
                 .addRoute("/wpf-view", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/wpf-edit", ConnectAppServlets.helloWorldServlet())
-                .addRoute("/wpf-create", ConnectAppServlets.workflowPostFunctionServlet())
-                .addRoute("/wpf-invalid-create", ConnectAppServlets.failValidateWorkflowPostFunctionServlet())
+                .addRoute("/wpf-create", JiraAppServlets.workflowPostFunctionServlet())
+                .addRoute("/wpf-invalid-create", JiraAppServlets.failValidateWorkflowPostFunctionServlet())
                 .start();
 
         ensureDefaultWorkflowActivated();
     }
+
 
     @AfterClass
     public static void stopConnectAddOn() throws Exception

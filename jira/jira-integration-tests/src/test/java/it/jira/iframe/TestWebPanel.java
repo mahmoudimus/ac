@@ -1,30 +1,32 @@
 
 package it.jira.iframe;
 
+import java.rmi.RemoteException;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraProjectAdministrationPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProfilePage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.rmi.RemoteException;
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
-import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyIframeURLHasVersionNumber;
+import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
