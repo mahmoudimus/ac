@@ -122,7 +122,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .addRoute("/echo/params", echoQueryParametersServlet())
                 .addRoute("/render-context", wrapContextAwareServlet(contextServlet))
                 .addRoute("/images/placeholder.png", resourceServlet("atlassian-icon-16.png", "image/png"))
-                .addRoute("/render-storage-format", resourceServlet("confluence/test-static-content-macro.xhtml", "application/xhtml+xml"))
+                .addRoute("/render-storage-format", resourceServlet("it/confluence/macro/test-static-content-macro.xhtml", "application/xhtml+xml"))
                 .addRoute("/counter", new CounterMacroServlet())
                 .addScope(ScopeName.WRITE)
                 .start();
