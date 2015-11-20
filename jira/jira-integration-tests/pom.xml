@@ -520,6 +520,7 @@
                                 <include>it/jira/**/*.java</include>
                             </includes>
                             <excludes>
+                                <exclude>it/jira/condition/*.java</exclude>
                                 <exclude>it/jira/iframe/*.java</exclude>
                                 <exclude>it/jira/item/*.java</exclude>
                                 <exclude>it/jira/jsapi/*.java</exclude>
