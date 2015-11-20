@@ -52,6 +52,7 @@ import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlet
 import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.resourceServlet;
 import static com.atlassian.plugin.connect.test.common.util.Utils.loadResourceAsString;
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static it.confluence.servlet.ConfluenceAppServlets.dynamicMacroStaticServlet;
 import static it.confluence.servlet.ConfluenceAppServlets.macroBodyEditor;
 import static it.confluence.servlet.ConfluenceAppServlets.macroEditor;
@@ -346,7 +347,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDescriptionShowsInMacroBrowser() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, SMALL_INLINE_MACRO_KEY);
 
@@ -366,7 +367,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDescriptionDoesNotExposeXss() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, CLIENT_SIDE_BODY_MACRO_KEY);
         try
@@ -417,7 +418,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroEditorSavesParameters() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(randomName("Macro Editor"));
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
 
@@ -432,7 +433,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroInOrderedTable() throws Exception
     {
         login(testUserFactory.basicUser());
-        Content page = createPage(randomName(TABLE_MACRO_NAME), loadResourceAsString("confluence/test-page-table-macro.xhtml"));
+        Content page = createPage(randomName(TABLE_MACRO_NAME), loadResourceAsString("it/confluence/macro/test-page-table-macro.xhtml"));
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
