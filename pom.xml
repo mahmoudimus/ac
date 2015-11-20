@@ -926,7 +926,7 @@
         <ao.short.timeout>30000</ao.short.timeout>
         <skipTests>false</skipTests>
         <skipUnits>${skipTests}</skipUnits>
-        <schema.generator.version>1.0.0</schema.generator.version>
+        <schema.generator.version>1.1.0-SNAPSHOT</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
         <npm.version>2.3.0</npm.version>
