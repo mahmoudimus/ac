@@ -115,7 +115,7 @@ runTestsStage() {
             setupVncTask()
             mavenTestTask(
                     description: 'Run Add-On Descriptor Validation Tests',
-                    goal: '-pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests',
+                    goal: '-pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -am',
                     environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
             )
             artifactDefinition(
