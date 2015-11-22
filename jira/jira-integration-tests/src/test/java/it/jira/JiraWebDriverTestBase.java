@@ -1,33 +1,35 @@
 package it.jira;
 
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
+
+import com.atlassian.connect.test.jira.pageobjects.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
 import com.atlassian.jira.pageobjects.pages.EditPermissionsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
-import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.jira.util.JiraTestUserFactory;
+import com.atlassian.plugin.connect.test.jira.product.JiraTestedProductAccessor;
+import com.atlassian.testutils.annotations.Retry;
+import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import it.util.ConnectTestUserFactory;
-import it.util.JiraTestUserFactory;
-import it.util.TestProject;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
-import com.atlassian.testutils.junit.RetryRule;
-import com.atlassian.testutils.annotations.Retry;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
+import it.jira.project.TestProject;
 
 @Retry(maxAttempts=JiraWebDriverTestBase.MAX_RETRY_ATTEMPTS)
 public class JiraWebDriverTestBase
 {
 
-    protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
+    protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
     protected static TestProject project;
 

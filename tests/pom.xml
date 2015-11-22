@@ -21,13 +21,15 @@
 
     <modules>
         <module>test-support-plugin</module>
+        <module>marketplace-support</module>
+        <module>integration-tests-support</module>
     </modules>
 
     <profiles>
         <profile>
             <id>it</id>
             <modules>
-                <module>integration-tests</module>
+                <module>core-integration-tests</module>
             </modules>
         </profile>
         <profile>
@@ -45,7 +47,7 @@
         <profile>
             <id>freezer-release-profile</id>
             <modules>
-                <module>integration-tests</module>
+                <module>core-integration-tests</module>
             </modules>
         </profile>
         <profile>

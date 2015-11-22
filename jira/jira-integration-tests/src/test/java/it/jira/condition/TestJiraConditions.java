@@ -1,5 +1,9 @@
 package it.jira.condition;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.atlassian.jira.pageobjects.pages.viewissue.IssueMenu;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
@@ -11,20 +15,19 @@ import com.atlassian.plugin.connect.jira.web.condition.JiraConditionClassResolve
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import com.google.common.collect.ImmutableMap;
-import it.jira.JiraWebDriverTestBase;
-import it.jira.item.TestJiraWebItemWithProductCondition;
-import it.util.TestUser;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import it.jira.JiraWebDriverTestBase;
+import it.jira.item.TestJiraWebItemWithProductCondition;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
