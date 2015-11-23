@@ -4,6 +4,8 @@ import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.GlobalPermissionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Create the global permission.
@@ -58,5 +60,31 @@ public class GlobalPermissionModuleBean extends RequiredKeyBean
     public Boolean getAnonymousAllowed()
     {
         return anonymousAllowed;
+    }
+
+    @Override
+    public boolean equals(final Object otherObj)
+    {
+        if (this == otherObj) { return true; }
+
+        if (otherObj == null || getClass() != otherObj.getClass()) { return false; }
+
+        final GlobalPermissionModuleBean that = (GlobalPermissionModuleBean) otherObj;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(otherObj))
+                .append(description, that.description)
+                .append(anonymousAllowed, that.anonymousAllowed)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(description)
+                .append(anonymousAllowed)
+                .toHashCode();
     }
 }
