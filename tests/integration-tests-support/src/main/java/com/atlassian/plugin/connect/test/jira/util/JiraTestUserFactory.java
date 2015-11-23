@@ -1,12 +1,8 @@
 package com.atlassian.plugin.connect.test.jira.util;
 
-import java.util.List;
-
 import com.atlassian.jira.functest.framework.backdoor.Backdoor;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.jira.security.Permissions;
 import com.atlassian.plugin.connect.test.common.helptips.HelpTipApiClient;
-
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 
@@ -39,19 +35,10 @@ public class JiraTestUserFactory extends ConnectTestUserFactory
 
     private void addJiraPermissionsForTestUser(TestUser testUser, AuthLevel authLevel)
     {
-        List<String> adminGroups = backdoor.permissions().getGlobalPermissionGroups(Permissions.ADMINISTER);
-        String adminGroup = (adminGroups.contains("jira-administrators")) ? "jira-administrators" : "administrators";
-
-        List<String> developerGroups = backdoor.permissions().getGlobalPermissionGroups(Permissions.USER_PICKER);
-        String developerGroup = (developerGroups.contains("jira-developers")) ? "jira-developers" : "developers";
-
         switch (authLevel)
         {
             case ADMIN:
-                backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), adminGroup);
-            case BASIC_USER:
-                backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), "jira-users");
-                backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), developerGroup);
+                backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), "jira-administrators");
         }
     }
 }

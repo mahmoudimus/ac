@@ -1,8 +1,5 @@
 package it.jira;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
@@ -19,13 +16,13 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
 import com.google.common.base.Optional;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
@@ -114,19 +111,13 @@ public class TestJira extends JiraWebDriverTestBase
     @Test
     public void testViewIssueTab() throws Exception
     {
-        testLoggedInAndAnonymous(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
-                String addOnKey = runner.getAddon().getKey();
-                JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.key, addOnKey);
-                Assert.assertEquals("Success", page.getMessage());
-                return null;
-            }
-        });
+        login(testUserFactory.basicUser());
+
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
+        String addOnKey = runner.getAddon().getKey();
+        JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
+                JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.key, addOnKey);
+        Assert.assertEquals("Success", page.getMessage());
     }
 
     @Test

@@ -1,8 +1,5 @@
 package it.jira.iframe;
 
-import java.util.Map;
-import java.util.concurrent.Callable;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraProjectSummaryPageWithAddonTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -10,14 +7,14 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.jira.JiraWebDriverTestBase;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -77,37 +74,11 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     }
 
     @Test
-    public void projectTabShouldBePresentAndReceiveContextParametersForAnonymous() throws Exception
-    {
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                logout();
-                visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
-                return null;
-            }
-        });
-    }
-
-    @Test
     public void projectTabShouldBePresentAndReceiveContextParameters() throws Exception
     {
-        loginAndRun(testUserFactory.basicUser(), new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception
-            {
-                visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
-                return null;
-            }
-        });
-    }
-
-    private void visitAndVerifyRemoteProjectTabPanelFromSummaryPage() throws Exception
-    {
-        JiraProjectSummaryPageWithAddonTab summaryPage = visitProjectSummaryPage();
+        login(testUserFactory.basicUser());
+        JiraProjectSummaryPageWithAddonTab summaryPage = product.visit(
+                JiraProjectSummaryPageWithAddonTab.class, project.getKey(), ADDON_KEY, MODULE_KEY);
         summaryPage = summaryPage.expandAddonsList();
         ConnectAddOnEmbeddedTestPage embeddedAddonTestPage = summaryPage.goToEmbeddedTestPageAddon();
         assertEquals("Success", embeddedAddonTestPage.getMessage());
@@ -115,10 +86,5 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
         Map<String, String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertThat(conditionRequestParams, hasEntry("projectKey", project.getKey()));
         assertThat(conditionRequestParams, hasEntry("projectId", project.getId()));
-    }
-
-    private JiraProjectSummaryPageWithAddonTab visitProjectSummaryPage()
-    {
-        return product.visit(JiraProjectSummaryPageWithAddonTab.class, project.getKey(), ADDON_KEY, MODULE_KEY);
     }
 }
