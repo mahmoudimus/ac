@@ -10,7 +10,7 @@ import java.util.Collection;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.util.JsonCommon;
+import com.atlassian.plugin.connect.plugin.property.JsonCommon;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.SignedRequestHandler;
@@ -100,7 +100,7 @@ public class TestAddOnProperties
         int responseCode = connection.getResponseCode();
         assertEquals(Response.SC_CREATED, responseCode);
 
-        assertDeleted(propertyKey);
+        deleteAndAssertDeleted(propertyKey);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class TestAddOnProperties
         final RestAddOnProperty result = JSON.readValue(response, RestAddOnProperty.class);
         assertThat(result, isEqualToIgnoringBaseUrl(property));
 
-        assertDeleted(propertyKey);
+        deleteAndAssertDeleted(propertyKey);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class TestAddOnProperties
         RestAddOnProperty result = JSON.readValue(response, RestAddOnProperty.class);
         assertThat(result, isEqualToIgnoringBaseUrl(property));
 
-        assertDeleted(propertyKey);
+        deleteAndAssertDeleted(propertyKey);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class TestAddOnProperties
         int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
-        assertDeleted(propertyKey);
+        deleteAndAssertDeleted(propertyKey);
     }
 
     @Test
@@ -230,7 +230,7 @@ public class TestAddOnProperties
         }
         for (int i = 0; i < 50; i++)
         {
-            assertDeleted(propertyKeyPrefix + String.valueOf(i));
+            deleteAndAssertDeleted(propertyKeyPrefix + String.valueOf(i));
         }
     }
 
@@ -249,7 +249,7 @@ public class TestAddOnProperties
 
         for (int i = 0; i < 50; i++)
         {
-            assertDeleted(propertyKeyPrefix + String.valueOf(i));
+            deleteAndAssertDeleted(propertyKeyPrefix + String.valueOf(i));
         }
     }
 
@@ -267,7 +267,7 @@ public class TestAddOnProperties
 
         RestAddOnPropertiesBean expected = RestAddOnPropertiesBean.fromRestAddOnProperties(property);
         assertThat(result, isEqualToIgnoringBaseUrl(expected));
-        assertDeleted(propertyKey);
+        deleteAndAssertDeleted(propertyKey);
     }
 
     private String getSelfForPropertyKey(final String propertyKey)
@@ -275,7 +275,7 @@ public class TestAddOnProperties
         return restPath + "/properties/" + propertyKey;
     }
 
-    private void assertDeleted(String propertyKey) throws IOException, URISyntaxException
+    private void deleteAndAssertDeleted(String propertyKey) throws IOException, URISyntaxException
     {
         int responseCode = executeDeleteRequest(propertyKey);
         assertEquals(Response.SC_NO_CONTENT, responseCode);
@@ -315,7 +315,7 @@ public class TestAddOnProperties
         final RestAddOnPropertiesBean restAddonProperties = JSON.readValue(rawProperties, RestAddOnPropertiesBean.class);
         for (RestAddOnPropertiesBean.RestAddOnPropertyBean restAddonKey : restAddonProperties.keys)
         {
-            assertDeleted(restAddonKey.key);
+            deleteAndAssertDeleted(restAddonKey.key);
         }
     }
 

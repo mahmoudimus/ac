@@ -10,7 +10,6 @@ import org.codehaus.jackson.JsonNode;
 import java.util.Iterator;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.util.JsonCommon;
 
 /**
  * This class represents an add-on property iterable which consist of a key and a value.

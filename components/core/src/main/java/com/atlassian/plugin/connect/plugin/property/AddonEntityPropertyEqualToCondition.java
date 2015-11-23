@@ -15,7 +15,7 @@ import com.google.common.base.Strings;
 
 import org.codehaus.jackson.JsonNode;
 
-import static com.atlassian.plugin.connect.plugin.util.JsonCommon.parseStringToJson;
+import static com.atlassian.plugin.connect.plugin.property.JsonCommon.parseStringToJson;
 
 @ConnectCondition
 public class AddonEntityPropertyEqualToCondition implements Condition

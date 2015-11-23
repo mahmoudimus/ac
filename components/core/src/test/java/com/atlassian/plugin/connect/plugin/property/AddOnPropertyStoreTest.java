@@ -7,7 +7,6 @@ import java.util.List;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.util.JsonCommon;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -41,13 +40,8 @@ public class AddOnPropertyStoreTest
 {
     private static final String ADD_ON_KEY = "addOnKey";
     private static final String PROPERTY_KEY = "propertyKey";
-    private static final String RAW_VALUE = q("value");
+    private static final String RAW_VALUE = quote("value");
     private static final JsonNode VALUE = JsonCommon.parseStringToJson(RAW_VALUE).get();
-
-    private static String q(String unquoted)
-    {
-        return '"' + unquoted + '"';
-    }
 
     private EntityManager entityManager;
     private AddOnPropertyStore store;
@@ -74,7 +68,7 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testCreatePropertyWithBigValue()
     {
-        String bigValue = q(StringUtils.repeat('.' , 65000));
+        String bigValue = quote(StringUtils.repeat('.', 65000));
         PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue).getResult();
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
     }
@@ -146,7 +140,7 @@ public class AddOnPropertyStoreTest
             @Override
             public Void call()
             {
-                store.setPropertyValue("a", "a", q("a"));
+                store.setPropertyValue("a", "a", quote("a"));
                 return null;
             }
         });
@@ -202,5 +196,10 @@ public class AddOnPropertyStoreTest
                 description.appendText("[key=" + property.getKey() + ",value=" + property.getValue() + "]");
             }
         };
+    }
+
+    private static String quote(String unquoted)
+    {
+        return '"' + unquoted + '"';
     }
 }

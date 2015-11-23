@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.util;
+package com.atlassian.plugin.connect.plugin.property;
 
 import java.io.IOException;
 

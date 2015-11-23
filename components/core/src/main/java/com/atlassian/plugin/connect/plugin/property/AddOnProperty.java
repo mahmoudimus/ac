@@ -8,7 +8,6 @@ import org.codehaus.jackson.JsonNode;
 import javax.annotation.concurrent.Immutable;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.util.JsonCommon;
 
 import com.google.common.base.Preconditions;
 
