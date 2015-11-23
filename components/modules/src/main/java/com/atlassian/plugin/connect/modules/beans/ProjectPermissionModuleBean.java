@@ -7,13 +7,16 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
  * Create the project permission.
- * <br />
- * Project permissions are handful if you need to manage permissions for operations performed on objects
- * related with project like issues, comments, versions or your add-on's entities related with projects.
- * <br />
- * User's permissions can be checked using <a href="https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions">my permission resource</a>.
- * Project permissions are not supported by conditions yet.
  *
+ * Project permissions are useful if you need to manage permissions for operations performed on objects
+ * related with project like issues, comments, versions or your add-on's entities related with projects.
+
+ * User's permissions can be checked using <a href="https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions">my permission resource</a>.
+ * Project permissions are not supported in conditions yet.
+ *
+ * You can define condition for project permissions. I may sense if permission that depends on global JIRA settings like time-tracking, voting or sub-tasks.
+ *
+ * #### Example
  * @exampleJson {@link ConnectJsonExamples#PROJECT_PERMISSION_EXAMPLE}
  * @schemaTitle Project Permission
  * @since 1.1

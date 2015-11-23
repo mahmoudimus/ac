@@ -7,13 +7,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
  * Create the global permission.
- * <br />
- * Global permissions are handful if you need to manage permissions for operations performed on global objects
- * like users or global settings.
- * <br />
- * User's permissions can be checked using <a href="https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions">my permission resource</a>.
- * Global permissions are not supported by conditions yet.
  *
+ * Global permissions are useful if you need to manage permissions for operations performed on global objects
+ * like users or global settings.
+ *
+ * User's permissions can be checked using <a href="https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions">my permission resource</a>.
+ * Global permissions are not supported in conditions yet.
+ *
+ * #### Example
  * @exampleJson {@link ConnectJsonExamples#GLOBAL_PERMISSION_EXAMPLE}
  * @schemaTitle Global Permission
  * @since 1.1
