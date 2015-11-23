@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.reference;
 
-import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -25,10 +25,10 @@ public class ModuleProviderForTests extends AbstractConnectPageModuleProvider
             @ComponentImport IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             @ComponentImport IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             @ComponentImport WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            @ComponentImport PluginAccessor pluginAccessor)
+            @ComponentImport ConditionClassAccessor conditionClassAccessor)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pluginAccessor);
+                webItemModuleDescriptorFactory, conditionClassAccessor);
     }
 
     @Override

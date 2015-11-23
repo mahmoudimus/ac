@@ -78,7 +78,7 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
         if (blacklistedLocationsUsed.size() > 0)
         {
             String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
-            throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.invalid.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
+            throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
         }
         else
         {

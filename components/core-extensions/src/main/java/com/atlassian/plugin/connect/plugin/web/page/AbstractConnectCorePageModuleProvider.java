@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -26,11 +26,11 @@ public abstract class AbstractConnectCorePageModuleProvider extends AbstractConn
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            PluginAccessor pluginAccessor,
+            ConditionClassAccessor conditionClassAccessor,
             ConnectJsonSchemaValidator schemaValidator)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pluginAccessor);
+                webItemModuleDescriptorFactory, conditionClassAccessor);
         this.pluginRetrievalService = pluginRetrievalService;
         this.schemaValidator = schemaValidator;
     }
