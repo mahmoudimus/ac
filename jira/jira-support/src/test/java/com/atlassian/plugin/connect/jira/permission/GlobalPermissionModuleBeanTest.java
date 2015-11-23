@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.capabilities.beans;
+package com.atlassian.plugin.connect.jira.permission;
 
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
