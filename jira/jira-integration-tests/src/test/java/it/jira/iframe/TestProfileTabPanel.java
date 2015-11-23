@@ -1,33 +1,35 @@
 package it.jira.iframe;
 
+import java.rmi.RemoteException;
+import java.util.Map;
+
+import com.atlassian.connect.test.jira.pageobjects.InsufficientPermissionsViewProfileTab;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProfilePage;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
-import com.atlassian.plugin.connect.test.pageobjects.jira.InsufficientPermissionsViewProfileTab;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import java.rmi.RemoteException;
-import java.util.Map;
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.matcher.IsNotBlank.isNotBlank;
-import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
-import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.matcher.IsNotBlank.isNotBlank;
+import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;

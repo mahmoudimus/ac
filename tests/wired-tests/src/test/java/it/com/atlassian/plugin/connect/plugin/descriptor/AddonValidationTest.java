@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
@@ -298,7 +297,6 @@ public class AddonValidationTest
     {
         return new ConnectAddonBeanBuilder()
                 .withKey("ac-test-" + AddonUtil.randomPluginKey())
-                .withModule("webItems", randomWebItemBean())
                 .withBaseurl("https://example.com/");
     }
 

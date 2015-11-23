@@ -1,28 +1,32 @@
 
 package it.jira.iframe;
 
+import java.rmi.RemoteException;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraProjectAdministrationPage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProfilePage;
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
+import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.rmi.RemoteException;
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
-import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyIframeURLHasVersionNumber;
+import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -43,6 +47,9 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     private static final String WEB_PANEL_WITH_CONDITION_KEY = "hip-chat-discussions";
 
     private static ConnectRunner runner;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -123,7 +130,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     public void testViewIssuePageWithArbitraryDataInUrl() throws Exception
     {
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
+        ViewIssuePageWithAddonFragments viewIssuePage = product.visit(ViewIssuePageWithAddonFragments.class, issue.key);
         RemoteWebPanel panel = viewIssuePage.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT2_KEY)).waitUntilContentLoaded();
 
         assertEquals(issue.id, panel.getFromQueryString("my-issue-id"));
@@ -157,7 +164,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         TestUser user = testUserFactory.basicUser();
         login(user);
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for left remotable-web-panel panel");
-        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
+        ViewIssuePageWithAddonFragments page = product.visit(ViewIssuePageWithAddonFragments.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT_KEY)).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
@@ -176,7 +183,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         TestUser user = testUserFactory.basicUser();
         login(user);
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Another test issue for right remotable-web-panel panel");
-        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
+        ViewIssuePageWithAddonFragments page = product.visit(ViewIssuePageWithAddonFragments.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_RIGHT_KEY)).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());

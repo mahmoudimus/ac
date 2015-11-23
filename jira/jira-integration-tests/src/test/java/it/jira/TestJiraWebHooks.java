@@ -2,15 +2,16 @@ package it.jira;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.Issue;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
+
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
-import static it.matcher.ParamMatchers.isVersionNumber;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
+import static com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet.runInJsonRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;

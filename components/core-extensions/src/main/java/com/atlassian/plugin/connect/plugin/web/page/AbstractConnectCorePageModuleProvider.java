@@ -40,7 +40,7 @@ public abstract class AbstractConnectCorePageModuleProvider extends AbstractConn
             ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
         URL schemaUrl = pluginRetrievalService.getPlugin().getResource(SCHEMA_PATH);
-        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, schemaUrl, schemaValidator);
+        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, descriptor, schemaUrl, schemaValidator);
         return super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
     }
 }

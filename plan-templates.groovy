@@ -59,7 +59,7 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '5.9.1-SNAPSHOT',
+            productVersion: '5.9.1-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'
@@ -77,7 +77,7 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.1.0-SNAPSHOT',
+            productVersion: '7.1.0-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'

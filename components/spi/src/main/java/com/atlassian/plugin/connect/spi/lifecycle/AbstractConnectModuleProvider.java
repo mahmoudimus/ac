@@ -41,13 +41,13 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
         List<T> beans;
         if (modulesElement.isJsonObject())
         {
-            assertMultipleModulesNotAllowed();
+            assertMultipleModulesNotAllowed(descriptor);
             T module = gson.fromJson(jsonModuleListEntry, getMeta().getBeanClass());
             beans = Collections.singletonList(module);
         }
         else
         {
-            assertMultipleModulesAllowed();
+            assertMultipleModulesAllowed(descriptor);
             beans = new ArrayList<>();
             for (JsonElement moduleElement : modulesElement.getAsJsonArray())
             {
@@ -61,13 +61,17 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
      * Validates the given JSON module list entry against the given JSON schema and asserts that the result is valid.
      *
      * @param jsonModuleListEntry the string representation of the module list entry JSON element
+     * @param descriptor the add-on descriptor (without the module list)
      * @param schemaUrl the URL of the JSON schema resource
      * @param schemaValidator the JSON schema validator to use
      * @throws IllegalStateException if a valid JSON schema cannot be read from the provided URL
      * @throws ConnectModuleSchemaValidationException if the module list entry was not well-formed or did not match the schema
      */
-    protected void assertDescriptorValidatesAgainstSchema(String jsonModuleListEntry, URL schemaUrl,
-            ConnectJsonSchemaValidator schemaValidator) throws ConnectModuleSchemaValidationException
+    protected void assertDescriptorValidatesAgainstSchema(String jsonModuleListEntry,
+            ShallowConnectAddonBean descriptor,
+            URL schemaUrl,
+            ConnectJsonSchemaValidator schemaValidator)
+            throws ConnectModuleSchemaValidationException
     {
         String modules = String.format("{\"%s\": %s}", getMeta().getDescriptorKey(), jsonModuleListEntry);
         try
@@ -75,33 +79,35 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
             schemaValidator.assertValidDescriptor(modules, schemaUrl);
         } catch (ConnectJsonSchemaValidationException e)
         {
-            throw new ConnectModuleSchemaValidationException(getMeta(), e);
+            throw new ConnectModuleSchemaValidationException(descriptor, getMeta(), e);
         }
     }
 
     /**
      * Asserts that the module type accepts multiple modules.
      *
+     * @param descriptor the add-on descriptor (without the module list)
      * @throws ConnectModuleValidationException if the assertion fails
      */
-    private void assertMultipleModulesAllowed() throws ConnectModuleValidationException
+    private void assertMultipleModulesAllowed(ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
         if (!getMeta().multipleModulesAllowed())
         {
-            throw new ConnectModuleValidationException(getMeta(), "Modules should be provided as a JSON array of objects.");
+            throw new ConnectModuleValidationException(descriptor, getMeta(), "Modules should be provided as a JSON array of objects.", null, null);
         }
     }
 
     /**
      * Asserts that the module type only accepts a single module.
      *
+     * @param descriptor the add-on descriptor (without the module list)
      * @throws ConnectModuleValidationException if the assertion fails
      */
-    private void assertMultipleModulesNotAllowed() throws ConnectModuleValidationException
+    private void assertMultipleModulesNotAllowed(ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
         if (getMeta().multipleModulesAllowed())
         {
-            throw new ConnectModuleValidationException(getMeta(), "A single module should be provided as a JSON object.");
+            throw new ConnectModuleValidationException(descriptor, getMeta(), "A single module should be provided as a JSON object.", null, null);
         }
     }
 }
