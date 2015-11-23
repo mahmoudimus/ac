@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleMeta;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
@@ -39,7 +39,7 @@ public class GlobalPermissionModuleProvider extends AbstractJiraConnectModulePro
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<GlobalPermissionModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(final List<GlobalPermissionModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
     {
         return Lists.transform(modules, new Function<GlobalPermissionModuleBean, ModuleDescriptor>()
         {
