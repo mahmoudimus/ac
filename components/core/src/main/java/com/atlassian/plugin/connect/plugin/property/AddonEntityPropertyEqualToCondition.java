@@ -63,9 +63,6 @@ public class AddonEntityPropertyEqualToCondition implements Condition
                 @Override
                 public Boolean apply(final AddOnProperty input)
                 {
-                    System.out.println("Property value: " + propertyValue);
-                    System.out.println("AddonProperty value: " + input.getValue());
-                    // return propertyValue.equals(input.getValue());
                     final Option<JsonNode> propertyJson = parseStringToJson(propertyValue);
                     return propertyJson.equals(Option.some(input.getValue()));
                 }

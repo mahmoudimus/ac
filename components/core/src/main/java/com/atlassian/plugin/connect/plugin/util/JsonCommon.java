@@ -9,7 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 
 /**
- * This class contains common methods that are employed across the codebase.
+ * This class contains common JSON methods.
  */
 public class JsonCommon
 {
