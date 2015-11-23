@@ -13,8 +13,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Global permissions are useful if you need to manage permissions for operations performed on global objects
  * like users or global settings.
  *
- * User's permissions can be checked using <a href="https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions">my permission resource</a>.
- * Global permissions are not supported in conditions yet.
+ * User's permissions can be checked using [/mypermissions](https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions).
+ * __Note:__ Global permissions added using this module are not supported for use with the `has_project_permission` condition.
  *
  * #### Example
  * @exampleJson {@link ConnectJsonExamples#GLOBAL_PERMISSION_EXAMPLE}
