@@ -129,7 +129,7 @@ To run wired tests:
 
 To run plug-in lifecycle tests:
 
-    mvn -pl tests/plugin-lifecycle-tests verify -PpluginLifecycle
+    mvn -pl tests/plugin-lifecycle-tests verify -PpluginLifecycle -DskipITs=false
 
 To run core integration tests:
 
