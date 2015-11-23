@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.61-SNAPSHOT</version>
+        <version>1.1.62-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -216,7 +216,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.8-atlassian-8</version>
+            <version>${jersey.server.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -928,7 +928,7 @@
         <od.testing.configuration>
             use-java,8
             use-maven,3
-            include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
+            include-artifact,com.atlassian.plugins:atlassian-connect-confluence-integration-tests
             include-artifact,com.atlassian.plugins:atlassian-connect-jira-integration-tests
         </od.testing.configuration>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>

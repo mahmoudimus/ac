@@ -27,6 +27,9 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+import org.junit.Rule;
+import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.testutils.annotations.Retry;
 
 import java.io.IOException;
 
@@ -99,6 +102,10 @@ public abstract class AbstractAddonLifecycleTest
         this.darkFeatureManager = darkFeatureManager;
         this.connectAddonRegistry = connectAddonRegistry;
     }
+
+    @Rule
+    public RetryRule retryRule = new RetryRule();
+    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     protected abstract boolean signCallbacksWithJwt();
 
@@ -187,6 +194,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void installUrlIsPosted() throws Exception
     {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
@@ -195,6 +203,7 @@ public abstract class AbstractAddonLifecycleTest
 
     // with the dark feature enabled we do sign install callbacks using the new shared secret (which is useless, but the previous behaviour)
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void callbackSigningDarkFeaturePreventsSigningTheInstalledCallback() throws Exception
     {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
@@ -299,6 +308,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void installRequestHasVersion() throws Exception
     {
         ConnectAddonBean addon = installOnlyBean;
@@ -325,6 +335,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void uninstallUrlIsPosted() throws Exception
     {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
@@ -333,6 +344,7 @@ public abstract class AbstractAddonLifecycleTest
 
     // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void callbackSigningDarkFeaturePreventsSigningTheUninstalledCallback() throws IOException
     {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
@@ -379,6 +391,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void uninstallRequestHasVersion() throws Exception
     {
         ConnectAddonBean addon = installAndUninstallBean;
@@ -410,6 +423,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void enableRequestHasVersion() throws IOException
     {
         ConnectAddonBean addon = installAndEnabledBean;
@@ -442,6 +456,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void disableRequestHasVersion() throws IOException
     {
         ConnectAddonBean addon = installAndDisabledBean;
@@ -476,6 +491,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void addonUserIsCreatedAndEnabled() throws Exception
     {
         ConnectAddonBean addon = installOnlyBean;
@@ -502,6 +518,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void uninstallAddonUserIsDisabled() throws Exception
     {
         ConnectAddonBean addon = installAndUninstallBean;
@@ -532,6 +549,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void addonUserIsRecreatedAfterInstall() throws Exception
     {
         ConnectAddonBean addon = installAndUninstallBean;
@@ -572,6 +590,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void disabledAddonHadDisabledUser() throws IOException
     {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
@@ -580,6 +599,7 @@ public abstract class AbstractAddonLifecycleTest
 
     // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void callbackSigningDarkFeatureDoesNotAffectDisabledCallback() throws IOException
     {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
@@ -625,6 +645,7 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void enabledAddonHadEnabledUser() throws Exception
     {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
@@ -633,6 +654,7 @@ public abstract class AbstractAddonLifecycleTest
 
     // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void callbackSigningDarkFeatureDoesNotAffectEnabledCallback() throws IOException
     {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);

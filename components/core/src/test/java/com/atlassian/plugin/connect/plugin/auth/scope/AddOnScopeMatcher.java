@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import com.atlassian.plugin.connect.spi.scope.AddOnScope;
-import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPath;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScopeApiPath;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.slf4j.Logger;

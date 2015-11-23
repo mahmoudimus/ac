@@ -6,6 +6,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeManagerTest;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;

@@ -1,23 +1,20 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import com.atlassian.sal.api.user.UserKey;
-import com.google.common.annotations.VisibleForTesting;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Handles permissions for remote plugin operations
+ * Handles access to API methods for add-ons.
  */
-@VisibleForTesting
 public interface AddOnScopeManager
 {
+
     /**
      * Tells whether a request can proceed given it's API scope and the plugin requested permissions.
      *
-     * @param req the current {@link javax.servlet.http.HttpServletRequest request}
-     * @param pluginKey the key of the plugin making the request.
-     * @param user the current logged in user
+     * @param request the current {@link HttpServletRequest request}
+     * @param addonKey the key of the add-on making the request.
      * @return {@code true} if the request is correctly in the current API scope, {@code false} otherwise
+     * @throws IllegalStateException if an add-on with the given key is not installed
      */
-    boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user);
+    boolean isRequestInApiScope(HttpServletRequest request, String addonKey);
 }

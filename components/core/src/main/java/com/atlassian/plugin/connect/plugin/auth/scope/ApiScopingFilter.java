@@ -96,7 +96,7 @@ public class ApiScopingFilter implements Filter
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
         HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res);
-        if (!addOnScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey, user))
+        if (!addOnScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey))
         {
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{addonKey, user, req.getMethod(), req.getRequestURI()});

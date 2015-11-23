@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.hasItem;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ConnectModuleProviderTest extends AbstractConnectAddonTest
 {
-    private final TestPluginInstaller testPluginInstaller;
+
     private final PluginControlHandler pluginControlHandler;
 
     private Plugin addon;
@@ -36,7 +36,6 @@ public class ConnectModuleProviderTest extends AbstractConnectAddonTest
             PluginControlHandler pluginControlHandler)
     {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
-        this.testPluginInstaller = testPluginInstaller;
         this.pluginControlHandler = pluginControlHandler;
     }
 

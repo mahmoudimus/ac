@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-components-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.61-SNAPSHOT</version>
+        <version>1.1.62-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -35,6 +35,10 @@
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webfragment</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
@@ -65,7 +69,6 @@
         </license>
     </licenses>
 
-
     <build>
         <plugins>
             <plugin>
@@ -73,6 +76,24 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <extractDependencies>false</extractDependencies>
+                    <instructions>
+                        <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
+                        <Spring-Context>*</Spring-Context>
+                        <Import-Package>
+                            <!-- Referenced by Spring Scanner for compatibility with Plugins 3, but isn't present
+                            and isn't needed, so we need to explicitly set it as optional -->
+                            org.springframework.osgi.*;resolution:="optional",
+
+                            <!-- Clover references classes it doesn't bundle so we need them to be optional -->
+                            *;resolution:=optional
+
+                            <!-- Let bnd infer all other dependencies as mandatory -->
+                            <!-- * -->
+                        </Import-Package>
+                    </instructions>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -84,8 +105,6 @@
                         <goals>
                             <goal>atlassian-spring-scanner</goal>
                         </goals>
-                        <!-- process-classes seems to be skipped if you are using scala
-                             so perhaps use prepare-package -->
                         <phase>process-classes</phase>
                     </execution>
                 </executions>

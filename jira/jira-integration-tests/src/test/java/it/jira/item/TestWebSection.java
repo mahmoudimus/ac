@@ -1,25 +1,26 @@
 package it.jira.item;
 
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.jira.pageobjects.components.menu.JiraAuiDropdownMenu;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
-import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
+import it.jira.JiraWebDriverTestBase;
+
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestWebSection extends JiraWebDriverTestBase
 {

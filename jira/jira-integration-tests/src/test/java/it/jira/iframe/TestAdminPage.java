@@ -1,28 +1,30 @@
 package it.jira.iframe;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraAdminPage;
 import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.IframeUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
