@@ -18,6 +18,7 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -68,6 +69,8 @@ public class TestAddOnProperties
         runner = new ConnectRunner(baseUrl, addOnKey)
                 .addJWT(installHandlerServlet)
                 .start();
+
+        deleteAllAddonProperties();
     }
 
     @After
@@ -128,6 +131,7 @@ public class TestAddOnProperties
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
+        System.out.println(response);
         RestAddOnProperty result = JSON.readValue(response, RestAddOnProperty.class);
         assertThat(result, isEqualToIgnoringBaseUrl(property));
 
@@ -252,7 +256,6 @@ public class TestAddOnProperties
     @Test
     public void testSuccessfulListRequest() throws IOException, URISyntaxException
     {
-        // should clean all properties before running, else this test depends on previous test failures!
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddOnProperty property = new RestAddOnProperty(propertyKey, JSON_ONE, getSelfForPropertyKey(propertyKey));
 
@@ -304,6 +307,16 @@ public class TestAddOnProperties
         assertEquals(Response.SC_OK, connection.getResponseCode());
 
         return IOUtils.toString(connection.getInputStream());
+    }
+
+    private void deleteAllAddonProperties() throws IOException, URISyntaxException
+    {
+        final String rawProperties = sendSuccessfulGetRequestForPropertyList();
+        final RestAddOnPropertiesBean restAddonProperties = JSON.readValue(rawProperties, RestAddOnPropertiesBean.class);
+        for (RestAddOnPropertiesBean.RestAddOnPropertyBean restAddonKey : restAddonProperties.keys)
+        {
+            assertDeleted(restAddonKey.key);
+        }
     }
 
     private HttpURLConnection executeGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException
@@ -387,7 +400,7 @@ public class TestAddOnProperties
             @Override
             protected boolean matchesSafely(final RestAddOnPropertiesBean properties)
             {
-                Iterable<RestAddOnPropertiesBean.RestAddOnPropertyBean> expectedBeans = Arrays.asList(expected.keys);
+                Iterable<RestAddOnPropertiesBean.RestAddOnPropertyBean> expectedBeans = ImmutableList.copyOf(expected.keys);
                 Iterable<Matcher<? super RestAddOnPropertiesBean.RestAddOnPropertyBean>> transform = Iterables.transform(expectedBeans, new Function<RestAddOnPropertiesBean.RestAddOnPropertyBean, Matcher<? super RestAddOnPropertiesBean.RestAddOnPropertyBean>>()
                 {
                     @Override
@@ -442,7 +455,7 @@ public class TestAddOnProperties
         }
     }
 
-    private class RestAddOnProperty
+    private static class RestAddOnProperty
     {
         @JsonProperty
         private final String key;
@@ -501,6 +514,8 @@ public class TestAddOnProperties
         @JsonProperty
         private RestAddOnPropertyBean[] keys;
 
+        public RestAddOnPropertiesBean() {}
+
         public RestAddOnPropertiesBean(@JsonProperty RestAddOnPropertyBean[] keys)
         {
             this.keys = keys;
@@ -528,7 +543,7 @@ public class TestAddOnProperties
         public String toString()
         {
             return "RestAddOnPropertiesBean{" +
-                    "properties=" + Arrays.toString(keys) +
+                    "properties=" + keys +
                     '}';
         }
 
@@ -545,9 +560,11 @@ public class TestAddOnProperties
         public static class RestAddOnPropertyBean
         {
             @JsonProperty
-            private final String self;
+            private String self;
             @JsonProperty
-            private final String key;
+            private String key;
+
+            public RestAddOnPropertyBean() {}
 
             public RestAddOnPropertyBean(@JsonProperty final String self, @JsonProperty final String key)
             {
