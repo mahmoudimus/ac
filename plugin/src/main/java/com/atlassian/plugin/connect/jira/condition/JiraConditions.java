@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.jira.condition;
 
 import com.atlassian.plugin.connect.api.condition.ConnectEntityPropertyEqualToCondition;
+import com.atlassian.plugin.connect.spi.condition.ConditionsProductProvider;
 import com.atlassian.plugin.connect.spi.condition.ConditionsProvider;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
@@ -13,7 +14,7 @@ import static com.google.common.base.Predicates.not;
  * NOTE: this class must be under the beans package (or a sub package) so our doclet can pick it up
  */
 @JiraComponent
-public class JiraConditions implements ConditionsProvider
+public class JiraConditions implements ConditionsProductProvider
 {
     public static final String CAN_ATTACH_FILE_TO_ISSUE = "can_attach_file_to_issue";
     public static final String CAN_MANAGE_ATTACHMENTS = "can_manage_attachments";

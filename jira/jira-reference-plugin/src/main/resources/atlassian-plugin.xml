@@ -14,4 +14,8 @@
         </validators>
     </connect-context-parameters-resolver>
 
+    <connect-conditions key="test-connect-connect-conditions-provider">
+        <connect-condition name="can_do_stuff" class="com.atlassian.plugin.connect.plugin.condition.ConnectEntityPropertyEqualToConditionImpl"/>
+    </connect-conditions>
+
 </atlassian-plugin>

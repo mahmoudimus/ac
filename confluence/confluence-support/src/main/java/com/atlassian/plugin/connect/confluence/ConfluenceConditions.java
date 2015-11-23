@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.confluence;
 
+import com.atlassian.plugin.connect.spi.condition.ConditionsProductProvider;
 import com.atlassian.plugin.connect.spi.condition.ConditionsProvider;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * NOTE: this class must be under the beans package (or a sub package) so our doclet can pick it up
  */
 @ConfluenceComponent
-public class ConfluenceConditions implements ConditionsProvider
+public class ConfluenceConditions implements ConditionsProductProvider
 {
     public static final String ACTIVE_THEME = "active_theme";
     public static final String CAN_EDIT_SPACE_STYLES = "can_edit_space_styles";
