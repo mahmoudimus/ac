@@ -6,8 +6,13 @@ import com.atlassian.plugin.connect.modules.beans.builder.ProjectPermissionModul
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
- * Add the permission to the project permission list in JIRA's setting page.
- * Project permissions can not be used in conditions yet.
+ * Create the project permission.
+ * <br />
+ * Project permissions are handful if you need to manage permissions for operations performed on objects
+ * related with project like issues, comments, versions or your add-on's entities related with projects.
+ * <br />
+ * User's permissions can be checked using <a href="https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions">my permission resource</a>.
+ * Project permissions are not supported by conditions yet.
  *
  * @exampleJson {@link ConnectJsonExamples#PROJECT_PERMISSION_EXAMPLE}
  * @schemaTitle Project Permission

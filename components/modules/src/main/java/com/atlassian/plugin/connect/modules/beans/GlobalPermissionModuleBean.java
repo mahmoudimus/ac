@@ -6,8 +6,13 @@ import com.atlassian.plugin.connect.modules.beans.builder.GlobalPermissionModule
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
- * Add the permission to the global permission list in JIRA's setting page.
- * Global permissions can not be used in conditions yet.
+ * Create the global permission.
+ * <br />
+ * Global permissions are handful if you need to manage permissions for operations performed on global objects
+ * like users or global settings.
+ * <br />
+ * User's permissions can be checked using <a href="https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions">my permission resource</a>.
+ * Global permissions are not supported by conditions yet.
  *
  * @exampleJson {@link ConnectJsonExamples#GLOBAL_PERMISSION_EXAMPLE}
  * @schemaTitle Global Permission
