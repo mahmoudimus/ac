@@ -14,9 +14,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * like users or global settings.
  *
  * User's permissions can be checked using [/mypermissions](https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions).
+ *
  * __Note:__ Global permissions added using this module are not supported for use with the `has_project_permission` condition.
  *
- * #### Example
+ *#### Example
  * @exampleJson {@link ConnectJsonExamples#GLOBAL_PERMISSION_EXAMPLE}
  * @schemaTitle Global Permission
  * @since 1.1
