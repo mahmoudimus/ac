@@ -19,11 +19,12 @@ import static com.google.common.collect.Lists.newArrayList;
  * related with project like issues, comments, versions or your add-on's entities related with projects.
 
  * User's permissions can be checked using [/mypermissions](https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions).
+ *
  * __Note:__ Project permissions added using this module are not supported for use with the `has_project_permission` condition.
  *
  * You can define condition for project permissions. I may sense if permission that depends on global JIRA settings like time-tracking, voting or sub-tasks.
  *
- * #### Example
+ *#### Example
  * @exampleJson {@link ConnectJsonExamples#PROJECT_PERMISSION_EXAMPLE}
  * @schemaTitle Project Permission
  * @since 1.1
