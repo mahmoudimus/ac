@@ -87,6 +87,7 @@
                                             <exclude>com.atlassian.upm</exclude>
                                             <!-- still depend on a milestone -->
                                             <exclude>external.atlassian.json</exclude>
+                                            <exclude>com.atlassian.selenium</exclude>
                                         </excludes>
                                     </banVersionDeps>
                                 </rules>
