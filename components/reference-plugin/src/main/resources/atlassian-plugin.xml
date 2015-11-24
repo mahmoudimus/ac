@@ -5,7 +5,7 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <connect-module key="test-module" class="com.atlassian.plugin.connect.reference.ModuleProviderForTests"/>
+    <connect-module key="reference-module-provider" class="com.atlassian.plugin.connect.reference.ReferenceModuleProvider"/>
 
     <connect-condition-class-resolver key="reference-condition-class-resolver"
                                       class="com.atlassian.plugin.connect.reference.ReferenceConditionClassResolver"/>

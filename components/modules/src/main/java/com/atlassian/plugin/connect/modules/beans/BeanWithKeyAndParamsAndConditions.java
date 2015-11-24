@@ -8,7 +8,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams
+public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams implements BeanWithConditions
 {
     /**
      * <a href="../../concepts/conditions.html">Conditions</a> can be added to display only when all the given conditions are true.

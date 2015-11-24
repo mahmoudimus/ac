@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -30,10 +31,11 @@ public class ProjectTabPanelModuleProvider extends ConnectTabPanelModuleProvider
             ConnectJsonSchemaValidator schemaValidator,
             ConnectTabPanelModuleDescriptorFactory descriptorFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            ConditionLoadingValidator conditionLoadingValidator)
     {
         super(pluginRetrievalService, schemaValidator, descriptorFactory, iFrameRenderStrategyRegistry,
-                iFrameRenderStrategyBuilderFactory);
+                iFrameRenderStrategyBuilderFactory, conditionLoadingValidator);
     }
 
     @Override

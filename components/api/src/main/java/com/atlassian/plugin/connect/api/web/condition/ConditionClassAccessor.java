@@ -14,8 +14,8 @@ public interface ConditionClassAccessor
 {
 
     /**
-     * Returns a condition class for use <b>where the full host application context is available</b>, if this entry
-     * applies to the given condition element.
+     * Returns a condition class for use with the given condition element <b>where the full host application context is
+     * available</b>.
      *
      * @param conditionBean a condition element from an add-on descriptor
      * @return the condition class or {@link Optional#empty()}
@@ -23,8 +23,7 @@ public interface ConditionClassAccessor
     public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean);
 
     /**
-     * Returns a condition class for use <b>where no context is available</b>, if this entry applies to the given
-     * condition element.
+     * Returns a condition class for use with the given condition element <b>where no context is available</b>.
      *
      * @param conditionBean a condition element from an add-on descriptor
      * @return the condition class or {@link Optional#empty()}

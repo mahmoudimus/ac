@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.spi.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
@@ -38,27 +39,31 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private ConditionClassAccessor conditionClassAccessor;
+    private ConditionLoadingValidator conditionLoadingValidator;
 
     public AbstractConnectPageModuleProvider(PluginRetrievalService pluginRetrievalService,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ConditionClassAccessor conditionClassAccessor)
+            ConditionClassAccessor conditionClassAccessor,
+            ConditionLoadingValidator conditionLoadingValidator)
     {
         this.pluginRetrievalService = pluginRetrievalService;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.conditionClassAccessor = conditionClassAccessor;
+        this.conditionLoadingValidator = conditionLoadingValidator;
     }
 
     @Override
     public List<ConnectPageModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry,
             ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        List<ConnectPageModuleBean> pageBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
-        validateConditions(descriptor, pageBeans);
-        return pageBeans;
+        List<ConnectPageModuleBean> pages = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+        conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), pages);
+        validateConditions(descriptor, pages);
+        return pages;
     }
 
     @Override

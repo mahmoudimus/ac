@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.panel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
@@ -30,19 +31,22 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebFragmentLocationBlacklist webFragmentLocationBlacklist;
+    private final ConditionLoadingValidator conditionLoadingValidator;
 
     public WebPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
-                                  ConnectJsonSchemaValidator schemaValidator,
-                                  WebPanelConnectModuleDescriptorFactory webPanelFactory,
-                                  IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                  IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                  WebFragmentLocationBlacklist webFragmentLocationBlacklist)
+            ConnectJsonSchemaValidator schemaValidator,
+            WebPanelConnectModuleDescriptorFactory webPanelFactory,
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebFragmentLocationBlacklist webFragmentLocationBlacklist,
+            ConditionLoadingValidator conditionLoadingValidator)
     {
         super(pluginRetrievalService, schemaValidator);
         this.webPanelFactory = webPanelFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webFragmentLocationBlacklist = webFragmentLocationBlacklist;
+        this.conditionLoadingValidator = conditionLoadingValidator;
     }
 
     @Override
@@ -54,8 +58,27 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     @Override
     public List<WebPanelModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        List<WebPanelModuleBean> webPanelModuleBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+        List<WebPanelModuleBean> webPanels = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+        conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), webPanels);
+        assertLocationNotBlacklisted(descriptor, webPanels);
+        return webPanels;
+    }
 
+    @Override
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    {
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
+        for (WebPanelModuleBean webPanel : modules)
+        {
+            registerIframeRenderStrategy(webPanel, moduleProviderContext.getConnectAddonBean());
+            descriptors.add(webPanelFactory.createModuleDescriptor(moduleProviderContext,
+                    pluginRetrievalService.getPlugin(), webPanel));
+        }
+        return descriptors;
+    }
+
+    private void assertLocationNotBlacklisted(ShallowConnectAddonBean descriptor, List<WebPanelModuleBean> webPanelModuleBeans) throws ConnectModuleValidationException
+    {
         List<String> blacklistedLocationsUsed = webPanelModuleBeans.stream()
                 .filter(new Predicate<WebPanelModuleBean>()
                 {
@@ -80,23 +103,6 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
             String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
             throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
         }
-        else
-        {
-            return webPanelModuleBeans;
-        }
-    }
-
-    @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
-    {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
-        for (WebPanelModuleBean webPanel : modules)
-        {
-            registerIframeRenderStrategy(webPanel, moduleProviderContext.getConnectAddonBean());
-            descriptors.add(webPanelFactory.createModuleDescriptor(moduleProviderContext,
-                    pluginRetrievalService.getPlugin(), webPanel));
-        }
-        return descriptors;
     }
 
     private void registerIframeRenderStrategy(WebPanelModuleBean webPanel, ConnectAddonBean descriptor)
@@ -111,5 +117,4 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
                 .build();
         iFrameRenderStrategyRegistry.register(descriptor.getKey(), webPanel.getRawKey(), renderStrategy);
     }
-
 }

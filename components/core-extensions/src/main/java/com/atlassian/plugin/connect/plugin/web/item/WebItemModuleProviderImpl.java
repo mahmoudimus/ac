@@ -84,10 +84,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     {
         final List<WebItemModuleBean> webItems = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         assertLocationNotBlacklisted(descriptor, webItems);
-        for (WebItemModuleBean webItem : webItems)
-        {
-            conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), webItem.getConditions());
-        }
+        conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), webItems);
         return webItems;
     }
 

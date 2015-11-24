@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.spi.lifecycle;
 
 import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
@@ -56,6 +57,9 @@ public class AbstractConnectPageModuleProviderTest
     @Mock
     private ConditionClassAccessor conditionClassAccessor;
 
+    @Mock
+    private ConditionLoadingValidator conditionLoadingValidator;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -63,7 +67,7 @@ public class AbstractConnectPageModuleProviderTest
     public void setUp()
     {
         provider = new AbstractConnectPageModuleProviderForTesting(pluginRetrievalService, iFrameRenderStrategyBuilderFactory,
-                iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, conditionClassAccessor);
+                iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, conditionClassAccessor, conditionLoadingValidator);
 
         when(conditionClassAccessor.getConditionClassForNoContext(argThat(isSingleConditionBeanFor(VALID_CONDITION))))
                 .thenReturn(Optional.of(Condition.class));
@@ -160,10 +164,11 @@ public class AbstractConnectPageModuleProviderTest
                 IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                 IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                 WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                ConditionClassAccessor conditionClassAccessor)
+                ConditionClassAccessor conditionClassAccessor,
+                ConditionLoadingValidator conditionLoadingValidator)
         {
             super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                    webItemModuleDescriptorFactory, conditionClassAccessor);
+                    webItemModuleDescriptorFactory, conditionClassAccessor, conditionLoadingValidator);
         }
 
         @Override
