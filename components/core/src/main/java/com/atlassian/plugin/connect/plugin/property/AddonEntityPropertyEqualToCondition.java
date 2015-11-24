@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.property;
 
 import java.util.Map;
+import java.util.Optional;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectCondition;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionContext;
@@ -38,12 +38,12 @@ public class AddonEntityPropertyEqualToCondition implements Condition
     {
         this.propertyKey = Strings.nullToEmpty(params.get("propertyKey"));
         this.propertyValue = Strings.nullToEmpty(params.get("value"));
-        Option<String> maybeAddOnKey = ConnectConditionContext.from(params).getAddOnKey();
-        if (maybeAddOnKey.isEmpty())
+        Optional<String> maybeAddOnKey = ConnectConditionContext.from(params).getAddOnKey();
+        if (!maybeAddOnKey.isPresent())
         {
             throw new IllegalStateException("Condition should have been invoked in the Atlassian Connect context, but apparently it was not, add-on key is missing");
         }
-        this.addOnKey = maybeAddOnKey.getOrNull();
+        this.addOnKey = maybeAddOnKey.get();
     }
 
     @Override
@@ -63,8 +63,8 @@ public class AddonEntityPropertyEqualToCondition implements Condition
                 @Override
                 public Boolean apply(final AddOnProperty input)
                 {
-                    final Option<JsonNode> propertyJson = parseStringToJson(propertyValue);
-                    return propertyJson.equals(Option.some(input.getValue()));
+                    final Optional<JsonNode> propertyJson = parseStringToJson(propertyValue);
+                    return propertyJson.equals(Optional.of(input.getValue()));
                 }
             }
         );

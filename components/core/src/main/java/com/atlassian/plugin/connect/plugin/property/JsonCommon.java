@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.plugin.property;
 
 import java.io.IOException;
-
-import com.atlassian.fugue.Option;
+import java.util.Optional;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -15,7 +14,7 @@ public class JsonCommon
 {
     private JsonCommon() {}
 
-    public static Option<JsonNode> parseStringToJson(String rawJson) {
+    public static Optional<JsonNode> parseStringToJson(String rawJson) {
         ObjectMapper objectMapper = new ObjectMapper();
         final JsonNode parsedJson;
         try
@@ -24,8 +23,8 @@ public class JsonCommon
         }
         catch (IOException e)
         {
-            return Option.none();
+            return Optional.empty();
         }
-        return Option.some(parsedJson);
+        return Optional.of(parsedJson);
     }
 }

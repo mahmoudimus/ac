@@ -1,15 +1,15 @@
 package com.atlassian.plugin.connect.plugin.property;
 
+import java.util.Optional;
+
+import javax.annotation.concurrent.Immutable;
+
+import com.google.common.base.Preconditions;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.JsonNode;
-
-import javax.annotation.concurrent.Immutable;
-
-import com.atlassian.fugue.Option;
-
-import com.google.common.base.Preconditions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -81,8 +81,8 @@ public final class AddOnProperty
 
     public static AddOnProperty fromAO(AddOnPropertyAO ao)
     {
-        final Option<JsonNode> potentialJsonValue = JsonCommon.parseStringToJson(ao.getValue());
-        Preconditions.checkState(potentialJsonValue.isDefined(), String.format("The addon property %s did not contain valid json: %s", ao.getPropertyKey(), ao.getValue()));
+        final Optional<JsonNode> potentialJsonValue = JsonCommon.parseStringToJson(ao.getValue());
+        Preconditions.checkState(potentialJsonValue.isPresent(), String.format("The addon property %s did not contain valid json: %s", ao.getPropertyKey(), ao.getValue()));
         return new AddOnProperty(ao.getPropertyKey(), potentialJsonValue.get(), ao.getID());
     }
 
