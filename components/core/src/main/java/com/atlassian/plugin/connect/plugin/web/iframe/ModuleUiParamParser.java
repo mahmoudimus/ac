@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.fugue.Option;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,5 +15,5 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface ModuleUiParamParser
 {
-    Option<String> parseUiParameters(HttpServletRequest req);
+    Optional<String> parseUiParameters(HttpServletRequest req);
 }

@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.plugin.property;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.fugue.Iterables;
-import com.atlassian.fugue.Option;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import net.java.ao.EntityManager;
-import net.java.ao.test.jdbc.Data;
-import net.java.ao.test.jdbc.DatabaseUpdater;
-import net.java.ao.test.jdbc.NonTransactional;
-import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Description;
@@ -20,15 +21,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import net.java.ao.EntityManager;
+import net.java.ao.test.jdbc.Data;
+import net.java.ao.test.jdbc.DatabaseUpdater;
+import net.java.ao.test.jdbc.NonTransactional;
+import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 
 import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResult;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 @RunWith (ActiveObjectsJUnitRunner.class)
 @Data (AddOnPropertyStoreTest.Data.class)
@@ -55,7 +58,7 @@ public class AddOnPropertyStoreTest
         PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue()).getResult();
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
 
-        Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        Optional<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
         assertThat(propertyValue.get(), isSameProperty(property));
     }
 
@@ -63,7 +66,7 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testCreatePropertyWithBigValue()
     {
-        String bigValue = StringUtils.repeat('.' , 65000);
+        String bigValue = StringUtils.repeat('.', 65000);
         PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue).getResult();
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
     }
@@ -78,7 +81,7 @@ public class AddOnPropertyStoreTest
         AddOnPropertyStore.PutResultWithOptionalProperty putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue());
         assertEquals(PutResult.PROPERTY_UPDATED, putResult.getResult());
 
-        Option<AddOnProperty> propertyValue = putResult.getProperty();
+        Optional<AddOnProperty> propertyValue = putResult.getProperty();
         assertThat(propertyValue.get(), isSameProperty(property2));
     }
 
@@ -102,8 +105,8 @@ public class AddOnPropertyStoreTest
     {
         store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
         store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
-        Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
-        assertTrue(propertyValue.isEmpty());
+        Optional<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        assertFalse(propertyValue.isPresent());
     }
     
     @Test

@@ -1,30 +1,32 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.oauth.ServiceProvider;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
-import com.atlassian.plugin.connect.plugin.request.DefaultRemotablePluginAccessorBase;
-import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
-import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
-import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
-import net.oauth.OAuth;
-
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import static com.atlassian.fugue.Option.option;
+import com.atlassian.oauth.ServiceProvider;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
+import com.atlassian.plugin.connect.plugin.request.DefaultRemotablePluginAccessorBase;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
+
+import net.oauth.OAuth;
+
 import static com.google.common.collect.Maps.transformValues;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.ofNullable;
 
 public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
 {
@@ -116,9 +118,9 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
             this.oAuthLinkManager = oAuthLinkManager;
         }
 
-        public Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters)
+        public Optional<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters)
         {
-            return option(oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url, UriBuilderUtils.toListFormat(parameters)));
+            return ofNullable(oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url, UriBuilderUtils.toListFormat(parameters)));
         }
     }
 }

@@ -1,19 +1,27 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import com.atlassian.fugue.Option;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -22,12 +30,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.Map;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static org.hamcrest.CoreMatchers.is;
@@ -59,7 +61,7 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void authorizationHeaderContainsJwt()
     {
-        assertThat(generate(), is(Option.some(JWT_AUTH_HEADER_PREFIX + A_MOCK_JWT)));
+        assertThat(generate(), is(Optional.of(JWT_AUTH_HEADER_PREFIX + A_MOCK_JWT)));
     }
 
     @Test
@@ -209,7 +211,7 @@ public class JwtAuthorizationGeneratorTest
         return HttpRequestCanonicalizer.computeCanonicalRequestHash(canonicalRequest);
     }
 
-    private Option<String> generate()
+    private Optional<String> generate()
     {
         return generator.generate(HttpMethod.POST, A_URI, PARAMS);
     }

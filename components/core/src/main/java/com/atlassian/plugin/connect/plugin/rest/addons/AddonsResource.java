@@ -1,14 +1,28 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
+import java.net.URI;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
 import com.atlassian.annotations.PublicApi;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.extras.api.Contact;
 import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilter;
@@ -23,7 +37,6 @@ import com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
-import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugins.rest.common.Link;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -33,24 +46,14 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.ResourceFilters;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDON_KEY_PATH_PARAMETER;
 
@@ -233,9 +236,10 @@ public class AddonsResource
     private RestHost getHostResource()
     {
         List<RestContact> contactList = null;
-        for (ProductLicense productLicense : productAccessor.getProductLicense())
+        final Optional<ProductLicense> potentialProductLicense = productAccessor.getProductLicense();
+        if(potentialProductLicense.isPresent())
         {
-            Collection<Contact> licenseContacts = productLicense.getContacts();
+            Collection<Contact> licenseContacts = potentialProductLicense.get().getContacts();
             Iterable<RestContact> contactRepresentations = Iterables.transform(licenseContacts, new Function<Contact, RestContact>()
             {
                 @Override

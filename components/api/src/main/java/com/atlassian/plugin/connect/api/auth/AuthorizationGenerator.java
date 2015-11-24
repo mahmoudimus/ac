@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.api.auth;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
+
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 
 /**
  * Generates an authorization http header value
@@ -20,5 +20,5 @@ public interface AuthorizationGenerator
      * @return some authorisation header, none if not generated.
      * @since 0.10
      */
-    Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters);
+    Optional<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters);
 }
