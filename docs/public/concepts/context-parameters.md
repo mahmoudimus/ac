@@ -55,10 +55,13 @@ JIRA supports these context variables.
  * `component.id`
  * `profileUser.name`, `profileUser.key` (available for user profile pages)
  * `dashboardItem.id`, `dashboardItem.key`, `dashboardItem.viewType`, `dashboard.id` (available for dashboard items)
- * `agileBoard.id`, `agileBoard.mode` (available on JIRA agile boards)
-
 JIRA issue pages only expose issue and project data. Similarly, version and component information is available only in
 project administration pages.
+
+Furthermore JIRA Agile supports these context variables.
+ * `board.id`
+ * `board.mode` (available for plugin points that are displayed on different board screens)
+ * `sprint.id`
 
 ## <a name="additional-parameters-confluence"></a>Confluence
 
