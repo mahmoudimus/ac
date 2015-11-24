@@ -64,9 +64,7 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
             @Override
             public AddOnProperty apply(final AddOnPropertyAO propertyAO)
             {
-                final Optional<JsonNode> potentialValue = JsonCommon.parseStringToJson(propertyAO.getValue());
-                Preconditions.checkState(potentialValue.isPresent(), String.format("The value being read out of the property %s was not valid JSON: %s", propertyAO.getPropertyKey(), propertyAO.getValue()));
-                return new AddOnProperty(propertyAO.getPropertyKey(), potentialValue.get(), propertyAO.getID());
+                return AddOnProperty.fromAO(propertyAO);
             }
         }));
     }
