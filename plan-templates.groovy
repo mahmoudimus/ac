@@ -7,7 +7,12 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
+    stashNotification()
     hipChatNotification()
+    notification(
+            type: 'Failed Builds and First Successful',
+            recipient: 'committers'
+    )
     runTestsStage()
     stage(
             name: 'Start Release',
@@ -37,6 +42,7 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (branch builds)')
     pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
+    stashNotification()
     notification(
             type: 'All Builds Completed',
             recipient: 'committers'

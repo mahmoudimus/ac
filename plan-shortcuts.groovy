@@ -3,10 +3,6 @@ commonPlanConfiguration() {
         loggedInUser(permissions: 'read')
     }
     notification(
-            type: 'All Builds Completed',
-            recipient: 'stash'
-    )
-    notification(
             type: 'Change of Build Status',
             recipient: 'watchers'
     )
@@ -38,11 +34,18 @@ pollingTrigger(['repositoryName']) {
 
 hipChatNotification() {
     notification(
-            type: 'All Builds Completed',
+            type: 'Failed Builds and First Successful',
             recipient: 'hipchat',
             apiKey: '${bamboo.atlassian.hipchat.apikey.password}',
             notify: 'false',
             room: 'Atlassian Connect Cloud Team'
+    )
+}
+
+stashNotification() {
+    notification(
+            type: 'All Builds Completed',
+            recipient: 'stash'
     )
 }
 
