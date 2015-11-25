@@ -1,22 +1,46 @@
 package at.marketplace;
 
+import java.util.List;
+
 import org.apache.commons.lang3.Validate;
+
+import static java.util.Arrays.asList;
 
 public class ConnectAddonRepresentation
 {
     private final String descriptorUrl;
     private final String vendorId;
-    private final String key;
     private final String logoUrl;
     private final String name;
+    private final List<Highlight> highlights;
+    private final String summary;
+
+    public String getTagline()
+    {
+        return tagline;
+    }
+
+    public String getSummary()
+    {
+        return summary;
+    }
+
+    public List<Highlight> getHighlights()
+    {
+        return highlights;
+    }
+
+    private final String tagline;
 
     public ConnectAddonRepresentation(Builder builder)
     {
-        this.descriptorUrl = Validate.notNull(builder.descriptorUrl);
-        this.vendorId = Validate.notNull(builder.vendorId);
-        this.key = Validate.notNull(builder.key);
         this.name = Validate.notNull(builder.name);
-        this.logoUrl = Validate.notNull(builder.logo);
+        this.descriptorUrl = Validate.notNull(builder.descriptorUrl);
+        this.vendorId = builder.vendorId;
+        this.logoUrl = builder.logo;
+        this.highlights = builder.highlights;
+        this.summary = builder.summary;
+        this.tagline = builder.tagline;
     }
 
     public static Builder builder()
@@ -34,11 +58,6 @@ public class ConnectAddonRepresentation
         return vendorId;
     }
 
-    public String getKey()
-    {
-        return key;
-    }
-
     public String getName()
     {
         return name;
@@ -49,33 +68,29 @@ public class ConnectAddonRepresentation
         return logoUrl;
     }
 
-    static class Builder
+    public static class Builder
     {
         private String descriptorUrl;
         private String vendorId;
-        private String key;
         private String logo;
         private String name;
+        private List<Highlight> highlights;
+        private String summary;
+        private String tagline;
 
-        Builder withDescriptorUrl(String url)
+        public Builder withDescriptorUrl(String url)
         {
             this.descriptorUrl = url;
             return this;
         }
 
-        Builder withVendorId(long vendorId)
+        public Builder withVendorId(long vendorId)
         {
             this.vendorId = String.valueOf(vendorId);
             return this;
         }
 
-        Builder withKey(String key)
-        {
-            this.key = key;
-            return this;
-        }
-
-        Builder withName(String name)
+        public Builder withName(String name)
         {
             this.name = name;
             return this;
@@ -87,9 +102,49 @@ public class ConnectAddonRepresentation
             return this;
         }
 
-        ConnectAddonRepresentation build()
+        public Builder withHighlights(Highlight first, Highlight second, Highlight third)
+        {
+            this.highlights = asList(first, second, third);
+            return this;
+        }
+
+        public Builder withSummary(String summary)
+        {
+            this.summary = summary;
+            return this;
+        }
+
+        public Builder withTagline(String tagline)
+        {
+            this.tagline = tagline;
+            return this;
+        }
+
+        public ConnectAddonRepresentation build()
         {
             return new ConnectAddonRepresentation(this);
+        }
+    }
+
+    static class Highlight
+    {
+        final private String title;
+        final private String body;
+
+        public String getTitle()
+        {
+            return title;
+        }
+
+        public String getBody()
+        {
+            return body;
+        }
+
+        public Highlight(String title, String body)
+        {
+            this.title = title;
+            this.body = body;
         }
     }
 }
