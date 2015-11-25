@@ -1,21 +1,11 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
-import java.io.IOException;
-
 import javax.annotation.concurrent.Immutable;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents an add-on property
@@ -25,15 +15,32 @@ public class RestAddOnProperty
 {
     @JsonProperty
     private final String key;
+
+    /**
+     * The value property is in the process of being converted from a String data type to a Json node. This will be
+     * done across two deprecation periods:
+     *
+     *  Stage 1 (current): Add jsonValue to the response, everybody switches over to use that instead.
+     *  Stage 2: Once six months have passed then change the type of 'value' to be JsonNode as well.
+     *  Stage 3: Once another six months have passed delete jsonValue entirely.
+     */
     @JsonProperty
-    private final JsonNode value;
+    private final String value;
+
+    /**
+     * See the comment on {@link #value}, this field will eventually be deleted.
+     */
+    @JsonProperty
+    private final JsonNode jsonValue;
+
     @JsonProperty
     private final String self;
 
     public RestAddOnProperty(@JsonProperty ("key") final String key, @JsonProperty ("value") final JsonNode value, @JsonProperty ("self") final String self)
     {
         this.key = key;
-        this.value = value;
+        this.jsonValue = value;
+        this.value = value.toString();
         this.self = self;
     }
 

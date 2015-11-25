@@ -241,3 +241,72 @@ The `page.id`, `page.version`, `page.type` context variables available in Conflu
 </div>
 </div>
 
+## Add-on properties 'value' field is being unescaped
+
+Requests to the following resource:
+
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/2/my-property
+    
+Return json objects in the following format:
+
+    {
+       "key": "my-property",
+       "value": "{\"object\": \"data\"}",
+       "self": "http://<self-url>..."
+    }
+
+Starting immediately the following response will now be sent:
+
+    {
+       "key": "my-property",
+       "value": "{\"object\": \"data\"}",
+       "jsonValue": {"object": "data"},
+       "self": "http://<self-url>..."
+    }
+    
+We highly recommend that you start using `jsonValue` over the next six months. When that six month period is over
+we will then update the `value` field to return the same data as `jsonValue`, like so:
+
+    {
+       "key": "my-property",
+       "value": "{\"object\": \"data\"}",
+       "jsonValue": {"object": "data"},
+       "self": "http://<self-url>..."
+    }
+    
+You will then have another six months to swap over from using `jsonValue`, to using the `value` field again. This slow
+double deprecation period is designed to ease the update from the `value` in string format to json format. Ultimately, 
+after the two deprecation periods have ended you should recieve data in the following format:
+ 
+    {
+       "key": "my-property",
+       "value": {"object": "data"},
+       "self": "http://<self-url>..."
+    } 
+
+<div class="ac-deprecations">
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Deprecated in</h5>
+    </div>
+    <div class="aui-item">
+        <span class="aui-lozenge">1.1.65</span>
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Atlassian Cloud removal</h5>
+    </div>
+    <div class="aui-item">
+        __June 2016 and December 2016 respectively__
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Upgrade guide</h5>
+    </div>
+    <div class="aui-item">
+        <p>Please swap over to using jsonValue for the next six months and then swap back to the updated 'value' field. For more details please read the text above.</p>
+    </div>
+</div>
+</div>
