@@ -164,13 +164,14 @@ The condition requires an `applicationKey` parameter, for example:
  }
  ```
  
-At the time of writing the following application keys are recognized:
+JIRA may support any number of custom-tailored applications, so it's not possible
+to give a definite set of allowed application keys. Standard applications are these:
 
 * jira-core
 * jira-servicedesk
 * jira-software
 
-If an unknown application key is provided then the condition will simply evaluate to `false`.
+If an invalid application key is provided then the condition will simply evaluate to `false`.
 
 ## <a name="boolean-operations"></a>Boolean operations
 

@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.jira.web.condition;
 
-import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+
+import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
+import com.google.common.collect.ImmutableList;
 
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 
@@ -26,10 +26,17 @@ public class JiraConditionClassResolver implements ConnectConditionClassResolver
                 newEntry("user_is_the_logged_in_user", ViewingOwnProfileCondition.class).build(),
                 newEntry("voting_enabled", com.atlassian.jira.plugin.webfragment.conditions.VotingEnabledCondition.class).build(),
                 newEntry("watching_enabled", com.atlassian.jira.plugin.webfragment.conditions.WatchingEnabledCondition.class).build(),
-                newEntry("can_use_application", CanUseApplication.class).build(),
+                newEntry("can_use_application", CanUseApplicationCondition.class).build(),
 
                 newEntry("entity_property_equal_to", com.atlassian.jira.plugin.webfragment.conditions.EntityPropertyEqualToCondition.class)
-                        .withPredicates(parameters -> !"addon".equals(parameters.get("entity")))
+                        .withPredicates(new Predicate<Map<String, String>>()
+                        {
+                            @Override
+                            public boolean test(Map<String, String> parameters)
+                            {
+                                return !"addon".equals(parameters.get("entity"));
+                            }
+                        })
                         .build(),
 
                 // issue conditions
