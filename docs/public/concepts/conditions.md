@@ -164,8 +164,7 @@ The condition requires an `applicationKey` parameter, for example:
  }
  ```
  
-JIRA may support any number of custom-tailored applications, so it's not possible
-to give a definite set of allowed application keys. Standard applications are these:
+Supported application keys are:
 
 * jira-core
 * jira-servicedesk
