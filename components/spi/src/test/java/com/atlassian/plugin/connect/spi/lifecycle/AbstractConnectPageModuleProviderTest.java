@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.spi.lifecycle;
 
-import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
@@ -11,10 +12,11 @@ import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.collect.ImmutableList;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,8 +26,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
+import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,7 +55,10 @@ public class AbstractConnectPageModuleProviderTest
     private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Mock
-    private PluginAccessor pluginAccessor;
+    private ConditionClassAccessor conditionClassAccessor;
+
+    @Mock
+    private ConditionLoadingValidator conditionLoadingValidator;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -59,12 +67,12 @@ public class AbstractConnectPageModuleProviderTest
     public void setUp()
     {
         provider = new AbstractConnectPageModuleProviderForTesting(pluginRetrievalService, iFrameRenderStrategyBuilderFactory,
-                iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pluginAccessor);
+                iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, conditionClassAccessor, conditionLoadingValidator);
 
-        ConnectConditionClassResolver resolver = () -> ImmutableList.of(
-                ConnectConditionClassResolver.Entry.newEntry(VALID_CONDITION, Condition.class).contextFree().build()
-        );
-        when(pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class)).thenReturn(ImmutableList.of(resolver));
+        when(conditionClassAccessor.getConditionClassForNoContext(argThat(isSingleConditionBeanFor(VALID_CONDITION))))
+                .thenReturn(Optional.of(Condition.class));
+        when(conditionClassAccessor.getConditionClassForNoContext(not(argThat(isSingleConditionBeanFor(VALID_CONDITION)))))
+                .thenReturn(Optional.empty());
     }
 
     @Test
@@ -130,16 +138,37 @@ public class AbstractConnectPageModuleProviderTest
         expectedException.expectMessage(String.format("The add-on includes a Page Module with an unsupported condition (%s)", conditionName));
     }
 
+    private Matcher<SingleConditionBean> isSingleConditionBeanFor(String condition)
+    {
+        return new TypeSafeMatcher<SingleConditionBean>()
+        {
+
+            @Override
+            protected boolean matchesSafely(SingleConditionBean conditionBean)
+            {
+                return condition.equals(conditionBean.getCondition());
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("Single condition with condition ")
+                        .appendValue(condition);
+            }
+        };
+    }
+
     private static class AbstractConnectPageModuleProviderForTesting extends AbstractConnectPageModuleProvider
     {
         public AbstractConnectPageModuleProviderForTesting(PluginRetrievalService pluginRetrievalService,
                 IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                 IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                 WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                PluginAccessor pluginAccessor)
+                ConditionClassAccessor conditionClassAccessor,
+                ConditionLoadingValidator conditionLoadingValidator)
         {
             super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                    webItemModuleDescriptorFactory, pluginAccessor);
+                    webItemModuleDescriptorFactory, conditionClassAccessor, conditionLoadingValidator);
         }
 
         @Override

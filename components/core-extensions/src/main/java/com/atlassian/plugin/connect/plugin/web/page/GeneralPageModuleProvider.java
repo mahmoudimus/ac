@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -24,12 +25,13 @@ public class GeneralPageModuleProvider extends AbstractGeneralPageModuleProvider
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            PluginAccessor pluginAccessor,
+            ConditionClassAccessor conditionClassAccessor,
+            ConditionLoadingValidator conditionLoadingValidator,
             ProductAccessor productAccessor,
             ConnectJsonSchemaValidator schemaValidator)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pluginAccessor, schemaValidator, productAccessor);
+                webItemModuleDescriptorFactory, conditionClassAccessor, schemaValidator, conditionLoadingValidator, productAccessor);
     }
 
     @Override

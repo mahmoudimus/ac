@@ -23,6 +23,8 @@ import java.util.function.Predicate;
  *
  * <b>NOTE:</b> the {@link com.atlassian.plugin.web.WebFragmentHelper} of the host products generally auto-wires
  * conditions in the context of the plugin that registers a plugin module making use of it.
+ *
+ * @see com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor
  */
 public interface ConnectConditionClassResolver
 {

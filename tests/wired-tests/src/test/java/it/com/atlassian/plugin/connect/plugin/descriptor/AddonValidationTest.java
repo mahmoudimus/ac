@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
@@ -30,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
@@ -155,6 +158,21 @@ public class AddonValidationTest
                 .build();
 
         install(bean);
+    }
+
+    @Test
+    public void shouldFailInstallationWithGeneralMessageForInvalidConditionParameters() throws Exception
+    {
+        ConnectAddonBean addon = testBeanBuilderWithoutAuthentication()
+                .withModule("webItems", newWebItemBean()
+                        .withKey("invalid-condition-item")
+                        .withUrl("/")
+                        .withName(new I18nProperty("Invalid Condition Item", null))
+                        .withConditions(newSingleConditionBean().withCondition("feature_flag").build())
+                        .withLocation("some-location")
+                        .build())
+                .build();
+        assertInstallationFailsWithMessage(addon, "connect.install.error.invalid.condition.parameters", "feature_flag", "Parameter 'featureKey' is mandatory.");
     }
 
     @Test

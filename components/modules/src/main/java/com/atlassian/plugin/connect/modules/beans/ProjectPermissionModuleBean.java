@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.plugin.connect.modules.beans.builder.BeanWithKeyAndParamsBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ProjectPermissionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -29,7 +28,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * @schemaTitle Project Permission
  * @since 1.1
  */
-public class ProjectPermissionModuleBean extends RequiredKeyBean
+public class ProjectPermissionModuleBean extends RequiredKeyBean implements BeanWithConditions
 {
     /**
      * Description of the project permission. It will be displayed under the permission's name.
