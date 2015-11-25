@@ -33,8 +33,8 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
-## [1.1.63](../release-notes/1-1-0.html#1.1.63)
- * JIRA: Two new modules for you to define global and project permissions for your JIRA add-on's.
+## [1.1.64](../release-notes/1-1-0.html#1.1.64)
+ * JIRA: Two new modules for you to define global and project permissions for your JIRA add-ons.
  * JIRA Software: The 'agileBoard.id' and 'agileBoard.mode' content properties became the 'board.id' and 'board.mode' content properties respectively. And another JIRA Software content property has been added 'sprint.id'.
 
 ## [1.1.60](../release-notes/1-1-0.html#1.1.60)
