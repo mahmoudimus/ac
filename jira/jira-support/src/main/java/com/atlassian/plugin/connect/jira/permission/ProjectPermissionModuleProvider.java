@@ -4,12 +4,12 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
@@ -53,14 +53,14 @@ public class ProjectPermissionModuleProvider extends AbstractJiraConnectModulePr
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ProjectPermissionModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ProjectPermissionModuleBean> modules, ConnectAddonBean addon)
     {
         return Lists.transform(modules, new Function<ProjectPermissionModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final ProjectPermissionModuleBean bean)
             {
-                return descriptorFactory.createModuleDescriptor(moduleProviderContext, pluginRetrievalService.getPlugin(), bean);
+                return descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
             }
         });
     }

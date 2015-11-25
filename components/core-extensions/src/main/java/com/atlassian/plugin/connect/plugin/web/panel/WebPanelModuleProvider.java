@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
 import java.util.ArrayList;
@@ -65,14 +64,13 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectAddonBean addon)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (WebPanelModuleBean webPanel : modules)
         {
-            registerIframeRenderStrategy(webPanel, moduleProviderContext.getConnectAddonBean());
-            descriptors.add(webPanelFactory.createModuleDescriptor(moduleProviderContext,
-                    pluginRetrievalService.getPlugin(), webPanel));
+            registerIframeRenderStrategy(webPanel, addon);
+            descriptors.add(webPanelFactory.createModuleDescriptor(webPanel, addon, pluginRetrievalService.getPlugin()));
         }
         return descriptors;
     }

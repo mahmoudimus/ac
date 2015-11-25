@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFac
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -32,19 +31,17 @@ public class ProjectPermissionModuleDescriptorFactory
     }
 
     @Override
-    public ProjectPermissionModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, ProjectPermissionModuleBean bean)
+    public ProjectPermissionModuleDescriptor createModuleDescriptor(ProjectPermissionModuleBean bean, ConnectAddonBean addon, Plugin theConnectPlugin)
     {
         Element projectPermissionElement = new DOMElement(DESCRIPTOR_NAME);
 
-        ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-
-        projectPermissionElement.addAttribute("key", bean.getKey(connectAddonBean));
+        projectPermissionElement.addAttribute("key", bean.getKey(addon));
         projectPermissionElement.addAttribute("i18n-name-key", bean.getName().getI18nOrValue());
         projectPermissionElement.addAttribute("i18n-description-key", bean.getDescription().getI18nOrValue());
         projectPermissionElement.addAttribute("category", bean.getCategory().toString());
         if (!bean.getConditions().isEmpty())
         {
-            projectPermissionElement.add(conditionModuleFragmentFactory.createFragment(connectAddonBean.getKey(), bean.getConditions()));
+            projectPermissionElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         }
 
         ProjectPermissionModuleDescriptor descriptor = autowireUtil.createBean(ProjectPermissionModuleDescriptorImpl.class);

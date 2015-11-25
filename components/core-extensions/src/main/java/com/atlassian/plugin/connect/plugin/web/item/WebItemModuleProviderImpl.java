@@ -22,7 +22,6 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -89,13 +88,13 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebItemModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebItemModuleBean> modules, ConnectAddonBean addon)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (WebItemModuleBean bean : modules)
         {
-            descriptors.add(beanToDescriptors(moduleProviderContext, pluginRetrievalService.getPlugin(), bean));
-            registerIframeRenderStrategy(bean, moduleProviderContext.getConnectAddonBean());
+            descriptors.add(beanToDescriptors(addon, pluginRetrievalService.getPlugin(), bean));
+            registerIframeRenderStrategy(bean, addon);
         }
         return descriptors;
     }
@@ -130,8 +129,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         }
     }
 
-    private ModuleDescriptor beanToDescriptors(ConnectModuleProviderContext moduleProviderContext,
-            Plugin plugin, WebItemModuleBean bean)
+    private ModuleDescriptor beanToDescriptors(ConnectAddonBean addon, Plugin plugin, WebItemModuleBean bean)
     {
         ModuleDescriptor descriptor;
 
@@ -140,14 +138,14 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             bean.getContext().equals(AddOnUrlContext.product) ||
             bean.getContext().equals(AddOnUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
         {
-            descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+            descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         }
         else
         {
-            String localUrl = ConnectIFrameServletPath.forModule(moduleProviderContext.getConnectAddonBean().getKey(), bean.getUrl());
+            String localUrl = ConnectIFrameServletPath.forModule(addon.getKey(), bean.getUrl());
 
             WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
-            descriptor = webItemFactory.createModuleDescriptor(moduleProviderContext, plugin, newBean);
+            descriptor = webItemFactory.createModuleDescriptor(newBean, addon, plugin);
         }
 
         return descriptor;

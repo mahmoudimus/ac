@@ -67,11 +67,9 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-
         for (ConnectPageModuleBean bean : modules)
         {
             if (hasWebItem())
@@ -84,7 +82,7 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
                         .withName(bean.getName())
                         .withKey(bean.getRawKey())
                         .withContext(page)
-                        .withUrl(ConnectIFrameServletPath.forModule(connectAddonBean.getKey(), bean.getRawKey()))
+                        .withUrl(ConnectIFrameServletPath.forModule(addon.getKey(), bean.getRawKey()))
                         .withLocation(location)
                         .withWeight(weight)
                         .withIcon(bean.getIcon())
@@ -92,11 +90,11 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
                         .setNeedsEscaping(needsEscaping())
                         .build();
 
-                descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                        pluginRetrievalService.getPlugin(), webItemBean, getConditionClasses()));
+                descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(
+                        webItemBean, addon, pluginRetrievalService.getPlugin(), getConditionClasses()));
             }
 
-            registerIframeRenderStrategy(bean, connectAddonBean);
+            registerIframeRenderStrategy(bean, addon);
         }
 
         return descriptors;

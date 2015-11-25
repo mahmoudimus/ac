@@ -22,11 +22,11 @@ public class XWorkActionDescriptorFactory
         this.eventPublisher = eventPublisher;
     }
 
-    public XWorkActionDescriptor create(ConnectAddonBean addon, Plugin theConnectPlugin, XWorkActionModuleBean actionModuleBean)
+    public XWorkActionDescriptor create(ConnectAddonBean addon, Plugin plugin, XWorkActionModuleBean actionModuleBean)
     {
         String moduleKey = "action-" + actionModuleBean.getRawKey();
-        XWorkPackageCreator packageCreator = new XWorkPackageCreator(addon, theConnectPlugin, actionModuleBean);
+        XWorkPackageCreator packageCreator = new XWorkPackageCreator(addon, plugin, actionModuleBean);
 
-        return new XWorkActionDescriptor(eventPublisher, theConnectPlugin, moduleKey, packageCreator);
+        return new XWorkActionDescriptor(eventPublisher, plugin, moduleKey, packageCreator);
     }
 }

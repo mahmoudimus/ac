@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.confluence.property;
 
 import com.atlassian.confluence.plugins.contentproperty.index.config.ContentPropertyIndexSchemaModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
@@ -9,10 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExt
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -38,19 +36,17 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
 
     @Override
     public ContentPropertyIndexSchemaModuleDescriptor createModuleDescriptor(
-            ConnectModuleProviderContext moduleProviderContext, Plugin plugin,
-            ContentPropertyModuleBean bean)
+            ContentPropertyModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
         ContentPropertyIndexSchemaModuleDescriptor descriptor = connectContainerUtil.createBean
                 (ContentPropertyIndexSchemaModuleDescriptor.class);
-        descriptor.init(plugin, createXmlConfig(moduleProviderContext, bean));
+        descriptor.init(plugin, createXmlConfig(addon, bean));
         return descriptor;
     }
 
-    private Element createXmlConfig(ConnectModuleProviderContext moduleProviderContext,
+    private Element createXmlConfig(ConnectAddonBean connectAddonBean,
             ContentPropertyModuleBean bean)
     {
-        ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         Element indexSchema = new DOMElement("content-property-index-schema");
         indexSchema.addAttribute("key", bean.getKey(connectAddonBean));
         String addonBaseUrl = connectAddonBean.getBaseUrl();

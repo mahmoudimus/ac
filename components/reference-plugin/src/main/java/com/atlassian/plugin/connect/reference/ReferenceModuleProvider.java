@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.reference;
 
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -47,7 +47,7 @@ public class ReferenceModuleProvider extends AbstractConnectModuleProvider<Refer
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReferenceModuleBean> referenceModules, ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReferenceModuleBean> referenceModules, ConnectAddonBean addon)
     {
         return referenceModules.stream().map(new Function<ReferenceModuleBean, ModuleDescriptor>()
         {
@@ -55,7 +55,7 @@ public class ReferenceModuleProvider extends AbstractConnectModuleProvider<Refer
             @Override
             public ModuleDescriptor apply(ReferenceModuleBean referenceModule)
             {
-                String moduleKey = referenceModule.getKey(moduleProviderContext.getConnectAddonBean());
+                String moduleKey = referenceModule.getKey(addon);
                 FakeModuleDescriptor moduleDescriptor = new FakeModuleDescriptor(moduleKey);
                 moduleDescriptor.setPlugin(pluginRetrievalService.getPlugin());
                 return moduleDescriptor;

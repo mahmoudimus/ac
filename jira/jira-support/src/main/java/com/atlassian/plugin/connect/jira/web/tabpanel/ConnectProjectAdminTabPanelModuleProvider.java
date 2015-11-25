@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
 import com.atlassian.plugin.connect.jira.web.condition.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -18,7 +18,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelMod
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
@@ -76,11 +75,10 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractJiraConne
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectProjectAdminTabPanelModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectProjectAdminTabPanelModuleBean> modules, ConnectAddonBean connectAddonBean)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (ConnectProjectAdminTabPanelModuleBean bean : modules)
         {
             // render a web item for our tab
@@ -95,8 +93,8 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractJiraConne
                     .setNeedsEscaping(false)
                     .build();
 
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                    pluginRetrievalService.getPlugin(), webItemModuleBean, IsProjectAdminCondition.class));
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(
+                    webItemModuleBean, connectAddonBean, pluginRetrievalService.getPlugin(), IsProjectAdminCondition.class));
 
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()

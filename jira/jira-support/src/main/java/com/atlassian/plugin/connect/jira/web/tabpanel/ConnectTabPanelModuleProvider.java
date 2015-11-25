@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -50,14 +49,14 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectM
         return tabPanels;
     }
 
-    protected List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints)
+    protected List<ModuleDescriptor> provideModules(ConnectAddonBean addonBean, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (ConnectTabPanelModuleBean bean : beans)
         {
-            descriptors.add(descriptorFactory.createModuleDescriptor(moduleProviderContext,
+            descriptors.add(descriptorFactory.createModuleDescriptor(addonBean,
                     pluginRetrievalService.getPlugin(), bean, hints));
-            registerIframeRenderStrategy(bean, moduleProviderContext.getConnectAddonBean());
+            registerIframeRenderStrategy(bean, addonBean);
         }
         return descriptors;
     }
