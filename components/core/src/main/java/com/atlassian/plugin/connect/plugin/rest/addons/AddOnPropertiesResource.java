@@ -29,6 +29,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
@@ -129,7 +130,7 @@ public class AddOnPropertiesResource
      */
     @GET
     @Path ("{propertyKey}")
-    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @Context final HttpServletRequest servletRequest)
+    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @QueryParam("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
     {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
@@ -148,7 +149,7 @@ public class AddOnPropertiesResource
             {
                 String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
                 return Response.ok()
-                        .entity(RestAddOnProperty.valueOf(property, baseURL))
+                        .entity(RestAddOnProperty.valueOf(property, baseURL, returnJsonFormat))
                         .cacheControl(never())
                         .build();
             }

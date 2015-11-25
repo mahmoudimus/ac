@@ -23,6 +23,23 @@ Requests via [`AP.request`](../javascript/module-request.html) to store and rece
 
 ## Request example
 
+To give you a very basic example you can set an add-on property like so:
+
+    PUT /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property
+    {"string":"string-value","number":5}
+
+And if you were to request it again you would get the following response:
+
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?jsonValue=true
+    {"key":"test-property","value":{"string":"string-value","number":5},"self":"..."}
+    
+Please note the use of the `jsonValue=true` query param. If you do not include that parameter then the response will be:
+
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?jsonValue=true
+    {"key":"test-property","value":"{\"string\":\"string-value\",\"number\":5}","self":"..."}
+     
+Which is deprecated behaviour and will be going away in June 2016. Please always use the `jsonValue=true` query parameter.
+
 Here is an example snippet that will show a pop-up with a JSON property named my-property-key for add-on with key my-add-on-key.
 
      AP.require(['request'], function(request) {

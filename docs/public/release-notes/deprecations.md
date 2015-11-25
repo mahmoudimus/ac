@@ -255,34 +255,18 @@ Return json objects in the following format:
        "self": "http://<self-url>..."
     }
 
-Starting immediately the following response will now be sent:
+Starting immediately the addition of the `?jsonValue=true` query parameter to the response will result in the following
+response:
 
-    {
-       "key": "my-property",
-       "value": "{\"object\": \"data\"}",
-       "jsonValue": {"object": "data"},
-       "self": "http://<self-url>..."
-    }
-    
-We highly recommend that you start using `jsonValue` over the next six months. When that six month period is over
-we will then update the `value` field to return the same data as `jsonValue`, like so:
-
-    {
-       "key": "my-property",
-       "value": "{\"object\": \"data\"}",
-       "jsonValue": {"object": "data"},
-       "self": "http://<self-url>..."
-    }
-    
-You will then have another six months to swap over from using `jsonValue`, to using the `value` field again. This slow
-double deprecation period is designed to ease the update from the `value` in string format to json format. Ultimately, 
-after the two deprecation periods have ended you should recieve data in the following format:
- 
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/2/my-property?jsonValue=true
     {
        "key": "my-property",
        "value": {"object": "data"},
        "self": "http://<self-url>..."
-    } 
+    }
+    
+You will need to swap over to using the `jsonValue` query param over the next six months. After that time the `value`
+field will always populate as though the `?jsonValue=true` was set. 
 
 <div class="ac-deprecations">
 <div class="aui-group">
@@ -298,7 +282,7 @@ after the two deprecation periods have ended you should recieve data in the foll
         <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
-        __June 2016 and December 2016 respectively__
+        __June 2016__
     </div>
 </div>
 <div class="aui-group">
@@ -306,7 +290,7 @@ after the two deprecation periods have ended you should recieve data in the foll
         <h5>Upgrade guide</h5>
     </div>
     <div class="aui-item">
-        <p>Please swap over to using jsonValue for the next six months and then swap back to the updated 'value' field. For more details please read the text above.</p>
+        <p>Please swap over to using jsonValue query param over the next six months and adjust your code to handle the updated format.</p>
     </div>
 </div>
 </div>
