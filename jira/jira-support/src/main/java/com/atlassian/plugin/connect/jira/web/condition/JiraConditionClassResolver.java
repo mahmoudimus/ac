@@ -26,17 +26,11 @@ public class JiraConditionClassResolver implements ConnectConditionClassResolver
                 newEntry("user_is_the_logged_in_user", ViewingOwnProfileCondition.class).build(),
                 newEntry("voting_enabled", com.atlassian.jira.plugin.webfragment.conditions.VotingEnabledCondition.class).build(),
                 newEntry("watching_enabled", com.atlassian.jira.plugin.webfragment.conditions.WatchingEnabledCondition.class).build(),
+                newEntry("can_use_application", CanUseApplication.class).build(),
 
                 newEntry("entity_property_equal_to", com.atlassian.jira.plugin.webfragment.conditions.EntityPropertyEqualToCondition.class)
-                        .withPredicates(
-                                new Predicate<Map<String, String>>()
-                                {
-                                    @Override
-                                    public boolean test(Map<String, String> parameters)
-                                    {
-                                        return !"addon".equals(parameters.get("entity"));
-                                    }
-                                }).build(),
+                        .withPredicates(parameters -> !"addon".equals(parameters.get("entity")))
+                        .build(),
 
                 // issue conditions
                 newEntry("can_attach_file_to_issue", com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition.class).build(),
