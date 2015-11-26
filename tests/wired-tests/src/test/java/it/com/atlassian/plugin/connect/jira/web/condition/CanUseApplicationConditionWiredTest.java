@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.jira.web.condition.CanUseApplicationConditio
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
+import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Application ("jira")
 @RunWith (AtlassianPluginsTestRunner.class)
 public class CanUseApplicationConditionWiredTest
 {
