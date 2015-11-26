@@ -12,6 +12,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.lang.String.format;
 
 public class CanUseApplicationCondition implements Condition
 {
@@ -29,8 +30,15 @@ public class CanUseApplicationCondition implements Condition
     @Override
     public void init(Map<String, String> params) throws PluginParseException
     {
-        Either<String, ApplicationKey> applicationKey = ApplicationKeys.TO_APPLICATION_KEY.apply(nullToEmpty(params.get("applicationKey")));
-        key = applicationKey.fold(param -> Optional.<ApplicationKey>empty(), Optional::of);
+        String keyParameter = params.get("applicationKey");
+        if (keyParameter == null) {
+            throw new PluginParseException("\"applicationKey\" parameter is required in the can_use_application condition");
+        }
+        Either<String, ApplicationKey> applicationKey = ApplicationKeys.TO_APPLICATION_KEY.apply(nullToEmpty(keyParameter));
+
+        key = applicationKey.fold(
+                param -> { throw new PluginParseException(format("invalid application key: \"%s\"", param)); },
+                Optional::of);
     }
 
     @Override

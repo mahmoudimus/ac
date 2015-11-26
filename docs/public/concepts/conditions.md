@@ -170,7 +170,7 @@ Supported application keys are:
 * jira-servicedesk
 * jira-software
 
-If an invalid application key is provided then the condition will simply evaluate to `false`.
+If an unrecognized application key is provided then the condition will simply evaluate to `false`.
 
 ## <a name="boolean-operations"></a>Boolean operations
 

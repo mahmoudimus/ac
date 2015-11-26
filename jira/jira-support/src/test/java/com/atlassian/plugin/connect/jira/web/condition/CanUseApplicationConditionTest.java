@@ -6,19 +6,24 @@ import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.plugin.PluginParseException;
 import com.google.common.collect.Maps;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class CanUseApplicationConditionTest
 {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     private static final ApplicationUser USER = mock(ApplicationUser.class);
     private static final ApplicationKey APPLICATION_KEY = ApplicationKey.valueOf("jira-app");
 
@@ -62,21 +67,19 @@ public class CanUseApplicationConditionTest
     }
 
     @Test
-    public void conditionEvaluatesToFalseAutomaticallyIfKeyIsInvalid()
+    public void ExceptionIsThrownIfKeyIsInvalid()
     {
+        thrown.expect(PluginParseException.class);
+        thrown.expectMessage("invalid application key: \"///;;;'[][][$%#$%,,, ---  =>\"");
         initConditionWith("///;;;'[][][$%#$%,,, ---  =>");
-
-        assertFalse(condition.shouldDisplay(emptyMap()));
-        verifyNoMoreInteractions(applicationAuthorizationService);
     }
 
     @Test
-    public void conditionEvaluatesToFalseAutomaticallyIfKeyIsNull()
+    public void ExceptionIsThrownIfKeyIsNull()
     {
+        thrown.expect(PluginParseException.class);
+        thrown.expectMessage("\"applicationKey\" parameter is required in the can_use_application condition");
         initConditionWith(null);
-
-        assertFalse(condition.shouldDisplay(emptyMap()));
-        verifyNoMoreInteractions(applicationAuthorizationService);
     }
 
     private void initConditionWith(String applicationKey)
