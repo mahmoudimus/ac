@@ -45,7 +45,7 @@ public interface ConnectModuleProvider<T extends BaseModuleBean>
      * Creates plugin module descriptors representing the given list of add-on modules.
      *
      * @param modules the add-on modules for which to create plugin module descriptors
-     * @param addon the add-on descriptor (without the module list)
+     * @param addon the add-on descriptor
      */
     List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon);
 }
