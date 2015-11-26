@@ -49,6 +49,15 @@ public class CanUseApplicationConditionTest
     }
 
     @Test
+    public void jiraCoreIsAlwaysTreatedAsInstalled() {
+        ApplicationKey key = ApplicationKey.valueOf("jira-core");
+        initConditionWith(key.value());
+        when(applicationAuthorizationService.canUseApplication(USER, key)).thenReturn(true);
+        when(applicationAuthorizationService.isApplicationInstalledAndLicensed(key)).thenReturn(false);
+        assertTrue(condition.shouldDisplay(emptyMap()));
+    }
+
+    @Test
     public void conditionEvaluatesToFalseIfApplicationIsInstalledButUserIsNotLicensed()
     {
         initConditionWith(APPLICATION_KEY.value());

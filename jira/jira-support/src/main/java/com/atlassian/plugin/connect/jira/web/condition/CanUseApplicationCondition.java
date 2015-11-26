@@ -44,8 +44,13 @@ public class CanUseApplicationCondition implements Condition
     @Override
     public boolean shouldDisplay(Map<String, Object> context)
     {
-        return key.filter(applicationService::isApplicationInstalledAndLicensed)
+        return key.filter(this::isApplicationInstalled)
                 .map(appKey -> applicationService.canUseApplication(authenticationContext.getLoggedInUser(), appKey))
                 .orElse(false);
+    }
+
+    private boolean isApplicationInstalled(final ApplicationKey key) {
+        return ApplicationKeys.CORE.equals(key) ||
+                applicationService.isApplicationInstalledAndLicensed(key);
     }
 }
