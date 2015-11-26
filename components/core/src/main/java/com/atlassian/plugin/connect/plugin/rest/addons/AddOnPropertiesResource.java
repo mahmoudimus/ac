@@ -113,6 +113,7 @@ public class AddOnPropertiesResource
      *
      * @param addOnKey the add-on key of the plugin to fetch the property from
      * @param propertyKey the key of the property
+     * @param returnJsonFormat set to true if the 'value' field should be returned in json format, false if you want string format. String format is deprecated.
      * @param servletRequest the HTTP servlet request
      * @return a Response containing a list of properties or an error code with message.
      *
