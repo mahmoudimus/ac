@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.confluence.web.spacetools;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
@@ -12,6 +13,8 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -61,6 +64,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
     private final ProductAccessor productAccessor;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final ConditionLoadingValidator conditionLoadingValidator;
 
     @Autowired
     public SpaceToolsTabModuleProvider(PluginRetrievalService pluginRetrievalService,
@@ -68,7 +72,8 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            ConditionLoadingValidator conditionLoadingValidator)
     {
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
@@ -76,12 +81,21 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
         this.productAccessor = productAccessor;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.conditionLoadingValidator = conditionLoadingValidator;
     }
 
     @Override
     public ConnectModuleMeta<SpaceToolsTabModuleBean> getMeta()
     {
         return META;
+    }
+
+    @Override
+    public List<SpaceToolsTabModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
+    {
+        List<SpaceToolsTabModuleBean> spaceToolsTabs = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+        conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), spaceToolsTabs);
+        return spaceToolsTabs;
     }
 
     @Override

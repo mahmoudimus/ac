@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
@@ -11,8 +12,10 @@ import com.atlassian.plugin.connect.jira.web.condition.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
@@ -41,24 +44,35 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractJiraConne
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final ConditionLoadingValidator conditionLoadingValidator;
 
     @Autowired
     public ConnectProjectAdminTabPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
             ConnectJsonSchemaValidator schemaValidator,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            ConditionLoadingValidator conditionLoadingValidator)
     {
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.conditionLoadingValidator = conditionLoadingValidator;
     }
 
     @Override
     public ConnectModuleMeta<ConnectProjectAdminTabPanelModuleBean> getMeta()
     {
         return META;
+    }
+
+    @Override
+    public List<ConnectProjectAdminTabPanelModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
+    {
+        List<ConnectProjectAdminTabPanelModuleBean> adminTabPanels = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+        conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), adminTabPanels);
+        return adminTabPanels;
     }
 
     @Override
