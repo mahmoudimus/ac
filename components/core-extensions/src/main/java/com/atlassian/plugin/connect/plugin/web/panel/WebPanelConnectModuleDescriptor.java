@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
 import com.atlassian.plugin.web.model.WebPanel;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
@@ -23,7 +22,7 @@ public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescri
     private final ModuleContextFilter moduleContextFilter;
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
 
-    public WebPanelConnectModuleDescriptor(@Qualifier ("hostContainer") HostContainer hostContainer, WebInterfaceManager webInterfaceManager,
+    public WebPanelConnectModuleDescriptor(HostContainer hostContainer, WebInterfaceManager webInterfaceManager,
             ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             ModuleContextFilter moduleContextFilter, PluggableParametersExtractor webFragmentModuleContextExtractor)
     {

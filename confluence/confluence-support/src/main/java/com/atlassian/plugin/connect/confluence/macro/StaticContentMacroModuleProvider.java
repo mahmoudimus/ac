@@ -30,7 +30,7 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
             ConnectJsonSchemaValidator schemaValidator,
             StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            @Qualifier("hostContainer") HostContainer hostContainer,
+            HostContainer hostContainer,
             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
