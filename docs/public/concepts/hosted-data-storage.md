@@ -35,7 +35,7 @@ And if you were to request it again you would get the following response:
     
 Please note the use of the `jsonValue=true` query param. If you do not include that parameter then the response will be:
 
-    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?jsonValue=true
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property
     {"key":"test-property","value":"{\"string\":\"string-value\",\"number\":5}","self":"..."}
      
 Which is deprecated behaviour and will be going away in June 2016. Please always use the `jsonValue=true` query parameter.
