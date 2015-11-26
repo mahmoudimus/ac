@@ -1,0 +1,19 @@
+{
+  "key" : "my-plugin-with-provided-module",
+  "baseUrl" : "http://www.example.com",
+  "authentication": {
+    "type": "none"
+  },
+  "modules": {
+    "webPanels": [
+      {
+        "key": "someKey",
+        "name" : {
+          "value" : "Web Panel with illegal location"
+        },
+        "location" : "atl.header.after.scripts",
+        "url" : "/pcp?issue_id=${issue.id}&project_id=${project.id}"
+      }
+    ]
+  }
+}
