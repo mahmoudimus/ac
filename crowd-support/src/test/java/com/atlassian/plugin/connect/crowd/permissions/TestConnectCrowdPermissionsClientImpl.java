@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.applinks.api.CredentialsRequiredException;
 import com.atlassian.crowd.exception.ApplicationAccessDeniedException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
@@ -12,15 +8,18 @@ import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.ResponseException;
-
 import com.google.common.collect.ImmutableMap;
-
+import com.google.gson.JsonObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.sal.api.net.Request.MethodType.POST;
 import static com.atlassian.sal.api.net.Request.MethodType.PUT;
@@ -68,8 +67,9 @@ public class TestConnectCrowdPermissionsClientImpl
         connectCrowdPermissionsClient.grantAdminPermission("atlassian-addons-admin", "jira", "jira");
 
         verify(connectCrowdSysadminHttpClient).executeAsSysadmin(eq(POST), eq(ACCESS_CONFIG_URL), dataCaptor.capture());
-        final List<String> providedData = (List<String>) new JSONParser().parse(dataCaptor.getValue());
-        assertThat(providedData, is(singletonList("atlassian-addons-admin")));
+        String value = dataCaptor.getValue();
+        final List<JsonObject> providedData = (List<JsonObject>) new JSONParser().parse(value);
+        assertThat(providedData, is(singletonList(expectedConfigData)));
     }
 
     @SuppressWarnings ("unchecked")

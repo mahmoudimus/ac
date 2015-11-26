@@ -1,0 +1,12 @@
+{
+    "key" : "jira-global-permission",
+    "name" : {
+        "value" : "Name",
+        "i18n" : "name.i18n"
+    },
+    "description" : {
+        "value" : "Description",
+        "i18n" : "description.i18n"
+    },
+    "anonymousAllowed" : false
+}

@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.google.common.collect.ImmutableSet;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.After;
@@ -103,7 +104,7 @@ public abstract class AdminScopeTestBase
     public void setUp() throws IOException
     {
         testAuthenticator.authenticateUser("admin");
-        String key = "ac-TEST-" + System.currentTimeMillis(); // Use uppercase character to detect username vs userkey issues
+        String key = "ac-TEST-" + AddonUtil.randomPluginKey(); // Use uppercase character to detect username vs userkey issues
         addonBaseBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))

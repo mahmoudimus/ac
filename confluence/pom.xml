@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.58-SNAPSHOT</version>
+        <version>1.1.64-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,5 +15,20 @@
         <module>confluence-reference-plugin</module>
         <module>confluence-support</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>it</id>
+            <modules>
+                <module>confluence-integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>freezer-release-profile</id>
+            <modules>
+                <module>confluence-integration-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

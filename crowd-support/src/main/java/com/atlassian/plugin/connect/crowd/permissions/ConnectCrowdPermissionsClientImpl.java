@@ -42,8 +42,8 @@ public class ConnectCrowdPermissionsClientImpl
     {
         try
         {
-            connectCrowdSysadminHttpClient.executeAsSysadmin(POST, addProductUri(productId, applicationId), groupsList(groupName));
-            connectCrowdSysadminHttpClient.executeAsSysadmin(PUT, configureProductUri(productId, applicationId), groupData(groupName));
+            connectCrowdSysadminHttpClient.executeAsSysadmin(POST, addProductUri(productId, applicationId), groupsList(groupName).toJSONString());
+            connectCrowdSysadminHttpClient.executeAsSysadmin(PUT, configureProductUri(productId, applicationId), groupData(groupName).toJSONString());
         }
         catch (InactiveAccountException
                 | ApplicationPermissionException
@@ -73,20 +73,24 @@ public class ConnectCrowdPermissionsClientImpl
     }
 
     @SuppressWarnings ("unchecked")
-    private String groupsList(String groupName)
+    private JSONArray groupsList(String groupName)
     {
         final JSONArray jsonArray = new JSONArray();
-        jsonArray.add(groupName);
-        return jsonArray.toJSONString();
+        jsonArray.add(groupData(groupName));
+        return jsonArray;
     }
 
-    private String groupData(String groupName)
+    /**
+     * @param groupName the name of the group
+     * @return a JSON object with the structure of com.atlassian.crowd.plugin.usermanagement.rest.entity.ProductDetailsEntity.GroupEntity
+     */
+    private JSONObject groupData(String groupName)
     {
         return new JSONObject(ImmutableMap.of(
                 "name", groupName,
                 "use", "NONE",
                 "admin", "DIRECT",
                 "defaultUse", false
-        )).toJSONString();
+        ));
     }
 }

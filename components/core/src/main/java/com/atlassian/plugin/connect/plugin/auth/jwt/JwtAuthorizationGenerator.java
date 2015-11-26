@@ -1,28 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.jwt.JwtService;
-import com.atlassian.jwt.core.HttpRequestCanonicalizer;
-import com.atlassian.jwt.core.TimeUtil;
-import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
-import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
-import com.atlassian.jwt.writer.JwtJsonBuilder;
-import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
-import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Supplier;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicHeaderValueParser;
-import org.apache.http.message.ParserCursor;
-import org.apache.http.util.CharArrayBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -32,9 +9,33 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.jwt.JwtService;
+import com.atlassian.jwt.core.HttpRequestCanonicalizer;
+import com.atlassian.jwt.core.TimeUtil;
+import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
+import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.jwt.writer.JwtJsonBuilder;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
+import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Supplier;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicHeaderValueParser;
+import org.apache.http.message.ParserCursor;
+import org.apache.http.util.CharArrayBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
  * Set the system property {@link JwtAuthorizationGenerator#JWT_EXPIRY_SECONDS_PROPERTY} with an integer value to control
@@ -48,8 +49,8 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
     /**
      * Default of 3 minutes.
      */
-    private static final int JWT_EXPIRY_WINDOW_SECONDS_DEFAULT = 60 * 3;
-    private static final int JWT_EXPIRY_WINDOW_SECONDS = ConfigurationUtils.getIntSystemProperty(JWT_EXPIRY_SECONDS_PROPERTY, JWT_EXPIRY_WINDOW_SECONDS_DEFAULT);
+    private static final long JWT_EXPIRY_WINDOW_SECONDS_DEFAULT = MINUTES.toSeconds(3);
+    private static final long JWT_EXPIRY_WINDOW_SECONDS = Long.getLong(JWT_EXPIRY_SECONDS_PROPERTY, JWT_EXPIRY_WINDOW_SECONDS_DEFAULT);
 
     private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationGenerator.class);
 
@@ -88,10 +89,11 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
         checkArgument(null != addOnBaseUrl, "base URI argument cannot be null");
         checkArgument(null != secret, "secret argument cannot be null");
 
+        final long currentTime = TimeUtil.currentTimeSeconds();
         JwtJsonBuilder jsonBuilder = jwtBuilderFactory.jsonBuilder()
-                .issuedAt(TimeUtil.currentTimeSeconds())
-                .expirationTime(TimeUtil.currentTimePlusNSeconds(JWT_EXPIRY_WINDOW_SECONDS))
-                .issuer(issuerId);
+            .issuedAt(currentTime)
+            .expirationTime(currentTime + JWT_EXPIRY_WINDOW_SECONDS)
+            .issuer(issuerId);
 
         Map<String, String[]> completeParams = params;
 

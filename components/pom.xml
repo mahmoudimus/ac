@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.58-SNAPSHOT</version>
+        <version>1.1.64-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,7 +12,12 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>api</module>
         <module>core</module>
+        <module>core-extensions</module>
+        <module>modules</module>
+        <module>reference-plugin</module>
+        <module>spi</module>
     </modules>
 
 </project>
