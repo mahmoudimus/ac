@@ -131,7 +131,6 @@ public class TestAddOnProperties
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
-        System.out.println(response);
         RestAddOnProperty result = JSON.readValue(response, RestAddOnProperty.class);
         assertThat(result, isEqualToIgnoringBaseUrl(property));
 
@@ -321,7 +320,7 @@ public class TestAddOnProperties
 
     private HttpURLConnection executeGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException
     {
-        URL url = new URL(restPath + "/properties/" + propertyKey);
+        URL url = new URL(restPath + "/properties/" + propertyKey + "?jsonValue=true");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setDoInput(true);
