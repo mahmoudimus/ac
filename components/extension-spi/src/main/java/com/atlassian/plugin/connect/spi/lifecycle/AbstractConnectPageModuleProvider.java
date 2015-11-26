@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.spi.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;

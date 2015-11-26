@@ -7,8 +7,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>atlassian-connect-spi</artifactId>
-    <name>Atlassian Connect - Public SPI</name>
+    <artifactId>atlassian-connect-host-spi</artifactId>
+    <name>Atlassian Connect - SPI for Host Applications</name>
 
     <licenses>
         <license>

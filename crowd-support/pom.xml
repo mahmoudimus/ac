@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-spi</artifactId>
+            <artifactId>atlassian-connect-host-spi</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
