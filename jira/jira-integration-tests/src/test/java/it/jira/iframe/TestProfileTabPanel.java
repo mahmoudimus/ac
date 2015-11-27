@@ -2,10 +2,10 @@ package it.jira.iframe;
 
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Optional;
 
 import com.atlassian.connect.test.jira.pageobjects.InsufficientPermissionsViewProfileTab;
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProfilePage;
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -87,7 +87,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
         loginAndVisit(user, ViewProfilePage.class);
         String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
-                Option.<String>none(),moduleKey);
+                Optional.<String>empty(),moduleKey);
         ConnectAddOnEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.getMessage(), equalTo("Success"));
 
