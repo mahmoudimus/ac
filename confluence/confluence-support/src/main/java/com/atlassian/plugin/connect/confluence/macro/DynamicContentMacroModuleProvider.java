@@ -32,7 +32,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     public DynamicContentMacroModuleProvider(PluginRetrievalService pluginRetrievalService,
             DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            @Qualifier("hostContainer") HostContainer hostContainer,
+            HostContainer hostContainer,
             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
