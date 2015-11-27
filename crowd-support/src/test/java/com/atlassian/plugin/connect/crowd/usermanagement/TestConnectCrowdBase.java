@@ -12,16 +12,14 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
-import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
-import static com.google.common.base.Optional.absent;
-import static com.google.common.base.Optional.of;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -42,7 +40,7 @@ public class TestConnectCrowdBase
     public void beforeEach()
     {
         initMocks(this);
-        when(userReconciliation.getFixes(any(User.class), anyString(), anyString(), anyBoolean())).thenReturn(Optional.<UserTemplate>absent());
+        when(userReconciliation.getFixes(any(User.class), anyString(), anyString(), anyBoolean())).thenReturn(Optional.<UserTemplate>empty());
     }
 
     @SuppressWarnings ("unchecked")
@@ -92,11 +90,11 @@ public class TestConnectCrowdBase
             if (user != null)
             {
                 assertThat("Crowd base searches for the user by name", username, is(user.getName()));
-                return of(user);
+                return Optional.of(user);
             }
             else
             {
-                return absent();
+                return Optional.empty();
             }
         }
 

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +14,6 @@ import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.connect.spi.FeatureManager;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
 import org.junit.Before;

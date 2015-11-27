@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.spi.web.context;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * Implementations of this interfaces are supposed to find context objects in module-specific contexts.
