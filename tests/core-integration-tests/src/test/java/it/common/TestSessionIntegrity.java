@@ -4,6 +4,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -13,7 +14,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 import org.junit.AfterClass;
@@ -71,7 +71,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
         String baseUrl = product.getProductInstance().getBaseUrl();
         URI uri = URI.create(baseUrl + "/rest/atlassian-connect/latest/license");
         String jwtToken = jwtAuthorizationGenerator.generate(HTTP_GET, product.getProductInstance().getContextPath(),
-                uri, Maps.<String, List<String>>newHashMap(), Optional.<String>absent(),
+                uri, Maps.<String, List<String>>newHashMap(), Optional.<String>empty(),
                 runner.getAddon().getKey(), installPayload.getSharedSecret());
         String signedUrl = uri.toString() + "?jwt=" + jwtToken;
 

@@ -1,5 +1,7 @@
 package it.jira.condition;
 
+import java.util.Optional;
+
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -7,8 +9,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
-import com.google.common.base.Optional;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -107,7 +107,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     public void bettyCanSeeBettyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(onlyBettyWebItem), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(onlyBettyWebItem), Optional.<String>empty()));
     }
 
     @Test
@@ -128,14 +128,14 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     public void bettyCanSeeBettyAndBarneyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>empty()));
     }
 
     @Test
     public void barneyCanSeeBettyAndBarneyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>empty()));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     public void bettyCanSeeAdminRightsWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>empty()));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     public void adminCanSeeAdminRightsWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(testUserFactory.admin(), JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>empty()));
     }
 
     private String getModuleKey(String module)

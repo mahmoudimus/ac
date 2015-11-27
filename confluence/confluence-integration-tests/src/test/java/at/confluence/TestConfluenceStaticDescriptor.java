@@ -1,5 +1,7 @@
 package at.confluence;
 
+import java.util.Optional;
+
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
@@ -9,8 +11,6 @@ import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProd
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
-import com.google.common.base.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -77,7 +77,7 @@ public class TestConfluenceStaticDescriptor
     public void testAcDashboardWebItemIsPresent()
     {
         product.login(toConfluenceUser(ADMIN), DashboardPage.class);
-        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
+        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>empty());
     }
 
     @After
