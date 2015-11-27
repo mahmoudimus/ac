@@ -11,7 +11,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
 
-import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.String.format;
 
 public class CanUseApplicationCondition implements Condition
@@ -31,10 +30,11 @@ public class CanUseApplicationCondition implements Condition
     public void init(Map<String, String> params) throws PluginParseException
     {
         String keyParameter = params.get("applicationKey");
-        if (keyParameter == null) {
+        if (keyParameter == null)
+        {
             throw new PluginParseException("\"applicationKey\" parameter is required in the can_use_application condition");
         }
-        Either<String, ApplicationKey> applicationKey = ApplicationKeys.TO_APPLICATION_KEY.apply(nullToEmpty(keyParameter));
+        Either<String, ApplicationKey> applicationKey = ApplicationKeys.TO_APPLICATION_KEY.apply(keyParameter);
 
         key = applicationKey.fold(
                 param -> { throw new PluginParseException(format("invalid application key: \"%s\"", param)); },
@@ -49,7 +49,8 @@ public class CanUseApplicationCondition implements Condition
                 .orElse(false);
     }
 
-    private boolean isApplicationInstalled(final ApplicationKey key) {
+    private boolean isApplicationInstalled(final ApplicationKey key)
+    {
         return ApplicationKeys.CORE.equals(key) ||
                 applicationService.isApplicationInstalledAndLicensed(key);
     }
