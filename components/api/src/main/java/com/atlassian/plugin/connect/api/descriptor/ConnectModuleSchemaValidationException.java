@@ -1,7 +1,5 @@
-package com.atlassian.plugin.connect.spi.descriptor;
+package com.atlassian.plugin.connect.api.descriptor;
 
-import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
-import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;

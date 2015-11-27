@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.jira.report;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleMeta;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
@@ -42,15 +42,15 @@ public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<Repo
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, ConnectAddonBean addon)
     {
         return Lists.transform(modules, new Function<ReportModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final ReportModuleBean bean)
             {
-                return moduleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                        pluginRetrievalService.getPlugin(), bean);
+                return moduleDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()
+                );
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.web;
+package com.atlassian.plugin.connect.spi.web.panel;
 
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import org.dom4j.Element;

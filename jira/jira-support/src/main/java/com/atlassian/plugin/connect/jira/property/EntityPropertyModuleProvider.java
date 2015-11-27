@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.jira.property;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleMeta;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
@@ -39,15 +39,14 @@ public class EntityPropertyModuleProvider extends AbstractJiraConnectModuleProvi
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<EntityPropertyModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<EntityPropertyModuleBean> modules, ConnectAddonBean addon)
     {
         return Lists.transform(modules, new Function<EntityPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final EntityPropertyModuleBean bean)
             {
-                return descriptorFactory.createModuleDescriptor(moduleProviderContext,
-                        pluginRetrievalService.getPlugin(), bean);
+                return descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
             }
         });
     }

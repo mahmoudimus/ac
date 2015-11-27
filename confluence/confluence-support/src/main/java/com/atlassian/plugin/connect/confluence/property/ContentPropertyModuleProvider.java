@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.confluence.property;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleMeta;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.collect.Lists;
@@ -41,9 +41,9 @@ public class ContentPropertyModuleProvider extends AbstractConfluenceConnectModu
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ContentPropertyModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ContentPropertyModuleBean> modules, ConnectAddonBean addon)
     {
-        return Lists.transform(modules, bean -> contentPropertyIndexFactory.createModuleDescriptor(moduleProviderContext,
-                pluginRetrievalService.getPlugin(), bean));
+        return Lists.transform(modules, bean -> contentPropertyIndexFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()
+        ));
     }
 }

@@ -3,14 +3,13 @@ package com.atlassian.plugin.connect.jira.report;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -41,10 +40,8 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
     }
 
     @Override
-    public ConnectReportModuleDescriptor createModuleDescriptor(final ConnectModuleProviderContext moduleProviderContext,
-            final Plugin plugin, final ReportModuleBean bean)
+    public ConnectReportModuleDescriptor createModuleDescriptor(final ReportModuleBean bean, ConnectAddonBean connectAddonBean, final Plugin plugin)
     {
-        ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         Element reportModule = createReportDescriptor(bean, connectAddonBean);
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
@@ -60,7 +57,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
         iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
         ConnectReportModuleDescriptor moduleDescriptor = containerUtil.createBean(ConnectReportModuleDescriptor.class);
-        moduleDescriptor.setThumbnailUrl(getThumbnailUrl(moduleProviderContext.getConnectAddonBean(), bean.getThumbnailUrl()));
+        moduleDescriptor.setThumbnailUrl(getThumbnailUrl(connectAddonBean, bean.getThumbnailUrl()));
         moduleDescriptor.init(plugin, reportModule);
         return moduleDescriptor;
     }

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.spi.lifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -44,8 +45,7 @@ public interface ConnectModuleProvider<T extends BaseModuleBean>
      * Creates plugin module descriptors representing the given list of add-on modules.
      *
      * @param modules the add-on modules for which to create plugin module descriptors
-     * @param moduleProviderContext
-     * @return the plugin module descriptors created
+     * @param addon the add-on descriptor
      */
-    List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectModuleProviderContext moduleProviderContext);
+    List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon);
 }

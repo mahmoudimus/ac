@@ -1,4 +1,6 @@
-package com.atlassian.plugin.connect.api.web.item;
+package com.atlassian.plugin.connect.api.web;
+
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
 /**
  * A utility that qualifies any locations (and location segments) that match keys in web items or web sections.
@@ -14,13 +16,15 @@ package com.atlassian.plugin.connect.api.web.item;
  * e.g. a web item may have a location like "top-menu/first-section" where "top-menu" is the key of another web item
  * and "first-section" is the key of a web section.
  */
-public interface ModuleLocationQualifier
+public interface WebFragmentLocationQualifier
 {
+
     /**
      * Process the given location, by substituting any location segments that are keys to other modules with their
      * qualified name
      * @param location the location to process
+     * @param addon the add-on descriptor in which the location is used
      * @return the possibly qualified location
      */
-    String processLocation(String location);
+    String processLocation(String location, ConnectAddonBean addon);
 }

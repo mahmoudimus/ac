@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.sal.api.user.UserManager;
@@ -16,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -43,9 +40,7 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
         StaticContentMacroModuleBean bean = createBeanBuilder()
                 .build();
 
-        final ConnectModuleProviderContext moduleProviderContext = mock(ConnectModuleProviderContext.class);
-        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
-        return macroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin);
     }
 
     @Override

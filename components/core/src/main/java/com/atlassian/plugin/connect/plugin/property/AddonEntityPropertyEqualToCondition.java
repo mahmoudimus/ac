@@ -13,6 +13,10 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
+import org.codehaus.jackson.JsonNode;
+
+import static com.atlassian.plugin.connect.plugin.property.JsonCommon.parseStringToJson;
+
 @ConnectCondition
 public class AddonEntityPropertyEqualToCondition implements Condition
 {
@@ -47,21 +51,22 @@ public class AddonEntityPropertyEqualToCondition implements Condition
     {
         UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUserKey());
         return addOnPropertyService.getPropertyValue(userProfile, addOnKey, addOnKey, propertyKey).fold(
-                new Function<AddOnPropertyService.OperationStatus, Boolean>()
+            new Function<AddOnPropertyService.OperationStatus, Boolean>()
+            {
+                @Override
+                public Boolean apply(final AddOnPropertyService.OperationStatus input)
                 {
-                    @Override
-                    public Boolean apply(final AddOnPropertyService.OperationStatus input)
-                    {
-                        return false;
-                    }
-                }, new Function<AddOnProperty, Boolean>()
-                {
-                    @Override
-                    public Boolean apply(final AddOnProperty input)
-                    {
-                        return propertyValue.equals(input.getValue());
-                    }
+                    return false;
                 }
+            }, new Function<AddOnProperty, Boolean>()
+            {
+                @Override
+                public Boolean apply(final AddOnProperty input)
+                {
+                    final Optional<JsonNode> propertyJson = parseStringToJson(propertyValue);
+                    return propertyJson.equals(Optional.of(input.getValue()));
+                }
+            }
         );
     }
 }

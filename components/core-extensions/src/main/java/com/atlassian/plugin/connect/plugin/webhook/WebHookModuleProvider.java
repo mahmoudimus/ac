@@ -2,13 +2,13 @@ package com.atlassian.plugin.connect.plugin.webhook;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,13 +52,13 @@ public class WebHookModuleProvider extends AbstractConnectCoreModuleProvider<Web
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebHookModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebHookModuleBean> modules, ConnectAddonBean addon)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (WebHookModuleBean webhook : modules)
         {
-            descriptors.add(moduleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                    pluginRetrievalService.getPlugin(), webhook));
+            descriptors.add(moduleDescriptorFactory.createModuleDescriptor(webhook, addon, pluginRetrievalService.getPlugin()
+            ));
         }
         return descriptors;
     }

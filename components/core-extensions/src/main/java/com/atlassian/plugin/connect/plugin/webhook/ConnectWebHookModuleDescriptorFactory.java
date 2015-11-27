@@ -2,10 +2,10 @@ package com.atlassian.plugin.connect.plugin.webhook;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -26,7 +26,7 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
     }
 
     @Override
-    public WebHookModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, WebHookModuleBean bean)
+    public WebHookModuleDescriptor createModuleDescriptor(WebHookModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
         Element webhookElement = new DOMElement("webhook");
 
@@ -41,11 +41,10 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
         }
 
         WebHookModuleDescriptor descriptor = autowireUtil.createBean(WebHookModuleDescriptor.class);
-        descriptor.setWebhookPluginKey(moduleProviderContext.getConnectAddonBean().getKey());
+        descriptor.setWebhookPluginKey(addon.getKey());
         
-        descriptor.init(theConnectPlugin, webhookElement);
+        descriptor.init(plugin, webhookElement);
 
         return descriptor;
     }
-
 }
