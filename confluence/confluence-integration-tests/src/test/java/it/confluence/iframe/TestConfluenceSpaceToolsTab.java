@@ -1,11 +1,12 @@
 package it.confluence.iframe;
 
+import java.util.Optional;
+
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.SpacePermission;
 import com.atlassian.confluence.it.admin.BundledTheme;
 import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
-import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.confluence.web.spacetools.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -76,7 +77,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
 
         String pageKey = addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
         String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
-        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Option.<String>none(), pageKey);
+        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Optional.<String>empty(), pageKey);
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
                 RemoteWebPanel.class,
@@ -93,7 +94,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
 
         loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, space);
 
-        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY));
+        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(LINK_TEXT, "AC Space Tab", Optional.<String>empty(), addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY));
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
                 RemoteWebPanel.class,
