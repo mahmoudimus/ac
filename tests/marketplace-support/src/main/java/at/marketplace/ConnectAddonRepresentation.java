@@ -1,10 +1,10 @@
 package at.marketplace;
 
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.lang3.Validate;
 
-import static java.util.Arrays.asList;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ConnectAddonRepresentation
 {
@@ -12,7 +12,7 @@ public class ConnectAddonRepresentation
     private final String vendorId;
     private final String logoUrl;
     private final String name;
-    private final List<Highlight> highlights;
+    private final Iterable<Highlight> highlights;
     private final String summary;
 
     public String getTagline()
@@ -25,7 +25,7 @@ public class ConnectAddonRepresentation
         return summary;
     }
 
-    public List<Highlight> getHighlights()
+    public Iterable<Highlight> getHighlights()
     {
         return highlights;
     }
@@ -74,7 +74,7 @@ public class ConnectAddonRepresentation
         private String vendorId;
         private String logo;
         private String name;
-        private List<Highlight> highlights;
+        private Iterable<Highlight> highlights;
         private String summary;
         private String tagline;
 
@@ -84,9 +84,9 @@ public class ConnectAddonRepresentation
             return this;
         }
 
-        public Builder withVendorId(long vendorId)
+        public Builder withVendorId(String vendorId)
         {
-            this.vendorId = String.valueOf(vendorId);
+            this.vendorId = vendorId;
             return this;
         }
 
@@ -96,7 +96,7 @@ public class ConnectAddonRepresentation
             return this;
         }
 
-        public Builder withLogo(String logoUrl)
+        public Builder withLogoUrl(String logoUrl)
         {
             this.logo = logoUrl;
             return this;
@@ -104,7 +104,11 @@ public class ConnectAddonRepresentation
 
         public Builder withHighlights(Highlight first, Highlight second, Highlight third)
         {
-            this.highlights = asList(first, second, third);
+            checkNotNull(first);
+            checkNotNull(second);
+            checkNotNull(third);
+
+            this.highlights = ImmutableList.of(first, second, third);
             return this;
         }
 

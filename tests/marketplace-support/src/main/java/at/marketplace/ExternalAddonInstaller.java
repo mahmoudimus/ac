@@ -40,6 +40,7 @@ import cc.plural.jsonij.parser.ParserException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class ExternalAddonInstaller
@@ -47,12 +48,13 @@ public class ExternalAddonInstaller
     public static final String ADDONS_REST_PATH = "/rest/2.0-beta/addons/";
     public static final String VENDORS_REST_PATH = "/rest/2.0-beta/vendors/";
     private static final String IMAGE_REST_PATH = "/rest/2.0-beta/assets/image/";
-    public static final long ATLASSIAN_LABS_ID = 33202;
+    public static final String ATLASSIAN_LABS_ID = "33202";
+
     public static final int TIMEOUT_MS = 30 * 1000;
     private static final String TEST_ADDON_VERSION = "0001";
     public static final ConnectAddonRepresentation DEFAULT_ADDON = ConnectAddonRepresentation.builder()
             .withDescriptorUrl("https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-" + TEST_ADDON_VERSION + "/atlassian-connect.json")
-            .withLogo("https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-" + TEST_ADDON_VERSION + "/simple-logo.png")
+            .withLogoUrl("https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-" + TEST_ADDON_VERSION + "/simple-logo.png")
             .withName("Connect Test Addon v" + TEST_ADDON_VERSION) // Must be < 40 characters
             .withVendorId(ATLASSIAN_LABS_ID)
             .withHighlights(
@@ -80,11 +82,6 @@ public class ExternalAddonInstaller
         FULL_SIZE
     }
 
-    private static <T> T withDefault(T value, T fallback)
-    {
-        return value != null ? value : fallback;
-    }
-
     public ExternalAddonInstaller(String productBaseUrl, TestUser user)
     {
         this(productBaseUrl, user, DEFAULT_ADDON);
@@ -92,7 +89,7 @@ public class ExternalAddonInstaller
 
     public ExternalAddonInstaller(String productBaseUrl, TestUser user, ConnectAddonRepresentation addon)
     {
-        this.addon = addon;
+        this.addon = mergeWithDefault(addon);
         this.productBaseUrl = productBaseUrl;
         connectClient = new AtlassianConnectRestClient(
                 productBaseUrl, user.getUsername(), user.getPassword());
@@ -127,7 +124,7 @@ public class ExternalAddonInstaller
         try
         {
             log.info("Installing add-on on instance {}", productBaseUrl);
-            connectClient.install(descriptorUrl, false);
+            connectClient.install(descriptorUrl);
         }
         catch (Exception e)
         {
@@ -386,21 +383,22 @@ public class ExternalAddonInstaller
     private StringEntity addonDetails() throws IOException
     {
         String addonEntity = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("marketplace/addon.json"));
-        addonEntity = (StringUtils.replace(addonEntity, "<%=vendor id goes here=>", withDefault(addon.getVendorId(), DEFAULT_ADDON.getVendorId())));
+        addonEntity = (StringUtils.replace(addonEntity, "<%=vendor id goes here=>", addon.getVendorId()));
         addonEntity = StringUtils.replace(addonEntity, "<%=key goes here=>", addonKey.get());
-        addonEntity = StringUtils.replace(addonEntity, "<%=name goes here=>", withDefault(addon.getName(), DEFAULT_ADDON.getName()));
-        addonEntity = StringUtils.replace(addonEntity, "<%=descriptor url goes here=>", withDefault(addon.getDescriptorUrl(), DEFAULT_ADDON.getDescriptorUrl()));
-        addonEntity = StringUtils.replace(addonEntity, "<%=logo url goes here=>", withDefault(addon.getLogoUrl(), DEFAULT_ADDON.getLogoUrl()));
+        addonEntity = StringUtils.replace(addonEntity, "<%=name goes here=>", addon.getName());
+        addonEntity = StringUtils.replace(addonEntity, "<%=descriptor url goes here=>", addon.getDescriptorUrl());
+        addonEntity = StringUtils.replace(addonEntity, "<%=logo url goes here=>", addon.getLogoUrl());
         addonEntity = StringUtils.replace(addonEntity, "<%=screenshot asset goes here=>", screenshotAsset);
         addonEntity = StringUtils.replace(addonEntity, "<%=thumbnail asset goes here=>", thumbnailAsset);
-        final List<Highlight> highlights = withDefault(addon.getHighlights(), DEFAULT_ADDON.getHighlights());
-        for (int i = 0; i < 3; i++)
+        int highlightNumber = 0;
+        for (Highlight highlight : addon.getHighlights())
         {
-            addonEntity = StringUtils.replace(addonEntity, "<%= highlight title " + i + " goes here =>", highlights.get(i).getTitle());
-            addonEntity = StringUtils.replace(addonEntity, "<%= highlight body " + i + " goes here =>", highlights.get(i).getBody());
+            highlightNumber++;
+            addonEntity = StringUtils.replace(addonEntity, "<%= highlight title " + highlightNumber + " goes here =>", highlight.getTitle());
+            addonEntity = StringUtils.replace(addonEntity, "<%= highlight body " + highlightNumber + " goes here =>", highlight.getBody());
         }
-        addonEntity = StringUtils.replace(addonEntity, "<%= summary goes here =>", withDefault(addon.getSummary(), DEFAULT_ADDON.getSummary()));
-        addonEntity = StringUtils.replace(addonEntity, "<%= tagline goes here =>", withDefault(addon.getTagline(), DEFAULT_ADDON.getTagline()));
+        addonEntity = StringUtils.replace(addonEntity, "<%= summary goes here =>", addon.getSummary());
+        addonEntity = StringUtils.replace(addonEntity, "<%= tagline goes here =>", addon.getTagline());
         log.info("Add-on entity: {}", addonEntity);
         return new StringEntity(addonEntity);
     }
