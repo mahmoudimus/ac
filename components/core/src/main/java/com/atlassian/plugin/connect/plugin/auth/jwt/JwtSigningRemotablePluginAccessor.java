@@ -2,8 +2,9 @@ package com.atlassian.plugin.connect.plugin.auth.jwt;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.applinks.exception.NotAJwtPeerException;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.request.DefaultRemotablePluginAccessorBase;
@@ -11,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Supplier;
@@ -27,26 +27,23 @@ import static com.atlassian.jwt.JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAM
  */
 public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
 {
-    private final JwtService jwtService;
     private final ConsumerService consumerService;
     private final ConnectApplinkManager connectApplinkManager;
-    private final UserManager userManager;
-    private final AuthorizationGenerator authorizationGenerator;
+    private final JwtAuthorizationGenerator authorizationGenerator;
 
     public JwtSigningRemotablePluginAccessor(ConnectAddonBean addon,
                                              Supplier<URI> baseUrlSupplier,
+                                             JwtJsonBuilderFactory jwtBuilderFactory,
                                              JwtService jwtService,
                                              ConsumerService consumerService,
                                              ConnectApplinkManager connectApplinkManager,
-                                             HttpContentRetriever httpContentRetriever,
-                                             UserManager userManager)
+                                             HttpContentRetriever httpContentRetriever)
     {
         super(addon.getKey(),addon.getName(), baseUrlSupplier, httpContentRetriever);
-        this.jwtService = jwtService;
+
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
-        this.userManager = userManager;
-        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, sharedSecretSupplier(getAppLink()), consumerService, URI.create(addon.getBaseUrl()));
+        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, jwtBuilderFactory, sharedSecretSupplier(getAppLink()), consumerService, URI.create(addon.getBaseUrl()));
     }
 
     @Override
@@ -54,7 +51,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     {
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
 
-        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, userManager, consumerService.getConsumer().getKey(), jwtService, requireSharedSecret(getAppLink()));
+        String encodedJwt = authorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, consumerService.getConsumer().getKey(), requireSharedSecret(getAppLink()));
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
         uriBuilder.addQueryParameter(JwtConstants.JWT_PARAM_NAME, encodedJwt);
 
