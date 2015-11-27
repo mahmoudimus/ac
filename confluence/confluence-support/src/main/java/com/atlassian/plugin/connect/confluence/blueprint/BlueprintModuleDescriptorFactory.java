@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.LinkBeanBuilder;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.base.Strings;

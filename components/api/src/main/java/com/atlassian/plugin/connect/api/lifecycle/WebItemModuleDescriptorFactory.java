@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.lifecycle;
+package com.atlassian.plugin.connect.api.lifecycle;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;

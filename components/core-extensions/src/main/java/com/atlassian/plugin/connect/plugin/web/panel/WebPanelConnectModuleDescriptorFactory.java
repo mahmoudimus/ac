@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFac
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.web.panel.ProductWebPanelElementEnhancer;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 import com.google.common.base.Strings;

@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleMeta;
-import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;

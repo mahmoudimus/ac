@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.jsapi;
 
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebPanel;
 import com.atlassian.plugin.web.model.WebPanel;
