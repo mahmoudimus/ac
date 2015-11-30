@@ -7,6 +7,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -74,7 +75,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Override
-    public Plugin install(String jsonDescriptor) throws ConnectAddOnInstallException
+    public Plugin install(String jsonDescriptor) throws ConnectAddonInstallException
     {
         String pluginKey = null;
         Plugin addonPluginWrapper;
@@ -150,9 +151,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     {
                         setAddonState(targetState, pluginKey);
                     }
-                    catch (ConnectAddOnUserDisableException caude)
+                    catch (ConnectAddOnUserDisableException cause)
                     {
-                        throw new ConnectAddOnInstallException("Could not disable add", caude);
+                        throw new ConnectAddonInstallException("Could not disable add-on", cause);
                     }
                 }
                 else
@@ -172,8 +173,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     }
                 }
             }
-            Throwables.propagateIfInstanceOf(e, ConnectAddOnInstallException.class);
-            throw new ConnectAddOnInstallException(e.getMessage(), e);
+            Throwables.propagateIfInstanceOf(e, ConnectAddonInstallException.class);
+            throw new ConnectAddonInstallException(e.getMessage(), e);
         }
 
         long endTime = System.currentTimeMillis();

@@ -12,6 +12,7 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
@@ -171,7 +172,7 @@ public class ConnectAddonManager
      * @param reusePreviousPublicKeyOrSharedSecret   toggle whether or not we issue a new secret/key if the previous one is defined
      */
     @VisibleForTesting
-    public void installConnectAddon(String jsonDescriptor, PluginState targetState, Option<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret)
+    public void installConnectAddon(String jsonDescriptor, PluginState targetState, Option<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret) throws ConnectAddonInstallException
     {
         long startTime = System.currentTimeMillis();
 
@@ -240,7 +241,7 @@ public class ConnectAddonManager
         }
     }
 
-    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
+    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor) throws ConnectAddonInstallException
     {
         return addOnRequiresUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
     }
@@ -436,7 +437,7 @@ public class ConnectAddonManager
     }
 
     // first install: no previous shared secret, no signing
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, final boolean sign)
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, final boolean sign) throws ConnectAddonInstallException
     {
         final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
         final Option<String> authHeader = sign ? getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator()) : Option.<String>none();
@@ -444,7 +445,7 @@ public class ConnectAddonManager
     }
 
     // reinstalls: sign with the previous shared secret so that the add-on can verify that the sender of the request is in possession of the previous shared secret
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, String previousSharedSecret)
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, String previousSharedSecret) throws ConnectAddonInstallException
     {
         final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
         final AuthorizationGenerator authorizationGenerator = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator();
@@ -465,7 +466,7 @@ public class ConnectAddonManager
         }
     }
 
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Option<String> authHeader)
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Option<String> authHeader) throws ConnectAddonInstallException
     {
         try
         {
@@ -478,7 +479,7 @@ public class ConnectAddonManager
         catch (LifecycleCallbackException e)
         {
             Serializable[] params = e.getParams() != null ? e.getParams() : new Serializable[] {};
-            throw new ConnectAddOnInstallException(e.getMessage(), e.getI18nKey(), params);
+            throw new ConnectAddonInstallException(e.getMessage(), e.getI18nKey(), params);
         }
     }
 
@@ -696,7 +697,7 @@ public class ConnectAddonManager
     }
 
     private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor)
-            throws PluginInstallException
+            throws PluginInstallException, ConnectAddonInstallException
     {
         Set<ScopeName> previousScopes = Sets.newHashSet();
         Set<ScopeName> newScopes = addOn.getScopes();
@@ -716,7 +717,7 @@ public class ConnectAddonManager
         }
         catch (ConnectAddOnUserInitException e)
         {
-            ConnectAddOnInstallException exception = new ConnectAddOnInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
+            ConnectAddonInstallException exception = new ConnectAddonInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
             exception.initCause(e);
             throw exception;
         }

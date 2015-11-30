@@ -3,42 +3,32 @@ package com.atlassian.plugin.connect.api;
 public interface ConnectAddonController
 {
     /**
-     * Enables the provided Connect add-ons, if installed.
+     * Enables the provided Connect add-on, if installed.
      *
-     * @param addonKeys keys of the add-ons to enable
+     * @param addonKey keys of the add-on to enable
+     * @throws ConnectAddonEnableException              
      */
-    void enableAddons(String... addonKeys);
+    void enableAddon(String addonKey);
 
     /**
      * Disables the provided Connect add-on.
      *
      * @param addonKey key of the add-on to disable
-     * @throws Exception                 
      */
-    void disableAddon(String addonKey) throws Exception;
+    void disableAddon(String addonKey);
 
     /**
-     * Disables the provided Connect add-on.
-     * Does not persist the add-on state. 
+     * Installs the provided Connect add-on.
      *
-     * @param addonKey key of the add-on to disable
-     * @throws Exception
+     * @param jsonDescriptor JSON descriptors of the add-on to install
+     * @throws ConnectAddonInstallException
      */
-    void disableAddonWithoutPersistingState(String addonKey) throws Exception;
-
-    /**
-     * Installs the provided Connect add-ons.
-     *
-     * @param jsonDescriptors JSON descriptors of the add-ons to install
-     */
-    void installAddons(String... jsonDescriptors);
-
+    void installAddon(String jsonDescriptor) throws ConnectAddonInstallException;
 
     /**
      * Uninstalls the provided Connect add-on.
      *
      * @param addonKey key of the add-on to uninstall
-     * @throws Exception
      */
-    void uninstallAddon(String addonKey) throws Exception;
+    void uninstallAddon(String addonKey);
 }
