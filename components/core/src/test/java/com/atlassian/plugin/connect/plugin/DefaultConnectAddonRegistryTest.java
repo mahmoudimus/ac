@@ -4,6 +4,8 @@ import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.transaction.TransactionCallback;
+
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.junit.Before;
@@ -36,10 +38,8 @@ public class DefaultConnectAddonRegistryTest
 
     @Mock
     private PluginSettingsFactory pluginSettingsFactory;
-
     @Mock
     private ConnectAddonBeanFactory connectAddonBeanFactory;
-
     @Mock
     private PluginSettings pluginSettings;
 
@@ -48,7 +48,7 @@ public class DefaultConnectAddonRegistryTest
     {
         when(pluginSettingsFactory.createGlobalSettings()).thenReturn(pluginSettings);
 
-        this.registry = new DefaultConnectAddonRegistry(pluginSettingsFactory);
+        this.registry = new DefaultConnectAddonRegistry(pluginSettingsFactory, TransactionCallback::doInTransaction);
     }
 
     @Test
@@ -75,14 +75,27 @@ public class DefaultConnectAddonRegistryTest
     {
         String addonKey = "foo";
         AddonSettings addonSettings = new AddonSettings();
+        addonSettings.setBaseUrl("https://base.url");
 
-        when(pluginSettings.get(addonKey)).thenReturn(toJson(addonSettings));
+        when(pluginSettings.get(ADDON_KEY_PREFIX + addonKey)).thenReturn(toJson(addonSettings));
         when(pluginSettings.get(ADDON_LIST_KEY)).thenReturn(ImmutableList.of(addonKey));
 
         registry.storeRestartState(addonKey, PluginState.DISABLED);
-        addonSettings.setRestartState(PluginState.DISABLED);
 
+        addonSettings.setRestartState(PluginState.DISABLED);
         verify(pluginSettings).put(ADDON_KEY_PREFIX + addonKey, toJson(addonSettings));
+        verify(pluginSettings, never()).put(eq(ADDON_LIST_KEY), any());
+    }
+
+    @Test
+    public void shouldIgnoreRestartStateWhenSettingsNotFound()
+    {
+        String addonKey = "foo";
+        when(pluginSettings.get(ADDON_LIST_KEY)).thenReturn(ImmutableList.of(addonKey));
+
+        registry.storeRestartState(addonKey, PluginState.DISABLED);
+
+        verify(pluginSettings, never()).put(eq(ADDON_KEY_PREFIX + addonKey), any());
         verify(pluginSettings, never()).put(eq(ADDON_LIST_KEY), any());
     }
 
