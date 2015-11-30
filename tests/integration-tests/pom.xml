@@ -437,9 +437,18 @@
                 <configuration>
                     <containerId>tomcat7x</containerId>
                     <skipManifestValidation>true</skipManifestValidation>
-                    <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <jvmArgs>
+                        -Xmx1024m -XX:MaxPermSize=256m
+                        <!-- -XXaltjvm=dcevm-->
+                        <!-- -javaagent:/Users/chibichii/bin/HotswapAgent/hotswap-agent.jar-->
+                        <!-- -Datlassian.org.osgi.framework.bootdelegation.extra=org.hotswap.*-->
+                    </jvmArgs>
                     <installPlugin>false</installPlugin>
                     <skipRestDocGeneration>true</skipRestDocGeneration>
+                    <enableFastdev>false</enableFastdev>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <allowGoogleTracking>false</allowGoogleTracking>
+                    <useFastdevCli>false</useFastdevCli>
 
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
