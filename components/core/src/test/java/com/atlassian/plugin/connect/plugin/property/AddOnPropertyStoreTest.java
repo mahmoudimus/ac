@@ -1,17 +1,19 @@
 package com.atlassian.plugin.connect.plugin.property;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import net.java.ao.EntityManager;
-import net.java.ao.test.jdbc.Data;
-import net.java.ao.test.jdbc.DatabaseUpdater;
-import net.java.ao.test.jdbc.NonTransactional;
-import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -20,9 +22,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import net.java.ao.EntityManager;
+import net.java.ao.test.jdbc.Data;
+import net.java.ao.test.jdbc.DatabaseUpdater;
+import net.java.ao.test.jdbc.NonTransactional;
+import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 
 import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResult;
@@ -36,7 +40,8 @@ public class AddOnPropertyStoreTest
 {
     private static final String ADD_ON_KEY = "addOnKey";
     private static final String PROPERTY_KEY = "propertyKey";
-    private static final String VALUE = "value";
+    private static final String RAW_VALUE = quote("value");
+    private static final JsonNode VALUE = JsonCommon.parseStringToJson(RAW_VALUE).get();
 
     private EntityManager entityManager;
     private AddOnPropertyStore store;
@@ -52,7 +57,7 @@ public class AddOnPropertyStoreTest
     public void testCreateAndGetProperty() throws Exception
     {
         AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE, 0);
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue()).getResult();
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property.getKey(), RAW_VALUE).getResult();
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
 
         Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
@@ -63,19 +68,20 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testCreatePropertyWithBigValue()
     {
-        String bigValue = StringUtils.repeat('.' , 65000);
+        String bigValue = quote(StringUtils.repeat('.', 65000));
         PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue).getResult();
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
     }
-    
+
     @Test
     @NonTransactional
     public void testCreateAndUpdateProperty() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
-        AddOnProperty property2 = new AddOnProperty(PROPERTY_KEY, VALUE + "1", 0);
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, RAW_VALUE);
+        final String newRawValue = RAW_VALUE + "1";
+        AddOnProperty property2 = new AddOnProperty(PROPERTY_KEY, JsonCommon.parseStringToJson(newRawValue).get(), 0);
 
-        AddOnPropertyStore.PutResultWithOptionalProperty putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue());
+        AddOnPropertyStore.PutResultWithOptionalProperty putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), newRawValue);
         assertEquals(PutResult.PROPERTY_UPDATED, putResult.getResult());
 
         Option<AddOnProperty> propertyValue = putResult.getProperty();
@@ -88,11 +94,11 @@ public class AddOnPropertyStoreTest
     {
         for (int i = 0; i < MAX_PROPERTIES_PER_ADD_ON; i++)
         {
-            AddOnPropertyStore.PutResultWithOptionalProperty storeResultWithOptionalProperty = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY + String.valueOf(i), VALUE);
+            AddOnPropertyStore.PutResultWithOptionalProperty storeResultWithOptionalProperty = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY + String.valueOf(i), RAW_VALUE);
             assertEquals(PutResult.PROPERTY_CREATED, storeResultWithOptionalProperty.getResult());
             assertEquals(PutResult.PROPERTY_CREATED, storeResultWithOptionalProperty.getResult());
         }
-        PutResult last = store.setPropertyValue(ADD_ON_KEY, "last", VALUE).getResult();
+        PutResult last = store.setPropertyValue(ADD_ON_KEY, "last", RAW_VALUE).getResult();
         assertEquals(PutResult.PROPERTY_LIMIT_EXCEEDED, last);
     }
 
@@ -100,7 +106,7 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testDeleteExistingProperty() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, RAW_VALUE);
         store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
         Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
         assertTrue(propertyValue.isEmpty());
@@ -134,7 +140,7 @@ public class AddOnPropertyStoreTest
             @Override
             public Void call()
             {
-                store.setPropertyValue("a", "a", "a");
+                store.setPropertyValue("a", "a", quote("a"));
                 return null;
             }
         });
@@ -144,7 +150,7 @@ public class AddOnPropertyStoreTest
     {
         for (AddOnProperty property : propertyList)
         {
-            store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue());
+            store.setPropertyValue(ADD_ON_KEY, property.getKey(), RAW_VALUE);
         }
 
         AddOnPropertyIterable result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY);
@@ -190,5 +196,10 @@ public class AddOnPropertyStoreTest
                 description.appendText("[key=" + property.getKey() + ",value=" + property.getValue() + "]");
             }
         };
+    }
+
+    private static String quote(String unquoted)
+    {
+        return '"' + unquoted + '"';
     }
 }

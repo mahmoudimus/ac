@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.plugin.descriptor.event.EventPublishingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
@@ -64,7 +63,6 @@ public class BeanToModuleRegistrar
 
         Collection<ConnectModuleProvider> moduleProviders = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
-        ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
 
         Map<String, List<ModuleBean>> moduleLists = getModuleLists(addon);
         List<ModuleBean> lifecycleWebhooks = getLifecycleWebhooks(addon.getLifecycle());
@@ -72,8 +70,8 @@ public class BeanToModuleRegistrar
                 = Collections.singletonMap(new WebHookModuleMeta().getDescriptorKey(), lifecycleWebhooks);
 
         List<ModuleDescriptor<?>> descriptorsToRegister = new ArrayList<>();
-        getDescriptorsToRegisterForModules(moduleLists, moduleProviderContext, moduleProviders, descriptorsToRegister);
-        getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, moduleProviderContext, moduleProviders, descriptorsToRegister);
+        getDescriptorsToRegisterForModules(moduleLists, addon, moduleProviders, descriptorsToRegister);
+        getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, addon, moduleProviders, descriptorsToRegister);
         if (!descriptorsToRegister.isEmpty())
         {
             registrations.putIfAbsent(addon.getKey(), dynamicDescriptorRegistration.registerDescriptors(descriptorsToRegister));
@@ -135,7 +133,7 @@ public class BeanToModuleRegistrar
     }
 
     private void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
-            ConnectModuleProviderContext moduleProviderContext,
+            ConnectAddonBean addon,
             Collection<ConnectModuleProvider> moduleProviders,
             List<ModuleDescriptor<?>> descriptorsToRegister) throws ConnectModuleRegistrationException
     {
@@ -143,7 +141,7 @@ public class BeanToModuleRegistrar
         {
             List<ModuleBean> beans = entry.getValue();
             ConnectModuleProvider provider = findProviderOrThrow(entry.getKey(), moduleProviders);
-            List<ModuleDescriptor<?>> descriptors = provider.createPluginModuleDescriptors(beans, moduleProviderContext);
+            List<ModuleDescriptor<?>> descriptors = provider.createPluginModuleDescriptors(beans, addon);
             descriptorsToRegister.addAll(descriptors);
         }
     }

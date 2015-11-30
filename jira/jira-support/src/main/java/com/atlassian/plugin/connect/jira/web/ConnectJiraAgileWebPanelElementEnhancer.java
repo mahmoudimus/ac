@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.jira.web;
 
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
-import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
+import com.atlassian.plugin.connect.spi.web.panel.ProductWebPanelElementEnhancer;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 

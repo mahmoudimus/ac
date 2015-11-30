@@ -10,6 +10,7 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +36,8 @@ public class AddOnPropertyServiceImplTest
     public static final UserKey userKey = new UserKey("userkey");
 
     private final String addOnKey = "testAddon";
-    private final AddOnProperty property = new AddOnProperty("testProperty", "{}", 0);
+    private static final JsonNode EMPTY_OBJECT = JsonCommon.parseStringToJson("{}").get();
+    private final AddOnProperty property = new AddOnProperty("testProperty", EMPTY_OBJECT, 0);
 
     @Mock
     private AddOnPropertyStore store;
@@ -166,7 +168,7 @@ public class AddOnPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(user, addOnKey, addOnKey, tooLongKey, property.getValue(), alwaysTrue());
+        PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(user, addOnKey, addOnKey, tooLongKey, property.getValue().toString(), alwaysTrue());
         result.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.KEY_TOO_LONG);
     }
@@ -187,9 +189,9 @@ public class AddOnPropertyServiceImplTest
         mockExecuteInTransaction();
         when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(property));
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddOnPropertyStore.PutResult.PROPERTY_LIMIT_EXCEEDED, Option.<AddOnProperty>none());
-        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue())).thenReturn(mockedResult);
+        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue().toString())).thenReturn(mockedResult);
 
-        PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(user, addOnKey, addOnKey, property.getKey(), property.getValue(), alwaysTrue());
+        PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(user, addOnKey, addOnKey, property.getKey(), property.getValue().toString(), alwaysTrue());
         result.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.MAXIMUM_PROPERTIES_EXCEEDED);
     }
@@ -205,7 +207,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testNoAccessToPutDifferentPluginData() throws Exception
     {
-        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue(), alwaysTrue());
+        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue().toString(), alwaysTrue());
         foldableServiceResult.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
     }
@@ -237,7 +239,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testSetNoAccessWhenNotLoggedIn() throws Exception
     {
-        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue(), alwaysTrue());
+        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue().toString(), alwaysTrue());
         foldableServiceResult.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
     }
@@ -376,9 +378,9 @@ public class AddOnPropertyServiceImplTest
         when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.<AddOnProperty>none());
 
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddOnPropertyStore.PutResult.PROPERTY_CREATED, Option.some(property));
-        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue())).thenReturn(mockedResult);
+        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue().toString())).thenReturn(mockedResult);
 
-        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue(), alwaysTrue());
+        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue().toString(), alwaysTrue());
 
         foldableServiceResult.fold(null, null, mockPutFunction);
 
@@ -390,9 +392,9 @@ public class AddOnPropertyServiceImplTest
         mockExecuteInTransaction();
         when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(property));
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddOnPropertyStore.PutResult.PROPERTY_UPDATED, Option.some(property));
-        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue())).thenReturn(mockedResult);
+        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue().toString())).thenReturn(mockedResult);
 
-        final PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue(), alwaysTrue());
+        final PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue().toString(), alwaysTrue());
 
         foldableServiceResult.fold(null, null, mockPutFunction);
         verify(mockPutFunction).apply(argThat(hasServiceResult(OperationStatusImpl.PROPERTY_UPDATED)));
@@ -401,7 +403,7 @@ public class AddOnPropertyServiceImplTest
     private void testDeleteExistingProperty(final String sourcePluginKey)
     {
         mockExecuteInTransaction();
-        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(new AddOnProperty("", "", 0)));
+        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(new AddOnProperty("", EMPTY_OBJECT, 0)));
 
         DeleteServiceResult<Void> foldableServiceResult = service.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, property.getKey(), alwaysTrue());
         foldableServiceResult.fold(null, null, mockFunction);

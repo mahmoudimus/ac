@@ -29,6 +29,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
@@ -112,6 +113,7 @@ public class AddOnPropertiesResource
      *
      * @param addOnKey the add-on key of the plugin to fetch the property from
      * @param propertyKey the key of the property
+     * @param returnJsonFormat set to true if the 'value' field should be returned in json format, false if you want string format. String format is deprecated.
      * @param servletRequest the HTTP servlet request
      * @return a Response containing a list of properties or an error code with message.
      *
@@ -129,7 +131,7 @@ public class AddOnPropertiesResource
      */
     @GET
     @Path ("{propertyKey}")
-    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @Context final HttpServletRequest servletRequest)
+    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @QueryParam("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
     {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
@@ -148,7 +150,7 @@ public class AddOnPropertiesResource
             {
                 String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
                 return Response.ok()
-                        .entity(RestAddOnProperty.valueOf(property, baseURL))
+                        .entity(RestAddOnProperty.valueOf(property, baseURL, returnJsonFormat))
                         .cacheControl(never())
                         .build();
             }

@@ -6,6 +6,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelMod
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
+import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
@@ -65,6 +67,16 @@ public class JiraModuleList extends BaseModuleBean
      * Add new dashboard item to JIRA.
      */
     private List<DashboardItemModuleBean> jiraDashboardItems;
+
+    /**
+     * Add global permission to JIRA.
+     */
+    private List<GlobalPermissionModuleBean> jiraGlobalPermissions;
+
+    /**
+     * Add project permission to JIRA.
+     */
+    private List<ProjectPermissionModuleBean> jiraProjectPermissions;
 
     private JiraModuleList()
     {

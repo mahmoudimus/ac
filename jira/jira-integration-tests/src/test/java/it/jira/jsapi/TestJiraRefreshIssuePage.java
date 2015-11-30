@@ -1,20 +1,22 @@
 package it.jira.jsapi;
 
+import java.rmi.RemoteException;
+
+import com.atlassian.connect.test.jira.pageobjects.RemoteRefreshIssuePageWebPanel;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.jira.pageobjects.util.Tracer;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteRefreshIssuePageWebPanel;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.rmi.RemoteException;
+import it.jira.JiraWebDriverTestBase;
+import it.jira.servlet.JiraAppServlets;
 
 /**
  * Integration tests for the JavaScript API method jira.refreshIssuePage().
@@ -41,7 +43,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .setAuthenticationToNone()
                 .addModules("webPanels", refreshIssuePageWebPanelModuleBean)
-                .addRoute(REFRESH_ISSUE_PAGE_WEB_PANEL_PATH, ConnectAppServlets.refreshIssuePageButtonServlet())
+                .addRoute(REFRESH_ISSUE_PAGE_WEB_PANEL_PATH, JiraAppServlets.refreshIssuePageButtonServlet())
                 .start();
     }
 

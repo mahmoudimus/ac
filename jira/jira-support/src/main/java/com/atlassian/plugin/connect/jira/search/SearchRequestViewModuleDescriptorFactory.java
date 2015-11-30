@@ -14,8 +14,7 @@ import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
@@ -64,14 +63,12 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public SearchRequestViewModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, SearchRequestViewModuleBean bean)
+    public SearchRequestViewModuleDescriptor createModuleDescriptor(SearchRequestViewModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
-                urlHandler, createModuleFactory(bean, connectAddonBean), conditionDescriptorFactory);
-        Element element = createElement(bean, connectAddonBean);
-        descriptor.init(theConnectPlugin, element);
+                urlHandler, createModuleFactory(bean, addon), conditionDescriptorFactory);
+        Element element = createElement(bean, addon);
+        descriptor.init(plugin, element);
         return descriptor;
     }
 
