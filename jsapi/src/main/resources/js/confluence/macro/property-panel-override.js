@@ -12,6 +12,8 @@ AJS.bind("init.rte", function () {
     var macroUrl = AJS.params.contextPath + "%%URL%%";
 
     require(["connect-host"], function(_AP) {
+        //TODO: Replace this with confluence/macro-js-overrides, once the version of Confluence that supports
+        // it is released to cloud.
         var existingOverride = AJS.MacroBrowser.getMacroJsOverride(macroName);
         if (existingOverride == null) {
             existingOverride = {};

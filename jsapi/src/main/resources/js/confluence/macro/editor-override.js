@@ -17,6 +17,8 @@ AJS.bind("init.rte", function () {
       url: AJS.params.contextPath + "%%URL%%"
     };
     require(["ac/confluence/macro/editor"], function(macroEditor) {
+        //TODO: Replace this with confluence/macro-js-overrides, once the version of Confluence that supports
+        // it is released to cloud.
         var existingOverride = AJS.MacroBrowser.getMacroJsOverride(macroName);
         if (existingOverride == null) {
             existingOverride = {};
