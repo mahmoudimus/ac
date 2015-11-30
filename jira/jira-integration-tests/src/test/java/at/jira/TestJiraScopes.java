@@ -22,14 +22,20 @@ import static org.hamcrest.core.Is.is;
 
 /**
  * Installs a scope testing add-on maintained by the Atlassian Connect team,
- * triggers a test, then reads the results
+ * triggers a test, then reads the results.
+ *
+ * The scope testing add-on repo is hosted on <a href=https://bitbucket.org/atlassianlabs/ac-acceptance-test-scope-checker>bitbucket</a>
+ * but restricted to Atlassian developers. Please ensure changes are backwards compatible with other versions still in the deployment pipeline.
  */
 
+// at.confluence.TestConfluenceScopes and at.jira.TestConfluenceScopes are very similar.
+// If you make changes here, please check whether corresponding changes are needed in the other class.
+// Issue for extracting shared functionality: ACDEV-2364
 @Category (OnDemandAcceptanceTest.class)
 public class TestJiraScopes extends JiraWebDriverTestBase
 {
     private static final Logger log = LoggerFactory.getLogger(TestJiraScopes.class);
-    public static final String SCOPE_TESTER_DESCRIPTOR_URL = "https://ac-acceptance-test-scope-checker.domain.dev.atlassian.io/atlassian-connect.json";
+    public static final String SCOPE_TESTER_DESCRIPTOR_URL = "https://ac-acceptance-test-scope-checker.app.dev.atlassian.io/atlassian-connect.json";
     private ExternalAddonInstaller externalAddonInstaller;
     private ConnectAddonRepresentation addon;
 

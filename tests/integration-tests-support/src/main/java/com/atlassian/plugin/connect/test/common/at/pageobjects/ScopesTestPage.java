@@ -12,9 +12,10 @@ public class ScopesTestPage extends ConnectAddOnPage implements Page
         super(addOnKey, pageElementKey, includedEmbeddedPrefix);
     }
 
+    @SuppressWarnings ("unused")
     public ScopesTestPage(String addOnKey)
     {
-        this(addOnKey, "ac-acceptance-test-scope-checker-page-jira", true);
+        this(addOnKey, "ac-acceptance-test-scope-checker-page", true);
     }
 
     @Override
