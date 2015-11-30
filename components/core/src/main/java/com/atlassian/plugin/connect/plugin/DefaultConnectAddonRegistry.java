@@ -4,11 +4,14 @@ import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,12 +32,14 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     protected static final String ADDON_LIST_KEY = "ac.addon.list";
     protected static final String ADDON_KEY_PREFIX = "acnct.";
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddonRegistry.class);
+
     private final PluginSettings settings;
 
-    private final TransactionTemplate transactionTemplate;
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private final Lock write = readWriteLock.writeLock();
     private final Lock read = readWriteLock.readLock();
+    private final TransactionTemplate transactionTemplate;
 
     @Inject
     public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate)
@@ -49,15 +54,19 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         write.lock();
         try
         {
-            transactionTemplate.execute(() ->
+            transactionTemplate.execute(new TransactionCallback<Void>()
             {
-                settings.remove(addonStorageKey(pluginKey));
+                @Override
+                public Void doInTransaction()
+                {
+                    settings.remove(addonStorageKey(pluginKey));
 
-                Set<String> addonKeys = getAddonKeySet();
-                addonKeys.remove(pluginKey);
+                    Set<String> addonKeys = getAddonKeySet();
+                    addonKeys.remove(pluginKey);
 
-                settings.put(ADDON_LIST_KEY, new ArrayList<>(addonKeys));
-                return null;
+                    settings.put(ADDON_LIST_KEY, new ArrayList<>(addonKeys));
+                    return null;
+                }
             });
         }
         finally
@@ -154,6 +163,10 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
                     final AddonSettings addonSettings = deserializeAddonSettings(gson, json);
                     allAddonSettings.add(addonSettings);
                 }
+                else
+                {
+                    log.warn("No settings found for listed connect add-on '{}'", addonKey);
+                }
             }
         }
         finally
@@ -170,16 +183,23 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         write.lock();
         try
         {
-            transactionTemplate.execute(() ->
+            transactionTemplate.execute(new TransactionCallback<Void>()
             {
-                final AddonSettings addonSettings = getAddonSettings(pluginKey);
-                if (!addonSettings.getBaseUrl().isEmpty() && // verify add-on hasn't been removed
-                    !state.toString().equalsIgnoreCase(addonSettings.getRestartState()))
+                @Override
+                public Void doInTransaction()
                 {
-                    addonSettings.setRestartState(state);
-                    storeAddonSettings(pluginKey, addonSettings);
+                    final AddonSettings addonSettings = getAddonSettings(pluginKey);
+                    if (addonSettings.getBaseUrl().isEmpty())
+                    {
+                        log.warn("Cannot update restart state for add-on '{}'. Add-on settings not found", pluginKey);
+                    }
+                    else if (!state.toString().equalsIgnoreCase(addonSettings.getRestartState()))
+                    {
+                        addonSettings.setRestartState(state);
+                        storeAddonSettings(pluginKey, addonSettings);
+                    }
+                    return null;
                 }
-                return null;
             });
         }
         finally
@@ -244,16 +264,20 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         write.lock();
         try
         {
-            transactionTemplate.execute(() ->
+            transactionTemplate.execute(new TransactionCallback<Void>()
             {
-                settings.put(addonStorageKey(pluginKey), settingsToStore);
-
-                Set<String> addonSet = getAddonKeySet();
-                if (addonSet.add(pluginKey))
+                @Override
+                public Void doInTransaction()
                 {
-                    settings.put(ADDON_LIST_KEY, new ArrayList<>(addonSet));
+                    settings.put(addonStorageKey(pluginKey), settingsToStore);
+
+                    Set<String> addonSet = getAddonKeySet();
+                    if (addonSet.add(pluginKey))
+                    {
+                        settings.put(ADDON_LIST_KEY, new ArrayList<>(addonSet));
+                    }
+                    return null;
                 }
-                return null;
             });
         }
         finally
