@@ -1,0 +1,11 @@
+#* @vtlvariable name="confluenceRemoteTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" *#
+#* @vtlvariable name="addonTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
+#set($addonTheme = $confluenceRemoteTheme.themeManager.globalTheme)
+<html class="page.vm">
+<body style="margin: 0">
+<iframe src="$addonTheme.getRemoteUrl('page', {'pageId': "$action.page.id", 'spaceKey':$action.spaceKey})" style="width: 100%;height: 100%;margin: 0;padding: 0;border: 0;"/>
+<script>
+
+</script>
+</body>
+</html>

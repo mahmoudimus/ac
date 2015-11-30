@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.confluence;
 
+import java.util.List;
+
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
-
-import java.util.List;
 
 /**
  * A container class used for generation of JSON schema for Confluence modules.
@@ -45,6 +46,11 @@ public class ConfluenceModuleList extends BaseModuleBean
      * Blueprints allow your connect add on provide content creation templates.
      */
     private List<BlueprintModuleBean> blueprints;
+
+    /**
+     * Themes, useful for overriding confluence's UI.
+     */
+    private List<ConfluenceThemeModuleBean> themes;
 
     /**
      * Definition of a content property index schema for an add-on. It allows extracting specific parts of the JSON
