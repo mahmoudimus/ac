@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage.Scope;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 
-import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +17,7 @@ import at.marketplace.ConnectAddonRepresentation;
 import at.marketplace.ExternalAddonInstaller;
 import it.jira.JiraWebDriverTestBase;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 /**
@@ -64,7 +64,7 @@ public class TestJiraScopes extends JiraWebDriverTestBase
         login(testUserFactory.basicUser());
         ScopesTestPage scopesTestPage = product.visit(ScopesTestPage.class, externalAddonInstaller.getAddonKey());
         String adminResponseCode = scopesTestPage.getCodeForScope(Scope.ADMIN);
-        MatcherAssert.assertThat("Admin-scoped request succeeded", adminResponseCode, is("200"));
+        assertThat("Admin-scoped request succeeded", adminResponseCode, is("200"));
     }
 
     @After
