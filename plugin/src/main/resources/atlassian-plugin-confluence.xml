@@ -1,11 +1,17 @@
 <application key="confluence">
 
+    <connect-module key="confluence-theme-module" class="com.atlassian.plugin.connect.confluence.theme.ConfluenceThemeModuleProviderImpl"/>
     <connect-module key="blueprint-module" class="com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProviderImpl"/>
     <connect-module key="content-property-module" class="com.atlassian.plugin.connect.confluence.property.ContentPropertyModuleProvider"/>
     <connect-module key="dynamic-content-macro-module" class="com.atlassian.plugin.connect.confluence.macro.DynamicContentMacroModuleProvider"/>
     <connect-module key="profile-page-module" class="com.atlassian.plugin.connect.confluence.web.ProfilePageModuleProvider"/>
     <connect-module key="space-tools-tab-module" class="com.atlassian.plugin.connect.confluence.web.spacetools.SpaceToolsTabModuleProvider"/>
     <connect-module key="static-content-macro-module" class="com.atlassian.plugin.connect.confluence.macro.StaticContentMacroModuleProvider"/>
+
+    <velocity-context-item key="confuence-remote-theme-velocity-context"
+                               name="Velocity Context for use by the remote-theme.vm to compute the iframe url"
+                               context-key="confluenceRemoteTheme"
+                               class="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" />
 
     <connect-api-scope-whitelist key="confluence-api-scope-whitelist" resource="/scope/confluence-whitelist.json"/>
 
