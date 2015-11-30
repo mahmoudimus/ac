@@ -208,7 +208,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         }
         else if (targetState == PluginState.ENABLED)
         {
-            connectAddonManager.enableConnectAddon(pluginKey);
+            connectAddonManager.enableConnectAddonAndCatchFailure(pluginKey);
         }
         else if (targetState == PluginState.DISABLED)
         {

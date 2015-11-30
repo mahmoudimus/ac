@@ -36,7 +36,7 @@ public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
         //enable all the addons if needed
         for (String addonKey : addonRegistry.getAddonKeysToEnableOnRestart())
         {
-            addonManager.enableConnectAddon(addonKey);
+            addonManager.enableConnectAddonAndCatchFailure(addonKey);
         }
     }
 }

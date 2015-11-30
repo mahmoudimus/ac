@@ -64,7 +64,7 @@ public class InstallStatusChecker
 
         if (abortAfter <= System.currentTimeMillis())
         {
-            throw new Exception("Connect App Plugin did not install within the allotted timeout");
+            throw new ConnectAddonInstallException("Connect App Plugin did not install within the allotted timeout");
         }
     }
 }

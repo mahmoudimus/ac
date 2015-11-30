@@ -51,7 +51,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     {
         for (String key : pluginKeys)
         {
-            connectAddonManager.enableConnectAddon(key);
+            connectAddonManager.enableConnectAddonAndCatchFailure(key);
         }
     }
 

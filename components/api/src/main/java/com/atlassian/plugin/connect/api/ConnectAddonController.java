@@ -8,7 +8,7 @@ public interface ConnectAddonController
      * @param addonKey keys of the add-on to enable
      * @throws ConnectAddonEnableException              
      */
-    void enableAddon(String addonKey);
+    void enableAddon(String addonKey) throws ConnectAddonEnableException;
 
     /**
      * Disables the provided Connect add-on.

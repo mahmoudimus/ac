@@ -12,6 +12,7 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
@@ -237,7 +238,7 @@ public class ConnectAddonManager
 
         if (PluginState.ENABLED == targetState)
         {
-            enableConnectAddon(pluginKey);
+            enableConnectAddonAndCatchFailure(pluginKey);
         }
     }
 
@@ -245,8 +246,20 @@ public class ConnectAddonManager
     {
         return addOnRequiresUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
     }
+    
+    public void enableConnectAddonAndCatchFailure(final String pluginKey)
+    {
+        try
+        {
+            enableConnectAddon(pluginKey);
+        }
+        catch (ConnectAddonEnableException e)
+        {
+            // ignore enable failure
+        }
+    }
 
-    public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
+    public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException, ConnectAddonEnableException
     {
         long startTime = System.currentTimeMillis();
         //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
@@ -266,8 +279,9 @@ public class ConnectAddonManager
                 catch (ConnectModuleRegistrationException e)
                 {
                     eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, e.getMessage()));
-                    log.error(String.format("Module registration failed while enabling add-on %s, skipping", pluginKey), e);
-                    return;
+                    String message = String.format("Module registration failed while enabling add-on %s, skipping", pluginKey);
+                    log.error(message, e);
+                    throw new ConnectAddonEnableException(message, e);
                 }
 
                 if (addOnRequiresUser(addon))
@@ -291,9 +305,10 @@ public class ConnectAddonManager
             }
             else
             {
-                String message = "Tried to publish plugin enabled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...";
+                String message = "Tried to publish plugin enabled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize its stored descriptor. Ignoring...";
                 eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, message));
                 log.warn(message);
+                throw new ConnectAddonEnableException(message);
             }
         }
     }
@@ -351,7 +366,6 @@ public class ConnectAddonManager
         {
             //uh, don't you know what "quietly" means?
         }
-
     }
 
     private void uninstallConnectAddon(final String pluginKey, boolean sendEvent)

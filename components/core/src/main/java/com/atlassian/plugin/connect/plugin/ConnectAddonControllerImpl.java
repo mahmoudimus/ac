@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 
 import com.atlassian.plugin.connect.api.ConnectAddonController;
+import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
@@ -31,7 +32,7 @@ public class ConnectAddonControllerImpl implements ConnectAddonController
     }
     
     @Override
-    public void enableAddon(String addonKey)
+    public void enableAddon(String addonKey) throws ConnectAddonEnableException
     {
         addonManager.enableConnectAddon(addonKey);
     }
