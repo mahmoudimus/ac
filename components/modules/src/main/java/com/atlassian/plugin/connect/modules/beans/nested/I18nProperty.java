@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.util.VelocityKiller;
-
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -17,7 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @schemaTitle i18n Property
  * @since 1.0
  */
-@SchemaDefinition("i18nProperty")
+@SchemaDefinition ("i18nProperty")
 public class I18nProperty
 {
     /**
@@ -48,6 +47,18 @@ public class I18nProperty
     public String getI18n()
     {
         return VelocityKiller.attack(i18n);
+    }
+
+    public String getI18nOrValue()
+    {
+        if (hasI18n())
+        {
+            return getI18n();
+        }
+        else
+        {
+            return getValue();
+        }
     }
 
     public String getRawValue()

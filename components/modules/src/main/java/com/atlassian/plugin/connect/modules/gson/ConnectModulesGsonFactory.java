@@ -45,6 +45,7 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
+                .registerTypeAdapter(JSON_MODULE_LIST_TYPE, new DefaultModuleSerializer())
                 .disableHtmlEscaping()
                 ;
     }
@@ -65,13 +66,11 @@ public class ConnectModulesGsonFactory
         GsonBuilder builder = getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, moduleDeserializer);
         JsonElement modulesJson = addonJson.getAsJsonObject().get("modules");
         return builder.create().fromJson(modulesJson, JSON_MODULE_LIST_TYPE);
-        
     }
 
     public static String addonBeanToJson(ConnectAddonBean bean)
     {
-        Gson gson = getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, new DefaultModuleSerializer()).create();
-        return gson.toJson(bean);
+        return getGson().toJson(bean);
     }
 
     private static class ShallowModuleListExclusionStrategy implements ExclusionStrategy
