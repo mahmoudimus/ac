@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
-import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
 import org.dom4j.Element;
@@ -35,7 +35,6 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     private ConnectContainerUtil connectContainerUtil;
     @Mock
     private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
-
 
     private WebPanelConnectModuleDescriptorFactory descriptorFactory;
 

@@ -1,6 +1,10 @@
 package it.jira.item;
 
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
@@ -8,23 +12,22 @@ import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOp
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteDialog;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteInlineDialog;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteInlineDialog;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import com.google.common.base.Optional;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.CheckUsernameConditionServlet;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -32,7 +35,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.modules.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;

@@ -12,4 +12,13 @@
 
     <connect-api-scope-whitelist key="test-api-scope-whitelist" resource="/scope/test-whitelist.json"/>
 
+    <connect-web-fragment-location-blacklist key="reference-blacklist">
+        <web-panel-locations>
+            <location>atl.header.webpanel.blacklisted</location>
+        </web-panel-locations>
+        <web-item-locations>
+            <location>atl.header.webitem.blacklisted</location>
+        </web-item-locations>
+    </connect-web-fragment-location-blacklist>
+
 </atlassian-plugin>

@@ -82,7 +82,7 @@ def write_idea_config(url, mpac_password):
     if not os.path.exists(path):
         print(
             'Could not find IDEA configuration file. Make sure you\'re in the connect root and have created an IDEA project')
-        exit(4)
+        sys.exit(4)
 
     config_fragment = config_fragment_template.format(
         vm_args=config_vm_arguments(url, mpac_password))
@@ -177,17 +177,18 @@ def config_vm_arguments(url, password):
         ])
 
 
+
 def run(args):
     if os.path.split(os.getcwd())[-1] == 'bin':
         os.chdir('..')
 
     if not os.path.exists('pom.xml'):
         print(WRONG_CWD)
-        exit(2)
+        sys.exit(2)
 
     if not args.skip_build:
         if build(args.npm) > 0:
-            exit(3)
+            sys.exit(3)
 
     path = args.at_runner_path
     if not os.path.exists(path):

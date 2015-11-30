@@ -7,7 +7,12 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
+    stashNotification()
     hipChatNotification()
+    notification(
+            type: 'Failed Builds and First Successful',
+            recipient: 'committers'
+    )
     runTestsStage()
     stage(
             name: 'Start Release',
@@ -37,6 +42,7 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (branch builds)')
     pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
+    stashNotification()
     notification(
             type: 'All Builds Completed',
             recipient: 'committers'
@@ -59,7 +65,7 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '5.9.1-SNAPSHOT',
+            productVersion: '5.9.1-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'
@@ -77,7 +83,7 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.1.0-SNAPSHOT',
+            productVersion: '7.1.0-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'
