@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
+import java.util.Map;
+
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.ConversionContextPropertyName;
 import com.atlassian.confluence.content.render.xhtml.storage.macro.MacroId;
@@ -13,10 +15,9 @@ import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParamete
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Map;
 
 /**
  *

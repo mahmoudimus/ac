@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.spi;
 
+import java.util.Optional;
+
 import com.atlassian.extras.api.ProductLicense;
-import com.atlassian.fugue.Option;
 
 /**
  * Product-specific accessors
@@ -22,5 +23,5 @@ public interface ProductAccessor extends HostProperties
 
     boolean needsAdminPageNameEscaping();
 
-    Option<ProductLicense> getProductLicense();
+    Optional<ProductLicense> getProductLicense();
 }

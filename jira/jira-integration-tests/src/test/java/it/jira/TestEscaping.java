@@ -1,5 +1,7 @@
 package it.jira;
 
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 
 import com.atlassian.connect.test.jira.pageobjects.IssueNavigatorViewsMenu;
@@ -12,7 +14,6 @@ import com.atlassian.connect.test.jira.pageobjects.Section;
 import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.connect.test.jira.pageobjects.workflow.JiraAddWorkflowTransitionPostFunctionPage;
 import com.atlassian.connect.test.jira.pageobjects.workflow.WorkflowPostFunctionEntry;
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
@@ -29,7 +30,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -224,8 +224,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     {
         product.quickLoginAsAdmin(ViewProfilePage.class);
         String moduleKey = getModuleKey(PROFILE_TAB_PANEL_KEY);
-        LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
-                Option.<String>none(), moduleKey);
+        LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a", Optional.<String>empty(), moduleKey);
         assertIsEscaped(tabPanel.getWebItem().getLinkText());
     }
 
@@ -306,7 +305,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     private RemoteWebItem findWebItem(String moduleKey)
     {
         product.visit(JiraViewProjectPage.class, project.getKey());
-        return connectPageOperations.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
+        return connectPageOperations.findWebItem(getModuleKey(moduleKey), Optional.<String>empty());
     }
 
     private String getModuleKey(String module)

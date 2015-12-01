@@ -1,20 +1,24 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+
 import com.google.common.base.Supplier;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @ConvertToWiredTest
@@ -61,8 +65,8 @@ public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePlugi
     public void testGetAuthorizationGenerator() throws Exception
     {
         Map<String, String[]> params = Collections.singletonMap("param", new String[]{"param value"});
-        Option<String> auth = createRemotePluginAccessor().getAuthorizationGenerator().generate(HttpMethod.POST, PATH_URI, params);
-        assertThat(auth, is(Option.none(String.class)));
+        Optional<String> auth = createRemotePluginAccessor().getAuthorizationGenerator().generate(HttpMethod.POST, PATH_URI, params);
+        assertThat(auth, is(Optional.<String>empty()));
     }
 
     private RemotablePluginAccessor createRemotePluginAccessor() throws ExecutionException, InterruptedException

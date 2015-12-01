@@ -4,10 +4,10 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Extracts issue parameters that can be included in webpanel's iframe url.
@@ -30,9 +30,9 @@ public class IssueContextMapParameterExtractor implements ContextMapParameterExt
         if (context.containsKey(ISSUE_CONTEXT_KEY))
         {
             Issue issue = (Issue) context.get(ISSUE_CONTEXT_KEY);
-            return Optional.fromNullable(issue);
+            return Optional.ofNullable(issue);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

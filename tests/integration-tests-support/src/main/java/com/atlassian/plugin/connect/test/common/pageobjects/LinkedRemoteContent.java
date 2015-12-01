@@ -1,14 +1,12 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode;
-
-import com.google.common.base.Optional;
-
 
 /**
  * Represents any type of addon that has a link (web item) and content (servlet) Includes the tab panels and pages
@@ -19,18 +17,18 @@ public class LinkedRemoteContent
     private final String pageKey;
     private final ItemMatchingMode mode;
     private final String matchValue;
-    private final Option<String> dropDownLinkId;
+    private final Optional<String> dropDownLinkId;
     private final String extraPrefix;
 
     @Inject
     private PageBinder pageBinder;
 
-    public LinkedRemoteContent(ItemMatchingMode mode, String id, Option<String> dropDownLinkId, String pageKey)
+    public LinkedRemoteContent(ItemMatchingMode mode, String id, Optional<String> dropDownLinkId, String pageKey)
     {
         this(mode, id, dropDownLinkId, pageKey, "");
     }
 
-    public LinkedRemoteContent(ItemMatchingMode mode, String id, Option<String> dropDownLinkId, String pageKey, String extraPrefix)
+    public LinkedRemoteContent(ItemMatchingMode mode, String id, Optional<String> dropDownLinkId, String pageKey, String extraPrefix)
     {
         this.mode = mode;
         this.matchValue = id;
@@ -39,7 +37,7 @@ public class LinkedRemoteContent
         this.extraPrefix = extraPrefix;
     }
 
-    public LinkedRemoteContent(String matchValue, Option<String> dropDownLinkId, String pageKey)
+    public LinkedRemoteContent(String matchValue, Optional<String> dropDownLinkId, String pageKey)
     {
         this(ItemMatchingMode.ID, matchValue, dropDownLinkId, pageKey);
     }
@@ -47,7 +45,7 @@ public class LinkedRemoteContent
     @Init
     public void init()
     {
-        webItem = pageBinder.bind(RemoteWebItem.class, mode, matchValue, Optional.fromNullable(dropDownLinkId.getOrNull())); // Doh!
+        webItem = pageBinder.bind(RemoteWebItem.class, mode, matchValue, Optional.ofNullable(dropDownLinkId.orElse(null))); // Doh!
     }
 
     public RemoteWebItem getWebItem()

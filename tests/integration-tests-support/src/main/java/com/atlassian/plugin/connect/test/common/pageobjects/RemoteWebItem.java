@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import com.atlassian.pageobjects.binder.Init;
@@ -7,8 +9,6 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.webdriver.utils.by.ByJquery;
-
-import com.google.common.base.Optional;
 
 import org.openqa.selenium.By;
 import org.slf4j.Logger;

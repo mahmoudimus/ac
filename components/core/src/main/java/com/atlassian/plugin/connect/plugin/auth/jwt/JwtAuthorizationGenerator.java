@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.TimeUtil;
@@ -70,9 +70,9 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
     }
 
     @Override
-    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
+    public Optional<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
     {
-        return Option.some(generate(httpMethod, url, parameters, checkNotNull(secretSupplier.get())));
+        return Optional.of(generate(httpMethod, url, parameters, checkNotNull(secretSupplier.get())));
     }
 
     @Override

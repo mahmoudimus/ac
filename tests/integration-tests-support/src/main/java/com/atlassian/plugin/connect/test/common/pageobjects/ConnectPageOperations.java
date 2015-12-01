@@ -1,16 +1,16 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import com.atlassian.fugue.Option;
+import java.util.Optional;
+
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 
@@ -104,22 +104,22 @@ public class ConnectPageOperations
         return driver.elementExists(By.id(id));
     }
 
-    public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Option<String> dropDownMenuId, String pageKey)
+    public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Optional<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(mode, linkText, dropDownMenuId, pageKey);
     }
 
-    public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
+    public LinkedRemoteContent findTabPanel(String webItemId, Optional<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
     }
 
-    public LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Option<String> dropDownMenuId, String pageKey)
+    public LinkedRemoteContent findRemoteLinkedContent(ItemMatchingMode mode, String webItemId, Optional<String> dropDownMenuId, String pageKey)
     {
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
 
-    private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Option<String> dropDownMenuId, String pageKey)
+    private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Optional<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(ItemMatchingMode.ID, webItemId, dropDownMenuId, pageKey);
     }

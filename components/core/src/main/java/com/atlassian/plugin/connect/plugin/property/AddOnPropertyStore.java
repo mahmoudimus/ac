@@ -1,16 +1,16 @@
 package com.atlassian.plugin.connect.plugin.property;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.fugue.Iterables;
-import com.atlassian.fugue.Option;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,18 +37,18 @@ public class AddOnPropertyStore
     @Autowired
     public AddOnPropertyStore(final ActiveObjects ao) {this.ao = checkNotNull(ao);}
 
-    public Option<AddOnProperty> getPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    public Optional<AddOnProperty> getPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         AddOnPropertyAO[] properties = ao.find(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ? AND PROPERTY_KEY = ?", addOnKey, propertyKey));
 
-        Option<AddOnPropertyAO> option = Iterables.first(Arrays.asList(properties));
+        Optional<AddOnPropertyAO> option = Optional.ofNullable(Iterables.getFirst(Arrays.asList(properties), null));
 
-        return option.map(new Function<AddOnPropertyAO, AddOnProperty>()
+        return option.flatMap(new Function<AddOnPropertyAO, Optional<AddOnProperty>>()
         {
             @Override
-            public AddOnProperty apply(final AddOnPropertyAO input)
+            public Optional<AddOnProperty> apply(AddOnPropertyAO addOnPropertyAO)
             {
-                return AddOnProperty.fromAO(input);
+                return Optional.of(AddOnProperty.fromAO(addOnPropertyAO));
             }
         });
     }
@@ -60,7 +60,7 @@ public class AddOnPropertyStore
         checkNotNull(value);
         if (hasReachedPropertyLimit(addOnKey))
         {
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_LIMIT_EXCEEDED, Option.<AddOnProperty>none());
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_LIMIT_EXCEEDED, Optional.<AddOnProperty>empty());
         }
         if (existsProperty(addOnKey, propertyKey))
         {
@@ -69,13 +69,15 @@ public class AddOnPropertyStore
 
             AddOnPropertyAO newPropertyAO = createAddOnProperty(addOnKey, propertyKey, value);
             newPropertyAO.save();
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Option.some(AddOnProperty.fromAO(newPropertyAO)));
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Optional.of(AddOnProperty.fromAO(
+                newPropertyAO)));
         }
         else
         {
             AddOnPropertyAO property = createAddOnProperty(addOnKey, propertyKey, value);
             property.save();
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_CREATED, Option.some(AddOnProperty.fromAO(property)));
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_CREATED, Optional.of(AddOnProperty.fromAO(
+                property)));
         }
     }
 
@@ -140,7 +142,7 @@ public class AddOnPropertyStore
     private AddOnPropertyAO getAddOnPropertyForKey(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         AddOnPropertyAO[] addOnPropertyAOs = ao.find(AddOnPropertyAO.class, Query.select().where("PRIMARY_KEY = ?", getPrimaryKeyForProperty(addOnKey, propertyKey)));
-        return Iterables.first(Arrays.asList(addOnPropertyAOs)).getOrNull();
+        return Iterables.getFirst(Arrays.asList(addOnPropertyAOs), null);
     }
 
     private boolean hasReachedPropertyLimit(@Nonnull final String addOnKey)
@@ -158,9 +160,9 @@ public class AddOnPropertyStore
     public static class PutResultWithOptionalProperty
     {
         private final PutResult result;
-        private final Option<AddOnProperty> property;
+        private final Optional<AddOnProperty> property;
 
-        public PutResultWithOptionalProperty(final PutResult result, final Option<AddOnProperty> property)
+        public PutResultWithOptionalProperty(final PutResult result, final Optional<AddOnProperty> property)
         {
             this.result = result;
             this.property = property;
@@ -171,7 +173,7 @@ public class AddOnPropertyStore
             return result;
         }
 
-        public Option<AddOnProperty> getProperty()
+        public Optional<AddOnProperty> getProperty()
         {
             return property;
         }
