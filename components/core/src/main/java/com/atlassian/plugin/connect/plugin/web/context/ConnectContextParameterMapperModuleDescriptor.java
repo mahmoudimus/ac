@@ -1,18 +1,18 @@
-package com.atlassian.plugin.connect.plugin.web.condition;
+package com.atlassian.plugin.connect.plugin.web.context;
 
-import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterMapper;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.util.validation.ValidationPattern;
 
 import static com.atlassian.plugin.util.validation.ValidationPattern.test;
 
-public class ConnectConditionClassResolverModuleDescriptor extends AbstractModuleDescriptor<ConnectConditionClassResolver>
+public class ConnectContextParameterMapperModuleDescriptor extends AbstractModuleDescriptor<ConnectContextParameterMapper>
 {
 
-    private ConnectConditionClassResolver resolver;
+    private ConnectContextParameterMapper contextParameterMapper;
 
-    public ConnectConditionClassResolverModuleDescriptor(ModuleFactory moduleFactory)
+    public ConnectContextParameterMapperModuleDescriptor(ModuleFactory moduleFactory)
     {
         super(moduleFactory);
     }
@@ -31,13 +31,13 @@ public class ConnectConditionClassResolverModuleDescriptor extends AbstractModul
     public void enabled()
     {
         super.enabled();
-        assertModuleClassImplements(ConnectConditionClassResolver.class);
-        resolver = moduleFactory.createModule(moduleClassName, this);
+        assertModuleClassImplements(ConnectContextParameterMapper.class);
+        contextParameterMapper = moduleFactory.createModule(moduleClassName, this);
     }
 
     @Override
-    public ConnectConditionClassResolver getModule()
+    public ConnectContextParameterMapper getModule()
     {
-        return resolver;
+        return contextParameterMapper;
     }
 }

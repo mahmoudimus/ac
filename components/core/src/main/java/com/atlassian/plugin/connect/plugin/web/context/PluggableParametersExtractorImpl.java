@@ -2,13 +2,15 @@ package com.atlassian.plugin.connect.plugin.web.context;
 
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
-import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterMapper;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -19,11 +21,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * This component extracts context parameters based on local Connect project extractors as well as extractors loaded from plug-ins.
  */
 @Component
+@ExportAsService
 public class PluggableParametersExtractorImpl implements PluggableParametersExtractor
 {
     private final static Logger log = LoggerFactory.getLogger(PluggableParametersExtractorImpl.class);
@@ -42,11 +46,35 @@ public class PluggableParametersExtractorImpl implements PluggableParametersExtr
     {
         ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         moduleContextParameters.putAll(connectModuleContextExtractor.extractParameters(context));
-        moduleContextParameters.putAll(extractByPlugins(context));
+        moduleContextParameters.putAll(extractFromPluginProvidedExtractors(context));
+        moduleContextParameters.putAll(extractFromPluginProvidedMappers(context));
         return moduleContextParameters;
     }
 
-    private Map<String, String> extractByPlugins(final Map<String, Object> context)
+    @SuppressWarnings("unchecked")
+    private Map<String, String> extractFromPluginProvidedMappers(final Map<String, Object> context)
+    {
+        ImmutableMap.Builder<String, String> contextParameters = ImmutableMap.builder();
+        List<ConnectContextParameterMapper> parameterMappers = pluginAccessor.getEnabledModulesByClass(ConnectContextParameterMapper.class);
+        for (ConnectContextParameterMapper parameterMapper : parameterMappers)
+        {
+            parameterMapper.extractContextValue(context).ifPresent(new Consumer()
+            {
+
+                @Override
+                public void accept(Object contextValue)
+                {
+                    if (parameterMapper.isParameterValueAccessibleByCurrentUser(contextValue))
+                    {
+                        contextParameters.put(parameterMapper.getParameterKey(), parameterMapper.getParameterValue(contextValue));
+                    }
+                }
+            });
+        }
+        return contextParameters.build();
+    }
+
+    private Map<String, String> extractFromPluginProvidedExtractors(final Map<String, Object> context)
     {
         ImmutableMap.Builder<String, String> result = ImmutableMap.builder();
         for (ContextParametersExtractor contextParametersExtractor : getExtractors())

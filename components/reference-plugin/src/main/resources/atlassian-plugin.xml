@@ -7,6 +7,9 @@
 
     <connect-module key="reference-module-provider" class="com.atlassian.plugin.connect.reference.ReferenceModuleProvider"/>
 
+    <connect-context-parameter-mapper key="reference-context-parameter-mapper"
+                                      class="com.atlassian.plugin.connect.reference.ReferenceContextParameterMapper"/>
+
     <connect-condition-class-resolver key="reference-condition-class-resolver"
                                       class="com.atlassian.plugin.connect.reference.ReferenceConditionClassResolver"/>
 
