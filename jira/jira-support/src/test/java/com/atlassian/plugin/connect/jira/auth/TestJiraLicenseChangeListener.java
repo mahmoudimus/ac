@@ -180,10 +180,10 @@ public class TestJiraLicenseChangeListener
             newApps.add(ApplicationKey.valueOf(key));
         }
         when(newLicenseDetails.getLicensedApplications()).thenReturn(
-                new MockLicensedApplications(newApps));
+            new MockLicensedApplications(newApps));
 
-        Option oldDetailsOption = oldKeys.isEmpty() ? none() : some(oldLicenseDetails);
-        Option newDetailsOption = newKeys.isEmpty() ? none() : some(newLicenseDetails);
+        Option<LicenseDetails> oldDetailsOption = oldKeys.isEmpty() ? none() : some(oldLicenseDetails);
+        Option<LicenseDetails> newDetailsOption = newKeys.isEmpty() ? none() : some(newLicenseDetails);
 
         return new LicenseChangedEvent(oldDetailsOption, newDetailsOption);
     }

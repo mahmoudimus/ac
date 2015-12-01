@@ -3,9 +3,9 @@ package it.confluence.iframe;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Optional;
 
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
@@ -100,7 +100,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
 
         product.visit(ConfluenceUserProfilePage.class);
 
-        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(mode, id, Option.<String>none(),
+        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(mode, id, Optional.<String>empty(),
                 awesomePageModuleKey);
 
         ConnectAddOnEmbeddedTestPage addonContentPage = addonPage.click();

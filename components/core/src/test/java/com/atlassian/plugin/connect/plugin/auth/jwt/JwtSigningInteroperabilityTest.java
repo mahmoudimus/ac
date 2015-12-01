@@ -145,11 +145,11 @@ public class JwtSigningInteroperabilityTest
 
         signer = new JwtSigningRemotablePluginAccessor(addon,
                 baseUrlSupplier,
-                new TestJwtService(SHARED_SECRET),
+                new TestJwtJsonBuilderFactory(new SubjectJwtClaimWriter(userManager)),
+                new TestJwtService(),
                 consumerService,
                 connectApplinkManager,
-                httpContentRetriever,
-                userManager);
+                httpContentRetriever);
     }
 
     @Test
@@ -267,7 +267,7 @@ public class JwtSigningInteroperabilityTest
 
     private SignedUrlTest createAndSignTest(String name, URI basePath, Map<String, String[]> params) throws UnsupportedEncodingException
     {
-        HashMap<String, String[]> completeParams = new HashMap<String, String[]>(params);
+        HashMap<String, String[]> completeParams = new HashMap<>(params);
         if (!StringUtils.isBlank(basePath.getQuery()))
         {
             completeParams.putAll(JwtAuthorizationGenerator.constructParameterMap(basePath));

@@ -1,14 +1,16 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import com.atlassian.fugue.Either;
-import com.atlassian.fugue.Option;
-import com.atlassian.sal.api.message.I18nResolver;
-import com.atlassian.sal.api.user.UserProfile;
-import com.google.common.base.Function;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+
+import com.atlassian.fugue.Either;
+import com.atlassian.sal.api.message.I18nResolver;
+import com.atlassian.sal.api.user.UserProfile;
+
+import com.google.common.base.Function;
 
 /**
  * This service is used to add, remove, list and update add-on properties.
@@ -56,7 +58,7 @@ public interface AddOnPropertyService
             @Nonnull String addOnKey,
             @Nonnull String propertyKey,
             @Nonnull String value,
-            @Nonnull final Function<Option<AddOnProperty>, ServiceConditionResult<T>> testFunction);
+            @Nonnull final Function<Optional<AddOnProperty>, ServiceConditionResult<T>> testFunction);
 
     /**
      * Deletes a property from the add-on store. <p> This method checks parameter validity and tries to delete a
@@ -78,7 +80,7 @@ public interface AddOnPropertyService
             @Nullable String sourcePluginKey,
             @Nonnull String addOnKey,
             @Nonnull String propertyKey,
-            @Nonnull final Function<Option<AddOnProperty>, ServiceConditionResult<T>> testFunction);
+            @Nonnull final Function<Optional<AddOnProperty>, ServiceConditionResult<T>> testFunction);
 
     /**
      * Returns a list of all properties for a given add-on. <p> This method checks parameter validity and lists all
@@ -136,11 +138,11 @@ public interface AddOnPropertyService
     @Immutable
     class ServiceConditionResult<T>
     {
-        private final Option<T> object;
+        private final Optional<T> object;
 
         private final boolean successful;
 
-        private ServiceConditionResult(Option<T> object, boolean isSuccessful)
+        private ServiceConditionResult(Optional<T> object, boolean isSuccessful)
         {
             this.object = object;
             this.successful = isSuccessful;
@@ -151,7 +153,7 @@ public interface AddOnPropertyService
             return successful;
         }
 
-        public Option<T> getObject()
+        public Optional<T> getObject()
         {
             return object;
         }
@@ -163,7 +165,7 @@ public interface AddOnPropertyService
 
         public static <T> ServiceConditionResult<T> FAILURE_WITH_OBJECT(T obj)
         {
-            return new ServiceConditionResult<T>(Option.some(obj), false);
+            return new ServiceConditionResult<T>(Optional.of(obj), false);
         }
     }
 
@@ -182,14 +184,14 @@ public interface AddOnPropertyService
             return result.isRight();
         }
 
-        public Option<OperationStatus> getError()
+        public Optional<OperationStatus> getError()
         {
-            return result.left().toOption();
+            return Optional.ofNullable(result.left().getOrNull());
         }
 
-        public Option<T> getValue()
+        public Optional<T> getValue()
         {
-            return result.right().toOption();
+            return Optional.ofNullable(result.right().getOrNull());
         }
 
         public static <T> ValidationResult<T> fromValue(T value)

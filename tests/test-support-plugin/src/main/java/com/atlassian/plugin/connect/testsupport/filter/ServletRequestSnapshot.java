@@ -1,16 +1,18 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.jwt.JwtConstants;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-import org.apache.commons.io.IOUtils;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.atlassian.jwt.JwtConstants;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+
+import org.apache.commons.io.IOUtils;
 
 public class ServletRequestSnapshot
 {
@@ -116,8 +118,8 @@ public class ServletRequestSnapshot
 
     public boolean hasJwtHeader()
     {
-        Option<String> authorizationHeader = getAuthorizationHeader();
-        return authorizationHeader.isDefined() &&
+        Optional<String> authorizationHeader = getAuthorizationHeader();
+        return authorizationHeader.isPresent() &&
                authorizationHeader.get().matches("^" + JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + ".+\\..+\\..+$");
     }
 
@@ -190,8 +192,8 @@ public class ServletRequestSnapshot
 
     private String getJwtHeader()
     {
-        final Option<String> header = getAuthorizationHeader();
-        return header.isDefined() ? header.get().substring(4) : null; // if it exists, remove the "JWT " prefix
+        final Optional<String> header = getAuthorizationHeader();
+        return header.isPresent() ? header.get().substring(4) : null; // if it exists, remove the "JWT " prefix
     }
 
     private String getJwtParameter()
@@ -201,14 +203,14 @@ public class ServletRequestSnapshot
     }
 
     // the case of the header can be changed at runtime :(
-    private Option<String> getAuthorizationHeader()
+    private Optional<String> getAuthorizationHeader()
     {
-        final Option<String> header = getHeader(JwtConstants.HttpRequests.AUTHORIZATION_HEADER);
-        return header.isDefined() ? header : getHeader(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
+        final Optional<String> header = getHeader(JwtConstants.HttpRequests.AUTHORIZATION_HEADER);
+        return header.isPresent() ? header : getHeader(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
     }
 
-    private Option<String> getHeader(String headerName)
+    private Optional<String> getHeader(String headerName)
     {
-        return headers.containsKey(headerName) ? Option.some(headers.get(headerName)) : Option.<String>none();
+        return headers.containsKey(headerName) ? Optional.of(headers.get(headerName)) : Optional.empty();
     }
 }

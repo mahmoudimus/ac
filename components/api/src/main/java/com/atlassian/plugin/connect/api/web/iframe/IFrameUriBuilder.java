@@ -1,10 +1,11 @@
 package com.atlassian.plugin.connect.api.web.iframe;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import java.util.Optional;
 
 import javax.annotation.concurrent.NotThreadSafe;
+
+import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 
 /**
  * Builds URIs to be used as the src attribute for iframes targeting Connect apps.
@@ -95,7 +96,7 @@ public interface IFrameUriBuilder
          * @param uiParameters the parameters to include
          * @return the builder
          */
-        InitializedBuilder uiParams(Option<String> uiParameters);
+        InitializedBuilder uiParams(Optional<String> uiParameters);
 
         /**
          * @return the constructed (and signed, if requested) URL.

@@ -16,7 +16,7 @@ public class ConnectApiScopeWhitelistModuleDescriptorFactory extends SingleModul
     private static final String TYPE = "connect-api-scope-whitelist";
 
     @Autowired
-    public ConnectApiScopeWhitelistModuleDescriptorFactory(@Qualifier("hostContainer") final HostContainer hostContainer)
+    public ConnectApiScopeWhitelistModuleDescriptorFactory(HostContainer hostContainer)
     {
         super(hostContainer, TYPE, ConnectApiScopeWhitelistModuleDescriptor.class);
     }

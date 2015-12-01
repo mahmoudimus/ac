@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
 import java.net.HttpCookie;
+import java.util.Optional;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkRequest;
@@ -15,15 +16,14 @@ import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.model.authentication.UserAuthenticationContext;
 import com.atlassian.crowd.model.authentication.ValidationFactor;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdClientProvider;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.collect.Iterables;
 
-import static com.atlassian.fugue.Iterables.first;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
 public class ConnectCrowdSysadminHttpClientImpl
@@ -51,8 +51,8 @@ public class ConnectCrowdSysadminHttpClientImpl
             ApplicationAccessDeniedException, OperationFailedException,
             InvalidAuthenticationException
     {
-        Option<ApplicationLink> possibleCrowd = first(applicationLinkService.getApplicationLinks(CrowdApplicationType.class));
-        if (possibleCrowd.isEmpty())
+        Optional<ApplicationLink> possibleCrowd = Optional.ofNullable(Iterables.getFirst(applicationLinkService.getApplicationLinks(CrowdApplicationType.class), null));
+        if (!possibleCrowd.isPresent())
         {
             throw new OperationFailedException("There was no Crowd application link. This is a problem");
         }

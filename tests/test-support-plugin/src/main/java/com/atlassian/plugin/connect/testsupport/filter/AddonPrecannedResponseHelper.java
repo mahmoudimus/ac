@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
+import java.util.Optional;
+
 import com.atlassian.fugue.Option;
 
 /**
@@ -18,5 +20,5 @@ public interface AddonPrecannedResponseHelper
     /**
      * Takes the latest precanned response if it exists or None if nothing queued
      */
-    Option<PrecannedResponse> poll();
+    Optional<PrecannedResponse> poll();
 }
