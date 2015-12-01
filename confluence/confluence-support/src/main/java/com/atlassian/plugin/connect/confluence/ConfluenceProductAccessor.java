@@ -1,12 +1,14 @@
 package com.atlassian.plugin.connect.confluence;
 
+import java.util.Optional;
+
 import com.atlassian.confluence.license.LicenseService;
 import com.atlassian.extras.api.AtlassianLicense;
 import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -73,9 +75,9 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     }
 
     @Override
-    public Option<ProductLicense> getProductLicense()
+    public Optional<ProductLicense> getProductLicense()
     {
         AtlassianLicense atlassianLicense = licenseService.retrieveAtlassianLicense();
-        return Option.option(atlassianLicense.getProductLicense(Product.CONFLUENCE));
+        return Optional.ofNullable(atlassianLicense.getProductLicense(Product.CONFLUENCE));
     }
 }

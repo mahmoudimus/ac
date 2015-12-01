@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.api.web.iframe;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
+import java.util.Optional;
+
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 
 public interface IFrameRenderStrategy
 {
@@ -13,7 +13,7 @@ public interface IFrameRenderStrategy
 
     void shouldShowOrThrow(Map<String, Object> conditionContext);
 
-    void render(ModuleContextParameters moduleContextParameters, Writer writer, Option<String> uiParameters) throws IOException;
+    void render(ModuleContextParameters moduleContextParameters, Writer writer, Optional<String> uiParameters) throws IOException;
 
     void renderAccessDenied(Writer writer) throws IOException;
 

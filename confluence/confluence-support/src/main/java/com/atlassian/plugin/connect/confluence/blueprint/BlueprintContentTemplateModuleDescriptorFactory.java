@@ -7,7 +7,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;

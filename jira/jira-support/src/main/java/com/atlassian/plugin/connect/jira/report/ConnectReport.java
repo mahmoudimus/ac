@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @since 1.2
@@ -44,7 +45,7 @@ public class ConnectReport implements Report
         StringWriter sw = new StringWriter();
         IFrameRenderStrategy frameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addOnKey, moduleKey);
         JiraModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
-        frameRenderStrategy.render(moduleContextParameters, sw, Option.<String>none());
+        frameRenderStrategy.render(moduleContextParameters, sw, Optional.empty());
         return sw.toString();
     }
 

@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Optional;
 
 public enum ReportCategory
 {
@@ -30,7 +30,7 @@ public enum ReportCategory
 
     public static Optional<ReportCategory> byKey(String key)
     {
-        return Optional.fromNullable(BY_KEY.get(key));
+        return Optional.ofNullable(BY_KEY.get(key));
     }
 
     static

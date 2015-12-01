@@ -17,11 +17,11 @@ import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvision
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
-import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
