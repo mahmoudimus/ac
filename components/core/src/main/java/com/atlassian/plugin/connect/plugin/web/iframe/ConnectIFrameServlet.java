@@ -1,18 +1,19 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -58,7 +59,7 @@ public class ConnectIFrameServlet extends HttpServlet
 
                 if (renderStrategy.shouldShow(moduleContextParameters))
                 {
-                    Option<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
+                    Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
                     renderStrategy.render(moduleContextParameters, resp.getWriter(), moduleUiParameters);
                 }
                 else

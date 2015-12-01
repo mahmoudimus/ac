@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.google.common.collect.ImmutableList;
 
@@ -7,6 +8,9 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 
+/**
+ * @see ConnectPageModuleBean#conditions documentation of context-free conditions
+ */
 public class CommonConditionClassResolver implements ConnectConditionClassResolver
 {
 

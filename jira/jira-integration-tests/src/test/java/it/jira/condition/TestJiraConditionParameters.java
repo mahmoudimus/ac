@@ -1,6 +1,7 @@
 package it.jira.condition;
 
 import java.util.Map;
+import java.util.Optional;
 
 import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
@@ -12,8 +13,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
-import com.google.common.base.Optional;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -85,7 +84,7 @@ public class TestJiraConditionParameters extends JiraWebDriverTestBase
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Nought but a test.");
         ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issue.key);
         String moduleKey = addonAndModuleKey(runner.getAddon().getKey(), CONTEXT_PARAMETERIZED_WEBITEM);
-        RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>absent());
+        RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>empty());
         assertNotNull("Web item should be found", webItem);
 
         return issue;

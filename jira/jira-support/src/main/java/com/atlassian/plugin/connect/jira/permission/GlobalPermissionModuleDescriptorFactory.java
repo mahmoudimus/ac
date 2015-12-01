@@ -6,8 +6,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -28,19 +27,17 @@ public class GlobalPermissionModuleDescriptorFactory
     }
 
     @Override
-    public GlobalPermissionModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, GlobalPermissionModuleBean bean)
+    public GlobalPermissionModuleDescriptor createModuleDescriptor(GlobalPermissionModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
         Element globalPermission = new DOMElement(DESCRIPTOR_NAME);
 
-        ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-
-        globalPermission.addAttribute("key", bean.getKey(connectAddonBean));
+        globalPermission.addAttribute("key", bean.getKey(addon));
         globalPermission.addAttribute("i18n-name-key", bean.getName().getI18nOrValue());
         globalPermission.addAttribute("i18n-description-key", bean.getDescription().getI18nOrValue());
         globalPermission.addAttribute("anonymous-allowed", bean.getAnonymousAllowed().toString());
 
         GlobalPermissionModuleDescriptorImpl descriptor = autowireUtil.createBean(GlobalPermissionModuleDescriptorImpl.class);
-        descriptor.init(theConnectPlugin, globalPermission);
+        descriptor.init(plugin, globalPermission);
 
         return descriptor;
     }

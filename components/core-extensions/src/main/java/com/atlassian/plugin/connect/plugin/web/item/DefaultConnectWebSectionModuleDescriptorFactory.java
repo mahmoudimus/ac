@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
@@ -24,27 +24,32 @@ public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectW
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectWebSectionModuleDescriptorFactory.class);
 
+    private final WebFragmentLocationQualifier webFragmentLocationQualifier;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     private final ProductSpecificWebSectionModuleDescriptorFactory webSectionModuleDescriptorFactory;
 
     @Autowired
-    public DefaultConnectWebSectionModuleDescriptorFactory(ConditionModuleFragmentFactory conditionModuleFragmentFactory, final ProductSpecificWebSectionModuleDescriptorFactory webSectionModuleDescriptorFactory)
+    public DefaultConnectWebSectionModuleDescriptorFactory(
+            WebFragmentLocationQualifier webFragmentLocationQualifier,
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+            ProductSpecificWebSectionModuleDescriptorFactory webSectionModuleDescriptorFactory)
     {
+        this.webFragmentLocationQualifier = webFragmentLocationQualifier;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
         this.webSectionModuleDescriptorFactory = webSectionModuleDescriptorFactory;
     }
 
     @Override
-    public WebSectionModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, WebSectionModuleBean bean)
+    public WebSectionModuleDescriptor createModuleDescriptor(WebSectionModuleBean bean, ConnectAddonBean connectAddonBean, Plugin plugin)
     {
         Element webSectionElement = new DOMElement("web-section");
 
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         String webSectionKey = bean.getKey(connectAddonBean);
+        String location = webFragmentLocationQualifier.processLocation(bean.getLocation(), connectAddonBean);
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
         webSectionElement.addAttribute("key", webSectionKey);
-        webSectionElement.addAttribute("location", moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation()));
+        webSectionElement.addAttribute("location", location);
         webSectionElement.addAttribute("weight", Integer.toString(bean.getWeight()));
         webSectionElement.addAttribute("i18n-name-key", i18nKeyOrName);
         webSectionElement.addAttribute("name", bean.getDisplayName());
@@ -70,7 +75,7 @@ public class DefaultConnectWebSectionModuleDescriptorFactory implements ConnectW
             log.debug("Created web section: " + printNode(webSectionElement));
         }
 
-        return createWebSectionDescriptor(theConnectPlugin, webSectionElement);
+        return createWebSectionDescriptor(plugin, webSectionElement);
     }
 
     private WebSectionModuleDescriptor createWebSectionDescriptor(Plugin plugin, Element webSectionElement)

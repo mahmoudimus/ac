@@ -23,7 +23,8 @@ As these remote service invocations have a negative impact the user experience, 
 
 * [Predefined conditions](#static)
   * [Condition parameters](#static-condition-parameters)
-* [Entity property conditions](#entity-property)
+  * [Entity property conditions](#entity-property)
+  * [can_use_application condition](#can-use-application)
 * [Boolean operations](#boolean-operations)
 * [Remote conditions](#remote)
 * [Appendix: List of predefined conditions](#product-specific-conditions)
@@ -131,6 +132,45 @@ the `entity_property_equal_to` to test for it with the following module definiti
 Also, an add-on that allows users to associate data with a JIRA issue could store a boolean property `hasContent`
 on that issue indicating that the issue has additional data, and then use this condition to control the display of a
 web panel with additional information.
+
+## <a name="can-use-application"></a>can_use_application condition
+
+`can_use_application` condition checks whether the current user is allowed to use a specific application 
+ (like JIRA Software or JIRA Service Desk). 
+ 
+ The condition is true if and only if both of the the following statements are true:
+ 
+ * the application is installed and enabled on the JIRA instance
+ * the user is permitted to use the application according to the installed licence
+ 
+The condition requires an `applicationKey` parameter, for example:
+ 
+ ```
+ {
+     "modules": {
+         "generalPages": [
+             {
+                 "conditions": [
+                     {
+                         "condition": "can_use_application",
+                         "params": { 
+                            "applicationKey": "jira-software"
+                         }
+                     }
+                 ]
+             }
+         ]
+     }
+ }
+ ```
+ 
+Supported application keys are:
+
+* jira-core
+* jira-servicedesk
+* jira-software
+
+If an unrecognized application key is provided then the condition will simply evaluate to `false`.
 
 ## <a name="boolean-operations"></a>Boolean operations
 
@@ -275,6 +315,7 @@ Each product defines a set of conditions relevant to its domain.
 * `user_is_the_logged_in_user`
 * `voting_enabled`
 * `watching_enabled`
+* [`can_use_application`](#can-use-application)
 
 #### <a name="jira-condition-parameters"></a>Condition parameter mappings
 

@@ -1,6 +1,7 @@
 package it.confluence.item;
 
 import java.util.Map;
+import java.util.Optional;
 
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
@@ -15,8 +16,6 @@ import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameC
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
-import com.google.common.base.Optional;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

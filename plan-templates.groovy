@@ -65,7 +65,7 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '5.9.1-SNAPSHOT'
+            productVersion: '6.0.0-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'

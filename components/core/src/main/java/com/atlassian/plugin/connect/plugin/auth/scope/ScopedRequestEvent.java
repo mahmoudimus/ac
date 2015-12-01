@@ -1,19 +1,22 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Pair;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.JsonRpcApiScopeHelper;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RpcEncodedSoapApiScopeHelper;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.XmlRpcApiScopeHelper;
-import com.atlassian.plugin.connect.api.util.ServletUtils;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+
+import com.atlassian.fugue.Pair;
+import com.atlassian.plugin.connect.api.util.ServletUtils;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.JsonRpcApiScopeHelper;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.XmlRpcApiScopeHelper;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class ScopedRequestEvent
 {
@@ -110,8 +113,8 @@ public abstract class ScopedRequestEvent
         }
         else if (isSoapUri(path))
         {
-            Option<Pair<String, String>> maybeMethod = RpcEncodedSoapApiScopeHelper.getMethod(rq);
-            if (maybeMethod.isEmpty())
+            Optional<Pair<String, String>> maybeMethod = RpcEncodedSoapApiScopeHelper.getMethod(rq);
+            if (!maybeMethod.isPresent())
             {
                 return path;
             }

@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
+import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
-import com.atlassian.plugin.connect.api.web.item.ModuleLocationQualifier;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -52,13 +51,15 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     @Mock private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     @Mock private WebFragmentHelper webFragmentHelper;
     @Mock private Condition condition;
-    @Mock private ConnectModuleProviderContext moduleProviderContext;
-    @Mock private ModuleLocationQualifier locationQualifier;
+    @Mock private WebFragmentLocationQualifier locationQualifier;
 
     @Before
     public void beforeEachTest() throws Exception
     {
-        ConnectWebSectionModuleDescriptorFactory webSectionFactory = new DefaultConnectWebSectionModuleDescriptorFactory(conditionModuleFragmentFactory, new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
+        ConnectWebSectionModuleDescriptorFactory webSectionFactory = new DefaultConnectWebSectionModuleDescriptorFactory(
+                locationQualifier,
+                conditionModuleFragmentFactory,
+                new WebSectionModuleDescriptorFactoryForTests(webInterfaceManager));
         when(plugin.getKey()).thenReturn("my-awesome-plugin");
         when(plugin.getName()).thenReturn("My Plugin™");
 
@@ -78,11 +79,10 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
 
         final ConnectAddonBean addonBean = newConnectAddonBean().withKey("my-awesome-plugin").build();
 
-        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addonBean);
-        when(moduleProviderContext.getLocationQualifier()).thenReturn(locationQualifier);
-        when(locationQualifier.processLocation(any(String.class))).then((invocation) -> invocation.getArguments()[0]);
+        when(locationQualifier.processLocation(any(String.class), any(ConnectAddonBean.class)))
+                .then((invocation) -> invocation.getArguments()[0]);
 
-        descriptor = webSectionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        descriptor = webSectionFactory.createModuleDescriptor(bean, addonBean, plugin);
         descriptor.enabled();
     }
 

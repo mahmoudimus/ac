@@ -3,13 +3,12 @@ package com.atlassian.plugin.connect.confluence.blueprint;
 import com.atlassian.confluence.plugins.createcontent.extensions.BlueprintModuleDescriptor;
 import com.atlassian.confluence.util.i18n.DocumentationBeanFactory;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.LinkBeanBuilder;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.api.util.Dom4jUtils;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.base.Strings;
@@ -39,9 +38,8 @@ public class BlueprintModuleDescriptorFactory
     }
 
     @Override
-    public BlueprintModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, BlueprintModuleBean bean)
+    public BlueprintModuleDescriptor createModuleDescriptor(BlueprintModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
-        ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
         DocumentationBeanFactory documentationBeanFactory = new ConnectDocumentationBeanFactory(new LinkBeanBuilder().build());
 
         Element blueprintElement = new DOMElement("blueprint");

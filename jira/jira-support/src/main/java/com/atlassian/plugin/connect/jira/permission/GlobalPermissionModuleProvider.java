@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.jira.permission;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleMeta;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
@@ -39,14 +39,14 @@ public class GlobalPermissionModuleProvider extends AbstractJiraConnectModulePro
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(final List<GlobalPermissionModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(final List<GlobalPermissionModuleBean> modules, ConnectAddonBean addon)
     {
         return Lists.transform(modules, new Function<GlobalPermissionModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final GlobalPermissionModuleBean bean)
             {
-                return descriptorFactory.createModuleDescriptor(moduleProviderContext, pluginRetrievalService.getPlugin(), bean);
+                return descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
             }
         });
     }

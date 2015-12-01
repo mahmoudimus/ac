@@ -1,5 +1,17 @@
 package it.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.jwt.core.TimeUtil;
 import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
@@ -11,25 +23,15 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
+
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.CharArrayBuffer;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -85,7 +87,7 @@ public class JwtAuthorizationGenerator
                 return checkNotNull(input).toArray(new String[input.size()]);
             }
         });
-        return encodeJwt(httpMethod, url, paramsAsArrays, userId.orNull(), issuer, sharedSecret);
+        return encodeJwt(httpMethod, url, paramsAsArrays, userId.orElse(null), issuer, sharedSecret);
     }
 
     private String encodeJwt(String httpMethod, URI targetPath, Map<String, String[]> params, String userKeyValue, String issuer, String sharedSecret)

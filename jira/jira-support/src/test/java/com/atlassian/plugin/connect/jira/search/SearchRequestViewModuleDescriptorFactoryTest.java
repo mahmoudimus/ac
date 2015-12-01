@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -72,15 +71,11 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private SearchRequestViewModuleDescriptorImpl descriptor;
 
     private ConnectAddonBean addon;
-    private ConnectModuleProviderContext moduleProviderContext;
 
     @Before
     public void beforeEachTest() throws Exception
     {
         this.addon = newConnectAddonBean().withKey("my-plugin").build();
-
-        this.moduleProviderContext = mock(ConnectModuleProviderContext.class);
-        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
 
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
@@ -118,7 +113,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                         newSingleConditionBean().withCondition("user_is_logged_in").build())
                 .build();
 
-        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(bean, addon, plugin);
         this.descriptor.enabled();
     }
 

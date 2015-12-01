@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.web.item.ConnectWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
@@ -67,8 +66,7 @@ public class WebSectionDescriptorFactoryTest
         addonBean = createAddonBean();
         
 
-        this.descriptor = descriptorFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addonBean),
-                getConnectPlugin(), bean);
+        this.descriptor = descriptorFactory.createModuleDescriptor(bean, addonBean, getConnectPlugin());
     }
 
     @After

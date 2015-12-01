@@ -1,7 +1,23 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
+import java.io.IOException;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+
 import com.atlassian.fugue.Either;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyIterable;
@@ -15,25 +31,13 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.base.Function;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 /**
  * REST endpoint for add-on properties
@@ -112,6 +116,7 @@ public class AddOnPropertiesResource
      *
      * @param addOnKey the add-on key of the plugin to fetch the property from
      * @param propertyKey the key of the property
+     * @param returnJsonFormat set to true if the 'value' field should be returned in json format, false if you want string format. String format is deprecated.
      * @param servletRequest the HTTP servlet request
      * @return a Response containing a list of properties or an error code with message.
      *
@@ -129,7 +134,7 @@ public class AddOnPropertiesResource
      */
     @GET
     @Path ("{propertyKey}")
-    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @Context final HttpServletRequest servletRequest)
+    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @QueryParam("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
     {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
@@ -148,7 +153,7 @@ public class AddOnPropertiesResource
             {
                 String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
                 return Response.ok()
-                        .entity(RestAddOnProperty.valueOf(property, baseURL))
+                        .entity(RestAddOnProperty.valueOf(property, baseURL, returnJsonFormat))
                         .cacheControl(never())
                         .build();
             }
@@ -242,12 +247,12 @@ public class AddOnPropertiesResource
         return applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/addons" + "/" + key;
     }
 
-    private Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request)
+    private Function<Optional<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request)
     {
-        return new Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
+        return new Function<Optional<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
         {
             @Override
-            public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Option<AddOnProperty> propertyOption)
+            public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Optional<AddOnProperty> propertyOption)
             {
                 return AddOnPropertyService.ServiceConditionResult.SUCCESS();
             }

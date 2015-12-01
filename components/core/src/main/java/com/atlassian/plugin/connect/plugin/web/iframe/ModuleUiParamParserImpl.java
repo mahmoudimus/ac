@@ -1,12 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.fugue.Option;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @Component
 public class ModuleUiParamParserImpl implements ModuleUiParamParser
@@ -14,11 +15,11 @@ public class ModuleUiParamParserImpl implements ModuleUiParamParser
     private static final Logger log = LoggerFactory.getLogger(ModuleUiParamParserImpl.class);
 
     @Override
-    public Option<String> parseUiParameters(HttpServletRequest req)
+    public Optional<String> parseUiParameters(HttpServletRequest req)
     {
         Map<String, String[]> parameterMap = req.getParameterMap();
         String uiParams = getParam(parameterMap, "ui-params");
-        return Option.option(uiParams);
+        return Optional.ofNullable(uiParams);
     }
 
     private String getParam(Map<String, String[]> parameterMap, String key)

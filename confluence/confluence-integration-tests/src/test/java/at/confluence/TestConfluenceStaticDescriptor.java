@@ -1,12 +1,13 @@
 package at.confluence;
 
+import java.util.Optional;
+
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
+import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
-import com.google.common.base.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +22,7 @@ import at.marketplace.ExternalAddonInstaller;
 import static com.atlassian.confluence.it.User.SYS_ADMIN;
 import static com.atlassian.confluence.it.rpc.ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP;
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 
 @Category (OnDemandAcceptanceTest.class)
 public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
@@ -69,8 +71,8 @@ public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
     @Test
     public void testAcDashboardWebItemIsPresent()
     {
-        login(ADMIN);
-        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
+        product.login(toConfluenceUser(ADMIN), DashboardPage.class);
+        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>empty());
     }
 
     @After

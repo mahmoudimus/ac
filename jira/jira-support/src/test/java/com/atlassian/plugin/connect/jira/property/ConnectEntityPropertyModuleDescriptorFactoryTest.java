@@ -16,7 +16,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyC
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matchers;
@@ -42,7 +41,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith (MockitoJUnitRunner.class)
@@ -76,9 +74,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
                 .thenReturn(new EntityPropertyIndexDocumentModuleDescriptorImpl(authContext, moduleFactory));
         EntityPropertyModuleBean bean = createBean();
 
-        ConnectModuleProviderContext context = mock(ConnectModuleProviderContext.class);
-        when(context.getConnectAddonBean()).thenReturn(addon);
-        this.moduleDescriptor = factory.createModuleDescriptor(context, plugin, bean);
+        this.moduleDescriptor = factory.createModuleDescriptor(bean, addon, plugin);
     }
 
     @Test

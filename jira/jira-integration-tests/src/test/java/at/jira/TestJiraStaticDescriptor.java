@@ -1,10 +1,9 @@
 package at.jira;
 
 import java.rmi.RemoteException;
+import java.util.Optional;
 
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
-
-import com.google.common.base.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +41,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
         login(testUserFactory.basicUser());
         product.goToViewIssue(ISSUE_WITH_WIKI_LINK.key);
 
-        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
+        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>empty());
     }
 
     @After

@@ -1,8 +1,9 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
+import java.util.Optional;
+
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
@@ -24,8 +25,10 @@ import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFac
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +83,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         Plugin addonPluginWrapper;
         AddonSettings previousSettings = new AddonSettings();
         PluginState targetState = null;
-        Option<ApplicationLink> maybePreviousApplink = Option.none();
-        Option<AuthenticationType> maybePreviousAuthType = Option.none();
-        Option<String> maybePreviousPublicKeyOrSharedSecret = Option.none();
+        Optional<ApplicationLink> maybePreviousApplink = Optional.empty();
+        Optional<AuthenticationType> maybePreviousAuthType = Optional.empty();
+        Optional<String> maybePreviousPublicKeyOrSharedSecret = Optional.empty();
         boolean reusePreviousPublicKeyOrSharedSecret = false;
         String baseUrl = "";
 
@@ -94,11 +97,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             validateModules(addOn);
 
             pluginKey = addOn.getKey();
-            maybePreviousApplink = Option.option(connectApplinkManager.getAppLink(pluginKey));
+            maybePreviousApplink = Optional.ofNullable(connectApplinkManager.getAppLink(pluginKey));
             previousSettings = addonRegistry.getAddonSettings(pluginKey);
             targetState = PluginState.valueOf(previousSettings.getRestartState());
 
-            if (maybePreviousApplink.isDefined() && !Strings.isNullOrEmpty(previousSettings.getDescriptor()))
+            if (maybePreviousApplink.isPresent() && !Strings.isNullOrEmpty(previousSettings.getDescriptor()))
             {
                 ApplicationLink applink = maybePreviousApplink.get();
                 baseUrl = applink.getRpcUrl().toString();
@@ -111,7 +114,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 // has been installed and then uninstalled: we should sign the new installation with the old secret (if there was one)
                 if (!StringUtils.isEmpty(previousSettings.getSecret()))
                 {
-                    maybePreviousPublicKeyOrSharedSecret = Option.some(previousSettings.getSecret());
+                    maybePreviousPublicKeyOrSharedSecret = Optional.of(previousSettings.getSecret());
                     // leave reusePreviousPublicKeyOrSharedSecret=false because we crossed an uninstall/reinstall boundary
                 }
 
@@ -131,8 +134,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage()));
                 if (!Strings.isNullOrEmpty(previousSettings.getDescriptor())
-                    && maybePreviousApplink.isDefined()
-                    && maybePreviousAuthType.isDefined())
+                    && maybePreviousApplink.isPresent()
+                    && maybePreviousAuthType.isPresent())
                 {
                     log.error("An exception occurred while installing the plugin '["
                               + pluginKey
@@ -144,7 +147,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     connectApplinkManager.createAppLink(previousAddon,
                                                         baseUrl,
                                                         maybePreviousAuthType.get(),
-                                                        maybePreviousPublicKeyOrSharedSecret.getOrElse(""),
+                                                        maybePreviousPublicKeyOrSharedSecret.orElse(""),
                                                         addonUserKey);
                     try
                     {

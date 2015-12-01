@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 
 import com.atlassian.plugin.connect.test.common.client.AtlassianConnectRestClient;
@@ -13,7 +14,6 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.util.concurrent.ResettableLazyReference;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -294,7 +294,7 @@ public class ExternalAddonInstaller
         get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Getting descriptor url for add-on {}", addonKey.get());
 
-        return Optional.fromNullable(transformResponse(
+        return Optional.ofNullable(transformResponse(
                 get,
                 new HashSet<>(asList(200, 404)),
                 "Error trying to retrieve descriptor href for add-on",
