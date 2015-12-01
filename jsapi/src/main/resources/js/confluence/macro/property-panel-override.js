@@ -6,14 +6,13 @@
  * (see MacroVariableInjectorTransformer).
  */
 AJS.bind("init.rte", function () {
-    console.log("binding property panel iframe: " + AJS.params.contextPath + "%%URL%%");
     // These parameters are injected contextually by the MacroVariableInjectorTransformer
     var macroName = "%%MACRONAME%%";
     var macroUrl = AJS.params.contextPath + "%%URL%%";
 
     require(["connect-host"], function(_AP) {
         //TODO: Replace this with confluence/macro-js-overrides, once the version of Confluence that supports
-        // it is released to cloud.
+        // it is released to cloud. CRA-1219
         var existingOverride = AJS.MacroBrowser.getMacroJsOverride(macroName);
         if (existingOverride == null) {
             existingOverride = {};

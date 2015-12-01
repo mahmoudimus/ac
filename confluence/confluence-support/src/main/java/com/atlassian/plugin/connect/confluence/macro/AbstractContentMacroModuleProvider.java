@@ -136,7 +136,9 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private void createPropertyPanelIFrame(T macroBean, ConnectAddonBean addon)
     {
         MacroPropertyPanelBean propertyPanel = macroBean.getPropertyPanel();
-        final String width = "0%", height = "0%", classifier = "property-panel";
+        final String width = "0%";
+        final String height = "0%";
+        final String classifier = "property-panel";
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
