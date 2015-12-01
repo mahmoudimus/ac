@@ -61,8 +61,7 @@ public class TestJiraScopes extends JiraWebDriverTestBase
     @Test
     public void testAdminScopeIsAuthorised() throws RemoteException
     {
-        login(testUserFactory.basicUser());
-        ScopesTestPage scopesTestPage = product.visit(ScopesTestPage.class, externalAddonInstaller.getAddonKey());
+        ScopesTestPage scopesTestPage = loginAndVisit(testUserFactory.basicUser(), ScopesTestPage.class, externalAddonInstaller.getAddonKey());
         String adminResponseCode = scopesTestPage.getCodeForScope(Scope.ADMIN);
         assertThat("Admin-scoped request succeeded", adminResponseCode, is("200"));
     }

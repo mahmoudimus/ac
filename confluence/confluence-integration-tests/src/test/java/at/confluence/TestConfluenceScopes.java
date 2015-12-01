@@ -60,8 +60,7 @@ public class TestConfluenceScopes extends ConfluenceAcceptanceTestBase
     @Test
     public void testAdminScopeIsAuthorised() throws RemoteException
     {
-        login(ADMIN);
-        ScopesTestPage scopesTestPage = product.visit(ScopesTestPage.class, externalAddonInstaller.getAddonKey());
+        ScopesTestPage scopesTestPage = login(ADMIN, ScopesTestPage.class, externalAddonInstaller.getAddonKey());
         String adminResponseCode = scopesTestPage.getCodeForScope(Scope.ADMIN);
         assertThat("Admin-scoped request succeeded", adminResponseCode, is("200"));
     }
