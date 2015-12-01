@@ -5,6 +5,7 @@ import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.PluginRestartState;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
+import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
@@ -51,7 +52,14 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     {
         for (String key : pluginKeys)
         {
-            connectAddonManager.enableConnectAddonAndCatchFailure(key);
+            try
+            {
+                connectAddonManager.enableConnectAddon(key);
+            }
+            catch (ConnectAddonEnableException e)
+            {
+                log.error("Tried to enable Connect add-on " + e.getAddonKey() + " from UPM, but couldn't: " + e.getMessage(), e);
+            }
         }
     }
 

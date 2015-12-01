@@ -238,25 +238,20 @@ public class ConnectAddonManager
 
         if (PluginState.ENABLED == targetState)
         {
-            enableConnectAddonAndCatchFailure(pluginKey);
+            try
+            {
+                enableConnectAddon(pluginKey);
+            }
+            catch (ConnectAddonEnableException e)
+            {
+                log.error("Could not enable add-on " + e.getAddonKey() + " during its installation: " + e.getMessage(), e);
+            }
         }
     }
 
     public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor) throws ConnectAddonInstallException
     {
         return addOnRequiresUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
-    }
-    
-    public void enableConnectAddonAndCatchFailure(final String pluginKey)
-    {
-        try
-        {
-            enableConnectAddon(pluginKey);
-        }
-        catch (ConnectAddonEnableException e)
-        {
-            // ignore enable failure
-        }
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException, ConnectAddonEnableException
@@ -279,9 +274,7 @@ public class ConnectAddonManager
                 catch (ConnectModuleRegistrationException e)
                 {
                     eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, e.getMessage()));
-                    String message = String.format("Module registration failed while enabling add-on %s, skipping", pluginKey);
-                    log.error(message, e);
-                    throw new ConnectAddonEnableException(message, e);
+                    throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
                 }
 
                 if (addOnRequiresUser(addon))
@@ -305,10 +298,9 @@ public class ConnectAddonManager
             }
             else
             {
-                String message = "Tried to publish plugin enabled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize its stored descriptor. Ignoring...";
+                String message = "Tried to publish plugin enabled event for addon, but got a null ConnectAddonBean when trying to deserialize its stored descriptor. Ignoring...";
                 eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, message));
-                log.warn(message);
-                throw new ConnectAddonEnableException(message);
+                throw new ConnectAddonEnableException(pluginKey, message);
             }
         }
     }

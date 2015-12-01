@@ -7,6 +7,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -147,14 +148,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                                         maybePreviousAuthType.get(),
                                                         maybePreviousPublicKeyOrSharedSecret.getOrElse(""),
                                                         addonUserKey);
-                    try
-                    {
-                        setAddonState(targetState, pluginKey);
-                    }
-                    catch (ConnectAddOnUserDisableException cause)
-                    {
-                        throw new ConnectAddonInstallException("Could not disable add-on", cause);
-                    }
+                    setAddonState(targetState, pluginKey);
                 }
                 else
                 {
@@ -200,7 +194,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         });
     }
 
-    private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddOnUserDisableException
+    private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddonInstallException
     {
         if (null == targetState)
         {
@@ -208,11 +202,25 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         }
         else if (targetState == PluginState.ENABLED)
         {
-            connectAddonManager.enableConnectAddonAndCatchFailure(pluginKey);
+            try
+            {
+                connectAddonManager.enableConnectAddon(pluginKey);
+            }
+            catch (ConnectAddonEnableException e)
+            {
+                log.error("Could not enable add-on " + e.getAddonKey() + " during its installation: " + e.getMessage(), e);
+            }
         }
         else if (targetState == PluginState.DISABLED)
         {
-            connectAddonManager.disableConnectAddon(pluginKey);
+            try
+            {
+                connectAddonManager.disableConnectAddon(pluginKey);
+            }
+            catch (ConnectAddOnUserDisableException cause)
+            {
+                throw new ConnectAddonInstallException("Could not disable add-on", cause);
+            }
         }
     }
 
