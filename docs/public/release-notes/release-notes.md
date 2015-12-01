@@ -33,6 +33,10 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.65](../release-notes/1-1-0.html#1.1.65)
+ * Add-on Properties GET request can provide the non-escaped JSON value with a query parameter [AC-1693](https://ecosystem.atlassian.net/browse/AC-1693)
+ * JIRA: Added condition to allow a query for available products [ACJIRA-590](https://ecosystem.atlassian.net/browse/ACJIRA-590)
+
 ## [1.1.64](../release-notes/1-1-0.html#1.1.64)
  * JIRA: Two new modules for you to define global and project permissions for your JIRA add-ons.
  * JIRA Software: The 'agileBoard.id' and 'agileBoard.mode' content properties became the 'board.id' and 'board.mode' content properties respectively. And another JIRA Software content property has been added 'sprint.id'.
