@@ -1,6 +1,6 @@
 <application key="bitbucket">
 
-    <connect-api-scope-whitelist key="bitbucket-api-scope-whitelist" resource="/scope/bitbucket-whitelist.json"/>
+    <!-- scopes are provided by Bitbucket's own connect-support plugin -->
 
     <connect-condition-class-resolver key="bitbucket-condition-class-resolver"
                                       class="com.atlassian.plugin.connect.bitbucket.web.condition.BitbucketConditionClassResolver"/>
