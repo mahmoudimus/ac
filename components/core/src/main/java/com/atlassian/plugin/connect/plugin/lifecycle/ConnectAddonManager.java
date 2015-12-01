@@ -303,6 +303,10 @@ public class ConnectAddonManager
                 throw new ConnectAddonEnableException(pluginKey, message);
             }
         }
+        else
+        {
+            throw new ConnectAddonEnableException(pluginKey, "Tried to enable add-on before it was installed.");
+        }
     }
 
     public void disableConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
