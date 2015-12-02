@@ -167,8 +167,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         }
         else
         {
-            // ACDEV-1304: Ensure that any add-on requests have no effect on a session that may already exist.
-            HttpSession session = request.getSession(false); // don't create a session if there is none
+
             try
             {
                 UserProfile impersonatedUserProfile = null;
@@ -192,6 +191,8 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
             }
             finally
             {
+                // ACDEV-1304: Ensure that any add-on requests have no effect on a session that may already exist.
+                HttpSession session = request.getSession(false); // don't create a session if there is none
                 if (session != null)
                 {
                     try {
