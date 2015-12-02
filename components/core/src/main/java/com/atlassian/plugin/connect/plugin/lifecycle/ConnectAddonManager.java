@@ -263,7 +263,6 @@ public class ConnectAddonManager
         //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
         remotablePluginAccessorFactory.remove(pluginKey);
 
-        //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (addonRegistry.hasDescriptor(pluginKey))
         {
             ConnectAddonBean addon = connectAddonAccessor.getAddon(pluginKey).get();
@@ -308,7 +307,9 @@ public class ConnectAddonManager
         }
         else
         {
-            throw new ConnectAddonEnableException(pluginKey, "Tried to enable add-on before it was installed.");
+            String message = "Tried to enable add-on before it was installed.";
+            eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, message));
+            throw new ConnectAddonEnableException(pluginKey, message);
         }
     }
 
