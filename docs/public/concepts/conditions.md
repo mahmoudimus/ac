@@ -27,6 +27,7 @@ As these remote service invocations have a negative impact the user experience, 
   * [can_use_application condition](#can-use-application)
 * [Boolean operations](#boolean-operations)
 * [Remote conditions](#remote)
+  * [Caching remote conditions](#remote-caching)
 * [Appendix: List of predefined conditions](#product-specific-conditions)
   * [Confluence](#confluence-conditions)
   * [JIRA](#jira-conditions)
@@ -200,8 +201,9 @@ module declaration.
 
 ## <a name="remote"></a>Remote conditions
 
-A remote condition is a condition which is implemented as an add-on resource. Upon evaluation, the Atlassian application
-issues a request to the remote resource and expects a response which specifies whether to show or hide the module feature.
+A remote condition specifies a remote resource that will be queried for the condition result. 
+Upon evaluation, the Atlassian application issues a request to the remote resource and expects a response which 
+specifies whether to show or hide the module feature.
 
 **NOTE** If a module with a remote condition is included on a page, the user at the browser will not see the page fully loaded
 until the remote condition has returned, and, if applicable, the module itself has loaded. Considering this
@@ -237,6 +239,37 @@ authentication information passed through as a header, rather than as a query st
 
 If there is an error communicating with the remote resource (for example, the request timeout period of 10 seconds elapses with no response),
 then the failure will be logged and the condition will be evaluated as `false`.
+
+### <a name="remote-caching"></a>Caching remote conditions
+
+When the remote application requests a remote condition it will cache the results of that request if HTTP cache headers are set.
+You should make use of this feature to improve performance of your application and decrease the number of requests that are made
+to your add-on. To show you how that is done lets walk through a hypothetical example. Pretend that you have written a remote
+condition that points to the url `/condition/true` such that this resource will always return the json response
+`{ shouldDisplay: true }`. In order to make sure that it is cached your response should contain a Cache-Control header
+that looks something like this:
+
+    Cache-Control: max-age=60, must-revalidate
+
+This will cause the remote condition to be cached for 60 seconds. But, under what situations would that cache be missed, if any?
+When the request is actually made some extra query parameters will be added and the request will look something like this:
+
+    /condition/true?tz=Australia%2FSydney&loc=en-US&user_id=admin&user_key=admin&xdm_e=http%3A%2F%2Flocalhost%3A2991&xdm_c=channel-condition&cp=%2Fjira&lic=none&cv=1.1.65
+    
+So, if we were to cache this request what would have to change about this request in order to create a cache miss? Inspecting
+the query parameters one at a time will give us a result:
+
+ * If your timezone or locale changes then the cache will be missed. (tz / loc)
+ * If this same condition is requested by a different user (or their username changes) then the cache will be missed. (user_id / user_key)
+ * If the url to your cloud instance changes then the cache will be missed. But changing the url of a cloud instance is not currently possible. (xdm_e)
+ * The xdm_c variable will not change for conditions; never resulting in a cache miss.
+ * The cp (context path) variable will not change for a running product: never resulting in a cache miss.
+ * The licensed status of your add-on will force cache misses. (lic)
+ * If the Atlassian Connect addon is upgraded then your cache will be missed. (cv)
+  
+As you can see, you only really need to consider the first two points. When you cache the results of a remote condition the
+only reason that the cache will be ignored if if a different user requests that condition. Essentially, remote conditions
+will only be cached on a per-user basis; even if that user is the 'anonymous' user.
 
 ## <a name="product-specific-conditions"></a>Appendix: List of predefined conditions
 
