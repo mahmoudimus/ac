@@ -419,7 +419,7 @@ public class ConnectJsonExamples
     {
         return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
                 .withUrl("/blueprints/blueprint.xml")
-                .withContextUrl("/blueprints/context")
+                .withBlueprintContext("/blueprints/context")
                 .build();
     }
 

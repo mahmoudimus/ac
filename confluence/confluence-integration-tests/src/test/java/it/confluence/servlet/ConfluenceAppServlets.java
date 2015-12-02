@@ -5,8 +5,10 @@ import javax.servlet.http.HttpServlet;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
+import com.atlassian.plugin.connect.test.common.servlet.TestServletContextExtractor;
 
 import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.wrapContextAwareServlet;
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Utility methods for creating test servlets suitable for serving Confluence-specific Connect iframes.
@@ -32,7 +34,21 @@ public class ConfluenceAppServlets
 
     public static HttpServlet blueprintTemplateServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/test-blueprint.xml"));
+        return wrapContextAwareServlet(new MustacheServlet("it/confluence/blueprint/blueprint.mu"));
+    }
+
+    public static HttpServlet blueprintContextServlet()
+    {
+        return wrapContextAwareServlet(
+                new MustacheServlet("it/confluence/blueprint/context.json", true),
+                newArrayList(
+                        new TestServletContextExtractor("parentPageId"),
+                        new TestServletContextExtractor("addonKey"),
+                        new TestServletContextExtractor("spaceKey"),
+                        new TestServletContextExtractor("userKey"),
+                        new TestServletContextExtractor("blueprintKey")
+                )
+        );
     }
 
 }

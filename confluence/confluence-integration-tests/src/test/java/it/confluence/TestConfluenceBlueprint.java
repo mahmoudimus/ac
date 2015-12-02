@@ -1,25 +1,27 @@
 package it.confluence;
 
-import java.io.IOException;
-
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import redstone.xmlrpc.XmlRpcFault;
-
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean.newBlueprintTemplateBeanBuilder;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static it.confluence.servlet.ConfluenceAppServlets.blueprintContextServlet;
 import static it.confluence.servlet.ConfluenceAppServlets.blueprintTemplateServlet;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Integration test that loads a blueprint addon and uses it in confluence.
@@ -28,28 +30,36 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
 {
     private static ConnectRunner runner;
     private static String completeKey;
+    private static String randomAddOnKey;
+    private static String moduleKey;
+    private static TestUser testUser;
 
     @BeforeClass
     public static void setupConfluenceAndStartConnectAddOn() throws Exception
     {
-        String key = AddonTestUtils.randomAddOnKey();
-        String moduleKey = "my-blueprint";
-        completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key, moduleKey) + "-web-item";
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(),
-                key)
+        randomAddOnKey = AddonTestUtils.randomAddOnKey();
+        moduleKey = "my-blueprint";
+        completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + addonAndModuleKey(randomAddOnKey, moduleKey) + "-web-item";
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddOnKey)
                 .addInstallLifecycle()
                 .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
                 .addModule("blueprints",
-                        newBlueprintModuleBean()
-                                .withName(new I18nProperty("My Blueprint", null))
-                                .withKey(moduleKey)
-                                .withTemplate(newBlueprintTemplateBeanBuilder()
-                                        .withUrl("/template.xml")
-                                        .build())
-                                .build())
+                           newBlueprintModuleBean()
+                                   .withName(new I18nProperty("My Blueprint", null))
+                                   .withKey(moduleKey)
+                                   .withTemplate(newBlueprintTemplateBeanBuilder()
+                                                         .withUrl("/template.xml")
+                                                         .withBlueprintContext("/context")
+                                                         .build())
+                                   .build())
                 .addRoute("/template.xml", blueprintTemplateServlet())
+                .addRoute("/context", blueprintContextServlet())
                 .addScope(ScopeName.READ)
                 .start();
+
+        testUser = testUserFactory.basicUser();
+        login(testUser);
+
     }
 
     @AfterClass
@@ -62,27 +72,28 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testRemoteSimpleBlueprintVisibleInDialog() throws XmlRpcFault, IOException
+    public void testRemoteSimpleBlueprintVisibleInDialog()
     {
-        login(testUserFactory.basicUser());
-        product.visit(DashboardPage.class).createDialog.click();
-        product.getPageBinder().bind(CreateContentDialog.class).waitForBlueprint(completeKey);
+        product.visit(DashboardPage.class)
+               .openCreateDialog()
+               .waitForBlueprint(completeKey);
     }
 
     @Test
-    public void testRemoteSimpleBlueprintCanCreatePage() throws XmlRpcFault, IOException
+    public void testRemoteSimpleBlueprintCanCreatePage()
     {
-        login(testUserFactory.basicUser());
         product.visit(DashboardPage.class).createDialog.click();
-        assertTrue("new page includes blueprint content",
-                product.getPageBinder()
-                        .bind(CreateContentDialog.class)
-                        .createWithBlueprint(completeKey)
-                        .getEditor()
-                        .getContent()
-                        .getTimedHtml()
-                        .byDefaultTimeout().contains("Hello Blueprint"));
+        String editorHtml = product.getPageBinder()
+                                   .bind(CreateContentDialog.class)
+                                   .createWithBlueprint(completeKey)
+                                   .getEditor()
+                                   .getContent()
+                                   .getTimedHtml()
+                                   .byDefaultTimeout();
+        Document editorDom = Jsoup.parseBodyFragment(editorHtml);
+        assertThat("new page includes blueprint content", editorHtml, containsString("Hello Blueprint"));
+        assertThat("new page includes blueprint content", editorHtml, containsString(moduleKey));
+        assertThat("wiki variable failed", editorDom.select("p strong").text(), is(randomAddOnKey));
+        assertThat("xhtml variable failed", editorDom.select("h2 img").attr("data-macro-name"), is("cheese"));
     }
-
-
 }

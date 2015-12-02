@@ -20,17 +20,17 @@ public class BlueprintTemplateBean {
      * to the add-on base URL.
      */
     @Required
-    @StringSchemaAttributes(format="url-template")
+    @StringSchemaAttributes(format="uri-template")
     private String url;
 
     /**
-     * The URL of the add-on server resource that provides the blueprint template with the context variables required for rendering.
+     * The URL of the add-on server resource that provides the blueprint template with the blueprintContext variables required for rendering.
      * This url will be POST'ed to during the creation of a blueprint with some data, and the expected return value is a
      * json object whose keys are the variables found in the template, and and whose values are the values to be used
      * in the substitution.
      */
-    @StringSchemaAttributes(format="url-template")
-    private String context;
+    @StringSchemaAttributes(format="uri-template")
+    private String blueprintContext;
 
     public static BlueprintTemplateBeanBuilder newBlueprintTemplateBeanBuilder() {
         return new BlueprintTemplateBeanBuilder();
@@ -44,7 +44,7 @@ public class BlueprintTemplateBean {
         return url;
     }
 
-    public String getContext() {
-        return context;
+    public String getBlueprintContext() {
+        return blueprintContext;
     }
 }

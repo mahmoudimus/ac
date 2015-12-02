@@ -67,7 +67,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                 .addAttribute("type", "download")
                 .addAttribute("location", createTemplateURL(addon.getBaseUrl(), bean.getBlueprintTemplate().getUrl()));
 
-        String contextUrl = BlueprintUtils.getContextUrl(addon, bean);
+        String contextUrl = bean.getBlueprintTemplate().getBlueprintContext();
         if (contextUrl != null)
         {
             Element contextProvider = contentTemplateElement.addElement("context-provider");
@@ -80,7 +80,8 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                                   .addAttribute("value", addon.getKey());
             contextProvider.addElement("param")
                                   .addAttribute("name", CONTENT_TEMPLATE_KEY)
-                                  .addAttribute("value", contentTemplateKey);
+                                  //we want the raw key since this is going to be sent to the connect plugin, and they can't decode our full key format
+                                  .addAttribute("value", bean.getRawKey());
         }
 
         if (log.isDebugEnabled())
