@@ -10,32 +10,14 @@ AJS.bind("init.rte", function () {
     var macroName = "%%MACRONAME%%";
     var macroUrl = AJS.params.contextPath + "%%URL%%";
 
-    require(["connect-host"], function(_AP) {
+    require(["ac/confluence/macro/property-panel-iframe"], function(propertyPanelIframeInjector) {
         //TODO: Replace this with confluence/macro-js-overrides, once the version of Confluence that supports
         // it is released to cloud. CRA-1219
         var existingOverride = AJS.MacroBrowser.getMacroJsOverride(macroName);
         if (existingOverride == null) {
             existingOverride = {};
         }
-        $.extend(existingOverride, {
-            propertyPanelIFrameInjector: function(currentPropertyPanel) {
-                function getIframeHtmlForMacro(url) {
-                    var data = {
-                        "ui-params": _AP.uiParams.encode({dlg: 1}),
-                        "classifier": "property-panel"
-                    };
-                    return $.ajax(url, {
-                        data: data
-                    });
-                }
-
-                getIframeHtmlForMacro(macroUrl).done(function(data){
-                    var panelHtml = $(data);
-                    panelHtml.css("display", "none");
-                    currentPropertyPanel.panel.append(panelHtml);
-                });
-            }
-        });
+        $.extend(existingOverride, propertyPanelIframeInjector(macroUrl));
         AJS.MacroBrowser.setMacroJsOverride(macroName, existingOverride);
     });
 
