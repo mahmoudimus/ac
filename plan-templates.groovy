@@ -13,7 +13,7 @@ plan(
             type: 'Failed Builds and First Successful',
             recipient: 'committers'
     )
-    runTestsStage()
+    runTestsStage(mavenParameters: '')
     stage(
             name: 'Start Release',
             manual: 'true'
@@ -54,8 +54,12 @@ plan(
             notificationStrategy: 'INHERIT',
             remoteJiraBranchLinkingEnabled: 'true'
     )
+    variable(
+            key: 'bamboo.maven.parameters',
+            value: ''
+    )
 
-    runTestsStage()
+    runTestsStage(mavenParameters: '${bamboo_maven_parameters}')
 }
 
 plan(
