@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.jira.web.context;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.user.UserManager;
@@ -27,13 +26,8 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
+    public Map<String, String> extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
-        if (ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
-        {
-            return (ModuleContextParameters) webFragmentContext;
-        }
-
         JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
 
         for (ParameterExtractor extractor : parameterExtractors)

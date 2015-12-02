@@ -3,23 +3,20 @@ package com.atlassian.plugin.connect.jira.web.context;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.web.context.AbstractModuleContextFilter;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.connect.spi.module.PermissionChecks;
+import com.atlassian.plugin.connect.spi.web.context.AbstractModuleContextFilter;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.predicate.ModuleDescriptorPredicate;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -29,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -198,7 +196,7 @@ public final class AbstractContextFilterTest
                     ))
             );
 
-            ModuleContextParameters filtered = filter.filter(contextWithAllParameters(whatToFilter));
+            Map<String, String> filtered = filter.filter(contextWithAllParameters(whatToFilter));
 
             assertThat(filtered.keySet(), equalTo((Set) ImmutableSet.copyOf(expectedResult)));
         }
@@ -223,9 +221,9 @@ public final class AbstractContextFilterTest
         }
     }
 
-    private ModuleContextParameters contextWithAllParameters(Iterable<String> names)
+    private Map<String, String> contextWithAllParameters(Iterable<String> names)
     {
-        ModuleContextParameters result = new HashMapModuleContextParameters();
+        Map<String, String> result = new HashMapModuleContextParameters();
         for (String name : names)
         {
             result.put(name, name);

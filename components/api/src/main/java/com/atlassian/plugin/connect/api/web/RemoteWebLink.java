@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.api.web;
 
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -53,7 +52,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getRenderedUrl(final Map<String, Object> context)
     {
-        ModuleContextParameters moduleParams = webFragmentModuleContextExtractor.extractParameters(context);
+        Map<String, String> moduleParams = webFragmentModuleContextExtractor.extractParameters(context);
         moduleParams = moduleContextFilter.filter(moduleParams);
 
         return iFrameUriBuilderFactory.builder()
@@ -75,7 +74,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         }
         else
         {
-            ModuleContextParameters moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
+            Map<String, String> moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
             moduleContext = moduleContextFilter.filter(moduleContext);
 
             if (addOnUrlContext == addon)

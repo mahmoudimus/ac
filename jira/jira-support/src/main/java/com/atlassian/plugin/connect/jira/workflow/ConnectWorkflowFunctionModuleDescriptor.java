@@ -1,18 +1,11 @@
 package com.atlassian.plugin.connect.jira.workflow;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
@@ -21,11 +14,15 @@ import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-
 import org.dom4j.Element;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
@@ -98,7 +95,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
 
         if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
         {
-            ModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
+            Map<String, String> moduleContext = new JiraModuleContextParametersImpl();
             moduleContext.put(
                     JiraModuleContextFilter.POSTFUNCTION_ID,
                     (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_ID)

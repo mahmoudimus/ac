@@ -13,8 +13,8 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
-import java.util.Map;
 import javax.inject.Inject;
+import java.util.Map;
 
 /**
  *
@@ -31,13 +31,8 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
+    public Map<String, String> extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
-        if(ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
-        {
-            return (ModuleContextParameters) webFragmentContext;
-        }
-        
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl();
 
         {
@@ -101,7 +96,7 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             moduleContext.addProfileUser(profile);
         }
 
-        ModuleContextParameters nestedContext = (ModuleContextParameters) webFragmentContext.get(MODULE_CONTEXT_KEY);
+        Map<String, String> nestedContext = (Map<String, String>) webFragmentContext.get(MODULE_CONTEXT_KEY);
         if (nestedContext != null)
         {
             moduleContext.putAll(nestedContext);

@@ -2,11 +2,10 @@ package com.atlassian.plugin.connect.jira.web;
 
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
@@ -28,8 +27,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
@@ -81,10 +81,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
                 webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
-
-        ModuleContextParameters contextParameters = mock(ModuleContextParameters.class);
-        when(contextParameters.isEmpty()).thenReturn(true);
-        when(moduleContextFilter.filter(any(ModuleContextParameters.class))).thenReturn(contextParameters);
+        when(moduleContextFilter.filter(any(Map.class))).thenReturn(new HashMap<>());
     }
 
     @Test

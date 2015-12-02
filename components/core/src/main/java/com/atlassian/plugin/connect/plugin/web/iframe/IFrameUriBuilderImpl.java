@@ -1,11 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import java.net.URI;
-import java.util.Optional;
-
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
@@ -15,9 +11,12 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -81,7 +80,7 @@ public class IFrameUriBuilderImpl
     }
 
     @Override
-    public InitializedBuilder context(final ModuleContextParameters context)
+    public InitializedBuilder context(final Map<String, String> context)
     {
         String substitutedUrl = urlVariableSubstitutor.replace(templateUri, context);
         UriBuilder uriBuilder = new UriBuilder(Uri.parse(substitutedUrl));

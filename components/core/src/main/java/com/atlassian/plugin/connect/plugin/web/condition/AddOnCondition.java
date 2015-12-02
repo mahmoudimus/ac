@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.web.Condition;
@@ -84,7 +83,7 @@ public class AddOnCondition implements Condition
 
         Configuration cfg = checkNotNull(configuration.get(), "configuration has not been set - init() not called?");
 
-        ModuleContextParameters moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
+        Map<String, String> moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
 
         String uriString = iFrameUriBuilderFactory
                 .builder()

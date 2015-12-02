@@ -1,27 +1,24 @@
 package com.atlassian.plugin.connect.jira.web.dashboard;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.gadgets.plugins.DashboardItemModule;
 import com.atlassian.gadgets.plugins.DashboardItemModule.DirectoryDefinition;
 import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.Condition;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Connect version of dashboard-item.
@@ -130,8 +127,8 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         @Override
         public void renderContent(final Writer writer, final Map<String, Object> context)
         {
-            ModuleContextParameters unfilteredContext = moduleContextExtractor.extractParameters(context);
-            ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
+            Map<String, String> unfilteredContext = moduleContextExtractor.extractParameters(context);
+            Map<String, String> filteredContext = moduleContextFilter.filter(unfilteredContext);
             try
             {
                 renderStrategy.render(filteredContext, writer, Optional.empty());

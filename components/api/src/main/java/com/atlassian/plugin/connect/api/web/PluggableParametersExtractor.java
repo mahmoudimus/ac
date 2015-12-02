@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.api.web;
 
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-
 import java.util.Map;
 
 /**
@@ -9,5 +7,5 @@ import java.util.Map;
  */
 public interface PluggableParametersExtractor
 {
-    ModuleContextParameters extractParameters(Map<String, Object> context);
+    Map<String, String> extractParameters(Map<String, Object> context);
 }

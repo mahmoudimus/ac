@@ -1,13 +1,15 @@
 package com.atlassian.plugin.connect.api.web.context;
 
+import java.util.Map;
+
 /**
  * @since 1.0
  */
 public interface ModuleContextFilter
 {
     /**
-     * @param unfiltered the raw context parameters, parsed from the request
+     * @param unfilteredContext the raw context parameters, parsed from the request
      * @return a filtered collection of parameters that will be passed to the remote iframe
      */
-    ModuleContextParameters filter(ModuleContextParameters unfiltered);
+    Map<String, String> filter(Map<String, String> unfilteredContext);
 }

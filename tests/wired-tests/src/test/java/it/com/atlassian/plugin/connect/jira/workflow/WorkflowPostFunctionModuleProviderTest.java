@@ -1,12 +1,6 @@
 package it.com.atlassian.plugin.connect.jira.workflow;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Optional;
-
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -18,11 +12,16 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
@@ -103,7 +102,7 @@ public class WorkflowPostFunctionModuleProviderTest
     @Test
     public void uiParamsNotInUrlWhenNotProvided() throws URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        Map<String, String> moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.<String>empty());
         final URI iframeUrl = new URI(iframeUrlStr);
@@ -113,7 +112,7 @@ public class WorkflowPostFunctionModuleProviderTest
     @Test
     public void uiParamsInUrlWhenProvided() throws URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        Map<String, String> moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.of("blah"));
         final URI iframeUrl = new URI(iframeUrlStr);
@@ -122,7 +121,7 @@ public class WorkflowPostFunctionModuleProviderTest
 
     private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        Map<String, String> moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
 
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.<String>empty());

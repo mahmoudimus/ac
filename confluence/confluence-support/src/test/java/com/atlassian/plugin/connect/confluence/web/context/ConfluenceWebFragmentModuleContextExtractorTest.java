@@ -6,7 +6,6 @@ import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -16,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
@@ -43,7 +44,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
         when(profile.getUserKey()).thenReturn(userKey);
         when(profile.getUsername()).thenReturn("tpettersen");
 
-        ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("targetUser", user));
+        Map<String, String> params = extractor.extractParameters(ImmutableMap.<String, Object>of("targetUser", user));
         assertEquals("test-key", params.get("profileUser.key"));
         assertEquals("tpettersen", params.get("profileUser.name"));
     }
@@ -56,7 +57,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
         when(page.getVersion()).thenReturn(2);
         when(page.getType()).thenReturn("page");
 
-        ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("page", page));
+        Map<String, String> params = extractor.extractParameters(ImmutableMap.<String, Object>of("page", page));
         assertEquals("123", params.get("page.id"));
         assertEquals("2", params.get("page.version"));
         assertEquals("page", params.get("page.type"));
@@ -69,7 +70,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
         when(space.getKey()).thenReturn("SPACE");
         when(space.getId()).thenReturn(321L);
 
-        ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("space", space));
+        Map<String, String> params = extractor.extractParameters(ImmutableMap.<String, Object>of("space", space));
         assertEquals("321", params.get("space.id"));
         assertEquals("SPACE", params.get("space.key"));
     }
@@ -90,7 +91,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
         AbstractPageAwareAction pageAwareAction = mock(AbstractPageAwareAction.class);
         when(pageAwareAction.getPage()).thenReturn(page);
 
-        ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("action", pageAwareAction));
+        Map<String, String> params = extractor.extractParameters(ImmutableMap.<String, Object>of("action", pageAwareAction));
 
         assertEquals("123", params.get("page.id"));
         assertEquals("2", params.get("page.version"));
@@ -105,7 +106,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
         BlogPost blogPost = mock(BlogPost.class);
         when(blogPost.getId()).thenReturn(123L);
 
-        ModuleContextParameters params = extractor.extractParameters(ImmutableMap.<String, Object>of("page", blogPost));
+        Map<String, String> params = extractor.extractParameters(ImmutableMap.<String, Object>of("page", blogPost));
         assertEquals("123", params.get("page.id"));
     }
 }

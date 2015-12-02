@@ -9,7 +9,6 @@ import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.ExecutingHttpRequest;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParametersImpl;
@@ -49,7 +48,7 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
     {
         // parse and filter module context
         JiraModuleContextParameters unfilteredContext = createUnfilteredContext(request.issue());
-        ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
+        Map<String, String> filteredContext = moduleContextFilter.filter(unfilteredContext);
 
         // render tab HTML
         StringIssueAction stringAction = new StringIssueAction(renderToString(filteredContext, iFrameRenderStrategy));

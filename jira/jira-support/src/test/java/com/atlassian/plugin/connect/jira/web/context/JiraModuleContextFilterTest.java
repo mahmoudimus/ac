@@ -13,7 +13,6 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.junit.Before;
@@ -151,10 +150,10 @@ public class JiraModuleContextFilterTest
 
     private void testFilter(Map<String, String> input, Map<String, String> expectedOutput)
     {
-        ModuleContextParameters unfiltered = new HashMapModuleContextParameters();
+        Map<String, String> unfiltered = new HashMapModuleContextParameters();
         unfiltered.putAll(input);
 
-        ModuleContextParameters filtered = jiraModuleContextFilter.filter(unfiltered);
+        Map<String, String> filtered = jiraModuleContextFilter.filter(unfiltered);
 
         if (expectedOutput.isEmpty())
         {

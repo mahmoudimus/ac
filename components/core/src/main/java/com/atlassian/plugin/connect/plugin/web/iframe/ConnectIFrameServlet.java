@@ -1,19 +1,18 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -55,7 +54,7 @@ public class ConnectIFrameServlet extends HttpServlet
             if (renderStrategy != null)
             {
                 resp.setContentType(renderStrategy.getContentType());
-                ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
+                Map<String, String> moduleContextParameters = moduleContextParser.parseContextParameters(req);
 
                 if (renderStrategy.shouldShow(moduleContextParameters))
                 {

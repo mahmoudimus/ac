@@ -3,14 +3,13 @@ package com.atlassian.plugin.connect.api.web.iframe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Map;
 import java.util.Optional;
-
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 
 public class IFrameRenderStrategyUtil
 {
 
-    public static String renderToString(ModuleContextParameters moduleContextParameters, IFrameRenderStrategy iFrameRenderStrategy)
+    public static String renderToString(Map<String, String> moduleContextParameters, IFrameRenderStrategy iFrameRenderStrategy)
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try

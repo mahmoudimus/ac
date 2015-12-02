@@ -13,7 +13,6 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.user.User;
@@ -22,6 +21,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Map;
 
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.not;
@@ -73,12 +74,12 @@ public class ConfluenceModuleContextFilterTest
         when(pageManager.getAbstractPage(anyLong())).thenReturn(page);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(page))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("page.id", "1234");
         params.put("page.version", "1");
         params.put("page.type", "page");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
         assertFalse(filtered.containsKey("page.id"));
 
         // page.version and page.type are not protected information
@@ -93,12 +94,12 @@ public class ConfluenceModuleContextFilterTest
         when(pageManager.getAbstractPage(anyLong())).thenReturn(page);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(page))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("page.id", "1234");
         params.put("page.version", "2");
         params.put("page.type", "blog");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
         assertEquals("1234", filtered.get("page.id"));
         assertEquals("2", filtered.get("page.version"));
         assertEquals("blog", filtered.get("page.type"));
@@ -111,12 +112,12 @@ public class ConfluenceModuleContextFilterTest
         when(pageManager.getAbstractPage(anyLong())).thenReturn(post);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(post))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("page.id", "1234");
         params.put("page.version", "2");
         params.put("page.type", "blog");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
         assertEquals("1234", filtered.get("page.id"));
         assertEquals("2", filtered.get("page.version"));
         assertEquals("blog", filtered.get("page.type"));
@@ -129,10 +130,10 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(anyString())).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("space.key", "TEST");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
         assertEquals("TEST", filtered.get("space.key"));
     }
 
@@ -145,11 +146,11 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(eq(1L))).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("space.key", "TEST");
         params.put("space.id", "1");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
         assertEquals("TEST", filtered.get("space.key"));
         assertEquals("1", filtered.get("space.id"));
     }
@@ -162,11 +163,11 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(anyString())).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("space.key", "TEST");
         params.put("space.id", "2");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
         assertEquals("TEST", filtered.get("space.key"));
         assertFalse(filtered.containsKey("space.id"));
     }
@@ -186,11 +187,11 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(2L)).thenReturn(barSpace);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(barSpace))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("space.key", "FOO");
         params.put("space.id", "2"); // bar's id
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
         assertFalse(filtered.containsKey("space.key"));
         assertEquals("2", filtered.get("space.id"));
     }
@@ -204,11 +205,11 @@ public class ConfluenceModuleContextFilterTest
         when(userAccessor.getUserByName(eq("bob"))).thenReturn(bob);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(bob))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("profileUser.name", "bob");
         params.put("profileUser.key", "babecafe");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
 
         assertThat(filtered, hasEntry(is("profileUser.name"), is("bob")));
         assertThat(filtered, hasEntry(is("profileUser.key"), is("babecafe")));
@@ -225,11 +226,11 @@ public class ConfluenceModuleContextFilterTest
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(bob))).thenReturn(true);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(eve))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("profileUser.name", "bob");
         params.put("profileUser.key", "defaced");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
 
         assertThat(filtered, hasEntry(is("profileUser.name"), is("bob")));
         assertThat(filtered, not(hasEntry(is("profileUser.key"), is("defaced"))));
@@ -244,11 +245,11 @@ public class ConfluenceModuleContextFilterTest
         when(userAccessor.getExistingUserByKey(eq(userKey))).thenReturn(eve);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(eve))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("profileUser.name", "eve");
         params.put("profileUser.key", "defaced");
 
-        ModuleContextParameters filtered = filter.filter(params);
+        Map<String, String> filtered = filter.filter(params);
 
         assertThat(filtered, not(hasEntry(is("profileUser.name"), is("eve"))));
         assertThat(filtered, not(hasEntry(is("profileUser.key"), is("defaced"))));
@@ -260,7 +261,7 @@ public class ConfluenceModuleContextFilterTest
     public void testFilterForbiddenContentDoesNotContainId()
     {
         createMockContentEntity(false);
-        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
+        Map<String, String> filtered = filter.filter(createCustomContentParams());
 
         assertFalse(filtered.containsKey("content.id"));
     }
@@ -269,7 +270,7 @@ public class ConfluenceModuleContextFilterTest
     public void testFilterForbiddenContentAllowsNonSensitiveParams()
     {
         createMockContentEntity(false);
-        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
+        Map<String, String> filtered = filter.filter(createCustomContentParams());
 
         // version/type/plugin are not protected information
         assertTrue(filtered.containsKey("content.version"));
@@ -282,7 +283,7 @@ public class ConfluenceModuleContextFilterTest
     {
         createMockContentEntity(true);
 
-        ModuleContextParameters filtered = filter.filter(createCustomContentParams());
+        Map<String, String> filtered = filter.filter(createCustomContentParams());
 
         assertEquals("1234", filtered.get("content.id"));
         assertEquals("1", filtered.get("content.version"));
@@ -290,9 +291,9 @@ public class ConfluenceModuleContextFilterTest
         assertEquals("plugin:foo", filtered.get("content.plugin"));
     }
 
-    private ModuleContextParameters createCustomContentParams()
+    private Map<String, String> createCustomContentParams()
     {
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        Map<String, String> params = new HashMapModuleContextParameters();
         params.put("content.id", "1234");
         params.put("content.version", "1");
         params.put("content.type", "custom");

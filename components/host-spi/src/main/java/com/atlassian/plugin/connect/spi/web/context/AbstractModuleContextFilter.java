@@ -1,28 +1,25 @@
 package com.atlassian.plugin.connect.spi.web.context;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Options;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
@@ -58,16 +55,16 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
     }
 
     @Override
-    public ModuleContextParameters filter(final ModuleContextParameters unfiltered)
+    public Map<String, String> filter(final Map<String, String> unfilteredContext)
     {
-        final ModuleContextParameters filtered = new HashMapModuleContextParameters();
+        final Map<String, String> filtered = new HashMapModuleContextParameters();
         final T currentUser = getCurrentUser();
 
         Multimap<String, PermissionCheck<T>> permissionChecksMultimap = getFieldNameToPermissionChecksMap();
 
-        for (final String parameterName : Iterables.filter(unfiltered.keySet(), IS_NOT_EMPTY))
+        for (final String parameterName : Iterables.filter(unfilteredContext.keySet(), IS_NOT_EMPTY))
         {
-            final String parameterValue = unfiltered.get(parameterName);
+            final String parameterValue = unfilteredContext.get(parameterName);
             Collection<PermissionCheck<T>> permissionChecks = permissionChecksMultimap.get(parameterName);
 
             boolean allValidatorsGrantedPermission = Iterables.all(permissionChecks, new Predicate<PermissionCheck<T>>()

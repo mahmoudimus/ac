@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.api.web.iframe;
 
-import java.util.Optional;
-
 import javax.annotation.concurrent.NotThreadSafe;
-
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Builds URIs to be used as the src attribute for iframes targeting Connect apps.
@@ -42,12 +39,12 @@ public interface IFrameUriBuilder
     interface TemplatedBuilder
     {
         /**
-         * @param context the {@link ModuleContextParameters} containing the context issue, project, space, etc. This
-         * builder does not do any permission checking, so it is up to the caller to apply the {@link ModuleContextFilter}
+         * @param context the context parameters containing the context issue, project, space, etc. This
+         * builder does not do any permission checking, so it is up to the caller to apply the {@link com.atlassian.plugin.connect.api.web.context.ModuleContextFilter}
          * if necessary.
          * @return the builder
          */
-        InitializedBuilder context(ModuleContextParameters context);
+        InitializedBuilder context(Map<String, String> context);
     }
 
     interface InitializedBuilder

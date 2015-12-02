@@ -6,7 +6,6 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParametersImpl;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -44,8 +43,8 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
 
     public String getHtml(ApplicationUser user)
     {
-        ModuleContextParameters unfilteredContext = createUnfilteredContext(user);
-        Map<String, ModuleContextParameters> conditionContext = ImmutableMap.of(MODULE_CONTEXT_KEY, unfilteredContext);
+        Map<String, String> unfilteredContext = createUnfilteredContext(user);
+        Map<String, Map<String, String>> conditionContext = ImmutableMap.of(MODULE_CONTEXT_KEY, unfilteredContext);
 
         if (iFrameRenderStrategy.shouldShow(conditionContext))
         {
@@ -57,10 +56,10 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
         }
     }
 
-    private ModuleContextParameters createUnfilteredContext(final ApplicationUser profileUser)
+    private Map<String, String> createUnfilteredContext(final ApplicationUser profileUser)
     {
         UserProfile userProfile = userManager.getUserProfile(new UserKey(profileUser.getKey()));
-        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+        ModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
         unfilteredContext.addProfileUser(userProfile);
         return unfilteredContext;
     }

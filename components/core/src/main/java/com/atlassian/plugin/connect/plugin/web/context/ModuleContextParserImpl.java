@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +30,9 @@ public class ModuleContextParserImpl implements ModuleContextParser
     }
 
     @Override
-    public ModuleContextParameters parseContextParameters(final HttpServletRequest req)
+    public Map<String, String> parseContextParameters(final HttpServletRequest req)
     {
-        ModuleContextParameters unfiltered = new HashMapModuleContextParameters();
+        Map<String, String> unfiltered = new HashMapModuleContextParameters();
         final Map<String, String[]> parameterMap = requestJsonParameterUtil.tryExtractContextFromJson(req.getParameterMap());
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet())
         {

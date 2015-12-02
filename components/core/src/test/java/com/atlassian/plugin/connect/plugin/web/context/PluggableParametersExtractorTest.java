@@ -2,13 +2,12 @@ package com.atlassian.plugin.connect.plugin.web.context;
 
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
-import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -36,7 +35,7 @@ public final class PluggableParametersExtractorTest
             "b", 2
     );
 
-    private final static ModuleContextParameters LOCAL_PARAMS = moduleParamsFromMap(ImmutableMap.of(
+    private final static Map<String, String> LOCAL_PARAMS = moduleParamsFromMap(ImmutableMap.of(
             "a", "1",
             "b", "2"
     ));
@@ -110,9 +109,9 @@ public final class PluggableParametersExtractorTest
         );
     }
 
-    private static ModuleContextParameters moduleParamsFromMap(Map<String, String> map)
+    private static Map<String, String> moduleParamsFromMap(Map<String, String> map)
     {
-        HashMapModuleContextParameters result = new HashMapModuleContextParameters();
+        Map<String, String> result = new HashMapModuleContextParameters();
         result.putAll(map);
         return result;
     }

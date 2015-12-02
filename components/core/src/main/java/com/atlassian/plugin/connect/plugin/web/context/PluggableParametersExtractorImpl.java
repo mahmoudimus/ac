@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.web.context;
 
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterMapper;
 import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
@@ -42,9 +41,9 @@ public class PluggableParametersExtractorImpl implements PluggableParametersExtr
         this.pluginAccessor = pluginAccessor;
     }
 
-    public ModuleContextParameters extractParameters(Map<String, Object> context)
+    public Map<String, String> extractParameters(Map<String, Object> context)
     {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        Map<String, String> moduleContextParameters = new HashMapModuleContextParameters();
         moduleContextParameters.putAll(connectModuleContextExtractor.extractParameters(context));
         moduleContextParameters.putAll(extractFromPluginProvidedExtractors(context));
         moduleContextParameters.putAll(extractFromPluginProvidedMappers(context));
