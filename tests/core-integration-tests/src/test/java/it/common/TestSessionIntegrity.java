@@ -64,6 +64,8 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     {
         WebDriver driver = product.getTester().getDriver().getDriver();
 
+        login(testUserFactory.basicUser());
+
         driver.get(signWithJwt("/rest/remoteplugintest/1/user"));
         assertThat(driver.getPageSource(), containsString(user("addon_" + runner.getAddon().getName())));
 
