@@ -55,11 +55,11 @@ plan(
             remoteJiraBranchLinkingEnabled: 'true'
     )
     variable(
-            key: 'bamboo.maven.parameters',
+            key: 'maven.parameters',
             value: ''
     )
 
-    runTestsStage(mavenParameters: '${bamboo_maven_parameters}')
+    runTestsStage(mavenParameters: '${bamboo.maven.parameters}')
 }
 
 plan(
@@ -75,7 +75,7 @@ plan(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo.product.version}'
         )
     }
 }
@@ -93,7 +93,7 @@ plan(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo.product.version}'
         )
     }
 }

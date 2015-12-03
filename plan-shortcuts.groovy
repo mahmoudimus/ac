@@ -12,7 +12,7 @@ productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
-            key: 'bamboo.product.version',
+            key: 'product.version',
             value: '#productVersion'
     )
     trigger(
