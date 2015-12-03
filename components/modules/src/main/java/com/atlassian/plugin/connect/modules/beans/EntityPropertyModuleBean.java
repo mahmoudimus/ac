@@ -12,11 +12,46 @@ import java.util.List;
 
 /**
  * Entity properties allow add-ons to add key/value stores to JIRA entities, such as issues or projects.
- * These values are indexed by JIRA and able to be queried via a REST api or through JQL.
+ * This module allows you to request those entity properties to be indexed by JIRA and able to be queried via JQL searches.
  * They are also available in the [`entity_property_equal_to`](../../concepts/conditions.html#entity-property) condition.
+ *
+ * <h4>Overview</h4>
+ *
+ * The purpose of this module is to specify what data from which entity properties should be extracted and indexed.
+ * Pretend that an add-on developer has an issue entity property with the key 'attachment' and in that entity property they store the following
+ * data:
+ *
+ * <pre>
+ * {
+ *     "attachment": {
+ *         "size": 14231,
+ *         "name": "new-years-jam",
+ *         "extension": "mp3",
+ *         "updated": "2016-12-25T20:55:59"
+ *     },
+ *     "extraData": {
+ *         ...
+ *     }
+ * }
+ * </pre>
+ *
+ * In this example the developer wants to make the *size*, *extension* and *updated* fields from the *attachment* object be searchable via JQL. To do that they start
+ * by declaring that the *entityType* to index will be an 'issue' entity type; this is specified at the top level of their
+ * module. Then they need to specify which entity property key that they wish to extract data from: so they add a single entry
+ * to *keyConfiguratons* with the *propertyKey* of 'attachment'. If there are multiple issue entity properties that an add-on developer wanted
+ * to index then they could add more *keyConfigurations* to declare those extra properties. From there the add-on developer specifies
+ * which data they want to extract from the json value that is stored in this issue entity property. In this example they would
+ * add three extractions for *attachment.size*, *attachment.extension* and *attachment.updated* being clear to specify the typo
+ * of data being extracted and what alias should be made avaliable to JQL queries.
+ *
+ * It is important to note that array types can be indexed too; that the *type* field in the extraction should be the type of
+ * each element in the array.
+ *
+ * You can see the resultant module definition in the example below.
+ *
  * For more information, please see the [JIRA documentation on entity properties](https://developer.atlassian.com/display/JIRADEV/JIRA+Entity+Properties+Overview).
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_EXAMPLE}
  * @schemaTitle Entity Property
