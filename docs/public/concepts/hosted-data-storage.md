@@ -118,12 +118,74 @@ All users and add-ons in the system can see all entity properties that they have
 not then A can see all of the entity properties on the issue and B will get a HTTP 403 when they attempt to query for any properties. This means that a malicious 
 user can modify the state of entity properties for everybody. Don't put sensitive data in these entity properties.
 This also means that you should namespace your entity properties to avoid conflicts with entity properties that other addons or users might create.
- 
-### Using entity properties
 
-### JQL search on entity properties
+Please note that you can only get or modify entity properties as a logged in user.
+ 
+### Issue entity properties example
+
+To set an entity property on an issue you can make the following request:
+
+    PUT /rest/api/2/issue/ET-1/properties/party-addon-properties
+              
+    {"party": { "attendees": ["alex", "betty", "charles", "davinda"], "attendeeCount": 4 }}
+    
+Then to get that data back you could make the following request:
+
+    GET /rest/api/2/issue/ET-1/properties/party-addon-properties
+     
+    {
+      "key": "party-addon-properties",
+      "value": {
+        "party": {
+          "attendees": [
+            "alex",
+            "betty",
+            "charles",
+            "davinda"
+          ],
+          "attendeeCount": 4
+        }
+      }
+    }
+         
+In this example an issue entity property with the key *party-addon-properties* has been set on the issue ET-1.
+
+You could then use the *jiraEntityProperties* module to index these issue entity properties so that they became avaliable
+in JQL searches. [Read the jiraEntityProperties documentation](modules/jira/entity-property.html) for more details.
 
 ### Conditions on entity properties
+
+Conditions on entity properties provide a major performance advantage over remote conditions; since the entity property is
+local to the host application the condition evaluates rapidly instead of requiring an entire HTTP call to take place.
+
+You can use the `entity_property_equal_to` condition to decide whether or not to show a web fragment based on the data
+in an entity property. For example, if we had an issue entity property with the key `isSpecialUser` and a value of `true` 
+(json boolean) then we could write the following conditon:
+
+    {
+        condition: "entity_property_equal_to",
+        params: {
+            entity: "issue",
+            propertyKey: "isSpecialUser",
+            value: "true"
+        }
+    }
+
+It is important to note that the `params.value` field currently expects a string. If you have a more complicated JSON object
+that you wish to compare against stored in your entity property then you will need to convert your json into a string that
+you compare for equality. To give you an example, if the true json boolean was actually the json string "special" then you should 
+write the condition like so:
+
+    {
+        condition: "entity_property_equal_to",
+        params: {
+            entity: "issue",
+            propertyKey: "isSpecialUser",
+            value: "\"special\""
+        }
+    }
+    
+Also, there is currently no way to get a nested value out of a json object stored in an entity property for the purposes of comparison.
 
 ## Confluence content properties
 
