@@ -10,7 +10,7 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsers;
 
 import org.slf4j.Logger;

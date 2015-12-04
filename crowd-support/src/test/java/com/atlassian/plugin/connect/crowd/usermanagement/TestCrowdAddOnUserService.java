@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.spi.HostProperties;

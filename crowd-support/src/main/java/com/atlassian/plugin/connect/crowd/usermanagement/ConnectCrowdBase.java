@@ -13,7 +13,6 @@ import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
@@ -148,7 +147,7 @@ public abstract class ConnectCrowdBase
             throws OperationFailedException, InvalidUserException;
 
     protected abstract void updateUser(UserTemplate fixes);
-    
+
     protected abstract void updateUserCredential(String username, PasswordCredential passwordCredential);
 
     protected abstract void addGroup(String groupName)
