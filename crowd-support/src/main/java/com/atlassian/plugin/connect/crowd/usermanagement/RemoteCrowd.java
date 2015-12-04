@@ -21,7 +21,7 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class RemoteCrowd extends ConnectCrowdBase
         }
         catch (UserNotFoundException | InvalidAuthenticationException | ApplicationPermissionException | OperationFailedException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
@@ -60,7 +60,7 @@ public class RemoteCrowd extends ConnectCrowdBase
         }
         catch (InvalidCredentialException | ApplicationPermissionException | InvalidAuthenticationException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
@@ -73,10 +73,10 @@ public class RemoteCrowd extends ConnectCrowdBase
         catch (InvalidUserException | InvalidAuthenticationException
                 | ApplicationPermissionException | OperationFailedException | UserNotFoundException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
-    
+
     protected void updateUserCredential(String username, PasswordCredential passwordCredential)
     {
         try
@@ -97,7 +97,7 @@ public class RemoteCrowd extends ConnectCrowdBase
         catch (UserNotFoundException | InvalidAuthenticationException |
                 ApplicationPermissionException | InvalidCredentialException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 

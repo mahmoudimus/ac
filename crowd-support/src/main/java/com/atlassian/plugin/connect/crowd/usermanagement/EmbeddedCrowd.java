@@ -21,7 +21,7 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public class EmbeddedCrowd extends ConnectCrowdBase
         }
         catch (OperationFailedException | UserNotFoundException | ApplicationPermissionException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
@@ -114,7 +114,7 @@ public class EmbeddedCrowd extends ConnectCrowdBase
         }
         catch (InvalidCredentialException | ApplicationPermissionException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
@@ -128,10 +128,10 @@ public class EmbeddedCrowd extends ConnectCrowdBase
         catch (InvalidUserException | ApplicationPermissionException
                 | OperationFailedException | UserNotFoundException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
-    
+
     @Override
     protected void updateUserCredential(String username, PasswordCredential passwordCredential)
     {
@@ -145,7 +145,7 @@ public class EmbeddedCrowd extends ConnectCrowdBase
         }
         catch ( ApplicationPermissionException | UserNotFoundException | InvalidCredentialException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 

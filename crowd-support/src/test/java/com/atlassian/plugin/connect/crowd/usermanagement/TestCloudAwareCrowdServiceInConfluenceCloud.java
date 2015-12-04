@@ -12,7 +12,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.connect.spi.FeatureManager;
 import com.atlassian.plugin.connect.spi.HostProperties;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -177,7 +177,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         when(embedded.findUserByName(anyString())).thenReturn(Optional.empty());
         cloudAwareCrowdService.setSyncTimeout(1);
 
-        thrown.expect(ConnectAddOnUserInitException.class);
+        thrown.expect(ConnectAddonInitException.class);
         cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, ATTRIBUTES);
     }
 }

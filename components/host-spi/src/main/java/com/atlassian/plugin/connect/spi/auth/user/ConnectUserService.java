@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 import com.atlassian.util.concurrent.Nullable;
 
 /**
@@ -18,9 +20,9 @@ public interface ConnectUserService
      * Disables the add-on user for the add-on with key {@code addOnKey}
      *
      * @param addOnKey the key of the add-on
-     * @throws ConnectAddOnUserDisableException
+     * @throws ConnectAddonDisableException
      */
-    void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddOnUserDisableException;
+    void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddonDisableException;
 
     /**
      * Retrieves the username for the add-on with key {@code addOnKey}. If the user does not exist, the user is created.
@@ -29,10 +31,10 @@ public interface ConnectUserService
      * @param addOnKey the key of the add-on
      * @param addOnDisplayName the display name of the add-on
      * @return the user the username for the add-on user
-     * @throws ConnectAddOnUserInitException
+     * @throws ConnectAddonInitException
      */
     @Nonnull
-    String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddOnUserInitException;
+    String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddonInitException;
 
     /**
      * Checks whether the user with the provided {@code username} is active.
@@ -51,9 +53,9 @@ public interface ConnectUserService
      * @param previousScopes the set of previous scopes in the case of a re-install of the add-on
      * @param newScopes the set of requested scopes
      * @return the username for the add-on user, or null if none is required
-     * @throws ConnectAddOnUserInitException
+     * @throws ConnectAddonInitException
      */
     @Nullable
     String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean connectAddonBean,
-            @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
+            @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException;
 }

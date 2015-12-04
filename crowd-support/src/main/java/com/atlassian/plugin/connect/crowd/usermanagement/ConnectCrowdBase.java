@@ -17,8 +17,8 @@ import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public abstract class ConnectCrowdBase
     }
 
     public void disableUser(String username)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         Optional<? extends User> user = findUserByName(username);
         if (user.isPresent())
@@ -67,9 +67,9 @@ public abstract class ConnectCrowdBase
                 userTemplate.setActive(false);
                 updateUser(userTemplate);
             }
-            catch (ConnectAddOnUserInitException e)
+            catch (ConnectAddonInitException e)
             {
-                throw new ConnectAddOnUserDisableException((e.getCause() instanceof Exception) ?
+                throw new ConnectAddonDisableException((e.getCause() instanceof Exception) ?
                         (Exception) e.getCause() : null);
             }
         }
@@ -90,10 +90,10 @@ public abstract class ConnectCrowdBase
             Optional<? extends User> user = findUserByName(username);
             if (!user.isPresent())
             {
-                throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!",
+                throw new ConnectAddonInitException(String.format("Tried to create user '%s' but the %s returned a null user!",
                         username,
                         CrowdClient.class.getSimpleName()),
-                        ConnectAddOnUserInitException.USER_PROVISIONING_ERROR);
+                        ConnectAddonInitException.USER_PROVISIONING_ERROR);
             }
 
             return user.get();

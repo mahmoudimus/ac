@@ -3,11 +3,11 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 import java.util.Set;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 
 public interface CrowdAddOnUserProvisioningService
 {
-    void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
+    void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddonInitException;
 
     /**
      * The keys of product groups of which add-on users should by default be members, and all of which are expected to exist

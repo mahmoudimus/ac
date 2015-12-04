@@ -14,8 +14,8 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.HostProperties;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -58,7 +58,7 @@ public class CrowdAddOnUserService implements ConnectUserService
 
     @Nonnull
     @Override
-    public String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddOnUserInitException
+    public String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddonInitException
     {
         try
         {
@@ -71,12 +71,12 @@ public class CrowdAddOnUserService implements ConnectUserService
                 | OperationFailedException
                 | InvalidAuthenticationException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
     @Override
-    public void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddOnUserDisableException
+    public void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddonDisableException
     {
         connectCrowdService.disableUser(usernameForAddon(addOnKey));
     }
@@ -89,7 +89,7 @@ public class CrowdAddOnUserService implements ConnectUserService
 
     @Nullable
     @Override
-    public String provisionAddOnUserWithScopes(@Nonnull com.atlassian.plugin.connect.modules.beans.ConnectAddonBean addon, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public String provisionAddOnUserWithScopes(@Nonnull com.atlassian.plugin.connect.modules.beans.ConnectAddonBean addon, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException
     {
         if (!addOnRequiresUser(addon))
         {

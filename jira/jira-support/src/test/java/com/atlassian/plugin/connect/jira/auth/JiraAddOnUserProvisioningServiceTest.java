@@ -20,7 +20,7 @@ import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -116,9 +116,9 @@ public class JiraAddOnUserProvisioningServiceTest
             provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
             fail("Provisioning addon should not have succeeded");
         }
-        catch (ConnectAddOnUserInitException exception)
+        catch (ConnectAddonInitException exception)
         {
-            assertEquals(exception.getI18nKey(), ConnectAddOnUserInitException.ADDON_ADMINS_MISSING_PERMISSION);
+            assertEquals(exception.getI18nKey(), ConnectAddonInitException.ADDON_ADMINS_MISSING_PERMISSION);
         }
     }
 

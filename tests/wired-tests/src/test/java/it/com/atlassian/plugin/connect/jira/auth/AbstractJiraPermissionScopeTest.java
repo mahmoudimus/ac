@@ -8,7 +8,7 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -234,7 +234,7 @@ public abstract class AbstractJiraPermissionScopeTest
         }
     }
 
-    protected List<String> permissionsForAllProjects(Permission permission, boolean permissionMustExist, Plugin plugin) throws ConnectAddOnUserInitException
+    protected List<String> permissionsForAllProjects(Permission permission, boolean permissionMustExist, Plugin plugin) throws ConnectAddonInitException
     {
         ApplicationUser addonUser = getAddOnUser();
         List<Project> allProjects = projectService.getAllProjects(addonUser).getReturnedValue();
@@ -286,12 +286,12 @@ public abstract class AbstractJiraPermissionScopeTest
         }
     }
 
-    private String getAddOnUserName() throws ConnectAddOnUserInitException
+    private String getAddOnUserName() throws ConnectAddonInitException
     {
         return connectUserService.getOrCreateAddOnUserName(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
     }
 
-    protected ApplicationUser getAddOnUser() throws ConnectAddOnUserInitException
+    protected ApplicationUser getAddOnUser() throws ConnectAddonInitException
     {
         String addonUserName = getAddOnUserName();
         return userManager.getUserByName(addonUserName);
