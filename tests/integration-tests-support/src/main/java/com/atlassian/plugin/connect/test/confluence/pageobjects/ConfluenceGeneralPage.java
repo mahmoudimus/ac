@@ -42,9 +42,15 @@ public class ConfluenceGeneralPage implements GeneralPage
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
+        clickAddOnLinkWithoutBinding();
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
+    }
+
+    @Override
+    public void clickAddOnLinkWithoutBinding()
+    {
         PageElement link = findLinkElement();
         RemotePageUtil.clickAddonLinkWithKeyboardFallback(link);
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
     public String getRemotePluginLinkHref()

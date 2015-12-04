@@ -25,6 +25,7 @@ public class ConnectIFrameServlet extends HttpServlet
 
     private static final String CLASSIFIER_PARAMETER = "classifier";
 
+    // Matches addOnKey and moduleKey from url: /addon.key/module.key
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
 
     private final IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry;

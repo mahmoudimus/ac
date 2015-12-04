@@ -72,4 +72,13 @@
                     location="before-decoration" weight="1">
         <url-pattern>/ac-test-addon/*</url-pattern>
     </servlet-filter>
+
+    <connect-context-parameters-resolver key="test-parameters-resolver">
+        <extractors>
+        </extractors>
+        <validators>
+            <validator class="com.atlassian.plugin.connect.testsupport.context.params.TestParametersValidator"/>
+        </validators>
+    </connect-context-parameters-resolver>
+
 </atlassian-plugin>

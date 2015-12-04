@@ -82,6 +82,11 @@
         <url-pattern>/ac/*</url-pattern>
     </servlet>
 
+    <servlet key="addon-redirect-servlet"
+             class="com.atlassian.plugin.connect.plugin.web.redirect.RedirectServlet">
+        <url-pattern>/ac-redirect/*</url-pattern>
+    </servlet>
+
     <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.web.jsapi.DialogOptionsWebPanel"/>
 
     <web-resource key="iframe-host-css">

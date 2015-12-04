@@ -23,6 +23,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.web.redirect.RedirectData;
+import com.atlassian.plugin.connect.plugin.web.redirect.RedirectDataBuilderFactory;
+import com.atlassian.plugin.connect.plugin.web.redirect.RedirectRegistry;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
@@ -52,6 +55,8 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     private final WebFragmentLocationBlacklist webFragmentLocationBlacklist;
     private final ConditionClassAccessor conditionClassAccessor;
     private final ConditionLoadingValidator conditionLoadingValidator;
+    private final RedirectRegistry redirectRegistry;
+    private final RedirectDataBuilderFactory redirectDataBuilderFactory;
 
     @Autowired
     public WebItemModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
@@ -61,7 +66,9 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebFragmentLocationBlacklist webFragmentLocationBlacklist,
             ConditionClassAccessor conditionClassAccessor,
-            ConditionLoadingValidator conditionLoadingValidator)
+            ConditionLoadingValidator conditionLoadingValidator,
+            RedirectRegistry redirectRegistry,
+            RedirectDataBuilderFactory redirectDataBuilderFactory)
     {
         super(pluginRetrievalService, schemaValidator);
         this.webItemFactory = webItemFactory;
@@ -70,6 +77,8 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         this.webFragmentLocationBlacklist = webFragmentLocationBlacklist;
         this.conditionClassAccessor = conditionClassAccessor;
         this.conditionLoadingValidator = conditionLoadingValidator;
+        this.redirectRegistry = redirectRegistry;
+        this.redirectDataBuilderFactory = redirectDataBuilderFactory;
     }
 
     @Override
@@ -93,7 +102,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (WebItemModuleBean bean : modules)
         {
-            descriptors.add(beanToDescriptors(addon, pluginRetrievalService.getPlugin(), bean));
+            descriptors.add(beanToDescriptor(addon, pluginRetrievalService.getPlugin(), bean));
             registerIframeRenderStrategy(bean, addon);
         }
         return descriptors;
@@ -129,11 +138,23 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         }
     }
 
-    private ModuleDescriptor beanToDescriptors(ConnectAddonBean addon, Plugin plugin, WebItemModuleBean bean)
+    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin plugin, WebItemModuleBean bean)
     {
         ModuleDescriptor descriptor;
 
         final WebItemTargetBean target = bean.getTarget();
+        if (requiredRedirection(bean))
+        {
+            RedirectData redirectData = redirectDataBuilderFactory.builder()
+                    .addOn(addon.getKey())
+                    .urlTemplate(bean.getUrl())
+                    .accessDeniedTemplateType(RedirectData.AccessDeniedTemplateType.PAGE)
+                    .conditions(bean.getConditions())
+                    .build();
+
+            redirectRegistry.register(addon.getKey(), bean.getRawKey(), redirectData);
+        }
+
         if (bean.isAbsolute() ||
             bean.getContext().equals(AddOnUrlContext.product) ||
             bean.getContext().equals(AddOnUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
@@ -149,6 +170,12 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         }
 
         return descriptor;
+    }
+
+    private boolean requiredRedirection(final WebItemModuleBean bean)
+    {
+        // Link to the add-ons may require revalidation of JWT token so they need to do request though redirect servlet.
+        return !bean.isAbsolute() && bean.getContext().equals(AddOnUrlContext.addon);
     }
 
     private void registerIframeRenderStrategy(WebItemModuleBean webItem, ConnectAddonBean descriptor)

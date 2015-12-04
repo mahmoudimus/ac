@@ -62,10 +62,16 @@ public final class JiraGeneralPage implements GeneralPage
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
+        clickAddOnLinkWithoutBinding();
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
+    }
+
+    @Override
+    public void clickAddOnLinkWithoutBinding()
+    {
         final PageElement linkElement = link.get().get();
         RemotePageUtil.clickAddonLinkWithKeyboardFallback(linkElement);
         logger.debug("Link '{}' was found and clicked.", linkElement);
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
     public void clickRemotePluginLinkWithoutBinding()

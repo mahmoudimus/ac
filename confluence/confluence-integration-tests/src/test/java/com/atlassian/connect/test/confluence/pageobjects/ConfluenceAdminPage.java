@@ -41,8 +41,14 @@ public class ConfluenceAdminPage implements AdminPage
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
-        findLinkElement().click();
+        clickAddOnLinkWithoutBinding();
         return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
+    }
+
+    @Override
+    public void clickAddOnLinkWithoutBinding()
+    {
+        findLinkElement().click();
     }
 
     public String getRemotePluginLinkHref()

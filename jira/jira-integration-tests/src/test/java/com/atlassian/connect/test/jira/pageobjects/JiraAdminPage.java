@@ -50,10 +50,16 @@ public final class JiraAdminPage implements AdminPage
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
+        clickAddOnLinkWithoutBinding();
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
+    }
+
+    @Override
+    public void clickAddOnLinkWithoutBinding()
+    {
         final WebElement webElement = link.get().get();
         webElement.click();
         logger.debug("Link '{}' was found and clicked.", webElement);
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
     }
 
     public String getRemotePluginLinkHref()
