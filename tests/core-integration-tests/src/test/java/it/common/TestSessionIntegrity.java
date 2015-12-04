@@ -69,8 +69,8 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
         driver.get(signWithJwt("/rest/remoteplugintest/1/user"));
         assertThat(driver.getPageSource(), containsString(user("addon_" + runner.getAddon().getName())));
 
-        driver.get(unsigned("/rest/remoteplugintest/1/user"));
-        assertThat(driver.getPageSource(), containsString(user("anonymous")));
+        driver.get(unsigned(""));
+        assertThat(driver.getPageSource(), containsString("Login"));
     }
 
     private String signWithJwt(String url) throws JwtUnknownIssuerException, URISyntaxException, JwtIssuerLacksSharedSecretException

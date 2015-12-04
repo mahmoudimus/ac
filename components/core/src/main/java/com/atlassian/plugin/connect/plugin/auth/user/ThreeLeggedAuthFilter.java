@@ -194,7 +194,6 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
             {
                 if (session != null)
                 {
-
                     try {
                         session.invalidate();
                     } catch (IllegalStateException e) {
