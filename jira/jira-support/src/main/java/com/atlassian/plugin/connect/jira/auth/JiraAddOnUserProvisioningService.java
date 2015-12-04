@@ -32,8 +32,8 @@ import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions;
-import com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult;
+import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
+import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -56,7 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_FAILED;
+import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_FAILED;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 
