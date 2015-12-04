@@ -244,7 +244,7 @@ then the failure will be logged and the condition will be evaluated as `false`.
 
 When the remote application requests a remote condition it will cache the results of that request if HTTP cache headers are set.
 You should make use of this feature to improve performance of your application and decrease the number of requests that are made
-to your add-on. To show you how that is done lets walk through a hypothetical example. Pretend that you have written a remote
+to your add-on. To show you how that is done we shall walk through a hypothetical example. Pretend that you have written a remote
 condition that points to the url `/condition/true` such that this resource will always return the json response
 `{ shouldDisplay: true }`. In order to make sure that it is cached your response should contain a Cache-Control header
 that looks something like this:
@@ -252,20 +252,20 @@ that looks something like this:
     Cache-Control: max-age=60, must-revalidate
 
 This will cause the remote condition to be cached for 60 seconds. But, under what situations would that cache be missed, if any?
-When the request is actually made some extra query parameters will be added and the request will look something like this:
+When the request is actually made some extra query parameters will be added and the request URL will look something like this:
 
     /condition/true?tz=Australia%2FSydney&loc=en-US&user_id=admin&user_key=admin&xdm_e=http%3A%2F%2Flocalhost%3A2991&xdm_c=channel-condition&cp=%2Fjira&lic=none&cv=1.1.65
     
 So, if we were to cache this request what would have to change about this request in order to create a cache miss? Inspecting
 the query parameters one at a time will give us a result:
 
- * If your timezone or locale changes then the cache will be missed. (tz / loc)
- * If this same condition is requested by a different user (or their username changes) then the cache will be missed. (user_id / user_key)
- * If the url to your cloud instance changes then the cache will be missed. But changing the url of a cloud instance is not currently possible. (xdm_e)
- * The xdm_c variable will not change for conditions; never resulting in a cache miss.
- * The cp (context path) variable will not change for a running product: never resulting in a cache miss.
- * The licensed status of your add-on will force cache misses. (lic)
- * If the Atlassian Connect addon is upgraded then your cache will be missed. (cv)
+ * If your timezone or locale changes then the cache will be missed. (`tz` / `loc`)
+ * If this same condition is requested by a different user (or their username changes) then the cache will be missed. (`user_id` / `user_key`)
+ * If the url to your cloud instance changes then the cache will be missed. But changing the url of a cloud instance is not currently possible. (`xdm_e`)
+ * The `xdm_c` variable will not change for conditions; never resulting in a cache miss.
+ * The `cp` (context path) variable will not change for a running product: never resulting in a cache miss.
+ * The licensed status of your add-on will force cache misses. (`lic`)
+ * If the Atlassian Connect framework version is upgraded then your cache will be missed. (`cv`)
   
 As you can see, you only really need to consider the first two points. When you cache the results of a remote condition the
 only reason that the cache will be ignored if if a different user requests that condition. Essentially, remote conditions
