@@ -78,11 +78,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.addOnRequiresUser;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * The ConnectAddonManager handles all the stuff that needs to happen when an add-on is enabled/disabled.
@@ -193,7 +193,7 @@ public class ConnectAddonManager
                 : null;
         String newAddOnSigningKey = newUseSharedSecret ? newSharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
+        String userKey = provisionAddOnUserAndScopes(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(newAuthType.name())
@@ -252,11 +252,6 @@ public class ConnectAddonManager
         }
     }
 
-    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor) throws ConnectAddonInstallException
-    {
-        return addOnRequiresUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
-    }
-
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException, ConnectAddonEnableException
     {
         long startTime = System.currentTimeMillis();
@@ -279,10 +274,7 @@ public class ConnectAddonManager
                     throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
                 }
 
-                if (addOnRequiresUser(addon))
-                {
-                    enableAddOnUser(addon);
-                }
+                enableAddOnUser(addon);
 
                 addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
 
@@ -479,7 +471,7 @@ public class ConnectAddonManager
                     callbackUri, addon.getKey(), authorizationGenerator.getClass().getSimpleName(), ReKeyableAuthorizationGenerator.class.getSimpleName()));
         }
     }
-    
+
     private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Optional<String> authHeader) throws ConnectAddonInstallException
     {
         try
@@ -514,6 +506,11 @@ public class ConnectAddonManager
 
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
+        if (isBlank(addon.getName()))
+        {
+            return;
+        }
+
         String userKey = connectUserService.getOrCreateAddOnUserName(addon.getKey(), addon.getName());
 
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
@@ -724,10 +721,7 @@ public class ConnectAddonManager
 
         try
         {
-            return connectUserService.provisionAddOnUserForScopes(addOn.getKey(),
-                    addOn.getName(),
-                    previousScopes,
-                    newScopes);
+            return connectUserService.provisionAddOnUserWithScopes(addOn, previousScopes, newScopes);
         }
         catch (ConnectAddOnUserInitException e)
         {

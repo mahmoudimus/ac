@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -13,15 +17,11 @@ import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
@@ -93,7 +93,7 @@ public abstract class ConnectCrowdBase
                 throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!",
                         username,
                         CrowdClient.class.getSimpleName()),
-                        ConnectAddOnUserProvisioningService.USER_PROVISIONING_ERROR);
+                        ConnectAddOnUserInitException.USER_PROVISIONING_ERROR);
             }
 
             return user.get();

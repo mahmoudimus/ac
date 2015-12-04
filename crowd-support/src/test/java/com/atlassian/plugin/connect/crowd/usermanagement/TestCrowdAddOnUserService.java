@@ -2,8 +2,6 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.spi.HostProperties;
 
 import com.google.common.collect.Sets;
@@ -12,9 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.usernameForAddon;
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
 import static org.mockito.Matchers.any;
@@ -35,7 +33,7 @@ public class TestCrowdAddOnUserService
     private CrowdAddOnUserService crowdAddOnUserService;
 
     @Mock
-    private ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
+    private CrowdAddOnUserProvisioningService crowdAddOnUserProvisioningService;
     @Mock
     private ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     @Mock
@@ -53,7 +51,7 @@ public class TestCrowdAddOnUserService
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
                 any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, NEWLY_CREATED));
         crowdAddOnUserService = new CrowdAddOnUserService(
-                connectAddOnUserProvisioningService,
+                crowdAddOnUserProvisioningService,
                 connectAddOnUserGroupProvisioningService,
                 connectCrowdService,
                 hostProperties);
@@ -81,8 +79,8 @@ public class TestCrowdAddOnUserService
     @Test
     public void getOrCreateUserNameAddsAddonUserToGroupsWhenUserIsNew() throws Exception
     {
-        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
-        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
+        when(crowdAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
+        when(crowdAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
 
         crowdAddOnUserService.getOrCreateAddOnUserName(ADDON_KEY, ADDON_NAME);
 
@@ -97,8 +95,8 @@ public class TestCrowdAddOnUserService
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
                 any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
 
-        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
-        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
+        when(crowdAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
+        when(crowdAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
 
         crowdAddOnUserService.getOrCreateAddOnUserName(ADDON_KEY, ADDON_NAME);
 

@@ -1,9 +1,12 @@
 package com.atlassian.plugin.connect.spi.auth.user;
 
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
+
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.util.concurrent.Nullable;
 
 /**
  * Provided by the host application to allow connect to manage add-on users and check whether impersonated users
@@ -47,10 +50,10 @@ public interface ConnectUserService
      * @param addOnDisplayName the display name of the add-on
      * @param previousScopes the set of previous scopes in the case of a re-install of the add-on
      * @param newScopes the set of requested scopes
-     * @return the username for the add-on user
+     * @return the username for the add-on user, or null if none is required
      * @throws ConnectAddOnUserInitException
      */
-    @Nonnull
-    String provisionAddOnUserForScopes(@Nonnull String addOnKey, @Nonnull String addOnDisplayName,
+    @Nullable
+    String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean connectAddonBean,
             @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 }

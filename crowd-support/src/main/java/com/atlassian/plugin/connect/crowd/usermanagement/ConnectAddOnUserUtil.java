@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.api.auth.user;
+package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Collections;
 import java.util.Set;

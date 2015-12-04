@@ -1,14 +1,12 @@
-package com.atlassian.plugin.connect.spi.auth.user;
-
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Set;
 
-public interface ConnectAddOnUserProvisioningService
-{
-    String USER_PROVISIONING_ERROR = "connect.install.error.user.provisioning";
-    String ADDON_ADMINS_MISSING_PERMISSION = "connect.install.error.addon.admin.permission";
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 
+public interface CrowdAddOnUserProvisioningService
+{
     void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 
     /**

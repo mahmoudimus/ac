@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.confluence.auth;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
 import com.atlassian.confluence.security.PermissionManager;
@@ -15,8 +21,7 @@ import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil;
+import com.atlassian.plugin.connect.crowd.usermanagement.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
@@ -27,20 +32,17 @@ import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
@@ -51,13 +53,15 @@ import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMEN
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.addOnRequiresUser;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.usernameForAddon;
 import static com.google.common.collect.Iterables.filter;
 import static java.util.Arrays.asList;
 
 @SuppressWarnings ("unused")
 @ConfluenceComponent
 @ExportAsDevService
-public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService, DisposableBean
+public class ConfluenceAddOnUserProvisioningService implements CrowdAddOnUserProvisioningService, DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceAddOnUserProvisioningService.class);
 
@@ -192,7 +196,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             grantAddonUserSpaceAdmin(confluenceAddonUser);
         }
     }
-    
+
     @Override
     public Set<String> getDefaultProductGroupsAlwaysExpected()
     {
@@ -344,9 +348,9 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         final Iterable<ConnectAddonBean> connectAddonBeans = fetchAddonsWithSpaceAdminScope();
         for (ConnectAddonBean connectAddonBean : connectAddonBeans)
         {
-            if (ConnectAddOnUserUtil.addOnRequiresUser(connectAddonBean))
+            if (addOnRequiresUser(connectAddonBean))
             {
-                String username = ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey());
+                String username = usernameForAddon(connectAddonBean.getKey());
                 try
                 {
                     grantAddonUserSpaceAdmin(getConfluenceUser(username));
