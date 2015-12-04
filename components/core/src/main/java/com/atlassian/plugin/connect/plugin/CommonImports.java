@@ -22,6 +22,7 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
+import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -46,7 +47,7 @@ import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegist
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
 @SuppressWarnings ("ALL")
-@Named
+@Scanned
 public class CommonImports
 {
     @Inject
