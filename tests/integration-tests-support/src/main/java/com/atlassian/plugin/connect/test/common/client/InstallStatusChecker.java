@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -63,7 +64,7 @@ public class InstallStatusChecker
 
         if (abortAfter <= System.currentTimeMillis())
         {
-            throw new ConnectAddonInstallationException("Connect App Plugin did not install within the allotted timeout");
+            throw new ConnectAddonInstallException("Connect App Plugin did not install within the allotted timeout");
         }
     }
 }

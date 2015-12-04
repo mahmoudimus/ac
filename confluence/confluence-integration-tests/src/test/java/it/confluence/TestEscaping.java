@@ -1,6 +1,7 @@
 package it.confluence;
 
 import java.net.MalformedURLException;
+import java.util.Optional;
 
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
@@ -9,7 +10,6 @@ import com.atlassian.connect.test.confluence.pageobjects.ConfluenceAdminPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
-import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -20,8 +20,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
-
-import com.google.common.base.Optional;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
@@ -163,7 +161,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     {
         ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(testUserFactory.admin(), ConnectConfluenceAdminHomePage.class);
         adminHomePage.openHelpMenu();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>absent());
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>empty());
         assertIsEscaped(webItem.getLinkText());
     }
 
@@ -247,7 +245,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     {
         loginAndVisit(testUserFactory.basicUser(), ConfluenceUserProfilePage.class);
         RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
-                "a[href*='" + getServletPath(PROFILE_PAGE_KEY) + "']", Optional.<String>absent());
+                "a[href*='" + getServletPath(PROFILE_PAGE_KEY) + "']", Optional.<String>empty());
         assertIsEscaped(webItem.getLinkText());
     }
 
@@ -256,7 +254,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     {
         loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, TestSpace.DEMO);
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(
-                RemoteWebItem.ItemMatchingMode.LINK_TEXT, MODULE_NAME, Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));
+                RemoteWebItem.ItemMatchingMode.LINK_TEXT, MODULE_NAME, Optional.<String>empty(), getModuleKey(SPACE_TOOLS_TAB_KEY));
         assertIsEscaped(addonPage.getWebItem().getLinkText());
     }
 

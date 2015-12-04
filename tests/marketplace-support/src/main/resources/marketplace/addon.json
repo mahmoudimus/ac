@@ -8,24 +8,24 @@
                             "screenshot": <%=screenshot asset goes here=>,
                             "thumbnail": <%=thumbnail asset goes here=>
                         },
-                        "title": "I wanna write the very test",
-                        "body": "<strong>That no test ever was</strong>"
+                        "title": "<%= highlight title 1 goes here =>",
+                        "body": "<%= highlight body 1 goes here =>"
                     },
                     {
                         "_links": {
                             "screenshot": <%=screenshot asset goes here=>,
                             "thumbnail": <%=thumbnail asset goes here=>
                         },
-                        "title": "To catch bugs is my real test",
-                        "body": "<strong>To fix them is my cause</strong>"
+                      "title": "<%= highlight title 2 goes here =>",
+                      "body": "<%= highlight body 2 goes here =>"
                     },
                     {
                         "_links": {
                             "screenshot": <%=screenshot asset goes here=>,
                             "thumbnail": <%=thumbnail asset goes here=>
                         },
-                        "title": "I will travel the happy paths",
-                        "body": "<strong>Searching far and wide...</strong>"
+                      "title": "<%= highlight title 3 goes here =>",
+                      "body": "<%= highlight body 3 goes here =>"
                     }
 
                 ],
@@ -52,15 +52,11 @@
                     "hosting": { "cloud": true }
                 }
             ],
-            "media": {},
             "name": "1.0",
             "paymentModel": "free",
             "release": {
                 "beta": false,
                 "date": "2015-02-19",
-                "license": {
-                    "id": "asl"
-                },
                 "supported": false
             },
             "status": "public",
@@ -84,8 +80,8 @@
     "key": "<%=key goes here=>",
     "name": "<%=name goes here=>",
     "status": "public",
-    "summary": "I wanna be the very test that no test ever was.",
-    "tagLine": "Regressions: gotta catch them all",
+    "summary": "<%= summary goes here =>",
+    "tagLine": "<%= tagline goes here =>",
     "vendorLinks": {
         "privacy": "https://www.atlassian.com/legal/privacy-policy"
     }

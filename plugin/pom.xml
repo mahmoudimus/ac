@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.64-SNAPSHOT</version>
+        <version>1.1.66-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -93,18 +93,6 @@
             <version>${toolbox.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
-            <version>${plugin.testrunner.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -118,7 +106,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-spi</artifactId>
+            <artifactId>atlassian-connect-host-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-extension-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -536,10 +529,12 @@
                         <Import-Package>
 
                             <!-- Required for pa / pi to work with the new version of atlassian-plugins -->
-                            com.atlassian.plugin.osgi.bridge.external;
-                            org.osgi.util.tracker;
-                            org.osgi.framework;
+                            com.atlassian.plugin.osgi.bridge.external,
+                            org.osgi.util.tracker,
+                            org.osgi.framework,
                             <!-- End pa / pi imports -->
+
+                            com.atlassian.jwt*;version="[1.4.0,2.0.0)",
 
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
                             com.github.fge.jsonschema.core*;version="1.2.4",

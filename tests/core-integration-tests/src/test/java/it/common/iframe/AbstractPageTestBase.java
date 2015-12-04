@@ -2,8 +2,8 @@ package it.common.iframe;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
@@ -24,9 +24,9 @@ import it.common.MultiProductWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
 import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -98,7 +98,7 @@ public class AbstractPageTestBase<T extends Page> extends MultiProductWebDriverT
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);
 
-        LinkedRemoteContent addonPage = connectPageOperations().findConnectPage(mode, id, Option.<String>none(),
+        LinkedRemoteContent addonPage = connectPageOperations().findConnectPage(mode, id, Optional.<String>empty(),
                 awesomePageModuleKey);
 
         ConnectAddOnEmbeddedTestPage addonContentPage = addonPage.click();

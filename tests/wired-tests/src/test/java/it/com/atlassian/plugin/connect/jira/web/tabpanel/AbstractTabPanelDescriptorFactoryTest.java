@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
@@ -63,7 +62,7 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
         this.pluginKey = AddonUtil.randomPluginKey();
         this.bean = createBean();
 
-        this.descriptor = descriptorFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(createAddonBean()),
+        this.descriptor = descriptorFactory.createModuleDescriptor(createAddonBean(),
                 getConnectPlugin(), bean, getDescriptorHints());
     }
     

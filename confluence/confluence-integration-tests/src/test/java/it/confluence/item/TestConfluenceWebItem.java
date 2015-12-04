@@ -2,6 +2,7 @@ package it.confluence.item;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.ConfluencePageData;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
@@ -16,8 +17,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
-import com.google.common.base.Optional;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -228,7 +227,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private Pair<ConfluenceViewPage, RemoteWebItem> findViewPageWebItem(String webItemId) throws Exception
     {
         ConfluenceViewPage viewPage = createAndVisitViewPage();
-        return Pair.pair(viewPage, connectPageOperations.findWebItem(webItemId, Optional.<String>absent()));
+        return Pair.pair(viewPage, connectPageOperations.findWebItem(webItemId, Optional.<String>empty()));
     }
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception

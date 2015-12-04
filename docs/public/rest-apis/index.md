@@ -378,6 +378,21 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
                             <p>The key of the property</p>
                         </td>
                     </tr>
+                    <tr>
+                        <td class="location">
+                            Query
+                        </td>
+                        <td class="name">
+                            <code>jsonValue</code>
+                        </td>
+                        <td class="type">
+                            <code>boolean</code>
+                        </td>
+                        <td class="description last">
+                            <p>Set to 'true' to have the 'value' field return as a json object. If false it will return the 'value' field
+                             as a string containing escaped json. This will be deprecated during June 2016 and the behaviour will default to true.</p>
+                        </td>
+                    </tr>
                 </tbody>
         </table>
         <h4>Response representations:</h4>

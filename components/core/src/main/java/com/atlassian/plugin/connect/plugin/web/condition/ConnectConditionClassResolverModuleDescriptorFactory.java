@@ -16,7 +16,7 @@ public class ConnectConditionClassResolverModuleDescriptorFactory extends Single
     private static final String TYPE = "connect-condition-class-resolver";
 
     @Autowired
-    public ConnectConditionClassResolverModuleDescriptorFactory(@Qualifier("hostContainer") final HostContainer hostContainer)
+    public ConnectConditionClassResolverModuleDescriptorFactory(HostContainer hostContainer)
     {
         super(hostContainer, TYPE, ConnectConditionClassResolverModuleDescriptor.class);
     }
