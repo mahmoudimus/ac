@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.google.common.collect.Maps;
 import it.util.JwtAuthorizationGenerator;
+import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -70,7 +71,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
         assertThat(driver.getPageSource(), containsString(user("addon_" + runner.getAddon().getName())));
 
         driver.get(unsigned(""));
-        assertThat(driver.getPageSource(), containsString("Login"));
+        assertThat(driver.getPageSource(), Matchers.anyOf(containsString("Log In"), containsString("Log in"), containsString("Login")));
     }
 
     private String signWithJwt(String url) throws JwtUnknownIssuerException, URISyntaxException, JwtIssuerLacksSharedSecretException
