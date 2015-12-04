@@ -13,7 +13,7 @@ plan(
             type: 'Failed Builds and First Successful',
             recipient: 'committers'
     )
-    runTestsStage()
+    runTestsStage(mavenParameters: '')
     stage(
             name: 'Start Release',
             manual: 'true'
@@ -54,8 +54,12 @@ plan(
             notificationStrategy: 'INHERIT',
             remoteJiraBranchLinkingEnabled: 'true'
     )
+    variable(
+            key: 'maven.parameters',
+            value: ''
+    )
 
-    runTestsStage()
+    runTestsStage(mavenParameters: '${bamboo.maven.parameters}')
 }
 
 plan(
@@ -71,7 +75,7 @@ plan(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo.product.version}'
         )
     }
 }
@@ -89,7 +93,7 @@ plan(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo.product.version}'
         )
     }
 }
