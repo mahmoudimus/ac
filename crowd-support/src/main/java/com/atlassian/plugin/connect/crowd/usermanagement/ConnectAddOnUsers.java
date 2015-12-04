@@ -1,19 +1,19 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUsers;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.crowd.search.EntityDescriptor.group;
 import static com.atlassian.crowd.search.EntityDescriptor.user;
@@ -26,8 +26,7 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Sets.newHashSet;
 
 @JiraComponent
-@ConfluenceComponent
-public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
+public class ConnectAddOnUsers
 {
     private ConnectAddonAccessor addonAccessor;
     private final ApplicationService applicationService;
@@ -35,7 +34,7 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
     private final MembershipQuery<User> membershipQuery;
 
     @Autowired
-    public ConnectAddOnUsersImpl(ConnectAddonAccessor addonAccessor, ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider)
+    public ConnectAddOnUsers(ConnectAddonAccessor addonAccessor, ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider)
     {
         this.addonAccessor = addonAccessor;
         this.applicationService = applicationService;
@@ -43,7 +42,6 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
         membershipQuery = queryFor(User.class, user()).childrenOf(group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
     }
 
-    @Override
     public Iterable<User> getAddonUsers()
     {
         try

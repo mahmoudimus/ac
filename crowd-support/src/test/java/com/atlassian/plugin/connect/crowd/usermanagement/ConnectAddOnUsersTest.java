@@ -1,4 +1,6 @@
-package com.atlassian.plugin.connect.crowd.upgrade;
+package com.atlassian.plugin.connect.crowd.usermanagement;
+
+import java.util.List;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -7,8 +9,7 @@ import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsersImpl;
-import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -17,8 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-
-import java.util.List;
 
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static java.util.Arrays.asList;
@@ -34,9 +33,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class ConnectAddOnUsersImplTest
+public class ConnectAddOnUsersTest
 {
-    private ConnectAddOnUsersImpl connectAddOnUsers;
+    private ConnectAddOnUsers connectAddOnUsers;
 
     @Mock
     private Application application;
@@ -52,12 +51,12 @@ public class ConnectAddOnUsersImplTest
     {
         initMocks(this);
 
-        List<User> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
+        List<Object> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
         when(applicationService.searchDirectGroupRelationships(any(Application.class), any(MembershipQuery.class))).thenReturn(allAddonUsers);
         when(addonAccessor.getAllAddonKeys()).thenReturn(singletonList("rad-jira-addon"));
         when(crowdApplicationProvider.getCrowdApplication()).thenReturn(application);
 
-        connectAddOnUsers = new ConnectAddOnUsersImpl(addonAccessor, applicationService, crowdApplicationProvider);
+        connectAddOnUsers = new ConnectAddOnUsers(addonAccessor, applicationService, crowdApplicationProvider);
     }
 
     @Test
