@@ -139,9 +139,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `space_permissions_updated`
  * * `space_removed`
  * * `space_updated`
- * * `status_cleared`
- * * `status_created`
- * * `status_removed`
  * * `user_created`
  * * `user_deactivated`
  * * `user_followed`

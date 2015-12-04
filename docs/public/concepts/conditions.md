@@ -272,13 +272,11 @@ Each product defines a set of conditions relevant to its domain.
 * `showing_page_attachments`
 * `space_function_permission`
 * `space_sidebar`
-* `target_user_can_set_status`
 * `target_user_has_personal_blog`
 * `target_user_has_personal_space`
 * `threaded_comments`
 * `tiny_url_supported`
 * `user_can_create_personal_space`
-* `user_can_update_user_status`
 * `user_can_use_confluence`
 * `user_favouriting_target_user_personal_space`
 * `user_has_personal_blog`

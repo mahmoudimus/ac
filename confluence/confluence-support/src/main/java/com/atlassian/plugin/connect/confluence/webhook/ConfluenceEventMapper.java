@@ -11,7 +11,6 @@ import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.confluence.userstatus.UserStatus;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
@@ -131,25 +130,6 @@ public class ConfluenceEventMapper
                 "self", getFullUrl(label.getUrlPath())
                 // TODO: Consider adding additional label data, including the label's namespace, owner and view URL
         );
-    }
-
-    protected Map<String, Object> userStatusToMap(UserStatus status)
-    {
-        ConfluenceUser creator = status.getCreator();
-
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        builder.put("id", status.getId());
-        builder.put("content", status.getTitle());
-        builder.put("self", getFullUrl(status.getUrlPath()));
-
-        // todo: this should be a creator 'user' object
-        builder.put("creatorName", getUserUsername(creator));
-        builder.put("creatorKey", getUserUserKey(creator));
-
-        builder.put("creationDate", status.getCreationDate().getTime());
-        builder.put("isCurrent", status.getContentStatus().equals("current"));
-
-        return builder.build();
     }
 
     protected Map<String, Object> userProfileToMap(UserProfile userProfile)
