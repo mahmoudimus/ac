@@ -41,7 +41,7 @@ import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.crowd.usermanagement.CrowdAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;

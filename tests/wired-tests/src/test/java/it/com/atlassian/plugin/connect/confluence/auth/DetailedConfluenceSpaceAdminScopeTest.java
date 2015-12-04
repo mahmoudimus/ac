@@ -22,7 +22,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.crowd.usermanagement.CrowdAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;

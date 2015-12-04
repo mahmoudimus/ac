@@ -12,6 +12,8 @@ import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
+import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
@@ -89,7 +91,7 @@ public class CrowdAddOnUserService implements ConnectUserService
 
     @Nullable
     @Override
-    public String provisionAddOnUserWithScopes(@Nonnull com.atlassian.plugin.connect.modules.beans.ConnectAddonBean addon, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException
+    public String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean addon, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException
     {
         if (!addOnRequiresUser(addon))
         {

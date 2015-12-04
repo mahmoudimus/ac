@@ -21,7 +21,7 @@ import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.crowd.usermanagement.CrowdAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;

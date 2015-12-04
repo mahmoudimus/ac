@@ -30,7 +30,7 @@
     <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.ConnectAddonRegistry"/>
     <component-import key="connectAddonService" interface="com.atlassian.plugin.connect.spi.auth.user.ConnectUserService"/>
     <component-import key="connectCrowdService" interface="com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService"/>
-    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.crowd.usermanagement.CrowdAddOnUserProvisioningService" />
+    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService" />
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
     <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.plugin.auth.user.ThreeLeggedAuthService" />
