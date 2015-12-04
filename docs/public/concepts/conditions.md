@@ -234,15 +234,15 @@ The following module declaration exemplifies the use of a remote condition.
         }
     }
 
-The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request
-authentication information passed through as a header, rather than as a query string parameter.
+The add-on can pass parameters to the remote condition as URL query parameters. Usually authentication information is passed
+to resources via query parameters; however, for remote conditions authentication information is passed through as a header.
 
 If there is an error communicating with the remote resource (for example, the request timeout period of 10 seconds elapses with no response),
 then the failure will be logged and the condition will be evaluated as `false`.
 
 ### <a name="remote-caching"></a>Caching remote conditions
 
-When the remote application requests a remote condition it will cache the results of that request if HTTP cache headers are set.
+When the remote application requests a remote condition, it will cache the results of that request, if HTTP cache headers are set on the response.
 You should make use of this feature to improve performance of your application and decrease the number of requests that are made
 to your add-on. To show you how that is done we shall walk through a hypothetical example. Pretend that you have written a remote
 condition that points to the url `/condition/true` such that this resource will always return the json response
@@ -256,20 +256,25 @@ When the request is actually made some extra query parameters will be added and 
 
     /condition/true?tz=Australia%2FSydney&loc=en-US&user_id=admin&user_key=admin&xdm_e=http%3A%2F%2Flocalhost%3A2991&xdm_c=channel-condition&cp=%2Fjira&lic=none&cv=1.1.65
     
-So, if we were to cache this request what would have to change about this request in order to create a cache miss? Inspecting
-the query parameters one at a time will give us a result:
+So, if we were to cache this request what would have to change about this request in order to create a cache miss? We separate
+the query parameters that are likely to cause a cache miss from the ones that are not.
+
+The query parameters likely to cause a cache miss:
 
  * If your timezone or locale changes then the cache will be missed. (`tz` / `loc`)
  * If this same condition is requested by a different user (or their username changes) then the cache will be missed. (`user_id` / `user_key`)
+ * If your add-on changes from unlicensed to licensed, or vice-versa, that will result in a cache miss. (`lic`)
+ * If the Atlassian Connect framework version is upgraded then your cache will be missed. (`cv`)
+ 
+The query parameters that will never result in a cache miss:
+
  * If the url to your cloud instance changes then the cache will be missed. But changing the url of a cloud instance is not currently possible. (`xdm_e`)
  * The `xdm_c` variable will not change for conditions; never resulting in a cache miss.
  * The `cp` (context path) variable will not change for a running product: never resulting in a cache miss.
- * The licensed status of your add-on will force cache misses. (`lic`)
- * If the Atlassian Connect framework version is upgraded then your cache will be missed. (`cv`)
   
-As you can see, you only really need to consider the first two points. When you cache the results of a remote condition the
-only reason that the cache will be ignored if if a different user requests that condition. Essentially, remote conditions
-will only be cached on a per-user basis; even if that user is the 'anonymous' user.
+As you can see, you only really need to consider the first three points. When you cache the results of a remote condition the
+only reason that the cache will be ignored if if a different user requests that condition or your licensed state changes. Essentially, 
+remote conditions will only be cached on a per-user basis; even if that user is the 'anonymous' user.
 
 ## <a name="product-specific-conditions"></a>Appendix: List of predefined conditions
 
