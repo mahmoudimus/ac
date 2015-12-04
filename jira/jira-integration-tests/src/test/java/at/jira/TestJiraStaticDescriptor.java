@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Optional;
 
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
+import com.atlassian.testutils.annotations.Retry;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +20,7 @@ import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem
 import static com.atlassian.test.ondemand.data.JiraData.Projects.EntityLinkedProject.Issues.ISSUE_WITH_WIKI_LINK;
 
 @Category (OnDemandAcceptanceTest.class)
+@Retry (maxAttempts=1)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
 {
     private static final String WEB_ITEM_TEXT = "AC Action";
