@@ -22,7 +22,6 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -309,7 +308,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private ConfluenceUser getAddonUserRemovedFromGroups(String addonKey)
     {
         final ConfluenceUser addonUser = getAddonUser(addonKey);
-        final Set<String> groups = new HashSet<String>(crowdAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected());
+        final Set<String> groups = new HashSet<>(crowdAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected());
         groups.addAll(crowdAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected());
         for (String group : groups)
         {
