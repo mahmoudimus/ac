@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-bitbucket-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.65-bitbucket-03-SNAPSHOT</version>
+        <version>1.1.65-bitbucket-03</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
