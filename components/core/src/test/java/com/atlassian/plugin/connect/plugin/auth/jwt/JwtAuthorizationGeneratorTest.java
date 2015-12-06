@@ -1,12 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
@@ -20,16 +13,21 @@ import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimStringMatcher.hasJwtClaim;
@@ -211,6 +209,14 @@ public class JwtAuthorizationGeneratorTest
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/", "", ALL_PARAMS);
         generateGet("https://example.com/base", "https://example.com/base", ALL_PARAMS);
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
+    }
+
+    @Test
+    public void canonicalRequestPreservesEncodedTargetPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/", Collections.emptyMap());
+        generateGet("https://example.com/some%20path", "https://example.com/", Collections.emptyMap());
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
