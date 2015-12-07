@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
+import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
 import com.google.common.collect.Maps;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,7 @@ public class RedirectRegistryImpl implements RedirectRegistry
     {
         synchronized (store)
         {
+
             Map<String, RedirectData> addonMap = store.get(addonKey);
             if (addonMap == null)
             {

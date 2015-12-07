@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.web.redirect;
+package com.atlassian.plugin.connect.api.web.redirect;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 

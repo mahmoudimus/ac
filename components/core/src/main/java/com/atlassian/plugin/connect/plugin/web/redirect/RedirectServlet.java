@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.web.redirect;
 
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameRenderStrategyBuilderImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.ModuleUiParamParser;

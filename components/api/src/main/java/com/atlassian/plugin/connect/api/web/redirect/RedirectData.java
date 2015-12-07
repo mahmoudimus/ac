@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.web.redirect;
+package com.atlassian.plugin.connect.api.web.redirect;
 
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableMap;
@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 /**
- * Bunch of data required to created redirect response by {@link RedirectServlet}.
+ * Bunch of data required to created redirect response by RedirectServlet.
  */
 
 public final class RedirectData

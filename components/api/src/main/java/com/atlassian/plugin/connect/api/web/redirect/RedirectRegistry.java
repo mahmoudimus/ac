@@ -1,8 +1,8 @@
-package com.atlassian.plugin.connect.plugin.web.redirect;
+package com.atlassian.plugin.connect.api.web.redirect;
 
 /**
  * The registry which store redirection data for modules.
- * These data are required by {@link RedirectServlet} to generate signed url
+ * These data are required by RedirectServlet to generate signed url
  * to the connect add-on returned as redirection.
  */
 public interface RedirectRegistry

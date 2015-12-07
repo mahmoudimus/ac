@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
+import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectDataBuilder;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectDataBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
 import com.atlassian.plugin.web.Condition;
