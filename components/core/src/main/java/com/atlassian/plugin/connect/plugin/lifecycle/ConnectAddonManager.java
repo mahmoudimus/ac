@@ -251,14 +251,14 @@ public class ConnectAddonManager
         }
     }
 
-    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor) throws ConnectAddonInstallException
+    private static boolean addonRequiresAuth(ConnectAddonBean addon)
     {
-        if (addOn.getAuthentication() == null || AuthenticationType.NONE.equals(addOn.getAuthentication().getType()))
-        {
-            return null;
-        }
+        return addon.getAuthentication() != null && !AuthenticationType.NONE.equals(addon.getAuthentication().getType());
+    }
 
-        return provisionAddOnUserAndScopes(addOn, previousDescriptor);
+    public String provisionUserIfNecessary(ConnectAddonBean addon, String previousDescriptor) throws ConnectAddonInstallException
+    {
+        return addonRequiresAuth(addon) ? provisionAddOnUserAndScopes(addon, previousDescriptor) : null;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddonInitException, ConnectAddonEnableException
@@ -283,7 +283,10 @@ public class ConnectAddonManager
                     throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
                 }
 
-                enableAddOnUser(addon);
+                if (addonRequiresAuth(addon))
+                {
+                    enableAddonUser(addon);
+                }
 
                 addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
 
@@ -513,7 +516,7 @@ public class ConnectAddonManager
         connectUserService.disableAddOnUser(addOnKey);
     }
 
-    private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddonInitException
+    private void enableAddonUser(ConnectAddonBean addon) throws ConnectAddonInitException
     {
         String userKey = connectUserService.getOrCreateAddOnUserName(addon.getKey(), addon.getName());
 
