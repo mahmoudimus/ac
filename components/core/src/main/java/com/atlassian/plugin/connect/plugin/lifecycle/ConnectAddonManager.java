@@ -25,9 +25,9 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
-import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
@@ -55,9 +55,9 @@ import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -82,7 +82,6 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.n
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * The ConnectAddonManager handles all the stuff that needs to happen when an add-on is enabled/disabled.
@@ -193,7 +192,7 @@ public class ConnectAddonManager
                 : null;
         String newAddOnSigningKey = newUseSharedSecret ? newSharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = provisionAddOnUserAndScopes(addOn, previousDescriptor);
+        String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(newAuthType.name())
@@ -250,6 +249,16 @@ public class ConnectAddonManager
                 log.error("Could not enable add-on " + e.getAddonKey() + " during its installation: " + e.getMessage(), e);
             }
         }
+    }
+
+    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor) throws ConnectAddonInstallException
+    {
+        if (addOn.getAuthentication() == null || AuthenticationType.NONE.equals(addOn.getAuthentication().getType()))
+        {
+            return null;
+        }
+
+        return provisionAddOnUserAndScopes(addOn, previousDescriptor);
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddonInitException, ConnectAddonEnableException
@@ -506,11 +515,6 @@ public class ConnectAddonManager
 
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddonInitException
     {
-        if (isBlank(addon.getName()))
-        {
-            return;
-        }
-
         String userKey = connectUserService.getOrCreateAddOnUserName(addon.getKey(), addon.getName());
 
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());

@@ -22,6 +22,7 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
@@ -53,8 +54,8 @@ import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMEN
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
-import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.addOnRequiresUser;
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationType.NONE;
 import static com.google.common.collect.Iterables.filter;
 import static java.util.Arrays.asList;
 
@@ -348,17 +349,20 @@ public class ConfluenceAddOnUserProvisioningService implements CrowdAddOnUserPro
         final Iterable<ConnectAddonBean> connectAddonBeans = fetchAddonsWithSpaceAdminScope();
         for (ConnectAddonBean connectAddonBean : connectAddonBeans)
         {
-            if (addOnRequiresUser(connectAddonBean))
+            final AuthenticationBean authentication = connectAddonBean.getAuthentication();
+            if (authentication == null || NONE.equals(authentication.getType()))
             {
-                String username = usernameForAddon(connectAddonBean.getKey());
-                try
-                {
-                    grantAddonUserSpaceAdmin(getConfluenceUser(username));
-                }
-                catch (Exception e)
-                {
-                    log.error("Could not add user '{}' to new spaces", username, e);
-                }
+                continue;
+            }
+
+            String username = usernameForAddon(connectAddonBean.getKey());
+            try
+            {
+                grantAddonUserSpaceAdmin(getConfluenceUser(username));
+            }
+            catch (Exception e)
+            {
+                log.error("Could not add user '{}' to new spaces", username, e);
             }
         }
 

@@ -16,20 +16,18 @@ import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.HostProperties;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.util.concurrent.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.Constants;
-import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.addOnRequiresUser;
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.usernameForAddon;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -89,15 +87,10 @@ public class CrowdAddOnUserService implements ConnectUserService
         return connectCrowdService.isUserActive(username);
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean addon, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException
     {
-        if (!addOnRequiresUser(addon))
-        {
-            return null;
-        }
-
         String username = getOrCreateAddOnUserName(checkNotNull(addon.getKey()), checkNotNull(addon.getName()));
         crowdAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
         return username;

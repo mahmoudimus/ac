@@ -55,7 +55,7 @@ public interface ConnectUserService
      * @return the username for the add-on user, or null if none is required
      * @throws ConnectAddonInitException
      */
-    @Nullable
+    @Nonnull
     String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean connectAddonBean,
             @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException;
 }
