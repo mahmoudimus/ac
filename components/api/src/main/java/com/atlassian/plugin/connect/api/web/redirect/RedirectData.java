@@ -24,7 +24,7 @@ public final class RedirectData
     private final Condition condition;
     private final AccessDeniedTemplateType accessDeniedTemplateType;
 
-    RedirectData(String title, String urlTemplate, Condition condition, AccessDeniedTemplateType accessDeniedTemplateType)
+    public RedirectData(String title, String urlTemplate, Condition condition, AccessDeniedTemplateType accessDeniedTemplateType)
     {
         this.title = title;
         this.urlTemplate = urlTemplate;

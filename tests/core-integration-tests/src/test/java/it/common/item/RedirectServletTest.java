@@ -1,4 +1,4 @@
-package it.common.redirect;
+package it.common.item;
 
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
@@ -9,19 +9,18 @@ import com.atlassian.jwt.exception.JwtParseException;
 import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
 import com.atlassian.jwt.reader.JwtReader;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemotePageUtil;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import it.common.MultiProductWebDriverTestBase;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
@@ -32,8 +31,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.ws.rs.core.UriBuilder;
@@ -105,9 +102,9 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
         String addOnPageUrl = runner.getAddon().getBaseUrl() + PARAMETER_CAPTURE_PAGE_PATH;
 
         HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY));
-        URI location = getLocation(response);
+        String url =  response.getHeaderField("Location");
 
-        assertThat(location.toString(), Matchers.startsWith(addOnPageUrl));
+        assertThat(url, Matchers.startsWith(addOnPageUrl));
     }
 
     @Test
@@ -134,8 +131,7 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
         String testValue = "10000";
         URI redirectUri = UriBuilder.fromUri(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY)).queryParam("testParam", testValue).build();
         HttpURLConnection response = doRedirectRequest(redirectUri);
-        Map<String, String> queryParams = getQueryParams(response);
-        String testIdFromUrlParam = queryParams.get("test-value");
+        String testIdFromUrlParam = getQueryParam(response, "test-value");
         assertThat(testIdFromUrlParam, is(testValue));
     }
 
@@ -168,22 +164,6 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
         assertThat(response.getResponseCode(), is(HttpStatus.SC_NOT_FOUND));
     }
 
-    private Map<String, String> getQueryParams(final HttpURLConnection response)
-    {
-        return getUriQueryParams(getLocation(response));
-    }
-
-    private URI getLocation(final HttpURLConnection response)
-    {
-        return URI.create(response.getHeaderField("Location"));
-    }
-
-    private Map<String, String> getUriQueryParams(URI uri)
-    {
-        List<NameValuePair> parse = URLEncodedUtils.parse(uri, "UTF-8");
-        return Maps.transformValues(Maps.uniqueIndex(parse, NameValuePair::getName), NameValuePair::getValue);
-    }
-
     private HttpURLConnection doRedirectRequest(final URI uri) throws IOException
     {
         return (HttpURLConnection) uri.toURL().openConnection();
@@ -191,7 +171,7 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
 
     private URI getPathToRedirectServlet(final String addOnKey, final String jwtExpiryPageKey)
     {
-        return UriBuilder.fromPath(baseUrl).path("plugins/servlet/ac-redirect").path(addOnKey).path(jwtExpiryPageKey).build();
+        return UriBuilder.fromPath(baseUrl).path(RedirectServletPath.forModule(addOnKey, jwtExpiryPageKey)).build();
     }
 
     private long getClaimDate(HttpURLConnection response) throws Exception
@@ -207,10 +187,14 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
         return jwtDateReader.getClaimDate();
     }
 
+    private String getQueryParam(HttpURLConnection response, String key)
+    {
+        return RemotePageUtil.findInContext(response.getHeaderField("Location"), key);
+    }
+
     private String readJwt(HttpURLConnection response)
     {
-        Map<String, String> queryParams = getQueryParams(response);
-        return queryParams.get(JwtConstants.JWT_PARAM_NAME);
+        return getQueryParam(response, JwtConstants.JWT_PARAM_NAME);
     }
 
     private static class JwtDateReader implements JwtClaimVerifier

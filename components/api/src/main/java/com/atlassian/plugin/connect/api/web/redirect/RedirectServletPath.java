@@ -4,8 +4,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RedirectServletPath
 {
+    private static final String SERVLET_PATH = "/plugins/servlet/ac-redirect/";
+
     public static String forModule(String addOnKey, String moduleKey)
     {
-        return "/plugins/servlet/ac-redirect/" + checkNotNull(addOnKey) + "/" + checkNotNull(moduleKey);
+        return SERVLET_PATH + checkNotNull(addOnKey) + "/" + checkNotNull(moduleKey);
     }
 }

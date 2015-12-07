@@ -101,6 +101,9 @@ public class RedirectServlet extends HttpServlet
     {
         resp.setStatus(TEMPORARY_REDIRECT_CODE);
         resp.setHeader("location", url);
+
+        // response will be cached for given time, only on client side (no proxies)
+        // and after that response must be revalidated (usually it's default behaviour but the "must-revalidate" param makes this unambiguous)
         resp.setHeader("cache-control", "private, must-revalidate, max-age=" + REDIRECT_CACHE_TIME);
     }
 
