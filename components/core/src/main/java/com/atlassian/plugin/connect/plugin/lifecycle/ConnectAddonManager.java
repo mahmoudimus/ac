@@ -25,9 +25,9 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
-import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
-import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
@@ -55,9 +55,9 @@ import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -78,7 +78,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.addOnRequiresUser;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -252,12 +251,17 @@ public class ConnectAddonManager
         }
     }
 
-    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor) throws ConnectAddonInstallException
+    private static boolean addonRequiresAuth(ConnectAddonBean addon)
     {
-        return addOnRequiresUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
+        return addon.getAuthentication() != null && !AuthenticationType.NONE.equals(addon.getAuthentication().getType());
     }
 
-    public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException, ConnectAddonEnableException
+    public String provisionUserIfNecessary(ConnectAddonBean addon, String previousDescriptor) throws ConnectAddonInstallException
+    {
+        return addonRequiresAuth(addon) ? provisionAddOnUserAndScopes(addon, previousDescriptor) : null;
+    }
+
+    public void enableConnectAddon(final String pluginKey) throws ConnectAddonInitException, ConnectAddonEnableException
     {
         long startTime = System.currentTimeMillis();
         //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
@@ -279,9 +283,9 @@ public class ConnectAddonManager
                     throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
                 }
 
-                if (addOnRequiresUser(addon))
+                if (addonRequiresAuth(addon))
                 {
-                    enableAddOnUser(addon);
+                    enableAddonUser(addon);
                 }
 
                 addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
@@ -313,19 +317,19 @@ public class ConnectAddonManager
         }
     }
 
-    public void disableConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
+    public void disableConnectAddon(final String pluginKey) throws ConnectAddonDisableException
     {
         disableConnectAddon(pluginKey, true, true);
     }
 
     public void disableConnectAddonWithoutPersistingState(final String pluginKey)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         disableConnectAddon(pluginKey, false, true);
     }
 
     private void disableConnectAddon(final String pluginKey, boolean persistState, boolean sendEvent)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         long startTime = System.currentTimeMillis();
         remotablePluginAccessorFactory.remove(pluginKey);
@@ -351,7 +355,7 @@ public class ConnectAddonManager
         }
     }
 
-    public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
+    public void uninstallConnectAddon(final String pluginKey) throws ConnectAddonDisableException
     {
         uninstallConnectAddon(pluginKey, true);
     }
@@ -362,14 +366,14 @@ public class ConnectAddonManager
         {
             uninstallConnectAddon(pluginKey, false);
         }
-        catch (ConnectAddOnUserDisableException e)
+        catch (ConnectAddonDisableException e)
         {
             //uh, don't you know what "quietly" means?
         }
     }
 
     private void uninstallConnectAddon(final String pluginKey, boolean sendEvent)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         long startTime = System.currentTimeMillis();
         if (addonRegistry.hasDescriptor(pluginKey))
@@ -479,7 +483,7 @@ public class ConnectAddonManager
                     callbackUri, addon.getKey(), authorizationGenerator.getClass().getSimpleName(), ReKeyableAuthorizationGenerator.class.getSimpleName()));
         }
     }
-    
+
     private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Optional<String> authHeader) throws ConnectAddonInstallException
     {
         try
@@ -500,7 +504,7 @@ public class ConnectAddonManager
     // removing the property from the app link removes the Authenticator's ability to assign a user to incoming requests
     // and as these users cannot log in anyway this reduces their possible actions to zero
     // (but don't remove the user as we need to preserve the history of their actions (e.g. audit trail, issue edited by <user>)
-    private void disableAddOnUser(String addOnKey) throws ConnectAddOnUserDisableException
+    private void disableAddOnUser(String addOnKey) throws ConnectAddonDisableException
     {
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addOnKey);
 
@@ -512,7 +516,7 @@ public class ConnectAddonManager
         connectUserService.disableAddOnUser(addOnKey);
     }
 
-    private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
+    private void enableAddonUser(ConnectAddonBean addon) throws ConnectAddonInitException
     {
         String userKey = connectUserService.getOrCreateAddOnUserName(addon.getKey(), addon.getName());
 
@@ -724,12 +728,9 @@ public class ConnectAddonManager
 
         try
         {
-            return connectUserService.provisionAddOnUserForScopes(addOn.getKey(),
-                    addOn.getName(),
-                    previousScopes,
-                    newScopes);
+            return connectUserService.provisionAddOnUserWithScopes(addOn, previousScopes, newScopes);
         }
-        catch (ConnectAddOnUserInitException e)
+        catch (ConnectAddonInitException e)
         {
             ConnectAddonInstallException exception = new ConnectAddonInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
             exception.initCause(e);

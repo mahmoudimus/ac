@@ -1,13 +1,12 @@
-package com.atlassian.plugin.connect.spi.auth.user;
+package com.atlassian.plugin.connect.spi;
+
+import java.util.TimeZone;
 
 import javax.annotation.Nullable;
-import java.util.TimeZone;
 
 /**
  * Allows to get user preferences (for example the time zone). Some preferences will return default (for the
  * application) values when no user is specified.
- *
- * @since 0.6
  */
 public interface UserPreferencesRetriever
 {

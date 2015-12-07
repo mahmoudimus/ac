@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
-import com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.spi.FeatureManager;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult.NO_REMOTE_GRANT_NEEDED;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED;
+import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.NO_REMOTE_GRANT_NEEDED;
+import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;

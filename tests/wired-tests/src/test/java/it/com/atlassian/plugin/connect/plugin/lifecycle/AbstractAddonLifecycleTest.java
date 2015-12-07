@@ -33,7 +33,7 @@ import com.atlassian.testutils.annotations.Retry;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.usernameForAddon;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.collect.Sets.newHashSet;

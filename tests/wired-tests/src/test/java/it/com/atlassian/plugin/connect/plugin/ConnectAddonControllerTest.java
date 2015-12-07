@@ -2,20 +2,18 @@ package it.com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonController;
-import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
-import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.lifecycle.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.atlassian.upm.spi.PluginControlHandler;
+
 import it.com.atlassian.plugin.connect.util.io.TestFileReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +54,7 @@ public class ConnectAddonControllerTest
     {
         connectAddonController.installAddon(TestFileReader.readAddonTestFile("invalidGenericDescriptor.json"));
     }
-    
+
     @Test
     public void canUninstallAddon() throws IOException, ConnectAddonInstallException
     {
@@ -65,7 +63,7 @@ public class ConnectAddonControllerTest
         connectAddonController.uninstallAddon(addonKey);
         assertTrue(addonRegistry.getRestartState(addonKey).equals(PluginState.UNINSTALLED));
     }
-    
+
     @Test
     public void canEnableInstalledAddon() throws IOException, ConnectAddonEnableException
     {
@@ -82,7 +80,7 @@ public class ConnectAddonControllerTest
     {
         connectAddonController.enableAddon("bad-key");
     }
-    
+
     @Test
     public void canDisableAddon() throws IOException
     {
@@ -104,7 +102,7 @@ public class ConnectAddonControllerTest
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
                 .withModule("webItems", randomWebItemBean())
                 .build();
-        
+
         return ConnectModulesGsonFactory.addonBeanToJson(addonBean);
     }
 }

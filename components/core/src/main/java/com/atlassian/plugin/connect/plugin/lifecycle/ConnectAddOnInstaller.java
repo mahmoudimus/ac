@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 
 /**
  * @since 1.0

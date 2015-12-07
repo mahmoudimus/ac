@@ -1,4 +1,6 @@
-package com.atlassian.plugin.connect.api.auth.user;
+package com.atlassian.plugin.connect.crowd.usermanagement;
+
+import java.util.Set;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
@@ -7,8 +9,6 @@ import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
-
-import java.util.Set;
 
 /**
  * Perform operations on user groups.
