@@ -42,6 +42,7 @@ import it.common.MultiProductWebDriverTestBase;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyIframeURLHasVersionNumber;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
@@ -163,10 +164,11 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_PAGE_KEY);
 
         final long timeBeforeClick = getSystemTimeBeforeJwtIssue();
-        openAndClosePage(page);
+        openPage(page);
         verifyIssuedAtTime(timeBeforeClick, PARAMETER_CAPTURING_PAGE_SERVLET);
+        goToPageWithLink(JWT_EXPIRY_PAGE_KEY);
 
-        openAndClosePage(page);
+        openPage(page);
         verifyIssuedAtTime(lastIssuedAtTime, PARAMETER_CAPTURING_PAGE_SERVLET);
     }
 
@@ -265,9 +267,8 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         inlineDialog.hideAndWaitUntilHidden();
     }
 
-    private void openAndClosePage(RemotePluginAwarePage page)
+    private void openPage(RemotePluginAwarePage page)
     {
         page.clickAddOnLinkWithoutBinding();
-        login(testUserFactory.basicUser());
     }
 }

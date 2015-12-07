@@ -126,16 +126,6 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void shouldResolveUriParamsForRedirection() throws Exception
-    {
-        String testValue = "10000";
-        URI redirectUri = UriBuilder.fromUri(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY)).queryParam("testParam", testValue).build();
-        HttpURLConnection response = doRedirectRequest(redirectUri);
-        String testIdFromUrlParam = getQueryParam(response, "test-value");
-        assertThat(testIdFromUrlParam, is(testValue));
-    }
-
-    @Test
     public void shouldReturnCachedResponseWithTemporaryRedirect() throws Exception
     {
         HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY));

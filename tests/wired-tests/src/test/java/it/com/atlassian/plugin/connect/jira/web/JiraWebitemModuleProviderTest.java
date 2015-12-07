@@ -1,7 +1,9 @@
 package it.com.atlassian.plugin.connect.jira.web;
 
 import com.atlassian.jira.project.Project;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
+import com.atlassian.plugin.connect.plugin.web.redirect.RedirectServlet;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -43,7 +45,7 @@ public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
 
         String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
 
-        assertTrue("wrong url prefix. expected: " + BASE_URL + ADDON_PATH + ", but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
-        assertTrue("project key not found in: " + convertedUrl, convertedUrl.contains("myProject=" + project.getKey()));
+        String expectedUrl = BASE_URL + RedirectServletPath.forModule(PLUGIN_KEY, MODULE_KEY);
+        assertTrue("wrong url. expected: " + expectedUrl + ", but got: " + convertedUrl, convertedUrl.equals(expectedUrl));
     }
 }

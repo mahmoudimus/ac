@@ -5,6 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -476,13 +477,24 @@ public class WebItemModuleProviderTest
 
     private void assertAddOnLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addOnBean)
     {
-        final WebItemTargetBean target = webItemModuleBean.getTarget();
-        final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
-                ? ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean))
-                : BASE_URL + "/my/addon";
-        final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
+        final String prefix = getExpectedUrlPrefixForWebItem(webItemModuleBean, addOnBean);
+        final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>());
         final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);
         assertTrue(message, href.startsWith(prefix));
+    }
+
+    private String getExpectedUrlPrefixForWebItem(final WebItemModuleBean webItemModuleBean, final ConnectAddonBean addOnBean)
+    {
+        final WebItemTargetBean target = webItemModuleBean.getTarget();
+        if (target.isDialogTarget() || target.isInlineDialogTarget())
+        {
+            return ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean));
+        }
+        if (target.isPageTarget() && !webItemModuleBean.isAbsolute())
+        {
+            return RedirectServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean));
+        }
+        return BASE_URL + "/my/addon";
     }
 
     private Plugin getConnectPlugin()

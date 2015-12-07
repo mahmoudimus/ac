@@ -22,6 +22,7 @@ import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
@@ -176,7 +177,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     {
         // Link to the add-ons may require revalidation of JWT token so they need to do request though redirect servlet.
         // Absolute links points to the external servers like wikipedia, so they do not need to be signed, so they do not need go through redirect servlet.
-        return !bean.isAbsolute() && bean.getContext().equals(AddOnUrlContext.addon);
+        return !bean.isAbsolute() && bean.getContext().equals(AddOnUrlContext.addon) && bean.getTarget().getType().equals(WebItemTargetType.page);
     }
 
     private void registerIframeRenderStrategy(WebItemModuleBean webItem, ConnectAddonBean descriptor)

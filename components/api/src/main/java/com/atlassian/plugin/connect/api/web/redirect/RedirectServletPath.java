@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.api.web.redirect;
 
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RedirectServletPath
@@ -8,6 +10,9 @@ public class RedirectServletPath
 
     public static String forModule(String addOnKey, String moduleKey)
     {
-        return SERVLET_PATH + checkNotNull(addOnKey) + "/" + checkNotNull(moduleKey);
+        checkNotNull(addOnKey);
+        checkNotNull(moduleKey);
+        String moduleKeyOnly = ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey);
+        return SERVLET_PATH + addOnKey + "/" + moduleKeyOnly;
     }
 }

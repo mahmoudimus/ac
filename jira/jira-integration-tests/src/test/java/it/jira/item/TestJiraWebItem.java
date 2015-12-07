@@ -1,10 +1,5 @@
 package it.jira.item;
 
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -19,14 +14,18 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
+import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -34,7 +33,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -61,6 +60,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String ADDON_WEBITEM_DIALOG = "ac-general-web-item-dialog";
     private static final String ABSOLUTE_WEBITEM_DIALOG = "ac-general-web-item-dialog-absolute";
 
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+
     private static ConnectRunner runner;
 
     private static TestUser betty;
@@ -78,11 +79,11 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
                 .addModule("generalPages",
                         newPageBean()
-                            .withName(new I18nProperty("A General Page", null))
-                            .withKey(GENERAL_PAGE)
-                            .withLocation("not a real location so no web item is displayed")
-                            .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
-                            .build())
+                                .withName(new I18nProperty("A General Page", null))
+                                .withKey(GENERAL_PAGE)
+                                .withLocation("not a real location so no web item is displayed")
+                                .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
+                                .build())
                 .addModules("webItems",
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.page)
@@ -128,9 +129,9 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
                                                 .withOptions(InlineDialogOptions.newInlineDialogOptions()
-                                                                .withOnHover(true)
-                                                                .withWidth("301px")
-                                                                .build()
+                                                        .withOnHover(true)
+                                                        .withWidth("301px")
+                                                        .build()
                                                 )
                                                 .build()
                                 )
@@ -145,9 +146,9 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
                                                 .withOptions(InlineDialogOptions.newInlineDialogOptions()
-                                                                .withOnHover(true)
-                                                                .withWidth("321px")
-                                                                .build()
+                                                        .withOnHover(true)
+                                                        .withWidth("321px")
+                                                        .build()
                                                 )
                                                 .build()
                                 )
@@ -161,7 +162,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 )
                 .addRoute("/only" + barney.getDisplayName() + "Condition", new CheckUsernameConditionServlet(barney.getUsername()))
                 .addRoute("/only" + betty.getDisplayName() + "Condition", new CheckUsernameConditionServlet(betty.getUsername()))
-                .addRoute("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/irwi", ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET))
                 .addRoute("/my-webitem-dialog", ConnectAppServlets.apRequestServlet())
                 .addRoute("/my-webitem-dialog" + CHROMELESS_VARIANT, ConnectAppServlets.apRequestServlet())
                 .addRoute("/my-webitem-dialog" + NULL_CHROME_VARIANT, ConnectAppServlets.apRequestServlet())
@@ -212,10 +213,12 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_DIRECT_WEBITEM), Optional.<String>empty());
         assertNotNull("Web item should be found", webItem);
 
-        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
-        assertEquals(project.getId(), webItem.getFromQueryString("pid"));
-        assertThat(webItem.getPath(), startsWith(runner.getAddon().getBaseUrl()));
-        verifyStandardAddOnRelativeQueryParameters(webItem, "/jira");
+        webItem.click();
+        Map<String, String> queryParams = PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET.getParamsFromLastRequest();
+
+        assertEquals(project.getKey(), queryParams.get("project_key"));
+        assertEquals(project.getId(), queryParams.get("pid"));
+        verifyContainsStandardAddOnQueryParamters(queryParams, "/jira");
     }
 
     @Test
@@ -310,7 +313,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.hover();
         assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
-
     }
 
     @Test
@@ -378,7 +380,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
         assertThat("webitem dialog has a height that is not 0", dialogPage.getIFrameSize().getHeight(), is(not(0)));
         assertThat("webitem dialog has a width that is not 0", dialogPage.getIFrameSize().getWidth(), is(not(0)));
-
     }
 
     @Test
@@ -403,7 +404,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class).waitUntilContentElementNotEmpty("client-http-status");
         assertEquals("Success", dialogPage.getIFrameElementText("message"));
         assertEquals("200", dialogPage.getIFrameElementText("client-http-status"));
-
     }
 
     @Test
@@ -503,7 +503,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 .build();
     }
 
-
     private static String dialogOptionKey(Boolean chrome, String moduleKey)
     {
         return moduleKey + dialogOptionVariant(chrome);
@@ -522,5 +521,4 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         }
         return variant;
     }
-
 }

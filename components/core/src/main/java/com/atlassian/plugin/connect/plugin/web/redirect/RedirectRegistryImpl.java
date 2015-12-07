@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.web.redirect;
 
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.google.common.collect.Maps;
 import org.springframework.stereotype.Component;
 
@@ -17,29 +18,30 @@ public class RedirectRegistryImpl implements RedirectRegistry
     private final Map<String, Map<String, RedirectData>> store = Maps.newConcurrentMap();
 
     @Override
-    public void register(String addonKey, String moduleKey, RedirectData redirectData)
+    public void register(String addOnKey, String moduleKey, RedirectData redirectData)
     {
+        String moduleKeyOnly = ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey);
         synchronized (store)
         {
-
-            Map<String, RedirectData> addonMap = store.get(addonKey);
+            Map<String, RedirectData> addonMap = store.get(addOnKey);
             if (addonMap == null)
             {
                 addonMap = Maps.newConcurrentMap();
-                store.put(addonKey, addonMap);
+                store.put(addOnKey, addonMap);
             }
-            addonMap.put(moduleKey, redirectData);
+            addonMap.put(moduleKeyOnly, redirectData);
         }
     }
 
     @Override
-    public Optional<RedirectData> get(String addonKey, String moduleKey)
+    public Optional<RedirectData> get(String addOnKey, String moduleKey)
     {
-        Map<String, RedirectData> addonEndpoints = store.get(addonKey);
-        if (addonEndpoints == null)
+        String moduleKeyOnly = ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey);
+        Map<String, RedirectData> addonEndpoints = store.get(addOnKey);
+        if (addonEndpoints == null || !addonEndpoints.containsKey(moduleKeyOnly))
         {
             return Optional.empty();
         }
-        return Optional.of(addonEndpoints.get(moduleKeyOnly(addonKey, moduleKey)));
+        return Optional.of(addonEndpoints.get(moduleKeyOnly(addOnKey, moduleKeyOnly)));
     }
 }
