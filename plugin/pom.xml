@@ -36,8 +36,6 @@
         <dependency>
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
-            <version>${atlassian.analytics.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->

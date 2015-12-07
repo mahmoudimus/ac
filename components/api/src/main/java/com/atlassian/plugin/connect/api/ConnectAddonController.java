@@ -1,12 +1,15 @@
 package com.atlassian.plugin.connect.api;
 
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
+
 public interface ConnectAddonController
 {
     /**
      * Enables the provided Connect add-on, if installed.
      *
      * @param addonKey keys of the add-on to enable
-     * @throws ConnectAddonEnableException              
+     * @throws ConnectAddonEnableException
      */
     void enableAddon(String addonKey) throws ConnectAddonEnableException;
 

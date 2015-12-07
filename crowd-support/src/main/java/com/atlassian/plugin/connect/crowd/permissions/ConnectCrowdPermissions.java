@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.api.auth.user;
+package com.atlassian.plugin.connect.crowd.permissions;
 
 /**
  * A component for adding permissions remotely via the Horde unified user management interface

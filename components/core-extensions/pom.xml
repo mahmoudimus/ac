@@ -121,8 +121,6 @@
         <dependency>
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
-            <version>${atlassian.analytics.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
@@ -311,8 +309,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>2.5.6</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

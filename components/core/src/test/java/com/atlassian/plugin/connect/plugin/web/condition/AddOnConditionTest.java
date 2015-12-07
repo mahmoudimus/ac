@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImp
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
