@@ -44,7 +44,7 @@ import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserGroupPr
 import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
+import com.atlassian.plugin.connect.api.ConnectAddonInitException;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.transaction.TransactionCallback;

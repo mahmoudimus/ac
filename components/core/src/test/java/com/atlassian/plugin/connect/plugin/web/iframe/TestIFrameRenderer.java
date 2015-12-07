@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;

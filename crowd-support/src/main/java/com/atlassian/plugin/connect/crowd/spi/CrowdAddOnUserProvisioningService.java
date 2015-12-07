@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.crowd.spi;
 import java.util.Set;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
+import com.atlassian.plugin.connect.api.ConnectAddonInitException;
 
 public interface CrowdAddOnUserProvisioningService
 {

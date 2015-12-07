@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;

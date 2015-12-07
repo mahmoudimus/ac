@@ -21,7 +21,7 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
+import com.atlassian.plugin.connect.api.ConnectAddonInitException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -24,7 +24,7 @@ import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException
 import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 

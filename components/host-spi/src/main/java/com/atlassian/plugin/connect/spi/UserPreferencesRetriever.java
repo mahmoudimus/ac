@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.user;
+package com.atlassian.plugin.connect.spi;
 
 import java.util.TimeZone;
 

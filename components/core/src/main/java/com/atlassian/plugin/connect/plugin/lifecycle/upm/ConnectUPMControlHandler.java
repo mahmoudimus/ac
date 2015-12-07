@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.ConnectAddonDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.spi.PluginControlHandler;
 import org.slf4j.Logger;

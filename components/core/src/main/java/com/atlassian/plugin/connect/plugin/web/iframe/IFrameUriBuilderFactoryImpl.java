@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;

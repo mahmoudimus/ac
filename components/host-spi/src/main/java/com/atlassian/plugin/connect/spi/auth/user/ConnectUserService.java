@@ -6,9 +6,8 @@ import javax.annotation.Nonnull;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonDisableException;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectAddonInitException;
-import com.atlassian.util.concurrent.Nullable;
+import com.atlassian.plugin.connect.api.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.ConnectAddonInitException;
 
 /**
  * Provided by the host application to allow connect to manage add-on users and check whether impersonated users
