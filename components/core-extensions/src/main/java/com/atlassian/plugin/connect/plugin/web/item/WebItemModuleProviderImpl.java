@@ -175,6 +175,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     private boolean requiredRedirection(final WebItemModuleBean bean)
     {
         // Link to the add-ons may require revalidation of JWT token so they need to do request though redirect servlet.
+        // Absolute links points to the external servers like wikipedia, so they do not need to be signed, so they do not need go through redirect servlet.
         return !bean.isAbsolute() && bean.getContext().equals(AddOnUrlContext.addon);
     }
 

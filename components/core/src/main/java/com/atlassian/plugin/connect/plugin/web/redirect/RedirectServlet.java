@@ -71,12 +71,13 @@ public class RedirectServlet extends HttpServlet
         String addOnKey = matcher.group(1);
         String moduleKey = matcher.group(2);
 
-        RedirectData redirectData = redirectRegistry.get(addOnKey, moduleKey);
-        if (redirectData == null)
+        Optional<RedirectData> redirectDataOpt = redirectRegistry.get(addOnKey, moduleKey);
+        if (!redirectDataOpt.isPresent())
         {
             resp.sendError(SC_NOT_FOUND);
             return;
         }
+        RedirectData redirectData = redirectDataOpt.get();
 
         ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
         if (redirectData.shouldRedirect(moduleContextParameters))

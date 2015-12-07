@@ -82,6 +82,9 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             if (addOnUrlContext == addon)
             {
                 return isDialog
+                        // Url to the the ConnectIFrameServlet does not need to have base url.
+                        // The url is only used by JS to parse url params from it.
+                        // Then JS compose new url to the ConnectIFrameServlet and do a request.
                         ? urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext)
                         : req.getContextPath() + urlVariableSubstitutor.append(RedirectServletPath.forModule(pluginKey, moduleKey), moduleContext);
             }

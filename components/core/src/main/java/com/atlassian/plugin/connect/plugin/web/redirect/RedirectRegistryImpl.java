@@ -6,6 +6,8 @@ import com.google.common.collect.Maps;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 
@@ -31,9 +33,13 @@ public class RedirectRegistryImpl implements RedirectRegistry
     }
 
     @Override
-    public RedirectData get(String addonKey, String moduleKey)
+    public Optional<RedirectData> get(String addonKey, String moduleKey)
     {
         Map<String, RedirectData> addonEndpoints = store.get(addonKey);
-        return addonEndpoints == null ? null : addonEndpoints.get(moduleKeyOnly(addonKey, moduleKey));
+        if (addonEndpoints == null)
+        {
+            return Optional.empty();
+        }
+        return Optional.of(addonEndpoints.get(moduleKeyOnly(addonKey, moduleKey)));
     }
 }
