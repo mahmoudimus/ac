@@ -47,14 +47,13 @@ public interface ConnectUserService
      * Provisions an add-on user for the add-on with key {@code addOnKey} and configures the user for the provided set
      * of {@link ScopeName scopes}. If the user already exists and is disabled, the user is re-enabled.
      *
-     * @param addOnKey the key of the add-on
-     * @param addOnDisplayName the display name of the add-on
+     * @param addon the add-on
      * @param previousScopes the set of previous scopes in the case of a re-install of the add-on
      * @param newScopes the set of requested scopes
      * @return the username for the add-on user, or null if none is required
      * @throws ConnectAddonInitException
      */
     @Nonnull
-    String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean connectAddonBean,
+    String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean addon,
             @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException;
 }
