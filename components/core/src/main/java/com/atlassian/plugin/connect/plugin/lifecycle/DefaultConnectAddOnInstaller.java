@@ -8,8 +8,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
-import com.atlassian.plugin.connect.api.ConnectAddonEnableException;
-import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -24,7 +24,7 @@ import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException
 import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFactory;
-import com.atlassian.plugin.connect.api.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 

@@ -20,7 +20,7 @@ import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.api.ConnectAddonInitException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.sal.api.transaction.TransactionCallback;

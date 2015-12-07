@@ -12,7 +12,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.connect.spi.FeatureManager;
 import com.atlassian.plugin.connect.spi.HostProperties;
-import com.atlassian.plugin.connect.api.ConnectAddonInitException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 
 import com.google.common.collect.ImmutableMap;
 

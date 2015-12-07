@@ -17,8 +17,8 @@ import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.api.ConnectAddonDisableException;
-import com.atlassian.plugin.connect.api.ConnectAddonInitException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

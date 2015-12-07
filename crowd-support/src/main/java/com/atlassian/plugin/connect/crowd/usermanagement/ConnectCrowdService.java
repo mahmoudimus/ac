@@ -4,7 +4,7 @@ import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
-import com.atlassian.plugin.connect.api.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.google.common.annotations.VisibleForTesting;
 
 import java.util.Map;

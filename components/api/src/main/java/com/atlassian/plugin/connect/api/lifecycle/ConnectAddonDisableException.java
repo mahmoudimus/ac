@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.api;
+package com.atlassian.plugin.connect.api.lifecycle;
 
 public class ConnectAddonDisableException extends Exception
 {
