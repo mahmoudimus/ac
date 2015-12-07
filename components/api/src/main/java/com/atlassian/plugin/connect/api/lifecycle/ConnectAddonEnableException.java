@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.api.lifecycle;
 
+/**
+ * Exception that is thrown when enablement of a connect add-on fails,
+ * e.g. when the associated user can not be enabled.
+ */
 public class ConnectAddonEnableException extends Exception {
 
     private final String addonKey;

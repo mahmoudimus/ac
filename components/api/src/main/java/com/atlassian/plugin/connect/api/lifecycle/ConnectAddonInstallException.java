@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 /**
  * Exception that is thrown when installation of a connect add-on fails
- *
- * @since 1.2
  */
 public class ConnectAddonInstallException extends Exception {
 

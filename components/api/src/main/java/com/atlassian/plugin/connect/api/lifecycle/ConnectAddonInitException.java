@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.api.lifecycle;
 
+/**
+ * Exception that is thrown when initialisation of a connect add-on fails,
+ * e.g. when the associated user can not be created.
+ */
 public class ConnectAddonInitException extends RuntimeException
 {
     public static final String USER_PROVISIONING_ERROR = "connect.install.error.user.provisioning";
