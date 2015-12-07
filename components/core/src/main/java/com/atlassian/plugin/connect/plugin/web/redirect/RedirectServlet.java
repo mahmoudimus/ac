@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
+import com.atlassian.plugin.connect.plugin.util.KeysFromPathMatcher;
 import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameRenderStrategyBuilderImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.ModuleUiParamParser;
@@ -14,8 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,9 +29,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 public class RedirectServlet extends HttpServlet
 {
-    // Matches addOnKey and moduleKey from url: /addon.key/module.key
-    private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
-
     public static final int TEMPORARY_REDIRECT_CODE = 307;
     private static final String REDIRECT_CACHE_TIME_PROPERTY = "com.atlassian.connect.redirect.cache_time";
     private static final long REDIRECT_CACHE_TIME_DEFAULT_DEFAULT = 120;
@@ -43,35 +39,35 @@ public class RedirectServlet extends HttpServlet
     private final ModuleUiParamParser moduleUiParamParser;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final TemplateRenderer templateRenderer;
+    private final KeysFromPathMatcher keysFromPathMatcher;
 
     public RedirectServlet(RedirectRegistry redirectRegistry,
             ModuleContextParser moduleContextParser,
             ModuleUiParamParser moduleUiParamParser,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
-            TemplateRenderer templateRenderer)
+            TemplateRenderer templateRenderer,
+            KeysFromPathMatcher keysFromPathMatcher)
     {
         this.redirectRegistry = redirectRegistry;
         this.moduleContextParser = moduleContextParser;
         this.moduleUiParamParser = moduleUiParamParser;
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.templateRenderer = templateRenderer;
+        this.keysFromPathMatcher = keysFromPathMatcher;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException
     {
-        Matcher matcher = PATH_PATTERN.matcher(req.getPathInfo());
-        if (!matcher.find())
+        Optional<KeysFromPathMatcher.AddOnKeyAndModuleKey> keys = keysFromPathMatcher.getAddOnKeyAndModuleKey(req.getPathInfo());
+        if (!keys.isPresent())
         {
             resp.sendError(SC_NOT_FOUND);
             return;
         }
 
-        String addOnKey = matcher.group(1);
-        String moduleKey = matcher.group(2);
-
-        Optional<RedirectData> redirectDataOpt = redirectRegistry.get(addOnKey, moduleKey);
+        Optional<RedirectData> redirectDataOpt = redirectRegistry.get(keys.get().getAddOnKey(), keys.get().getModuleKey());
         if (!redirectDataOpt.isPresent())
         {
             resp.sendError(SC_NOT_FOUND);
@@ -84,8 +80,8 @@ public class RedirectServlet extends HttpServlet
         {
             Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
             String signedUrl = iFrameUriBuilderFactory.builder()
-                    .addOn(addOnKey)
-                    .namespace(moduleKey)
+                    .addOn(keys.get().getAddOnKey())
+                    .namespace(keys.get().getModuleKey())
                     .urlTemplate(redirectData.getUrlTemplate())
                     .context(moduleContextParameters)
                     .uiParams(moduleUiParameters)
