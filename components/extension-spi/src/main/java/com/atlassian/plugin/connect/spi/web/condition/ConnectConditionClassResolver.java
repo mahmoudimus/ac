@@ -152,7 +152,7 @@ public interface ConnectConditionClassResolver
             }
 
             /**
-             * Adds the given parameter predicates to the builder. The predicates that must be satisfied for the entry
+             * Adds the given parameter predicates to the builder. The predicates must be satisfied for the entry
              * to be used.
              *
              * @param parameterPredicates predicates on the parameters of the condition
@@ -165,8 +165,9 @@ public interface ConnectConditionClassResolver
             }
 
             /**
-             * Marks the condition as being usable also where the full host application context is not available. These
-             * conditions should generally not access any fields from the context map.
+             * Marks the condition as being usable also where the full host application context is not available.
+             * Connect may evaluate this condition even when the context map is not fully populated.
+             * Conditions marked with this flag should generally not access any fields from the context map.
              *
              * @return the builder
              */
