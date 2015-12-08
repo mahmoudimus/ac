@@ -80,7 +80,6 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
             tooltipElement.setText(toolTip.getValue());
         }
 
-        webPanelElement.addAttribute("class", IFrameWebPanel.class.getName());
         webPanelElement.addAttribute("width", bean.getLayout().getWidth());
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());
