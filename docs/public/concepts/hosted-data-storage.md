@@ -7,25 +7,26 @@ What are add-on properties and how do they work?
 What are entity properties and how do they work?
 What are content properties aond how do they work?
 
-There are three ways in which you can store data against JIRA and Confluence: add-on properties, entity properties (jira only) or 
-content properties (confluence only). We will refer to them collectively as *host propeties*. A host property is a key-value pair
-where the value is a blob of JSON data. Your add-on will need to request the right Scopes to perform operations on host
-properties.
+There are three ways in which you can store data against JIRA and Confluence: add-on properties, entity properties 
+(jira only) or content properties (confluence only). We will refer to them collectively as *host propeties*. A host 
+property is a key-value pair where the value is a blob of JSON data. Your add-on will need to request the right 
+Scopes to perform operations on host properties.
 
 Hosted data storage is useful to Atlassian Connect developers for the following reasons:
 
- * Your addon does not need to have a backend to store data.  
+ * **Your addon does not need to have a backend to store data.**  
    You can store your data in the host application itself meaning that your addon could be written using frontend only technologies (like Javascript / HTML / CSS).
- * You don't need to worry about imports and exports.  
+ * **Imports and exports are handled by the host product.**  
    Since your data is stored with the host application it is included in the host applications backups and the import process
    will restore your data for you. This means that you never need to worry about your data being lost or disconnected from the customer.
- * Conditions can be predicated on host properties    
+ * **Conditions can be predicated on host properties.**    
    Meaning that you can configure if a web fragment will be shown based on an host property; this is a must faster approach than relying upon remote conditions. This
    is because a remote condition must make an entire HTTP call whereas a host property based condition is a local operation. It is an order of magnitude faster to render
    the page and a highle recommended approach.
- * The products have access to your properties  
-   In JIRA's case this means that you can write JQL queries based on issue entity properties. This enables your users to enjoy the power of JQL on search data
-   that you have defined.
+ * **The products have access to your properties.**  
+   In JIRA's case this means that you can write JQL queries based on issue entity properties. This enables your users to
+   enjoy the power of JQL on search data that you have defined. In Confluence this means that you can use [CQL to search 
+   for content](https://developer.atlassian.com/confdev/confluence-rest-api/advanced-searching-using-cql).
    
 Host properties give an Atlassian Connect developer a great many benefits. The following sections provide detailed explanations of how add-on properties,
 entity properties and content properties may be used in your add-on.
@@ -99,7 +100,7 @@ Here is an example snippet that will show a pop-up with a JSON property named my
 
 Apart from using [`AP.request`](../javascript/module-request.html), the same endpoints are accessible via a request signed with JWT.
 
-## JIRA entity properties
+## <a id="jira-entity-properties"></a>JIRA entity properties
 
 JIRA provides a mechanism to store key-value pair data against JIRA entities and these are known as *entity properties*. The JIRA entities
 that you can store properties against are:
@@ -112,7 +113,7 @@ that you can store properties against are:
  * [Workflows](https://docs.atlassian.com/jira/REST/latest/#api/2/workflow-updateProperty)
  * [Dashboard items](https://docs.atlassian.com/jira/REST/latest/#api/2/dashboard/{dashboardId}/items/{itemId}/properties-getProperty)
  
-### Limitations of entity properties
+### <a id="jira-entity-properties-limitations"></a>Limitations of entity properties
 
 All users and add-ons in the system can see all entity properties that they have access to. For example, if user A has access to a JIRA issue but user B does 
 not then A can see all of the entity properties on the issue and B will get a HTTP 403 when they attempt to query for any properties. This means that a malicious 
@@ -121,7 +122,7 @@ This also means that you should namespace your entity properties to avoid confli
 
 Please note that you can only get or modify entity properties as a logged in user.
  
-### Issue entity properties example
+### <a id="jira-entity-properties-example"></a>Issue entity properties example
 
 To set an entity property on an issue you can make the following request:
 
@@ -153,7 +154,7 @@ In this example an issue entity property with the key *party-addon-properties* h
 You could then use the *jiraEntityProperties* module to index these issue entity properties so that they became avaliable
 in JQL searches. [Read the jiraEntityProperties documentation](modules/jira/entity-property.html) for more details.
 
-### Conditions on entity properties
+### <a id="jira-entity-properties-conditions"></a>Conditions on entity properties
 
 Conditions on entity properties provide a major performance advantage over remote conditions; since the entity property is
 local to the host application the condition evaluates rapidly instead of requiring an entire HTTP call to take place.
@@ -187,10 +188,97 @@ write the condition like so:
     
 Also, there is currently no way to get a nested value out of a json object stored in an entity property for the purposes of comparison.
 
-## Confluence content properties
+## <a id="confuence-content-properties"></a>Confluence content properties
 
-TODO
+[Content properties](https://developer.atlassian.com/confdev/confluence-rest-api/content-properties-in-the-rest-api) are a 
+key-value storage associated with a piece of Confluence content, and are one of the forms of persistence available to you as 
+an add-on developer. The Confluence content that you can store content properties against are:
 
-## Conditions based on host properties
+ * Pages
+ * Blog Posts
+ 
+### <a id="confuence-content-properties-limitations"></a>Limitations of Content Properties
 
-TODO
+You can store an unlimited number of content properties against a piece of content but each property can have no more than 32kB of JSON data stored in it. It is also important to note that every user that is authenticated will be able to read the contents of the content properties. Any authenticated user that has create or update access on a piece of content will have the ability to create or update entity properties on that piece of content.
+
+### <a id="confuence-content-properties-example"></a>Confluence content properties example
+
+If you wanted to create a content property called 'my-property' on a piece of Confluence content with the id 12345 then
+you would make the following request:
+
+    PUT /rest/api/content/12345/property/my-property
+    
+    { 
+        "key": "my-property",
+        "version": { "number": 1 },
+        "value": {"party": { "attendees": ["alex", "betty", "charles", "davinda"], "attendeeCount": 4 }}
+    }
+    
+The structure of the payload in this request is different to entity and add-on properties. The differences are:
+
+ * You need to provide the key in the JSON data as well as the URI
+ * You need to provide a version number with the data. That version number must be higher than the
+   previous version number or '1' if it is a brand new piece of content.
+ * The actual value of the content value is still a JSON blob but it is nested inside the 'value' field of the root JSON object.
+
+To update that property in the future you would need to bump the version number, like so:
+
+    PUT /rest/api/content/12345/property/my-property
+        
+    { 
+        "key": "my-property",
+        "version": { "number": 2 },
+        "value": {"party": { "attendees": ["alex", "betty", "charles", "davinda"], "attendeeCount": 4 }}
+    }
+
+Each of these PUT requests will return the same data as a GET request on this resource. A get
+request on the 'my-property' content property will return the following result:
+
+    GET /rest/api/content/98305/property/my-property
+    
+    {
+      "id": "786433",
+      "key": "my-property",
+      "value": {
+        "party": {
+          "attendees": [
+            "alex",
+            "betty",
+            "charles",
+            "davinda"
+          ],
+          "attendeeCount": 4
+        }
+      },
+      "version": {
+        "when": "2015-12-08T12:13:01.878+11:00",
+        "message": "",
+        "number": 1,
+        "minorEdit": false
+      },
+      "_links": {
+        "base": "http://my-site.atlassian.net/confluence",
+        "context": "/confluence",
+        "self": "http://my-site.atlassian.net/confluence/rest/api/content/98305/property/my-property"
+      },
+      "_expandable": {
+        "content": "/rest/api/content/98305"
+      }
+    }
+        
+These examples show how you can get and set content properties on your confluence content.
+
+## <a id="conditions-on-host-properties"></a>Conditions based on host properties
+
+Add-on properties can be referenced in the `entity_property_equal_to` condition decide wether or not to show a web fragment. For example, the following is a valid condition:
+
+    {
+        condition: "entity_property_equal_to",
+        params: {
+            entity: "addon",
+            propertyKey: "activatedForUsers",
+            value: "true"
+        }
+    }
+    
+You can use this to decied wether or not to show web fragments based on data that you have stored in add-on properties.
