@@ -5,13 +5,10 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.confluence.pageobjects.page.ConfluenceLoginPage;
-import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.jira.pageobjects.components.JiraHeader;
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
 import com.atlassian.jwt.exception.JwtUnknownIssuerException;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
@@ -74,7 +71,6 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
         driver.get(signedWithJwt("/rest/remoteplugintest/1/user"));
         assertThat(driver.getPageSource(), containsString(user("addon_" + runner.getAddon().getName())));
 
-        driver.get(unsigned(""));
         assertFalse(isUserLoggedIn());
     }
 
@@ -89,11 +85,6 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
         return uri.toString() + "?jwt=" + jwtToken;
     }
 
-    private String unsigned(String url)
-    {
-        return baseUrl() + url;
-    }
-
     private String user(String name)
     {
         return "<user><name>" + name + "</name></user>";
@@ -106,17 +97,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
 
     private boolean isUserLoggedIn()
     {
-        if (product instanceof JiraTestedProduct)
-        {
-            return product.getPageBinder().bind(JiraHeader.class).isLoggedIn();
-        }
-        else if (product instanceof ConfluenceTestedProduct)
-        {
-            return product.getPageBinder().bind(ConfluenceLoginPage.class).isLoggedIn();
-        }
-        else
-        {
-            throw new IllegalStateException("unrecognized product");
-        }
+        HomePage homePage = product.visit(HomePage.class);
+        return homePage.getHeader().isLoggedIn();
     }
 }
