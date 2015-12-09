@@ -13,8 +13,7 @@ To add a new module type, you'll need to implement three interfaces:
    will be deserialized into this class. Your bean should have a required unique `String key` field and an 
    `I18nProperty name` for a human readable name. Other useful fields you might want to include are a
    `List<ConditionalBean> conditions` and a `Map<String, String> params`. You should add public documentation to this
-   class as Javadoc, detailing how and why your module type should be used. See the [README of the docs module]
-   (../../docs) for more information.
+   class as Javadoc, detailing how and why your module type should be used. See the [README of the docs module](../../docs) for more information.
  * `ConnectModuleMeta` - provides metadata for your module type, including the key of your module type in the JSON descriptor,
    your `BaseModuleBean` implementation, and whether or not multiple modules of your type are allowed for a single add-on.
  * `ConnectModuleProvider` - handles deserialization and validation of modules of your type from the add-on descriptor, 
@@ -125,8 +124,7 @@ add-on scope should provide access to, e.g.
 ]
 ```
 
-For an example implementation of a scope whitelist, see [`test-whitelist.json`]
-(../reference-plugin/src/main/resources/scope/test-whitelist.json).
+For an example implementation of a scope whitelist, see [`test-whitelist.json`](../reference-plugin/src/main/resources/scope/test-whitelist.json).
 
 If you add to the JIRA, JIRA Agile, Confluence, or common whitelist files, the changes will appear on the corresponding
 page in the documentation when it gets built.
@@ -134,9 +132,8 @@ page in the documentation when it gets built.
 
 ## Condition Class Resolver
 
-A condition class resolver is responsible for mapping [condition keys]
-(https://developer.atlassian.com/static/connect/docs/latest/concepts/conditions.html) in an add-on descriptor with a 
-condition class. Each plugin should only need to declare a single condition class resolver in `atlassian-plugin.xml`, e.g.
+A condition class resolver is responsible for mapping [condition keys](https://developer.atlassian.com/static/connect/docs/latest/concepts/conditions.html) 
+in an add-on descriptor with a condition class. Each plugin should only need to declare a single condition class resolver in `atlassian-plugin.xml`, e.g.
 
     <connect-condition-class-resolver key="my-condition-class-resolver" class="com.atlassian.plugin.MyConditionClassResolver"/>
 
@@ -155,8 +152,7 @@ evaluated against any parameters that are provided with the condition in the add
 condition with the key `entity_property_equal_to` will only resolve to the `AddonEntityPropertyEqualToCondition` 
 class if a parameter is defined with the condition in the descriptor with the key `entity` and the value `addon`.
 
-For a simple example implementation, see [`ReferenceConditionClassResolver`]
-(../reference-plugin/src/main/java/com/atlassian/plugin/connect/reference/ReferenceConditionClassResolver).
+For a simple example implementation, see [`ReferenceConditionClassResolver`](../reference-plugin/src/main/java/com/atlassian/plugin/connect/reference/ReferenceConditionClassResolver).
 
 Note that conditions are generally autowired in the context of the plugin that registers a plugin module making use 
 of it. For any new condition added, please include wired or integration tests that cover this autowiring.
