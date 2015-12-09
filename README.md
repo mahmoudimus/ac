@@ -43,7 +43,7 @@ Contributions are encouraged!
     * [AC](https://ecosystem.atlassian.net/browse/AC) (Atlassian Connect)
     * [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) (JIRA Ecosystem)
     * [CE](https://ecosystem.atlassian.net/browse/CE) (Confluence Ecosystem)
-2. If you are an Atlassian developer, follow the [internal developer's guide](https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Internal+Developer%27s+Guide)
+2. If you are an Atlassian developer, follow the [internal developer's guide](https://extranet.atlassian.com/display/ECO/Atlassian+Connect+-+Internal+Developer%27s+Guide)
 3. Create your feature branch, e.g. `feature/AC-1-create-project`
     * The prefix `feature/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
     * Include your issue key and a short description
