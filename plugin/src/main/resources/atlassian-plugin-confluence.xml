@@ -44,6 +44,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-extensions</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-user</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-navigator-routes</dependency>
 
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
@@ -109,5 +110,13 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
+
+    <web-resource key="navigator-routes">
+        <resource type="download" name="navigator-routes.js" location="js/confluence/navigator/routes.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
 
 </application>
