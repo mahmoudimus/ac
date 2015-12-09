@@ -1,24 +1,27 @@
 package com.atlassian.plugin.connect.plugin.request;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
+
 import com.google.common.base.Supplier;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -59,11 +62,29 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
                                         Map<String, String> headers)
     {
         return httpContentRetriever.async(getAuthorizationGenerator(),
-                method,
-                getTargetUrl(targetPath),
-                params,
-                headers,
-                getKey());
+                                          method,
+                                          getTargetUrl(targetPath),
+                                          params,
+                                          headers,
+                                          getKey()
+        );
+    }
+
+    @Override
+    public Promise<String> executeAsync(HttpMethod method,
+                                        URI targetPath,
+                                        Map<String, String[]> params,
+                                        Map<String, String> headers,
+                                        InputStream body)
+    {
+        return httpContentRetriever.async(getAuthorizationGenerator(),
+                                          method,
+                                          getTargetUrl(targetPath),
+                                          params,
+                                          headers,
+                                          body,
+                                          getKey()
+        );
     }
 
     @Override

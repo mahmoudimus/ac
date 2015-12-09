@@ -2,39 +2,46 @@ package com.atlassian.plugin.connect.test.common.servlet;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 public class MustacheServlet extends ContextServlet
 {
     private final String templatePath;
-    private final boolean shouldHandlePost;
+    private final Set<HttpMethod> methods;
 
     public MustacheServlet(String templatePath)
     {
-        this(templatePath, false);
+        this(templatePath, HttpMethod.GET);
     }
 
-    public MustacheServlet(String templatePath, boolean shouldHandlePost)
+    public MustacheServlet(String templatePath, HttpMethod ... methods)
     {
         this.templatePath = templatePath;
-        this.shouldHandlePost = shouldHandlePost;
+        this.methods = ImmutableSet.copyOf(methods);
     }
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
-        renderTemplate(resp, context);
+        if (methods.contains(HttpMethod.GET))
+        {
+            renderTemplate(resp, context);
+        }
     }
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
-        if (shouldHandlePost)
+        if (methods.contains(HttpMethod.POST))
         {
             renderTemplate(resp, context);
         }

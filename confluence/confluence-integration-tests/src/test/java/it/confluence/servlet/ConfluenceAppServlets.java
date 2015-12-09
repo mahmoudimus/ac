@@ -1,11 +1,19 @@
 package it.confluence.servlet;
 
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Map;
+
 import javax.servlet.http.HttpServlet;
 
 import com.atlassian.connect.test.confluence.pageobjects.RemoteMacroEditorDialog;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextRequestTypeToken;
+import com.atlassian.plugin.connect.test.common.servlet.BodyExtractor;
 import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
-import com.atlassian.plugin.connect.test.common.servlet.TestServletContextExtractor;
+
+import com.google.gson.Gson;
 
 import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.wrapContextAwareServlet;
 import static com.google.common.collect.Lists.newArrayList;
@@ -40,15 +48,22 @@ public class ConfluenceAppServlets
     public static HttpServlet blueprintContextServlet()
     {
         return wrapContextAwareServlet(
-                new MustacheServlet("it/confluence/blueprint/context.json", true),
-                newArrayList(
-                        new TestServletContextExtractor("parentPageId"),
-                        new TestServletContextExtractor("addonKey"),
-                        new TestServletContextExtractor("spaceKey"),
-                        new TestServletContextExtractor("userKey"),
-                        new TestServletContextExtractor("blueprintKey")
-                )
+                new MustacheServlet("it/confluence/blueprint/context.json", HttpMethod.POST),
+                Collections.emptyList(),
+                newArrayList(new JsonExtractor())
         );
     }
 
+    private static class JsonExtractor implements BodyExtractor
+    {
+        private static final Gson GSON = new Gson();
+        private static final Type requestType = new ConnectBlueprintContextRequestTypeToken().getType();
+
+        @Override
+        public Map<String, String> extractAll(String jsonString)
+        {
+            Map<String, String> json = GSON.fromJson(jsonString, requestType);
+            return json;
+        }
+    }
 }

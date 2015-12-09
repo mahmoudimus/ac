@@ -69,7 +69,7 @@ public class BlueprintModuleProviderTest
     {
         BlueprintTemplateBean template = new BlueprintTemplateBeanBuilder()
                 .withUrl("/blueprints/blueprint.xml")
-                .withBlueprintContext("/blueprints/context")
+                .withBlueprintContextUrl("/blueprints/context")
                 .build();
 
         BlueprintModuleBean bean = newBlueprintModuleBean()
@@ -121,17 +121,17 @@ public class BlueprintModuleProviderTest
             webItemDescriptor.enabled();
 
             // check the content template descriptor
-            ContentTemplateModuleDescriptor contentTemplateDescr = (ContentTemplateModuleDescriptor) descriptors.get(1);
-            assertNotNull(contentTemplateDescr);
+            ContentTemplateModuleDescriptor contentTemplateModuleDescriptor = (ContentTemplateModuleDescriptor) descriptors.get(1);
+            assertNotNull(contentTemplateModuleDescriptor);
 
-            assertEquals(baseAddonKey + "-content-template", contentTemplateDescr.getKey());
-            assertEquals(MODULE_NAME, contentTemplateDescr.getI18nNameKey());
-            assertEquals(BASE_URL + "/blueprints/blueprint.xml", contentTemplateDescr.getResourceDescriptor("download", "template").getLocation());
+            assertEquals(baseAddonKey + "-content-template", contentTemplateModuleDescriptor.getKey());
+            assertEquals(MODULE_NAME, contentTemplateModuleDescriptor.getI18nNameKey());
+            assertEquals(BASE_URL + "/blueprints/blueprint.xml", contentTemplateModuleDescriptor.getResourceDescriptor("download", "template").getLocation());
 
-            contentTemplateDescr.enabled();
+            contentTemplateModuleDescriptor.enabled();
             //context provider is only available after the module is enabled.
-            assertTrue("ConnectBlueprintContextProvider not returned from getContextProvider" , contentTemplateDescr.getContextProvider() instanceof ConnectBlueprintContextProvider);
-            ConnectBlueprintContextProvider context = (ConnectBlueprintContextProvider) contentTemplateDescr.getContextProvider();
+            assertTrue("ConnectBlueprintContextProvider not returned from getContextProvider" , contentTemplateModuleDescriptor.getContextProvider() instanceof ConnectBlueprintContextProvider);
+            ConnectBlueprintContextProvider context = (ConnectBlueprintContextProvider) contentTemplateModuleDescriptor.getContextProvider();
             assertEquals("the context url either doesn't match, or needs to be a relative url", "/blueprints/context", context.getContextUrl());
             assertEquals(PLUGIN_KEY, context.getAddonKey());
             assertEquals(MODULE_KEY, context.getBlueprintKey());

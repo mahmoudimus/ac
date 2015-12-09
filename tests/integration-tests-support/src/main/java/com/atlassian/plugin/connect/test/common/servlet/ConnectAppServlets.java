@@ -144,12 +144,17 @@ public class ConnectAppServlets
 
     public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
     {
-        return wrapContextAwareServlet(servlet, Lists.<TestServletContextExtractor>newArrayList());
+        return wrapContextAwareServlet(servlet, Lists.<FormParameterExtractor>newArrayList());
     }
 
-    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<TestServletContextExtractor> extractors)
+    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<FormParameterExtractor> extractors)
     {
         return new HttpContextServlet(servlet, extractors);
+    }
+
+    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<FormParameterExtractor> extractors, Iterable<BodyExtractor> bodyExtractors)
+    {
+        return new HttpContextServlet(servlet, extractors, bodyExtractors);
     }
 
     public static HttpServlet echoQueryParametersServlet()

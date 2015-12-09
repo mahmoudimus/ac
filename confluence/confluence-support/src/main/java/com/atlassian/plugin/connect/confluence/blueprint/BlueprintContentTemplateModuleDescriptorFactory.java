@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.ADDON_KEY;
+import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.REMOTE_ADDON_KEY;
 import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.CONTENT_TEMPLATE_KEY;
 import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.CONTEXT_URL_KEY;
 
@@ -67,7 +67,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                 .addAttribute("type", "download")
                 .addAttribute("location", createTemplateURL(addon.getBaseUrl(), bean.getBlueprintTemplate().getUrl()));
 
-        String contextUrl = bean.getBlueprintTemplate().getBlueprintContext();
+        String contextUrl = bean.getBlueprintTemplate().getBlueprintContext().getUrl();
         if (contextUrl != null)
         {
             Element contextProvider = contentTemplateElement.addElement("context-provider");
@@ -76,7 +76,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                                   .addAttribute("name", CONTEXT_URL_KEY)
                                   .addAttribute("value", contextUrl);
             contextProvider.addElement("param")
-                                  .addAttribute("name", ADDON_KEY)
+                                  .addAttribute("name", REMOTE_ADDON_KEY)
                                   .addAttribute("value", addon.getKey());
             contextProvider.addElement("param")
                                   .addAttribute("name", CONTENT_TEMPLATE_KEY)

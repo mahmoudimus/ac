@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataB
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateContextBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
@@ -110,6 +111,7 @@ public class ConnectJsonExamples
 
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
+    public static final String BLUEPRINT_TEMPLATE_CONTEXT_EXAMPLE = createBlueprintTemplateExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
     public static final String CONTENT_PROPERTY_UI_SUPPORT = createAttachmentTypeUISupportExample();
     public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createContentPropertyIndexExtractionConfigurationExample();
@@ -415,11 +417,24 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObject("template", blueprintTemplateBean));
     }
 
+    private static String createBlueprintTemplateContextExample()
+    {
+        BlueprintTemplateContextBean blueprintTemplateContextBean = createBlueprintTemplateContextBean();
+        return gson.toJson(createJsonObject("blueprintContext", blueprintTemplateContextBean));
+    }
+
+    private static BlueprintTemplateContextBean createBlueprintTemplateContextBean()
+    {
+        return BlueprintTemplateContextBean.newBlueprintTemplateContextBeanBuilder()
+                                           .withUrl("/blueprints/context")
+                                           .build();
+    }
+
     private static BlueprintTemplateBean createBlueprintTemplateBean()
     {
         return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
                 .withUrl("/blueprints/blueprint.xml")
-                .withBlueprintContext("/blueprints/context")
+                .withBlueprintContext(createBlueprintTemplateContextBean())
                 .build();
     }
 

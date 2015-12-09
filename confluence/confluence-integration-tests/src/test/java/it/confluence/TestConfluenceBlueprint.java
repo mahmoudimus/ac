@@ -49,7 +49,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
                                    .withKey(moduleKey)
                                    .withTemplate(newBlueprintTemplateBeanBuilder()
                                                          .withUrl("/template.xml")
-                                                         .withBlueprintContext("/context")
+                                                         .withBlueprintContextUrl("/context")
                                                          .build())
                                    .build())
                 .addRoute("/template.xml", blueprintTemplateServlet())

@@ -1,32 +1,40 @@
 package com.atlassian.plugin.connect.plugin.request;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponseTransformation;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
+import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.request.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.api.request.ContentRetrievalException;
-import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHeaders;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.contains;
@@ -39,7 +47,8 @@ import static com.google.common.collect.Maps.newHashMap;
 @Named
 public final class CachingHttpContentRetriever implements HttpContentRetriever
 {
-    private final static Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
+    private static final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
+    private static final ByteArrayInputStream EMPTY_INPUTSTREAM = new ByteArrayInputStream(new byte[0]);
 
     private static final Set<HttpMethod> METHODS_WITH_BODY = Sets.immutableEnumSet(HttpMethod.POST, HttpMethod.PUT);
     private static final Set<HttpMethod> METHODS_WITH_QUERY_PARAMS = Sets.immutableEnumSet(HttpMethod.GET);
@@ -71,6 +80,26 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
                                  Map<String, String> headers,
                                  String addOnKey)
     {
+        InputStream bodyStream = EMPTY_INPUTSTREAM;
+        ImmutableMap.Builder<String, String> modifiedHeader = ImmutableMap.builder();
+        if (contains(METHODS_WITH_BODY, method))
+        {
+            modifiedHeader.putAll(headers)
+                          .put(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
+            bodyStream = IOUtils.toInputStream(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(parameters)));
+        }
+        return async(authorizationGenerator, method, url, parameters, headers, bodyStream, addOnKey);
+    }
+
+    @Override
+    public Promise<String> async(AuthorizationGenerator authorizationGenerator,
+                                 HttpMethod method,
+                                 URI url,
+                                 Map<String, String[]> parameters,
+                                 Map<String, String> headers,
+                                 InputStream body,
+                                 String addOnKey)
+    {
         checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
 
         log.debug("{}ing content from '{}'", method, url);
@@ -83,8 +112,8 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
         if (contains(METHODS_WITH_BODY, method))
         {
-            request.setContentType("application/x-www-form-urlencoded");
-            request.setEntity(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(parameters)));
+            request.setContentType(headers.getOrDefault(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()));
+            request.setEntityStream(body);
         }
 
         ResponseTransformation<String> responseTransformation = httpClient.<String>transformation()

@@ -287,7 +287,12 @@
                 <configuration>
                     <containerId>tomcat7x</containerId>
                     <skipManifestValidation>true</skipManifestValidation>
-                    <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <jvmArgs>
+                        -Xmx1024m -XX:MaxPermSize=256m
+                        -javaagent:/Users/chibichii/bin/jrebel/jrebel.jar
+                        -Drebel.remoting_plugin=true
+                        -Datlassian.org.osgi.framework.bootdelegation.extra=org.zeroturnaround.*,com.zeroturnaround.*
+                    </jvmArgs>
                     <installPlugin>false</installPlugin>
                     <skipRestDocGeneration>true</skipRestDocGeneration>
 

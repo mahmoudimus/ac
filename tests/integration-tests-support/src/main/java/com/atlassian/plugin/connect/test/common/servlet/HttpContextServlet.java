@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -9,7 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+
 import com.google.common.collect.ImmutableMap;
+
+import org.apache.commons.io.IOUtils;
 
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -20,17 +24,24 @@ public class HttpContextServlet extends HttpServlet
 {
     private final Map<String, Object> baseContext = newHashMap();
     private final ContextServlet servlet;
-    private final Iterable<TestServletContextExtractor> servletContextExtractors;
+    private final Iterable<FormParameterExtractor> formParameterExtractors;
+    private final Iterable<BodyExtractor> bodyExtractors;
 
     public HttpContextServlet(ContextServlet servlet)
     {
-        this(servlet, new ArrayList<TestServletContextExtractor>());
+        this(servlet, Collections.emptyList());
     }
 
-    public HttpContextServlet(ContextServlet servlet, Iterable<TestServletContextExtractor> extractors)
+    public HttpContextServlet(ContextServlet servlet, Iterable<FormParameterExtractor> extractors)
+    {
+        this(checkNotNull(servlet), extractors, Collections.emptyList());
+    }
+
+    public HttpContextServlet(ContextServlet servlet, Iterable<FormParameterExtractor> extractors, Iterable<BodyExtractor> bodyExtractors)
     {
         this.servlet = checkNotNull(servlet);
-        this.servletContextExtractors = extractors;
+        this.formParameterExtractors = extractors;
+        this.bodyExtractors = bodyExtractors;
     }
 
     @Override
@@ -64,12 +75,26 @@ public class HttpContextServlet extends HttpServlet
     private Map<String, ?> extractContext(final HttpServletRequest req)
     {
         final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        for (TestServletContextExtractor extractor : servletContextExtractors)
+        for (FormParameterExtractor extractor : formParameterExtractors)
         {
-            final Object extractedValue = extractor.extract(req);
+            final String extractedValue = extractor.extract(req);
             if (extractedValue != null)
             {
                 builder.put(extractor.getParameterId(), extractedValue);
+            }
+        }
+        if (req.getMethod().equalsIgnoreCase(HttpMethod.POST.name()))
+        {
+            for (BodyExtractor bodyExtractor : bodyExtractors)
+            {
+                try
+                {
+                    builder.putAll(bodyExtractor.extractAll(IOUtils.toString(req.getInputStream())));
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
             }
         }
         return builder.build();
