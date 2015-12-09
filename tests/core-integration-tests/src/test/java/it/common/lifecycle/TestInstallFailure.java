@@ -23,7 +23,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -74,7 +74,7 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
                 .withUrl(URL)
                 .withLocation(getGloballyVisibleLocation()).build();
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addUninstallLifecycle()
                 .addModules("generalPages", pageBean)
                 .addJWT(installUninstallHandler)
@@ -105,7 +105,7 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
     }
 
     @After
-    public void stopConnectAddOn() throws Exception
+    public void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -157,9 +157,9 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         loginAndVisit(testUserFactory.basicUser(), HomePage.class);
 
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, MY_AWESOME_PAGE_KEY, remotePlugin.getAddon().getKey());
-        ConnectAddOnEmbeddedTestPage addonContentPage = page.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage addonContentPage = page.clickAddonLink();
 
-        ConnectAsserts.verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),
+        ConnectAsserts.verifyContainsStandardAddonQueryParamters(addonContentPage.getIframeQueryParams(),
                 product.getProductInstance().getContextPath());
 
         final String jwt = addonContentPage.getIframeQueryParams().get("jwt");

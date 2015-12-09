@@ -58,15 +58,15 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
     private final JwtService jwtService;
     private final Supplier<String> secretSupplier;
     private final ConsumerService consumerService;
-    private final URI addOnBaseUrl;
+    private final URI addonBaseUrl;
 
-    public JwtAuthorizationGenerator(JwtService jwtService, JwtJsonBuilderFactory jwtBuilderFactory, Supplier<String> secretSupplier, ConsumerService consumerService, URI addOnBaseUrl)
+    public JwtAuthorizationGenerator(JwtService jwtService, JwtJsonBuilderFactory jwtBuilderFactory, Supplier<String> secretSupplier, ConsumerService consumerService, URI addonBaseUrl)
     {
         this.jwtBuilderFactory = jwtBuilderFactory;
         this.jwtService = checkNotNull(jwtService);
         this.secretSupplier = checkNotNull(secretSupplier);
         this.consumerService = checkNotNull(consumerService);
-        this.addOnBaseUrl = checkNotNull(addOnBaseUrl);
+        this.addonBaseUrl = checkNotNull(addonBaseUrl);
     }
 
     @Override
@@ -79,14 +79,14 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
     public String generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, String secret)
     {
         checkArgument(null != parameters, "Parameters Map argument cannot be null");
-        return JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, consumerService.getConsumer().getKey(), secret);
+        return JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addonBaseUrl, parameters, consumerService.getConsumer().getKey(), secret);
     }
 
-    String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, String issuerId, String secret)
+    String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addonBaseUrl, Map<String, String[]> params, String issuerId, String secret)
     {
         checkArgument(null != httpMethod, "HttpMethod argument cannot be null");
         checkArgument(null != targetPath, "URI argument cannot be null");
-        checkArgument(null != addOnBaseUrl, "base URI argument cannot be null");
+        checkArgument(null != addonBaseUrl, "base URI argument cannot be null");
         checkArgument(null != secret, "secret argument cannot be null");
 
         final long currentTime = TimeUtil.currentTimeSeconds();
@@ -105,7 +105,7 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
                 completeParams.putAll(constructParameterMap(targetPath));
             }
 
-            CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(httpMethod.toString(), extractRelativePath(targetPath, addOnBaseUrl), "", completeParams);
+            CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(httpMethod.toString(), extractRelativePath(targetPath, addonBaseUrl), "", completeParams);
             log.debug("Canonical request is: " + HttpRequestCanonicalizer.canonicalize(request));
 
             JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, request);
@@ -118,11 +118,11 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
         return jwtService.issueJwt(jsonBuilder.build(), secret);
     }
 
-    private static String extractRelativePath(URI targetUri, URI addOnBaseUri)
+    private static String extractRelativePath(URI targetUri, URI addonBaseUri)
     {
         String path = targetUri.getPath();
         final String targetString = targetUri.toString();
-        final String baseString = addOnBaseUri.toString();
+        final String baseString = addonBaseUri.toString();
 
         if (!StringUtils.isEmpty(targetString) && !StringUtils.isEmpty(baseString))
         {

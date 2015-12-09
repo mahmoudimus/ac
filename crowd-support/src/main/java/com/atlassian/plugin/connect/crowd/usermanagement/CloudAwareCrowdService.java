@@ -45,7 +45,7 @@ import java.util.concurrent.TransferQueue;
 @ExportAsDevService
 @ConfluenceComponent
 @JiraComponent
-public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService, ConnectCrowdSyncService
+public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddonUserGroupProvisioningService, ConnectCrowdSyncService
 {
     private long syncTimeout = 10;
     private HostProperties hostProperties;

@@ -6,8 +6,8 @@ public class ConnectIFrameServletPath
 {
     private ConnectIFrameServletPath() {}
 
-    public static String forModule(String addOnKey, String moduleKey)
+    public static String forModule(String addonKey, String moduleKey)
     {
-        return "/plugins/servlet/ac/" + checkNotNull(addOnKey) + "/" + checkNotNull(moduleKey);
+        return "/plugins/servlet/ac/" + checkNotNull(addonKey) + "/" + checkNotNull(moduleKey);
     }
 }

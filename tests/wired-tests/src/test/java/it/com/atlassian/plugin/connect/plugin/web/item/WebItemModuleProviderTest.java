@@ -5,7 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -121,7 +121,7 @@ public class WebItemModuleProviderTest
                 .withKey(MODULE_KEY)
                 .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.page)
+                .withContext(AddonUrlContext.page)
                 .build();
 
         Plugin plugin = getConnectPlugin();
@@ -143,7 +143,7 @@ public class WebItemModuleProviderTest
                 .withKey(MODULE_KEY)
                 .withUrl("http://www.google.com")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.product)
+                .withContext(AddonUrlContext.product)
                 .build();
 
         Plugin plugin = getConnectPlugin();
@@ -165,7 +165,7 @@ public class WebItemModuleProviderTest
                 .withKey(MODULE_KEY)
                 .withUrl("some-page-key")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.page)
+                .withContext(AddonUrlContext.page)
                 .build();
 
         Plugin plugin = getConnectPlugin();
@@ -207,7 +207,7 @@ public class WebItemModuleProviderTest
                 .withKey(MODULE_KEY)
                 .withUrl("some-page-key")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.page)
+                .withContext(AddonUrlContext.page)
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -262,7 +262,7 @@ public class WebItemModuleProviderTest
                 .withKey(MODULE_KEY)
                 .withUrl("/local/jira/admin")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.product)
+                .withContext(AddonUrlContext.product)
                 .build();
 
         Plugin plugin = getConnectPlugin();
@@ -307,7 +307,7 @@ public class WebItemModuleProviderTest
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
             descriptor.enabled();
 
-            assertAddOnLinkHrefIsCorrect(descriptor, bean, addon);
+            assertAddonLinkHrefIsCorrect(descriptor, bean, addon);
         }
         finally
         {
@@ -360,7 +360,7 @@ public class WebItemModuleProviderTest
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
             descriptor.enabled();
 
-            assertAddOnLinkHrefIsCorrect(descriptor, bean, addon);
+            assertAddonLinkHrefIsCorrect(descriptor, bean, addon);
             assertTrue("expected param [-acopt-width]", descriptor.getParams().containsKey("-acopt-width"));
             assertTrue("expected param [-acopt-height]", descriptor.getParams().containsKey("-acopt-height"));
         }
@@ -415,7 +415,7 @@ public class WebItemModuleProviderTest
             descriptor2.enabled();
 
             assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
-            assertAddOnLinkHrefIsCorrect(descriptor2, bean2, addon);
+            assertAddonLinkHrefIsCorrect(descriptor2, bean2, addon);
         }
         finally
         {
@@ -474,11 +474,11 @@ public class WebItemModuleProviderTest
         }
     }
 
-    private void assertAddOnLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addOnBean)
+    private void assertAddonLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addonBean)
     {
         final WebItemTargetBean target = webItemModuleBean.getTarget();
         final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
-                ? ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean))
+                ? ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean))
                 : BASE_URL + "/my/addon";
         final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
         final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);

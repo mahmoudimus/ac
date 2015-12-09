@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
@@ -66,7 +66,7 @@ public class AddonsResourceGetAddonTest
     private ConnectAddonManager connectAddonManager;
 
     @Mock
-    private ConnectAddOnInstaller connectAddOnInstaller;
+    private ConnectAddonInstaller connectAddonInstaller;
 
     @Mock
     private ApplicationProperties applicationProperties;
@@ -100,7 +100,7 @@ public class AddonsResourceGetAddonTest
     public void setup()
     {
         this.resource = new AddonsResource(this.addonRegistry, this.licenseRetriever, this.connectApplinkManager,
-                this.connectAddonManager, this.connectAddOnInstaller, this.applicationProperties, this.userManager,
+                this.connectAddonManager, this.connectAddonInstaller, this.applicationProperties, this.userManager,
                 this.productAccessor, addonAccessor);
     }
 

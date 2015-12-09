@@ -9,7 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.confluence.macro.MacroContentManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
@@ -18,12 +18,12 @@ import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 public class MacroResource
 {
     private final MacroContentManager macroContentManager;
-    private final AddOnKeyExtractor addOnKeyExtractor;
+    private final AddonKeyExtractor addonKeyExtractor;
 
-    public MacroResource(MacroContentManager macroContentManager, final AddOnKeyExtractor addOnKeyExtractor)
+    public MacroResource(MacroContentManager macroContentManager, final AddonKeyExtractor addonKeyExtractor)
     {
         this.macroContentManager = macroContentManager;
-        this.addOnKeyExtractor = addOnKeyExtractor;
+        this.addonKeyExtractor = addonKeyExtractor;
     }
 
     @Path("/app/{appKey}")
@@ -64,6 +64,6 @@ public class MacroResource
 
     private Optional<String> getConsumerKeyFromRequest(HttpServletRequest request)
     {
-        return Optional.ofNullable(addOnKeyExtractor.extractClientKey(request));
+        return Optional.ofNullable(addonKeyExtractor.extractClientKey(request));
     }
 }

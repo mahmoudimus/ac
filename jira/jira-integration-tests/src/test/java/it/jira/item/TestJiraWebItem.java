@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.Optional;
 
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
@@ -34,7 +34,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyStandardAddonRelativeQueryParameters;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -67,12 +67,12 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         betty = testUserFactory.admin();
         barney = testUserFactory.basicUser();
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addScope(ScopeName.READ)
                 .addInstallLifecycle()
                 .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
@@ -85,7 +85,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                             .build())
                 .addModules("webItems",
                         newWebItemBean()
-                                .withContext(AddOnUrlContext.page)
+                                .withContext(AddonUrlContext.page)
                                 .withName(new I18nProperty("AC General Web Item", null))
                                 .withKey(PAGE_CONTEXT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
@@ -93,7 +93,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withUrl(GENERAL_PAGE)
                                 .build(),
                         newWebItemBean()
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withName(new I18nProperty("AC Direct To Addon Web Item", null))
                                 .withKey(ADDON_DIRECT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
@@ -101,7 +101,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
                                 .build(),
                         newWebItemBean()
-                                .withContext(AddOnUrlContext.product)
+                                .withContext(AddonUrlContext.product)
                                 .withName(new I18nProperty("Quick project link", null))
                                 .withKey(PRODUCT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
@@ -140,7 +140,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withKey(ADDON_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withUrl("/my-webitem-inlinedialog")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)
@@ -170,7 +170,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -215,7 +215,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
         assertEquals(project.getId(), webItem.getFromQueryString("pid"));
         assertThat(webItem.getPath(), startsWith(runner.getAddon().getBaseUrl()));
-        verifyStandardAddOnRelativeQueryParameters(webItem, "/jira");
+        verifyStandardAddonRelativeQueryParameters(webItem, "/jira");
     }
 
     @Test
@@ -280,7 +280,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddOnWebItemInlineDialogXdm() throws Exception
+    public void testAddonWebItemInlineDialogXdm() throws Exception
     {
         RemoteInlineDialog inlineDialogPage = testWebItemInlineDialogXdm(ADDON_WEBITEM_INLINE_DIALOG);
         assertEquals("Success", inlineDialogPage.getIFrameElementText("message"));
@@ -336,7 +336,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddOnWebItemDialog() throws Exception
+    public void testAddonWebItemDialog() throws Exception
     {
         TestUser admin = testUserFactory.basicUser();
 
@@ -357,7 +357,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddOnWebItemDialogDimensions() throws Exception
+    public void testAddonWebItemDialogDimensions() throws Exception
     {
         testWebItemDialogDimensions(ADDON_WEBITEM_DIALOG);
     }
@@ -382,7 +382,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddOnWebItemDialogXdm() throws Exception
+    public void testAddonWebItemDialogXdm() throws Exception
     {
         testWebItemDialogXdm(ADDON_WEBITEM_DIALOG);
     }
@@ -407,19 +407,19 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddOnWebItemDialogTargetOptions() throws Exception
+    public void testAddonWebItemDialogTargetOptions() throws Exception
     {
         testWebItemDialogTargetOptions(true, ADDON_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAddOnWebItemDialogTargetOptionsChromeless() throws Exception
+    public void testAddonWebItemDialogTargetOptionsChromeless() throws Exception
     {
         testWebItemDialogTargetOptions(false, ADDON_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAddOnWebItemDialogTargetOptionsNullChrome() throws Exception
+    public void testAddonWebItemDialogTargetOptionsNullChrome() throws Exception
     {
         testWebItemDialogTargetOptions(null, ADDON_WEBITEM_DIALOG);
     }
@@ -493,7 +493,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 .withKey(moduleKeyPrefix + variant)
                 .withLocation("system.top.navigation.bar")
                 .withWeight(1)
-                .withContext(AddOnUrlContext.addon)
+                .withContext(AddonUrlContext.addon)
                 .withUrl("/my-webitem-dialog" + variant)
                 .withTarget(
                         newWebItemTargetBean().withType(WebItemTargetType.dialog)

@@ -116,7 +116,7 @@
 
     <ao key="add-on-properties-ao-module" name="Active Objects Module">
         <description>Datastore for add-on properties.</description>
-        <entity>com.atlassian.plugin.connect.plugin.property.AddOnPropertyAO</entity>
+        <entity>com.atlassian.plugin.connect.plugin.property.AddonPropertyAO</entity>
     </ao>
 
 </atlassian-plugin>

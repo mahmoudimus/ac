@@ -2,7 +2,7 @@ package it.jira.iframe;
 
 import com.atlassian.connect.test.jira.pageobjects.JiraProjectSummaryPageWithAddonTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestProjectTabPanel extends JiraWebDriverTestBase
 {
-    private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String ADDON_KEY = AddonTestUtils.randomAddonKey();
     private static final String MODULE_KEY = "ac-test-project-tab";
     private static final String MODULE_TITLE = "AC Test Project Tab";
 
@@ -65,7 +65,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (addon != null)
         {
@@ -80,7 +80,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
         JiraProjectSummaryPageWithAddonTab summaryPage = product.visit(
                 JiraProjectSummaryPageWithAddonTab.class, project.getKey(), ADDON_KEY, MODULE_KEY);
         summaryPage = summaryPage.expandAddonsList();
-        ConnectAddOnEmbeddedTestPage embeddedAddonTestPage = summaryPage.goToEmbeddedTestPageAddon();
+        ConnectAddonEmbeddedTestPage embeddedAddonTestPage = summaryPage.goToEmbeddedTestPageAddon();
         assertEquals("Success", embeddedAddonTestPage.getMessage());
 
         Map<String, String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();

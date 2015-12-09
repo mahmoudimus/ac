@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -135,8 +135,8 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
 
         final WebItemTargetBean target = bean.getTarget();
         if (bean.isAbsolute() ||
-            bean.getContext().equals(AddOnUrlContext.product) ||
-            bean.getContext().equals(AddOnUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
+            bean.getContext().equals(AddonUrlContext.product) ||
+            bean.getContext().equals(AddonUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
         {
             descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         }
@@ -159,7 +159,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         {
             List<ConditionalBean> iframeConditions = getConditionsForIframe(webItem);
             final IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(descriptor.getKey())
+                    .addon(descriptor.getKey())
                     .module(webItem.getKey(descriptor))
                     .genericBodyTemplate()
                     .urlTemplate(webItem.getUrl())

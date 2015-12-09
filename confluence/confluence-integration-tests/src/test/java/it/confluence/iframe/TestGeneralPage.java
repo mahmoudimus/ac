@@ -6,7 +6,7 @@ import java.util.Map;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -28,7 +28,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParamters;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasEntry;
@@ -57,7 +57,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     public TestRule resetToggleableCondition = runner.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         runner = new ConnectRunner(product)
                 .setAuthenticationToNone()
@@ -86,7 +86,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -112,13 +112,13 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         URI url = new URI(generalPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence" + IframeUtils.iframeServletPath(addonKey, KEY_MY_AWESOME_PAGE)));
 
-        ConnectAddOnEmbeddedTestPage addonContentsPage = generalPage.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage addonContentsPage = generalPage.clickAddonLink();
 
         assertThat(addonContentsPage.isFullSize(), is(true));
 
         // check iframe url params
         Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
-        verifyContainsStandardAddOnQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
+        verifyContainsStandardAddonQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
         assertThat(iframeQueryParams, hasEntry("page_id", createdPage.getPageId()));
         assertThat(iframeQueryParams, hasEntry("page_version", "1"));
         assertThat(iframeQueryParams, hasEntry("page_type", "page"));

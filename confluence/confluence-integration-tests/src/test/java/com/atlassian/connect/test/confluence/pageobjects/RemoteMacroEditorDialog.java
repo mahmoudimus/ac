@@ -2,7 +2,7 @@ package com.atlassian.connect.test.confluence.pageobjects;
 
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
@@ -18,7 +18,7 @@ public class RemoteMacroEditorDialog extends RemotePluginDialog
 
     private static final String CLOSE_EDITOR_BUTTON_ID = "macro-editor-close-button";
 
-    public RemoteMacroEditorDialog(ConnectAddOnEmbeddedTestPage embeddedConnectPage)
+    public RemoteMacroEditorDialog(ConnectAddonEmbeddedTestPage embeddedConnectPage)
     {
         super(embeddedConnectPage);
     }

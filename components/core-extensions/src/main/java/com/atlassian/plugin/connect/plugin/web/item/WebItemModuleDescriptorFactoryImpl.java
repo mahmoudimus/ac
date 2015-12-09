@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.item;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
@@ -170,7 +170,7 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(ConnectAddonBean addon, Plugin plugin, Element webItemElement, String moduleKey, String url,
-                                                            boolean absolute, AddOnUrlContext urlContext, boolean isDialog, String section)
+                                                            boolean absolute, AddonUrlContext urlContext, boolean isDialog, String section)
     {
         webItemElement.addAttribute("system", "true");
 

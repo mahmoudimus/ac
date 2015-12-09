@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface ConnectCrowdService
-        extends ConnectAddOnUserGroupProvisioningService
+        extends ConnectAddonUserGroupProvisioningService
 {
     UserCreationResult createOrEnableUser(String username, String displayName,
             String emailAddress, PasswordCredential passwordCredential);

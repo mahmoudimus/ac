@@ -47,11 +47,11 @@ public abstract class AbstractJiraPermissionScopeTest
     private final TestAuthenticator testAuthenticator;
     protected final JiraTestUtil jiraTestUtil;
 
-    private ConnectAddonBean adminAddOn;
-    private ConnectAddonBean projectAdminAddOn;
-    private ConnectAddonBean deleteAddOn;
-    private ConnectAddonBean writeAddOn;
-    private ConnectAddonBean readAddOn;
+    private ConnectAddonBean adminAddon;
+    private ConnectAddonBean projectAdminAddon;
+    private ConnectAddonBean deleteAddon;
+    private ConnectAddonBean writeAddon;
+    private ConnectAddonBean readAddon;
 
     public AbstractJiraPermissionScopeTest(ConnectUserService connectUserService,
                                            PermissionManager permissionManager,
@@ -87,23 +87,23 @@ public abstract class AbstractJiraPermissionScopeTest
                 )
                 .build();
 
-        this.adminAddOn = newConnectAddonBean(baseBean)
+        this.adminAddon = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.ADMIN))
                 .build();
 
-        this.projectAdminAddOn = newConnectAddonBean(baseBean)
+        this.projectAdminAddon = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.PROJECT_ADMIN))
                 .build();
 
-        this.deleteAddOn = newConnectAddonBean(baseBean)
+        this.deleteAddon = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.DELETE))
                 .build();
 
-        this.writeAddOn = newConnectAddonBean(baseBean)
+        this.writeAddon = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.WRITE))
                 .build();
 
-        this.readAddOn = newConnectAddonBean(baseBean)
+        this.readAddon = newConnectAddonBean(baseBean)
                 .withScopes(Sets.newHashSet(ScopeName.READ))
                 .build();
 
@@ -113,40 +113,40 @@ public abstract class AbstractJiraPermissionScopeTest
     @After
     public void resetBeans()
     {
-        this.adminAddOn = null;
+        this.adminAddon = null;
 
-        this.projectAdminAddOn = null;
+        this.projectAdminAddon = null;
 
-        this.deleteAddOn = null;
+        this.deleteAddon = null;
 
-        this.writeAddOn = null;
+        this.writeAddon = null;
 
-        this.readAddOn = null;
+        this.readAddon = null;
     }
 
-    public ConnectAddonBean getAdminAddOn()
+    public ConnectAddonBean getAdminAddon()
     {
-        return adminAddOn;
+        return adminAddon;
     }
 
-    public ConnectAddonBean getProjectAdminAddOn()
+    public ConnectAddonBean getProjectAdminAddon()
     {
-        return projectAdminAddOn;
+        return projectAdminAddon;
     }
 
-    public ConnectAddonBean getDeleteAddOn()
+    public ConnectAddonBean getDeleteAddon()
     {
-        return deleteAddOn;
+        return deleteAddon;
     }
 
-    public ConnectAddonBean getWriteAddOn()
+    public ConnectAddonBean getWriteAddon()
     {
-        return writeAddOn;
+        return writeAddon;
     }
 
-    public ConnectAddonBean getReadAddOn()
+    public ConnectAddonBean getReadAddon()
     {
-        return readAddOn;
+        return readAddon;
     }
 
     public PermissionManager getPermissionManager()
@@ -236,7 +236,7 @@ public abstract class AbstractJiraPermissionScopeTest
 
     protected List<String> permissionsForAllProjects(Permission permission, boolean permissionMustExist, Plugin plugin) throws ConnectAddonInitException
     {
-        ApplicationUser addonUser = getAddOnUser();
+        ApplicationUser addonUser = getAddonUser();
         List<Project> allProjects = projectService.getAllProjects(addonUser).getReturnedValue();
         List<String> projectAdminErrors = Lists.newArrayList();
 
@@ -267,7 +267,7 @@ public abstract class AbstractJiraPermissionScopeTest
             plugin = testPluginInstaller.installAddon(to);
 
             Project project = jiraTestUtil.createProject();
-            ApplicationUser addonUser = getAddOnUser();
+            ApplicationUser addonUser = getAddonUser();
 
             boolean hasPermission = permissionManager.hasPermission(permission.getId(), project, addonUser, false);
 
@@ -286,14 +286,14 @@ public abstract class AbstractJiraPermissionScopeTest
         }
     }
 
-    private String getAddOnUserName() throws ConnectAddonInitException
+    private String getAddonUserName() throws ConnectAddonInitException
     {
-        return connectUserService.getOrCreateAddOnUserName(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
+        return connectUserService.getOrCreateAddonUserName(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
     }
 
-    protected ApplicationUser getAddOnUser() throws ConnectAddonInitException
+    protected ApplicationUser getAddonUser() throws ConnectAddonInitException
     {
-        String addonUserName = getAddOnUserName();
+        String addonUserName = getAddonUserName();
         return userManager.getUserByName(addonUserName);
     }
 

@@ -22,12 +22,12 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddonKey;
 import static org.junit.Assert.assertTrue;
 
 public class TestWebSection extends ConfluenceWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = randomAddOnKey();
+    private static final String PLUGIN_KEY = randomAddonKey();
 
     private static final String TOOLS_LOCATION = "system.content.action";
 
@@ -44,7 +44,7 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
@@ -69,7 +69,7 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (addon != null)
         {

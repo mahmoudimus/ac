@@ -47,10 +47,10 @@ public class ConnectIFrameServlet extends HttpServlet
         Matcher matcher = PATH_PATTERN.matcher(req.getPathInfo());
         if (matcher.find())
         {
-            String addOnKey = matcher.group(1);
+            String addonKey = matcher.group(1);
             String moduleKey = matcher.group(2);
 
-            IFrameRenderStrategy renderStrategy = getiFrameRenderStrategyForJsonModule(req, addOnKey, moduleKey);
+            IFrameRenderStrategy renderStrategy = getiFrameRenderStrategyForJsonModule(req, addonKey, moduleKey);
 
             if (renderStrategy != null)
             {
@@ -74,12 +74,12 @@ public class ConnectIFrameServlet extends HttpServlet
         resp.sendError(SC_NOT_FOUND);
     }
 
-    private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
+    private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addonKey, final String moduleKey)
     {
         String classifier = req.getParameter(CLASSIFIER_PARAMETER);
         String lookupClassifier = IFrameRenderStrategyRegistry.JSON_CLASSIFIER.equals(classifier) ? null : classifier;
 
-        IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, lookupClassifier);
+        IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addonKey, moduleKey, lookupClassifier);
 
         if (null != renderStrategy && IFrameRenderStrategyRegistry.JSON_CLASSIFIER.equals(classifier))
         {

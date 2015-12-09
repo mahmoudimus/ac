@@ -8,7 +8,7 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
@@ -24,9 +24,9 @@ import it.common.MultiProductWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParamters;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
-import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddonKey;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -44,17 +44,17 @@ public class AbstractPageTestBase<T extends Page> extends MultiProductWebDriverT
     @Rule
     public TestRule resetToggleableCondition = runner.resetToggleableConditionRule();
 
-    protected static void startConnectAddOn(String fieldName, ConnectModuleMeta meta) throws Exception
+    protected static void startConnectAddon(String fieldName, ConnectModuleMeta meta) throws Exception
     {
-        startConnectAddOn(fieldName, meta, URL);
+        startConnectAddon(fieldName, meta, URL);
     }
 
-    protected static void startConnectAddOn(String fieldName, ConnectModuleMeta meta, String url) throws Exception
+    protected static void startConnectAddon(String fieldName, ConnectModuleMeta meta, String url) throws Exception
     {
-        startConnectAddOn(fieldName, meta, url, newPageBean());
+        startConnectAddon(fieldName, meta, url, newPageBean());
     }
 
-    protected static void startConnectAddOn(String fieldName, ConnectModuleMeta meta, String url, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
+    protected static void startConnectAddon(String fieldName, ConnectModuleMeta meta, String url, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
     {
         pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
@@ -65,7 +65,7 @@ public class AbstractPageTestBase<T extends Page> extends MultiProductWebDriverT
         int query = url.indexOf("?");
         String route = query > -1 ? url.substring(0, query) : url;
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddonKey())
                 .addModule(fieldName, pageBeanBuilder.build())
                 .addModuleMeta(meta)
                 .setAuthenticationToNone()
@@ -74,7 +74,7 @@ public class AbstractPageTestBase<T extends Page> extends MultiProductWebDriverT
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -89,7 +89,7 @@ public class AbstractPageTestBase<T extends Page> extends MultiProductWebDriverT
         this.awesomePageModuleKey = addonAndModuleKey(addonKey, MY_AWESOME_PAGE_KEY);
     }
 
-    protected ConnectAddOnEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass,
+    protected ConnectAddonEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass,
             RemoteWebItem.ItemMatchingMode mode, String id, TestUser user)
             throws MalformedURLException, URISyntaxException
     {
@@ -101,11 +101,11 @@ public class AbstractPageTestBase<T extends Page> extends MultiProductWebDriverT
         LinkedRemoteContent addonPage = connectPageOperations().findConnectPage(mode, id, Optional.<String>empty(),
                 awesomePageModuleKey);
 
-        ConnectAddOnEmbeddedTestPage addonContentPage = addonPage.click();
+        ConnectAddonEmbeddedTestPage addonContentPage = addonPage.click();
 
         assertThat(addonContentPage.getMessage(), equalTo("Success"));
 
-        verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),
+        verifyContainsStandardAddonQueryParamters(addonContentPage.getIframeQueryParams(),
                 product.getProductInstance().getContextPath());
 
         return addonContentPage;

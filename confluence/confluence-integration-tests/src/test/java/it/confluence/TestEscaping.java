@@ -11,7 +11,7 @@ import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePa
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
@@ -66,9 +66,9 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModule("generalPages",
                         newPageBean()
@@ -82,7 +82,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(WEB_ITEM_KEY)
                                 .withUrl(MODULE_URL)
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withTooltip(new I18nProperty(MODULE_NAME, null))
@@ -148,7 +148,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {

@@ -37,10 +37,10 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     private final JwtAuthorizationGenerator jwtAuthorizationGenerator = new JwtAuthorizationGenerator(new NimbusJwtWriterFactory());
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         installHandler = ConnectAppServlets.installHandlerServlet();
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addModule("generalPages", newPageBean()
                         .withKey("page")
                         .withName(new I18nProperty("Page", null))
@@ -53,7 +53,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -62,7 +62,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void addOnUserDoesNotInheritTheSession() throws Exception
+    public void addonUserDoesNotInheritTheSession() throws Exception
     {
         login(testUserFactory.basicUser());
 

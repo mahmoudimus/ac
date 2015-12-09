@@ -6,7 +6,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.AdminPage;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import com.google.common.base.Function;
@@ -29,7 +29,7 @@ public final class JiraAdminPage implements AdminPage
 
     @Inject
     private PageBinder pageBinder;
-    private final String addOnKey;
+    private final String addonKey;
     private final String moduleKey;
 
     private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
@@ -41,19 +41,19 @@ public final class JiraAdminPage implements AdminPage
         }
     };
 
-    public JiraAdminPage(String addOnKey, String moduleKey)
+    public JiraAdminPage(String addonKey, String moduleKey)
     {
-        this.addOnKey = addOnKey;
+        this.addonKey = addonKey;
         this.moduleKey = moduleKey;
     }
 
     @Override
-    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
+    public ConnectAddonEmbeddedTestPage clickAddonLink()
     {
         final WebElement webElement = link.get().get();
         webElement.click();
         logger.debug("Link '{}' was found and clicked.", webElement);
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
+        return pageBinder.bind(ConnectAddonEmbeddedTestPage.class, addonKey, moduleKey, true);
     }
 
     public String getRemotePluginLinkHref()
@@ -97,7 +97,7 @@ public final class JiraAdminPage implements AdminPage
 
     private By link()
     {
-        return By.id(ModuleKeyUtils.addonAndModuleKey(addOnKey, moduleKey));
+        return By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
     }
 
 }

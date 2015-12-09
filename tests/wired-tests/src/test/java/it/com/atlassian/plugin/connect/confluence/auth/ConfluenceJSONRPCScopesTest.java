@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect.confluence.auth;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
@@ -17,7 +17,7 @@ import java.util.Collection;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class ConfluenceJSONRPCScopesTest extends ScopeManagerTest
 {
-    public ConfluenceJSONRPCScopesTest(AddOnScopeManager scopeManager,  ScopeTestHelper scopeTestHelper)
+    public ConfluenceJSONRPCScopesTest(AddonScopeManager scopeManager,  ScopeTestHelper scopeTestHelper)
     {
         super(scopeManager, scopeTestHelper, testData());
     }

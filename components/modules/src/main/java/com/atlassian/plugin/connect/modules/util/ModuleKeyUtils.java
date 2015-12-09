@@ -34,9 +34,9 @@ public class ModuleKeyUtils
         return StringUtils.substringAfterLast(moduleKey, ADDON_MODULE_SEPARATOR);
     }
 
-    public static String moduleKeyOnly(String addOnKey, String moduleKey)
+    public static String moduleKeyOnly(String addonKey, String moduleKey)
     {
-        return moduleKey.startsWith(addOnKey) ? moduleKey.replace(addOnKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR, "") : moduleKey;
+        return moduleKey.startsWith(addonKey) ? moduleKey.replace(addonKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR, "") : moduleKey;
     }
 
     public static String addonKeyOnly(String moduleKey)
