@@ -4,10 +4,9 @@ import com.atlassian.confluence.plugin.descriptor.LayoutModuleDescriptor;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;
@@ -39,21 +38,19 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
     }
 
     @Override
-    public LayoutModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
-                                                         Plugin plugin,
-                                                         ConfluenceThemeModuleBean bean)
+    public LayoutModuleDescriptor createModuleDescriptor(ConfluenceThemeModuleBean bean,
+                                                         ConnectAddonBean addon,
+                                                         Plugin plugin)
     {
-        return createModuleDescriptor(moduleProviderContext, plugin, bean, LayoutType.main);
+        return createModuleDescriptor(addon, plugin, bean, LayoutType.main);
     }
 
 
-    public LayoutModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
+    public LayoutModuleDescriptor createModuleDescriptor(ConnectAddonBean addon,
                                                          Plugin plugin,
                                                          ConfluenceThemeModuleBean bean,
                                                          LayoutType type)
     {
-        ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
-
         Element dom = new DOMElement("layout");
         dom.addAttribute("key", ConfluenceThemeUtils.getLayoutKey(addon, bean, type));
         dom.addAttribute("name", ConfluenceThemeUtils.getLayoutName(addon, bean, type));

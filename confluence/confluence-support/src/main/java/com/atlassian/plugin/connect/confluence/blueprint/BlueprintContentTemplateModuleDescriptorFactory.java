@@ -4,11 +4,10 @@ import com.atlassian.confluence.languages.DefaultLocaleManager;
 import com.atlassian.confluence.plugins.createcontent.extensions.ContentTemplateModuleDescriptor;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;
@@ -24,7 +23,7 @@ import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprint
 import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.CONTEXT_URL_KEY;
 
 /**
- * The {@link com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean} to
+ * The {@link BlueprintModuleBean} to
  * {@link com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor} part of the blueprint
  * mapping.
  *

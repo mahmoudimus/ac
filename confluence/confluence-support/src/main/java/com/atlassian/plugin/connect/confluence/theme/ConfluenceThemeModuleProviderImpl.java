@@ -7,9 +7,9 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.UiOverrideBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -49,16 +49,16 @@ public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnect
 
     @Override
     public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConfluenceThemeModuleBean> modules,
-                                                                ConnectModuleProviderContext moduleProviderContext)
+                                                                ConnectAddonBean addon)
     {
         Plugin plugin = pluginRetrievalService.getPlugin();
         List<ModuleDescriptor> descriptors = Lists.newArrayList();
         for (ConfluenceThemeModuleBean moduleBean : modules)
         {
-            descriptors.add(themeDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin, moduleBean));
+            descriptors.add(themeDescriptorFactory.createModuleDescriptor(moduleBean, addon, plugin));
             for (UiOverrideBean uiOverrideBean : moduleBean.getOverrides())
             {
-                descriptors.add(layoutModuleFactory.createModuleDescriptor(moduleProviderContext, plugin, moduleBean, LayoutType.valueOf(uiOverrideBean.getType())));
+                descriptors.add(layoutModuleFactory.createModuleDescriptor(addon, plugin, moduleBean, LayoutType.valueOf(uiOverrideBean.getType())));
             }
         }
         return descriptors;
