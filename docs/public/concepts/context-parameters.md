@@ -7,7 +7,7 @@ Context parameters are additional values pairs that are sent to your add-on in t
 * [Standard parameters](#standard-parameters)
 * [Additional parameters](#additional-parameters)
   * [JIRA](#additional-parameters-jira)
-  * * [JIRA Agile](#additional-parameters-jira-agile)
+    * [JIRA Agile](#additional-parameters-jira-agile)
   * [Confluence](#additional-parameters-confluence)
 
 ## <a name="standard-parameters"></a>Standard parameters
@@ -60,7 +60,7 @@ JIRA supports these context variables.
 JIRA issue pages only expose issue and project data. Similarly, version and component information is available only in
 project administration pages.
 
-### <a name="additional-parameters-jira-agile"></a>JIRA Agile
+#### <a name="additional-parameters-jira-agile"></a>JIRA Agile
 
 JIRA Agile supports these context variables.
 
