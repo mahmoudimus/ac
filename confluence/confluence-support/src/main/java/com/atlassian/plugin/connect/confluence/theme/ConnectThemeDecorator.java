@@ -7,4 +7,5 @@ import com.atlassian.confluence.themes.VelocityDecorator;
  */
 public class ConnectThemeDecorator extends VelocityDecorator
 {
+
 }

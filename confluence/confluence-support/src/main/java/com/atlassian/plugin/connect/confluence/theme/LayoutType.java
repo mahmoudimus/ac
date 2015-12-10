@@ -5,17 +5,17 @@ package com.atlassian.plugin.connect.confluence.theme;
  */
 public enum LayoutType {
     main("/decorators/main.vmd",
-         "velocity/confluence/theme-support/remote-theme-support.vmd",
+         "velocity/confluence/theme-support/main.vmd",
          "search", /*TODO: check that search is the dashboard?!*/
          "dashboard",
          "success",
-         "/theme-support/remote-theme-support.vmd"),
+         "/velocity/confluence/theme-support/main.vm"),
     page("/decorators/page.vmd",
-         "velocity/confluence/theme-support/remote-theme-support.vmd",
+         "velocity/confluence/theme-support/page.vmd",
          "pages",
          "viewpage",
          "page",
-         "/theme-support/remote-theme-support.vmd");
+         "/velocity/confluence/theme-support/page.vm");
 
     private final String decoratorToOverride;
     private final String decoratorLocation;

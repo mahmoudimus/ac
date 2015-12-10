@@ -1,20 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScope;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScopeApiPath;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RestApiScopeHelper;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.Iterables;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +7,24 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScopeApiPath;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RestApiScopeHelper;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Iterables;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
@@ -97,7 +100,13 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
         @Override
         public boolean apply(ApiScope scope)
         {
-            return null != scope && scope.allow(request);
+            return isDevmode() || (null != scope && scope.allow(request));
+        }
+
+        private boolean isDevmode()
+        {
+            return Boolean.parseBoolean(System.getProperty("atlassian.dev.mode", "false")) ||
+                   Boolean.parseBoolean(System.getProperty("dev.mode", "false"));
         }
     }
 }

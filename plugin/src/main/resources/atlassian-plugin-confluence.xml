@@ -11,7 +11,7 @@
     <velocity-context-item key="confuence-remote-theme-velocity-context"
                                name="Velocity Context for use by the remote-theme.vm to compute the iframe url"
                                context-key="confluenceRemoteTheme"
-                               class="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" />
+                               class="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" enabled="true"/>
 
     <connect-api-scope-whitelist key="confluence-api-scope-whitelist" resource="/scope/confluence-whitelist.json"/>
 
