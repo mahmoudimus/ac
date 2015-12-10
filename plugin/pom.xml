@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.58-SNAPSHOT</version>
+        <version>1.1.67-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -36,8 +36,6 @@
         <dependency>
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
-            <version>${atlassian.analytics.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
@@ -93,18 +91,6 @@
             <version>${toolbox.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
-            <version>${plugin.testrunner.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -118,12 +104,22 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-spi</artifactId>
+            <artifactId>atlassian-connect-host-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-extension-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-core-extensions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -211,7 +207,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.8-atlassian-8</version>
+            <version>${jersey.server.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -531,10 +527,12 @@
                         <Import-Package>
 
                             <!-- Required for pa / pi to work with the new version of atlassian-plugins -->
-                            com.atlassian.plugin.osgi.bridge.external;
-                            org.osgi.util.tracker;
-                            org.osgi.framework;
+                            com.atlassian.plugin.osgi.bridge.external,
+                            org.osgi.util.tracker,
+                            org.osgi.framework,
                             <!-- End pa / pi imports -->
+
+                            com.atlassian.jwt*;version="[1.4.0,2.0.0)",
 
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
                             com.github.fge.jsonschema.core*;version="1.2.4",
@@ -614,11 +612,6 @@
                                     <groupId>com.atlassian.httpclient</groupId>
                                     <artifactId>atlassian-httpclient-plugin</artifactId>
                                     <version>${atlassian.httpclient.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.gadgets</groupId>
-                                    <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
-                                    <version>3.2.0-m8</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
@@ -794,7 +787,7 @@
                         </goals>
                         <configuration>
                             <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
-                            <sourcepath>src/main/java:../modules/src/main/java</sourcepath>
+                            <sourcepath>../components/modules/src/main/java</sourcepath>
                             <debug>${debugSchemaGen}</debug>
                         </configuration>
                     </execution>
@@ -806,7 +799,7 @@
                         </goals>
                         <configuration>
                             <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.plugin.descriptor.CommonModuleList</rootClassName>
+                            <rootClassName>com.atlassian.plugin.connect.plugin.CommonModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
@@ -819,7 +812,7 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.jira.JiraModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
@@ -833,7 +826,7 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.confluence.ConfluenceModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
@@ -847,11 +840,36 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-schema-support-docs-exist</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireFilesExist>
+                                    <files>
+                                        <file>${project.build.directory}/jsonSchemaInterfaces.json</file>
+                                        <file>${project.build.directory}/jsonSchemaDocs.json</file>
+                                    </files>
+                                    <message>The goal json-schemagen-maven-plugin:generate-support-docs did not produce the expected files</message>
+                                </requireFilesExist>
+                            </rules>
+                            <fail>true</fail>
                         </configuration>
                     </execution>
                 </executions>
@@ -873,8 +891,8 @@
                 </executions>
                 <configuration>
                     <additionalSourceDirectories>
-                        <additionalSourceDirectory>../modules/src/main/java/</additionalSourceDirectory>
-                        <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
+                        <additionalSourceDirectory>../components/modules/src/main/java/</additionalSourceDirectory>
+                        <additionalSourceDirectory>../components/spi/src/main/java/</additionalSourceDirectory>
                     </additionalSourceDirectories>
                 </configuration>
             </plugin>
@@ -903,7 +921,7 @@
         <od.testing.configuration>
             use-java,8
             use-maven,3
-            include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
+            include-artifact,com.atlassian.plugins:atlassian-connect-confluence-integration-tests
             include-artifact,com.atlassian.plugins:atlassian-connect-jira-integration-tests
         </od.testing.configuration>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>

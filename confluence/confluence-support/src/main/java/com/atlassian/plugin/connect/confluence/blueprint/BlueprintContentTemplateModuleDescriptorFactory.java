@@ -4,11 +4,10 @@ import com.atlassian.confluence.languages.DefaultLocaleManager;
 import com.atlassian.confluence.plugins.createcontent.extensions.ContentTemplateModuleDescriptor;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;
@@ -49,10 +48,8 @@ public class BlueprintContentTemplateModuleDescriptorFactory
 
 
     @Override
-    public ContentTemplateModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, BlueprintModuleBean bean)
+    public ContentTemplateModuleDescriptor createModuleDescriptor(BlueprintModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
-        ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
-
         Element contentTemplateElement = new DOMElement("content-template");
         String contentTemplateKey = BlueprintUtils.getContentTemplateKey(addon, bean);
 

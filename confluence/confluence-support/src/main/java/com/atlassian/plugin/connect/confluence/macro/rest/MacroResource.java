@@ -1,11 +1,6 @@
 package com.atlassian.plugin.connect.confluence.macro.rest;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.confluence.macro.MacroContentManager;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.base.Function;
-import com.google.common.base.Suppliers;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -14,7 +9,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import static com.atlassian.fugue.Option.option;
+import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.confluence.macro.MacroContentManager;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @Path("/macro")
 @AnonymousAllowed
@@ -61,20 +58,12 @@ public class MacroResource
 
     private boolean isAuthorisedConsumer(HttpServletRequest request, final String appKey)
     {
-        return getConsumerKeyFromRequest(request).fold(
-                Suppliers.ofInstance(Boolean.FALSE),
-                new Function<String, Boolean>()
-                {
-                    @Override
-                    public Boolean apply(String key)
-                    {
-                        return key.equals(appKey);
-                    }
-                });
+        final Optional<String> potentialConsumerKeyFromRequest = getConsumerKeyFromRequest(request);
+        return potentialConsumerKeyFromRequest.isPresent() && appKey.equals(potentialConsumerKeyFromRequest.get());
     }
 
-    private Option<String> getConsumerKeyFromRequest(HttpServletRequest request)
+    private Optional<String> getConsumerKeyFromRequest(HttpServletRequest request)
     {
-        return option(addOnKeyExtractor.extractClientKey(request));
+        return Optional.ofNullable(addOnKeyExtractor.extractClientKey(request));
     }
 }

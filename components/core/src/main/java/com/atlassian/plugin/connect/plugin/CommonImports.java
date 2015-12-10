@@ -10,8 +10,9 @@ import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
+import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
-import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.oauth.serviceprovider.ServiceProviderTokenStore;
@@ -21,6 +22,7 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
+import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -45,7 +47,7 @@ import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegist
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
 @SuppressWarnings ("ALL")
-@Named
+@Scanned
 public class CommonImports
 {
     @Inject
@@ -79,6 +81,7 @@ public class CommonImports
             @ComponentImport HttpClientFactory httpClientFactory,
             @ComponentImport ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry,
             @ComponentImport RemotePluginLicenseService remotePluginLicenseService,
+            @ComponentImport JwtJsonBuilderFactory jwtBuilderFactory,
             @ComponentImport JwtService jwtService,
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,

@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
-import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
-import com.google.common.base.Supplier;
-
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
+
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+
+import com.google.common.base.Supplier;
 
 public class NoAuthRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
 {
@@ -35,9 +36,9 @@ public class NoAuthRemotablePluginAccessor extends DefaultRemotablePluginAccesso
         return new AuthorizationGenerator()
         {
             @Override
-            public Option<String> generate(final HttpMethod method, final URI url, final Map<String, String[]> parameters)
+            public Optional<String> generate(final HttpMethod method, final URI url, final Map<String, String[]> parameters)
             {
-                return Option.none(String.class);
+                return Optional.empty();
             }
         };
     }

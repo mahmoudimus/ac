@@ -2,9 +2,11 @@ package it.com.atlassian.plugin.connect.testlifecycle;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
 import com.google.common.base.Strings;
-import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginInstaller;
+import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginHelper;
+import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleUpmHelper;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthenticator;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -25,15 +27,22 @@ public class AbstractPluginLifecycleTest
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPluginLifecycleTest.class);
 
-    protected final LifecyclePluginInstaller testPluginInstaller;
+    protected final PluginController pluginController;
+    protected final LifecyclePluginHelper pluginHelper;
+    protected final LifecycleUpmHelper upmHelper;
     protected final LifecycleTestAuthenticator testAuthenticator;
 
     protected Plugin theConnectPlugin;
 
-    public AbstractPluginLifecycleTest(LifecycleTestAuthenticator testAuthenticator, LifecyclePluginInstaller testPluginInstaller)
+    public AbstractPluginLifecycleTest(PluginController pluginController,
+            LifecyclePluginHelper pluginHelper,
+            LifecycleUpmHelper upmHelper,
+            LifecycleTestAuthenticator testAuthenticator)
     {
+        this.pluginController = pluginController;
+        this.pluginHelper = pluginHelper;
+        this.upmHelper = upmHelper;
         this.testAuthenticator = testAuthenticator;
-        this.testPluginInstaller = testPluginInstaller;
     }
 
     @BeforeClass
@@ -49,7 +58,7 @@ public class AbstractPluginLifecycleTest
         {
             try
             {
-                testPluginInstaller.uninstallPlugin(theConnectPlugin);
+                pluginController.uninstall(theConnectPlugin);
             }
             catch (Exception e)
             {
@@ -64,8 +73,8 @@ public class AbstractPluginLifecycleTest
 
     protected Plugin installAndEnableAddon(String template) throws IOException
     {
-        Plugin plugin = testPluginInstaller.installAddon(getAddonJson(template));
-        testPluginInstaller.enableAddon(plugin.getKey());
+        Plugin plugin = upmHelper.installAddon(getAddonJson(template));
+        upmHelper.getUpmControlHandler().enablePlugins(plugin.getKey());
         return plugin;
     }
 
@@ -87,7 +96,7 @@ public class AbstractPluginLifecycleTest
 
         sb.append(originalAddonPlugin.getKey()).append(": ");
 
-        Plugin pluginToCheck = testPluginInstaller.getAddonPlugin(originalAddonPlugin.getKey());
+        Plugin pluginToCheck = upmHelper.getUpmControlHandler().getPlugin(originalAddonPlugin.getKey());
 
         PluginState addonState = pluginToCheck.getPluginState();
         Collection<ModuleDescriptor<?>> addonModules = pluginToCheck.getModuleDescriptors();

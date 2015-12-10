@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.plugin.lifecycle.upm;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
-import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
@@ -139,7 +139,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
 
             return new PluginInstallResult(plugin);
         }
-        catch (ConnectAddOnInstallException e)
+        catch (ConnectAddonInstallException e)
         {
             Throwable cause = e.getCause();
             Throwables.propagateIfInstanceOf(cause, PluginInstallException.class);

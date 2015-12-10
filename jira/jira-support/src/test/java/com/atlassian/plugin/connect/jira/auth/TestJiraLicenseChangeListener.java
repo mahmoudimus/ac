@@ -14,10 +14,9 @@ import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.jira.license.MockLicensedApplications;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsers;
-import com.atlassian.plugin.connect.jira.auth.JiraLicenseChangeListener;
+
 import com.google.common.collect.ImmutableSet;
 
 import org.junit.Before;
@@ -181,10 +180,10 @@ public class TestJiraLicenseChangeListener
             newApps.add(ApplicationKey.valueOf(key));
         }
         when(newLicenseDetails.getLicensedApplications()).thenReturn(
-                new MockLicensedApplications(newApps));
+            new MockLicensedApplications(newApps));
 
-        Option oldDetailsOption = oldKeys.isEmpty() ? none() : some(oldLicenseDetails);
-        Option newDetailsOption = newKeys.isEmpty() ? none() : some(newLicenseDetails);
+        Option<LicenseDetails> oldDetailsOption = oldKeys.isEmpty() ? none() : some(oldLicenseDetails);
+        Option<LicenseDetails> newDetailsOption = newKeys.isEmpty() ? none() : some(newLicenseDetails);
 
         return new LicenseChangedEvent(oldDetailsOption, newDetailsOption);
     }

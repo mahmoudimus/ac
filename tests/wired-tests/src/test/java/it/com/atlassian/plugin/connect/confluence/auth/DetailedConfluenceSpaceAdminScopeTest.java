@@ -1,5 +1,10 @@
 package it.com.atlassian.plugin.connect.confluence.auth;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.SpacePermissionManager;
@@ -17,19 +22,21 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,11 +46,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
@@ -73,7 +75,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
-    private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
+    private final CrowdAddOnUserProvisioningService crowdAddOnUserProvisioningService;
 
     private List<Plugin> installedAddonPlugins;
     private List<Space> createdSpaceList;
@@ -85,7 +87,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
             JwtApplinkFinder jwtApplinkFinder,
             ApplicationService applicationService,
             ApplicationManager applicationManager,
-            ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService)
+            CrowdAddOnUserProvisioningService crowdAddOnUserProvisioningService)
     {
         this.spaceManager = spaceManager;
         this.spacePermissionManager = spacePermissionManager;
@@ -94,7 +96,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
         this.jwtApplinkFinder = jwtApplinkFinder;
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
-        this.connectAddOnUserProvisioningService = connectAddOnUserProvisioningService;
+        this.crowdAddOnUserProvisioningService = crowdAddOnUserProvisioningService;
     }
 
     @Before
@@ -306,8 +308,8 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private ConfluenceUser getAddonUserRemovedFromGroups(String addonKey)
     {
         final ConfluenceUser addonUser = getAddonUser(addonKey);
-        final Set<String> groups = new HashSet<String>(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected());
-        groups.addAll(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected());
+        final Set<String> groups = new HashSet<>(crowdAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected());
+        groups.addAll(crowdAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected());
         for (String group : groups)
         {
             removeUserFromGroup(addonUser.getName(), group);
@@ -335,7 +337,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
     private ConnectAddonBeanBuilder createAddonBean(ScopeName scope)
     {
-        String key = "ac-test-" + System.currentTimeMillis();
+        String key = "ac-test-" + AddonUtil.randomPluginKey();
         return ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withDescription(getClass().getCanonicalName())

@@ -2,12 +2,12 @@ package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
@@ -19,8 +19,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -66,33 +65,30 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }
 
-    protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
+    protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,
             Plugin plugin, T macroBean);
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
         for (T macros : modules)
         {
-            moduleDescriptors.addAll(createModuleDescriptors(moduleProviderContext, pluginRetrievalService.getPlugin(), macros));
+            moduleDescriptors.addAll(createModuleDescriptors(addon, pluginRetrievalService.getPlugin(), macros));
         }
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(ConnectModuleProviderContext moduleProviderContext,
-            Plugin plugin, T macroBean)
+    protected List<ModuleDescriptor> createModuleDescriptors(ConnectAddonBean addon, Plugin plugin, T macroBean)
     {
         List<ModuleDescriptor> descriptors = newArrayList();
 
-        final ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
-
-        descriptors.add(createMacroModuleDescriptor(moduleProviderContext, plugin, macroBean));
+        descriptors.add(createMacroModuleDescriptor(addon, plugin, macroBean));
 
         if (macroBean.isFeatured())
         {
             WebItemModuleBean featuredWebItem = createFeaturedWebItem(macroBean);
-            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin, featuredWebItem));
+            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(featuredWebItem, addon, plugin));
 
             // Add a featured icon web resource
             if (macroBean.hasIcon())

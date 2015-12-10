@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.58-SNAPSHOT</version>
+        <version>1.1.67-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-spi</artifactId>
+            <artifactId>atlassian-connect-extension-spi</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.8-atlassian-8</version>
+            <version>${jersey.server.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>2.5.6.SEC02</version>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
 

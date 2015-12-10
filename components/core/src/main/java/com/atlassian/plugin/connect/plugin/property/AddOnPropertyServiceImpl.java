@@ -1,17 +1,22 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Suppliers;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.TransactionAction;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+
 import org.apache.http.HttpStatus;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -19,10 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResult;
@@ -107,18 +108,13 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         ValidationResult<GetOrDeletePropertyInput> validationResult = validateGetPropertyValue(user, sourceAddOnKey, addOnKey, propertyKey);
         if (validationResult.isValid())
         {
-            GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
-            Option<AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
-            return propertyValue.fold(
-                    Suppliers.ofInstance(new GetServiceResult.Fail(OperationStatusImpl.PROPERTY_NOT_FOUND)),
-                    new Function<AddOnProperty, GetServiceResult>()
-            {
-                @Override
-                public GetServiceResult apply(@Nullable final AddOnProperty input)
-                {
-                    return new GetServiceResult.Success(input);
-                }
-            });
+            GetOrDeletePropertyInput input = validationResult.getValue().orElse(null);
+            Optional<AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
+            if(!propertyValue.isPresent()) {
+                return new GetServiceResult.Fail(OperationStatusImpl.PROPERTY_NOT_FOUND);
+            } else {
+                return new GetServiceResult.Success(propertyValue.get());
+            }
         }
         else
         {
@@ -133,27 +129,27 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
             @Nonnull final String addOnKey,
             @Nonnull final String propertyKey,
             @Nonnull final String value,
-            @Nonnull final Function<Option<AddOnProperty>, ServiceConditionResult<T>> testFunction)
+            @Nonnull final Function<Optional<AddOnProperty>, ServiceConditionResult<T>> testFunction)
     {
         Preconditions.checkArgument(value.length() <= MAXIMUM_PROPERTY_VALUE_LENGTH);
         ValidationResult<SetPropertyInput> validationResult = validateSetPropertyValue(user, sourceAddOnKey, checkNotNull(addOnKey), checkNotNull(propertyKey), checkNotNull(value));
         if (validationResult.isValid())
         {
-            final SetPropertyInput input = validationResult.getValue().getOrNull();
+            final SetPropertyInput input = validationResult.getValue().orElse(null);
 
             return store.executeInTransaction(new TransactionAction<PutServiceResult<T>>()
             {
                 @Override
                 public PutServiceResult<T> call()
                 {
-                    Option<AddOnProperty> propertyOption = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
+                    Optional<AddOnProperty> propertyOption = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
 
                     final ServiceConditionResult<T> conditionSucceed = testFunction.apply(propertyOption);
 
                     if (conditionSucceed.isSuccessful())
                     {
                         final PutResultWithOptionalProperty putResult = store.setPropertyValue(input.getAddOnKey(), input.getPropertyKey(), input.getValue());
-                        if (putResult.getProperty().isDefined())
+                        if (putResult.getProperty().isPresent())
                         {
                             return new PutServiceResult.Success<T>(
                                     new PutOperationStatus(
@@ -181,42 +177,32 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
             @Nullable final String sourceAddOnKey,
             @Nonnull final String addOnKey,
             @Nonnull final String propertyKey,
-            @Nonnull final Function<Option<AddOnProperty>, ServiceConditionResult<T>> testFunction)
+            @Nonnull final Function<Optional<AddOnProperty>, ServiceConditionResult<T>> testFunction)
     {
         ValidationResult<GetOrDeletePropertyInput> validationResult = validateDeletePropertyValue(user, sourceAddOnKey, checkNotNull(addOnKey), checkNotNull(propertyKey));
         if (validationResult.isValid())
         {
-            final GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
+            final GetOrDeletePropertyInput input = validationResult.getValue().orElse(null);
 
             return store.executeInTransaction(new TransactionAction<DeleteServiceResult<T>>()
             {
                 @Override
                 public DeleteServiceResult<T> call()
                 {
-                    return store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey()).fold(new Supplier<DeleteServiceResult<T>>()
+                    final Optional<AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
+                    if(!propertyValue.isPresent()) {
+                        return new DeleteServiceResult.Fail<T>(OperationStatusImpl.PROPERTY_NOT_FOUND);
+                    }
+
+                    final ServiceConditionResult<T> conditionSucceeded = testFunction.apply(propertyValue);
+                    if (conditionSucceeded.isSuccessful())
                     {
-                        @Override
-                        public DeleteServiceResult<T> get()
-                        {
-                            return new DeleteServiceResult.Fail<T>(OperationStatusImpl.PROPERTY_NOT_FOUND);
-                        }
-                    }, new Function<AddOnProperty, DeleteServiceResult<T>>()
+                        store.deletePropertyValue(input.getAddOnKey(), input.getPropertyKey());
+                        return new DeleteServiceResult.Success<T>(OperationStatusImpl.PROPERTY_DELETED);
+                    } else
                     {
-                        @Override
-                        public DeleteServiceResult<T> apply(final AddOnProperty property)
-                        {
-                            final ServiceConditionResult<T> conditionSucceeded = testFunction.apply(Option.some(property));
-                            if (conditionSucceeded.isSuccessful())
-                            {
-                                store.deletePropertyValue(input.getAddOnKey(), input.getPropertyKey());
-                                return new DeleteServiceResult.Success<T>(OperationStatusImpl.PROPERTY_DELETED);
-                            }
-                            else
-                            {
-                                return new DeleteServiceResult.PreconditionFail<T>(conditionSucceeded.getObject().get());
-                            }
-                        }
-                    });
+                        return new DeleteServiceResult.PreconditionFail<T>(conditionSucceeded.getObject().get());
+                    }
                 }
             });
         }
@@ -238,31 +224,31 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         return new GetAllServiceResult.Fail(validationResult.getError().get());
     }
 
-    private Option<OperationStatus> validateCommonParameters(UserProfile user, String sourceAddOnKey, String addOnKey, String propertyKey)
+    private Optional<OperationStatus> validateCommonParameters(UserProfile user, String sourceAddOnKey, String addOnKey, String propertyKey)
     {
         if (!loggedIn(user))
         {
-            return Option.<OperationStatus>some(OperationStatusImpl.NOT_AUTHENTICATED);
+            return Optional.of(OperationStatusImpl.NOT_AUTHENTICATED);
         }
         if (!hasAccessToData(user, sourceAddOnKey, addOnKey))
         {
-            return Option.<OperationStatus>some(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
+            return Optional.of(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
         if (propertyKey.length() > AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
         {
-            return Option.<OperationStatus>some(OperationStatusImpl.KEY_TOO_LONG);
+            return Optional.of(OperationStatusImpl.KEY_TOO_LONG);
         }
         if (!connectAddonRegistry.hasAddonWithKey(addOnKey))
         {
-            return Option.<OperationStatus>some(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
+            return Optional.of(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
-        return Option.none();
+        return Optional.empty();
     }
 
     private ValidationResult<GetOrDeletePropertyInput> validateGetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
-        Option<OperationStatus> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey, propertyKey);
-        if (validationError.isDefined())
+        Optional<OperationStatus> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey, propertyKey);
+        if (validationError.isPresent())
         {
             return ValidationResult.fromError(validationError.get());
         }
@@ -271,8 +257,9 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
 
     private ValidationResult<SetPropertyInput> validateSetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, final String propertyKey, final String value)
     {
-        Option<OperationStatus> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey, propertyKey);
-        if (validationError.isDefined())
+        Optional<OperationStatus> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey,
+            propertyKey);
+        if (validationError.isPresent())
         {
             return ValidationResult.fromError(validationError.get());
         }
@@ -285,8 +272,9 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
 
     private ValidationResult<GetOrDeletePropertyInput> validateDeletePropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
-        Option<OperationStatus> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey, propertyKey);
-        if (validationError.isDefined())
+        Optional<OperationStatus> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey,
+            propertyKey);
+        if (validationError.isPresent())
         {
             return ValidationResult.fromError(validationError.get());
         }

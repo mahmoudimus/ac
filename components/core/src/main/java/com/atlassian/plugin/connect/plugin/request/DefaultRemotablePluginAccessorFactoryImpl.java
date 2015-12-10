@@ -5,26 +5,26 @@ import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.JwtService;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.auth.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.auth.jwt.JwtSigningRemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthSigningRemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.AuthenticationMethod;
-import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
+import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
+import com.atlassian.plugin.connect.plugin.auth.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -51,9 +51,10 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
     private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
     private final EventPublisher eventPublisher;
+    private final JwtJsonBuilderFactory jwtBuilderFactory;
     private final JwtService jwtService;
     private final ConsumerService consumerService;
-    private final UserManager userManager;
+
     private ConnectAddonAccessor addonAccessor;
 
     private final Map<String, RemotablePluginAccessor> accessors;
@@ -68,9 +69,9 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
                                                  PluginAccessor pluginAccessor,
                                                  ApplicationProperties applicationProperties,
                                                  EventPublisher eventPublisher,
+                                                 JwtJsonBuilderFactory jwtBuilderFactory,
                                                  JwtService jwtService,
                                                  ConsumerService consumerService,
-                                                 UserManager userManager,
                                                  ConnectAddonAccessor addonAccessor)
     {
         this.connectApplinkManager = connectApplinkManager;
@@ -81,8 +82,8 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         this.applicationProperties = applicationProperties;
         this.eventPublisher = eventPublisher;
         this.consumerService = consumerService;
-        this.userManager = userManager;
         this.eventPublisher.register(this);
+        this.jwtBuilderFactory = jwtBuilderFactory;
         this.jwtService = jwtService;
         this.addonAccessor = addonAccessor;
 
@@ -302,8 +303,8 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
         if (AuthenticationMethod.JWT.equals(authenticationMethod))
         {
-            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtService, consumerService,
-                    connectApplinkManager, httpContentRetriever, userManager);
+            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtBuilderFactory, jwtService,
+                    consumerService, connectApplinkManager, httpContentRetriever);
         }
         else if (AuthenticationMethod.NONE.equals(authenticationMethod))
         {
@@ -354,8 +355,8 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         if (AuthenticationMethod.JWT.equals(authenticationMethod))
         {
             ConnectAddonBean addon = addonAccessor.getAddon(pluginKey).get();
-            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtService, consumerService,
-                    connectApplinkManager, httpContentRetriever, userManager);
+            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtBuilderFactory, jwtService,
+                    consumerService, connectApplinkManager, httpContentRetriever);
         }
         else if (AuthenticationMethod.NONE.equals(authenticationMethod))
         {
@@ -381,7 +382,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         eventPublisher.unregister(this);
     }
 
-    private static enum ToUriFunction implements Function<String, URI>
+    private enum ToUriFunction implements Function<String, URI>
     {
         INSTANCE;
 

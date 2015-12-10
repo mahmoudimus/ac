@@ -60,10 +60,10 @@ JIRA issue pages only expose issue and project data. Similarly, version and comp
 project administration pages.
 
 Furthermore JIRA Agile supports these context variables.
- * `board.id`, `board.type`
- * `board.view.mode` (available for plugin points that are displayed in multiple board view modes (plan, work, report))
- * `sprint.id`, `sprint.state`
- 
+ * `board.id`
+ * `board.mode` (available for plugin points that are displayed on different board screens)
+ * `sprint.id`
+
 ## <a name="additional-parameters-confluence"></a>Confluence
 
 Confluence supports these context variables.

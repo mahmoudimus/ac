@@ -5,10 +5,11 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -129,7 +130,7 @@ public class AddonsResourceReinstallTest
 
     private ConnectAddonBean createAddonBean() throws IOException
     {
-        String key = "ac-test-json-" + System.currentTimeMillis();
+        String key = "ac-test-json-" + AddonUtil.randomPluginKey();
         return ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))

@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
 import com.atlassian.jira.project.Project;
-import com.atlassian.plugin.connect.spi.module.context.ContextMapParameterExtractor;
-import com.atlassian.plugin.connect.spi.module.context.ParameterSerializer;
+import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Extracts project parameters that can be included in webpanel's iframe url.
@@ -30,9 +30,9 @@ public class ProjectContextMapParameterExtractor implements ContextMapParameterE
         if (context.containsKey(PROJECT_CONTEXT_KEY))
         {
             Project project = (Project) context.get(PROJECT_CONTEXT_KEY);
-            return Optional.fromNullable(project);
+            return Optional.ofNullable(project);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

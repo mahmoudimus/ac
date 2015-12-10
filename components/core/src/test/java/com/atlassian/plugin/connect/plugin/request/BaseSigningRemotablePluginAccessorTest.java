@@ -7,9 +7,7 @@ import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.httpclient.api.ResponseTransformation;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.request.CachingHttpContentRetriever;
-import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
-import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.util.concurrent.Promise;
 
 import java.net.URI;

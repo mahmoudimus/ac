@@ -2,8 +2,8 @@ package it.com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;

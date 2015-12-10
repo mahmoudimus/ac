@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-components-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.58-SNAPSHOT</version>
+        <version>1.1.67-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,7 +19,13 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-spi</artifactId>
+            <artifactId>atlassian-connect-host-spi</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-extension-spi</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -115,8 +121,6 @@
         <dependency>
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
-            <version>${atlassian.analytics.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
@@ -206,7 +210,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.8-atlassian-8</version>
+            <version>${jersey.server.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -282,6 +286,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.security</groupId>
+            <artifactId>atlassian-secure-xml</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <scope>test</scope>
@@ -289,6 +297,12 @@
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.9-RC1</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- EXTRAS -->
@@ -301,13 +315,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>2.5.6</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.4.1</version>
+            <version>${httpcomponents.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

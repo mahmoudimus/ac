@@ -3,11 +3,8 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.jwt.core.SystemClock;
-import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
-import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
-import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
-import com.atlassian.plugin.connect.spi.util.ServletUtils;
+import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
@@ -99,7 +96,7 @@ public class ApiScopingFilter implements Filter
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
         HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res);
-        if (!addOnScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey, user))
+        if (!addOnScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey))
         {
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{addonKey, user, req.getMethod(), req.getRequestURI()});

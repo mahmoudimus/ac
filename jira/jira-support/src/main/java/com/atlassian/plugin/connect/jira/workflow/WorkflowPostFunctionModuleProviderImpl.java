@@ -3,17 +3,16 @@ package com.atlassian.plugin.connect.jira.workflow;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilder;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilder;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -56,11 +55,10 @@ public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectM
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, ConnectAddonBean connectAddonBean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (WorkflowPostFunctionModuleBean bean : modules)
         {
             // register render strategies for iframe workflow views
@@ -77,15 +75,15 @@ public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectM
                 registerIFrameRenderStrategy(connectAddonBean, bean, WorkflowPostFunctionResource.VIEW, bean.getView());
             }
 
-            descriptors.add(beanToDescriptor(moduleProviderContext, pluginRetrievalService.getPlugin(), bean));
+            descriptors.add(beanToDescriptor(connectAddonBean, pluginRetrievalService.getPlugin(), bean));
         }
 
         return descriptors;
     }
 
-    private ModuleDescriptor beanToDescriptor(ConnectModuleProviderContext addon, Plugin theConnectPlugin, WorkflowPostFunctionModuleBean bean)
+    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin plugin, WorkflowPostFunctionModuleBean bean)
     {
-        return workflowPostFunctionFactory.createModuleDescriptor(addon, theConnectPlugin, bean);
+        return workflowPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
     }
 
     private void registerIFrameRenderStrategy(ConnectAddonBean addon, WorkflowPostFunctionModuleBean bean, WorkflowPostFunctionResource resource, UrlBean urlBean)

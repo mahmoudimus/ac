@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.58-SNAPSHOT</version>
+        <version>1.1.67-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -54,18 +54,6 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
-            <version>${plugin.testrunner.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.gson</groupId>
-                    <artifactId>gson</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jwt</groupId>
@@ -107,6 +95,18 @@
             <artifactId>atlassian-connect-test-support-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -199,6 +199,12 @@
             <artifactId>json-schema-validator</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.testutils</groupId>
+            <artifactId>atlassian-test-annotations</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -236,6 +242,7 @@
                             <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
+                                <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -269,11 +276,6 @@
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.atlassian.gadgets</groupId>
-                                    <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
-                                    <version>3.2.0-m8</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
                                     <version>${functest.version}</version>
@@ -301,6 +303,11 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
                                     <artifactId>atlassian-connect-jira-reference-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-connect-reference-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
@@ -369,6 +376,11 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
                                     <artifactId>atlassian-connect-confluence-reference-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-connect-reference-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>

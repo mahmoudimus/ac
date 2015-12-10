@@ -1,0 +1,24 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    </plugin-info>
+
+    <connect-module key="reference-module-provider" class="com.atlassian.plugin.connect.reference.ReferenceModuleProvider"/>
+
+    <connect-condition-class-resolver key="reference-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.reference.ReferenceConditionClassResolver"/>
+
+    <connect-api-scope-whitelist key="test-api-scope-whitelist" resource="/scope/test-whitelist.json"/>
+
+    <connect-web-fragment-location-blacklist key="reference-blacklist">
+        <web-panel-locations>
+            <location>atl.header.webpanel.blacklisted</location>
+        </web-panel-locations>
+        <web-item-locations>
+            <location>atl.header.webitem.blacklisted</location>
+        </web-item-locations>
+    </connect-web-fragment-location-blacklist>
+
+</atlassian-plugin>

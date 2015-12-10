@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.After;
@@ -68,7 +69,7 @@ public class AddOnUpgradeTest
 
     private Plugin installPlugin() throws IOException
     {
-        String key = "ac-test-" + System.currentTimeMillis();
+        String key = "ac-test-" + AddonUtil.randomPluginKey();
         addonBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
                 .withDescription(AddOnUpgradeTest.class.getCanonicalName())

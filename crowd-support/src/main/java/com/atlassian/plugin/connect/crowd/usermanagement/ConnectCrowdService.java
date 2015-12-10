@@ -4,8 +4,7 @@ import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.google.common.annotations.VisibleForTesting;
 
 import java.util.Map;
@@ -20,7 +19,7 @@ public interface ConnectCrowdService
     UserCreationResult createOrEnableUser(String username, String displayName,
             String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes);
 
-    void disableUser(String username) throws ConnectAddOnUserDisableException;
+    void disableUser(String username) throws ConnectAddonDisableException;
 
     @VisibleForTesting
     boolean isUserActive(String username);

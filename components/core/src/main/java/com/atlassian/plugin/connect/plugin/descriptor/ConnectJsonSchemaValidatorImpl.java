@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationException;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,6 +15,7 @@ import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
+import com.opensymphony.util.TextUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URL;
 
@@ -83,26 +83,27 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
         ConnectJsonSchemaValidationResult result = validateDescriptor(descriptor, schemaUrl);
         if (!result.isWellformed())
         {
-            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getReportAsString(), "connect.invalid.descriptor.malformed.json", result.getReportAsString());
+            throw new ConnectJsonSchemaValidationException(result,
+                    "Malformed connect descriptor: " + result.getReportAsString(),
+                    "connect.invalid.descriptor.malformed.json",
+                    result.getReportAsString());
         }
         if (!result.isValid())
         {
-            String exceptionMessage = "Invalid connect descriptor: " + result.getReportAsString();
-
-            String i18nKey;
-            Serializable[] params;
             if (isDevModeService.isDevMode())
             {
-                i18nKey = "connect.install.error.remote.descriptor.validation.dev";
-                String validationMessage = buildHtmlErrorMessage(result);
-                params = new Serializable[] {validationMessage};
+                throw new ConnectJsonSchemaValidationException(result,
+                        "Invalid connect descriptor: " + result.getReportAsString(),
+                        "connect.install.error.remote.descriptor.validation.dev",
+                        buildHtmlErrorMessage(result));
             }
             else
             {
-                i18nKey = "connect.install.error.remote.descriptor.validation";
-                params = new Serializable[] {applicationProperties.getDisplayName()};
+                throw new ConnectJsonSchemaValidationException(result,
+                        "Invalid connect descriptor: " + result.getReportAsString(),
+                        "connect.install.error.remote.descriptor.validation",
+                        applicationProperties.getDisplayName());
             }
-            throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
         }
     }
 
@@ -154,7 +155,7 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
         for (String message : result.getReportMessages())
         {
             messageBuilder.append("<li>");
-            messageBuilder.append(message);
+            messageBuilder.append(TextUtils.htmlEncode(message));
         }
         messageBuilder.append("</ul>");
         return messageBuilder.toString();

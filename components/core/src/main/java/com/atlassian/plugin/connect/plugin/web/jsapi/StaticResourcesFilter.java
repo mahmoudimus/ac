@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.jsapi;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

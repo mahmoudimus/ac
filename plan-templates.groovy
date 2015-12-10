@@ -7,8 +7,13 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
+    stashNotification()
     hipChatNotification()
-    runTestsStage()
+    notification(
+            type: 'Failed Builds and First Successful',
+            recipient: 'committers'
+    )
+    runTestsStage(mavenParameters: '')
     stage(
             name: 'Start Release',
             manual: 'true'
@@ -37,6 +42,7 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (branch builds)')
     pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
+    stashNotification()
     notification(
             type: 'All Builds Completed',
             recipient: 'committers'
@@ -48,8 +54,12 @@ plan(
             notificationStrategy: 'INHERIT',
             remoteJiraBranchLinkingEnabled: 'true'
     )
+    variable(
+            key: 'maven.parameters',
+            value: ''
+    )
 
-    runTestsStage()
+    runTestsStage(mavenParameters: '${bamboo.maven.parameters}')
 }
 
 plan(
@@ -59,31 +69,31 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '5.9.1-SNAPSHOT',
+            productVersion: '6.0.0-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo.product.version}'
         )
     }
 }
 
 plan(
         projectKey: 'CONNECT',
-        key: 'CJMR',
-        name: 'Cloud Plugin - SNAPSHOT JIRA - Renaissance',
+        key: 'CJM',
+        name: 'Cloud Plugin - SNAPSHOT JIRA',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.0.0-DA-SNAPSHOT',
+            productVersion: '7.1.0-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Djvmargs="-Datlassian.darkfeature.com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED=true"'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo.product.version}'
         )
     }
 }

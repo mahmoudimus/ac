@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import org.junit.runner.RunWith;
@@ -13,8 +12,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -36,9 +33,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
 
-        final ConnectModuleProviderContext moduleProviderContext = mock(ConnectModuleProviderContext.class);
-        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
-        return macroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin);
     }
 
     @Override

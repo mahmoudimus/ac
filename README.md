@@ -43,7 +43,7 @@ Contributions are encouraged!
     * [AC](https://ecosystem.atlassian.net/browse/AC) (Atlassian Connect)
     * [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) (JIRA Ecosystem)
     * [CE](https://ecosystem.atlassian.net/browse/CE) (Confluence Ecosystem)
-2. If you are an Atlassian developer, follow the [internal developer's guide](https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Internal+Developer%27s+Guide)
+2. If you are an Atlassian developer, follow the [internal developer's guide](https://extranet.atlassian.com/display/ECO/Atlassian+Connect+-+Internal+Developer%27s+Guide)
 3. Create your feature branch, e.g. `feature/AC-1-create-project`
     * The prefix `feature/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
     * Include your issue key and a short description
@@ -52,27 +52,34 @@ Contributions are encouraged!
 
 ### Repository structure
 
-* `api-parent` - the parent of all modules containing public interfaces
-	* `api` - a draft application programming interface for the plugin
-	* `spi` - a draft service provider interface for the plugin
 * `bin` - utility scripts
+* `components` - the shared components of the plugin
+	* `api` - a draft application programming interface for the plugin
+	* `core` - the core cross-product implementation
+	* `core-extensions` - cross-product extensions for web fragments, webhooks etc.
+	* `reference-plugin` - a cross-product reference implementation of some SPI interfaces
+	* `modules` - bean representations of add-on JSON descriptor elements
+	* `spi` - a draft service provider interface for the plugin
 * `confluence` - the parent of all Confluence-specific modules
-	* `confluence-support` - support for Atlassian Connect in Confluence
+    * `confluence-integration-tests` - Confluence-specific integration tests for the plugin
 	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
+	* `confluence-support` - support for Atlassian Connect in Confluence
 * `crowd-support` - support for Atlassian Connect in products that use Atlassian Crowd
-* `docs` - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
+* [`docs`](docs) - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
 * `jira` - the parent of all JIRA-specific modules
-	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
 	* `jira-integration-tests` - JIRA-specific integration tests for the plugin
-* `jsapi` - builds the JavaScript API based on [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js)
-* `modules` - bean representations of add-on JSON descriptor elements
+	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
+	* `jira-support` - support for Atlassian Connect in JIRA
+* [`jsapi`](jsapi) - builds the JavaScript API based on [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js)
 * `plugin` - groups the other modules into a plugin
 * `tests` - the parent of all non-product-specific test modules
     * `descriptor-validation-tests` - JSON schema validation of all public add-ons for JIRA and Confluence on Atlassian Marketplace
-    * `integration-tests` - integration tests for the plugin
+    * `core-integration-tests` - integration tests for the plugin's core functionality
+    * `integration-tests-support` - classes and utilities useful to both core and product-specific integration test modules
     * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
     * `test-support-plugin` - a collection of test utility classes
     * `wired-tests` - wired tests for the plugin
+    * `marketplace-support` - utilities for working with Atlassian Marketplace in tests
 
 ### Branches
 
@@ -90,9 +97,15 @@ To build the plugin:
 To speed up subsequent builds, the `-` prefix can be used with the `-pl` option to exclude specific modules,
 e.g. the `jsapi` module which invokes a time-consuming Node.js build.
 
-    mvn clean install -pl -jsapi
+    mvn -pl -jsapi clean install
+
+Conversely, once the project has been built, it can be rebuilt with changes only from specific modules:
+
+    mvn -pl jsapi,plugin clean install
 
 ### Running tests
+
+#### Unit tests
 
 To run unit tests:
 
@@ -102,22 +115,37 @@ To run JavaScript unit tests:
 
     mvn clean package -Pkarma-tests -DskipUnits
 
+#### Integration tests
+
+Before running integration tests, build the plugin.
+
+To speed up local development, all integration test modules are excluded by default. For these modules to be included
+in the build, such as when running `mvn clean` or `mvn verify`, a specific profile must be activated manually. See the
+commands below for the name of each profile.
+
 To run wired tests:
 
-    mvn clean install
-    mvn -pl tests/wired-tests verify -am -Pwired
+    mvn -pl tests/wired-tests verify -Pwired -DskipITs=false
 
 To run plug-in lifecycle tests:
 
-    mvn -pl tests/plugin-lifecycle-tests verify -am -PpluginLifecycle
+    mvn -pl tests/plugin-lifecycle-tests verify -PpluginLifecycle -DskipITs=false
 
-To run integration tests:
+To run core integration tests:
 
-    mvn -pl tests/integration-tests verify -Pit -am [-DtestGroups=...]
+    mvn -pl tests/core-integration-tests verify -Pit [-DtestGroups=...] -DskipITs=false 
+
+To run JIRA integration tests:
+
+    mvn -pl jira/jira-integration-tests verify -Pit [-DtestGroups=...] -DskipITs=false 
+    
+To run Confluence integration tests:
+
+    mvn -pl confluence/confluence-integration-tests verify -Pit [-DtestGroups=...] -DskipITs=false 
 
 To run add-on descriptor validation tests:
 
-    mvn -pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -am
+    mvn -pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -DskipITs=false
 
 ### Updating developer documentation
 

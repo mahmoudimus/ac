@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.jira.web;
 
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebSectionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.connect.spi.module.websection.ProductSpecificWebSectionModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebSectionModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;

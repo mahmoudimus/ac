@@ -1,15 +1,11 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.base.Strings;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,40 +15,41 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 
 @Component
 public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragmentFactory
 {
+
     private static final Logger log = LoggerFactory.getLogger(ConditionModuleFragmentFactory.class);
     private static final String TYPE_KEY = "type";
 
-    private final ProductAccessor productAccessor;
-    private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
+    private ConditionClassAccessor conditionClassAccessor;
 
     @Autowired
-    public ConditionModuleFragmentFactoryImpl(ProductAccessor productAccessor,
-            ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+    public ConditionModuleFragmentFactoryImpl(ConditionClassAccessor conditionClassAccessor)
     {
-        this.productAccessor = productAccessor;
-        this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
+        this.conditionClassAccessor = conditionClassAccessor;
     }
 
     @Override
-    public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans)
+    public DOMElement createFragment(String addonKey, List<ConditionalBean> beans)
     {
-        return createFragment(pluginKey, beans, Collections.<Class<? extends Condition>>emptyList());
+        return createFragment(addonKey, beans, Collections.<Class<? extends Condition>>emptyList());
     }
 
     @Override
-    public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans,
+    public DOMElement createFragment(String addonKey, List<ConditionalBean> beans,
             Iterable<Class<? extends Condition>> additionalStaticConditions)
     {
         DOMElement element = new DOMElement("conditions");
         element.addAttribute(TYPE_KEY, "AND");
 
-        List<DOMElement> conditions = processConditionBeans(pluginKey, beans);
+        List<DOMElement> conditions = processConditionBeans(addonKey, beans);
 
         for (DOMElement condition : conditions)
         {
@@ -66,6 +63,36 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
 
         return element;
 
+    }
+
+    @Override
+    public Map<String, String> getFragmentParameters(String addonKey, SingleConditionBean conditionBean)
+    {
+        ConnectConditionContext.Builder contextBuilder = ConnectConditionContext.builder(conditionBean.getParams());
+
+        if (isRemoteCondition(conditionBean))
+        {
+            contextBuilder.put(AddOnCondition.ADDON_KEY, addonKey);
+            contextBuilder.put(AddOnCondition.URL, conditionBean.getCondition());
+        }
+        else
+        {
+            Optional<Class<? extends Condition>> optionalConditionClass = getConditionClass(conditionBean);
+            optionalConditionClass.ifPresent(new Consumer<Class<? extends Condition>>()
+            {
+
+                @Override
+                public void accept(Class<? extends Condition> conditionClass)
+                {
+                    if (conditionClass.isAnnotationPresent(ConnectCondition.class))
+                    {
+                        contextBuilder.putAddOnKey(addonKey);
+                    }
+                }
+            });
+        }
+
+        return contextBuilder.build().toMap();
     }
 
     private List<DOMElement> processConditionBeans(String pluginKey, List<ConditionalBean> beans)
@@ -104,49 +131,47 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
         return elements;
     }
 
-
-    private DOMElement createSingleCondition(String addOnKey, SingleConditionBean bean)
+    private DOMElement createSingleCondition(String addonKey, SingleConditionBean conditionBean)
     {
-        String className = "";
         DOMElement element = null;
 
-        final ConnectConditionContext.Builder contextBuilder = ConnectConditionContext.builder(bean.getParams());
-
-        if (isRemoteCondition(bean))
+        Optional<Class<? extends Condition>> optionalConditionClass = getConditionClass(conditionBean);
+        if (optionalConditionClass.isPresent())
         {
-            className = AddOnCondition.class.getName();
-            contextBuilder.put(AddOnCondition.ADDON_KEY, addOnKey);
-            contextBuilder.put(AddOnCondition.URL, bean.getCondition());
-        }
-        else
-        {
-            ConditionClassResolver conditionClassResolver = productAccessor.getConditions();
-            Option<? extends Class<? extends Condition>> clazz = conditionClassResolver.get(bean.getCondition(), bean.getParams());
+            Class<? extends Condition> conditionClass = optionalConditionClass.get();
+            Map<String, String> conditionElementParameters = getFragmentParameters(addonKey, conditionBean);
 
-            if (clazz.isDefined())
+            element = new DOMElement("condition");
+            element.addAttribute("class", conditionClass.getName());
+            element.addAttribute("invert", Boolean.toString(conditionBean.isInvert()));
+
+            for (Map.Entry<String,String> entry : conditionElementParameters.entrySet())
             {
-                className = clazz.get().getName();
-                if (clazz.get().isAnnotationPresent(ConnectCondition.class))
-                {
-                    contextBuilder.putAddOnKey(addOnKey);
-                }
+                element.addElement("param")
+                        .addAttribute("name", entry.getKey())
+                        .addAttribute("value", entry.getValue());
             }
         }
-
-        if (!Strings.isNullOrEmpty(className))
-        {
-            element = new DOMElement("condition");
-            element.addAttribute("class", className);
-            element.addAttribute("invert", Boolean.toString(bean.isInvert()));
-
-            paramsModuleFragmentFactory.addParamsToElement(element, contextBuilder.build().toMap());
-        }
         else
         {
-            log.warn("Condition with name " + bean.getCondition() + " could not be found");
+            log.warn("Condition with name " + conditionBean.getCondition() + " could not be found");
         }
 
         return element;
+    }
+
+    private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean)
+    {
+        Optional<Class<? extends Condition>> optionalConditionClass;
+        if (isRemoteCondition(conditionBean))
+        {
+            optionalConditionClass = Optional.of(AddOnCondition.class);
+        }
+        else
+        {
+            optionalConditionClass = conditionClassAccessor.getConditionClassForHostContext(conditionBean);
+        }
+        return optionalConditionClass;
     }
 
     private DOMElement createSingleCondition(Class<? extends Condition> conditionClass)
@@ -155,5 +180,4 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
         element.addAttribute("class", conditionClass.getName());
         return element;
     }
-
 }

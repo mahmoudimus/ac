@@ -2,22 +2,19 @@ package com.atlassian.plugin.connect.plugin.web.condition;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.plugin.request.HttpHeaderNames;
-import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.api.util.http.ContentRetrievalException;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
-import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.request.ContentRetrievalException;
+import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.Promise;
 import org.apache.commons.lang3.time.StopWatch;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,18 +48,19 @@ public class AddOnCondition implements Condition
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final EventPublisher eventPublisher;
-    private BundleContext bundleContext;
+    private PluginRetrievalService pluginRetrievalService;
 
     public AddOnCondition(final RemotablePluginAccessorFactory remotablePluginAccessorFactory,
                           final IFrameUriBuilderFactory iFrameUriBuilderFactory,
                           final PluggableParametersExtractor webFragmentModuleContextExtractor,
-                          EventPublisher eventPublisher, BundleContext bundleContext)
+                          EventPublisher eventPublisher,
+            PluginRetrievalService pluginRetrievalService)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
         this.eventPublisher = eventPublisher;
-        this.bundleContext = bundleContext;
+        this.pluginRetrievalService = pluginRetrievalService;
     }
 
     /**
@@ -99,12 +97,10 @@ public class AddOnCondition implements Condition
 
         final URI uri = URI.create(uriString);
         final String uriPath = uri.getPath();
-        final String version = BundleUtil.getBundleVersion(bundleContext);
-        final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION,
-                version);
+        final String version = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
+        final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
         Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddOnKey())
-                .executeAsync(HttpMethod.GET, uri,
-                        Collections.<String, String[]>emptyMap(), httpHeaders);
+                .executeAsync(HttpMethod.GET, uri, Collections.<String, String[]>emptyMap(), httpHeaders);
 
         String response;
         try

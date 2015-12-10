@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Supplier;
@@ -72,12 +71,11 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
         descriptorCache.clear();
     }
 
-    private ConnectAddonBean fromJsonImpl(final String jsonDescriptor) throws InvalidDescriptorException
+    protected ConnectAddonBean fromJsonImpl(final String jsonDescriptor) throws InvalidDescriptorException
     {
         validateDescriptorAgainstShallowSchema(jsonDescriptor);
         ConnectAddonBean addon = deserializeDescriptor(jsonDescriptor);
         addOnBeanValidatorService.validate(addon);
-        validateModules(addon);
         return addon;
     }
 
@@ -96,28 +94,12 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     {
         JsonElement element = new JsonParser().parse(jsonDescriptor);
         ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJson(element);
-        ModuleListDeserializer moduleDeserializer = new ModuleListDeserializer(new PluginAvailableModuleTypes(pluginAccessor, shallowBean));
+        ModuleListDeserializer moduleDeserializer = new PluggableModuleListDeserializer(pluginAccessor, shallowBean);
 
         Map<String, Supplier<List<ModuleBean>>> moduleList;
         moduleList = ConnectModulesGsonFactory.moduleListFromJson(element, moduleDeserializer);
 
         return new ConnectAddonBeanBuilder(shallowBean).withModuleList(moduleList).build();
-    }
-
-    private void validateModules(ConnectAddonBean addon)
-    {
-        try
-        {
-            addon.getModules();
-        }
-        catch (ConnectModuleValidationRuntimeException e)
-        {
-            ConnectModuleValidationException cause = e.getCause();
-            InvalidDescriptorException exception = new InvalidDescriptorException(cause.getMessage(),
-                    cause.getI18nKey(), cause.getI18nParameters());
-            exception.initCause(cause);
-            throw exception;
-        }
     }
 
     private URL getShallowSchemaUrl()

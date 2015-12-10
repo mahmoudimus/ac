@@ -9,7 +9,7 @@ import com.atlassian.jwt.exception.JwtParseException;
 import com.atlassian.jwt.exception.JwtUnknownIssuerException;
 import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -28,6 +28,7 @@ import com.atlassian.upm.spi.PluginInstallException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import com.atlassian.testutils.annotations.Retry;
 
 import java.io.IOException;
 
@@ -76,6 +77,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void installPostContainsSharedSecret() throws Exception
     {
         ConnectAddonBean addon = installOnlyBean;
@@ -106,6 +108,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void enabledPostContainsValidSharedSecret() throws Exception
     {
         ConnectAddonBean addon = installAndEnabledBean;
@@ -161,6 +164,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void installPostContainsNoUserKey() throws Exception
     {
         ConnectAddonBean addon = installOnlyBean;
@@ -191,6 +195,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void uninstallPostContainsValidJwt() throws Exception
     {
         ConnectAddonBean addon = installAndUninstallBean;
@@ -233,6 +238,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void uninstallPostContainsNoUserKey() throws Exception
     {
         ConnectAddonBean addon = installAndUninstallBean;
@@ -267,6 +273,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void appLinkIsCreatedWithCorrectParameters() throws Exception
     {
         ConnectAddonBean addon = installOnlyBean;
@@ -296,6 +303,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void aFailedReinstallationPreservesPreviousUninstalledState() throws Exception
     {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
@@ -303,6 +311,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     }
 
     @Test
+    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
     public void aFailedReinstallationPreservesPreviousUninstalledStateWhenTheDarkFeatureIsEnabled() throws Exception
     {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);

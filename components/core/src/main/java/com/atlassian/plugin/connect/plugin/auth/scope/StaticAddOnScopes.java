@@ -1,16 +1,11 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.AddOnScope;
-import com.atlassian.plugin.connect.spi.scope.helper.AddOnScopeLoadJsonFileHelper;
-import com.google.common.annotations.VisibleForTesting;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScope;
 import com.google.common.base.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,22 +17,6 @@ import static com.google.common.collect.Collections2.transform;
 
 public class StaticAddOnScopes
 {
-    @VisibleForTesting
-    public static Collection<AddOnScope> buildFor(URL... scopeFileUrls) throws IOException
-    {
-        Map<ScopeName, AddOnScope> keyToScope = new HashMap<>();
-
-        for (URL scopeFileUrl : scopeFileUrls)
-        {
-            AddOnScopeLoadJsonFileHelper.addProductScopesFromFile(keyToScope, scopeFileUrl);
-        }
-
-        // copy element references into an ArrayList so that equals() comparisons work
-        // sort to protect against ordering throwing off ArrayList.equals() and to make toString() look nicer
-        ArrayList<AddOnScope> addOnScopes = new ArrayList<>(keyToScope.values());
-        Collections.sort(addOnScopes);
-        return addOnScopes;
-    }
 
     /**
      * Turn lightweight references to scopes into the scopes themselves.

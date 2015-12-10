@@ -7,13 +7,12 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.ConnectContainerUtilForTests;
 import com.atlassian.plugin.elements.ResourceDescriptor;
@@ -40,7 +39,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
@@ -73,15 +71,12 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     @Mock
     private ApplicationUser applicationUser;
 
-    private ConnectModuleProviderContext moduleProviderContext;
     private ConnectAddonBean addon;
 
     @Before
     public void setup() throws IOException
     {
         this.addon = newConnectAddonBean().withKey("my-key").build();
-        this.moduleProviderContext = mock(ConnectModuleProviderContext.class);
-        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
 
         when(plugin.getName()).thenReturn("My Plugin");
         when(plugin.getKey()).thenReturn("my-key");
@@ -117,7 +112,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertEquals("my-key:" + addonAndModuleKey("my-key", "my-post-function"), descriptor.getCompleteKey());
     }
@@ -131,7 +126,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertEquals("My Post Function", descriptor.getName());
     }
@@ -145,7 +140,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertEquals("Some description", descriptor.getDescription());
     }
@@ -160,7 +155,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertTrue(descriptor.isEditable());
     }
@@ -174,7 +169,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertFalse(descriptor.isEditable());
     }
@@ -190,7 +185,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertEquals(3, descriptor.getResourceDescriptors(RESOURCE_TYPE_VELOCITY).size());
     }
@@ -203,7 +198,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertTrue(descriptor.isDeletable());
     }
@@ -216,7 +211,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertTrue(descriptor.isOrderable());
     }
@@ -229,7 +224,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertFalse(descriptor.isUnique());
     }
@@ -242,7 +237,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertFalse(descriptor.isSystemModule());
     }
@@ -255,7 +250,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withTriggered(new UrlBean("/callme"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         assertTrue(descriptor.isEnabledByDefault());
     }
@@ -269,7 +264,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withCreate(new UrlBean("/create"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         ResourceDescriptor resource = descriptor.getResourceDescriptor(RESOURCE_TYPE_VELOCITY, RESOURCE_NAME_INPUT_PARAMETERS);
         assertEquals("/create", resource.getLocation());
@@ -284,7 +279,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withEdit(new UrlBean("/edit"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         ResourceDescriptor resource = descriptor.getResourceDescriptor(RESOURCE_TYPE_VELOCITY, RESOURCE_NAME_EDIT_PARAMETERS);
         assertEquals("/edit", resource.getLocation());
@@ -299,7 +294,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
                                                                             .withView(new UrlBean("/view"))
                                                                             .build();
 
-        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
         ResourceDescriptor resource = descriptor.getResourceDescriptor(RESOURCE_TYPE_VELOCITY, RESOURCE_NAME_VIEW);
         assertEquals("/view", resource.getLocation());

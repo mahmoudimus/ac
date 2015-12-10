@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
 import com.atlassian.confluence.core.ContentEntityObject;
-import com.atlassian.plugin.connect.confluence.web.context.ContentContextMapParameterExtractor;
-import com.atlassian.plugin.connect.confluence.web.context.ContentSerializer;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

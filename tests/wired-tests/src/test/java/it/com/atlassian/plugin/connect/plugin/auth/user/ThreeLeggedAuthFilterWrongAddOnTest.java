@@ -3,7 +3,7 @@ package it.com.atlassian.plugin.connect.plugin.auth.user;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.auth.user.NoUserAgencyException;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;

@@ -1,25 +1,23 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.fugue.Effect;
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilder;
-import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
-import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import java.net.URI;
+import java.util.Optional;
+
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-
-import java.net.URI;
-
-import org.osgi.framework.BundleContext;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -36,17 +34,20 @@ public class IFrameUriBuilderImpl
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
-    private final BundleContext bundleContext;
+    private PluginRetrievalService pluginRetrievalService;
 
     private String addonKey;
     private String namespace;
     private String templateUri;
 
-    public IFrameUriBuilderImpl(final UrlVariableSubstitutor urlVariableSubstitutor,
-            final RemotablePluginAccessorFactory pluginAccessorFactory,
-            final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
-            final LicenseRetriever licenseRetriever, final LocaleHelper localeHelper,
-            final UserPreferencesRetriever userPreferencesRetriever, final BundleContext bundleContext)
+    public IFrameUriBuilderImpl(UrlVariableSubstitutor urlVariableSubstitutor,
+            RemotablePluginAccessorFactory pluginAccessorFactory,
+            UserManager userManager,
+            HostApplicationInfo hostApplicationInfo,
+            LicenseRetriever licenseRetriever,
+            LocaleHelper localeHelper,
+            UserPreferencesRetriever userPreferencesRetriever,
+            PluginRetrievalService pluginRetrievalService)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.pluginAccessorFactory = pluginAccessorFactory;
@@ -55,7 +56,7 @@ public class IFrameUriBuilderImpl
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
         this.userPreferencesRetriever = userPreferencesRetriever;
-        this.bundleContext = bundleContext;
+        this.pluginRetrievalService = pluginRetrievalService;
     }
 
     @Override
@@ -95,7 +96,7 @@ public class IFrameUriBuilderImpl
 
         private boolean sign = true;
         private boolean includeStandardParams = true;
-        private Option<String> uiParameters = Option.none();
+        private Optional<String> uiParameters = Optional.empty();
 
         private InitializedBuilderImpl(final String addonKey, final String namespace, final UriBuilder uriBuilder)
         {
@@ -137,7 +138,7 @@ public class IFrameUriBuilderImpl
         }
 
         @Override
-        public InitializedBuilder uiParams(Option<String> uiParameters)
+        public InitializedBuilder uiParams(Optional<String> uiParameters)
         {
             this.uiParameters = uiParameters;
             return this;
@@ -151,14 +152,9 @@ public class IFrameUriBuilderImpl
                 addStandardIFrameUrlParameters();
             }
 
-            uiParameters.foreach(new Effect<String>()
-            {
-                @Override
-                public void apply(String uiParam)
-                {
-                    uriBuilder.addQueryParameter("ui-params", uiParam);
-                }
-            });
+            if(uiParameters.isPresent()) {
+                uriBuilder.addQueryParameter("ui-params", uiParameters.get());
+            }
 
             if (sign)
             {
@@ -199,7 +195,7 @@ public class IFrameUriBuilderImpl
             uriBuilder.addQueryParameter("lic", licenseRetriever.getLicenseStatus(addonKey).value());
 
             // Connect framework version
-            uriBuilder.addQueryParameter("cv", BundleUtil.getBundleVersion(bundleContext));
+            uriBuilder.addQueryParameter("cv", pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
         }
     }
 

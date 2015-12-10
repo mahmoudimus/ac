@@ -18,6 +18,11 @@
         </bundle-instructions>
     </plugin-info>
 
+    <connect-api-scope-whitelist key="test-support-api-scope-whitelist" resource="/scope/test-support-whitelist.json"/>
+
+    <connect-condition-class-resolver key="test-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.testsupport.TestConditionClassResolver"/>
+
     <rest key="rest" path="/remoteplugintest" version="1">
         <package>com.atlassian.plugin.connect.testsupport.rest</package>
     </rest>

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.jira.report;
 
+import java.util.Map;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.report.Report;
 import com.atlassian.jira.plugin.report.ReportModuleDescriptor;
@@ -9,19 +11,19 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.lifecycle.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
-import com.google.common.base.CharMatcher;
-import org.dom4j.Element;
 
-import java.util.Map;
+import com.google.common.base.CharMatcher;
+
+import org.dom4j.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

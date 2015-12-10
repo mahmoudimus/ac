@@ -2,11 +2,10 @@ package com.atlassian.plugin.connect.jira.workflow;
 
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -31,14 +30,13 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     }
 
     @Override
-    public WorkflowFunctionModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
-                                                                   Plugin theConnectPlugin, WorkflowPostFunctionModuleBean bean)
+    public WorkflowFunctionModuleDescriptor createModuleDescriptor(WorkflowPostFunctionModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
-        Element element = createDOMElement(bean, moduleProviderContext.getConnectAddonBean());
+        Element element = createDOMElement(bean, addon);
         ConnectWorkflowFunctionModuleDescriptor moduleDescriptor =
                 connectContainerUtil.createBean(ConnectWorkflowFunctionModuleDescriptor.class);
         
-        moduleDescriptor.init(theConnectPlugin, element);
+        moduleDescriptor.init(plugin, element);
         return moduleDescriptor;
     }
 

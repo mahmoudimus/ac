@@ -6,18 +6,17 @@ import com.atlassian.gadgets.plugins.DashboardItemModule.Author;
 import com.atlassian.gadgets.plugins.DashboardItemModule.DirectoryDefinition;
 import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.condition.ConditionElementParserFactory;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionElementParserFactory;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
@@ -61,11 +60,8 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
     }
 
     @Override
-    public DashboardItemModuleDescriptor createModuleDescriptor(final ConnectModuleProviderContext moduleProviderContext,
-            final Plugin plugin,
-            final DashboardItemModuleBean bean)
+    public DashboardItemModuleDescriptor createModuleDescriptor(final DashboardItemModuleBean bean, ConnectAddonBean addonBean, final Plugin plugin)
     {
-        ConnectAddonBean addonBean = moduleProviderContext.getConnectAddonBean();
         VendorBean vendor = addonBean.getVendor();
 
         DirectoryDefinition directoryDefinition = createDirectoryDefinition(addonBean, bean, vendor);

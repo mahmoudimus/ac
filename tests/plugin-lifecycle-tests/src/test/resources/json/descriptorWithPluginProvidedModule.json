@@ -5,7 +5,7 @@
     "type": "none"
   },
   "modules": {
-    "jiraTestModules": [
+    "referenceModules": [
       {
         "key": "test-provided-module"
       }

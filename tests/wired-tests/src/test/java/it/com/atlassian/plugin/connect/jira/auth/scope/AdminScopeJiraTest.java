@@ -2,8 +2,8 @@ package it.com.atlassian.plugin.connect.jira.auth.scope;
 
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
@@ -33,11 +33,5 @@ public class AdminScopeJiraTest extends ScopeTestBase
     public void shouldAllowUsageOfRoleResource() throws IOException, NoSuchAlgorithmException
     {
         assertValidRequest(HttpMethod.GET, "/rest/api/2/role");
-    }
-
-    @Test
-    public void shouldAllowUsageOfRoleResourceForSingleRole() throws IOException, NoSuchAlgorithmException
-    {
-        assertValidRequest(HttpMethod.GET, "/rest/api/2/role/10000");
     }
 }

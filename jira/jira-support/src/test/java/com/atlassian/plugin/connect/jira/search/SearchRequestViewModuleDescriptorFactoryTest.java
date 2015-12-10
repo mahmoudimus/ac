@@ -8,16 +8,12 @@ import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFact
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
-import com.atlassian.plugin.connect.jira.search.ConnectConditionDescriptorFactory;
-import com.atlassian.plugin.connect.jira.search.SearchRequestViewModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -29,11 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -44,10 +36,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -81,39 +71,17 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private SearchRequestViewModuleDescriptorImpl descriptor;
 
     private ConnectAddonBean addon;
-    private ConnectModuleProviderContext moduleProviderContext;
 
     @Before
     public void beforeEachTest() throws Exception
     {
         this.addon = newConnectAddonBean().withKey("my-plugin").build();
 
-        this.moduleProviderContext = mock(ConnectModuleProviderContext.class);
-        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
-
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
                 .thenReturn(UserLoggedInCondition.class);
 
         ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(webFragmentHelper);
-
-        ParamsModuleFragmentFactory paramsModuleFragmentFactory = mock(ParamsModuleFragmentFactory.class);
-        doAnswer(new Answer()
-        {
-            @Override
-            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
-            {
-                Element element = (Element) invocationOnMock.getArguments()[0];
-                Map<String,String> params = (Map) invocationOnMock.getArguments()[1];
-                for(Map.Entry<String,String> entry : params.entrySet())
-                {
-                    element.addElement("param")
-                            .addAttribute("name",entry.getKey())
-                            .addAttribute("value",entry.getValue());
-                }
-                return null;
-            }
-        }).when(paramsModuleFragmentFactory).addParamsToElement(any(Element.class), anyMap());
 
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = mock(ConditionModuleFragmentFactory.class);
         when(conditionModuleFragmentFactory.createFragment(anyString(), anyList())).thenReturn(new DOMElement("conditions"));
@@ -145,7 +113,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                         newSingleConditionBean().withCondition("user_is_logged_in").build())
                 .build();
 
-        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(bean, addon, plugin);
         this.descriptor.enabled();
     }
 

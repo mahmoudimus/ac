@@ -1,32 +1,35 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import com.atlassian.fugue.Option;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponseTransformation;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.ContentRetrievalErrors;
+import com.atlassian.plugin.connect.api.request.ContentRetrievalException;
+import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
-import com.atlassian.plugin.connect.api.util.http.ContentRetrievalErrors;
-import com.atlassian.plugin.connect.api.util.http.ContentRetrievalException;
-import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.contains;
@@ -77,7 +80,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
         request = request.setAttributes(getAttributes(addOnKey));
-        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
+        Optional<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
         Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
         request = request.setHeaders(allHeaders);
 
@@ -114,17 +117,17 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         return properties;
     }
 
-    private Map<String, String> getAllHeaders(Map<String, String> headers, Option<String> authHeader)
+    private Map<String, String> getAllHeaders(Map<String, String> headers, Optional<String> authHeader)
     {
         final ImmutableMap.Builder<String, String> allHeaders = ImmutableMap.<String, String>builder().putAll(headers);
-        if (authHeader.isDefined())
+        if (authHeader.isPresent())
         {
             allHeaders.put("Authorization", authHeader.get());
         }
         return allHeaders.build();
     }
 
-    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
+    private Optional<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
     {
         return authorizationGenerator.generate(method, url, allParameters);
     }

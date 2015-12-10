@@ -1,11 +1,9 @@
 package com.atlassian.plugin.connect.plugin.rest.license;
 
-import java.util.Date;
-
-import com.atlassian.plugin.connect.api.service.license.RemotablePluginLicense;
-
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.util.Date;
 
 /**
  * fixme: this is copied from UPM master at 75cee855ebd6475a3e7d9b619694e613c8906f09

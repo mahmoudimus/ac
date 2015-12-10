@@ -3,8 +3,8 @@ package com.atlassian.plugin.connect.jira;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.module.AbstractConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
 import java.net.URL;
@@ -29,7 +29,7 @@ public abstract class AbstractJiraConnectModuleProvider<T extends BaseModuleBean
             throws ConnectModuleValidationException
     {
         URL schemaUrl = pluginRetrievalService.getPlugin().getResource(SCHEMA_PATH);
-        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, schemaUrl, schemaValidator);
+        assertDescriptorValidatesAgainstSchema(jsonModuleListEntry, descriptor, schemaUrl, schemaValidator);
         return super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
     }
 }

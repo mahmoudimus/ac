@@ -4,16 +4,16 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
-import com.atlassian.plugin.connect.spi.module.context.ContextMapParameterExtractor;
-import com.atlassian.plugin.connect.spi.module.context.ParameterSerializer;
+import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.google.common.base.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
+import java.util.Optional;
 
 @ConfluenceComponent
 public class ContentContextMapParameterExtractor implements ContextMapParameterExtractor<ContentEntityObject>
@@ -64,9 +64,9 @@ public class ContentContextMapParameterExtractor implements ContextMapParameterE
         else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction)
         {
             AbstractPageAwareAction action = (AbstractPageAwareAction) context.get(ACTION_PARAMETER);
-            return Optional.<ContentEntityObject>fromNullable(action.getPage());
+            return Optional.<ContentEntityObject>ofNullable(action.getPage());
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

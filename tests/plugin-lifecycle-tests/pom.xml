@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.58-SNAPSHOT</version>
+        <version>1.1.67-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,14 +20,6 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
-            <version>${plugin.testrunner.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -43,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-connect-jira-reference-plugin</artifactId>
+            <artifactId>atlassian-connect-reference-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -60,7 +52,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>2.5.6.SEC02</version>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -96,6 +88,10 @@
             <artifactId>confluence</artifactId>
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.testutils</groupId>
+            <artifactId>atlassian-test-annotations</artifactId>
         </dependency>
 
     </dependencies>
@@ -143,7 +139,7 @@
                         <product>
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../integration-tests-support/src/main/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -151,6 +147,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -167,11 +164,6 @@
                                     <groupId>com.atlassian.httpclient</groupId>
                                     <artifactId>atlassian-httpclient-plugin</artifactId>
                                     <version>${atlassian.httpclient.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.gadgets</groupId>
-                                    <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
-                                    <version>3.2.0-m8</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
@@ -213,7 +205,7 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../integration-tests-support/src/main/resources/log4j-confluence.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -310,7 +302,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>atlassian-connect-plugin,atlassian-connect-jira-reference-plugin</includeArtifactIds>
+                            <includeArtifactIds>atlassian-connect-plugin,atlassian-connect-reference-plugin</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
                         </configuration>

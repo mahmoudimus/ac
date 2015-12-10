@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.confluence.auth;
 
 import com.atlassian.confluence.security.websudo.WebSudoManager;
-import com.atlassian.plugin.connect.spi.product.WebSudoService;
+import com.atlassian.plugin.connect.spi.auth.WebSudoService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 

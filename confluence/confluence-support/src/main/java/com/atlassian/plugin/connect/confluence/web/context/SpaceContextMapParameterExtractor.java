@@ -3,13 +3,13 @@ package com.atlassian.plugin.connect.confluence.web.context;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
-import com.atlassian.plugin.connect.spi.module.context.ContextMapParameterExtractor;
-import com.atlassian.plugin.connect.spi.module.context.ParameterSerializer;
+import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.google.common.base.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Extracts space parameters that can be included in webpanel's iframe url.
@@ -45,9 +45,9 @@ public class SpaceContextMapParameterExtractor implements ContextMapParameterExt
         else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction)
         {
             AbstractPageAwareAction action = (AbstractPageAwareAction) context.get(ACTION_PARAMETER);
-            return Optional.fromNullable(action.getSpace());
+            return Optional.ofNullable(action.getSpace());
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

@@ -16,7 +16,6 @@ import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
-
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.application.ApplicationRole;
 import com.atlassian.jira.application.ApplicationRoleManager;
@@ -39,13 +38,13 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -67,7 +66,7 @@ import static com.google.common.collect.Iterables.any;
 @SuppressWarnings("unused")
 @JiraComponent
 @ExportAsDevService
-public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisioningService
+public class JiraAddOnUserProvisioningService implements CrowdAddOnUserProvisioningService
 {
     private static final String CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME = "atlassian-addons-project-access";
     private static final String CONNECT_PROJECT_ACCESS_PROJECT_ROLE_DESC = "A project role that represents Connect add-ons declaring a scope that requires more than read issue permissions";
@@ -153,13 +152,13 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 
         if (applicationRoles.isEmpty() || groupSet.isEmpty())
         {
-            throw new ConnectAddOnUserInitException("No application roles were present, we expect at least one to be on an instance");
+            throw new ConnectAddonInitException("No application roles were present, we expect at least one to be on an instance");
         }
         return groupSet;
     }
 
     @Override
-    public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddonInitException
     {
         // Subvert permission checking while provisioning add-on users. This can be invoked on a thread with no
         // authentication context (for example, the auto-update task thread run scheduled by the UPM) so permission
@@ -175,7 +174,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }));
     }
 
-    private void provisionAddonUserForScopesInTransaction(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    private void provisionAddonUserForScopesInTransaction(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddonInitException
     {
         ApplicationUser user = userManager.getUserByName(username);
 
@@ -216,7 +215,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         return null != projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME, new SimpleErrorCollection());
     }
 
-    private boolean adminGroupExists() throws ConnectAddOnUserInitException
+    private boolean adminGroupExists() throws ConnectAddonInitException
     {
         try
         {
@@ -224,11 +223,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
         catch (ApplicationNotFoundException | ApplicationPermissionException | InvalidAuthenticationException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
-    private void makeUserGlobalAdmin(ApplicationUser user) throws ConnectAddOnUserInitException
+    private void makeUserGlobalAdmin(ApplicationUser user) throws ConnectAddonInitException
     {
         try
         {
@@ -240,11 +239,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         {
             // this should never happen because we've just "successfully" ensured that the group exists,
             // so if it does then it's programmer error and not part of this interface method's signature
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
-    private void removeUserFromGlobalAdmins(ApplicationUser user) throws ConnectAddOnUserInitException
+    private void removeUserFromGlobalAdmins(ApplicationUser user) throws ConnectAddonInitException
     {
         try
         {
@@ -254,12 +253,12 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                 | ApplicationPermissionException | UserNotFoundException
                 | GroupNotFoundException | InvalidAuthenticationException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
     private void ensureGroupExistsAndIsAdmin(String groupKey)
-            throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
+            throws ConnectAddonInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
     {
         final boolean created = connectAddOnUserGroupProvisioningService.ensureGroupExists(groupKey);
 
@@ -268,17 +267,17 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             GrantResult result = giveAdminPermission(groupKey);
             if (result == REMOTE_GRANT_FAILED)
             {
-                throw new ConnectAddOnUserInitException(String.format("Failed to grant '%s' administrative rights through the Remote UM REST API", groupKey));
+                throw new ConnectAddonInitException(String.format("Failed to grant '%s' administrative rights through the Remote UM REST API", groupKey));
             }
             ensureGroupHasAdminPermission(groupKey);
         }
         else if (!groupHasAdminPermission(groupKey))
         {
-            throw new ConnectAddOnUserInitException(String.format("Group '%s' already exists and is NOT an administrators group. " +
+            throw new ConnectAddonInitException(String.format("Group '%s' already exists and is NOT an administrators group. " +
                     "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
                     "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. " +
                     "Aborting user setup.",
-                    groupKey), ConnectAddOnUserProvisioningService.ADDON_ADMINS_MISSING_PERMISSION);
+                    groupKey), ConnectAddonInitException.ADDON_ADMINS_MISSING_PERMISSION);
         }
     }
 
@@ -324,7 +323,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         });
     }
 
-    private void updateProjectPermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
+    private void updateProjectPermissions(ApplicationUser addOnUser) throws ConnectAddonInitException
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
         ProjectRole projectRole = getOrCreateProjectRole(errorCollection);
@@ -349,11 +348,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
         if (errorCollection.hasAnyErrors())
         {
-            throw new ConnectAddOnUserInitException(generateErrorMessage(errorCollection));
+            throw new ConnectAddonInitException(generateErrorMessage(errorCollection));
         }
     }
 
-    private void removeProjectPermissions(ApplicationUser addOnUser) throws ConnectAddOnUserInitException
+    private void removeProjectPermissions(ApplicationUser addOnUser) throws ConnectAddonInitException
     {
         ErrorCollection errorCollection = new SimpleErrorCollection();
         ProjectRole projectRole = projectRoleService.getProjectRoleByName(CONNECT_PROJECT_ACCESS_PROJECT_ROLE_NAME, errorCollection);
@@ -374,7 +373,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
         if (errorCollection.hasAnyErrors())
         {
-            throw new ConnectAddOnUserInitException(generateErrorMessage(errorCollection));
+            throw new ConnectAddonInitException(generateErrorMessage(errorCollection));
         }
     }
 

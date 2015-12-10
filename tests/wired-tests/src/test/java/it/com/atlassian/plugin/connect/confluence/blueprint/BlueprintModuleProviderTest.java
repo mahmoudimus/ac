@@ -13,8 +13,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.CreateResultType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProvider;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;
@@ -81,15 +79,13 @@ public class BlueprintModuleProviderTest
                 .withModules("blueprints", bean)
                 .build();
 
-        ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
-
         Plugin plugin = null;
 
         try
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = blueprintModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
+            List<ModuleDescriptor> descriptors = blueprintModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
 
             // should get a WebItem Descriptor and a Blueprint Descriptor
             assertEquals(3, descriptors.size());

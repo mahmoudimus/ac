@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
-import com.atlassian.plugin.connect.spi.product.FeatureManager;
+import com.atlassian.plugin.connect.spi.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;

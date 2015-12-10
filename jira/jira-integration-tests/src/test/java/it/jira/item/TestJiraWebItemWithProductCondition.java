@@ -1,17 +1,21 @@
 package it.jira.item;
 
+import java.util.Optional;
+
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
@@ -58,8 +62,7 @@ public class TestJiraWebItemWithProductCondition extends JiraWebDriverTestBase
     public void shouldPerformActionForWebItemWithAdminModeCondition()
     {
         loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
-        RemoteWebItem webItem = connectPageOperations.findWebItem(addonAndModuleKey(addon.getAddon().getKey(), ITEM_KEY),
-                com.google.common.base.Optional.<String>absent());
+        RemoteWebItem webItem = connectPageOperations.findWebItem(addonAndModuleKey(addon.getAddon().getKey(), ITEM_KEY), Optional.<String>empty());
         webItem.click();
         connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addon.getAddon().getKey(), ITEM_KEY, true);
     }

@@ -6,8 +6,8 @@ import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -48,20 +48,16 @@ public class BlueprintModuleProviderImpl extends AbstractConfluenceConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<BlueprintModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<BlueprintModuleBean> modules, ConnectAddonBean addon)
     {
         Plugin plugin = pluginRetrievalService.getPlugin();
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (BlueprintModuleBean blueprint : modules)
         {
-            descriptors.add(blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                            plugin,blueprint));
-            descriptors.add(blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                            plugin, blueprint));
-            descriptors.add(blueprintModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                            plugin, blueprint));
+            descriptors.add(blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(blueprint, addon, plugin));
+            descriptors.add(blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(blueprint, addon, plugin));
+            descriptors.add(blueprintModuleDescriptorFactory.createModuleDescriptor(blueprint, addon, plugin));
         }
-
         return descriptors;
     }
 }

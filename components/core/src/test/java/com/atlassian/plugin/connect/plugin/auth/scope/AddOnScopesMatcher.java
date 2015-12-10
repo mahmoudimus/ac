@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import com.atlassian.plugin.connect.spi.scope.AddOnScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScope;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
