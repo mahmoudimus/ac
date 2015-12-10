@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.jira;
 
-import javax.inject.Inject;
-
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.gadgets.dashboard.spi.DashboardPermissionService;
@@ -50,16 +48,18 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.velocity.VelocityRequestContextFactory;
 import com.atlassian.jira.web.FieldVisibilityManager;
 import com.atlassian.jira.web.session.SessionSearchObjectManagerFactory;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
+
+import javax.inject.Inject;
 
 /**
  * This class does nothing but is here to centralize the JIRA component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
 @SuppressWarnings ("ALL")
-@JiraComponent
+@Scanned
 public class JiraImports
 {
     @Inject

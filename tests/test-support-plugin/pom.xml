@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.66-SNAPSHOT</version>
+        <version>1.1.67-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>2.5.6.SEC02</version>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
 

@@ -26,6 +26,8 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
@@ -53,9 +55,9 @@ import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -76,7 +78,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.addOnRequiresUser;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -174,7 +175,7 @@ public class ConnectAddonManager
      * @param reusePreviousPublicKeyOrSharedSecret   toggle whether or not we issue a new secret/key if the previous one is defined
      */
     @VisibleForTesting
-    public void installConnectAddon(String jsonDescriptor, PluginState targetState, Optional<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret)
+    public void installConnectAddon(String jsonDescriptor, PluginState targetState, Optional<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret) throws ConnectAddonInstallException
     {
         long startTime = System.currentTimeMillis();
 
@@ -239,22 +240,33 @@ public class ConnectAddonManager
 
         if (PluginState.ENABLED == targetState)
         {
-            enableConnectAddon(pluginKey);
+            try
+            {
+                enableConnectAddon(pluginKey);
+            }
+            catch (ConnectAddonEnableException e)
+            {
+                log.error("Could not enable add-on " + e.getAddonKey() + " during its installation: " + e.getMessage(), e);
+            }
         }
     }
 
-    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
+    private static boolean addonRequiresAuth(ConnectAddonBean addon)
     {
-        return addOnRequiresUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
+        return addon.getAuthentication() != null && !AuthenticationType.NONE.equals(addon.getAuthentication().getType());
     }
 
-    public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
+    public String provisionUserIfNecessary(ConnectAddonBean addon, String previousDescriptor) throws ConnectAddonInstallException
+    {
+        return addonRequiresAuth(addon) ? provisionAddOnUserAndScopes(addon, previousDescriptor) : null;
+    }
+
+    public void enableConnectAddon(final String pluginKey) throws ConnectAddonInitException, ConnectAddonEnableException
     {
         long startTime = System.currentTimeMillis();
         //Instances of remotablePluginAccessor are only meant to be used for the current operation and should not be cached across operations.
         remotablePluginAccessorFactory.remove(pluginKey);
 
-        //if a descriptor is not stored, it means this event was fired during install before modules were created and we need to ignore
         if (addonRegistry.hasDescriptor(pluginKey))
         {
             ConnectAddonBean addon = connectAddonAccessor.getAddon(pluginKey).get();
@@ -268,13 +280,12 @@ public class ConnectAddonManager
                 catch (ConnectModuleRegistrationException e)
                 {
                     eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, e.getMessage()));
-                    log.error(String.format("Module registration failed while enabling add-on %s, skipping", pluginKey), e);
-                    return;
+                    throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
                 }
 
-                if (addOnRequiresUser(addon))
+                if (addonRequiresAuth(addon))
                 {
-                    enableAddOnUser(addon);
+                    enableAddonUser(addon);
                 }
 
                 addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
@@ -293,26 +304,32 @@ public class ConnectAddonManager
             }
             else
             {
-                String message = "Tried to publish plugin enabled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...";
+                String message = "Tried to publish plugin enabled event for addon, but got a null ConnectAddonBean when trying to deserialize its stored descriptor. Ignoring...";
                 eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, message));
-                log.warn(message);
+                throw new ConnectAddonEnableException(pluginKey, message);
             }
+        }
+        else
+        {
+            String message = "Tried to enable add-on before it was installed.";
+            eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, message));
+            throw new ConnectAddonEnableException(pluginKey, message);
         }
     }
 
-    public void disableConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
+    public void disableConnectAddon(final String pluginKey) throws ConnectAddonDisableException
     {
         disableConnectAddon(pluginKey, true, true);
     }
 
     public void disableConnectAddonWithoutPersistingState(final String pluginKey)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         disableConnectAddon(pluginKey, false, true);
     }
 
     private void disableConnectAddon(final String pluginKey, boolean persistState, boolean sendEvent)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         long startTime = System.currentTimeMillis();
         remotablePluginAccessorFactory.remove(pluginKey);
@@ -338,7 +355,7 @@ public class ConnectAddonManager
         }
     }
 
-    public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
+    public void uninstallConnectAddon(final String pluginKey) throws ConnectAddonDisableException
     {
         uninstallConnectAddon(pluginKey, true);
     }
@@ -349,15 +366,14 @@ public class ConnectAddonManager
         {
             uninstallConnectAddon(pluginKey, false);
         }
-        catch (ConnectAddOnUserDisableException e)
+        catch (ConnectAddonDisableException e)
         {
             //uh, don't you know what "quietly" means?
         }
-
     }
 
     private void uninstallConnectAddon(final String pluginKey, boolean sendEvent)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         long startTime = System.currentTimeMillis();
         if (addonRegistry.hasDescriptor(pluginKey))
@@ -439,7 +455,7 @@ public class ConnectAddonManager
     }
 
     // first install: no previous shared secret, no signing
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, final boolean sign)
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, final boolean sign) throws ConnectAddonInstallException
     {
         final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
         final Optional<String> authHeader = sign ? getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator()) : Optional.<String>empty();
@@ -447,7 +463,7 @@ public class ConnectAddonManager
     }
 
     // reinstalls: sign with the previous shared secret so that the add-on can verify that the sender of the request is in possession of the previous shared secret
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, String previousSharedSecret)
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, String previousSharedSecret) throws ConnectAddonInstallException
     {
         final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
         final AuthorizationGenerator authorizationGenerator = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator();
@@ -468,7 +484,7 @@ public class ConnectAddonManager
         }
     }
 
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Optional<String> authHeader)
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Optional<String> authHeader) throws ConnectAddonInstallException
     {
         try
         {
@@ -481,14 +497,14 @@ public class ConnectAddonManager
         catch (LifecycleCallbackException e)
         {
             Serializable[] params = e.getParams() != null ? e.getParams() : new Serializable[] {};
-            throw new ConnectAddOnInstallException(e.getMessage(), e.getI18nKey(), params);
+            throw new ConnectAddonInstallException(e.getMessage(), e.getI18nKey(), params);
         }
     }
 
     // removing the property from the app link removes the Authenticator's ability to assign a user to incoming requests
     // and as these users cannot log in anyway this reduces their possible actions to zero
     // (but don't remove the user as we need to preserve the history of their actions (e.g. audit trail, issue edited by <user>)
-    private void disableAddOnUser(String addOnKey) throws ConnectAddOnUserDisableException
+    private void disableAddOnUser(String addOnKey) throws ConnectAddonDisableException
     {
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addOnKey);
 
@@ -500,7 +516,7 @@ public class ConnectAddonManager
         connectUserService.disableAddOnUser(addOnKey);
     }
 
-    private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
+    private void enableAddonUser(ConnectAddonBean addon) throws ConnectAddonInitException
     {
         String userKey = connectUserService.getOrCreateAddOnUserName(addon.getKey(), addon.getName());
 
@@ -699,7 +715,7 @@ public class ConnectAddonManager
     }
 
     private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor)
-            throws PluginInstallException
+            throws PluginInstallException, ConnectAddonInstallException
     {
         Set<ScopeName> previousScopes = Sets.newHashSet();
         Set<ScopeName> newScopes = addOn.getScopes();
@@ -712,14 +728,11 @@ public class ConnectAddonManager
 
         try
         {
-            return connectUserService.provisionAddOnUserForScopes(addOn.getKey(),
-                    addOn.getName(),
-                    previousScopes,
-                    newScopes);
+            return connectUserService.provisionAddOnUserWithScopes(addOn, previousScopes, newScopes);
         }
-        catch (ConnectAddOnUserInitException e)
+        catch (ConnectAddonInitException e)
         {
-            ConnectAddOnInstallException exception = new ConnectAddOnInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
+            ConnectAddonInstallException exception = new ConnectAddonInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
             exception.initCause(e);
             throw exception;
         }

@@ -7,7 +7,7 @@ import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.healthcheck.core.HealthStatus;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.Constants;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.Constants;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 
 import com.google.common.collect.Sets;

@@ -1,8 +1,6 @@
 package at.marketplace;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,9 +21,10 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -40,6 +39,7 @@ import cc.plural.jsonij.parser.ParserException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -220,19 +220,14 @@ public class ExternalAddonInstaller
 
     private String createScreenshotAsset(ImageType imageType) throws IOException
     {
-        FileBody fileBody;
-        try
-        {
-            @SuppressWarnings ("ConstantConditions") File file = new File(getClass().getClassLoader().getResource("marketplace/screenshot.png").toURI());
-            fileBody = new FileBody(file);
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException(e);
-        }
+        byte[] screenshotByteArray = toByteArray(
+                getClass().getClassLoader().getResourceAsStream("marketplace/screenshot.png"));
+
+        ByteArrayBody byteArrayBody =
+                new ByteArrayBody(screenshotByteArray, ContentType.create("image/png"), "screenshot.png");
 
         HttpEntity body = MultipartEntityBuilder.create()
-                .addPart("file", fileBody)
+                .addPart("file", byteArrayBody)
                 .build();
 
         HttpPost screenshotPost = new HttpPost(mpacUrl + IMAGE_REST_PATH + "screenshot" + (imageType == ImageType.THUMBNAIL ? "-thumbnail" : ""));
