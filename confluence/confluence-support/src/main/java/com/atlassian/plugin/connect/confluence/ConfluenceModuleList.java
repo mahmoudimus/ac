@@ -47,6 +47,9 @@ public class ConfluenceModuleList extends BaseModuleBean
      */
     private List<BlueprintModuleBean> blueprints;
 
+    /**
+     * Themes, useful for overriding confluence's UI.
+     */
     private List<ConfluenceThemeModuleBean> themes;
 
     /**

@@ -8,7 +8,7 @@ import com.atlassian.json.schema.annotation.StringSchemaAttributes;
  */
 public class UiOverrideBean {
     @Required
-    @StringSchemaAttributes (format="uri-template")
+    @StringSchemaAttributes (format="uri")
     private String url;
 
     @Required
