@@ -492,7 +492,7 @@ public class WebItemModuleProviderTest
         }
         if (target.isPageTarget() && !webItemModuleBean.isAbsolute())
         {
-            return RedirectServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean));
+            return CONTEXT_PATH + RedirectServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean));
         }
         return BASE_URL + "/my/addon";
     }

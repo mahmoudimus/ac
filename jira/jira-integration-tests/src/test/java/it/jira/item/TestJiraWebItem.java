@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOp
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnHelloWorldPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteInlineDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
@@ -214,6 +215,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         webItem.click();
+        product.getPageBinder().bind(ConnectAddOnHelloWorldPage.class);
         Map<String, String> queryParams = PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET.getParamsFromLastRequest();
 
         assertEquals(project.getKey(), queryParams.get("project_key"));

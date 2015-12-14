@@ -47,9 +47,9 @@ import static org.junit.Assert.assertThat;
 
 public class RedirectServletTest extends MultiProductWebDriverTestBase
 {
-    private static final String JWT_EXPIRY_PAGE_KEY = "checkPageJwtExpiry";
+    private static final String WEB_ITEM_KEY = "checkPageJwtExpiry";
     private static final String ABSOLUTE_PAGE_KEY = "absolutePage";
-    private static final String PARAMETER_CAPTURE_PAGE_PATH = "/pcp";
+    private static final String WEB_ITEM_ON_URL = "/pcp";
     private static final String ABSOLUTE_URL = "http://example.com";
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
 
@@ -73,9 +73,9 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
                 .addJWT(INSTALL_HANDLER_SERVLET)
                 .addModules("webItems",
                         newWebItemBean()
-                                .withKey(JWT_EXPIRY_PAGE_KEY)
+                                .withKey(WEB_ITEM_KEY)
                                 .withName(new I18nProperty("JWTP", null))
-                                .withUrl(PARAMETER_CAPTURE_PAGE_PATH + "?test-value={testParam}")
+                                .withUrl(WEB_ITEM_ON_URL)
                                 .withTarget(pageTarget)
                                 .withLocation(getGloballyVisibleLocation())
                                 .build(),
@@ -99,9 +99,9 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     @Test
     public void shouldReturnRedirectionToAddOnServer() throws Exception
     {
-        String addOnPageUrl = runner.getAddon().getBaseUrl() + PARAMETER_CAPTURE_PAGE_PATH;
+        String addOnPageUrl = runner.getAddon().getBaseUrl() + WEB_ITEM_ON_URL;
 
-        HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY));
+        HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
         String url =  response.getHeaderField("Location");
 
         assertThat(url, Matchers.startsWith(addOnPageUrl));
@@ -110,25 +110,25 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     @Test
     public void shouldSignRedirectionWithFreshJwtToken() throws Exception
     {
-        HttpURLConnection response1 = doRedirectRequest(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY));
+        HttpURLConnection response1 = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
 
         long timeBeforeClick = getSystemTimeBeforeJwtIssue();
-        long claimDate1 = getClaimDate(response1);
+        long claimDate1 = getClaimDate(response1.getHeaderField("Location"));
         assertThat(claimDate1, greaterThan(timeBeforeClick));
 
         // JWT token's sign time has one second precision.
         // We have to wait one second to be sure that token from next request is new.
         Thread.sleep(1000);
 
-        HttpURLConnection response2 = doRedirectRequest(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY));
-        long claimDate2 = getClaimDate(response2);
+        HttpURLConnection response2 = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
+        long claimDate2 = getClaimDate(response2.getHeaderField("Location"));
         assertThat(claimDate2, greaterThan(claimDate1));
     }
 
     @Test
     public void shouldReturnCachedResponseWithTemporaryRedirect() throws Exception
     {
-        HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY));
+        HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
         assertThat(response.getResponseCode(), is(HttpStatus.SC_TEMPORARY_REDIRECT));
 
         assertThat(response.getHeaderField("cache-control"), allOf(
@@ -150,41 +150,41 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     public void shouldReturnNotFoundIfAddonKeyIsNotValid() throws Exception
     {
         String addOnKey = "not-existing-add-onn";
-        HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, JWT_EXPIRY_PAGE_KEY));
+        HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
         assertThat(response.getResponseCode(), is(HttpStatus.SC_NOT_FOUND));
     }
 
-    private HttpURLConnection doRedirectRequest(final URI uri) throws IOException
+    private HttpURLConnection doRedirectRequest(URI uri) throws IOException
     {
         return (HttpURLConnection) uri.toURL().openConnection();
     }
 
-    private URI getPathToRedirectServlet(final String addOnKey, final String jwtExpiryPageKey)
+    private URI getPathToRedirectServlet(String addOnKey, String moduleKey)
     {
-        return UriBuilder.fromPath(baseUrl).path(RedirectServletPath.forModule(addOnKey, jwtExpiryPageKey)).build();
+        return UriBuilder.fromPath(baseUrl).path(RedirectServletPath.forModule(addOnKey, moduleKey)).build();
     }
 
-    private long getClaimDate(HttpURLConnection response) throws Exception
+    private long getClaimDate(String urlToAddOn) throws Exception
     {
-        final JwtIssuerSharedSecretService sharedSecretService = issuer -> INSTALL_HANDLER_SERVLET.getInstallPayload().getSharedSecret();
-        final JwtIssuerValidator jwtIssuerValidator = issuer -> true;
+        JwtIssuerSharedSecretService sharedSecretService = issuer -> INSTALL_HANDLER_SERVLET.getInstallPayload().getSharedSecret();
+        JwtIssuerValidator jwtIssuerValidator = issuer -> true;
         NimbusJwtReaderFactory jwtReaderFactory = new NimbusJwtReaderFactory(jwtIssuerValidator, sharedSecretService);
 
-        String jwt = readJwt(response);
+        String jwt = readJwt(urlToAddOn);
         JwtDateReader jwtDateReader = new JwtDateReader();
         JwtReader jwtReader = jwtReaderFactory.getReader(jwt);
         jwtReader.readAndVerify(jwt, ImmutableMap.of("iat", jwtDateReader));
         return jwtDateReader.getClaimDate();
     }
 
-    private String getQueryParam(HttpURLConnection response, String key)
+    private String getQueryParam(String key, String url)
     {
-        return RemotePageUtil.findInContext(response.getHeaderField("Location"), key);
+        return RemotePageUtil.findInContext(url, key);
     }
 
-    private String readJwt(HttpURLConnection response)
+    private String readJwt(String urlToAddOn)
     {
-        return getQueryParam(response, JwtConstants.JWT_PARAM_NAME);
+        return getQueryParam(JwtConstants.JWT_PARAM_NAME, urlToAddOn);
     }
 
     private static class JwtDateReader implements JwtClaimVerifier
@@ -193,7 +193,7 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
         private long claimDate = 0;
 
         @Override
-        public void verify(@Nonnull final Object claim) throws JwtVerificationException, JwtParseException
+        public void verify(@Nonnull Object claim) throws JwtVerificationException, JwtParseException
         {
             if (claim instanceof Date)
             {

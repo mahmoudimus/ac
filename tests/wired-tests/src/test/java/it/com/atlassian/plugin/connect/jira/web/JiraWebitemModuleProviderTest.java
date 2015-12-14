@@ -3,7 +3,6 @@ package it.com.atlassian.plugin.connect.jira.web;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
-import com.atlassian.plugin.connect.plugin.web.redirect.RedirectServlet;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -16,6 +15,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Map;
+
+import javax.ws.rs.core.UriBuilder;
 
 import static org.junit.Assert.assertTrue;
 
@@ -34,7 +35,7 @@ public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
     }
 
     @Test
-    public void singleAddonLinkWithReplacement() throws Exception
+    public void singleAddonLinkWithContextPrams() throws Exception
     {
         Project project = jiraTestUtil.createProject();
         WebItemModuleDescriptor descriptor = registerWebItem("myProject={project.key}", "atl.admin/menu");
@@ -45,7 +46,8 @@ public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
 
         String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
 
-        String expectedUrl = BASE_URL + RedirectServletPath.forModule(PLUGIN_KEY, MODULE_KEY);
-        assertTrue("wrong url. expected: " + expectedUrl + ", but got: " + convertedUrl, convertedUrl.equals(expectedUrl));
+        String expectedUrlPrefix = UriBuilder.fromPath(CONTEXT_PATH).path(RedirectServletPath.forModule(PLUGIN_KEY, MODULE_KEY)).build().toString();
+        assertTrue("wrong url prefix. expected: " + expectedUrlPrefix + ", but got: " + convertedUrl, convertedUrl.startsWith(expectedUrlPrefix));
+        assertTrue("project key not found in: " + convertedUrl, convertedUrl.contains("project.key=" + project.getKey()));
     }
 }

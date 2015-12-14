@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.web.iframe.ModuleUiParamParser;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.Map;
@@ -29,7 +30,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 public class RedirectServlet extends HttpServlet
 {
-    public static final int TEMPORARY_REDIRECT_CODE = 307;
     private static final String REDIRECT_CACHE_TIME_PROPERTY = "com.atlassian.connect.redirect.cache_time";
     private static final long REDIRECT_CACHE_TIME_DEFAULT_DEFAULT = 120;
     private static final long REDIRECT_CACHE_TIME = Long.getLong(REDIRECT_CACHE_TIME_PROPERTY, REDIRECT_CACHE_TIME_DEFAULT_DEFAULT);
@@ -99,7 +99,7 @@ public class RedirectServlet extends HttpServlet
 
     private void redirect(HttpServletResponse resp, String url)
     {
-        resp.setStatus(TEMPORARY_REDIRECT_CODE);
+        resp.setStatus(HttpStatus.SC_TEMPORARY_REDIRECT);
         resp.setHeader("location", url);
 
         // response will be cached for given time, only on client side (no proxies)
@@ -115,6 +115,7 @@ public class RedirectServlet extends HttpServlet
                 .put("decorator", IFrameRenderStrategyBuilderImpl.ATL_GENERAL)
                 .build();
 
+        resp.setStatus(HttpStatus.SC_NOT_FOUND);
         templateRenderer.render(redirectData.getAccessDeniedTemplate(), renderContext, resp.getWriter());
     }
 }
