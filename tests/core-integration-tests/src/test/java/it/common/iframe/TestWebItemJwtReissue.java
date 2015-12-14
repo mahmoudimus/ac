@@ -21,6 +21,7 @@ import com.atlassian.jwt.reader.JwtReader;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnHelloWorldPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteInlineDialog;
@@ -270,5 +271,6 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     private void openPage(RemotePluginAwarePage page)
     {
         page.clickAddOnLinkWithoutBinding();
+        product.getPageBinder().bind(ConnectAddOnHelloWorldPage.class);
     }
 }

@@ -13,6 +13,7 @@ import com.atlassian.plugin.web.model.WebLink;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import javax.ws.rs.core.UriBuilder;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
@@ -86,7 +87,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
                         // The url is only used by JS to parse url params from it.
                         // Then JS compose new url to the ConnectIFrameServlet and do a request.
                         ? urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext)
-                        : req.getContextPath() + urlVariableSubstitutor.append(RedirectServletPath.forModule(pluginKey, moduleKey), moduleContext);
+                        : UriBuilder.fromPath(req.getContextPath()).path(urlVariableSubstitutor.append(RedirectServletPath.forModule(pluginKey, moduleKey), moduleContext)).build().toString();
             }
             else if (addOnUrlContext == page)
             {

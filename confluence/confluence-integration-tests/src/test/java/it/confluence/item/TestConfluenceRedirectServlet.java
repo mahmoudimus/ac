@@ -133,7 +133,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
                 .build();
 
         HttpURLConnection response = doRedirectRequest(redirectUrl);
-        assertThat(response.getResponseCode(), Matchers.is(HttpStatus.SC_FORBIDDEN));
+        assertThat(response.getResponseCode(), Matchers.is(HttpStatus.SC_NOT_FOUND));
     }
 
     private RemoteWebItem findViewPageWebItem(String moduleKey) throws Exception
