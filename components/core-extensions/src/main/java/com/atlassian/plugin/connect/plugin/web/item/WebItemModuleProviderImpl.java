@@ -150,7 +150,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
                     .addOn(addon.getKey())
                     .urlTemplate(bean.getUrl())
                     .accessDeniedTemplateType(RedirectData.AccessDeniedTemplateType.PAGE)
-                    .conditions(bean.getConditions())
+                    .conditions(filterProductSpecificConditions(bean.getConditions()))
                     .build();
 
             redirectRegistry.register(addon.getKey(), bean.getRawKey(), redirectData);
@@ -186,7 +186,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         final WebItemTargetBean target = webItem.getTarget();
         if (target.isDialogTarget() || target.isInlineDialogTarget())
         {
-            List<ConditionalBean> iframeConditions = getConditionsForIframe(webItem);
+            List<ConditionalBean> iframeConditions = filterProductSpecificConditions(webItem.getConditions());
             final IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(descriptor.getKey())
                     .module(webItem.getKey(descriptor))
@@ -206,9 +206,9 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     }
 
     @VisibleForTesting
-    List<ConditionalBean> getConditionsForIframe(WebItemModuleBean webItem)
+    List<ConditionalBean> filterProductSpecificConditions(List<ConditionalBean> conditions)
     {
-        return filterSingleConditionsRecursively(webItem.getConditions(), new Predicate<SingleConditionBean>()
+        return filterSingleConditionsRecursively(conditions, new Predicate<SingleConditionBean>()
         {
 
             @Override

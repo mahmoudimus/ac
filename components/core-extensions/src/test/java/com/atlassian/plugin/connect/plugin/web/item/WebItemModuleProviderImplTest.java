@@ -76,7 +76,7 @@ public class WebItemModuleProviderImplTest
     @Test
     public void shouldRetainEmptyConditionsForIframe()
     {
-        assertThat(provider.getConditionsForIframe(newWebItemWithConditions(Collections.<ConditionalBean>emptyList())), empty());
+        assertThat(provider.filterProductSpecificConditions(newWebItemWithConditions(Collections.<ConditionalBean>emptyList()).getConditions()), empty());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class WebItemModuleProviderImplTest
     {
         List<ConditionalBean> conditions = newArrayList(newCondition(VALID_CONDITION),
                 newCompositeConditionBean().withConditions(newCondition(OTHER_VALID_CONDITION)).build());
-        assertThat(provider.getConditionsForIframe(newWebItemWithConditions(conditions)), contains(conditions.toArray()));
+        assertThat(provider.filterProductSpecificConditions(newWebItemWithConditions(conditions).getConditions()), contains(conditions.toArray()));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class WebItemModuleProviderImplTest
     {
         CompositeConditionBean compositeCondition = newCompositeConditionBean().withConditions(newCondition(OTHER_VALID_CONDITION)).build();
         List<ConditionalBean> conditions = newArrayList(newCondition("foo"), compositeCondition);
-        assertThat(provider.getConditionsForIframe(newWebItemWithConditions(conditions)), contains(compositeCondition));
+        assertThat(provider.filterProductSpecificConditions(newWebItemWithConditions(conditions).getConditions()), contains(compositeCondition));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class WebItemModuleProviderImplTest
         SingleConditionBean singleCondition = newCondition(VALID_CONDITION);
         List<ConditionalBean> conditions = newArrayList(singleCondition,
                 newCompositeConditionBean().withConditions(newCondition("foo")).build());
-        assertThat(provider.getConditionsForIframe(newWebItemWithConditions(conditions)), contains(singleCondition));
+        assertThat(provider.filterProductSpecificConditions(newWebItemWithConditions(conditions).getConditions()), contains(singleCondition));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class WebItemModuleProviderImplTest
         SingleConditionBean singleCondition = newCondition(VALID_CONDITION);
         List<ConditionalBean> conditions = newArrayList(singleCondition,
                 newCompositeConditionBean().withConditions(newCondition("foo"), newCondition(OTHER_VALID_CONDITION)).build());
-        assertThat(provider.getConditionsForIframe(newWebItemWithConditions(conditions)),
+        assertThat(provider.filterProductSpecificConditions(newWebItemWithConditions(conditions).getConditions()),
                 contains(singleCondition, newCompositeConditionBean().withConditions(newCondition(OTHER_VALID_CONDITION)).build()));
     }
 

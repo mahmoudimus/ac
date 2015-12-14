@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import it.jira.JiraWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,6 +42,7 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
 {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
     private static final String ADDON_WEBITEM_FOR_LOGGED_USERS = "ac-general-web-item-for-loged";
+    private static final String ADDON_WEBITEM_JIRA_CONDITION = "ac-general-web-item-jira-condition";
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
     private static final String WEB_ITEM_ON_URL = "/irwi";
     private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
@@ -80,6 +82,17 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build()
                                 ).build()
+                        ,
+                        newWebItemBean()
+                                .withName(new I18nProperty("With jira condition", null))
+                                .withKey(ADDON_WEBITEM_JIRA_CONDITION)
+                                .withLocation("system.top.navigation.bar")
+                                .withUrl(WEB_ITEM_ON_URL)
+                                .withConditions(
+                                        newSingleConditionBean().withCondition("has_project_permission")
+                                                .withParam("permission", "admin")
+                                                .build()
+                                ).build()
                 )
                 .addRoute(WEB_ITEM_ON_URL, ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET))
                 .start();
@@ -118,6 +131,7 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
 
         HttpURLConnection response = doRedirectRequest(redirectUrl);
         String urlToAddOn = response.getHeaderField("Location");
+        assertThat(response.getResponseCode(), Matchers.is(HttpStatus.SC_TEMPORARY_REDIRECT));
         assertThat(getQueryParam("aways_allowed_param", urlToAddOn), is(postFunctionId));
         assertThat(getQueryParam("restricted_param", urlToAddOn), isEmptyOrNullString());
     }
@@ -131,6 +145,20 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
 
         HttpURLConnection response = doRedirectRequest(redirectUrl);
         assertThat(response.getResponseCode(), Matchers.is(HttpStatus.SC_NOT_FOUND));
+    }
+
+    @Test
+    public void shouldNotCheckProductSpecificConditions() throws Exception
+    {
+        // As described in AC-1640 servlets does not have product specific context required by product specific conditions, so they should not be checked.
+        login(testUserFactory.basicUser());
+
+        URI redirectUrl = UriBuilder.fromPath(baseUrl)
+                .path(RedirectServletPath.forModule(addOnKey, ADDON_WEBITEM_JIRA_CONDITION))
+                .build();
+
+        HttpURLConnection response = doRedirectRequest(redirectUrl);
+        assertThat(response.getResponseCode(), Matchers.is(HttpStatus.SC_TEMPORARY_REDIRECT));
     }
 
     private RemoteWebItem findViewPageWebItem(String moduleKey) throws Exception
