@@ -11,15 +11,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.List;
 
 /**
- * Entity properties allow add-ons to add key/value stores to JIRA entities, such as issues or projects.
+ * <p>Entity properties allow add-ons to add key/value stores to JIRA entities, such as issues or projects.
  * This module allows you to request those entity properties to be indexed by JIRA and able to be queried via JQL searches.
- * They are also available in the [`entity_property_equal_to`](../../concepts/conditions.html#entity-property) condition.
+ * They are also available in the <i>entity_property_equal_to</i> condition.</p>
  *
  * <h4>Overview</h4>
  *
- * The purpose of this module is to specify what data from which entity properties should be extracted and indexed.
+ * <p>The purpose of this module is to specify what data from which entity properties should be extracted and indexed.
  * Pretend that an add-on developer has an issue entity property with the key 'attachment' and in that entity property they store the following
- * data:
+ * data:</p>
  *
  * <pre>
  * {
@@ -35,21 +35,21 @@ import java.util.List;
  * }
  * </pre>
  *
- * In this example the developer wants to make the *size*, *extension* and *updated* fields from the *attachment* object be searchable via JQL. To do that they start
- * by declaring that the *entityType* to index will be an 'issue' entity type; this is specified at the top level of their
+ * <p>In this example the developer wants to make the <i>size</i>, <i>extension</i> and <i>updated</i> fields from the <i>attachment</i> object be searchable via JQL. To do that they start
+ * by declaring that the <i>entityType</i> to index will be an 'issue' entity type; this is specified at the top level of their
  * module. Then they need to specify which entity property key that they wish to extract data from: so they add a single entry
- * to *keyConfiguratons* with the *propertyKey* of 'attachment'. If there are multiple issue entity properties that an add-on developer wanted
+ * to <i>keyConfiguratons</i> with the <i>propertyKey</i> of 'attachment'. If there are multiple issue entity properties that an add-on developer wanted
  * to index then they could add more *keyConfigurations* to declare those extra properties. From there the add-on developer specifies
  * which data they want to extract from the json value that is stored in this issue entity property. In this example they would
- * add three extractions for *attachment.size*, *attachment.extension* and *attachment.updated* being clear to specify the typo
- * of data being extracted and what alias should be made avaliable to JQL queries.
+ * add three extractions for <i>attachment.size</i>, <i>attachment.extension</i> and <i>attachment.updated</i> being clear to specify the typo
+ * of data being extracted and what alias should be made avaliable to JQL queries.</p>
  *
- * It is important to note that array types can be indexed too; that the *type* field in the extraction should be the type of
- * each element in the array.
+ * <p>It is important to note that array types can be indexed too; that the *type* field in the extraction should be the type of
+ * each element in the array.</p>
  *
- * You can see the resultant module definition in the example below.
+ * <p>You can see the resultant module definition in the example below.</p>
  *
- * For more information, please see the [JIRA documentation on entity properties](https://developer.atlassian.com/display/JIRADEV/JIRA+Entity+Properties+Overview).
+ * <p>For more information, please see the <a href="https://developer.atlassian.com/display/JIRADEV/JIRA+Entity+Properties+Overview">JIRA documentation on entity properties</a>.</p>
  *
  * <h4>Example</h4>
  *
