@@ -1,12 +1,5 @@
 # Hosted data storage
 
-What is the use case that we are solving with this?
-What hosted data storage options are avaliable?
-What are the advantages and disadvantages of hosted data storage?
-What are add-on properties and how do they work?
-What are entity properties and how do they work?
-What are content properties and how do they work?
-
 There are three ways in which you can store data against JIRA and Confluence: add-on properties, entity properties 
 (jira only) or content properties (confluence only). We will refer to them collectively as *host propeties*. A host 
 property is a key-value pair where the value is a blob of JSON data. Every host property is stored inside a container in 
