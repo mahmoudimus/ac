@@ -14,4 +14,7 @@
         </validators>
     </connect-context-parameters-resolver>
 
+    <movable-web-panel-locations-list key="test-movable-web-panel-locations-list">
+        <location>atl.jira.proj.config.sidebar</location>
+    </movable-web-panel-locations-list>
 </atlassian-plugin>

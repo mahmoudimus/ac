@@ -7,6 +7,9 @@ import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectDataBuilderFactory;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -22,6 +25,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.atlassian.plugin.connect.api.web.redirect.RedirectData.AccessDeniedTemplateType.IFRAME;
+
 public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<WebPanelModuleBean>
 {
     private static final WebPanelModuleMeta META = new WebPanelModuleMeta();
@@ -31,6 +36,9 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebFragmentLocationBlacklist webFragmentLocationBlacklist;
     private final ConditionLoadingValidator conditionLoadingValidator;
+    private final RedirectRegistry redirectRegistry;
+    private final RedirectDataBuilderFactory redirectDataBuilderFactory;
+    private final MovableWebSectionSearcher movableWebSectionSearcher;
 
     public WebPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
             ConnectJsonSchemaValidator schemaValidator,
@@ -38,7 +46,10 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebFragmentLocationBlacklist webFragmentLocationBlacklist,
-            ConditionLoadingValidator conditionLoadingValidator)
+            ConditionLoadingValidator conditionLoadingValidator,
+            RedirectRegistry redirectRegistry,
+            RedirectDataBuilderFactory redirectDataBuilderFactory,
+            MovableWebSectionSearcher movableWebSectionSearcher)
     {
         super(pluginRetrievalService, schemaValidator);
         this.webPanelFactory = webPanelFactory;
@@ -46,6 +57,9 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webFragmentLocationBlacklist = webFragmentLocationBlacklist;
         this.conditionLoadingValidator = conditionLoadingValidator;
+        this.redirectRegistry = redirectRegistry;
+        this.redirectDataBuilderFactory = redirectDataBuilderFactory;
+        this.movableWebSectionSearcher = movableWebSectionSearcher;
     }
 
     @Override
@@ -105,14 +119,30 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
 
     private void registerIframeRenderStrategy(WebPanelModuleBean webPanel, ConnectAddonBean descriptor)
     {
+        boolean webPanelNeedsRedirection = movableWebSectionSearcher.isWebPanelInMovableWebSection(webPanel, descriptor);
+
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addon(descriptor.getKey())
                 .module(webPanel.getKey(descriptor))
                 .genericBodyTemplate()
                 .urlTemplate(webPanel.getUrl())
                 .title(webPanel.getDisplayName())
+                .redirect(webPanelNeedsRedirection)
                 .dimensions(webPanel.getLayout().getWidth(), webPanel.getLayout().getHeight())
                 .build();
         iFrameRenderStrategyRegistry.register(descriptor.getKey(), webPanel.getRawKey(), renderStrategy);
+
+        if (webPanelNeedsRedirection)
+        {
+            RedirectData redirectData = redirectDataBuilderFactory.builder()
+                    .addOn(descriptor.getKey())
+                    .urlTemplate(webPanel.getUrl())
+                    .accessDeniedTemplateType(IFRAME)
+                    .title(webPanel.getDisplayName())
+                    .conditions(webPanel.getConditions())
+                    .build();
+
+            redirectRegistry.register(descriptor.getKey(), webPanel.getRawKey(), redirectData);
+        }
     }
 }

@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
@@ -11,6 +12,7 @@ import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.web.iframe.EncodingUtils.escapeQuotes;
@@ -32,7 +34,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     public IFrameRenderContextBuilderImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
                                           final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
                                           final UserPreferencesRetriever userPreferencesRetriever) {
-        this.pluginAccessorFactory = pluginAccessorFactory;
+        this.pluginAccessorFactory = pluginAcbcessorFactory;
         this.userManager = userManager;
         this.hostApplicationInfo = hostApplicationInfo;
         this.userPreferencesRetriever = userPreferencesRetriever;
@@ -164,18 +166,26 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         {
             Map<String, Object> defaultContext = Maps.newHashMap();
 
+            RemotablePluginAccessor plugin = pluginAccessorFactory.getOrThrow(addonKey);
             UserProfile profile = userManager.getRemoteUser();
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());
             String userKey = nullToEmpty(profile == null ? "" : profile.getUserKey().getStringValue());
             String timeZone = userPreferencesRetriever.getTimeZoneFor(username).getID();
+            URI baseUrl = plugin.getBaseUrl();
+
+            // origin is required by XDM to establish connection with iframe.
+            // Since for some places iframe requires to be redirected,
+            // in that case the origin can not obtain from the url because it points to the redirect servlet.
+            String origin = (baseUrl.getScheme() + "://" + baseUrl.getAuthority()).toLowerCase();
 
             defaultContext.put("iframeSrcHtml", escapeQuotes(iframeUri));
-            defaultContext.put("plugin", pluginAccessorFactory.getOrThrow(addonKey));
+            defaultContext.put("plugin", plugin);
             defaultContext.put("namespace", namespace);
             defaultContext.put("contextPath", hostApplicationInfo.getContextPath());
             defaultContext.put("userId", username);
             defaultContext.put("userKey", userKey);
             defaultContext.put("timeZone", timeZone);
+            defaultContext.put("origin", origin);
 
             return defaultContext;
         }
