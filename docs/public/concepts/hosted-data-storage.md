@@ -5,44 +5,48 @@ What hosted data storage options are avaliable?
 What are the advantages and disadvantages of hosted data storage?
 What are add-on properties and how do they work?
 What are entity properties and how do they work?
-What are content properties aond how do they work?
+What are content properties and how do they work?
 
 There are three ways in which you can store data against JIRA and Confluence: add-on properties, entity properties 
 (jira only) or content properties (confluence only). We will refer to them collectively as *host propeties*. A host 
-property is a key-value pair where the value is a blob of JSON data. Your add-on will need to request the right 
-Scopes to perform operations on host properties.
+property is a key-value pair where the value is a blob of JSON data. Every host property is stored inside a container in 
+the host application. That container might be an issue in JIRA, a page in confluence or even the add-on itself. Your add-on 
+will need to request the right [Scopes](../scopes/scopes.html) to perform operations on host properties.
 
 Hosted data storage is useful to Atlassian Connect developers for the following reasons:
 
  * **Your addon does not need to have a backend to store data.**  
    You can store your data in the host application itself meaning that your addon could be written using frontend only technologies (like Javascript / HTML / CSS).
  * **Imports and exports are handled by the host product.**  
-   Since your data is stored with the host application it is included in the host applications backups and the import process
-   will restore your data for you. This means that you never need to worry about your data being lost or disconnected from the customer.
+   Since your data is stored with the host application it is included in the host applications backups. This means that the import process
+   will restore your data automatically. With host properties you never need to worry about your data being lost or disconnected from the customer.
  * **Conditions can be predicated on host properties.**    
-   Meaning that you can configure if a web fragment will be shown based on an host property; this is a must faster approach than relying upon remote conditions. This
-   is because a remote condition must make an entire HTTP call whereas a host property based condition is a local operation. It is an order of magnitude faster to render
-   the page and a highle recommended approach.
+   Meaning that you can configure if a web fragment will be shown based on a host property; this is a must faster approach than relying upon remote conditions. This
+   is because the host application must make a HTTP request to your add-on every time it evaluates a remote condition; blocking the display of your content until the request 
+   finishes. With host property conditions it is an order of magnitude faster to render the page and thus is a highly recommended approach.
  * **The products have access to your properties.**  
    In JIRA's case this means that you can write JQL queries based on issue entity properties. This enables your users to
    enjoy the power of JQL on search data that you have defined. In Confluence this means that you can use [CQL to search 
    for content](https://developer.atlassian.com/confdev/confluence-rest-api/advanced-searching-using-cql).
    
-Host properties give an Atlassian Connect developer a great many benefits. The following sections provide detailed explanations of how add-on properties,
+Host properties are a powerful tool for Atlassian Connect developers. The following sections provide detailed explanations of how add-on properties,
 entity properties and content properties may be used in your add-on.
 
 ## <a id="add-on-properties">Add-on properties
 
-Add-on properties allow add-ons to store key-value pairs in the host application, either JIRA or Confluence, and retrieve them. 
+Add-on properties are host properties who store each property against the add-on itself. In this case the 'add-on' is considered
+to be the storage container.
 
 ### <a id="add-on-properties-limitations"></a>Limitations of add-on properties
 
 Add-on properties have the following limitations:
 
- * Only the add-on that writes the add-on properties can read those properties. They cannot be shared or read by other add-ons.
+ * The properties for each add-on are sandboxed to the add-on. Only the add-on that writes the add-on properties can read those properties. 
+   They cannot be shared or read by other add-ons.
  * Each addon can create a maximum of 100 properties, each property value cannot be more than 32KB in size.
  * The value stored in each property must be in valid JSON format.
  * Requests via [`AP.request`](../javascript/module-request.html) to store and receive add-on properties can only be made via a logged-in user.
+ * There is no mechanism to handle concurrent edits by two users to the one add-on property. Whomever saves data last will win.
  
 **Warning:** Add-on properties can be manipulated by a malicious authenticated user (e.g. by making REST calls through the developer console). For this reason:
 
@@ -68,23 +72,24 @@ To give you a very basic example you can set an add-on property like so:
 
 And if you were to request it again you would get the following response:
 
-    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?jsonValue=true
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?JSONValue=true
     
     {"key":"test-property","value":{"string":"string-value","number":5},"self":"..."}
     
-Please note the use of the `jsonValue=true` query param. If you do not include that parameter then the response will be:
+Please note the use of the `JSONValue=true` query param. If you do not include that parameter then the response will be:
 
     GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property
     
     {"key":"test-property","value":"{\"string\":\"string-value\",\"number\":5}","self":"..."}
      
-Which is deprecated behaviour and will be going away in June 2016. Please always use the `jsonValue=true` query parameter.
+Which returns the value as a JSON-escaped string. This is deprecated behaviour and will be going away in June 2016. Please 
+always use the `JSONValue=true` query parameter.
 
 Here is an example snippet that will show a pop-up with a JSON property named my-property-key for add-on with key my-add-on-key.
 
      AP.require(['request'], function(request) {
          request({
-             url: '/rest/atlassian-connect/1/addons/my-add-on-key/properties/my-property-key?jsonValue=true',
+             url: '/rest/atlassian-connect/1/addons/my-add-on-key/properties/my-property-key?JSONValue=true',
              success: function(response) {
                  // Convert the string response to JSON
                  response = JSON.parse(response);
@@ -94,7 +99,7 @@ Here is an example snippet that will show a pop-up with a JSON property named my
                  console.log("Error loading API (" + uri + ")");
                  console.log(arguments);
              },
-             contentType: "application/json"
+             contentType: "application/JSON"
          });
      });
 
@@ -113,46 +118,56 @@ that you can store properties against are:
  * [Workflows](https://docs.atlassian.com/jira/REST/latest/#api/2/workflow-updateProperty)
  * [Dashboard items](https://docs.atlassian.com/jira/REST/latest/#api/2/dashboard/{dashboardId}/items/{itemId}/properties-getProperty)
  
+Entity properties can be used in Conditions: enabling the showing and hiding of webfragments based on the value of an entity property.
+ 
 ### <a id="jira-entity-properties-limitations"></a>Limitations of entity properties
 
-All users and add-ons in the system can see all entity properties that they have access to. For example, if user A has access to a JIRA issue but user B does 
-not then A can see all of the entity properties on the issue and B will get a HTTP 403 when they attempt to query for any properties. This means that a malicious 
-user can modify the state of entity properties for everybody. Don't put sensitive data in these entity properties.
-This also means that you should namespace your entity properties to avoid conflicts with entity properties that other addons or users might create.
+Entity properties have the following limitations: 
 
-Please note that you can only get or modify entity properties as a logged in user.
- 
+ * Entity properties can be modified by all users that have permission to edit the entity; they are not sandboxed on a per-user basis.
+   This means that the same entity property can be edited by two different users.
+ * Entity properties can be modified by all addons in the system and exist in a global namespace. It is recommended that you namespace
+   then entity property keys for the properties that you wish to be specific to your addon. This also means that you should
+   avoid storing unencrypted sensitive data in entity properties.
+ * There is no mechanism to handle concurrent edits by two users to the one add-on property. Whomever saves data last will win.
+ * Entity properties can only be modified as a logged in user.
+ * The scopes that your addon requires to modify entity properties different depending on the type of entity property that you wish to modify.
+   For example, to delete an issue entity property you only need `DELETE` scope however, to delete a project entity propecty you require 
+   `PROJECT_ADMIN` scope.
+   
+Keep these limitations in mind when you use entity properties.
+
 ### <a id="jira-entity-properties-example"></a>Issue entity properties example
 
-To set an entity property on an issue you can make the following request:
+To set an entity property on an issue (ET-1) you can make the following request:
 
-    PUT /rest/api/2/issue/ET-1/properties/party-addon-properties
+    PUT /rest/api/2/issue/ET-1/properties/party-members
               
-    {"party": { "attendees": ["alex", "betty", "charles", "davinda"], "attendeeCount": 4 }}
+    {"party": { "attendees": ["antman", "batman", "catwoman", "deadpool"], "attendeeCount": 4 }}
     
 Then to get that data back you could make the following request:
 
-    GET /rest/api/2/issue/ET-1/properties/party-addon-properties
+    GET /rest/api/2/issue/ET-1/properties/party-members
      
     {
-      "key": "party-addon-properties",
+      "key": "party-members",
       "value": {
         "party": {
           "attendees": [
-            "alex",
-            "betty",
-            "charles",
-            "davinda"
+            "antman",
+            "batman",
+            "catwoman",
+            "deadpool"
           ],
           "attendeeCount": 4
         }
       }
     }
          
-In this example an issue entity property with the key *party-addon-properties* has been set on the issue ET-1.
+In this example an issue entity property with the key *party-members* has been set on the issue ET-1.
 
-You could then use the *jiraEntityProperties* module to index these issue entity properties so that they became avaliable
-in JQL searches. [Read the jiraEntityProperties documentation](modules/jira/entity-property.html) for more details.
+You could then use the *jiraEntityProperties* module to index these issue entity properties so that the data becomes
+available in JQL searches. [Read the jiraEntityProperties documentation](modules/jira/entity-property.html) for more details.
 
 ### <a id="jira-entity-properties-conditions"></a>Conditions on entity properties
 
@@ -161,7 +176,7 @@ local to the host application the condition evaluates rapidly instead of requiri
 
 You can use the `entity_property_equal_to` condition to decide whether or not to show a web fragment based on the data
 in an entity property. For example, if we had an issue entity property with the key `isSpecialUser` and a value of `true` 
-(json boolean) then we could write the following conditon:
+(JSON boolean) then we could write the following conditon:
 
     {
         condition: "entity_property_equal_to",
@@ -173,8 +188,8 @@ in an entity property. For example, if we had an issue entity property with the 
     }
 
 It is important to note that the `params.value` field currently expects a string. If you have a more complicated JSON object
-that you wish to compare against stored in your entity property then you will need to convert your json into a string that
-you compare for equality. To give you an example, if the true json boolean was actually the json string "special" then you should 
+that you wish to compare against the stored data in your entity property then you will need to convert your JSON into a string that
+you compare for equality. To give you an example, if the true JSON boolean was actually the JSON string "special" then you should 
 write the condition like so:
 
     {
@@ -186,7 +201,8 @@ write the condition like so:
         }
     }
     
-Also, there is currently no way to get a nested value out of a json object stored in an entity property for the purposes of comparison.
+Also, there is currently no way to get a nested value out of a JSON object stored in an entity property for the purposes
+of comparison in a condition.
 
 ## <a id="confuence-content-properties"></a>Confluence content properties
 
@@ -199,7 +215,10 @@ an add-on developer. The Confluence content that you can store content propertie
  
 ### <a id="confuence-content-properties-limitations"></a>Limitations of Content Properties
 
-You can store an unlimited number of content properties against a piece of content but each property can have no more than 32kB of JSON data stored in it. It is also important to note that every user that is authenticated will be able to read the contents of the content properties. Any authenticated user that has create or update access on a piece of content will have the ability to create or update entity properties on that piece of content.
+You can store an unlimited number of content properties against a piece of content but each property can have no more than 
+32kB of JSON data stored in it. It is also important to note that every user that is authenticated will be able to read 
+the contents of the content properties. Any authenticated user that has create or update access on a piece of content will 
+have the ability to create or update entity properties on that piece of content.
 
 ### <a id="confuence-content-properties-example"></a>Confluence content properties example
 
