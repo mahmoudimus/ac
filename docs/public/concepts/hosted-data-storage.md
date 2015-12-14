@@ -35,7 +35,8 @@ entity properties and content properties may be used in your add-on.
 ## <a id="add-on-properties">Add-on properties
 
 Add-on properties are host properties who store each property against the add-on itself. In this case the 'add-on' is considered
-to be the storage container.
+to be the storage container. However, add-on properties are still unique for each host application: the same add-on stored on
+two different host applications wil not share the same add-on properties.
 
 ### <a id="add-on-properties-limitations"></a>Limitations of add-on properties
 
@@ -134,6 +135,7 @@ Entity properties have the following limitations:
  * The scopes that your addon requires to modify entity properties different depending on the type of entity property that you wish to modify.
    For example, to delete an issue entity property you only need `DELETE` scope however, to delete a project entity propecty you require 
    `PROJECT_ADMIN` scope.
+ * The value stored in each property must be in valid JSON format.
    
 Keep these limitations in mind when you use entity properties.
 
@@ -215,10 +217,19 @@ an add-on developer. The Confluence content that you can store content propertie
  
 ### <a id="confuence-content-properties-limitations"></a>Limitations of Content Properties
 
-You can store an unlimited number of content properties against a piece of content but each property can have no more than 
-32kB of JSON data stored in it. It is also important to note that every user that is authenticated will be able to read 
-the contents of the content properties. Any authenticated user that has create or update access on a piece of content will 
-have the ability to create or update entity properties on that piece of content.
+Content properties have the following limitations:
+
+ * You can store an unlimited number of content properties against a piece of content but each property can have no more than 
+   32kB of JSON data stored in it.
+ * Content properties can be modified by all addons in the system and exist in a global namespace. It is recommended that you namespace
+   then entity property keys for the properties that you wish to be specific to your addon. This also means that you should
+   avoid storing unencrypted sensitive data in entity properties.
+ * Content properties can only be modified as a logged in user.
+ * The value stored in each property must be in valid JSON format.
+ 
+It is important to note that Content properties are unique in that they provide a mechanism to handle concurrent edits. The 'version'
+field in the request and response ensures that two requests cannot update the same version of the entity properties data. Attempting
+to do so will result in a HTTP error.
 
 ### <a id="confuence-content-properties-example"></a>Confluence content properties example
 
@@ -238,7 +249,7 @@ The structure of the payload in this request is different to entity and add-on p
  * You need to provide the key in the JSON data as well as the URI
  * You need to provide a version number with the data. That version number must be higher than the
    previous version number or '1' if it is a brand new piece of content.
- * The actual value of the content value is still a JSON blob but it is nested inside the 'value' field of the root JSON object.
+ * The actual data you wish to store must still be a JSON blob but it is nested inside the 'value' field of the root JSON object.
 
 To update that property in the future you would need to bump the version number, like so:
 
@@ -247,7 +258,7 @@ To update that property in the future you would need to bump the version number,
     { 
         "key": "my-property",
         "version": { "number": 2 },
-        "value": {"party": { "attendees": ["alex", "betty", "charles", "davinda"], "attendeeCount": 4 }}
+        "value": {"party": { "attendees": ["antman", "batman", "catwoman", "deadpool"], "attendeeCount": 4 }}
     }
 
 Each of these PUT requests will return the same data as a GET request on this resource. A get
@@ -289,7 +300,8 @@ These examples show how you can get and set content properties on your confluenc
 
 ## <a id="conditions-on-host-properties"></a>Conditions based on host properties
 
-Add-on properties can be referenced in the `entity_property_equal_to` condition decide wether or not to show a web fragment. For example, the following is a valid condition:
+Add-on properties can be referenced in the `entity_property_equal_to` condition to decide whether or not to show a web fragment. 
+For example, the following is a valid condition on the addon property `activatedForUsers`:
 
     {
         condition: "entity_property_equal_to",
@@ -300,4 +312,6 @@ Add-on properties can be referenced in the `entity_property_equal_to` condition 
         }
     }
     
-You can use this to decied wether or not to show web fragments based on data that you have stored in add-on properties.
+Only if that property is set to true against the addon will the condition allow the web fragment to show. Thus you can use this to 
+decide wether or not to show web fragments based on data that you have stored in add-on properties. This is very useful 
+when you have host application wide configuration that you wish to rely upon.
