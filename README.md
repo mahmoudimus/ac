@@ -57,9 +57,12 @@ Contributions are encouraged!
 	* `api` - a draft application programming interface for the plugin
 	* `core` - the core cross-product implementation
 	* `core-extensions` - cross-product extensions for web fragments, webhooks etc.
+    * [`extension-spi`](components/extension-spi) - a draft service provider interface containing components that the 
+    host application or plugin can provide in order to extend Connect
+    * `host-spi` - a draft service provider interface containing components that a host application needs to provide in 
+    order to support Connect
+    * `modules` - bean representations of add-on JSON descriptor elements
 	* `reference-plugin` - a cross-product reference implementation of some SPI interfaces
-	* `modules` - bean representations of add-on JSON descriptor elements
-	* `spi` - a draft service provider interface for the plugin
 * `confluence` - the parent of all Confluence-specific modules
     * `confluence-integration-tests` - Confluence-specific integration tests for the plugin
 	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
@@ -73,13 +76,13 @@ Contributions are encouraged!
 * [`jsapi`](jsapi) - builds the JavaScript API based on [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js)
 * `plugin` - groups the other modules into a plugin
 * `tests` - the parent of all non-product-specific test modules
-    * `descriptor-validation-tests` - JSON schema validation of all public add-ons for JIRA and Confluence on Atlassian Marketplace
     * `core-integration-tests` - integration tests for the plugin's core functionality
+    * `descriptor-validation-tests` - JSON schema validation of all public add-ons for JIRA and Confluence on Atlassian Marketplace
     * `integration-tests-support` - classes and utilities useful to both core and product-specific integration test modules
+    * `marketplace-support` - utilities for working with Atlassian Marketplace in tests
     * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
     * `test-support-plugin` - a collection of test utility classes
     * `wired-tests` - wired tests for the plugin
-    * `marketplace-support` - utilities for working with Atlassian Marketplace in tests
 
 ### Branches
 
