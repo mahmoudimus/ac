@@ -63,12 +63,10 @@ project administration pages.
 
 JIRA Software supports these context variables.
 
- * `board.id`
- * `board.type`
- * `board.screen` (available for plugin points that are displayed on different board screens)
- * `board.mode` <span class="aui-lozenge">DEPRECATED</span> in favor of `board.screen` 
- * `sprint.id`
- * `sprint.state` 
+ * `board.id`, `board.type`, 
+ `board.screen` (available for plugin points that are displayed in multiple board screens),
+ `board.mode` <span class="aui-lozenge">DEPRECATED</span> in favor of `board.screen` 
+ * `sprint.id`, `sprint.state` 
 
 ## <a name="additional-parameters-confluence"></a>Confluence
 
