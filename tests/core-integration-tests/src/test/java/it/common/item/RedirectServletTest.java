@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import it.common.MultiProductWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -152,6 +153,15 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
         String addOnKey = "not-existing-add-onn";
         HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
         assertThat(response.getResponseCode(), is(HttpStatus.SC_NOT_FOUND));
+    }
+
+    @Test
+    public void shouldReturnNotFoundIfAddonHasBeenUninstalled() throws Exception
+    {
+        runner.stopAndUninstall();
+
+        HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
+        assertThat(response.getResponseCode(), Is.is(HttpStatus.SC_NOT_FOUND));
     }
 
     private HttpURLConnection doRedirectRequest(URI uri) throws IOException

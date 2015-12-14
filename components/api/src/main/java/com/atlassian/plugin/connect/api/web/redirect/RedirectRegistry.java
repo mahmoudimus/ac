@@ -11,5 +11,7 @@ public interface RedirectRegistry
 {
     void register(String addonKey, String moduleKey, RedirectData redirectData);
 
+    void unregisterAll(String addonKey);
+
     Optional<RedirectData> get(String addonKey, String moduleKey);
 }
