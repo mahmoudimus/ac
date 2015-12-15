@@ -20,10 +20,8 @@ import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
@@ -120,7 +118,7 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
 
     private static String extractRelativePath(URI targetUri, URI addOnBaseUri)
     {
-        String path = targetUri.getPath();
+        String path = targetUri.getRawPath();
         final String targetString = targetUri.toString();
         final String baseString = addOnBaseUri.toString();
 
@@ -128,7 +126,7 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
         {
             if (targetString.startsWith(baseString))
             {
-                path = URI.create(StringUtils.removeStart(targetString, baseString)).getPath();
+                path = URI.create(StringUtils.removeStart(targetString, baseString)).getRawPath();
             }
             else
             {
