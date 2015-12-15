@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.rest.data;
 import javax.annotation.concurrent.Immutable;
 
 import com.atlassian.fugue.Either;
-import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnProperty;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonProperty;

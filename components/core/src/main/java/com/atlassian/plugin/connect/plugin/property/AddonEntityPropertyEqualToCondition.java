@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnProperty;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectCondition;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionContext;
 import com.atlassian.plugin.web.Condition;

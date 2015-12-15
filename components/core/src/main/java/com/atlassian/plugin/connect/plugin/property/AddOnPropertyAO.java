@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.property;
 
+import com.atlassian.plugin.connect.api.plugin.property.AddOnProperty;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import net.java.ao.Entity;
 import net.java.ao.schema.Indexed;
@@ -9,7 +10,7 @@ import net.java.ao.schema.Unique;
 
 /**
  * Active object representation of an add-on property.
- * @see com.atlassian.plugin.connect.plugin.property.AddOnProperty
+ * @see AddOnProperty
  */
 public interface AddOnPropertyAO extends Entity
 {
@@ -40,5 +41,7 @@ public interface AddOnPropertyAO extends Entity
     @StringLength(StringLength.UNLIMITED)
     String getValue();
     void setValue(String value);
+
+
 
 }

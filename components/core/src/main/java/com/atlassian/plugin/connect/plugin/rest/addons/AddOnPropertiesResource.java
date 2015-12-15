@@ -19,9 +19,9 @@ import javax.ws.rs.core.Response;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyIterable;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnProperty;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnPropertyIterable;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;

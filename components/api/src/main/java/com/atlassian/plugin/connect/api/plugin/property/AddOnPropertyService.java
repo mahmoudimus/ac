@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.property;
+package com.atlassian.plugin.connect.api.plugin.property;
 
 import java.util.Optional;
 
@@ -94,6 +94,16 @@ public interface AddOnPropertyService
      * OnSuccess is called with AddOnPropertyIterable that was retrieved.
      */
     GetAllServiceResult getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey);
+
+    /**
+     * Returns a list of all properties for a given add-on. This method does not check any permissions, but checks whether the add-on exists.
+     *
+     * @param addOnKey the key of the add-on that owns the property
+     * @return GetAllServiceResult which calls one of two callbacks: OnFailed or OnSuccess,
+     * OnFailed is called with OperationResult explaining the reason
+     * OnSuccess is called with AddOnPropertyIterable that was retrieved.
+     */
+    GetAllServiceResult getAddOnProperties(@Nonnull String addOnKey);
 
 
     /**

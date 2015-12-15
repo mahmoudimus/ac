@@ -6,9 +6,12 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.atlassian.plugin.connect.api.plugin.property.AddOnProperty;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.TransactionAction;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -30,6 +33,7 @@ import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.Pu
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Component
+@ExportAsService(AddOnPropertyService.class)
 public class AddOnPropertyServiceImpl implements AddOnPropertyService
 {
 
@@ -213,15 +217,27 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
+    public GetAllServiceResult getAddOnProperties(@Nonnull final String addOnKey)
+    {
+        ValidationResult<String> validationResult = validateIfAddOnExists(checkNotNull(addOnKey));
+        return getAddOnProperties(validationResult);
+    }
+
+    @Override
     public GetAllServiceResult getAddOnProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey)
     {
         ValidationResult<String> validationResult = validateListProperties(user, sourcePluginKey, checkNotNull(addOnKey));
-        if (validationResult.isValid())
+        return getAddOnProperties(validationResult);
+    }
+
+    private GetAllServiceResult getAddOnProperties(final ValidationResult<String> validatedAddOnKey)
+    {
+        if (validatedAddOnKey.isValid())
         {
-            String input = validationResult.getValue().get();
-            return new GetAllServiceResult.Success(store.getAllPropertiesForAddOnKey(input));
+            String addOnKey = validatedAddOnKey.getValue().get();
+            return new GetAllServiceResult.Success(store.getAllPropertiesForAddOnKey(addOnKey));
         }
-        return new GetAllServiceResult.Fail(validationResult.getError().get());
+        return new GetAllServiceResult.Fail(validatedAddOnKey.getError().get());
     }
 
     private Optional<OperationStatus> validateCommonParameters(UserProfile user, String sourceAddOnKey, String addOnKey, String propertyKey)
@@ -258,7 +274,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     private ValidationResult<SetPropertyInput> validateSetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, final String propertyKey, final String value)
     {
         Optional<OperationStatus> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey,
-            propertyKey);
+                propertyKey);
         if (validationError.isPresent())
         {
             return ValidationResult.fromError(validationError.get());
@@ -273,7 +289,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     private ValidationResult<GetOrDeletePropertyInput> validateDeletePropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         Optional<OperationStatus> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey,
-            propertyKey);
+                propertyKey);
         if (validationError.isPresent())
         {
             return ValidationResult.fromError(validationError.get());
@@ -291,6 +307,10 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         {
             return ValidationResult.fromError(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
+        return validateIfAddOnExists(addOnKey);
+    }
+
+    private ValidationResult<String> validateIfAddOnExists(String addOnKey) {
         if (!connectAddonRegistry.hasAddonWithKey(addOnKey))
         {
             return ValidationResult.fromError(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);

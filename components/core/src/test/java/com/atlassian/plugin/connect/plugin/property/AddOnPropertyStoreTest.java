@@ -8,6 +8,8 @@ import java.util.Optional;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.fugue.Iterables;
 
+import com.atlassian.plugin.connect.api.plugin.property.AddOnProperty;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnPropertyIterable;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 

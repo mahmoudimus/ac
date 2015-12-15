@@ -7,6 +7,8 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnProperty;
+import com.atlassian.plugin.connect.api.plugin.property.AddOnPropertyIterable;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 
 import com.google.common.collect.ImmutableList;
@@ -48,7 +50,7 @@ public class AddOnPropertyStore
             @Override
             public Optional<AddOnProperty> apply(AddOnPropertyAO addOnPropertyAO)
             {
-                return Optional.of(AddOnProperty.fromAO(addOnPropertyAO));
+                return Optional.of(AddOnPropertyFactory.fromAO(addOnPropertyAO));
             }
         });
     }
@@ -69,14 +71,14 @@ public class AddOnPropertyStore
 
             AddOnPropertyAO newPropertyAO = createAddOnProperty(addOnKey, propertyKey, value);
             newPropertyAO.save();
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Optional.of(AddOnProperty.fromAO(
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Optional.of(AddOnPropertyFactory.fromAO(
                 newPropertyAO)));
         }
         else
         {
             AddOnPropertyAO property = createAddOnProperty(addOnKey, propertyKey, value);
             property.save();
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_CREATED, Optional.of(AddOnProperty.fromAO(
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_CREATED, Optional.of(AddOnPropertyFactory.fromAO(
                 property)));
         }
     }
@@ -110,7 +112,7 @@ public class AddOnPropertyStore
             public AddOnPropertyIterable doInTransaction()
             {
                 ImmutableList<AddOnPropertyAO> addOnPropertyAOList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
-                return AddOnPropertyIterable.fromAddOnPropertyAOList(addOnPropertyAOList);
+                return AddOnPropertyFactory.fromAddOnPropertyAOList(addOnPropertyAOList);
             }
         });
     }
