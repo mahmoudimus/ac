@@ -171,6 +171,9 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
 
         openPage(page);
         verifyIssuedAtTime(lastIssuedAtTime, PARAMETER_CAPTURING_PAGE_SERVLET);
+
+        // go back to confluence page, so next test when will use logout method, deletes cookies from the right domain.
+        goToPageWithLink(JWT_EXPIRY_PAGE_KEY);
     }
 
     // because we issue a new JWT when it is clicked
