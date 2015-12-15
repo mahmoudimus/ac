@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 
+import org.apache.log4j.Level;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.AfterClass;
@@ -37,6 +38,8 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void setupConfluenceAndStartConnectAddOn() throws Exception
     {
+        rpc.setLogLevel("com.atlassian.plugin.connect.confluence", Level.DEBUG);
+
         randomAddOnKey = AddonTestUtils.randomAddOnKey();
         moduleKey = "my-blueprint";
         completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + addonAndModuleKey(randomAddOnKey, moduleKey) + "-web-item";
@@ -69,6 +72,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
         {
             runner.stopAndUninstall();
         }
+        rpc.setLogLevel("com.atlassian.plugin.connect.confluence", Level.INFO);
     }
 
     @Test

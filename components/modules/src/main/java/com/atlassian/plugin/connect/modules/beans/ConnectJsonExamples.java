@@ -8,6 +8,7 @@ import java.util.Map;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateContextBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
@@ -112,6 +113,7 @@ public class ConnectJsonExamples
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String BLUEPRINT_TEMPLATE_CONTEXT_EXAMPLE = createBlueprintTemplateExample();
+    public static final String BLUEPRINT_POST_BODY_EXAMPLE = createBlueprintPostBodyExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
     public static final String CONTENT_PROPERTY_UI_SUPPORT = createAttachmentTypeUISupportExample();
     public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createContentPropertyIndexExtractionConfigurationExample();
@@ -409,6 +411,12 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("blueprints", blueprintModuleBean));
+    }
+
+    private static String createBlueprintPostBodyExample()
+    {
+        BlueprintContextPostBody body = new BlueprintContextPostBody("addon-key", "blueprint-key", "SPACEKEY", "edd16ba6-0d41-4313-8bb9-84dc82cf6e7c");
+        return gson.toJson(body);
     }
 
     private static String createBlueprintTemplateExample()

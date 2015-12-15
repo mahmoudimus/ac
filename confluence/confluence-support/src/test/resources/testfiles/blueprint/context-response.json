@@ -1,0 +1,20 @@
+{
+  "ContentPageTitle": {
+    "value": "test page title for something"
+  },
+  "custom1": {
+    "value": "something 1"
+  },
+  "custom2": {
+    "value": "something 2",
+    "representation": "wiki"
+  },
+  "custom3": {
+    "value": "something 3",
+    "representation": "storage"
+  },
+  "custom4": {
+    "value": "<ac:structured-macro ac:name=\"cheese\" ac:schema-version=\"1\"/> ",
+    "representation": "storage"
+  }
+}

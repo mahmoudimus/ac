@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.util.concurrent.Promise;
 
+import org.apache.http.entity.ContentType;
+
 /**
  * Retrieves and caches http content.
  */
@@ -25,7 +27,10 @@ public interface HttpContentRetriever
      * @param method                 the HTTP method to use
      * @param url                    the url to hit
      * @param parameters             the parameters to use.
-     * @param headers                the headers
+     * @param headers                the headers to use. 'Content-Type' is ignored, and is set
+     *                               to {@link ContentType#APPLICATION_FORM_URLENCODED}.
+     *                               Use {@link #async(AuthorizationGenerator, HttpMethod, URI, Map, Map, InputStream, String)}
+     *                               if you want to use a different content type.
      * @param addOnKey               the key of the add-on from which to retrieve the content
      * @return a promise of the retrieved content
      * @since 0.10
@@ -48,11 +53,10 @@ public interface HttpContentRetriever
      * @param method                 the HTTP method to use
      * @param url                    the url to hit
      * @param parameters             the parameters to use.
-     * @param headers                the headers
+     * @param headers                the headers to use. If 'Content-Type' is null, then defaults to {@link ContentType#APPLICATION_JSON}
      * @param body                   the inputstream which returns the body, if method is POST, or PUT, or TRACE.
      * @param addOnKey               the key of the add-on from which to retrieve the content
      * @return a promise of the retrieved content
-     * @since 0.10
      */
     Promise<String> async(AuthorizationGenerator authorizationGenerator,
                           HttpMethod method,

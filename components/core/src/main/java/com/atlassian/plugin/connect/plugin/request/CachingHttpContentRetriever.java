@@ -48,7 +48,7 @@ import static com.google.common.collect.Maps.newHashMap;
 public final class CachingHttpContentRetriever implements HttpContentRetriever
 {
     private static final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
-    private static final ByteArrayInputStream EMPTY_INPUTSTREAM = new ByteArrayInputStream(new byte[0]);
+    private static final ByteArrayInputStream EMPTY_STREAM = new ByteArrayInputStream(new byte[0]);
 
     private static final Set<HttpMethod> METHODS_WITH_BODY = Sets.immutableEnumSet(HttpMethod.POST, HttpMethod.PUT);
     private static final Set<HttpMethod> METHODS_WITH_QUERY_PARAMS = Sets.immutableEnumSet(HttpMethod.GET);
@@ -80,15 +80,18 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
                                  Map<String, String> headers,
                                  String addOnKey)
     {
-        InputStream bodyStream = EMPTY_INPUTSTREAM;
+        checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
+
+        InputStream body = EMPTY_STREAM;
         ImmutableMap.Builder<String, String> modifiedHeader = ImmutableMap.builder();
         if (contains(METHODS_WITH_BODY, method))
         {
+            /*we default to 'form-url-encoded' when we call this particular overload of #async(), for compatibility reasons*/
             modifiedHeader.putAll(headers)
                           .put(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
-            bodyStream = IOUtils.toInputStream(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(parameters)));
+            body = IOUtils.toInputStream(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(parameters)));
         }
-        return async(authorizationGenerator, method, url, parameters, headers, bodyStream, addOnKey);
+        return async(authorizationGenerator, method, url, parameters, headers, body, addOnKey);
     }
 
     @Override

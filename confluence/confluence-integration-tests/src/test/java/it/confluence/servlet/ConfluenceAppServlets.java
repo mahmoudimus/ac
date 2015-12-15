@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 
 import com.atlassian.connect.test.confluence.pageobjects.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextRequestTypeToken;
+import com.atlassian.plugin.connect.confluence.blueprint.RequestTypeToken;
 import com.atlassian.plugin.connect.test.common.servlet.BodyExtractor;
 import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
@@ -57,7 +57,7 @@ public class ConfluenceAppServlets
     private static class JsonExtractor implements BodyExtractor
     {
         private static final Gson GSON = new Gson();
-        private static final Type requestType = new ConnectBlueprintContextRequestTypeToken().getType();
+        private static final Type requestType = new RequestTypeToken().getType();
 
         @Override
         public Map<String, String> extractAll(String jsonString)

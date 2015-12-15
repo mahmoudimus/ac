@@ -7,6 +7,6 @@ import com.google.gson.reflect.TypeToken;
 /**
  *
  */
-public class ConnectBlueprintContextRequestTypeToken extends TypeToken<Map<String, String>>
+public class RequestTypeToken extends TypeToken<Map<String, String>>
 {
 }

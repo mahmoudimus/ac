@@ -7,7 +7,7 @@ import com.atlassian.confluence.plugins.createcontent.extensions.ContentTemplate
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProvider;
-import com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider;
+import com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -130,8 +130,8 @@ public class BlueprintModuleProviderTest
 
             contentTemplateModuleDescriptor.enabled();
             //context provider is only available after the module is enabled.
-            assertTrue("ConnectBlueprintContextProvider not returned from getContextProvider" , contentTemplateModuleDescriptor.getContextProvider() instanceof ConnectBlueprintContextProvider);
-            ConnectBlueprintContextProvider context = (ConnectBlueprintContextProvider) contentTemplateModuleDescriptor.getContextProvider();
+            assertTrue("ConnectBlueprintContextProvider not returned from getContextProvider" , contentTemplateModuleDescriptor.getContextProvider() instanceof BlueprintContextProvider);
+            BlueprintContextProvider context = (BlueprintContextProvider) contentTemplateModuleDescriptor.getContextProvider();
             assertEquals("the context url either doesn't match, or needs to be a relative url", "/blueprints/context", context.getContextUrl());
             assertEquals(PLUGIN_KEY, context.getAddonKey());
             assertEquals(MODULE_KEY, context.getBlueprintKey());

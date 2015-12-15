@@ -18,9 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.REMOTE_ADDON_KEY;
-import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.CONTENT_TEMPLATE_KEY;
-import static com.atlassian.plugin.connect.confluence.blueprint.ConnectBlueprintContextProvider.CONTEXT_URL_KEY;
+import static com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider.REMOTE_ADDON_KEY;
+import static com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider.CONTENT_TEMPLATE_KEY;
+import static com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider.CONTEXT_URL_KEY;
 
 /**
  * The {@link com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean} to
@@ -71,7 +71,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         if (contextUrl != null)
         {
             Element contextProvider = contentTemplateElement.addElement("context-provider");
-            contextProvider.addAttribute("class", ConnectBlueprintContextProvider.class.getName());
+            contextProvider.addAttribute("class", BlueprintContextProvider.class.getName());
             contextProvider.addElement("param")
                                   .addAttribute("name", CONTEXT_URL_KEY)
                                   .addAttribute("value", contextUrl);
