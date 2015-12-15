@@ -35,16 +35,11 @@ public class RemoteMessageGeneralPage extends ConnectAddOnPage implements Page
 
     public void openInfoMessage()
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id("display-message"));
-                waitUntilTrue(element.timed().isVisible());
-                element.click();
-                return null;
-            }
+        runInFrame(() -> {
+            PageElement element = elementFinder.find(By.id("display-message"));
+            waitUntilTrue(element.timed().isVisible());
+            element.click();
+            return null;
         });
     }
 
