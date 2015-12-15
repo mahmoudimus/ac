@@ -4,9 +4,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectGeneralTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteNavigatorGeneralPage;
 import it.common.MultiProductWebDriverTestBase;
+
+import static org.junit.Assert.assertEquals;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,12 +48,14 @@ public class TestNavigator extends MultiProductWebDriverTestBase
     @Test
     public void testNavigateToDashboard() throws Exception
     {
+        loginAndClickToNavigate("navigate-to-dashboard");
+        assertEquals(product.getProductInstance().getContextPath(), "/confluence");
+    }
+
+    public void loginAndClickToNavigate(String id) {
         RemoteNavigatorGeneralPage page = loginAndVisit(testUserFactory.basicUser(),
                 RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
-        ConnectGeneralTestPage dashboard = page.clickToNavigate("navigate-to-dashboard");
-
-        // test the navigation happened
-
+        page.open(id);
     }
 }

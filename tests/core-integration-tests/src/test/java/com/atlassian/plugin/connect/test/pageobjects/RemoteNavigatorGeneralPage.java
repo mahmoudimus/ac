@@ -31,11 +31,6 @@ public class RemoteNavigatorGeneralPage extends ConnectAddOnPage implements Page
         return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 
-    public ConnectGeneralTestPage clickToNavigate(String id) {
-        open(id);
-        return pageBinder.bind(ConnectGeneralTestPage.class);
-    }
-
     public void open(final String id)
     {
         runInFrame(() -> {
