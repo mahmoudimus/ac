@@ -22,7 +22,7 @@
         <script type="text/javascript">
             function navigateToPage() {
                 AP.require('navigator', function(navigator) {
-                    navigator.go("contentview", {contentId: 98311);
+                    navigator.go("contentview", {contentId: 98311});
                 });
             }
         </script>

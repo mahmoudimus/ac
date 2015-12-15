@@ -79,7 +79,7 @@ public class TestNavigator extends MultiProductWebDriverTestBase
         loginAndClickToNavigate("navigate-to-edit-page");
 
         String relativeUrl = getRelativeUrlFromWebDriver();
-        assertEquals("/editpage.action?pageId=98311", relativeUrl);
+        assertEquals("/pages/editpage.action?pageId=98311", relativeUrl);
 
         makeSureNo404s();
     }
