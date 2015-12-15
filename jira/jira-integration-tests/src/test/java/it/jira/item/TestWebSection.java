@@ -3,6 +3,7 @@ package it.jira.item;
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.jira.pageobjects.components.menu.JiraAuiDropdownMenu;
 import com.atlassian.pageobjects.elements.PageElement;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -101,7 +102,7 @@ public class TestWebSection extends JiraWebDriverTestBase
         PageElement item = dropdown.getItem(By.id(addonAndModuleKey(PLUGIN_KEY, CONTENT_WEB_ITEM_ID)));
 
         assertNotNull("Web item within web section should be found", item);
-        assertTrue("Web item url within web section should be correct", item.getAttribute("href").contains(CONTENT_WEB_ITEM_URL));
+        assertTrue("Web item url within web section should be correct", item.getAttribute("href").contains(RedirectServletPath.forModule(PLUGIN_KEY, CONTENT_WEB_ITEM_ID)));
         assertEquals("Web item text within web section should be correct", CONTENT_WEB_ITEM_NAME, item.getText());
     }
 
