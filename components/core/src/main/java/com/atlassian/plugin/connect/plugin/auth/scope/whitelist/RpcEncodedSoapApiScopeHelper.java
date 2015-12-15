@@ -1,20 +1,23 @@
 package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
-import com.atlassian.fugue.Option;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.plugin.auth.scope.ApiResourceInfo;
+
 import com.google.common.base.Function;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dom4j.Document;
 import org.dom4j.Element;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import static com.atlassian.plugin.connect.api.util.Dom4jUtils.readDocument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -60,31 +63,31 @@ public final class RpcEncodedSoapApiScopeHelper
         })), httpMethod);
     }
     
-    public static Option<Pair<String,String>> getMethod(HttpServletRequest rq)
+    public static Optional<Pair<String,String>> getMethod(HttpServletRequest rq)
     {
         Document doc = readDocument(rq);
         if(null == doc)
         {
-            return Option.none();
+            return Optional.empty();
         }
         Element root = doc.getRootElement();
         if(null == root)
         {
-            return Option.none();
+            return Optional.empty();
         }
         Element body = root.element("Body");
         if(null == body)
         {
-            return Option.none();
+            return Optional.empty();
         }
         Element methodElement = (Element) body.elements().get(0);
         if(null == methodElement)
         {
-            return Option.none();
+            return Optional.empty();
         }
         String name = methodElement.getName();
         String namespace = methodElement.getNamespaceURI();
-        return Option.some(Pair.pair(namespace, name));
+        return Optional.of(Pair.pair(namespace, name));
     }
 
     public boolean allow(HttpServletRequest request)
@@ -97,8 +100,8 @@ public final class RpcEncodedSoapApiScopeHelper
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {
-            Option<Pair<String,String>> maybeNamespaceAndName = getMethod(request);
-            if(maybeNamespaceAndName.isEmpty())
+            Optional<Pair<String,String>> maybeNamespaceAndName = getMethod(request);
+            if(!maybeNamespaceAndName.isPresent())
             {
                 return false;
             }

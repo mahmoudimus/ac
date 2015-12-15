@@ -98,11 +98,9 @@ public class AddOnCondition implements Condition
         final URI uri = URI.create(uriString);
         final String uriPath = uri.getPath();
         final String version = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
-        final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION,
-                version);
+        final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
         Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddOnKey())
-                .executeAsync(HttpMethod.GET, uri,
-                        Collections.<String, String[]>emptyMap(), httpHeaders);
+                .executeAsync(HttpMethod.GET, uri, Collections.<String, String[]>emptyMap(), httpHeaders);
 
         String response;
         try

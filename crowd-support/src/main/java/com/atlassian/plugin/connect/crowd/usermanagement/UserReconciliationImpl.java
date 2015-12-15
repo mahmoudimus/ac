@@ -1,13 +1,11 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.Optional;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.model.user.UserTemplate;
-
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.google.common.base.Optional;
-
-import org.springframework.stereotype.Component;
 
 @ConfluenceComponent
 @JiraComponent
@@ -20,7 +18,7 @@ public class UserReconciliationImpl implements UserReconciliation
                 && user.getDisplayName().equals(requiredDisplayName)
                 && user.isActive() == active)
         {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         UserTemplate userTemplate = new UserTemplate(user);

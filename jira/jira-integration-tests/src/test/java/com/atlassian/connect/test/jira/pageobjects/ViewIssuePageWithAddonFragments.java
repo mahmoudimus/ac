@@ -1,5 +1,7 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
@@ -8,8 +10,6 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteXdmEventPanel;
-
-import com.google.common.base.Optional;
 
 import org.openqa.selenium.By;
 

@@ -1,16 +1,13 @@
 package at.confluence;
 
+import java.util.Optional;
+
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
-import com.atlassian.plugin.connect.test.common.util.TestUser;
-import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
-import com.google.common.base.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,14 +25,12 @@ import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 
 @Category (OnDemandAcceptanceTest.class)
-public class TestConfluenceStaticDescriptor
+public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
 {
     private static final String WEB_ITEM_TEXT = "AC Action";
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceStaticDescriptor.class);
-    private static final TestUser ADMIN = new TestUser("admin");
     public static final String DASHBOARD_ONBOARDING_DISABLED = "dashboard.onboarding.disabled";
 
-    private final ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
     private final ExternalAddonInstaller externalAddonInstaller =
             new ExternalAddonInstaller(product.getProductInstance().getBaseUrl(), ADMIN);
     private final ConnectPageOperations connectPageOperations = new ConnectPageOperations(
@@ -77,7 +72,7 @@ public class TestConfluenceStaticDescriptor
     public void testAcDashboardWebItemIsPresent()
     {
         product.login(toConfluenceUser(ADMIN), DashboardPage.class);
-        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
+        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>empty());
     }
 
     @After

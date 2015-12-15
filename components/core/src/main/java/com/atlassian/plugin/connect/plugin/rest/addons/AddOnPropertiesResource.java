@@ -1,25 +1,7 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
-import com.atlassian.fugue.Either;
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyIterable;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl;
-import com.atlassian.plugin.connect.plugin.rest.RestResult;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
-import com.atlassian.sal.api.message.I18nResolver;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-import com.google.common.base.Function;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -34,7 +16,28 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
+
+import com.atlassian.fugue.Either;
+import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyIterable;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl;
+import com.atlassian.plugin.connect.plugin.rest.RestResult;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.message.I18nResolver;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+
+import com.google.common.base.Function;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * REST endpoint for add-on properties
@@ -244,12 +247,12 @@ public class AddOnPropertiesResource
         return applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/addons" + "/" + key;
     }
 
-    private Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request)
+    private Function<Optional<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request)
     {
-        return new Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
+        return new Function<Optional<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
         {
             @Override
-            public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Option<AddOnProperty> propertyOption)
+            public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Optional<AddOnProperty> propertyOption)
             {
                 return AddOnPropertyService.ServiceConditionResult.SUCCESS();
             }

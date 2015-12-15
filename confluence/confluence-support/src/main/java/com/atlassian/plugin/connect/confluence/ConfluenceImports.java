@@ -19,6 +19,7 @@ import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.core.task.MultiQueueTaskManager;
+import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ConfluenceImport;
 
@@ -29,7 +30,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
 @SuppressWarnings ("ALL")
-@ConfluenceComponent
+@Scanned
 public class ConfluenceImports
 {
     @Inject

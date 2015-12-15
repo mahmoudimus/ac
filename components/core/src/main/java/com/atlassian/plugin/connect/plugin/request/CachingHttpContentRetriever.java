@@ -1,16 +1,14 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
@@ -109,7 +107,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
         request = request.setAttributes(getAttributes(addOnKey));
-        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
+        Optional<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
         Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
         request = request.setHeaders(allHeaders);
 
@@ -146,17 +144,17 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         return properties;
     }
 
-    private Map<String, String> getAllHeaders(Map<String, String> headers, Option<String> authHeader)
+    private Map<String, String> getAllHeaders(Map<String, String> headers, Optional<String> authHeader)
     {
         final ImmutableMap.Builder<String, String> allHeaders = ImmutableMap.<String, String>builder().putAll(headers);
-        if (authHeader.isDefined())
+        if (authHeader.isPresent())
         {
             allHeaders.put("Authorization", authHeader.get());
         }
         return allHeaders.build();
     }
 
-    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
+    private Optional<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
     {
         return authorizationGenerator.generate(method, url, allParameters);
     }

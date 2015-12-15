@@ -1,27 +1,29 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import com.atlassian.fugue.Option;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
+
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.httpclient.api.ResponseTransformation;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
-import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.features.DarkFeatureManager;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.net.URI;
-import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
@@ -61,7 +63,7 @@ public class CachingHttpContentRetrieverTest
     @Before
     public void beforeEachTest()
     {
-        when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMap())).thenReturn(Option.<String>none());
+        when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMap())).thenReturn(Optional.empty());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         when(plugin.getPluginInformation()).thenReturn(pluginInformation);
         when(httpClientFactory.getInstance()).thenReturn(httpClient);

@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -8,27 +12,24 @@ import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil;
+import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.connect.spi.HostProperties;
+import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nonnull;
-import java.util.Set;
-
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.Constants;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.Constants;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.usernameForAddon;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
@@ -38,26 +39,26 @@ public class CrowdAddOnUserService implements ConnectUserService
 {
     public static final PasswordCredential PREVENT_LOGIN = PasswordCredential.NONE;
 
-    private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
+    private final CrowdAddOnUserProvisioningService crowdAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private static final Logger log = LoggerFactory.getLogger(CrowdAddOnUserService.class);
     private final ConnectCrowdService connectCrowdService;
     private final HostProperties hostProperties;
 
     @Autowired
-    public CrowdAddOnUserService(ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
+    public CrowdAddOnUserService(CrowdAddOnUserProvisioningService crowdAddOnUserProvisioningService,
             ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, ConnectCrowdService connectCrowdService,
             HostProperties hostProperties)
     {
         this.connectCrowdService = connectCrowdService;
         this.hostProperties = hostProperties;
-        this.connectAddOnUserProvisioningService = checkNotNull(connectAddOnUserProvisioningService);
+        this.crowdAddOnUserProvisioningService = checkNotNull(crowdAddOnUserProvisioningService);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
     }
 
     @Nonnull
     @Override
-    public String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddOnUserInitException
+    public String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddonInitException
     {
         try
         {
@@ -70,12 +71,12 @@ public class CrowdAddOnUserService implements ConnectUserService
                 | OperationFailedException
                 | InvalidAuthenticationException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
     }
 
     @Override
-    public void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddOnUserDisableException
+    public void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddonDisableException
     {
         connectCrowdService.disableUser(usernameForAddon(addOnKey));
     }
@@ -88,10 +89,10 @@ public class CrowdAddOnUserService implements ConnectUserService
 
     @Nonnull
     @Override
-    public String provisionAddOnUserForScopes(@Nonnull String addOnKey, @Nonnull String addOnDisplayName, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean addon, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException
     {
-        String username = getOrCreateAddOnUserName(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
-        connectAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
+        String username = getOrCreateAddOnUserName(checkNotNull(addon.getKey()), checkNotNull(addon.getName()));
+        crowdAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
         return username;
     }
 
@@ -119,7 +120,7 @@ public class CrowdAddOnUserService implements ConnectUserService
             throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, OperationFailedException, InvalidAuthenticationException
     {
         String username = user.getName();
-        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
+        for (String group : crowdAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
             {
@@ -137,7 +138,7 @@ public class CrowdAddOnUserService implements ConnectUserService
 
         int numPossibleDefaultGroupsAddedTo = 0;
         String errorMessage = String.format("Could not make user '%s' a member of one of groups ", username);
-        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected())
+        for (String group : crowdAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected())
         {
             try
             {
@@ -150,7 +151,7 @@ public class CrowdAddOnUserService implements ConnectUserService
             }
 
         }
-        if (numPossibleDefaultGroupsAddedTo == 0 && connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0)
+        if (numPossibleDefaultGroupsAddedTo == 0 && crowdAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0)
         {
             log.error(errorMessage + "because none of those groups exist!" +
                     "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +

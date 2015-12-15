@@ -54,7 +54,6 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
             "threaded_comments",
             "tiny_url_supported",
             "user_can_create_personal_space",
-            "user_can_update_user_status",
             "user_logged_in_editable",
             "viewing_content"
     );
