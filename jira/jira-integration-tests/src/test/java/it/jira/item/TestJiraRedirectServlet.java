@@ -16,7 +16,6 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import it.jira.JiraWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,7 +40,7 @@ import static org.junit.Assert.assertThat;
 public class TestJiraRedirectServlet extends JiraWebDriverTestBase
 {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
-    private static final String ADDON_WEBITEM_FOR_LOGGED_USERS = "ac-general-web-item-for-loged";
+    private static final String ADDON_WEBITEM_FOR_LOGGED_USERS = "ac-general-web-item-for-logged";
     private static final String ADDON_WEBITEM_JIRA_CONDITION = "ac-general-web-item-jira-condition";
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
     private static final String WEB_ITEM_ON_URL = "/irwi";
@@ -72,7 +71,7 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
                                 .withKey(ADDON_WEBITEM)
                                 .withTarget(pageTarget)
                                 .withLocation("system.top.navigation.bar")
-                                .withUrl(WEB_ITEM_ON_URL + "?aways_allowed_param={postFunction.id}&restricted_param={project.key}")
+                                .withUrl(WEB_ITEM_ON_URL + "?always_allowed_param={postFunction.id}&restricted_param={project.key}")
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("Only for logged", null))
@@ -132,7 +131,7 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
         HttpURLConnection response = doRedirectRequest(redirectUrl);
         String urlToAddOn = response.getHeaderField("Location");
         assertThat(response.getResponseCode(), Matchers.is(HttpStatus.SC_TEMPORARY_REDIRECT));
-        assertThat(getQueryParam("aways_allowed_param", urlToAddOn), is(postFunctionId));
+        assertThat(getQueryParam("always_allowed_param", urlToAddOn), is(postFunctionId));
         assertThat(getQueryParam("restricted_param", urlToAddOn), isEmptyOrNullString());
     }
 

@@ -42,7 +42,7 @@ import static org.junit.Assert.assertThat;
 public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
 {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
-    private static final String ADDON_WEBITEM_FOR_LOGGED_USERS = "ac-general-web-item-for-loged";
+    private static final String ADDON_WEBITEM_FOR_LOGGED_USERS = "ac-general-web-item-for-logged";
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
     private static final String SPACE = "ds";
     private static final String WEB_ITEM_ON_URL = "/irwi";
@@ -73,7 +73,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
                                 .withKey(ADDON_WEBITEM)
                                 .withTarget(pageTarget)
                                 .withLocation("system.content.action")
-                                .withUrl(WEB_ITEM_ON_URL + "?aways_allowed_param={page.type}&restricted_param={space.key}")
+                                .withUrl(WEB_ITEM_ON_URL + "?always_allowed_param={page.type}&restricted_param={space.key}")
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("Only for logged", null))
@@ -106,7 +106,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
         product.getPageBinder().bind(ConnectAddOnHelloWorldPage.class);
 
         Map<String, String> queryParams = PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET.getParamsFromLastRequest();
-        assertThat(queryParams.get("aways_allowed_param"), is("page"));
+        assertThat(queryParams.get("always_allowed_param"), is("page"));
         assertThat(queryParams.get("restricted_param"), is(SPACE));
     }
 
@@ -121,7 +121,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
 
         HttpURLConnection response = doRedirectRequest(redirectUrl);
         String urlToAddOn = response.getHeaderField("Location");
-        assertThat(getQueryParam("aways_allowed_param", urlToAddOn), is("page"));
+        assertThat(getQueryParam("always_allowed_param", urlToAddOn), is("page"));
         assertThat(getQueryParam("restricted_param", urlToAddOn), isEmptyOrNullString());
     }
 

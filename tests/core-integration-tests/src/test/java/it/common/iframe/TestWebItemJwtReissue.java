@@ -1,5 +1,7 @@
 package it.common.iframe;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,6 @@ import com.atlassian.jwt.reader.JwtReader;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnHelloWorldPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteInlineDialog;
@@ -43,7 +44,6 @@ import it.common.MultiProductWebDriverTestBase;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyIframeURLHasVersionNumber;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
@@ -158,22 +158,23 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void pageClicksGetsNewJwt()
-            throws JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
+    public void pageClicksGetsNewJwt() throws Exception
     {
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_PAGE_KEY);
+        URL webItemUrl = new URL(page.findLinkElement().getAttribute("href"));
 
-        final long timeBeforeClick = getSystemTimeBeforeJwtIssue();
-        openPage(page);
+        long timeBeforeClick = getSystemTimeBeforeJwtIssue();
+        webItemUrl.openConnection().getInputStream();
+
         verifyIssuedAtTime(timeBeforeClick, PARAMETER_CAPTURING_PAGE_SERVLET);
-        goToPageWithLink(JWT_EXPIRY_PAGE_KEY);
 
-        openPage(page);
+        // JWT token's sign time has one second precision.
+        // We have to wait one second to be sure that token from next request is new.
+        Thread.sleep(1000);
+
+        webItemUrl.openConnection().getInputStream();
         verifyIssuedAtTime(lastIssuedAtTime, PARAMETER_CAPTURING_PAGE_SERVLET);
-
-        // go back to confluence page, so next test when will use logout method, deletes cookies from the right domain.
-        goToPageWithLink(JWT_EXPIRY_PAGE_KEY);
     }
 
     // because we issue a new JWT when it is clicked
@@ -222,9 +223,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey)
     {
         product.visit(HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, runner.getAddon().getKey());
-
-        return page;
+        return product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, runner.getAddon().getKey());
     }
 
     private JwtClaimVerifier newIssuedAtTimeClaimVerifier(final long minimumIssueTime)
@@ -269,11 +268,5 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         page.clickAddOnLink();
         RemoteInlineDialog inlineDialog = product.getPageBinder().bind(RemoteInlineDialog.class);
         inlineDialog.hideAndWaitUntilHidden();
-    }
-
-    private void openPage(RemotePluginAwarePage page)
-    {
-        page.clickAddOnLinkWithoutBinding();
-        product.getPageBinder().bind(ConnectAddOnHelloWorldPage.class);
     }
 }

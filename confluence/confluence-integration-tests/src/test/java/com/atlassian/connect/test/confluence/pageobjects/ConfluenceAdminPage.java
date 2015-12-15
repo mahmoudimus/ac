@@ -19,9 +19,6 @@ import org.openqa.selenium.By;
 public class ConfluenceAdminPage implements AdminPage
 {
     @Inject
-    private AtlassianWebDriver driver;
-
-    @Inject
     private PageElementFinder elementFinder;
 
     @Inject
@@ -41,14 +38,8 @@ public class ConfluenceAdminPage implements AdminPage
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
-        clickAddOnLinkWithoutBinding();
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
-    }
-
-    @Override
-    public void clickAddOnLinkWithoutBinding()
-    {
         findLinkElement().click();
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
     }
 
     public String getRemotePluginLinkHref()
@@ -61,7 +52,8 @@ public class ConfluenceAdminPage implements AdminPage
         return findLinkElement().getText();
     }
 
-    private PageElement findLinkElement()
+    @Override
+    public PageElement findLinkElement()
     {
         if (linkElement == null)
         {
