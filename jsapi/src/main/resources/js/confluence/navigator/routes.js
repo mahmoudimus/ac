@@ -4,7 +4,7 @@
         var routes = {
             "dashboard"    : "",
             "contentview"  : "/pages/viewpage.action?pageId={contentId}",
-            "contentedit"  : "/pages/resumedraft.action?draftId={draftId}&draftShareId={shareToken}",
+            "contentedit"  : "/edit{contentType}.action?pageId={contentId}",
             "spacetools"   : "/spaces/viewspacesummary.action?key={spaceKey}",
             "spaceview"    : "/display/{spaceKey}",
             "userprofile"  : "/display/~{username}"
