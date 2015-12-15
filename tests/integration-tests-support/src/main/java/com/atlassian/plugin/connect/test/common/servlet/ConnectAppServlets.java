@@ -142,6 +142,14 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new MustacheServlet("iframe-cookie.mu"));
     }
 
+    /**
+     * @return a servlet that contains 3 buttons to navigate to different parts of confluence
+     */
+    public static HttpServlet navigatorServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-navigator.mu"));
+    }
+
     public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
     {
         return wrapContextAwareServlet(servlet, Lists.<TestServletContextExtractor>newArrayList());
