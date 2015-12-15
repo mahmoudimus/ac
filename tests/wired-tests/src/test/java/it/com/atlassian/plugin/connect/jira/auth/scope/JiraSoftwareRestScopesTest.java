@@ -19,12 +19,13 @@ import static java.util.Arrays.asList;
 
 @Application ("jira")
 @RunWith (AtlassianPluginsTestRunner.class)
-public class JiraAgileRestScopesTest extends ScopeManagerTest
+public class JiraSoftwareRestScopesTest extends ScopeManagerTest
 {
+
     /**
      * These tests are not exhaustive. They touch parts of JIRA Agile API that was selectively made available to Connect apps.
      */
-    public JiraAgileRestScopesTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
+    public JiraSoftwareRestScopesTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
     {
         super(scopeManager, scopeTestHelper, testData());
     }
@@ -32,6 +33,8 @@ public class JiraAgileRestScopesTest extends ScopeManagerTest
     public static Collection<ScopeTestData> testData()
     {
         List<ScopeTestData> params = new ArrayList<>();
+
+        final String publicSoftwareApiPath = "jira/rest/agile/1.0/board";
 
         params.addAll(asList(
                 // RapidView Read
@@ -94,25 +97,25 @@ public class JiraAgileRestScopesTest extends ScopeManagerTest
                 emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/remove", true),
 
                 // All public API methods
-                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board", false),
-                emptyBodyForJira(null, HttpMethod.POST, "jira/rest/agile/1.0/board", false),
-                emptyBodyForJira(null, HttpMethod.PUT, "jira/rest/agile/1.0/board", false),
-                emptyBodyForJira(null, HttpMethod.DELETE, "jira/rest/agile/1.0/board", false),
+                emptyBodyForJira(null, HttpMethod.GET, publicSoftwareApiPath, false),
+                emptyBodyForJira(null, HttpMethod.POST, publicSoftwareApiPath, false),
+                emptyBodyForJira(null, HttpMethod.PUT, publicSoftwareApiPath, false),
+                emptyBodyForJira(null, HttpMethod.DELETE, publicSoftwareApiPath, false),
 
-                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board", true),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "jira/rest/agile/1.0/board", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "jira/rest/agile/1.0/board", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, "jira/rest/agile/1.0/board", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, publicSoftwareApiPath, true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, publicSoftwareApiPath, false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, publicSoftwareApiPath, false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, publicSoftwareApiPath, false),
 
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, "jira/rest/agile/1.0/board", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "jira/rest/agile/1.0/board", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/agile/1.0/board", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, "jira/rest/agile/1.0/board", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, publicSoftwareApiPath, true),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, publicSoftwareApiPath, true),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, publicSoftwareApiPath, true),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, publicSoftwareApiPath, false),
 
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, "jira/rest/agile/1.0/board", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "jira/rest/agile/1.0/board", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "jira/rest/agile/1.0/board", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "jira/rest/agile/1.0/board", true)
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, publicSoftwareApiPath, true),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, publicSoftwareApiPath, true),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, publicSoftwareApiPath, true),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, publicSoftwareApiPath, true)
         ));
         return params;
     }

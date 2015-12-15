@@ -1,0 +1,1 @@
+<meta http-equiv="refresh" content="0; url=jira-software-rest-scopes.html">
