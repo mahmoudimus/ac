@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import com.google.common.base.Objects;
+import java.util.Locale;
 
 /**
  * Pojo to hold the body POST'ed to the addon's blueprint context url.
@@ -11,13 +11,15 @@ public final class BlueprintContextPostBody
     private final String blueprintKey;
     private final String spaceKey;
     private final String userKey;
+    private final Locale userLocale;
 
-    public BlueprintContextPostBody(String addonKey, String blueprintKey, String spaceKey, String userKey)
+    public BlueprintContextPostBody(String addonKey, String blueprintKey, String spaceKey, String userKey, Locale userLocale)
     {
         this.addonKey = addonKey;
         this.blueprintKey = blueprintKey;
         this.spaceKey = spaceKey;
         this.userKey = userKey;
+        this.userLocale = userLocale;
     }
 
     public String getAddonKey()
@@ -40,26 +42,8 @@ public final class BlueprintContextPostBody
         return userKey;
     }
 
-    @Override
-    public boolean equals(Object o)
+    public Locale getUserLocale()
     {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
-        BlueprintContextPostBody body = (BlueprintContextPostBody) o;
-        return Objects.equal(addonKey, body.addonKey) &&
-               Objects.equal(blueprintKey, body.blueprintKey) &&
-               Objects.equal(spaceKey, body.spaceKey) &&
-               Objects.equal(userKey, body.userKey);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hashCode(addonKey, blueprintKey, spaceKey, userKey);
+        return userLocale;
     }
 }

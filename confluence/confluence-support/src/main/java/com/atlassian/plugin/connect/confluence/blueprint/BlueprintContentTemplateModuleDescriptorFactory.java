@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.sal.api.net.RequestFactory;
 
 import org.dom4j.Element;
@@ -18,14 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider.REMOTE_ADDON_KEY;
-import static com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider.CONTENT_TEMPLATE_KEY;
-import static com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider.CONTEXT_URL_KEY;
-
 /**
- * The {@link com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean} to
- * {@link com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor} part of the blueprint
- * mapping.
+ * The {@link BlueprintModuleBean} to {@link WebItemModuleDescriptor} part of the blueprint mapping.
  *
  * @see BlueprintModuleDescriptorFactory
  * @see BlueprintWebItemModuleDescriptorFactory
@@ -73,13 +68,13 @@ public class BlueprintContentTemplateModuleDescriptorFactory
             Element contextProvider = contentTemplateElement.addElement("context-provider");
             contextProvider.addAttribute("class", BlueprintContextProvider.class.getName());
             contextProvider.addElement("param")
-                                  .addAttribute("name", CONTEXT_URL_KEY)
+                                  .addAttribute("name", BlueprintContextProvider.CONTEXT_URL_KEY)
                                   .addAttribute("value", contextUrl);
             contextProvider.addElement("param")
-                                  .addAttribute("name", REMOTE_ADDON_KEY)
+                                  .addAttribute("name", BlueprintContextProvider.REMOTE_ADDON_KEY)
                                   .addAttribute("value", addon.getKey());
             contextProvider.addElement("param")
-                                  .addAttribute("name", CONTENT_TEMPLATE_KEY)
+                                  .addAttribute("name", BlueprintContextProvider.CONTENT_TEMPLATE_KEY)
                                   //we want the raw key since this is going to be sent to the connect plugin, and they can't decode our full key format
                                   .addAttribute("value", bean.getRawKey());
         }

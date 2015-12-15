@@ -259,7 +259,6 @@
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <atlassian.darkfeature.confluence.onboarding.bypass>true</atlassian.darkfeature.confluence.onboarding.bypass>
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
@@ -274,6 +273,7 @@
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>
                                     ${addonconfig.maxpropertiesperplugin}
                                 </com.atlassian.plugin.connect.add_on_properties.max_properties>
+                                <atlassian.darkfeature.confluence.onboarding.bypass>true</atlassian.darkfeature.confluence.onboarding.bypass>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>

@@ -8,15 +8,21 @@ import com.atlassian.plugin.connect.modules.beans.builder.BlueprintTemplateConte
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
 /**
+ * Defines the context of the blueprint.
+ *
  * @exampleJson {@link ConnectJsonExamples#BLUEPRINT_TEMPLATE_CONTEXT_EXAMPLE}
  * @schemaTitle Remote Blueprint Template Context
  */
 public class BlueprintTemplateContextBean
 {
     /**
-     * The URL of the add-on server resource that provides the blueprint template with the blueprintContext variables required for rendering. This URL
-     * will be POST'ed to during the creation of a blueprint with some data, and the expected return value is a JSON object whose keys are the
-     * variables found in the template, and whose values are the values to be used in the substitution.
+     * A URL which confluence will make a POST request to, during the rendering of the blueprint for which this context bean is
+     * associated. The expected return value is a JSON object with string keys, and values of :
+     *
+     * @exampleJson {@link ConnectJsonExamples#BLUEPRINT_CONTEXT_RESPONSE_EXAMPLE}
+     *
+     * #### Example JSON
+     * @exampleJson {@link ConnectJsonExamples#BLUEPRINT_POST_BODY_EXAMPLE}
      */
     @Required
     @StringSchemaAttributes (format = "uri")

@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.confluence.blueprint;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -16,6 +18,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
@@ -31,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.api.request.HttpMethod.POST;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.commons.io.IOUtils.toInputStream;
@@ -111,14 +115,14 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
                                                               emptyMap(),
                                                               toInputStream(buildBody(blueprintContext)));
         String json = retrieveResponse(promise);
-        Map<String, BlueprintContextValue> contextMap = readJsonResponse(json);
-        contextMap.forEach((k, v) -> blueprintContext.put(k, transformValue(v)));
+        List<BlueprintContextValue> contextMap = readJsonResponse(json);
+        contextMap.forEach(v -> blueprintContext.put(v.getIdentifier(), transformValue(v)));
         return blueprintContext;
     }
 
-    private Map<String, BlueprintContextValue> readJsonResponse(String json)
+    private List<BlueprintContextValue> readJsonResponse(String json)
     {
-        Map<String, BlueprintContextValue> contextMap = emptyMap();
+        List<BlueprintContextValue> contextMap = emptyList();
         try
         {
             log.debug("start parsing response json into " + responseType.getTypeName());
@@ -127,7 +131,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
 
             if (log.isDebugEnabled())
             {
-                log.debug(Arrays.toString(contextMap.entrySet().toArray()));
+                log.debug(Arrays.toString(contextMap.toArray()));
             }
             log.debug("finish parsing response json");
         }
@@ -181,7 +185,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
 
     private String transformValue(BlueprintContextValue v)
     {
-        if (Iterables.contains(ContentRepresentation.INPUT_CONVERSION_TO_STORAGE_ORDER, v.getRepresentation()))
+        if (Iterables.contains(ContentRepresentation.INPUT_CONVERSION_TO_STORAGE_ORDER, ContentRepresentation.valueOf(v.getRepresentation())))
         {
             String converted = converter.convert(makeContentBody(v), ContentRepresentation.STORAGE).getValue();
             if (log.isDebugEnabled())
@@ -199,7 +203,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     private ContentBody makeContentBody(BlueprintContextValue v)
     {
         return ContentBody.contentBodyBuilder()
-                .representation(v.getRepresentation())
+                .representation(ContentRepresentation.valueOf(v.getRepresentation()))
                 .value(v.getValue())
                 .build();
     }
@@ -226,10 +230,11 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     {
         UserKey remoteUserKey = userManager.getRemoteUserKey();
         String userKey = remoteUserKey != null ? remoteUserKey.getStringValue() : "";
+        Locale userLocale = Locale.ENGLISH;
         BlueprintContextPostBody body = new BlueprintContextPostBody(addonKey,
                                                                      blueprintKey,
                                                                      blueprintContext.getSpaceKey(),
-                                                                     userKey);
+                                                                     userKey, userLocale);
         //TODO: look into using a PipedInputStream/CircularBuffer if (when?) this body does becomes large (mitigates copying around large strings just to send it)
         String bodyJson = gson.toJson(body);
         if (log.isDebugEnabled())

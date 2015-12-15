@@ -38,9 +38,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- *
- */
 @RunWith(MockitoJUnit44Runner.class)
 public class BlueprintContextProviderTest
 {

@@ -2,13 +2,16 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateContextBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
@@ -114,6 +117,7 @@ public class ConnectJsonExamples
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String BLUEPRINT_TEMPLATE_CONTEXT_EXAMPLE = createBlueprintTemplateExample();
     public static final String BLUEPRINT_POST_BODY_EXAMPLE = createBlueprintPostBodyExample();
+    public static final String BLUEPRINT_CONTEXT_RESPONSE_EXAMPLE = createBlueprintContextResponseExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
     public static final String CONTENT_PROPERTY_UI_SUPPORT = createAttachmentTypeUISupportExample();
     public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createContentPropertyIndexExtractionConfigurationExample();
@@ -413,9 +417,42 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("blueprints", blueprintModuleBean));
     }
 
+    private static String createBlueprintContextResponseExample()
+    {
+        List<BlueprintContextValue> contextValues =  new LinkedList<>();
+        contextValues.add(makeBlueprintContextValueExample1());
+        contextValues.add(makeBlueprintContextValueExample2());
+        contextValues.add(makeBlueprintContextValueExample3());
+        return gson.toJson(contextValues);
+    }
+
+    private static BlueprintContextValue makeBlueprintContextValue(String identifier, String value, String representation)
+    {
+        BlueprintContextValue v1 = new BlueprintContextValue();
+        v1.setIdentifier(identifier);
+        v1.setValue(value);
+        v1.setRepresentation(representation);
+        return v1;
+    }
+
+    private static BlueprintContextValue makeBlueprintContextValueExample1()
+    {
+        return makeBlueprintContextValue("ContentPageTitle", "Unique Page Title 1", "plain");
+    }
+
+    private static BlueprintContextValue makeBlueprintContextValueExample2()
+    {
+        return makeBlueprintContextValue("custom-key1", "custom value 1", "plain");
+    }
+
+    private static BlueprintContextValue makeBlueprintContextValueExample3()
+    {
+        return makeBlueprintContextValue("custom-key2", "<ac:structured-macro ac:name=\\\"cheese\\\" ac:schema-version=\\\"1\\\"/> ", "storage");
+    }
+
     private static String createBlueprintPostBodyExample()
     {
-        BlueprintContextPostBody body = new BlueprintContextPostBody("addon-key", "blueprint-key", "SPACEKEY", "edd16ba6-0d41-4313-8bb9-84dc82cf6e7c");
+        BlueprintContextPostBody body = new BlueprintContextPostBody("addon-key", "blueprint-key", "SPACEKEY", "edd16ba6-0d41-4313-8bb9-84dc82cf6e7c", Locale.FRANCE);
         return gson.toJson(body);
     }
 

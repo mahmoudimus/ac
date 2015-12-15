@@ -21,7 +21,7 @@ public class BlueprintTemplateBean
      * to the add-on base URL.
      */
     @Required
-    @StringSchemaAttributes(format="uri-template")
+    @StringSchemaAttributes(format="uri")
     private String url;
 
     @Required
