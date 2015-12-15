@@ -17,6 +17,7 @@ import it.jira.JiraWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -101,6 +102,12 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
     public void tearDown() throws Exception
     {
         runner.stopAndUninstall();
+    }
+
+    @AfterClass
+    public static void tearDownUrlHandlers()
+    {
+        HttpURLConnection.setFollowRedirects(true);
     }
 
     @Test

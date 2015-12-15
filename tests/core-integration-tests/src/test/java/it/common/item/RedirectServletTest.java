@@ -24,6 +24,7 @@ import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -95,6 +96,12 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     public void tearDown() throws Exception
     {
         runner.stopAndUninstall();
+    }
+
+    @AfterClass
+    public static void tearDownUrlHandlers()
+    {
+        HttpURLConnection.setFollowRedirects(true);
     }
 
     @Test
