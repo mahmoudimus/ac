@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.request;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
