@@ -104,14 +104,14 @@ public class JiraAgileRestScopesTest extends ScopeManagerTest
                 emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "jira/rest/agile/1.0/board", false),
                 emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, "jira/rest/agile/1.0/board", false),
 
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, "jira/rest/agile/1.0/board", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, "jira/rest/agile/1.0/board", true),
                 emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "jira/rest/agile/1.0/board", true),
                 emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/agile/1.0/board", true),
                 emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, "jira/rest/agile/1.0/board", false),
 
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, "jira/rest/agile/1.0/board", false),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "jira/rest/agile/1.0/board", false),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "jira/rest/agile/1.0/board", false),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, "jira/rest/agile/1.0/board", true),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "jira/rest/agile/1.0/board", true),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "jira/rest/agile/1.0/board", true),
                 emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "jira/rest/agile/1.0/board", true)
         ));
         return params;
