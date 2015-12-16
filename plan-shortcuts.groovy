@@ -338,7 +338,9 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenInstallTask()
+        mavenInstallTask(
+                additionalMavenParameters: '#additionalMavenParameters'
+        )
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
                 goal: 'verify -pl tests/plugin-lifecycle-tests -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
@@ -366,7 +368,9 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenInstallTask()
+        mavenInstallTask(
+                additionalMavenParameters: '#additionalMavenParameters'
+        )
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
                 goal: 'verify -pl tests/wired-tests -Pwired -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters',
@@ -428,7 +432,9 @@ projectIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'addition
         commonRequirements()
         checkoutDefaultRepositoryTask()
         setupVncTask()
-        mavenInstallTask()
+        mavenInstallTask(
+                additionalMavenParameters: '#additionalMavenParameters'
+        )
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
                 goal: 'verify -pl #project -Pit -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
@@ -467,10 +473,10 @@ checkoutDefaultRepositoryTask() {
     )
 }
 
-mavenInstallTask() {
+mavenInstallTask(['additionalMavenParameters']) {
     mavenTask(
             description: 'Install',
-            goal: 'clover2:setup install -Pclover -DskipUnits'
+            goal: 'clover2:setup install -Pclover -DskipUnits #additionalMavenParameters'
     )
 }
 
