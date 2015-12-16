@@ -9,13 +9,16 @@ import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 
@@ -63,12 +66,25 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
 
     protected static final String EDITOR_MACRO_NAME = "Editor Macro";
     protected static final String EDITOR_MACRO_KEY = "editor-macro";
+
+    protected static final String PROPERTY_PANEL_MACRO_WITH_DIALOG_NAME = "Property Panel Macro";
+    protected static final String PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY = "property-panel-macro";
+
+    protected static final String PROPERTY_PANEL_MACRO_KEY = "property-panel-macro";
+    protected static final String PROPERTY_PANEL_MACRO_NAME = "Property Panel Macro";
+
+    protected static final String DIALOG_KEY = "dialog-key";
+    protected static final String DIALOG_NAME = "Dialog";
+
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_NAME = "Custom Title Macro";
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_KEY = "custom-title-macro";
     private static final String CUSTOM_TITLE = "Custom Title";
 
     protected static final String HIDDEN_MACRO_NAME = "Hidden Macro";
     protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
+
+    public static final String PROPERTY_PANEL_URL = "/render-property-panel";
+    public static final String PROPERTY_PANEL_WITH_DIALOG_URL = "/render-property-panel-with-dialog";
 
     @BeforeClass
     public static void setUpClass()
@@ -241,6 +257,66 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                                 .withWidth("300px")
                                 .build()
                 )
+                .build();
+    }
+
+    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createPropertyPanelMacro(T builder)
+    {
+        return builder
+                .withKey(PROPERTY_PANEL_MACRO_KEY)
+                .withUrl("/echo/params?" + SINGLE_PARAM_ID + "={" + SINGLE_PARAM_ID + "}")
+                .withName(new I18nProperty(PROPERTY_PANEL_MACRO_NAME, null))
+                .withPropertyPanel(MacroPropertyPanelBean.newMacroPropertyPanelBean()
+                                .withUrl(PROPERTY_PANEL_URL)
+                                .build()
+                )
+                .withParameters(MacroParameterBean.newMacroParameterBean()
+                                .withIdentifier(SINGLE_PARAM_ID)
+                                .withName(new I18nProperty(SINGLE_PARAM_NAME, null))
+                                .withType("string")
+                                .build()
+                )
+                .withEditor(MacroEditorBean.newMacroEditorBean()
+                            .withUrl(PROPERTY_PANEL_URL)
+                            .withHeight("200px")
+                            .withWidth("200px")
+                            .build()
+                )
+                .build();
+    }
+
+    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createPropertyPanelMacroWithDialog(T builder)
+    {
+        return builder
+                .withKey(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY)
+                .withUrl("/echo/params?" + SINGLE_PARAM_ID +  "={" + SINGLE_PARAM_ID + "}")
+                .withName(new I18nProperty(PROPERTY_PANEL_MACRO_WITH_DIALOG_NAME, null))
+                .withPropertyPanel(MacroPropertyPanelBean.newMacroPropertyPanelBean()
+                                .withUrl(PROPERTY_PANEL_WITH_DIALOG_URL)
+                                .build()
+                )
+                .withParameters(MacroParameterBean.newMacroParameterBean()
+                                .withIdentifier(SINGLE_PARAM_ID)
+                                .withName(new I18nProperty(SINGLE_PARAM_NAME, null))
+                                .withType("string")
+                                .build()
+                )
+                .withEditor(MacroEditorBean.newMacroEditorBean()
+                            .withUrl(PROPERTY_PANEL_WITH_DIALOG_URL)
+                            .withHeight("200px")
+                            .withWidth("200px")
+                            .build()
+                )
+                .build();
+    }
+
+    protected static ConnectPageModuleBean createPropertyPanelDialogPage(ConnectPageModuleBeanBuilder builder)
+    {
+        return builder
+                .withName(new I18nProperty(DIALOG_NAME, null))
+                .withUrl(PROPERTY_PANEL_URL)
+                .withKey(DIALOG_KEY)
+                .withLocation("none")
                 .build();
     }
 

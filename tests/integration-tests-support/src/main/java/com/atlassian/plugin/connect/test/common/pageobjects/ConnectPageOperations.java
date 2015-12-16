@@ -148,9 +148,18 @@ public class ConnectPageOperations
 
     public RemotePluginDialog editMacro(String macroKey)
     {
-        String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"table[data-macro-name='" + macroKey + "']\")";
+        String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"[data-macro-name='" + macroKey + "']\")";
         driver.executeScript("tinymce.confluence.macrobrowser.editMacro(" + macroNodeSelector + ")");
         return findDialog(macroKey);
+    }
+
+    public WebElement openPropertyPanel() {
+        final WebElement innerFrame = driver.findElement(ByJquery.$("#wysiwygTextarea_ifr"));
+        driver.switchTo().frame(innerFrame);
+        final WebElement macro = driver.findElement(ByJquery.$(".editor-inline-macro"));
+        macro.click();
+        driver.switchTo().defaultContent();
+        return driver.findElement(ByJquery.$("#property-panel"));
     }
 
     public void reorderConfluenceTableOnPage()

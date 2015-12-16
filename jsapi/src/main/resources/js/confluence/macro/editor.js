@@ -1,30 +1,10 @@
 (function($, define){
 
-    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog"], function(_AP, dialog) {
+    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog", "ac/confluence/macro"], function(_AP, dialog, saveMacro) {
 
-        // When openCustomEditor is invoked, it will assign a function for saving the macro
-        // being edited to this field. This simplifies the client's job of saving the macro
-        // values - they only need to pass back the updated values - and works because only
-        // a single macro editor can be open at a time.
-        var saveMacro,
-            openEditorMacroBody,
-            openEditorMacroData;
-
+        var openEditorMacroBody;
 
         var module = {
-            /**
-             * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
-             *
-             * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
-             * @param {String} updatedMacroBody the (optional) body of the macro
-             */
-            saveMacro: function(updatedMacroParameters, updatedMacroBody) {
-                if (!saveMacro) {
-                    $.handleError("Illegal state: no macro currently being edited!");
-                }
-                saveMacro(updatedMacroParameters, updatedMacroBody);
-                saveMacro = undefined;
-            },
 
             /**
              * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
@@ -39,7 +19,7 @@
              * @param callback the callback function which will be called with the parameter object
              */
             getMacroData: function(callback){
-                return callback(openEditorMacroData);
+                return callback(saveMacro.getCurrentMacroParameters());
             },
 
             /**
@@ -70,9 +50,8 @@
                 // will occur in Internet Explorer, so restore focus just in case.
                 AJS.Rte.getEditor().focus();
                 var editorSelection = AJS.Rte.getEditor().selection;
-                var bm = editorSelection.getBookmark();
+                saveMacro.setLastSelectedConnectMacroNode(editorSelection.getNode());
 
-                openEditorMacroData = macroData.params;
                 openEditorMacroBody = macroData.body;
 
                 function getIframeHtmlForMacro(url) {
@@ -81,28 +60,11 @@
                             "height": "100%",
                             "ui-params": _AP.uiParams.encode({dlg: 1})
                         };
-                    $.extend(data, openEditorMacroData);
+                    $.extend(data, saveMacro.getCurrentMacroParameters());
                     return $.ajax(url, {
                         data: data
                     });
                 }
-
-                saveMacro = function(updatedParameters, updatedMacroBody) {
-                    // Render the macro
-                    var macroRenderRequest = {
-                        contentId: Confluence.Editor.getContentId(),
-                        macro: {
-                            name: macroData.name,
-                            params: updatedParameters,
-                            // AC-741: MacroUtils clients in Confluence core set a non-existent macro body to the empty string.
-                            // In the absence of a public API, let's do the same to minimize the chance of breakage in the future.
-                            body: updatedMacroBody || (macroData.body ? macroData.body : "")
-                        }
-                    };
-
-                    editorSelection.moveToBookmark(bm);
-                    tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
-                };
 
                 var dialogOpts = {
                     header: macroData.params ? opts.editTitle : opts.insertTitle,

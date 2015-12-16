@@ -15,20 +15,12 @@ AJS.bind("init.rte", function () {
       insertTitle: "%%INSERT_TITLE%%",
       url: AJS.params.contextPath + "%%URL%%"
     };
-    require(["ac/confluence/macro/editor"], function(macroEditor) {
-        //TODO: Replace this with confluence/macro-js-overrides, once the version of Confluence that supports
-        // it is released to cloud. CRA-1219
-        var existingOverride = AJS.MacroBrowser.getMacroJsOverride(macroName);
-        if (existingOverride == null) {
-            existingOverride = {};
-        }
-        $.extend(existingOverride, {
+    require(["ac/confluence/macro/editor", "confluence/macro-js-overrides"], function(macroEditor, macroOverrides) {
+        macroOverrides.assignFunction(macroName, {
             opener: function(macroData) {
                 macroData = $.extend({name: macroName}, macroData);
                 macroEditor.openCustomEditor(macroData, editorOpts);
             }
         });
-        AJS.MacroBrowser.setMacroJsOverride(macroName, existingOverride);
     });
-
 });
