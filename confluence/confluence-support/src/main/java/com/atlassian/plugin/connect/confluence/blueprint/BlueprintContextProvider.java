@@ -177,7 +177,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             {
                 log.info("Turn on debug for " + log.getName() + " to see the full stackdebug.");
             }
-            throw new RuntimeException("Error retrieving variables for blueprint, see logs for details", e);
+            throw new RuntimeException("Error retrieving variables for blueprint", e);
         }
         return json;
     }
