@@ -454,7 +454,7 @@ commonRequirements() {
 
 maven32Requirement() {
     requirement(
-            key: 'system.builder.mvn3.Maven 3.2',
+            key: 'system.builder.mvn3.Maven 3.3',
             condition: 'exists'
     )
 }
@@ -503,7 +503,7 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
             description: '#description',
             goal: '#goal -B -e',
             buildJdk: 'JDK 1.8',
-            mavenExecutable: 'Maven 3.2',
+            mavenExecutable: 'Maven 3.3',
             environmentVariables: '#environmentVariables',
             hasTests: '#hasTests',
             testDirectory: '#testDirectory'
