@@ -1,6 +1,5 @@
 package it.com.atlassian.plugin.connect.jira.util;
 
-import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.bc.issue.comment.CommentService;
 import com.atlassian.jira.bc.issue.comment.property.CommentPropertyService;
@@ -29,30 +28,25 @@ public class JiraTestUtil
 
     public static final String ADMIN_USERNAME = "admin";
 
-    public static final String PROJECT_TEMPLATE_KEY_RENAISSANCE = "com.atlassian.jira-core-project-templates:jira-core-task-management";
-
-    public static final String PROJECT_TEMPLATE_KEY_DARK_AGES = "com.atlassian.jira-core-project-templates:jira-issuetracking";
+    private static final String PROJECT_TEMPLATE_KEY = "com.atlassian.jira-core-project-templates:jira-core-task-management";
 
     private final UserManager userManager;
     private final ProjectService projectService;
     private final CommentService commentService;
     private final CommentPropertyService commentPropertyService;
     private final IssueService issueService;
-    private final ApplicationAuthorizationService applicationAuthorizationService;
 
     public JiraTestUtil(final UserManager userManager,
                         final ProjectService projectService,
                         final CommentService commentService,
                         final CommentPropertyService commentPropertyService,
-                        final IssueService issueService,
-                        ApplicationAuthorizationService applicationAuthorizationService)
+                        final IssueService issueService)
     {
         this.userManager = userManager;
         this.projectService = projectService;
         this.commentService = commentService;
         this.commentPropertyService = commentPropertyService;
         this.issueService = issueService;
-        this.applicationAuthorizationService = applicationAuthorizationService;
     }
 
     public Project createProject() throws IOException
@@ -66,17 +60,11 @@ public class JiraTestUtil
                 .withKey(key)
                 .withLead(user)
                 .withDescription(key)
-                .withProjectTemplateKey(getProjectTemplateKey())
+                .withProjectTemplateKey(PROJECT_TEMPLATE_KEY)
                 .build();
 
         ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(user, projectCreationData);
         return projectService.createProject(result);
-    }
-
-    private String getProjectTemplateKey()
-    {
-        return applicationAuthorizationService.rolesEnabled()
-                ? PROJECT_TEMPLATE_KEY_RENAISSANCE : PROJECT_TEMPLATE_KEY_DARK_AGES;
     }
 
     public ApplicationUser getAdmin() {return userManager.getUserByKey(ADMIN_USERNAME);}

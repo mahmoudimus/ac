@@ -2,11 +2,10 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -39,9 +38,8 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
     }
 
     @Override
-    public ModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
+    public ModuleDescriptor createModuleDescriptor(ConnectAddonBean connectAddonBean, Plugin plugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
     {
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         DOMElement element = new DOMElement(hints.getDomElementName());
 
         element
@@ -66,7 +64,7 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
         }
 
         ModuleDescriptor descriptor = connectContainerUtil.createBean(hints.getDescriptorClass());
-        descriptor.init(theConnectPlugin, element);
+        descriptor.init(plugin, element);
 
         return descriptor;
     }

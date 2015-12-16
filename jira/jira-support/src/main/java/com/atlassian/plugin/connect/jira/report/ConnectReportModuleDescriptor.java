@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.jira.report;
 
+import java.util.Map;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.report.Report;
 import com.atlassian.jira.plugin.report.ReportModuleDescriptor;
@@ -18,10 +20,10 @@ import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
-import com.google.common.base.CharMatcher;
-import org.dom4j.Element;
 
-import java.util.Map;
+import com.google.common.base.CharMatcher;
+
+import org.dom4j.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

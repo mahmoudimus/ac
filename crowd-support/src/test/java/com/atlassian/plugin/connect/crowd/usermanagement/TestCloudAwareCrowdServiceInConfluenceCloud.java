@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -9,11 +10,10 @@ import java.util.concurrent.TimeUnit;
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.connect.spi.FeatureManager;
+import com.atlassian.plugin.connect.spi.HostProperties;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
 import org.junit.Before;
@@ -45,7 +45,6 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
     @Mock private FeatureManager featureManager;
     @Mock private CrowdClientProvider crowdClientProvider;
     @Mock private UserReconciliation userReconciliation;
-    @Mock private Optional userOption;
 
     private CloudAwareCrowdService cloudAwareCrowdService;
 
@@ -73,9 +72,8 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
     @Test
     public void createOrEnableUserUsesRemote()
     {
-        Optional userOption = mock(Optional.class);
-        when(userOption.isPresent()).thenReturn(true);
-        when(embedded.findUserByName(anyString())).thenReturn(userOption);
+        final User mockUser = mock(User.class);
+        when(embedded.findUserByName(anyString())).thenReturn((Optional) Optional.of(mockUser));
         Map<String, Set<String>> noAttributes = Collections.emptyMap();
 
         cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, noAttributes);
@@ -91,9 +89,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
 
-        when(userOption.isPresent()).thenReturn(false, true);
-        when(userOption.get()).thenReturn(user);
-        when(embedded.findUserByName(anyString())).thenReturn(userOption);
+        when(embedded.findUserByName(anyString())).thenReturn(Optional.empty(), (Optional) Optional.of(user));
 
         ScheduledThreadPoolExecutor simulatedCrowdSyncEvent = new ScheduledThreadPoolExecutor(1);
         simulatedCrowdSyncEvent.schedule(new Runnable()
@@ -116,13 +112,12 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
 
-        when(userOption.isPresent()).thenReturn(
-                false, // No user is found when we search for an existing user
-                false, // The user still doesn't show up after a directory sync
-                true,  // The user shows up after a second directory sync
-                true); // The user is still there when we double-check at the end
-        when(userOption.get()).thenReturn(user);
-        when(embedded.findUserByName(anyString())).thenReturn(userOption);
+        when(embedded.findUserByName(anyString())).thenReturn(
+            Optional.empty(),               // No user is found when we search for an existing user
+            Optional.empty(),               // The user still doesn't show up after a directory sync
+            (Optional) Optional.of(user),   // The user shows up after a second directory sync
+            (Optional) Optional.of(user)    // The user is still there when we double-check at the end
+        );
 
         cloudAwareCrowdService.setSyncTimeout(1);
 
@@ -161,11 +156,10 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
 
-        when(userOption.isPresent()).thenReturn(
-                false, // No user is found when we search for an existing user
-                true); // The user shows up after the timeout has elapsed
-        when(userOption.get()).thenReturn(user);
-        when(embedded.findUserByName(anyString())).thenReturn(userOption);
+        when(embedded.findUserByName(anyString())).thenReturn(
+            Optional.empty(),               // No user is found when we search for an existing user
+            (Optional) Optional.of(user)    // The user shows up after the timeout has elapsed
+        );
 
         cloudAwareCrowdService.setSyncTimeout(1);
         cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, ATTRIBUTES);
@@ -180,12 +174,10 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
     {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
-        when(userOption.isPresent()).thenReturn(false);
-        when(userOption.get()).thenReturn(user);
-        when(embedded.findUserByName(anyString())).thenReturn(userOption);
+        when(embedded.findUserByName(anyString())).thenReturn(Optional.empty());
         cloudAwareCrowdService.setSyncTimeout(1);
 
-        thrown.expect(ConnectAddOnUserInitException.class);
+        thrown.expect(ConnectAddonInitException.class);
         cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, ATTRIBUTES);
     }
 }

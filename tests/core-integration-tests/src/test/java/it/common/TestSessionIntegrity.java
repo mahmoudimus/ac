@@ -1,31 +1,31 @@
 package it.common;
 
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
+import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
+import com.atlassian.jwt.exception.JwtUnknownIssuerException;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-
+import it.util.JwtAuthorizationGenerator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
-import it.util.JwtAuthorizationGenerator;
-
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 public class TestSessionIntegrity extends MultiProductWebDriverTestBase
 {
@@ -40,7 +40,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         installHandler = ConnectAppServlets.installHandlerServlet();
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(baseUrl(), AddonTestUtils.randomAddOnKey())
                 .addModule("generalPages", newPageBean()
                         .withKey("page")
                         .withName(new I18nProperty("Page", null))
@@ -64,40 +64,40 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     @Test
     public void addOnUserDoesNotInheritTheSession() throws Exception
     {
+        WebDriver driver = product.getTester().getDriver().getDriver();
+
         login(testUserFactory.basicUser());
 
-        InstallHandlerServlet.InstallPayload installPayload = installHandler.getInstallPayload();
+        driver.get(signedWithJwt("/rest/remoteplugintest/1/user"));
+        assertThat(driver.getPageSource(), containsString(user("addon_" + runner.getAddon().getName())));
 
-        String baseUrl = product.getProductInstance().getBaseUrl();
-        URI uri = URI.create(baseUrl + "/rest/atlassian-connect/latest/license");
-        String jwtToken = jwtAuthorizationGenerator.generate(HTTP_GET, product.getProductInstance().getContextPath(),
-                uri, Maps.<String, List<String>>newHashMap(), Optional.<String>absent(),
-                runner.getAddon().getKey(), installPayload.getSharedSecret());
-        String signedUrl = uri.toString() + "?jwt=" + jwtToken;
-
-        // First assert (through the backdoor) that the JWT token validates.
-        // This is to avoid a successful test result if the request didn't pass the JwtFilter for some reason.
-        // Could be avoided if webdriver allowed to check response status codes...
-        URL url = new URL(signedUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod(HTTP_GET);
-
-        // This resource only works with JWT (which makes it a good candidate for this test)
-        // It returns a 404 if the call succeeded but no license is present
-        // It returns a 401 if JWT auth failed
-        // It returns 400 if no JWT token was provided
-        // The main assertion is that there is no 401, i.e. the call went through the JWT auth filter
-        assertEquals(404, connection.getResponseCode());
-
-        // Now hit the same URL within the browser session
-        WebDriver driver = product.getTester().getDriver().getDriver();
-        driver.get(signedUrl);
-
-        // Then get the current session user
-        driver.get(baseUrl + "/rest/remoteplugintest/1/user");
-
-        // We destroy the session, so 'anonymous' is expected, not the add-on user
-        assertTrue(driver.getPageSource().contains("<user><name>anonymous</name></user>"));
+        assertFalse(isUserLoggedIn());
     }
 
+    private String signedWithJwt(String url) throws JwtUnknownIssuerException, URISyntaxException, JwtIssuerLacksSharedSecretException
+    {
+        InstallHandlerServlet.InstallPayload installPayload = installHandler.getInstallPayload();
+        String baseUrl = baseUrl();
+        URI uri = URI.create(baseUrl + url);
+        String jwtToken = jwtAuthorizationGenerator.generate(HTTP_GET, product.getProductInstance().getContextPath(),
+                uri, Maps.<String, List<String>>newHashMap(), Optional.<String>empty(),
+                runner.getAddon().getKey(), installPayload.getSharedSecret());
+        return uri.toString() + "?jwt=" + jwtToken;
+    }
+
+    private String user(String name)
+    {
+        return "<user><name>" + name + "</name></user>";
+    }
+
+    private static String baseUrl()
+    {
+        return product.getProductInstance().getBaseUrl();
+    }
+
+    private boolean isUserLoggedIn()
+    {
+        HomePage homePage = product.visit(HomePage.class);
+        return homePage.getHeader().isLoggedIn();
+    }
 }

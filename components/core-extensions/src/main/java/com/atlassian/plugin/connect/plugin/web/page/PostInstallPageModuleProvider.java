@@ -1,16 +1,17 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,13 @@ public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProv
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            PluginAccessor pluginAccessor,
+            ConditionClassAccessor conditionClassAccessor,
+            ConditionLoadingValidator conditionLoadingValidator,
             ProductAccessor productAccessor,
             ConnectJsonSchemaValidator schemaValidator)
     {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pluginAccessor, schemaValidator, productAccessor);
+                webItemModuleDescriptorFactory, conditionClassAccessor, schemaValidator, conditionLoadingValidator, productAccessor);
     }
 
     @Override
@@ -46,9 +48,9 @@ public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProv
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon)
     {
-        super.createPluginModuleDescriptors(modules, moduleProviderContext);
+        super.createPluginModuleDescriptors(modules, addon);
 
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         Iterator<ConnectPageModuleBean> iterator = modules.iterator();
@@ -57,7 +59,7 @@ public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProv
             ConnectPageModuleBean postInstallPage = iterator.next();
             ModuleDescriptor descriptor = new PostInstallPageModuleDescriptor();
             descriptor.init(pluginRetrievalService.getPlugin(), new DOMElement("connectPostInstallPage").addAttribute("key",
-                    postInstallPage.getKey(moduleProviderContext.getConnectAddonBean())));
+                    postInstallPage.getKey(addon)));
             descriptors.add(descriptor);
         }
         return descriptors;

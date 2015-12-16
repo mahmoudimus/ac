@@ -1,17 +1,17 @@
 package at.marketplace;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 
 import com.atlassian.plugin.connect.test.common.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.util.concurrent.ResettableLazyReference;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +21,10 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -31,21 +32,39 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.marketplace.ConnectAddonRepresentation.Highlight;
 import cc.plural.jsonij.JPath;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.io.IOUtils.toByteArray;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class ExternalAddonInstaller
 {
     public static final String ADDONS_REST_PATH = "/rest/2.0-beta/addons/";
     public static final String VENDORS_REST_PATH = "/rest/2.0-beta/vendors/";
     private static final String IMAGE_REST_PATH = "/rest/2.0-beta/assets/image/";
-    public static final long ATLASSIAN_LABS_ID = 33202;
+    public static final String ATLASSIAN_LABS_ID = "33202";
+
     public static final int TIMEOUT_MS = 30 * 1000;
     private static final String TEST_ADDON_VERSION = "0001";
+    public static final ConnectAddonRepresentation DEFAULT_ADDON = ConnectAddonRepresentation.builder()
+            .withDescriptorUrl("https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-" + TEST_ADDON_VERSION + "/atlassian-connect.json")
+            .withLogoUrl("https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-" + TEST_ADDON_VERSION + "/simple-logo.png")
+            .withName("Connect Test Addon v" + TEST_ADDON_VERSION) // Must be < 40 characters
+            .withVendorId(ATLASSIAN_LABS_ID)
+            .withHighlights(
+                    new Highlight("I wanna write the very test", "<strong>That no test ever was</strong>"),
+                    new Highlight("To catch bugs is your behest", "<strong>To fix them is my cause</strong>"),
+                    new Highlight("I will travel the happy paths", "<strong>Searching far and wide...</strong>")
+            )
+            .withTagline("An Acceptance Test add-on")
+            .withSummary("Regressions: gotta catch them all")
+            .build();
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final AtlassianConnectRestClient connectClient;
@@ -65,21 +84,37 @@ public class ExternalAddonInstaller
 
     public ExternalAddonInstaller(String productBaseUrl, TestUser user)
     {
-        this(productBaseUrl, user, ConnectAddonRepresentation.builder()
-                .withDescriptorUrl("https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-" + TEST_ADDON_VERSION + "/atlassian-connect.json")
-                .withLogo("https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-" + TEST_ADDON_VERSION + "/simple-logo.png")
-                .withKey("com.atlassian.connect.acceptance.test.addon." + TEST_ADDON_VERSION)
-                .withName("Connect Test Addon v" + TEST_ADDON_VERSION) // Must be < 40 characters
-                .withVendorId(ATLASSIAN_LABS_ID).build());
+        this(productBaseUrl, user, DEFAULT_ADDON);
     }
 
     public ExternalAddonInstaller(String productBaseUrl, TestUser user, ConnectAddonRepresentation addon)
     {
-        this.addon = addon;
+        this.addon = mergeWithDefault(addon);
         this.productBaseUrl = productBaseUrl;
         connectClient = new AtlassianConnectRestClient(
                 productBaseUrl, user.getUsername(), user.getPassword());
         mpacUrl = MarketplaceSettings.baseUrl();
+    }
+
+    private ConnectAddonRepresentation mergeWithDefault(ConnectAddonRepresentation addon)
+    {
+        Iterator<Highlight> highlights = defaultIfNull(
+                addon.getHighlights(),
+                DEFAULT_ADDON.getHighlights()
+        ).iterator();
+
+        return ConnectAddonRepresentation.builder()
+                .withDescriptorUrl(defaultIfNull(addon.getDescriptorUrl(), DEFAULT_ADDON.getDescriptorUrl()))
+                .withVendorId(defaultIfNull(addon.getVendorId(), DEFAULT_ADDON.getVendorId()))
+                .withName(defaultIfNull(addon.getName(), DEFAULT_ADDON.getName()))
+                .withSummary(defaultIfNull(addon.getSummary(), DEFAULT_ADDON.getSummary()))
+                .withTagline(defaultIfNull(addon.getTagline(), DEFAULT_ADDON.getTagline()))
+                .withLogoUrl(defaultIfNull(addon.getLogoUrl(), DEFAULT_ADDON.getLogoUrl()))
+                .withHighlights(
+                        highlights.next(),
+                        highlights.next(),
+                        highlights.next())
+                .build();
     }
 
     public void install()
@@ -89,13 +124,54 @@ public class ExternalAddonInstaller
         try
         {
             log.info("Installing add-on on instance {}", productBaseUrl);
-            connectClient.install(descriptorUrl, false);
+            connectClient.install(descriptorUrl);
         }
         catch (Exception e)
         {
             throw new RuntimeException("There was error while installing our add-on on the instance.", e);
         }
     }
+
+    public String getAddonKey()
+    {
+        return addonKey.get();
+    }
+
+    private ResettableLazyReference<String> addonKey = new ResettableLazyReference<String>()
+    {
+        @Override
+        protected String create() throws Exception
+        {
+            try
+            {
+                String addonKey = transformResponse(new HttpGet(addon.getDescriptorUrl()), new HashSet<>(singletonList(200)),
+                        "Error while downloading descriptor from " + addon.getDescriptorUrl(),
+                        response -> {
+                            try
+                            {
+                                return JPath.evaluate(EntityUtils.toString(response.getEntity()), "key").getString();
+                            }
+                            catch (ParserException | IOException e)
+                            {
+                                throw new RuntimeException(e);
+                            }
+                        }, false
+                );
+
+                if (isBlank(addonKey))
+                {
+                    throw new IllegalStateException("Could not find key in downloaded descriptor");
+                }
+
+                return addonKey;
+
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    };
 
     private void assertVendorExists()
     {
@@ -144,19 +220,14 @@ public class ExternalAddonInstaller
 
     private String createScreenshotAsset(ImageType imageType) throws IOException
     {
-        FileBody fileBody;
-        try
-        {
-            File file = new File(getClass().getClassLoader().getResource("marketplace/screenshot.png").toURI());
-            fileBody = new FileBody(file);
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException(e);
-        }
+        byte[] screenshotByteArray = toByteArray(
+                getClass().getClassLoader().getResourceAsStream("marketplace/screenshot.png"));
+
+        ByteArrayBody byteArrayBody =
+                new ByteArrayBody(screenshotByteArray, ContentType.create("image/png"), "screenshot.png");
 
         HttpEntity body = MultipartEntityBuilder.create()
-                .addPart("file", fileBody)
+                .addPart("file", byteArrayBody)
                 .build();
 
         HttpPost screenshotPost = new HttpPost(mpacUrl + IMAGE_REST_PATH + "screenshot" + (imageType == ImageType.THUMBNAIL ? "-thumbnail" : ""));
@@ -183,7 +254,7 @@ public class ExternalAddonInstaller
     {
         try
         {
-            connectClient.uninstall(addon.getKey());
+            connectClient.uninstall(addonKey.get());
         }
         catch (Exception ignored)
         { /* Push on if possible */ }
@@ -193,13 +264,13 @@ public class ExternalAddonInstaller
     {
         HttpPost addonPost = new HttpPost(mpacUrl + ADDONS_REST_PATH);
         addonPost.setEntity(addonDetails());
-        log.info("Registering our test add-on \"{}\" on the marketplace...", addon.getKey());
+        log.info("Registering our test add-on \"{}\" on the marketplace...", addonKey.get());
         makeRequest(addonPost, new HashSet<>(asList(200, 204)), "Could not register add-on on the marketplace");
     }
 
     private boolean addonExists() throws IOException
     {
-        HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addon.getKey());
+        HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addonKey.get());
         get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Checking whether the test add-on already exists on the marketplace");
 
@@ -214,11 +285,11 @@ public class ExternalAddonInstaller
 
     private Optional<String> getDescriptorUrl() throws IOException
     {
-        HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addon.getKey() + "/versions/latest");
+        HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addonKey.get() + "/versions/latest");
         get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
-        log.info("Getting descriptor url for add-on {}", addon.getKey());
+        log.info("Getting descriptor url for add-on {}", addonKey.get());
 
-        return Optional.fromNullable(transformResponse(
+        return Optional.ofNullable(transformResponse(
                 get,
                 new HashSet<>(asList(200, 404)),
                 "Error trying to retrieve descriptor href for add-on",
@@ -308,12 +379,21 @@ public class ExternalAddonInstaller
     {
         String addonEntity = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("marketplace/addon.json"));
         addonEntity = (StringUtils.replace(addonEntity, "<%=vendor id goes here=>", addon.getVendorId()));
-        addonEntity = StringUtils.replace(addonEntity, "<%=key goes here=>", addon.getKey());
+        addonEntity = StringUtils.replace(addonEntity, "<%=key goes here=>", addonKey.get());
         addonEntity = StringUtils.replace(addonEntity, "<%=name goes here=>", addon.getName());
         addonEntity = StringUtils.replace(addonEntity, "<%=descriptor url goes here=>", addon.getDescriptorUrl());
         addonEntity = StringUtils.replace(addonEntity, "<%=logo url goes here=>", addon.getLogoUrl());
         addonEntity = StringUtils.replace(addonEntity, "<%=screenshot asset goes here=>", screenshotAsset);
         addonEntity = StringUtils.replace(addonEntity, "<%=thumbnail asset goes here=>", thumbnailAsset);
+        int highlightNumber = 0;
+        for (Highlight highlight : addon.getHighlights())
+        {
+            highlightNumber++;
+            addonEntity = StringUtils.replace(addonEntity, "<%= highlight title " + highlightNumber + " goes here =>", highlight.getTitle());
+            addonEntity = StringUtils.replace(addonEntity, "<%= highlight body " + highlightNumber + " goes here =>", highlight.getBody());
+        }
+        addonEntity = StringUtils.replace(addonEntity, "<%= summary goes here =>", addon.getSummary());
+        addonEntity = StringUtils.replace(addonEntity, "<%= tagline goes here =>", addon.getTagline());
         log.info("Add-on entity: {}", addonEntity);
         return new StringEntity(addonEntity);
     }

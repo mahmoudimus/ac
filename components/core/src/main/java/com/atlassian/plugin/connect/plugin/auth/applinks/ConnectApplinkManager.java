@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.auth.applinks;
 
+import java.net.URI;
+import java.util.Optional;
+
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-
-import java.net.URI;
 
 /**
  * A helper component for creating applinks for add ons.
@@ -65,6 +65,6 @@ public interface ConnectApplinkManager
      * @param applink the application link for the add-on
      * @return the JWT shared secret or the OAuth consumer public key
      */
-    Option<String> getSharedSecretOrPublicKey(ApplicationLink applink);
+    Optional<String> getSharedSecretOrPublicKey(ApplicationLink applink);
 
 }

@@ -30,14 +30,16 @@
     <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.ConnectAddonRegistry"/>
     <component-import key="connectAddonService" interface="com.atlassian.plugin.connect.spi.auth.user.ConnectUserService"/>
     <component-import key="connectCrowdService" interface="com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService"/>
-    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService" />
+    <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService" />
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
     <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.plugin.auth.user.ThreeLeggedAuthService" />
-    <component-import key="addOnService" interface="com.atlassian.plugin.connect.api.ConnectAddonAccessor" />
+    <component-import key="connectAddonAccessor" interface="com.atlassian.plugin.connect.api.ConnectAddonAccessor" />
+    <component-import key="connectAddonController" interface="com.atlassian.plugin.connect.api.ConnectAddonController" />
     <component-import key="addOnScopeManager" interface="com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager" />
     <component-import key="upmControlHandler" interface="com.atlassian.upm.spi.PluginControlHandler" />
     <component-import key="webFragmentLocationBlacklist" interface="com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist" />
+    <component-import key="conditionLoadingValidator" interface="com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator" />
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider" />

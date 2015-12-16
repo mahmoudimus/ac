@@ -3,8 +3,9 @@ package it.com.atlassian.plugin.connect.plugin.web.item;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -13,9 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
-import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.util.WaitUntil;
@@ -66,7 +65,6 @@ public class WebItemModuleProviderTest
     private final TestAuthenticator testAuthenticator;
     private final PluginAccessor pluginAccessor;
     private HttpServletRequest servletRequest;
-    private ConnectModuleProviderContext moduleProviderContext;
     private ConnectAddonBean addon;
 
     private String pluginKey;
@@ -91,7 +89,6 @@ public class WebItemModuleProviderTest
     {
         this.pluginKey = randomPluginKey();
         this.addon = newConnectAddonBean().withKey(pluginKey).build();
-        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
     }
@@ -107,7 +104,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
 
         assertEquals(1, descriptors.size());
 
@@ -129,7 +126,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
 
         assertEquals(1, descriptors.size());
 
@@ -151,7 +148,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
 
         assertEquals(1, descriptors.size());
 
@@ -173,7 +170,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
 
         assertEquals(1, descriptors.size());
 
@@ -244,7 +241,7 @@ public class WebItemModuleProviderTest
                     return "waiting for addon module to be registered...";
                 }
             });
-            
+
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) connectPlugin.getModuleDescriptor(moduleKey);
 
             assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>()));
@@ -270,7 +267,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
 
         assertEquals(1, descriptors.size());
 
@@ -304,7 +301,7 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), moduleProviderContext);
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
 
             assertEquals(1, descriptors.size());
 
@@ -357,7 +354,7 @@ public class WebItemModuleProviderTest
             plugin = testPluginInstaller.installAddon(addon);
 
             List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(
-                    newArrayList(bean), moduleProviderContext);
+                    newArrayList(bean), addon);
 
             assertEquals(1, descriptors.size());
 
@@ -408,7 +405,7 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean, bean2), moduleProviderContext);
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean, bean2), addon);
 
             assertEquals(2, descriptors.size());
 
@@ -480,13 +477,24 @@ public class WebItemModuleProviderTest
 
     private void assertAddOnLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addOnBean)
     {
-        final WebItemTargetBean target = webItemModuleBean.getTarget();
-        final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
-                ? ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean))
-                : BASE_URL + "/my/addon";
-        final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
+        final String prefix = getExpectedUrlPrefixForWebItem(webItemModuleBean, addOnBean);
+        final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>());
         final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);
         assertTrue(message, href.startsWith(prefix));
+    }
+
+    private String getExpectedUrlPrefixForWebItem(final WebItemModuleBean webItemModuleBean, final ConnectAddonBean addOnBean)
+    {
+        final WebItemTargetBean target = webItemModuleBean.getTarget();
+        if (target.isDialogTarget() || target.isInlineDialogTarget())
+        {
+            return ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean));
+        }
+        if (target.isPageTarget() && !webItemModuleBean.isAbsolute())
+        {
+            return CONTEXT_PATH + RedirectServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean));
+        }
+        return BASE_URL + "/my/addon";
     }
 
     private Plugin getConnectPlugin()

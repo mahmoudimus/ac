@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Queue;
 
 import com.atlassian.fugue.Option;
@@ -16,8 +17,8 @@ public class DefaultAddonPrecannedResponseHelper implements AddonPrecannedRespon
     }
 
     @Override
-    public Option<PrecannedResponse> poll()
+    public Optional<PrecannedResponse> poll()
     {
-        return Option.option(precannedResponseQueue.poll());
+        return Optional.ofNullable(precannedResponseQueue.poll());
     }
 }

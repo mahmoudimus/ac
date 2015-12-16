@@ -8,8 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -29,13 +28,11 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
     }
 
     @Override
-    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, EntityPropertyModuleBean bean)
+    public EntityPropertyIndexDocumentModuleDescriptor createModuleDescriptor(EntityPropertyModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
         Element indexDocumentConfiguration = new DOMElement(DESCRIPTOR_NAME);
 
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-
-        indexDocumentConfiguration.addAttribute("key", bean.getKey(connectAddonBean));
+        indexDocumentConfiguration.addAttribute("key", bean.getKey(addon));
         indexDocumentConfiguration.addAttribute("entity-key", bean.getEntityType().getValue());
         indexDocumentConfiguration.addAttribute("i18n-name-key", bean.getName().getI18n());
 
@@ -57,9 +54,8 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
         }
 
         EntityPropertyIndexDocumentModuleDescriptorImpl descriptor = autowireUtil.createBean(EntityPropertyIndexDocumentModuleDescriptorImpl.class);
-        descriptor.init(theConnectPlugin, indexDocumentConfiguration);
+        descriptor.init(plugin, indexDocumentConfiguration);
 
         return descriptor;
     }
-
 }

@@ -6,7 +6,6 @@ import com.atlassian.plugin.osgi.external.ListableModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.external.SingleModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ModuleType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @ModuleType (ListableModuleDescriptorFactory.class)
@@ -17,7 +16,7 @@ public final class ConnectContextParameterResolverModuleDescriptorFactory extend
     private static final String TYPE = "connect-context-parameters-resolver";
 
     @Autowired
-    public ConnectContextParameterResolverModuleDescriptorFactory(@Qualifier ("hostContainer") final HostContainer hostContainer)
+    public ConnectContextParameterResolverModuleDescriptorFactory(HostContainer hostContainer)
     {
         super(hostContainer, TYPE, ConnectContextParameterResolverModuleDescriptor.class);
     }

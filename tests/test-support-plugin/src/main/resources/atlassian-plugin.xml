@@ -20,6 +20,9 @@
 
     <connect-api-scope-whitelist key="test-support-api-scope-whitelist" resource="/scope/test-support-whitelist.json"/>
 
+    <connect-condition-class-resolver key="test-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.testsupport.TestConditionClassResolver"/>
+
     <rest key="rest" path="/remoteplugintest" version="1">
         <package>com.atlassian.plugin.connect.testsupport.rest</package>
     </rest>
@@ -27,9 +30,9 @@
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager" />
 
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
-    
+
     <component-import key="salLicenseHandler" interface="com.atlassian.sal.api.license.LicenseHandler"/>
-    
+
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
 
     <component-import key="jwtReaderFactory" interface="com.atlassian.jwt.reader.JwtReaderFactory"/>
@@ -37,7 +40,7 @@
     <component-import key="consumerService" interface="com.atlassian.oauth.consumer.ConsumerService"/>
 
     <component key="testPluginInstaller"
-               class="com.atlassian.plugin.connect.testsupport.DefaultTestPluginInstaller" 
+               class="com.atlassian.plugin.connect.testsupport.DefaultTestPluginInstaller"
                interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller"
                public="true"
             />
@@ -47,7 +50,7 @@
                public="true"
             />
 
-    <component key="testFilterResults" 
+    <component key="testFilterResults"
                class="com.atlassian.plugin.connect.testsupport.filter.DefaultAddonTestFilterResults"
                interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults"
                public="true"
@@ -60,7 +63,7 @@
             />
 
     <component key="jiraLicenseUpdater" class="com.atlassian.plugin.connect.testsupport.LicenseUpdater"/>
-    
+
     <servlet-filter key="connect-test-addon-from-host" class="com.atlassian.plugin.connect.testsupport.filter.AddonTestHostFilter"
                     location="after-encoding" weight="1">
         <url-pattern>/ac-test-addon/*</url-pattern>
@@ -69,4 +72,5 @@
                     location="before-decoration" weight="1">
         <url-pattern>/ac-test-addon/*</url-pattern>
     </servlet-filter>
+
 </atlassian-plugin>

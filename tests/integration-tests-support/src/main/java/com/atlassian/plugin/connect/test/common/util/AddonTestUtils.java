@@ -3,6 +3,9 @@ package com.atlassian.plugin.connect.test.common.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.atlassian.jwt.SigningAlgorithm;
@@ -17,7 +20,12 @@ import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 
@@ -58,9 +66,25 @@ public class AddonTestUtils
     {
         JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
         JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, secret);
+
+        // Parse param values and build a map
+        final List<NameValuePair> rawParams = URLEncodedUtils.parse(uri, "UTF-8");
+        final ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.builder();
+        for (NameValuePair rawParam : rawParams)
+        {
+            builder.put(rawParam.getName(), rawParam.getValue());
+        }
+
+        final ImmutableMap.Builder<String, String[]> paramsMap = ImmutableMap.builder();
+        for (Map.Entry<String, Collection<String>> stringCollectionEntry : builder.build().asMap().entrySet())
+        {
+            final Collection<String> collection = stringCollectionEntry.getValue();
+            paramsMap.put(stringCollectionEntry.getKey(), collection.toArray(new String[collection.size()]));
+        }
+
         final JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuer(addOnKey)
-                .queryHash(HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(httpMethod.name(), uri.getPath(), URI.create(contextPath).getPath())));
+                .queryHash(HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(httpMethod.name(), uri.getPath(), URI.create(contextPath).getPath(), paramsMap.build())));
 
         if (null != subject)
         {

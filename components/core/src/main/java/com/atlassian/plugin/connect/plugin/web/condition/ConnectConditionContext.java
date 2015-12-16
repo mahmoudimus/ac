@@ -1,12 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
-import com.atlassian.fugue.Option;
-import com.google.common.collect.Maps;
-
 import java.util.Map;
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 
-import static com.atlassian.fugue.Option.option;
+import com.google.common.collect.Maps;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Wrapper over context parameters which gives access to Connect-related context parameters.
@@ -33,9 +34,9 @@ public class ConnectConditionContext
         return new Builder(initialState);
     }
 
-    public Option<String> getAddOnKey()
+    public Optional<String> getAddOnKey()
     {
-        return option(contextMap.get(CONNECT_ADD_ON_KEY_KEY));
+        return ofNullable(contextMap.get(CONNECT_ADD_ON_KEY_KEY));
     }
 
     public Map<String, String> toMap()

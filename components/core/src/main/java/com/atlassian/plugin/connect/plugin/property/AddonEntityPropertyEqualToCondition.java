@@ -1,16 +1,21 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import com.atlassian.fugue.Option;
+import java.util.Map;
+import java.util.Optional;
+
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectCondition;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionContext;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
-import java.util.Map;
+import org.codehaus.jackson.JsonNode;
+
+import static com.atlassian.plugin.connect.plugin.property.JsonCommon.parseStringToJson;
 
 @ConnectCondition
 public class AddonEntityPropertyEqualToCondition implements Condition
@@ -33,12 +38,12 @@ public class AddonEntityPropertyEqualToCondition implements Condition
     {
         this.propertyKey = Strings.nullToEmpty(params.get("propertyKey"));
         this.propertyValue = Strings.nullToEmpty(params.get("value"));
-        Option<String> maybeAddOnKey = ConnectConditionContext.from(params).getAddOnKey();
-        if (maybeAddOnKey.isEmpty())
+        Optional<String> maybeAddOnKey = ConnectConditionContext.from(params).getAddOnKey();
+        if (!maybeAddOnKey.isPresent())
         {
             throw new IllegalStateException("Condition should have been invoked in the Atlassian Connect context, but apparently it was not, add-on key is missing");
         }
-        this.addOnKey = maybeAddOnKey.getOrNull();
+        this.addOnKey = maybeAddOnKey.get();
     }
 
     @Override
@@ -46,21 +51,22 @@ public class AddonEntityPropertyEqualToCondition implements Condition
     {
         UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUserKey());
         return addOnPropertyService.getPropertyValue(userProfile, addOnKey, addOnKey, propertyKey).fold(
-                new Function<AddOnPropertyService.OperationStatus, Boolean>()
+            new Function<AddOnPropertyService.OperationStatus, Boolean>()
+            {
+                @Override
+                public Boolean apply(final AddOnPropertyService.OperationStatus input)
                 {
-                    @Override
-                    public Boolean apply(final AddOnPropertyService.OperationStatus input)
-                    {
-                        return false;
-                    }
-                }, new Function<AddOnProperty, Boolean>()
-                {
-                    @Override
-                    public Boolean apply(final AddOnProperty input)
-                    {
-                        return propertyValue.equals(input.getValue());
-                    }
+                    return false;
                 }
+            }, new Function<AddOnProperty, Boolean>()
+            {
+                @Override
+                public Boolean apply(final AddOnProperty input)
+                {
+                    final Optional<JsonNode> propertyJson = parseStringToJson(propertyValue);
+                    return propertyJson.equals(Optional.of(input.getValue()));
+                }
+            }
         );
     }
 }

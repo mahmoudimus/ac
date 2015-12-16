@@ -5,7 +5,7 @@
     "type": "none"
   },
   "modules": {
-    "testModules": [
+    "referenceModules": [
       {
         "key": "test-provided-module"
       }

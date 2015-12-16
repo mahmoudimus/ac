@@ -635,7 +635,7 @@ public class ConnectJsonExamples
     private static String createSingleConditionExample()
     {
         SingleConditionBean bean = newSingleConditionBean().withCondition("user_is_logged_in").build();
-        return gson.toJson(createJsonObject("condition", bean));
+        return gson.toJson(bean);
     }
 
     private static String createCompositeConditionExample()

@@ -12,7 +12,7 @@ productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
-            key: 'bamboo.product.version',
+            key: 'product.version',
             value: '#productVersion'
     )
     trigger(
@@ -49,15 +49,15 @@ stashNotification() {
     )
 }
 
-runTestsStage() {
+runTestsStage(['mavenParameters']) {
     stage(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: ''
+                mavenProductParameters: '#mavenParameters'
         )
         testJobsForJIRA(
-                mavenProductParameters: ''
+                mavenProductParameters: '#mavenParameters'
         )
         job(
                 key: 'UTJ7',
@@ -67,7 +67,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run Unit Tests',
-                    goal: 'clover2:setup package -Pclover clover2:aggregate clover2:clover',
+                    goal: 'clover2:setup package -Pclover clover2:aggregate clover2:clover #mavenParameters',
                     environmentVariables: ''
             )
             cloverReportArtifact(
@@ -87,7 +87,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run QUnit Tests using Karma',
-                    goal: '-pl jsapi package -Pkarma-tests',
+                    goal: '-pl jsapi package -Pkarma-tests #mavenParameters',
                     environmentVariables: ''
             )
             artifactDefinition(
@@ -106,7 +106,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTask(
                     description: 'Build Plugin and Generate Javadoc',
-                    goal: 'install -DskipTests javadoc:javadoc',
+                    goal: 'install -DskipTests javadoc:javadoc #mavenParameters',
             )
         }
         job(
@@ -119,7 +119,7 @@ runTestsStage() {
             setupVncTask()
             mavenTestTask(
                     description: 'Run Add-On Descriptor Validation Tests',
-                    goal: '-pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -am',
+                    goal: '-pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -am #mavenParameters',
                     environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
             )
             artifactDefinition(
@@ -147,7 +147,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTask(
                     description: 'Build Developer Documentation',
-                    goal: 'install site -DskipTests',
+                    goal: 'install site -DskipTests #mavenParameters',
             )
             artifactDefinition(
                     name: 'Documentation',
