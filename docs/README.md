@@ -45,10 +45,9 @@ To regenerate the schemas after changing the source code or the Javadoc of `modu
 
 	mvn -pl plugin process-classes
 
-To explicitly invoke the `json-schemagen` goals to generate an individual schema (using [mvnvm](http://mvnvm.org) and
-functionality introduced in Maven 3.3):
+To explicitly invoke the `json-schemagen` goals to generate an individual schema:
 
-    mvn --mvn-version 3.3.3 -pl plugin external.atlassian.json:json-schemagen-maven-plugin:generate-support-docs@schema-support external.atlassian.json:json-schemagen-maven-plugin:generate-schema@<jira|confluence>-schema
+    mvn -pl plugin external.atlassian.json:json-schemagen-maven-plugin:generate-support-docs@schema-support external.atlassian.json:json-schemagen-maven-plugin:generate-schema@<jira|confluence>-schema
 
 #### JavaScript API modules
 
