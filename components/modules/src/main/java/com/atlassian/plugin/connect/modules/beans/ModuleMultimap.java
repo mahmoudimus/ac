@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * The modules of an add-on. Modules are loaded lazily and any validation errors are deferred to the first usage.
@@ -71,27 +70,11 @@ public class ModuleMultimap
     {
         try
         {
-            return validModules.computeIfAbsent(moduleType, new Function<String, List<ModuleBean>>()
-            {
-
-                @Override
-                public List<ModuleBean> apply(String type)
-                {
-                    return moduleListSuppliers.get(type).get();
-                }
-            });
+            return validModules.computeIfAbsent(moduleType, (type) -> moduleListSuppliers.get(type).get());
         }
         catch (Exception e)
         {
-            optionalExceptionHandler.ifPresent(new Consumer<Consumer<Exception>>()
-            {
-
-                @Override
-                public void accept(Consumer<Exception> exceptionConsumer)
-                {
-                    exceptionConsumer.accept(e);
-                }
-            });
+            optionalExceptionHandler.ifPresent((exceptionConsumer) -> exceptionConsumer.accept(e));
             return null;
         }
     }
@@ -105,14 +88,7 @@ public class ModuleMultimap
         }
         ModuleMultimap other = (ModuleMultimap) otherObj;
 
-        Consumer<Exception> noopExceptionHandler = new Consumer<Exception>()
-        {
-
-            @Override
-            public void accept(Exception e)
-            {
-            }
-        };
+        Consumer<Exception> noopExceptionHandler = e -> {};
         return new EqualsBuilder()
                 .append(moduleListSuppliers.keySet(), other.moduleListSuppliers.keySet())
                 .append(getValidModuleLists(noopExceptionHandler), other.getValidModuleLists(noopExceptionHandler))
@@ -124,13 +100,7 @@ public class ModuleMultimap
     {
         return new HashCodeBuilder(41, 7)
                 .append(moduleListSuppliers.keySet())
-                .append(getValidModuleLists(new Consumer<Exception>()
-                {
-
-                    @Override
-                    public void accept(Exception e)
-                    {}
-                }))
+                .append(getValidModuleLists(e -> {}))
                 .build();
     }
 }

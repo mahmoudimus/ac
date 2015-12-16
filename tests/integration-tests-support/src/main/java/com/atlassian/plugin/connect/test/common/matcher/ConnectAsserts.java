@@ -57,10 +57,10 @@ public class ConnectAsserts
         {
             parameters.put(key, webItem.getFromQueryString(key));
         }
-        verifyContainsStandardAddonQueryParamters(parameters, contextPath);
+        verifyContainsStandardAddonQueryParameters(parameters, contextPath);
     }
 
-    public static void verifyContainsStandardAddonQueryParamters(Map<String, String> parameters, String contextPath)
+    public static void verifyContainsStandardAddonQueryParameters(Map<String, String> parameters, String contextPath)
     {
         //example tz:  America/Los_Angeles
         //example loc: en-GB

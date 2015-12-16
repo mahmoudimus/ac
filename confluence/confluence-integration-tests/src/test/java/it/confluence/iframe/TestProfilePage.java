@@ -25,7 +25,7 @@ import org.junit.Test;
 import it.confluence.ConfluenceWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParamters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParameters;
 import static com.atlassian.plugin.connect.test.common.matcher.IsNotBlank.isNotBlank;
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
@@ -107,7 +107,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
 
         assertThat(addonContentPage.getMessage(), equalTo("Success"));
 
-        verifyContainsStandardAddonQueryParamters(addonContentPage.getIframeQueryParams(),
+        verifyContainsStandardAddonQueryParameters(addonContentPage.getIframeQueryParams(),
                 product.getProductInstance().getContextPath());
 
         return addonContentPage;

@@ -47,13 +47,14 @@ public class ConfluenceGeneralPage implements GeneralPage
         return pageBinder.bind(ConnectAddonEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
+    @Override
+    public PageElement findLinkElement()
+    {
+        return elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, pageKey)), TimeoutType.DEFAULT);
+    }
+
     public String getRemotePluginLinkHref()
     {
         return findLinkElement().getAttribute("href");
-    }
-
-    private PageElement findLinkElement()
-    {
-        return elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, pageKey)), TimeoutType.DEFAULT);
     }
 }

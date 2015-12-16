@@ -1,12 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
@@ -20,16 +13,21 @@ import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimStringMatcher.hasJwtClaim;
@@ -52,7 +50,8 @@ public class JwtAuthorizationGeneratorTest
     private static final String A_MOCK_JWT = "a.mock.jwt";
     private static final Map<String, String[]> PARAMS = ImmutableMap.of("a_param", new String[]{"a_value"});
     private static final ImmutableMap<String, String[]> ALL_PARAMS = ImmutableMap.of("a_param", new String[] { "a_value" }, "b_param", new String[] { "b value with spaces" }, "c_param", new String[] { "c_value" });
-    private static final URI A_URI_BASE = URI.create("http://any.url");
+    private static final String CONTEXT_PATH = "/contextPath";
+    private static final URI A_URI_BASE = URI.create("http://any.url" + CONTEXT_PATH);
     private static final URI A_URI = URI.create(A_URI_BASE.toString() + "/path?b_param=b+value+with+spaces&c_param=c_value");
     private static final String SECRET = "secret";
     private static final String USER_KEY = "bruceWayne";
@@ -108,7 +107,7 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void hasQueryHashClaimWithCorrectValue() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        final String expectedQueryHash = generateQueryHash(HttpMethod.POST, A_URI.getPath(), "", ALL_PARAMS);
+        final String expectedQueryHash = generateQueryHash(HttpMethod.POST, A_URI.getPath(), CONTEXT_PATH, ALL_PARAMS);
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
@@ -169,7 +168,7 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void signedRelativeUrlWithNoBaseIsEquivalentToAbsoluteUrlWithAnyBase() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", "", ALL_PARAMS);
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", CONTEXT_PATH, ALL_PARAMS);
         generateGet("/path", "https://example.com", ALL_PARAMS);
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
@@ -177,7 +176,7 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void signedUrlDoesNotIncludeAddonBaseUrlWhenBaseUrlContainsPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", Collections.<String, String[]>emptyMap());
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", CONTEXT_PATH, Collections.<String, String[]>emptyMap());
         generateGet("https://example.com/base/and/path", "https://example.com/base", Collections.<String, String[]>emptyMap());
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
@@ -185,7 +184,7 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void signedUrlDoesNotIncludeAddonBaseUrlWhenBaseUrlContainsPathAndThereAreParams() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", PARAMS);
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", CONTEXT_PATH, PARAMS);
         generateGet("https://example.com/base/and/path", "https://example.com/base", PARAMS);
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
@@ -193,7 +192,7 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void signedUrlDoesNotIncludeAddonBaseUrlWhenBaseUrlContainsPathAndThereAreParamsInTheTargetPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", PARAMS);
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", CONTEXT_PATH, PARAMS);
         generateGet("https://example.com/base/and/path?a_param=a_value", "https://example.com/base", Collections.<String, String[]>emptyMap());
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
@@ -201,7 +200,7 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void signedUrlDoesNotIncludeAddonBaseUrlWhenBaseUrlEndsInSlash() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", "", ALL_PARAMS);
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", CONTEXT_PATH, ALL_PARAMS);
         generateGet("https://example.com/path", "https://example.com/", ALL_PARAMS);
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
@@ -209,8 +208,40 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void signedUrlPathIsSlashWhenThereIsImplicitlyNoPathRelativeToTheBaseUrl() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/", "", ALL_PARAMS);
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/", CONTEXT_PATH, ALL_PARAMS);
         generateGet("https://example.com/base", "https://example.com/base", ALL_PARAMS);
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
+    }
+
+    @Test
+    public void canonicalRequestPreservesEncodedTargetPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/", Collections.emptyMap());
+        generateGet("https://example.com/some%20path", "https://example.com/", Collections.emptyMap());
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
+    }
+
+    @Test
+    public void canonicalRequestCorrectWithNoContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "", Collections.emptyMap());
+        generateGet("https://example.com/some%20path", "https://example.com/", Collections.emptyMap());
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
+    }
+
+    @Test
+    public void canonicalRequestCorrectWithEncodedContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/context%20path", Collections.emptyMap());
+        generateGet("https://example.com/context%20path/some%20path", "https://example.com/context%20path", Collections.emptyMap());
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
+    }
+
+    @Test
+    public void canonicalRequestCorrectWithMultiSegmentContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
+        String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/context/path", Collections.emptyMap());
+        generateGet("https://example.com/context/path/some%20path", "https://example.com/context/path", Collections.emptyMap());
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 

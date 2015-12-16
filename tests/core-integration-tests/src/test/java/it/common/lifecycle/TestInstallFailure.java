@@ -159,7 +159,7 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, MY_AWESOME_PAGE_KEY, remotePlugin.getAddon().getKey());
         ConnectAddonEmbeddedTestPage addonContentPage = page.clickAddonLink();
 
-        ConnectAsserts.verifyContainsStandardAddonQueryParamters(addonContentPage.getIframeQueryParams(),
+        ConnectAsserts.verifyContainsStandardAddonQueryParameters(addonContentPage.getIframeQueryParams(),
                 product.getProductInstance().getContextPath());
 
         final String jwt = addonContentPage.getIframeQueryParams().get("jwt");

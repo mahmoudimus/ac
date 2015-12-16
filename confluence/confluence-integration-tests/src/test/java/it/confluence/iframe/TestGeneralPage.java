@@ -28,7 +28,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParamters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParameters;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasEntry;
@@ -118,7 +118,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
         // check iframe url params
         Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
-        verifyContainsStandardAddonQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
+        verifyContainsStandardAddonQueryParameters(iframeQueryParams, product.getProductInstance().getContextPath());
         assertThat(iframeQueryParams, hasEntry("page_id", createdPage.getPageId()));
         assertThat(iframeQueryParams, hasEntry("page_version", "1"));
         assertThat(iframeQueryParams, hasEntry("page_type", "page"));

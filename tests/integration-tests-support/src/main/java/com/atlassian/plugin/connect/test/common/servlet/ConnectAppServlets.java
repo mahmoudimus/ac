@@ -103,6 +103,11 @@ public class ConnectAppServlets
         return new ParameterCapturingServlet(simpleInlineDialogServlet());
     }
 
+    public static ParameterCapturingServlet parameterCapturingPageServlet()
+    {
+        return new ParameterCapturingServlet(simplePageServlet());
+    }
+
     /**
      * @return a servlet that opens a dialog
      */
@@ -175,5 +180,10 @@ public class ConnectAppServlets
     private static ContextServlet simpleInlineDialogServlet()
     {
         return new MustacheServlet("iframe-inline-dialog.mu");
+    }
+
+    public static ContextServlet simplePageServlet()
+    {
+        return new MustacheServlet("iframe-hello-world.mu");
     }
 }

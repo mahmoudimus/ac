@@ -1,10 +1,18 @@
 package it.com.atlassian.plugin.connect.plugin.web.item;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -20,6 +28,7 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebLink;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -27,12 +36,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -476,13 +479,24 @@ public class WebItemModuleProviderTest
 
     private void assertAddonLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addonBean)
     {
-        final WebItemTargetBean target = webItemModuleBean.getTarget();
-        final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
-                ? ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean))
-                : BASE_URL + "/my/addon";
-        final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
+        final String prefix = getExpectedUrlPrefixForWebItem(webItemModuleBean, addonBean);
+        final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>());
         final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);
         assertTrue(message, href.startsWith(prefix));
+    }
+
+    private String getExpectedUrlPrefixForWebItem(final WebItemModuleBean webItemModuleBean, final ConnectAddonBean addonBean)
+    {
+        final WebItemTargetBean target = webItemModuleBean.getTarget();
+        if (target.isDialogTarget() || target.isInlineDialogTarget())
+        {
+            return ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean));
+        }
+        if (target.isPageTarget() && !webItemModuleBean.isAbsolute())
+        {
+            return CONTEXT_PATH + RedirectServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean));
+        }
+        return BASE_URL + "/my/addon";
     }
 
     private Plugin getConnectPlugin()

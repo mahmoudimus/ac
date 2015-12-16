@@ -24,7 +24,7 @@ import it.common.MultiProductWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParamters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParameters;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddonKey;
 import static org.hamcrest.Matchers.equalTo;
@@ -105,7 +105,7 @@ public class AbstractPageTestBase<T extends Page> extends MultiProductWebDriverT
 
         assertThat(addonContentPage.getMessage(), equalTo("Success"));
 
-        verifyContainsStandardAddonQueryParamters(addonContentPage.getIframeQueryParams(),
+        verifyContainsStandardAddonQueryParameters(addonContentPage.getIframeQueryParams(),
                 product.getProductInstance().getContextPath());
 
         return addonContentPage;
