@@ -396,7 +396,6 @@
                             </bundledArtifacts>
                         </product>
                     </products>
-                    <enableFastdev>false</enableFastdev>
                     <testGroups>
                         <testGroup>
                             <id>confluence</id>

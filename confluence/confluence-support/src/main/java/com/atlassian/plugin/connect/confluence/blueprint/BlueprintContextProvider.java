@@ -24,7 +24,6 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -147,7 +146,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             {
                 log.info("Turn on debug for " + log.getName() + " to see the full stackdebug.");
             }
-            Throwables.propagate(e);
+            throw new RuntimeException("JSON syntax error, see logs for details", e);
         }
         return contextMap;
     }
@@ -178,7 +177,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             {
                 log.info("Turn on debug for " + log.getName() + " to see the full stackdebug.");
             }
-            Throwables.propagate(e);
+            throw new RuntimeException("Error retrieving variables for blueprint, see logs for details", e);
         }
         return json;
     }

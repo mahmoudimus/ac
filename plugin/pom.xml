@@ -491,8 +491,10 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <containerId>tomcat7x</containerId>
-                    <enableDevToolbox>false</enableDevToolbox>
                     <enableFastdev>false</enableFastdev>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enablePde>false</enablePde>
+                    <skipRestDocGeneration>true</skipRestDocGeneration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <testBundleExcludes>
@@ -655,6 +657,8 @@
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
+                                <atlassian.darkfeature.confluence.onboarding.bypass>true</atlassian.darkfeature.confluence.onboarding.bypass>
+                                <atlassian.darkfeature.dashboard.onboarding.disabled>true</atlassian.darkfeature.dashboard.onboarding.disabled>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -691,6 +695,11 @@
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-create-content-plugin</artifactId>
                                     <version>${blueprints.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quick.reload.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

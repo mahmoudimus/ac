@@ -286,15 +286,13 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <containerId>tomcat7x</containerId>
-                    <skipManifestValidation>true</skipManifestValidation>
-                    <jvmArgs>
-                        -Xmx1024m -XX:MaxPermSize=256m
-                        -javaagent:/Users/chibichii/bin/jrebel/jrebel.jar
-                        -Drebel.remoting_plugin=true
-                        -Datlassian.org.osgi.framework.bootdelegation.extra=org.zeroturnaround.*,com.zeroturnaround.*
-                    </jvmArgs>
+                    <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <installPlugin>false</installPlugin>
+                    <enableFastdev>false</enableFastdev>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enablePde>false</enablePde>
                     <skipRestDocGeneration>true</skipRestDocGeneration>
+                    <skipManifestValidation>true</skipManifestValidation>
 
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
