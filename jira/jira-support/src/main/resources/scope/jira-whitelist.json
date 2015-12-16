@@ -38,7 +38,7 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["issueLinkType", "issuetype"],
+      "restPathKeys": ["issueLinkType", "issuetype", "user"],
       "methods": ["POST", "PUT", "DELETE"]
     },
     {
