@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.atlassian.plugin.connect.api.ConnectAddonInstallException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;

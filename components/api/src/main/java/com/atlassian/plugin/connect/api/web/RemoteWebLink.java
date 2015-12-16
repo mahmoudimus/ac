@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
@@ -12,6 +13,7 @@ import com.atlassian.plugin.web.model.WebLink;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import javax.ws.rs.core.UriBuilder;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
@@ -80,15 +82,15 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
 
             if (addOnUrlContext == addon)
             {
-                return isDialog
-                        ? urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext)
-                        : iFrameUriBuilderFactory.builder()
-                                .addOn(pluginKey)
-                                .namespace(moduleKey)
-                                .urlTemplate(url)
-                                .context(moduleContext)
-                                .dialog(isDialog)
-                                .build();
+                if (isDialog) {
+                    // Url to the the ConnectIFrameServlet does not need to have base url.
+                    // The url is only used by JS to parse url params from it.
+                    // Then JS compose new url to the ConnectIFrameServlet and do a request.
+                    return urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext);
+                } else {
+                    String urlToRedirectServlet = UriBuilder.fromPath(req.getContextPath()).path(RedirectServletPath.forModule(pluginKey, moduleKey)).build().toString();
+                    return urlVariableSubstitutor.append(urlToRedirectServlet, moduleContext);
+                }
             }
             else if (addOnUrlContext == page)
             {

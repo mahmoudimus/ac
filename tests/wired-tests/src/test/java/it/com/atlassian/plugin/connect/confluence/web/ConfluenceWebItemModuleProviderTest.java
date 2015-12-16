@@ -3,6 +3,7 @@ package it.com.atlassian.plugin.connect.confluence.web;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -15,6 +16,8 @@ import org.junit.runner.RunWith;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.ws.rs.core.UriBuilder;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -32,7 +35,7 @@ public class ConfluenceWebItemModuleProviderTest extends AbstractConnectAddonTes
     }
 
     @Test
-    public void singleAddonLinkWithReplacement() throws Exception
+    public void singleAddonLinkWithContextPrams() throws Exception
     {
         WebItemModuleDescriptor descriptor = registerWebItem("mySpace={space.key}", "atl.admin/menu");
 
@@ -51,7 +54,8 @@ public class ConfluenceWebItemModuleProviderTest extends AbstractConnectAddonTes
 
         String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
 
-        assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
-        assertTrue("space key not found in: " + convertedUrl, convertedUrl.contains("mySpace=" + SPACE_KEY));
+        String expectedUrlPrefix = UriBuilder.fromPath(CONTEXT_PATH).path(RedirectServletPath.forModule(PLUGIN_KEY, MODULE_KEY)).build().toString();
+        assertTrue("wrong url prefix. expected: " + expectedUrlPrefix + ", but got: " + convertedUrl, convertedUrl.startsWith(expectedUrlPrefix));
+        assertTrue("project key not found in: " + convertedUrl, convertedUrl.contains("space.key=" + SPACE_KEY));
     }
 }
