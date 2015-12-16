@@ -11,6 +11,8 @@
             <button id="navigate-to-page" onclick="navigateToPage()">Navigate to page</button>
             <button id="navigate-to-edit-page" onclick="navigateToEditPage()">Navigate to edit page</button>
             <button id="navigate-to-user-profile" onclick="navigateToUserProfile()">Navigate to user profile</button>
+            <button id="navigate-to-space" onclick="navigateToSpace()">Navigate to space</button>
+            <button id="navigate-to-space-tools" onclick="navigateToSpaceTools()">Navigate to space tools</button>
         </div>
         <script type="text/javascript">
             function navigateToDashboard() {
@@ -37,6 +39,20 @@
             function navigateToUserProfile() {
                 AP.require('navigator', function(navigator) {
                     navigator.go("userprofile", {username: "admin"});
+                });
+            }
+        </script>
+        <script type="text/javascript">
+            function navigateToSpace() {
+                AP.require('navigator', function(navigator) {
+                    navigator.go("spaceview", {spaceKey: "DS"});
+                });
+            }
+        </script>
+        <script type="text/javascript">
+            function navigateToSpaceTools() {
+                AP.require('navigator', function(navigator) {
+                    navigator.go("spacetools", {spaceKey: "DS"});
                 });
             }
         </script>

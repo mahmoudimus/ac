@@ -1,21 +1,24 @@
-package it.common.jsapi;
+package it.confluence.jsapi;
 
+import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteNavigatorGeneralPage;
-import it.common.MultiProductWebDriverTestBase;
 
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.confluence.servlet.ConfluenceAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
-public class TestNavigator extends MultiProductWebDriverTestBase
+public class TestNavigator extends ConfluenceWebDriverTestBase
 {
     private static final String PAGE_KEY = "ac-navigator-general-page";
     private static ConnectRunner remotePlugin;
@@ -23,17 +26,17 @@ public class TestNavigator extends MultiProductWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("Nvg", null))
                                 .withUrl("/nvg")
                                 .withKey(PAGE_KEY)
-                                .withLocation(getGloballyVisibleLocation())
+                                .withLocation("system.header/left")
                                 .build()
                 )
-                .addRoute("/nvg", ConnectAppServlets.navigatorServlet())
+                .addRoute("/nvg", ConfluenceAppServlets.navigatorServlet())
                 .start();
     }
 
@@ -46,18 +49,13 @@ public class TestNavigator extends MultiProductWebDriverTestBase
         }
     }
 
-    /*
-     If you've been messing around locally on the instance it may redirect to the dashboard
-     being at #recently-viewed or #all-updates depending on what you've clicked. In this case
-     the test isn't broken, you just need a fresh startup.
-     */
     @Test
     public void testNavigateToDashboard() throws Exception
     {
         loginAndClickToNavigate("navigate-to-dashboard");
 
         String relativeUrl = getRelativeUrlFromWebDriver();
-        assertEquals("/confluence", relativeUrl);
+        assertThat(relativeUrl, anyOf(is("/confluence"), is("/#all-updates"), is("/#recently-viewed")));
 
         makeSureNo404s();
     }
@@ -95,9 +93,31 @@ public class TestNavigator extends MultiProductWebDriverTestBase
         makeSureNo404s();
     }
 
+    @Test
+    public void testNavigateToSpace() throws Exception
+    {
+        loginAndClickToNavigate("navigate-to-space");
+
+        String relativeUrl = getRelativeUrlFromWebDriver();
+        assertEquals("/display/DS", relativeUrl);
+
+        makeSureNo404s();
+    }
+
+    @Test
+    public void testNavigateToSpaceTools() throws Exception
+    {
+        loginAndClickToNavigate("navigate-to-space-tools");
+
+        String relativeUrl = getRelativeUrlFromWebDriver();
+        assertEquals("/spaces/viewspacesummary.action?key=DS", relativeUrl);
+
+        makeSureNo404s();
+    }
+
     public void loginAndClickToNavigate(String id)
     {
-        RemoteNavigatorGeneralPage page = loginAndVisit(testUserFactory.basicUser(),
+        RemoteNavigatorGeneralPage page = loginAndVisit(ConfluenceWebDriverTestBase.testUserFactory.basicUser(),
                 RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
         page.open(id);
@@ -105,7 +125,7 @@ public class TestNavigator extends MultiProductWebDriverTestBase
 
     public void makeSureNo404s()
     {
-        String pageSource = product.getTester().getDriver().getPageSource();
+        String pageSource = ConfluenceWebDriverTestBase.product.getTester().getDriver().getPageSource();
         assertFalse(pageSource.contains("Page Not Found"));
     }
 
@@ -115,8 +135,8 @@ public class TestNavigator extends MultiProductWebDriverTestBase
       */
     public String getRelativeUrlFromWebDriver()
     {
-        String absoluteUrl = product.getTester().getDriver().getCurrentUrl();
-        String baseUrl = product.getProductInstance().getBaseUrl();
+        String absoluteUrl = ConfluenceWebDriverTestBase.product.getTester().getDriver().getCurrentUrl();
+        String baseUrl = ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl();
         return absoluteUrl.replace(baseUrl, "");
     }
 }

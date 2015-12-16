@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.pageobjects;
+package com.atlassian.connect.test.confluence.pageobjects;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;

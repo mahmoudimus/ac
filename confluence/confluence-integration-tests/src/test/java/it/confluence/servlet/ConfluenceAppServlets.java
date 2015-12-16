@@ -35,4 +35,12 @@ public class ConfluenceAppServlets
         return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/test-blueprint.xml"));
     }
 
+    /**
+     * @return a servlet that contains 3 buttons to navigate to different parts of confluence
+     */
+    public static HttpServlet navigatorServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("it/confluence/navigator/iframe-navigator.mu"));
+    }
+
 }
