@@ -77,12 +77,6 @@ public class RemotablePluginAccessorForTests implements RemotablePluginAccessor
     }
 
     @Override
-    public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers)
-    {
-        return null;
-    }
-
-    @Override
     public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers, InputStream body)
     {
         return null;

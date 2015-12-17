@@ -36,6 +36,7 @@ public class MustacheServlet extends ContextServlet
         {
             renderTemplate(resp, context);
         }
+        throw new UnsupportedOperationException("This servlet does not handle GET requests");
     }
 
     @Override
@@ -45,6 +46,7 @@ public class MustacheServlet extends ContextServlet
         {
             renderTemplate(resp, context);
         }
+        throw new UnsupportedOperationException("This servlet does not handle POST requests");
     }
 
     private void renderTemplate(HttpServletResponse resp, Map<String, Object> context) throws IOException

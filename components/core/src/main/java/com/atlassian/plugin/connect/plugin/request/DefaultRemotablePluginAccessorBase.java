@@ -59,21 +59,6 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     public Promise<String> executeAsync(HttpMethod method,
                                         URI targetPath,
                                         Map<String, String[]> params,
-                                        Map<String, String> headers)
-    {
-        return httpContentRetriever.async(getAuthorizationGenerator(),
-                                          method,
-                                          getTargetUrl(targetPath),
-                                          params,
-                                          headers,
-                                          getKey()
-        );
-    }
-
-    @Override
-    public Promise<String> executeAsync(HttpMethod method,
-                                        URI targetPath,
-                                        Map<String, String[]> params,
                                         Map<String, String> headers,
                                         InputStream body)
     {

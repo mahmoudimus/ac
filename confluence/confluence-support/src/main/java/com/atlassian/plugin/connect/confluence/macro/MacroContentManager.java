@@ -1,5 +1,14 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
@@ -7,31 +16,25 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.connect.api.request.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.api.request.ContentRetrievalException;
 import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * TODO once we drop XML, refactor this to take into account that we no longer support specifying a method type and to
@@ -90,7 +93,7 @@ public class MacroContentManager implements DisposableBean
                                     Map<String, String> headers, final ConversionContext conversionContext,
                                     final RemotablePluginAccessor accessor)
     {
-        Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers);
+        Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers, HttpContentRetriever.EMPTY_STREAM);
 
         try
         {

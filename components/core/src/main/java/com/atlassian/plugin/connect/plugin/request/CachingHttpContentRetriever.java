@@ -1,13 +1,14 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -48,7 +49,6 @@ import static com.google.common.collect.Maps.newHashMap;
 public final class CachingHttpContentRetriever implements HttpContentRetriever
 {
     private static final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
-    private static final ByteArrayInputStream EMPTY_STREAM = new ByteArrayInputStream(new byte[0]);
 
     private static final Set<HttpMethod> METHODS_WITH_BODY = Sets.immutableEnumSet(HttpMethod.POST, HttpMethod.PUT);
     private static final Set<HttpMethod> METHODS_WITH_QUERY_PARAMS = Sets.immutableEnumSet(HttpMethod.GET);
@@ -63,7 +63,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
     @Inject
     public CachingHttpContentRetriever(ConnectHttpClientFactory httpClientFactory)
     {
-        this.httpClient = httpClientFactory.getInstance();
+        httpClient = httpClientFactory.getInstance();
     }
 
     @Override
@@ -73,35 +73,13 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
     }
 
     @Override
-    public Promise<String> async(AuthorizationGenerator authorizationGenerator,
-                                 HttpMethod method,
-                                 URI url,
-                                 Map<String, String[]> parameters,
-                                 Map<String, String> headers,
-                                 String addOnKey)
-    {
-        checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
-
-        InputStream body = EMPTY_STREAM;
-        ImmutableMap.Builder<String, String> modifiedHeader = ImmutableMap.builder();
-        if (contains(METHODS_WITH_BODY, method))
-        {
-            /*we default to 'form-url-encoded' when we call this particular overload of #async(), for compatibility reasons*/
-            modifiedHeader.putAll(headers)
-                          .put(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
-            body = IOUtils.toInputStream(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(parameters)));
-        }
-        return async(authorizationGenerator, method, url, parameters, headers, body, addOnKey);
-    }
-
-    @Override
-    public Promise<String> async(AuthorizationGenerator authorizationGenerator,
-                                 HttpMethod method,
-                                 URI url,
-                                 Map<String, String[]> parameters,
-                                 Map<String, String> headers,
-                                 InputStream body,
-                                 String addOnKey)
+    public Promise<String> async(@Nonnull AuthorizationGenerator authorizationGenerator,
+                                 @Nonnull HttpMethod method,
+                                 @Nonnull URI url,
+                                 @Nonnull Map<String, String[]> parameters,
+                                 @Nonnull Map<String, String> headers,
+                                 @Nonnull InputStream body,
+                                 @Nonnull String addOnKey)
     {
         checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
 
@@ -115,8 +93,17 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
         if (contains(METHODS_WITH_BODY, method))
         {
-            request.setContentType(headers.getOrDefault(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()));
-            request.setEntityStream(body);
+            String contentType = headers.getOrDefault(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
+            request.setContentType(contentType);
+            if(ContentType.APPLICATION_FORM_URLENCODED.getMimeType().equals(contentType))
+            {
+                InputStream form = IOUtils.toInputStream(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(parameters)));
+                request.setEntityStream(new SequenceInputStream(body, form));
+            }
+            else
+            {
+                request.setEntityStream(body);
+            }
         }
 
         ResponseTransformation<String> responseTransformation = httpClient.<String>transformation()

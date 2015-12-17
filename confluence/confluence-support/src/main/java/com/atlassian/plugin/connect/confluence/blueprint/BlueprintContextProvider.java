@@ -47,7 +47,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     private static final Logger log = LoggerFactory.getLogger(BlueprintContextProvider.class);
 
     private static final Gson gson = new Gson();
-    private static final Type responseType = new ResponseTypeToken().getType();
+    private static final Type responseType = new BlueprintContextResponseTypeToken().getType();
 
     /* timeout in seconds for remote requests to get context values. Should be same value as set in ConnectHttpClientFactory*/
     private static final long MAX_TIMEOUT = 10L;

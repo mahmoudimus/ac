@@ -27,8 +27,6 @@ public interface RemotablePluginAccessor
 
     String createGetUrl(URI targetPath, Map<String, String[]> params);
 
-    Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers);
-
     Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers, InputStream body);
 
     AuthorizationGenerator getAuthorizationGenerator();
