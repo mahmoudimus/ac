@@ -9,14 +9,14 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 
 import javax.inject.Inject;
 
 /**
  * Describes a project administration tab.
  */
-public class JiraProjectAdministrationTab extends ConnectAddOnEmbeddedTestPage implements ProjectConfigPageTab
+public class JiraProjectAdministrationTab extends ConnectAddonEmbeddedTestPage implements ProjectConfigPageTab
 {
     @Inject
     private PageBinder pageBinder;
@@ -27,9 +27,9 @@ public class JiraProjectAdministrationTab extends ConnectAddOnEmbeddedTestPage i
     private ProjectInfoLocator projectInfoLocator;
     private final String projectKey;
 
-    public JiraProjectAdministrationTab(String projectKey, String addOnKey, String moduleKey)
+    public JiraProjectAdministrationTab(String projectKey, String addonKey, String moduleKey)
     {
-        super(addOnKey, moduleKey, true);
+        super(addonKey, moduleKey, true);
         this.projectKey = projectKey;
     }
 

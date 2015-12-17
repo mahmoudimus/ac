@@ -4,7 +4,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.plugin.connect.api.ConnectAddonController;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
-import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -21,11 +21,11 @@ public class ConnectAddonControllerImpl implements ConnectAddonController
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonControllerImpl.class);
 
     private final ConnectAddonManager addonManager;
-    private final ConnectAddOnInstaller addonInstaller;
+    private final ConnectAddonInstaller addonInstaller;
 
     @Inject
     public ConnectAddonControllerImpl(ConnectAddonManager addonManager,
-                                      ConnectAddOnInstaller addonInstaller)
+                                      ConnectAddonInstaller addonInstaller)
     {
         this.addonManager = addonManager;
         this.addonInstaller = addonInstaller;

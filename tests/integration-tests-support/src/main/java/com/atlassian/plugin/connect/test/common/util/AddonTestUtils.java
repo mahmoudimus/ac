@@ -31,7 +31,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 
 public class AddonTestUtils
 {
-    public static String randomAddOnKey()
+    public static String randomAddonKey()
     {
         // include underscores in add-on key: used in the separator at ModuleKeyUtils
         return "some.test_addon__" + RandomStringUtils.randomAlphanumeric(8).replaceAll("3", "4").toLowerCase();
@@ -62,7 +62,7 @@ public class AddonTestUtils
         return regex.matcher(selector).replaceAll("\\\\$0");
     }
 
-    public static String generateJwtSignature(HttpMethod httpMethod, URI uri, String addOnKey, String secret, String contextPath, String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException
+    public static String generateJwtSignature(HttpMethod httpMethod, URI uri, String addonKey, String secret, String contextPath, String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
         JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, secret);
@@ -83,7 +83,7 @@ public class AddonTestUtils
         }
 
         final JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
-                .issuer(addOnKey)
+                .issuer(addonKey)
                 .queryHash(HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(httpMethod.name(), uri.getPath(), URI.create(contextPath).getPath(), paramsMap.build())));
 
         if (null != subject)

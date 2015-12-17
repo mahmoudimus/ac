@@ -28,19 +28,19 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
 {
 
     private final ConnectJsonSchemaValidator descriptorSchemaValidator;
-    private final AddOnBeanValidatorService addOnBeanValidatorService;
+    private final AddonBeanValidatorService addonBeanValidatorService;
     private final PluginRetrievalService pluginRetrievalService;
     private final PluginAccessor pluginAccessor;
     private Map<String, ConnectAddonBean> descriptorCache = Maps.newConcurrentMap();
 
     @Autowired
     public GsonConnectAddonBeanFactory(ConnectJsonSchemaValidator descriptorSchemaValidator,
-            AddOnBeanValidatorService addOnBeanValidatorService,
+            AddonBeanValidatorService addonBeanValidatorService,
             PluginRetrievalService pluginRetrievalService,
             PluginAccessor pluginAccessor)
     {
         this.descriptorSchemaValidator = descriptorSchemaValidator;
-        this.addOnBeanValidatorService = addOnBeanValidatorService;
+        this.addonBeanValidatorService = addonBeanValidatorService;
         this.pluginRetrievalService = pluginRetrievalService;
         this.pluginAccessor = pluginAccessor;
     }
@@ -75,7 +75,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     {
         validateDescriptorAgainstShallowSchema(jsonDescriptor);
         ConnectAddonBean addon = deserializeDescriptor(jsonDescriptor);
-        addOnBeanValidatorService.validate(addon);
+        addonBeanValidatorService.validate(addon);
         return addon;
     }
 

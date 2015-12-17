@@ -16,24 +16,24 @@ import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 public interface ConnectUserService
 {
     /**
-     * Disables the add-on user for the add-on with key {@code addOnKey}
+     * Disables the add-on user for the add-on with key {@code addonKey}
      *
-     * @param addOnKey the key of the add-on
+     * @param addonKey the key of the add-on
      * @throws ConnectAddonDisableException
      */
-    void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddonDisableException;
+    void disableAddonUser(@Nonnull String addonKey) throws ConnectAddonDisableException;
 
     /**
-     * Retrieves the username for the add-on with key {@code addOnKey}. If the user does not exist, the user is created.
+     * Retrieves the username for the add-on with key {@code addonKey}. If the user does not exist, the user is created.
      * If the user exists but is disabled, the user is activated.
      *
-     * @param addOnKey the key of the add-on
-     * @param addOnDisplayName the display name of the add-on
+     * @param addonKey the key of the add-on
+     * @param addonDisplayName the display name of the add-on
      * @return the user the username for the add-on user
      * @throws ConnectAddonInitException
      */
     @Nonnull
-    String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddonInitException;
+    String getOrCreateAddonUserName(@Nonnull String addonKey, @Nonnull String addonDisplayName) throws ConnectAddonInitException;
 
     /**
      * Checks whether the user with the provided {@code username} is active.
@@ -44,7 +44,7 @@ public interface ConnectUserService
     boolean isActive(@Nonnull String username);
 
     /**
-     * Provisions an add-on user for the add-on with key {@code addOnKey} and configures the user for the provided set
+     * Provisions an add-on user for the add-on with key {@code addonKey} and configures the user for the provided set
      * of {@link ScopeName scopes}. If the user already exists and is disabled, the user is re-enabled.
      *
      * @param addon the add-on
@@ -54,6 +54,6 @@ public interface ConnectUserService
      * @throws ConnectAddonInitException
      */
     @Nonnull
-    String provisionAddOnUserWithScopes(@Nonnull ConnectAddonBean addon,
+    String provisionAddonUserWithScopes(@Nonnull ConnectAddonBean addon,
             @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException;
 }

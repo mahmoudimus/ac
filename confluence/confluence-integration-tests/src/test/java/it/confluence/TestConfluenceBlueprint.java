@@ -36,7 +36,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     private static TestUser testUser;
 
     @BeforeClass
-    public static void setupConfluenceAndStartConnectAddOn() throws Exception
+    public static void setupConfluenceAndStartConnectAddon() throws Exception
     {
         rpc.setLogLevel("com.atlassian.plugin.connect.confluence", Level.DEBUG);
 
@@ -66,7 +66,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {

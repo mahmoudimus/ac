@@ -194,11 +194,11 @@ public final class WebHookTestServlet extends HttpServlet
         }
     }
 
-    public static void runInJsonRunner(String baseUrl, String addOnKey, String eventId, WebHookTester tester) throws Exception
+    public static void runInJsonRunner(String baseUrl, String addonKey, String eventId, WebHookTester tester) throws Exception
     {
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, addOnKey)
+        ConnectRunner runner = new ConnectRunner(baseUrl, addonKey)
                 .setAuthenticationToNone()
                 .addModule("webhooks", newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)

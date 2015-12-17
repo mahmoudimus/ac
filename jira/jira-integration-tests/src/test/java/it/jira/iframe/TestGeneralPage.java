@@ -8,7 +8,7 @@ import java.util.Map;
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -30,7 +30,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParameters;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasEntry;
@@ -60,9 +60,9 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        addonKey = AddonTestUtils.randomAddOnKey();
+        addonKey = AddonTestUtils.randomAddonKey();
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
                 .addModules(
@@ -88,7 +88,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -113,12 +113,12 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira" + IframeUtils.iframeServletPath(addonKey, KEY_MY_AWESOME_PAGE)));
 
-        ConnectAddOnEmbeddedTestPage addonContentsPage = viewProjectPage.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage addonContentsPage = viewProjectPage.clickAddonLink();
         assertThat(addonContentsPage.isFullSize(), is(true));
 
         // check iframe url params
         Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
-        verifyContainsStandardAddOnQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
+        verifyContainsStandardAddonQueryParameters(iframeQueryParams, product.getProductInstance().getContextPath());
         assertThat(iframeQueryParams, hasEntry("project_key", project.getKey()));
         assertThat(iframeQueryParams, hasEntry("project_id", project.getId()));
     }

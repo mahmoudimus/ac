@@ -57,16 +57,16 @@ public class ConnectAddonBeanMarshallingTest
         String json = readAddonTestFile("addonNoCapabilities.json");
 
         Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean addon = gson.fromJson(json, ConnectAddonBean.class);
 
-        assertEquals("My Plugin", addOn.getName());
-        assertEquals("a cool addon", addOn.getDescription());
-        assertEquals("my-plugin", addOn.getKey());
-        assertEquals("Atlassian", addOn.getVendor().getName());
-        assertEquals("http://www.atlassian.com", addOn.getVendor().getUrl());
-        assertEquals(2, addOn.getLinks().size());
-        assertEquals("http://www.example.com", addOn.getLinks().get("homepage"));
-        assertEquals("http://www.example.com/capabilities", addOn.getLinks().get("self"));
+        assertEquals("My Plugin", addon.getName());
+        assertEquals("a cool addon", addon.getDescription());
+        assertEquals("my-plugin", addon.getKey());
+        assertEquals("Atlassian", addon.getVendor().getName());
+        assertEquals("http://www.atlassian.com", addon.getVendor().getUrl());
+        assertEquals(2, addon.getLinks().size());
+        assertEquals("http://www.example.com", addon.getLinks().get("homepage"));
+        assertEquals("http://www.example.com/capabilities", addon.getLinks().get("self"));
     }
 
     /**
@@ -79,9 +79,9 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonNoCapabilitiesCompositeCondition.json");
 
-        ConnectAddonBean addOn = deserializeAddonWithModules(json);
+        ConnectAddonBean addon = deserializeAddonWithModules(json);
 
-        List<ModuleBean> moduleList = addOn.getModules().getValidModuleListOfType("webItems", (e) -> {}).get();
+        List<ModuleBean> moduleList = addon.getModules().getValidModuleListOfType("webItems", (e) -> {}).get();
         assertThat(moduleList, contains(hasProperty("conditions", contains(
                 both(instanceOf(CompositeConditionBean.class)).and(hasProperty("conditions", contains(
                         both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("can_attach_file_to_issue"))),
@@ -102,16 +102,16 @@ public class ConnectAddonBeanMarshallingTest
         String json = readAddonTestFile("addonExtraValue.json");
 
         Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean addon = gson.fromJson(json, ConnectAddonBean.class);
 
-        assertEquals("My Plugin", addOn.getName());
-        assertEquals("a cool addon", addOn.getDescription());
-        assertEquals("my-plugin", addOn.getKey());
-        assertEquals("Atlassian", addOn.getVendor().getName());
-        assertEquals("http://www.atlassian.com", addOn.getVendor().getUrl());
-        assertEquals(2, addOn.getLinks().size());
-        assertEquals("http://www.example.com", addOn.getLinks().get("homepage"));
-        assertEquals("http://www.example.com/capabilities", addOn.getLinks().get("self"));
+        assertEquals("My Plugin", addon.getName());
+        assertEquals("a cool addon", addon.getDescription());
+        assertEquals("my-plugin", addon.getKey());
+        assertEquals("Atlassian", addon.getVendor().getName());
+        assertEquals("http://www.atlassian.com", addon.getVendor().getUrl());
+        assertEquals(2, addon.getLinks().size());
+        assertEquals("http://www.example.com", addon.getLinks().get("homepage"));
+        assertEquals("http://www.example.com/capabilities", addon.getLinks().get("self"));
     }
 
     /**
@@ -125,9 +125,9 @@ public class ConnectAddonBeanMarshallingTest
         String json = readAddonTestFile("addonNoCapabilities.json");
 
         Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean addon = gson.fromJson(json, ConnectAddonBean.class);
 
-        assertNotNull(addOn.getModules());
+        assertNotNull(addon.getModules());
     }
 
     /**
@@ -140,9 +140,9 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonSingleCapability.json");
 
-        ConnectAddonBean addOn = deserializeAddonWithModules(json);
+        ConnectAddonBean addon = deserializeAddonWithModules(json);
 
-        List<ModuleBean> moduleList = addOn.getModules().getValidModuleListOfType("webItems", (e) -> {
+        List<ModuleBean> moduleList = addon.getModules().getValidModuleListOfType("webItems", (e) -> {
         }).get();
 
         assertEquals(1, moduleList.size());
@@ -161,13 +161,13 @@ public class ConnectAddonBeanMarshallingTest
     public void multiCapabilities() throws Exception
     {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
-        ConnectAddonBean addOn = deserializeAddonWithModules(json);
-        List<ModuleBean> moduleList = addOn.getModules().getValidModuleListOfType("webItems", (e) -> {}).get();
+        ConnectAddonBean addon = deserializeAddonWithModules(json);
+        List<ModuleBean> moduleList = addon.getModules().getValidModuleListOfType("webItems", (e) -> {}).get();
 
         assertEquals(2, moduleList.size());
         assertEquals("a web item", ((WebItemModuleBean)moduleList.get(0)).getName().getValue());
         assertEquals("another web item", ((WebItemModuleBean)moduleList.get(1)).getName().getValue());
-        assertEquals("http://www.example.com", addOn.getBaseUrl());
+        assertEquals("http://www.example.com", addon.getBaseUrl());
     }
 
     @Test
@@ -175,24 +175,24 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonNoCapabilities.json");
         Gson gson = ConnectModulesGsonFactory.getGsonBuilder().create();
-        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
-        assertThat(addOn.getScopes(), is(Collections.<ScopeName>emptySet()));
+        ConnectAddonBean addon = gson.fromJson(json, ConnectAddonBean.class);
+        assertThat(addon.getScopes(), is(Collections.<ScopeName>emptySet()));
     }
 
     @Test
     public void singleScope() throws IOException
     {
         String json = readAddonTestFile("singleScope.json");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
-        assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ)));
+        ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        assertThat(addon.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ)));
     }
 
     @Test
     public void multipleScopes() throws IOException
     {
         String json = readAddonTestFile("multipleScopes.json");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
-        assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ, ScopeName.WRITE)));
+        ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        assertThat(addon.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ, ScopeName.WRITE)));
     }
 
     @Test
@@ -200,8 +200,8 @@ public class ConnectAddonBeanMarshallingTest
     {
         Set<ScopeName> emptySet = newHashSet();
         String json = readAddonTestFile("badScopeName.json");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
-        assertThat(addOn.getScopes(), is(emptySet));
+        ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        assertThat(addon.getScopes(), is(emptySet));
     }
 
     private ConnectAddonBean deserializeAddonWithModules(String json)

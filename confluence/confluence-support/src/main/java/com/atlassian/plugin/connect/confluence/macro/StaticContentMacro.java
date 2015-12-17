@@ -9,15 +9,15 @@ import java.util.Map;
 
 public class StaticContentMacro extends AbstractMacro
 {
-    private final String addOnKey;
+    private final String addonKey;
     private final String moduleKey;
     private final String uriTemplate;
     private final RemoteMacroRenderer remoteMacroRenderer;
 
-    public StaticContentMacro(String addOnKey, String moduleKey, String uriTemplate, BodyType bodyType, OutputType outputType, RemoteMacroRenderer remoteMacroRenderer)
+    public StaticContentMacro(String addonKey, String moduleKey, String uriTemplate, BodyType bodyType, OutputType outputType, RemoteMacroRenderer remoteMacroRenderer)
     {
         super(bodyType, outputType);
-        this.addOnKey = addOnKey;
+        this.addonKey = addonKey;
         this.moduleKey = moduleKey;
         this.uriTemplate = uriTemplate;
         this.remoteMacroRenderer = remoteMacroRenderer;
@@ -27,6 +27,6 @@ public class StaticContentMacro extends AbstractMacro
     @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String body, ConversionContext context) throws MacroExecutionException
     {
-        return remoteMacroRenderer.executeStatic(addOnKey, moduleKey, uriTemplate, parameters, body, context);
+        return remoteMacroRenderer.executeStatic(addonKey, moduleKey, uriTemplate, parameters, body, context);
     }
 }

@@ -52,7 +52,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         product.quickLoginAsAdmin();
 
@@ -118,7 +118,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -237,12 +237,12 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        assertThat("AddOn web panel should be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(true));
+        assertThat("Addon web panel should be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(true));
         runner.setToggleableConditionShouldDisplay(false);
 
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        assertThat("AddOn web panel should NOT be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(false));
+        assertThat("Addon web panel should NOT be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(false));
     }
 
     private String getModuleKey(ConnectRunner runner, String module)
