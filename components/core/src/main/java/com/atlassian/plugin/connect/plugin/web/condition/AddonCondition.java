@@ -101,7 +101,7 @@ public class AddonCondition implements Condition
         final String uriPath = uri.getPath();
         final String version = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
         final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
-        Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddOnKey())
+        Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddonKey())
                                                                         .executeAsync(HttpMethod.GET, uri, Collections.emptyMap(), httpHeaders, HttpContentRetriever.EMPTY_STREAM);
 
         String response;

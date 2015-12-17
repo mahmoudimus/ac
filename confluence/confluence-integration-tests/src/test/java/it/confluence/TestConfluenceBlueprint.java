@@ -40,7 +40,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     {
         rpc.setLogLevel("com.atlassian.plugin.connect.confluence", Level.DEBUG);
 
-        randomAddOnKey = AddonTestUtils.randomAddOnKey();
+        randomAddOnKey = AddonTestUtils.randomAddonKey();
         moduleKey = "my-blueprint";
         completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + addonAndModuleKey(randomAddOnKey, moduleKey) + "-web-item";
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddOnKey)

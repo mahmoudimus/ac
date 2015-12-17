@@ -86,7 +86,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         log.debug("{}ing content from '{}'", method, url);
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
-        request = request.setAttributes(getAttributes(addonKey));
+        request = request.setAttributes(getAttributes(addOnKey));
         Optional<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
         Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
         request = request.setHeaders(allHeaders);
