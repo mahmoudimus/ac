@@ -24,12 +24,15 @@ public interface HttpContentRetriever
 
     /**
      * Retrieves HTTP content asynchronously using the given parameters.
-     * {@code Parameters} will be added as query parameters for  {@code GET}, {@code DELETE} and {@code HEAD}.
-     * If the Content-Type header is {@link ContentType#APPLICATION_FORM_URLENCODED},  then the parameters will also
-     * be added to {@code POST}, {@code PUT} and {@code TRACE}.
+     * {@code Parameters} will be added as query parameters for {@code GET}, {@code DELETE} and {@code HEAD}.
      *
-     * The {@code body} is then added as the entity for {@code POST}, {@code PUT} and {@code TRACE} methods, and ignored for
+     * The {@code body} is added as the entity for {@code POST}, {@code PUT} and {@code TRACE} methods, and ignored for
      * {@code GET}, {@code DELETE} and {@code HEAD}.
+     *
+     * If the Content-Type header is {@link ContentType#APPLICATION_FORM_URLENCODED}, then the {@code parameters} will also
+     * be appended to the {@code body}. The {@code body} is then added as the entity for {@code POST}, {@code PUT} and
+     * {@code TRACE} methods.
+     *
      * It is up to implementation to limit the list of accepted HTTP methods.
      *
      * @param authorizationGenerator the generator for the authorisation header
