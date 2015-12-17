@@ -12,6 +12,7 @@ import java.util.concurrent.TimeoutException;
 import com.atlassian.confluence.api.model.content.ContentBody;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
+import com.atlassian.confluence.api.service.exceptions.ServiceException;
 import com.atlassian.confluence.plugins.createcontent.api.contextproviders.AbstractBlueprintContextProvider;
 import com.atlassian.confluence.plugins.createcontent.api.contextproviders.BlueprintContext;
 import com.atlassian.event.api.EventPublisher;
@@ -133,21 +134,13 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
 
     private List<BlueprintContextValue> readJsonResponse(String json)
     {
+        log.debug("start parsing response json into " + responseType.getTypeName());
+        long start =  System.currentTimeMillis();
         List<BlueprintContextValue> contextMap = emptyList();
         try
         {
-            log.debug("start parsing response json into " + responseType.getTypeName());
-            long start =  System.currentTimeMillis();
 
             contextMap = gson.fromJson(json, responseType);
-            long timeTaken = System.currentTimeMillis() - start;
-
-            if (log.isDebugEnabled())
-            {
-                log.debug(Arrays.toString(contextMap.toArray()));
-            }
-            log.debug("finish parsing response json in " + timeTaken + "ms");
-            eventPublisher.publish(new BlueprintContextResponseParseSuccessEvent(addonKey, blueprintKey, contextUrl, timeTaken));
         }
         catch (JsonSyntaxException e)
         {
@@ -164,27 +157,25 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             eventPublisher.publish(new BlueprintContextResponseParseFailureEvent(addonKey, blueprintKey, contextUrl));
             throw new RuntimeException("JSON syntax error, see logs for details", e);
         }
+
+        long timeTaken = System.currentTimeMillis() - start;
+        if (log.isDebugEnabled())
+        {
+            log.debug(Arrays.toString(contextMap.toArray()));
+        }
+        log.debug("finish parsing response json in " + timeTaken + "ms");
+        eventPublisher.publish(new BlueprintContextResponseParseSuccessEvent(addonKey, blueprintKey, contextUrl, timeTaken));
         return contextMap;
     }
 
     private String retrieveResponse(Promise<String> promise)
     {
+        log.debug("start retrieving response");
+        long start = System.currentTimeMillis();
         String json = "{}";
         try
         {
-            log.debug("start retrieving response");
-            long start = System.currentTimeMillis();
-
             json = promise.get(MAX_TIMEOUT, SECONDS);
-
-            long timeTaken = System.currentTimeMillis() - start;
-
-            log.debug("finished retrieving response in " + timeTaken + "ms");
-            if (log.isDebugEnabled())
-            {
-                log.debug(json);
-            }
-            eventPublisher.publish(new BlueprintContextRequestSuccessEvent(addonKey, blueprintKey, contextUrl, timeTaken));
         }
         catch (InterruptedException | ExecutionException | TimeoutException e)
         {
@@ -200,17 +191,40 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             eventPublisher.publish(new BlueprintContextRequestFailedEvent(addonKey, blueprintKey, contextUrl, e.getClass().getName()));
             throw new RuntimeException("Error retrieving variables for blueprint", e);
         }
+
+        long timeTaken = System.currentTimeMillis() - start;
+        if (log.isDebugEnabled())
+        {
+            log.debug(json);
+        }
+        log.debug("finished retrieving response in " + timeTaken + "ms");
+        eventPublisher.publish(new BlueprintContextRequestSuccessEvent(addonKey, blueprintKey, contextUrl, timeTaken));
         return json;
     }
 
     private String transformValue(BlueprintContextValue v)
     {
-        if (Iterables.contains(ContentRepresentation.INPUT_CONVERSION_TO_STORAGE_ORDER, ContentRepresentation.valueOf(v.getRepresentation())))
+        if (isValidForTransform(v))
         {
-            String converted = converter.convert(makeContentBody(v), ContentRepresentation.STORAGE).getValue();
+            String converted;
+            try
+            {
+                converted = converter.convert(makeContentBody(v), ContentRepresentation.STORAGE).getValue();
+            }
+            catch (ServiceException e)
+            {
+                //this really shouldn't fail, but we can recover and just don't convert on failure
+                log.error("conversion to STORAGE format failed for " + v + " :" + e.getMessage());
+                if (log.isDebugEnabled())
+                {
+                    log.debug(String.format("(%s,%s,%s):", addonKey, blueprintKey, contextUrl), e);
+                }
+                converted = v.getValue();
+            }
+
             if (log.isDebugEnabled())
             {
-                log.debug("converted " + v.getValue() + " to '" + converted + "'");
+                log.debug("converted '" + v.getValue() + "' to '" + converted + "'");
             }
             return converted;
         }
@@ -218,6 +232,21 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         {
             return v.getValue();
         }
+    }
+
+    private boolean isValidForTransform(BlueprintContextValue v)
+    {
+        final ContentRepresentation representation;
+        try
+        {
+            representation = ContentRepresentation.valueOf(v.getRepresentation());
+        }
+        catch (IllegalArgumentException ignored)
+        {
+            log.debug("Ignored blueprint context value with invalid representation: " + v);
+            return false;
+        }
+        return Iterables.contains(ContentRepresentation.INPUT_CONVERSION_TO_STORAGE_ORDER, representation);
     }
 
     private ContentBody makeContentBody(BlueprintContextValue v)
