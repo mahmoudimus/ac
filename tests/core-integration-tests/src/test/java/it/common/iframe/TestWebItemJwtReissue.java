@@ -68,11 +68,11 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     private long lastIssuedAtTime;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         logout();
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT(INSTALL_HANDLER_SERVLET)
                 .addModules("webItems",
                         newWebItemBean()
@@ -110,7 +110,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -198,7 +198,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG_KEY);
-        page.clickAddOnLink();
+        page.clickAddonLink();
         RemoteInlineDialog inlineDialog = product.getPageBinder().bind(RemoteInlineDialog.class);
         verifyIframeURLHasVersionNumber(inlineDialog);
     }
@@ -258,14 +258,14 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
 
     private void openAndCloseDialog(RemotePluginAwarePage page)
     {
-        page.clickAddOnLink();
+        page.clickAddonLink();
         RemoteDialog dialog = product.getPageBinder().bind(RemoteDialog.class);
         dialog.cancelAndWaitUntilHidden();
     }
 
     private void openAndCloseInlineDialog(RemotePluginAwarePage page)
     {
-        page.clickAddOnLink();
+        page.clickAddonLink();
         RemoteInlineDialog inlineDialog = product.getPageBinder().bind(RemoteInlineDialog.class);
         inlineDialog.hideAndWaitUntilHidden();
     }

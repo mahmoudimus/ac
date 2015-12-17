@@ -19,29 +19,29 @@ public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
     public void testChangedKey() throws Exception
     {
         login(testUserFactory.basicUser());
-        ConnectRunner pluginFirst = createAddOn("pluginFirst");
+        ConnectRunner pluginFirst = createAddon("pluginFirst");
         assertThatWeCanVisitThePage(pluginFirst);
 
-        ConnectRunner pluginSecond = createAddOn("pluginSecond");
+        ConnectRunner pluginSecond = createAddon("pluginSecond");
         assertThatWeCanVisitThePage(pluginSecond);
     }
 
-    private void assertThatWeCanVisitThePage(ConnectRunner addOn) throws Exception
+    private void assertThatWeCanVisitThePage(ConnectRunner addon) throws Exception
     {
         try
         {
             product.visit(HomePage.class);
-            product.getPageBinder().bind(GeneralPage.class, "changedPage", addOn.getAddon().getKey()).clickAddOnLink(); // will throw if it fails to load
+            product.getPageBinder().bind(GeneralPage.class, "changedPage", addon.getAddon().getKey()).clickAddonLink(); // will throw if it fails to load
         }
         finally
         {
-            addOn.stopAndUninstall();
+            addon.stopAndUninstall();
         }
     }
 
-    private ConnectRunner createAddOn(String addOnKey) throws Exception
+    private ConnectRunner createAddon(String addonKey) throws Exception
     {
-        return new ConnectRunner(product.getProductInstance().getBaseUrl(), addOnKey)
+        return new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .addModule("generalPages", newPageBean()
                         .withKey("changedPage")
                         .withName(new I18nProperty("Foo", null))

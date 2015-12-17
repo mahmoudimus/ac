@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFa
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
 import com.atlassian.plugin.connect.jira.web.condition.IsProjectAdminCondition;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -86,7 +86,7 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractJiraConne
                     .withName(bean.getName())
                     .withKey(bean.getRawKey())
                     .withUrl(ConnectIFrameServletPath.forModule(connectAddonBean.getKey(), bean.getRawKey()))
-                    .withContext(AddOnUrlContext.page)
+                    .withContext(AddonUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
                     .withConditions(bean.getConditions())
@@ -98,7 +98,7 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractJiraConne
 
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(connectAddonBean.getKey())
+                    .addon(connectAddonBean.getKey())
                     .module(bean.getKey(connectAddonBean))
                     .template(projectAdminTabTemplate())
                     .urlTemplate(bean.getUrl())

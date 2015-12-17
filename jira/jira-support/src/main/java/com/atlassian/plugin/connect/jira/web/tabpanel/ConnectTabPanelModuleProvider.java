@@ -65,7 +65,7 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectM
     {
         // register a render strategy for tab panels
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(connectAddonBean.getKey())
+                .addon(connectAddonBean.getKey())
                 .module(tabPanel.getKey(connectAddonBean))
                 .genericBodyTemplate()
                 .urlTemplate(tabPanel.getUrl())

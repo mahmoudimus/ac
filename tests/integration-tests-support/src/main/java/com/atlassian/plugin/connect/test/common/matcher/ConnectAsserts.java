@@ -50,17 +50,17 @@ public class ConnectAsserts
         assertThat(version, isVersionNumber());
     }
 
-    public static void verifyStandardAddOnRelativeQueryParameters(final RemoteWebItem webItem, String contextPath)
+    public static void verifyStandardAddonRelativeQueryParameters(final RemoteWebItem webItem, String contextPath)
     {
         Map<String, String> parameters = Maps.newHashMap();
         for (String key : new String[] {"tz", "loc", "cp", "lic", "cv"})
         {
             parameters.put(key, webItem.getFromQueryString(key));
         }
-        verifyContainsStandardAddOnQueryParamters(parameters, contextPath);
+        verifyContainsStandardAddonQueryParameters(parameters, contextPath);
     }
 
-    public static void verifyContainsStandardAddOnQueryParamters(Map<String, String> parameters, String contextPath)
+    public static void verifyContainsStandardAddonQueryParameters(Map<String, String> parameters, String contextPath)
     {
         //example tz:  America/Los_Angeles
         //example loc: en-GB

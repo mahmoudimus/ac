@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TestGlobalPermission extends JiraTestBase
 {
-    private static final String pluginKey = AddonTestUtils.randomAddOnKey();
+    private static final String pluginKey = AddonTestUtils.randomAddonKey();
 
     private static final String permissionKey = "plugged-global-permission";
     private static final String fullPermissionKey = ModuleKeyUtils.addonAndModuleKey(pluginKey, permissionKey);
@@ -27,7 +27,7 @@ public class TestGlobalPermission extends JiraTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         myPermissionRestClient = new MyPermissionRestClient(product);
         remotePlugin = new ConnectRunner(product.environmentData().getBaseUrl().toString(), pluginKey)
@@ -45,7 +45,7 @@ public class TestGlobalPermission extends JiraTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

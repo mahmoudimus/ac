@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.confluence.macro;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
@@ -33,13 +33,13 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
             DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             HostContainer hostContainer,
-            AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
+            AbsoluteAddonUrlConverter absoluteAddonUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             ConnectJsonSchemaValidator schemaValidator)
     {
         super(pluginRetrievalService, schemaValidator, webItemModuleDescriptorFactory, hostContainer,
-                absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
+                absoluteAddonUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
         this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
@@ -54,7 +54,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
             Plugin plugin, DynamicContentMacroModuleBean macroBean)
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(connectAddonBean.getKey())
+                .addon(connectAddonBean.getKey())
                 .module(macroBean.getRawKey())
                 .genericBodyTemplate(macroBean.getOutputType() == MacroOutputType.INLINE)
                 .urlTemplate(macroBean.getUrl())

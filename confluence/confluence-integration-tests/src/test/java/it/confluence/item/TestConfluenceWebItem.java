@@ -9,10 +9,10 @@ import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.Confluenc
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnHelloWorldPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonHelloWorldPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -33,7 +33,8 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts
+        .verifyContainsStandardAddonQueryParameters;
 import static com.atlassian.plugin.connect.test.common.matcher.IsInteger.isInteger;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -65,12 +66,12 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         barney = testUserFactory.basicUser();
         betty = testUserFactory.admin();
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
                         newWebItemBean()
@@ -81,7 +82,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withUrl("/irwi?page_id={page.id}&content_id={content.id}")
                                 .build(),
                         newWebItemBean()
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withName(new I18nProperty("AC Direct To Addon Web Item", null))
                                 .withKey(ADDON_DIRECT_WEBITEM)
                                 .withLocation("system.content.action")
@@ -89,7 +90,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withUrl("/irwi?page_id={page.id}&content_id={content.id}")
                                 .build(),
                         newWebItemBean()
-                                .withContext(AddOnUrlContext.product)
+                                .withContext(AddonUrlContext.product)
                                 .withName(new I18nProperty("Quick page link", null))
                                 .withKey(PRODUCT_WEBITEM)
                                 .withLocation("system.content.action")
@@ -111,7 +112,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withKey(ADDON_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.content.metadata")
                                 .withWeight(1)
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withUrl("http://www.wikipedia.org")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build()
@@ -124,7 +125,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -149,16 +150,16 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testRelativeWebItem() throws Exception
     {
-        testAddOnWebItem(ADDON_WEBITEM);
+        testAddonWebItem(ADDON_WEBITEM);
     }
 
     @Test
     public void testAddonDirectWebItem() throws Exception
     {
-        testAddOnWebItem(ADDON_DIRECT_WEBITEM);
+        testAddonWebItem(ADDON_DIRECT_WEBITEM);
     }
 
-    private void testAddOnWebItem(final String addonDirectWebitem) throws Exception
+    private void testAddonWebItem(final String addonDirectWebitem) throws Exception
     {
         login(testUserFactory.admin());
 
@@ -169,12 +170,12 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         webItem.click();
-        product.getPageBinder().bind(ConnectAddOnHelloWorldPage.class);
+        product.getPageBinder().bind(ConnectAddonHelloWorldPage.class);
         Map<String, String> queryParams = PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET.getParamsFromLastRequest();
 
         assertEquals(pageId, queryParams.get("page_id"));
         assertEquals(pageId, queryParams.get("content_id"));
-        verifyContainsStandardAddOnQueryParamters(queryParams, "/confluence");
+        verifyContainsStandardAddonQueryParameters(queryParams, "/confluence");
     }
 
     @Test

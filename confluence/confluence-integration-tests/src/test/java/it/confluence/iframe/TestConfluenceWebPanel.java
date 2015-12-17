@@ -62,7 +62,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         editorWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("Editor Panel", null))
@@ -102,7 +102,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

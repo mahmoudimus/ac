@@ -1,18 +1,20 @@
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
-import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
-import com.atlassian.plugins.osgi.test.Application;
-import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeManagerTest;
-import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
-import org.junit.runner.RunWith;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
+import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
+import com.atlassian.plugins.osgi.test.Application;
+import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
+import org.junit.runner.RunWith;
+
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeManagerTest;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 
 import static it.com.atlassian.plugin.connect.jira.auth.scope.JiraScopeTestHelper.emptyBodyForJira;
 import static java.util.Arrays.asList;
@@ -25,7 +27,7 @@ public class JiraSoftwareRestScopesTest extends ScopeManagerTest
     /**
      * These tests are not exhaustive. They touch parts of JIRA Agile API that was selectively made available to Connect apps.
      */
-    public JiraSoftwareRestScopesTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
+    public JiraSoftwareRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
     {
         super(scopeManager, scopeTestHelper, testData());
     }

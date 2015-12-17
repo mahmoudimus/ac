@@ -5,7 +5,7 @@ import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.confluence.util.i18n.DocumentationBean;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
@@ -55,7 +55,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Mock
     protected ContainerContext containerContext;
     @Mock
-    protected AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
+    protected AbsoluteAddonUrlConverter absoluteAddonUrlConverter;
 
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     protected XhtmlMacroModuleDescriptor descriptor;
@@ -76,7 +76,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
 
     private void setupUrlConverter()
     {
-        when(absoluteAddOnUrlConverter.getAbsoluteUrl((ConnectAddonBean)any(), anyString())).then(new Answer<Object>()
+        when(absoluteAddonUrlConverter.getAbsoluteUrl((ConnectAddonBean)any(), anyString())).then(new Answer<Object>()
         {
             @Override
             public Object answer(final InvocationOnMock invocationOnMock) throws Throwable

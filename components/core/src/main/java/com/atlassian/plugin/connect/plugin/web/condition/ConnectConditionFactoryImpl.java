@@ -33,10 +33,10 @@ public class ConnectConditionFactoryImpl implements ConnectConditionFactory
     }
 
     @Override
-    public Condition createCondition(final String addOnKey, final List<ConditionalBean> conditionalBeans,
+    public Condition createCondition(final String addonKey, final List<ConditionalBean> conditionalBeans,
             final Iterable<Class<? extends Condition>> additionalConditions)
     {
-        DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addOnKey, conditionalBeans, additionalConditions);
+        DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addonKey, conditionalBeans, additionalConditions);
         return conditionElementParser.makeConditions(theConnectPlugin, conditionFragment, CompositeType.AND);
     }
 

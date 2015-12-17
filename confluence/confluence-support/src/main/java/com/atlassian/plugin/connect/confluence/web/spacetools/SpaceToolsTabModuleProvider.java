@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFa
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
 import com.atlassian.plugin.connect.confluence.web.ConfluenceConditionClassResolver;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -108,7 +108,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
             moduleDescriptors.add(xWorkActionDescriptorFactory.create(connectAddonBean, plugin, actionBean));
 
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(connectAddonBean.getKey())
+                    .addon(connectAddonBean.getKey())
                     .module(bean.getKey(connectAddonBean))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
@@ -167,7 +167,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
         WebItemModuleBean spaceToolsWebItemBean = newWebItemBean(baseWebItemBean)
                 .withKey(bean.getRawKey())
                 .withName(bean.getName())
-                .withContext(AddOnUrlContext.product)
+                .withContext(AddonUrlContext.product)
                 .withLocation(SPACE_TOOLS_SECTION + "/" + location)
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditionClassResolver.SPACE_SIDEBAR)
@@ -178,7 +178,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
         WebItemModuleBean spaceAdminWebItemBean = newWebItemBean(baseWebItemBean)
                 .withKey(bean.getRawKey() + SPACE_ADMIN_KEY_SUFFIX)
                 .withName(bean.getName())
-                .withContext(AddOnUrlContext.product)
+                .withContext(AddonUrlContext.product)
                 .withLocation(SPACE_ADMIN_SECTION + "/" + LEGACY_LOCATION)
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditionClassResolver.SPACE_SIDEBAR)

@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonPage;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Page with buttons for executing the javascript jira quick issue create
  */
-public class RemoteQuickCreateIssueGeneralPage extends ConnectAddOnPage implements Page
+public class RemoteQuickCreateIssueGeneralPage extends ConnectAddonPage implements Page
 {
 
     @Inject
@@ -29,7 +29,7 @@ public class RemoteQuickCreateIssueGeneralPage extends ConnectAddOnPage implemen
     @Override
     public String getUrl()
     {
-        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
+        return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
     public void launchQuickCreate()

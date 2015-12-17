@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
@@ -40,7 +40,7 @@ public class WebItemModuleBeanTest
         Gson gson = ConnectModulesGsonFactory.getGson();
 
         WebItemModuleBean webItemBean = createWebItemBeanBuilder()
-                .withContext(AddOnUrlContext.product)
+                .withContext(AddonUrlContext.product)
                 .build();
 
         String json = readTestFile("productContextWebItemTest.json");

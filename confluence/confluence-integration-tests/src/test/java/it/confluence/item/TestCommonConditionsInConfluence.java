@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -62,7 +62,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         betty = testUserFactory.admin();
         barney = testUserFactory.basicUser();
@@ -72,7 +72,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         onlyBettyConditionUrl = "/only" + betty.getDisplayName() + "Condition";
         onlyBarneyConditionUrl = "/only" + barney.getDisplayName() + "Condition";
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
                         newWebItemBean()
@@ -115,7 +115,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
                                 .withName(new I18nProperty("Context Parameterized", CONTEXT_PARAMETERIZED_WEBITEM))
                                 .withKey(CONTEXT_PARAMETERIZED_WEBITEM)
                                 .withLocation("system.browse")
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withWeight(1)
                                 .withUrl("/somewhere")
                                 .withConditions(
@@ -142,7 +142,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

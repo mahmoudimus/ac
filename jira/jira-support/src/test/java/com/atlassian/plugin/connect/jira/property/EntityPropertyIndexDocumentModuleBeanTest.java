@@ -79,7 +79,7 @@ public class EntityPropertyIndexDocumentModuleBeanTest
                 .build();
     }
 
-    private static ConnectAddonBean createAddOnBean()
+    private static ConnectAddonBean createAddonBean()
     {
         return newConnectAddonBean()
                 .withName("My Add-On")

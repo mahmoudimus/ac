@@ -7,14 +7,14 @@ import java.util.Map;
 public class ConnectApiScopeWhitelist
 {
 
-    private Map<ScopeName, AddOnScope> scopes;
+    private Map<ScopeName, AddonScope> scopes;
 
-    public ConnectApiScopeWhitelist(Map<ScopeName, AddOnScope> scopes)
+    public ConnectApiScopeWhitelist(Map<ScopeName, AddonScope> scopes)
     {
         this.scopes = scopes;
     }
 
-    public Map<ScopeName, AddOnScope> getScopes()
+    public Map<ScopeName, AddonScope> getScopes()
     {
         return scopes;
     }

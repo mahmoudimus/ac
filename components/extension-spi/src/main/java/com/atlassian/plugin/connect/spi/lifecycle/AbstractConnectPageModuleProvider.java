@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
+import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.page;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -105,7 +105,7 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     {
         // register a render strategy for our iframe page
         IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(connectAddonBean.getKey())
+                .addon(connectAddonBean.getKey())
                 .module(page.getKey(connectAddonBean))
                 .pageTemplate()
                 .urlTemplate(page.getUrl())
@@ -119,7 +119,7 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
 
         // and an additional strategy for raw content, in case the user wants to use it as a dialog target
         IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(connectAddonBean.getKey())
+                .addon(connectAddonBean.getKey())
                 .module(page.getKey(connectAddonBean))
                 .genericBodyTemplate()
                 .urlTemplate(page.getUrl())

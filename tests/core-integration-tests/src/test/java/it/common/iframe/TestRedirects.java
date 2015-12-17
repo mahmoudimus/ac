@@ -35,7 +35,7 @@ public class TestRedirects
     @Test
     public void testPermanentRedirect() throws Exception
     {
-        ConnectRunner runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
+        ConnectRunner runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddonKey())
                 .addModule("generalPages", newPageBean()
                         .withKey("page")
                         .withName(new I18nProperty("Page", null))

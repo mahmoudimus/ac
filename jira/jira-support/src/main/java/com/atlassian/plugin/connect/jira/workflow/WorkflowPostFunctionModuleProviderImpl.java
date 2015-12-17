@@ -89,7 +89,7 @@ public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectM
     private void registerIFrameRenderStrategy(ConnectAddonBean addon, WorkflowPostFunctionModuleBean bean, WorkflowPostFunctionResource resource, UrlBean urlBean)
     {
         IFrameRenderStrategyBuilder.InitializedBuilder builder = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(addon.getKey())
+                .addon(addon.getKey())
                 .module(bean.getKey(addon))
                 .template(workflowPostFunctionTemplate(resource))
                 .urlTemplate(urlBean.getUrl())

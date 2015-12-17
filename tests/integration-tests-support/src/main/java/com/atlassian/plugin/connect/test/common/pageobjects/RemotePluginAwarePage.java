@@ -4,7 +4,7 @@ import com.atlassian.pageobjects.elements.PageElement;
 
 public interface RemotePluginAwarePage
 {
-    ConnectAddOnEmbeddedTestPage clickAddOnLink();
+    ConnectAddonEmbeddedTestPage clickAddonLink();
 
     PageElement findLinkElement();
 }
