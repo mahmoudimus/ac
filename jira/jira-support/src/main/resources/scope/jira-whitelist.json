@@ -23,7 +23,7 @@
     },
     {
       "key": "WRITE",
-      "restPathKeys": ["projectProperties"],
+      "restPathKeys": ["projectProperties", "user-properties"],
       "methods": ["PUT"]
     },
     {
@@ -38,7 +38,7 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["issueLinkType", "issuetype", "user"],
+      "restPathKeys": ["issueLinkType", "issuetype", "user-properties"],
       "methods": ["POST", "PUT", "DELETE"]
     },
     {
@@ -64,6 +64,13 @@
       "key": "user",
       "name": "api",
       "basePaths": ["/user($|/.*)"],
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
+    },
+    {
+      "key": "user-properties",
+      "name": "api",
+      "basePaths": ["/user/properties($|/.*)"],
       "versions": ["2", "2.0.alpha1", "latest"],
       "public": true
     },
