@@ -67,8 +67,8 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     protected static final String EDITOR_MACRO_NAME = "Editor Macro";
     protected static final String EDITOR_MACRO_KEY = "editor-macro";
 
-    protected static final String PROPERTY_PANEL_MACRO_WITH_DIALOG_NAME = "Property Panel Macro";
-    protected static final String PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY = "property-panel-macro";
+    protected static final String PROPERTY_PANEL_MACRO_WITH_DIALOG_NAME = "Property Panel with dialog Macro";
+    protected static final String PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY = "property-panel-with-dialog-macro";
 
     protected static final String PROPERTY_PANEL_MACRO_KEY = "property-panel-macro";
     protected static final String PROPERTY_PANEL_MACRO_NAME = "Property Panel Macro";

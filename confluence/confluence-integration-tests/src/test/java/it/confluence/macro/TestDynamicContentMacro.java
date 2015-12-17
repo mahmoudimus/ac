@@ -570,7 +570,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
         assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValue"));
     }
 
