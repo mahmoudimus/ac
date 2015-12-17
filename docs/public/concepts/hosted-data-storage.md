@@ -1,10 +1,9 @@
 # Hosted data storage
 
-There are three ways in which you can store data against JIRA and Confluence: add-on properties, entity properties 
-(JIRA only) or content properties (Confluence only). We will refer to them collectively as *host properties*. A host 
-property is a key-value pair where the value is a blob of JSON data. Every host property is stored inside a container in 
-the host application. That container might be an issue in JIRA, a page in confluence or even the add-on itself. Your add-on 
-will need to request the right [scopes](../scopes/scopes.html) to perform operations on host properties.
+Add-ons can store data in the form of entity properties in the host application. Properties are key-value pairs where the 
+key is a string used to identify the property in all operations, and the value a JSON blob. Each host application allows 
+properties to be stored on different types of entities, e.g. JIRA issues, Confluence pages, or the add-on itself. Your 
+add-on will need to request the right [scopes](../scopes/scopes.html) to perform operations on entity properties.
 
 Hosted data storage is useful to Atlassian Connect developers for the following reasons:
 
@@ -12,11 +11,11 @@ Hosted data storage is useful to Atlassian Connect developers for the following 
    Your add-on could be written as a set of static web pages using only HTML, CSS and Javascript, without any need for an application server.
  * **Imports and exports are handled by the host product.**  
    Since your data is stored with the host application it is included in the host applications backups. This means that the import process
-   will restore your data automatically. With host properties you never need to worry about your data being lost or disconnected from the customer.
- * **Conditions can be predicated on host properties.**    
-   Meaning that you can configure if a web fragment will be shown based on a host property; this is a much faster approach than relying upon remote conditions. This
+   will restore your data automatically. With entity properties you never need to worry about your data being lost or disconnected from the customer.
+ * **Conditions can be predicated on entity properties.**    
+   Meaning that you can configure if a web fragment will be shown based on a entity property; this is a much faster approach than relying upon remote conditions. This
    is because the host application must make a HTTP request to your add-on every time it evaluates a remote condition; blocking the display of your content until the request 
-   finishes. With host property conditions it is an order of magnitude faster to render the page and thus is a highly recommended approach.
+   finishes. With entity property conditions it is an order of magnitude faster to render the page and thus is a highly recommended approach.
  * **The products have access to your properties.**  
    In JIRA's case this means that you can write JQL queries based on issue entity properties. This enables your users to
    enjoy the power of [JQL on search data][1] that you have defined. In Confluence this means that you can use [CQL to search 
@@ -25,9 +24,24 @@ Hosted data storage is useful to Atlassian Connect developers for the following 
 Host properties are a powerful tool for Atlassian Connect developers. The following sections provide detailed explanations of how add-on properties,
 entity properties and content properties may be used in your add-on.
 
+## Table of contents
+
+* [Add-on properties](#add-on-properties)
+  * [Limitations of add-on properties](#add-on-properties-limitations)
+  * [Supported Operations](#add-on-properties-supported-operations)
+  * [Request example](#add-on-properties-request-example)
+  * [Conditions based on add-on properties](#conditions-on-add-on-properties)
+* [JIRA entity properties](#jira-entity-properties)
+  * [Limitations of entity properties](#jira-entity-properties-limitations)
+  * [Issue entity properties example](#jira-entity-properties-example) 
+  * [Conditions on entity properties](#jira-entity-properties-conditions)
+* [Confluence content properties](#confluence-content-properties)
+  * [Limitations of Content Properties](#confluence-content-properties-limitations)
+  * [Confluence content properties example](#confluence-content-properties-example)
+
 ## <a id="add-on-properties"></a>Add-on properties
 
-Add-on properties are host properties stored against the add-on itself. In this case the 'add-on' is considered
+Add-on properties are entity properties stored against the add-on itself. In this case the 'add-on' is considered
 to be the storage container. However, add-on properties are still unique for each host application: the same add-on stored on
 two different host applications wil not share the same add-on properties.
 
@@ -98,6 +112,27 @@ Here is an example snippet that will show a pop-up with a JSON property named my
      });
 
 Apart from using [`AP.request`](../javascript/module-request.html), the same endpoints are accessible via a request signed with JWT.
+
+### <a id="conditions-on-add-on-properties"></a>Conditions based on add-on properties
+
+Add-on properties can be referenced in the `entity_property_equal_to` condition to decide whether or not to show a web fragment. 
+For example, the following is a valid condition on the add-on property `activatedForUsers`:
+
+    {
+        condition: "entity_property_equal_to",
+        params: {
+            entity: "addon",
+            propertyKey: "activatedForUsers",
+            value: "true"
+        }
+    }
+    
+Only if that property is set to true against the add-on will the condition allow the web fragment to show. Thus you can use this to 
+decide whether or not to show web fragments based on data that you have stored in add-on properties. This is very useful 
+when you have host application wide configuration that you wish to rely upon.
+
+ [1]: https://developer.atlassian.com/jiradev/jira-platform/building-jira-add-ons/jira-entity-properties-overview#JIRAEntityPropertiesOverview-HowdoImakethepropertiesofanentitysearchable?
+ [2]: https://developer.atlassian.com/confdev/confluence-rest-api/advanced-searching-using-cql
 
 ## <a id="jira-entity-properties"></a>JIRA entity properties
 
@@ -196,7 +231,7 @@ in `isSpecialUser` then the condition must be written like so:
 Also, there is currently no way to get a nested value out of a JSON object stored in an entity property for the purposes
 of comparison in a condition.
 
-## <a id="confuence-content-properties"></a>Confluence content properties
+## <a id="confluence-content-properties"></a>Confluence content properties
 
 [Content properties](https://developer.atlassian.com/confdev/confluence-rest-api/content-properties-in-the-rest-api) are a 
 key-value storage associated with a piece of Confluence content, and are one of the forms of persistence available to you as 
@@ -204,7 +239,7 @@ an add-on developer. The Confluence content that you can store content propertie
 
  * [Pages and Blogs](https://docs.atlassian.com/atlassian-confluence/REST/latest/#d3e163)
  
-### <a id="confuence-content-properties-limitations"></a>Limitations of Content Properties
+### <a id="confluence-content-properties-limitations"></a>Limitations of Content Properties
 
 Content properties have the following limitations:
 
@@ -220,7 +255,7 @@ It is important to note that Content properties are unique in that they provide 
 field in the request and response ensures that two requests cannot update the same version of the entity properties data. Attempting
 to do so will result in a HTTP error.
 
-### <a id="confuence-content-properties-example"></a>Confluence content properties example
+### <a id="confluence-content-properties-example"></a>Confluence content properties example
 
 If you wanted to create a content property called 'my-property' on a piece of Confluence content with the id 12345 then
 you would make the following request:
@@ -287,24 +322,3 @@ request on the 'my-property' content property will return the following result:
 
 You can also [use the confluenceContentProperties module](../modules/confluence/content-property.html) to extract data from 
 your content properties and have it indexed and available for search in CQL.
-
-## <a id="conditions-on-host-properties"></a>Conditions based on host properties
-
-Add-on properties can be referenced in the `entity_property_equal_to` condition to decide whether or not to show a web fragment. 
-For example, the following is a valid condition on the add-on property `activatedForUsers`:
-
-    {
-        condition: "entity_property_equal_to",
-        params: {
-            entity: "addon",
-            propertyKey: "activatedForUsers",
-            value: "true"
-        }
-    }
-    
-Only if that property is set to true against the add-on will the condition allow the web fragment to show. Thus you can use this to 
-decide whether or not to show web fragments based on data that you have stored in add-on properties. This is very useful 
-when you have host application wide configuration that you wish to rely upon.
-
- [1]: https://developer.atlassian.com/jiradev/jira-platform/building-jira-add-ons/jira-entity-properties-overview#JIRAEntityPropertiesOverview-HowdoImakethepropertiesofanentitysearchable?
- [2]: https://developer.atlassian.com/confdev/confluence-rest-api/advanced-searching-using-cql
