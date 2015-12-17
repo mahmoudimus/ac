@@ -24,6 +24,7 @@ import com.atlassian.plugin.connect.confluence.blueprint.event.BlueprintContextR
 import com.atlassian.plugin.connect.confluence.blueprint.event.BlueprintContextResponseParseSuccessEvent;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
+import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
@@ -66,6 +67,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     private final RemotablePluginAccessorFactory accessorFactory;
     private final ContentBodyConversionService converter;
     private final UserManager userManager;
+    private final LocaleResolver localeResolver;
     private final EventPublisher eventPublisher;
 
     private String contextUrl;
@@ -77,11 +79,13 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     public BlueprintContextProvider(RemotablePluginAccessorFactory httpAccessor,
                                     ContentBodyConversionService converter,
                                     UserManager userManager,
+                                    LocaleResolver localeResolver,
                                     EventPublisher eventPublisher)
     {
         accessorFactory = httpAccessor;
         this.converter = converter;
         this.userManager = userManager;
+        this.localeResolver = localeResolver;
         this.eventPublisher = eventPublisher;
     }
 
@@ -246,7 +250,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     {
         UserKey remoteUserKey = userManager.getRemoteUserKey();
         String userKey = remoteUserKey != null ? remoteUserKey.getStringValue() : "";
-        Locale userLocale = Locale.ENGLISH;
+        Locale userLocale = localeResolver.getLocale(remoteUserKey);
         BlueprintContextPostBody body = new BlueprintContextPostBody(addonKey,
                                                                      blueprintKey,
                                                                      blueprintContext.getSpaceKey(),

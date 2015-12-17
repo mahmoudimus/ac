@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.confluence.blueprint;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -12,6 +13,8 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.sal.api.message.LocaleResolver;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
 
@@ -50,6 +53,7 @@ public class BlueprintContextProviderTest
     @Mock private ContentBodyConversionService converter;
     @Mock private UserManager userManager;
     @Mock private RemotablePluginAccessor mockAccessor;
+    @Mock private LocaleResolver localeResolver;
 
     @Mock private Promise<String> mockPromise;
     @Mock private BlueprintContext mockContextObj;
@@ -59,7 +63,8 @@ public class BlueprintContextProviderTest
     @Before
     public void setUp() throws Exception
     {
-        blueprintContextProvider = new BlueprintContextProvider(accessorFactory, converter, userManager, eventPublisher);
+        blueprintContextProvider = new BlueprintContextProvider(accessorFactory, converter, userManager, localeResolver, eventPublisher);
+        when(localeResolver.getLocale(any(UserKey.class))).thenReturn(Locale.ENGLISH);
         when(converter.convert(any(), any())).thenAnswer(a -> a.getArguments()[0]);
         when(accessorFactory.getOrThrow("remote-addon-key")).thenReturn(mockAccessor);
         when(mockAccessor.executeAsync(eq(POST), eq(URI.create("/context-url")), anyMap(), anyMap(), any())).thenReturn(mockPromise);
