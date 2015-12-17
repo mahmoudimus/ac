@@ -8,6 +8,7 @@ import java.util.concurrent.TimeoutException;
 
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
 import com.atlassian.confluence.plugins.createcontent.api.contextproviders.BlueprintContext;
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
@@ -44,6 +45,7 @@ public class BlueprintContextProviderTest
     @Rule
     public ExpectedException exceptions = ExpectedException.none();
 
+    @Mock private EventPublisher eventPublisher;
     @Mock private RemotablePluginAccessorFactory accessorFactory;
     @Mock private ContentBodyConversionService converter;
     @Mock private UserManager userManager;
@@ -57,7 +59,7 @@ public class BlueprintContextProviderTest
     @Before
     public void setUp() throws Exception
     {
-        blueprintContextProvider = new BlueprintContextProvider(accessorFactory, converter, userManager);
+        blueprintContextProvider = new BlueprintContextProvider(accessorFactory, converter, userManager, eventPublisher);
         when(converter.convert(any(), any())).thenAnswer(a -> a.getArguments()[0]);
         when(accessorFactory.getOrThrow("remote-addon-key")).thenReturn(mockAccessor);
         when(mockAccessor.executeAsync(eq(POST), eq(URI.create("/context-url")), anyMap(), anyMap(), any())).thenReturn(mockPromise);

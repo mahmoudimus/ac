@@ -14,9 +14,14 @@ import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
 import com.atlassian.confluence.plugins.createcontent.api.contextproviders.AbstractBlueprintContextProvider;
 import com.atlassian.confluence.plugins.createcontent.api.contextproviders.BlueprintContext;
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.confluence.blueprint.event.BlueprintContextRequestFailedEvent;
+import com.atlassian.plugin.connect.confluence.blueprint.event.BlueprintContextRequestSuccessEvent;
+import com.atlassian.plugin.connect.confluence.blueprint.event.BlueprintContextResponseParseFailureEvent;
+import com.atlassian.plugin.connect.confluence.blueprint.event.BlueprintContextResponseParseSuccessEvent;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
 import com.atlassian.sal.api.user.UserKey;
@@ -61,6 +66,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     private final RemotablePluginAccessorFactory accessorFactory;
     private final ContentBodyConversionService converter;
     private final UserManager userManager;
+    private final EventPublisher eventPublisher;
 
     private String contextUrl;
     private String addonKey;
@@ -70,11 +76,13 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     @Autowired
     public BlueprintContextProvider(RemotablePluginAccessorFactory httpAccessor,
                                     ContentBodyConversionService converter,
-                                    UserManager userManager)
+                                    UserManager userManager,
+                                    EventPublisher eventPublisher)
     {
         accessorFactory = httpAccessor;
         this.converter = converter;
         this.userManager = userManager;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -125,14 +133,17 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         try
         {
             log.debug("start parsing response json into " + responseType.getTypeName());
+            long start =  System.currentTimeMillis();
 
             contextMap = gson.fromJson(json, responseType);
+            long timeTaken = System.currentTimeMillis() - start;
 
             if (log.isDebugEnabled())
             {
                 log.debug(Arrays.toString(contextMap.toArray()));
             }
-            log.debug("finish parsing response json");
+            log.debug("finish parsing response json in " + timeTaken + "ms");
+            eventPublisher.publish(new BlueprintContextResponseParseSuccessEvent(addonKey, blueprintKey, contextUrl, timeTaken));
         }
         catch (JsonSyntaxException e)
         {
@@ -146,6 +157,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             {
                 log.info("Turn on debug for " + log.getName() + " to see the full stackdebug.");
             }
+            eventPublisher.publish(new BlueprintContextResponseParseFailureEvent(addonKey, blueprintKey, contextUrl));
             throw new RuntimeException("JSON syntax error, see logs for details", e);
         }
         return contextMap;
@@ -157,14 +169,18 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         try
         {
             log.debug("start retrieving response");
+            long start = System.currentTimeMillis();
 
             json = promise.get(MAX_TIMEOUT, SECONDS);
 
-            log.debug("finished retrieving response");
+            long timeTaken = System.currentTimeMillis() - start;
+
+            log.debug("finished retrieving response in " + timeTaken + "ms");
             if (log.isDebugEnabled())
             {
                 log.debug(json);
             }
+            eventPublisher.publish(new BlueprintContextRequestSuccessEvent(addonKey, blueprintKey, contextUrl, timeTaken));
         }
         catch (InterruptedException | ExecutionException | TimeoutException e)
         {
@@ -177,6 +193,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             {
                 log.info("Turn on debug for " + log.getName() + " to see the full stackdebug.");
             }
+            eventPublisher.publish(new BlueprintContextRequestFailedEvent(addonKey, blueprintKey, contextUrl, e.getClass().getName()));
             throw new RuntimeException("Error retrieving variables for blueprint", e);
         }
         return json;
