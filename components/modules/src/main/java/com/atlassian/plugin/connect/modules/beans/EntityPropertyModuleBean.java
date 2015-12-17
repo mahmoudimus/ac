@@ -15,7 +15,7 @@ import java.util.List;
  * This module allows you to request those entity properties to be indexed by JIRA and able to be queried via JQL searches.
  * They are also available in the <i>entity_property_equal_to</i> condition.</p>
  *
- * <h4>Overview</h4>
+ * <h3>Overview</h3>
  *
  * <p>The purpose of this module is to specify what data from which entity properties should be extracted and indexed.
  * Pretend that an add-on developer has an issue entity property with the key 'attachment' and in that entity property they store the following
@@ -51,7 +51,7 @@ import java.util.List;
  *
  * <p>For more information, please see the <a href="https://developer.atlassian.com/display/JIRADEV/JIRA+Entity+Properties+Overview">JIRA documentation on entity properties</a>.</p>
  *
- * <h4>Example</h4>
+ * <h3>Example</h3>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_EXAMPLE}
  * @schemaTitle Entity Property
