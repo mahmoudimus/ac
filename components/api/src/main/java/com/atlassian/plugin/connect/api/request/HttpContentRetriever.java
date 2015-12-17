@@ -43,7 +43,7 @@ public interface HttpContentRetriever
      * @param body                   the inputstream which returns the body, if method is POST, or PUT, or TRACE.
      *                               If 'Content-Type' is {@link ContentType#APPLICATION_FORM_URLENCODED}, then the {@code parameters} are
      *                               also converted into form-url-encoded format and appended to the body.
-     * @param addOnKey               the key of the add-on from which to retrieve the content
+     * @param addonKey               the key of the add-on from which to retrieve the content
      * @return a promise of the retrieved content
      */
     Promise<String> async(@Nonnull AuthorizationGenerator authorizationGenerator,
@@ -52,6 +52,6 @@ public interface HttpContentRetriever
                           @Nonnull Map<String, String[]> parameters,
                           @Nonnull Map<String, String> headers,
                           @Nonnull InputStream body,
-                          @Nonnull String addOnKey);
+                          @Nonnull String addonKey);
 
 }

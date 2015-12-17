@@ -79,14 +79,14 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
                                  @Nonnull Map<String, String[]> parameters,
                                  @Nonnull Map<String, String> headers,
                                  @Nonnull InputStream body,
-                                 @Nonnull String addOnKey)
+                                 @Nonnull String addonKey)
     {
         checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
 
         log.debug("{}ing content from '{}'", method, url);
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
-        request = request.setAttributes(getAttributes(addOnKey));
+        request = request.setAttributes(getAttributes(addonKey));
         Optional<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
         Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
         request = request.setHeaders(allHeaders);
