@@ -304,6 +304,13 @@
             <version>0.9.9-RC1</version>
             <scope>test</scope>
         </dependency>
+        <!--added as a test dependency because the analytics whitelist requires the events from this module-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-confluence-support</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- EXTRAS -->
         <dependency>
