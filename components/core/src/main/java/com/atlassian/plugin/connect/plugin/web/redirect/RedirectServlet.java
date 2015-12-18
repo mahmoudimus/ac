@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.plugin.util.KeysFromPathMatcher;
@@ -40,21 +40,21 @@ public class RedirectServlet extends HttpServlet
     private final RedirectRegistry redirectRegistry;
     private final ModuleContextParser moduleContextParser;
     private final ModuleUiParamParser moduleUiParamParser;
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
     private final TemplateRenderer templateRenderer;
     private final KeysFromPathMatcher keysFromPathMatcher;
 
     public RedirectServlet(RedirectRegistry redirectRegistry,
             ModuleContextParser moduleContextParser,
             ModuleUiParamParser moduleUiParamParser,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            ConnectUriFactory connectUriFactory,
             TemplateRenderer templateRenderer,
             KeysFromPathMatcher keysFromPathMatcher)
     {
         this.redirectRegistry = redirectRegistry;
         this.moduleContextParser = moduleContextParser;
         this.moduleUiParamParser = moduleUiParamParser;
-        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.connectUriFactory = connectUriFactory;
         this.templateRenderer = templateRenderer;
         this.keysFromPathMatcher = keysFromPathMatcher;
     }
@@ -82,7 +82,7 @@ public class RedirectServlet extends HttpServlet
         if (redirectData.shouldRedirect(moduleContextParameters))
         {
             Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
-            String signedUrl = iFrameUriBuilderFactory.builder()
+            String signedUrl = connectUriFactory.createConnectAddonUriBuilder()
                     .addon(keys.get().getAddOnKey())
                     .namespace(keys.get().getModuleKey())
                     .urlTemplate(redirectData.getUrlTemplate())

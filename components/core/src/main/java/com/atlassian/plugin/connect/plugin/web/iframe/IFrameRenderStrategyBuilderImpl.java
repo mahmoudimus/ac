@@ -8,16 +8,13 @@ import java.util.Optional;
 
 import com.atlassian.plugin.connect.api.web.ModuleTemplate;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilder;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
-import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
-import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
 
@@ -29,8 +26,6 @@ import com.google.common.collect.Maps;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
-
-import javax.ws.rs.core.UriBuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -53,12 +48,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
     public static final String ATL_GENERAL = "atl.general";
 
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private final TemplateRenderer templateRenderer;
     private final ConnectConditionFactory connectConditionFactory;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final HostApplicationInfo hostApplicationInfo;
 
     private final Map<String, Object> additionalRenderContext = Maps.newHashMap();
 
@@ -83,20 +76,16 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private final List<Class<? extends Condition>> conditionClasses = Lists.newArrayList();
 
     public IFrameRenderStrategyBuilderImpl(
-            final IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            final ConnectUriFactory connectUriFactory,
             final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
             final TemplateRenderer templateRenderer,
-            final ConnectConditionFactory connectConditionFactory,
-            final UrlVariableSubstitutor urlVariableSubstitutor,
-            final HostApplicationInfo hostApplicationInfo)
+            final ConnectConditionFactory connectConditionFactory)
     {
-        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.connectUriFactory = connectUriFactory;
         this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
         this.templateRenderer = templateRenderer;
         this.connectConditionFactory = connectConditionFactory;
         this.contentType = ContentType.TEXT_HTML.getMimeType();
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.hostApplicationInfo = hostApplicationInfo;
     }
 
     @Override
@@ -274,8 +263,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     {
         Condition condition = connectConditionFactory.createCondition(addonKey, conditionalBeans, conditionClasses);
 
-        return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                templateRenderer, urlVariableSubstitutor, hostApplicationInfo, addonKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
+        return new IFrameRenderStrategyImpl(connectUriFactory, iFrameRenderContextBuilderFactory, templateRenderer,
+                addonKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
                 decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
                 resizeToParent, sign, contentType, redirect);
     }
@@ -284,11 +273,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     public static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
     {
 
-        private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+        private final ConnectUriFactory connectUriFactory;
         private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
         private final TemplateRenderer templateRenderer;
-        private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final HostApplicationInfo hostApplicationInfo;
 
         private final Map<String, Object> additionalRenderContext;
         private final String addOnKey;
@@ -310,11 +297,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final boolean redirect;
 
         private IFrameRenderStrategyImpl(
-                final IFrameUriBuilderFactory iFrameUriBuilderFactory,
+                final ConnectUriFactory connectUriFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
                 final TemplateRenderer templateRenderer,
-                final UrlVariableSubstitutor urlVariableSubstitutor,
-                final HostApplicationInfo hostApplicationInfo,
                 final String addOnKey,
                 final String moduleKey,
                 final String template,
@@ -334,11 +319,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final String contentType,
                 boolean redirect)
         {
-            this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+            this.connectUriFactory = connectUriFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
             this.templateRenderer = templateRenderer;
-            this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.hostApplicationInfo = hostApplicationInfo;
             this.addOnKey = addOnKey;
             this.moduleKey = moduleKey;
             this.template = template;
@@ -401,18 +384,17 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         {
             if (redirect)
             {
-                String urlToRedirectServlet = UriBuilder.fromPath(hostApplicationInfo.getContextPath()).path(RedirectServletPath.forModule(addOnKey, moduleKey)).build().toString();
-                return urlVariableSubstitutor.append(urlToRedirectServlet, moduleContextParameters);
+                return connectUriFactory.createRedirectServletUri(addOnKey, namespace, moduleContextParameters);
             }
-            return iFrameUriBuilderFactory.builder()
-                    .addon(addOnKey)
-                    .namespace(namespace)
-                    .urlTemplate(urlTemplate)
-                    .context(moduleContextParameters)
-                    .uiParams(uiParameters)
-                    .dialog(isDialog)
-                    .sign(sign)
-                    .build();
+            return connectUriFactory.createConnectAddonUriBuilder()
+                            .addon(addOnKey)
+                            .namespace(namespace)
+                            .urlTemplate(urlTemplate)
+                            .context(moduleContextParameters)
+                            .uiParams(uiParameters)
+                            .dialog(isDialog)
+                            .sign(sign)
+                            .build();
         }
 
         @Override
@@ -450,8 +432,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         @Override
         public IFrameRenderStrategy toJsonRenderStrategy()
         {
-            return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                    templateRenderer, urlVariableSubstitutor, hostApplicationInfo,
+            return new IFrameRenderStrategyImpl(connectUriFactory, iFrameRenderContextBuilderFactory, templateRenderer,
                     addOnKey, moduleKey, TEMPLATE_JSON, TEMPLATE_ACCESS_DENIED_JSON, urlTemplate, title,
                     decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
                     resizeToParent, sign, ContentType.APPLICATION_JSON.getMimeType(), redirect);
