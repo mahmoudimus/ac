@@ -13,7 +13,10 @@ plan(
             type: 'Failed Builds and First Successful',
             recipient: 'committers'
     )
-    runTestsStage(mavenParameters: '')
+    runTestsStage(
+            installMavenParameters: '',
+            testMavenParameters: ''
+    )
     stage(
             name: 'Start Release',
             manual: 'true'
@@ -59,7 +62,10 @@ plan(
             value: ''
     )
 
-    runTestsStage(mavenParameters: '${bamboo.maven.parameters}')
+    runTestsStage(
+            installMavenParameters: '${bamboo.maven.parameters}',
+            testMavenParameters: '${bamboo.maven.parameters}'
+    )
 }
 
 plan(
@@ -75,7 +81,8 @@ plan(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo.product.version}'
+                installMavenParameters: '',
+                testMavenParameters: '-Datlassian.confluence.version=${bamboo.product.version}'
         )
     }
 }
@@ -93,7 +100,8 @@ plan(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo.product.version}'
+                installMavenParameters: '',
+                testMavenParameters: '-Datlassian.jira.version=${bamboo.product.version}'
         )
     }
 }
