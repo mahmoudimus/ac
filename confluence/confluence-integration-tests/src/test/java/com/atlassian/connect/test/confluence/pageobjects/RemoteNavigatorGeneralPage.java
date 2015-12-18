@@ -1,5 +1,6 @@
 package com.atlassian.connect.test.confluence.pageobjects;
 
+import com.atlassian.confluence.webdriver.pageobjects.page.DashboardPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
@@ -29,6 +30,12 @@ public class RemoteNavigatorGeneralPage extends ConnectAddOnPage implements Page
     public String getUrl()
     {
         return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
+    }
+
+    public <P extends com.atlassian.pageobjects.Page> P clickToNavigate(final String id, java.lang.Class<P> aPageClass) {
+        open(id);
+
+        return pageBinder.bind(aPageClass);
     }
 
     public void open(final String id)
