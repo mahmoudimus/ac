@@ -18,15 +18,10 @@ public class MustacheServlet extends ContextServlet
     private final String templatePath;
     private final Set<HttpMethod> methods;
 
-    public MustacheServlet(String templatePath)
-    {
-        this(templatePath, HttpMethod.GET);
-    }
-
     public MustacheServlet(String templatePath, HttpMethod ... methods)
     {
         this.templatePath = templatePath;
-        this.methods = ImmutableSet.copyOf(methods);
+        this.methods = ImmutableSet.copyOf(methods.length == 0 ? new HttpMethod[] { HttpMethod.GET } : methods);
     }
 
     @Override
