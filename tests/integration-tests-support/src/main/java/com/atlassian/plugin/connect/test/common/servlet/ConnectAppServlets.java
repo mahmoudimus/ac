@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.common.servlet;
 
 import javax.servlet.http.HttpServlet;
 
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 
@@ -38,7 +39,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet helloWorldServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-hello-world.mu"));
+        return wrapContextAwareServlet(new MustacheServlet("iframe-hello-world.mu", HttpMethod.GET, HttpMethod.POST));
     }
 
     /**
