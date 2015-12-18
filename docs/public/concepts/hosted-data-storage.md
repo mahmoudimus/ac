@@ -13,8 +13,8 @@ Hosted data storage is useful to Atlassian Connect developers for the following 
    Since your data is stored with the host application it is included in the host applications backups. This means that the import process
    will restore your data automatically. With entity properties you never need to worry about your data being lost or disconnected from the customer.
  * **Conditions can be predicated on entity properties.**    
-   Meaning that you can configure if a web fragment will be shown based on a entity property; this is a much faster approach than relying upon remote conditions. This
-   is because the host application must make a HTTP request to your add-on every time it evaluates a remote condition; blocking the display of your content until the request 
+   Meaning that you can configure whether a web fragment will be shown based on a entity property; this is a much faster approach than relying upon remote conditions. This
+   is because the host application must make a HTTP request to your add-on every time it evaluates a remote condition, blocking the display of your content until the request 
    finishes. With entity property conditions it is an order of magnitude faster to render the page and thus is a highly recommended approach.
  * **The products have access to your properties.**  
    In JIRA's case this means that you can write JQL queries based on issue entity properties. This enables your users to
@@ -52,7 +52,8 @@ Add-on properties have the following limitations:
  * The properties for each add-on are sandboxed to the add-on. Only the add-on that writes the add-on properties can read those properties. 
    They cannot be shared or read by other add-ons.
  * Each add-on can create a maximum of 100 properties, each property value cannot be more than 32KB in size.
- * The value stored in each property must be in valid JSON format.
+ * The value stored in each property must be in valid JSON format. (Valid JSON format is defined as anything that 
+   [JSON.parse](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) can read)
  * Requests via [`AP.request`](../javascript/module-request.html) to store and receive add-on properties can only be made via a logged-in user.
  * There is no mechanism to handle concurrent edits by two users to the one add-on property. Whomever saves data last will win.
  
@@ -72,13 +73,13 @@ The following operations may be performed to manipulate add-on properties:
 
 ### <a id="add-on-properties-request-example"></a>Request example
 
-To give you a very basic example you can set an add-on property like so:
+Add-on properties can be set like so:
 
     PUT /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property
     
     {"string":"string-value","number":5}
 
-And if you were to request it again you would get the following response:
+To request the value of the property we just set:
 
     GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?JSONValue=true
     
@@ -157,11 +158,11 @@ Entity properties have the following limitations:
    the entity property keys for the properties that you wish to be specific to your add-on. This also means that you should
    avoid storing unencrypted sensitive data in entity properties.
  * There is no mechanism to handle concurrent edits by two users to the one add-on property. Whomever saves data last will win.
- * Entity properties can only be modified as a logged in user.
  * The scopes that your add-on requires to modify entity properties are different depending on the type of entity property that you wish to modify.
    For example, to delete an issue entity property you only need `DELETE` scope. However, to delete a project entity property you require 
    `PROJECT_ADMIN` scope.
- * The value stored in each property must be in valid JSON format.
+ * The value stored in each property must be in valid JSON format. (Valid JSON format is defined as anything that 
+   [JSON.parse](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) can read)
    
 Keep these limitations in mind when you use entity properties.
 
@@ -248,8 +249,8 @@ Content properties have the following limitations:
  * Content properties can be modified by all add-ons in the system and exist in a global namespace. It is recommended that you namespace
    then entity property keys for the properties that you wish to be specific to your add-on. This also means that you should
    avoid storing unencrypted sensitive data in entity properties.
- * Content properties can only be modified as a logged in user.
- * The value stored in each property must be in valid JSON format.
+ * The value stored in each property must be in valid JSON format. (Valid JSON format is defined as anything that 
+   [JSON.parse](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) can read)
  
 It is important to note that Content properties are unique in that they provide a mechanism to handle concurrent edits. The 'version'
 field in the request and response ensures that two requests cannot update the same version of the entity properties data. Attempting
