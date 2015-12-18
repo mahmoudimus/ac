@@ -148,6 +148,11 @@ that you can store properties against are:
  * [Workflows](https://docs.atlassian.com/jira/REST/latest/#api/2/workflow-updateProperty)
  * [Dashboard items](https://docs.atlassian.com/jira/REST/latest/#api/2/dashboard/{dashboardId}/items/{itemId}/properties-getProperty)
  
+And, in JIRA Software:
+
+ * [Boards](https://docs.atlassian.com/greenhopper/REST/cloud/#agile/1.0/board/{boardId}/properties-getProperty)
+ * [Sprints](https://docs.atlassian.com/greenhopper/REST/cloud/#agile/1.0/sprint/{sprintId}/properties-getProperty)
+ 
 ### <a id="jira-entity-properties-limitations"></a>Limitations of entity properties
 
 Entity properties have the following limitations: 
