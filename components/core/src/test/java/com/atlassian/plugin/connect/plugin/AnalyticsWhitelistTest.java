@@ -1,15 +1,5 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.analytics.api.annotations.EventName;
-import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
-import com.google.gson.Gson;
-import org.apache.commons.io.IOUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.reflections.Reflections;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -19,6 +9,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.atlassian.analytics.api.annotations.EventName;
+import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
+
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.reflections.Reflections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -56,17 +59,27 @@ public class AnalyticsWhitelistTest
     }
 
     @BeforeClass
-    public static void collectEventClasses() throws ClassNotFoundException
+    public static void collectEventClasses()
     {
-        Reflections reflections = new Reflections("com.atlassian.plugin.connect.plugin");
-        Set<Class<?>> eventClasses = reflections.getTypesAnnotatedWith(EventName.class);
-        for (Class<?> eventClass : eventClasses)
+        Set<Class<?>> union = reflectAllEvents("com.atlassian.plugin.connect.plugin", "com.atlassian.plugin.connect.confluence");
+        for (Class<?> eventClass : union)
         {
             List<Field> fields = ConnectReflectionHelper.getAllFieldsInObjectChain(eventClass);
             List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
             String eventName = eventClass.getAnnotation(EventName.class).value();
             eventClassFields.put(eventName, fieldNames);
         }
+    }
+
+    private static Set<Class<?>> reflectAllEvents(final String ... packages)
+    {
+        Set<Class<?>> clazzes = Sets.newHashSet();
+        for (String p : packages)
+        {
+            Reflections coreReflection = new Reflections(p);
+            clazzes.addAll(coreReflection.getTypesAnnotatedWith(EventName.class));
+        }
+        return clazzes;
     }
 
     private static Map<String, List<String>> eventClassFields = new HashMap<String, List<String>>();

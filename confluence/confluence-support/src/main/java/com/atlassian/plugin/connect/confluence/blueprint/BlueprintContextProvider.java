@@ -31,10 +31,13 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +127,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         Promise<String> promise = pluginAccessor.executeAsync(POST,
                                                               URI.create(contextUrl),
                                                               emptyMap(),
-                                                              emptyMap(),
+                                                              ImmutableMap.of(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()),
                                                               toInputStream(buildBody(blueprintContext)));
         String json = retrieveResponse(promise);
         List<BlueprintContextValue> contextMap = readJsonResponse(json);

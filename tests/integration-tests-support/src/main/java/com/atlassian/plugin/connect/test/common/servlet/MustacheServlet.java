@@ -31,7 +31,10 @@ public class MustacheServlet extends ContextServlet
         {
             renderTemplate(resp, context);
         }
-        throw new UnsupportedOperationException("This servlet does not handle GET requests");
+        else
+        {
+            throw new UnsupportedOperationException("This servlet does not handle GET requests to " + req.getRequestURI());
+        }
     }
 
     @Override
@@ -41,7 +44,10 @@ public class MustacheServlet extends ContextServlet
         {
             renderTemplate(resp, context);
         }
-        throw new UnsupportedOperationException("This servlet does not handle POST requests");
+        else
+        {
+            throw new UnsupportedOperationException("This servlet does not handle POST requests to " + req.getRequestURI());
+        }
     }
 
     private void renderTemplate(HttpServletResponse resp, Map<String, Object> context) throws IOException
