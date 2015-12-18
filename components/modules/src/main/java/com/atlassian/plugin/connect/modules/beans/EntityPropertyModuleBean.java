@@ -39,12 +39,12 @@ import java.util.List;
  * by declaring that the <i>entityType</i> to index will be an 'issue' entity type; this is specified at the top level of their
  * module. Then they need to specify which entity property key that they wish to extract data from: so they add a single entry
  * to <i>keyConfiguratons</i> with the <i>propertyKey</i> of 'attachment'. If there are multiple issue entity properties that an add-on developer wanted
- * to index then they could add more *keyConfigurations* to declare those extra properties. From there the add-on developer specifies
+ * to index then they could add more <i>keyConfigurations</i> to declare those extra properties. From there the add-on developer specifies
  * which data they want to extract from the json value that is stored in this issue entity property. In this example they would
  * add three extractions for <i>attachment.size</i>, <i>attachment.extension</i> and <i>attachment.updated</i> being clear to specify the typo
  * of data being extracted and what alias should be made avaliable to JQL queries.</p>
  *
- * <p>It is important to note that array types can be indexed too; that the *type* field in the extraction should be the type of
+ * <p>It is important to note that array types can be indexed too; that the <i>type</i> field in the extraction should be the type of
  * each element in the array.</p>
  *
  * <p>You can see the resultant module definition in the example below.</p>
