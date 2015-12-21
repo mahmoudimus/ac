@@ -32,10 +32,10 @@ public class RemoteNavigatorGeneralPage extends ConnectAddOnPage implements Page
         return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 
-    public <P extends com.atlassian.pageobjects.Page> P clickToNavigate(final String id, java.lang.Class<P> aPageClass) {
+    public <P extends com.atlassian.pageobjects.Page> P clickToNavigate(final String id, java.lang.Class<P> aPageClass, Object...args) {
         open(id);
 
-        return pageBinder.bind(aPageClass);
+        return pageBinder.bind(aPageClass,args);
     }
 
     public void open(final String id)

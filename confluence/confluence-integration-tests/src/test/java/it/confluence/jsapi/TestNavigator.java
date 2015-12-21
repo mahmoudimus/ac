@@ -1,17 +1,17 @@
 package it.confluence.jsapi;
 
+import com.atlassian.confluence.api.model.content.Content;
+import com.atlassian.confluence.api.model.content.ContentType;
+import com.atlassian.confluence.api.model.content.Space;
 import com.atlassian.confluence.webdriver.pageobjects.page.SimpleDashboardPage;
-import com.atlassian.confluence.webdriver.pageobjects.page.content.ViewPage;
-import com.atlassian.confluence.webdriver.pageobjects.page.DashboardPage;
 import com.atlassian.confluence.webdriver.pageobjects.page.content.EditContentPage;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.ViewPage;
 import com.atlassian.confluence.webdriver.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.confluence.webdriver.pageobjects.page.user.ViewProfilePage;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.servlet.ConfluenceAppServlets;
 import org.junit.AfterClass;
@@ -21,9 +21,7 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class TestNavigator extends ConfluenceWebDriverTestBase
 {
@@ -60,78 +58,39 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     public void testNavigateToDashboard() throws Exception
     {
         SimpleDashboardPage dashboard = loginAndClickToNavigate("navigate-to-dashboard", SimpleDashboardPage.class);
-
-        String relativeUrl = getRelativeUrlFromWebDriver();
-        assertThat(relativeUrl, anyOf(is("/confluence"), is("/#all-updates"), is("/#recently-viewed")));
-
-        makeSureNo404s();
     }
 
     @Test
     public void testNavigateToPage() throws Exception
     {
         ViewPage viewpage = loginAndClickToNavigate("navigate-to-page", ViewPage.class);
-
-        String relativeUrl = getRelativeUrlFromWebDriver();
-        assertEquals("/pages/viewpage.action?pageId=98311", relativeUrl);
-
-        makeSureNo404s();
     }
 
     @Test
     public void testNavigateToEditPage() throws Exception
     {
-        RemoteNavigatorGeneralPage page = loginAndVisit(ConfluenceWebDriverTestBase.testUserFactory.basicUser(),
-                RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
-
-        page.open("navigate-to-edit-page");
-
-        String relativeUrl = getRelativeUrlFromWebDriver();
-        assertEquals("/pages/editpage.action?pageId=98311", relativeUrl);
-
-        makeSureNo404s();
+        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, Content.builder(ContentType.PAGE, 98311).build());
     }
 
     @Test
     public void testNavigateToUserProfile() throws Exception
     {
-        RemoteNavigatorGeneralPage page = loginAndVisit(ConfluenceWebDriverTestBase.testUserFactory.basicUser(),
-                RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
-
-        page.open("navigate-to-user-profile");
-
-        String relativeUrl = getRelativeUrlFromWebDriver();
-        assertEquals("/display/~admin", relativeUrl);
-
-        makeSureNo404s();
+        ViewProfilePage viewProfilePage = loginAndClickToNavigate("navigate-to-user-profile", ViewProfilePage.class, "admin");
     }
 
     @Test
     public void testNavigateToSpaceTools() throws Exception
     {
-        RemoteNavigatorGeneralPage page = loginAndVisit(ConfluenceWebDriverTestBase.testUserFactory.basicUser(),
-                RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
-
-        page.open("navigate-to-space-tools");
-
-        String relativeUrl = getRelativeUrlFromWebDriver();
-        assertEquals("/spaces/viewspacesummary.action?key=DS", relativeUrl);
-
-        makeSureNo404s();
+        String spaceKey = "DS";
+        ViewSpaceSummaryPage viewSpaceSummaryPage = loginAndClickToNavigate("navigate-to-space-tools", ViewSpaceSummaryPage.class, Space.builder().key(spaceKey).build());
     }
 
-    public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass)
+    public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass, Object...args)
     {
         RemoteNavigatorGeneralPage page = loginAndVisit(ConfluenceWebDriverTestBase.testUserFactory.basicUser(),
                 RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
-        return page.clickToNavigate(id, aPageClass);
-    }
-
-    public void makeSureNo404s()
-    {
-        String pageSource = ConfluenceWebDriverTestBase.product.getTester().getDriver().getPageSource();
-        assertFalse(pageSource.contains("Page Not Found"));
+        return page.clickToNavigate(id, aPageClass, args);
     }
 
     /*
