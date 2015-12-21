@@ -187,11 +187,8 @@ public class AddOnPropertiesResource
     @Path ("{propertyKey}")
     public Response putAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
     {
-        final UserProfile user = userManager.getRemoteUser(servletRequest);
-        // can be null, it is checked in the service.
-        final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
-
         Either<RestParamError, String> errorStringEither = propertyValue(servletRequest);
+
         return errorStringEither.fold(new Function<RestParamError, Response>()
         {
             @Override
@@ -204,8 +201,11 @@ public class AddOnPropertiesResource
             @Override
             public Response apply(final String propertyValue)
             {
-                return addOnPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, propertyKey, propertyValue, eTagValidationFunction(request))
-                        .fold(onPreconditionFailed(), onFailure(), onSuccess());
+                final UserProfile user = userManager.getRemoteUser(servletRequest);
+                // can be null, it is checked in the service.
+                final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
+
+                return addOnPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, propertyKey, propertyValue, eTagValidationFunction(request)).fold(onPreconditionFailed(), onFailure(), onSuccess());
             }
         });
     }
@@ -340,12 +340,21 @@ public class AddOnPropertiesResource
 
         try
         {
-            char[] charData = IOUtils.toCharArray(request.getReader());
-            return Either.right(new String(charData));
+            return Either.right(readHttpServletRequestBody(request));
         }
         catch (IOException e)
         {
             return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
+        }
+    }
+
+    private static String readHttpServletRequestBody(final HttpServletRequest request) throws IOException
+    {
+        try
+        {
+            return new String(IOUtils.toCharArray(request.getInputStream()));
+        } catch(IllegalStateException e) {
+            return new String(IOUtils.toCharArray(request.getReader()));
         }
     }
 
