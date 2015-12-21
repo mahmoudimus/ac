@@ -8,7 +8,8 @@ add-on will need to request the right [scopes](../scopes/scopes.html) to perform
 Hosted data storage is useful to Atlassian Connect developers for the following reasons:
 
  * **Your add-on does not need to include a database to store data.**  
-   Your add-on could be written as a set of static web pages using only HTML, CSS and Javascript, without any need for an application server.
+   Your add-on could be written as a set of static web pages using only HTML, CSS and Javascript, without any need for an application server. Your data
+   will be stored against the host application entities.
  * **Imports and exports are handled by the host product.**  
    Since your data is stored with the host application it is included in the host applications backups. This means that the import process
    will restore your data automatically. With entity properties you never need to worry about your data being lost or disconnected from the customer.
@@ -42,7 +43,7 @@ entity properties and content properties may be used in your add-on.
 ## <a id="add-on-properties"></a>Add-on properties
 
 Add-on properties are entity properties stored against the add-on itself. In this case the 'add-on' is considered
-to be the storage container. However, add-on properties are still unique for each host application: the same add-on stored on
+to be the storage container. However, add-on properties are still unique to each host application: the same add-on installed on
 two different host applications wil not share the same add-on properties.
 
 ### <a id="add-on-properties-limitations"></a>Limitations of add-on properties
@@ -132,8 +133,6 @@ Only if that property is set to true against the add-on will the condition allow
 decide whether or not to show web fragments based on data that you have stored in add-on properties. This is very useful 
 when you have host application wide configuration that you wish to rely upon.
 
- [1]: https://developer.atlassian.com/jiradev/jira-platform/building-jira-add-ons/jira-entity-properties-overview#JIRAEntityPropertiesOverview-HowdoImakethepropertiesofanentitysearchable?
- [2]: https://developer.atlassian.com/confdev/confluence-rest-api/advanced-searching-using-cql
 
 ## <a id="jira-entity-properties"></a>JIRA entity properties
 
@@ -145,7 +144,7 @@ that you can store properties against are:
  * [Users](https://docs.atlassian.com/jira/REST/latest/#api/2/user/properties-getProperty)
  * [Issue types](https://docs.atlassian.com/jira/REST/latest/#api/2/issuetype/{issueTypeId}/properties-getProperty)
  * [Comments](https://docs.atlassian.com/jira/REST/latest/#api/2/comment/{commentId}/properties-getProperty)
- * [Workflows](https://docs.atlassian.com/jira/REST/latest/#api/2/workflow-updateProperty)
+ * [Workflow transitions](https://docs.atlassian.com/jira/REST/latest/#api/2/workflow-updateProperty)
  * [Dashboard items](https://docs.atlassian.com/jira/REST/latest/#api/2/dashboard/{dashboardId}/items/{itemId}/properties-getProperty)
  
 And, in JIRA Software:
@@ -328,3 +327,6 @@ request on the 'my-property' content property will return the following result:
 
 You can also [use the confluenceContentProperties module](../modules/confluence/content-property.html) to extract data from 
 your content properties and have it indexed and available for search in CQL.
+
+ [1]: https://developer.atlassian.com/jiradev/jira-platform/building-jira-add-ons/jira-entity-properties-overview#JIRAEntityPropertiesOverview-HowdoImakethepropertiesofanentitysearchable?
+ [2]: https://developer.atlassian.com/confdev/confluence-rest-api/advanced-searching-using-cql
