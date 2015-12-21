@@ -23,6 +23,7 @@ import it.common.MultiProductWebDriverTestBase;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,6 +33,8 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
 
     private static final String REMOTE_PLUGIN_DIALOG_KEY = "remotePluginDialog";
     private static final String SIZE_TO_PARENT_DIALOG_KEY = "sizeToParentDialog";
+    private static final String MULTIPLE_DIALOG_1_DIALOG_KEY = "multipleDialogs1Dialog";
+    private static final String MULTIPLE_DIALOG_2_DIALOG_KEY = "multipleDialogs2Dialog";
 
     private static ConnectRunner runner;
 
@@ -60,10 +63,30 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
                                         .withType(WebItemTargetType.dialog)
                                         .build())
                                 .withLocation(getGloballyVisibleLocation())
+                                .build(),
+                        newWebItemBean()
+                                .withKey(MULTIPLE_DIALOG_1_DIALOG_KEY)
+                                .withName(new I18nProperty("Multiple-dialog 1", null))
+                                .withUrl("/mdd1")
+                                .withTarget(newWebItemTargetBean()
+                                        .withType(WebItemTargetType.dialog)
+                                        .build())
+                                .withLocation(getGloballyVisibleLocation())
+                                .build(),
+                        newWebItemBean()
+                                .withKey(MULTIPLE_DIALOG_2_DIALOG_KEY)
+                                .withName(new I18nProperty("Multiple-dialog 2", null))
+                                .withUrl("/mdd2")
+                                .withTarget(newWebItemTargetBean()
+                                        .withType(WebItemTargetType.dialog)
+                                        .build())
+                                .withLocation("not-shown")
                                 .build()
                 )
                 .addRoute("/rpd", ConnectAppServlets.dialogServlet())
                 .addRoute("/fsd", ConnectAppServlets.sizeToParentServlet())
+                .addRoute("/mdd1", ConnectAppServlets.mustacheServlet("multiple-dialog-1.mu"))
+                .addRoute("/mdd2", ConnectAppServlets.mustacheServlet("multiple-dialog-2.mu"))
                 .start();
     }
 
@@ -103,5 +126,36 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, SIZE_TO_PARENT_DIALOG_KEY, runner.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.isNotFullSize());
+    }
+
+    @Test
+    public void testMultipleDialogs() throws MalformedURLException
+    {
+        login(testUserFactory.basicUser());
+        product.visit(HomePage.class);
+
+        final String addonKey = runner.getAddon().getKey();
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, MULTIPLE_DIALOG_1_DIALOG_KEY, addonKey);
+        ConnectAddOnEmbeddedTestPage dialog1Page = page.clickAddOnLink();
+
+        // The first dialog should have a button to launch a second dialog.
+        RemoteLayeredDialog dialog1 = product.getPageBinder().bind(RemoteLayeredDialog.class, dialog1Page, true);
+        assertThat(dialog1.getIFrameElementText("dialog-name"), containsString("Dialog1"));
+        dialog1.clickCustomButton();
+
+        // The second dialog should be opened, and have the expected content.
+        ConnectAddOnEmbeddedTestPage dialog2Page = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, MULTIPLE_DIALOG_2_DIALOG_KEY, true);
+        RemoteLayeredDialog dialog2 = product.getPageBinder().bind(RemoteLayeredDialog.class, dialog2Page, false);
+        assertThat(dialog2.getIFrameElementText("dialog-name"), containsString("Dialog2"));
+
+        // When the second dialog is closed, the first dialog should be visible.
+        dialog2.cancelAndWaitUntilHidden();
+        dialog1.cancelAndWaitUntilHidden();
+
+        // TODO - assert dialog1 iframe contents still there.
+//        assertThat(dialog1.getIFrameElementText("something"), containsString("foo"));
+
+        // TODO - assert that dialog2 shown when custom button clicked again.
+//        dialog1.clickCustomButton("Launch Fullscreen Dialog");
     }
 }
