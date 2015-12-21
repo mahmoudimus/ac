@@ -29,7 +29,7 @@ public class TestJiraWebHooks extends JiraTestBase
     @Test
     public void testWebHookOnIssueCreated() throws Exception
     {
-        runInJsonRunner(baseUrl, AddonTestUtils.randomAddOnKey(), "jira:issue_created", new WebHookTester()
+        runInJsonRunner(baseUrl, AddonTestUtils.randomAddonKey(), "jira:issue_created", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
@@ -46,7 +46,7 @@ public class TestJiraWebHooks extends JiraTestBase
     @Test
     public void testWebHookHasVersion() throws Exception
     {
-        runInJsonRunner(baseUrl, AddonTestUtils.randomAddOnKey(), "jira:issue_created", new WebHookTester()
+        runInJsonRunner(baseUrl, AddonTestUtils.randomAddonKey(), "jira:issue_created", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
@@ -62,7 +62,7 @@ public class TestJiraWebHooks extends JiraTestBase
     @Test
     public void testWebHookOnIssueUpdated() throws Exception
     {
-        runInJsonRunner(baseUrl, AddonTestUtils.randomAddOnKey(), "jira:issue_updated", new WebHookTester()
+        runInJsonRunner(baseUrl, AddonTestUtils.randomAddonKey(), "jira:issue_updated", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception
@@ -80,7 +80,7 @@ public class TestJiraWebHooks extends JiraTestBase
     @Test
     public void testWebHookOnIssueTransitioned() throws Exception
     {
-        runInJsonRunner(baseUrl, AddonTestUtils.randomAddOnKey(), "jira:issue_updated", new WebHookTester()
+        runInJsonRunner(baseUrl, AddonTestUtils.randomAddonKey(), "jira:issue_updated", new WebHookTester()
         {
             @Override
             public void test(WebHookWaiter waiter) throws Exception

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-confluence-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.66-SNAPSHOT</version>
+        <version>1.1.67-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -38,6 +38,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-test-support-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-connect-crowd-support</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

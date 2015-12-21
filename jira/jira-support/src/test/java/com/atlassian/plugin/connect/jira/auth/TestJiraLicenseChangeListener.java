@@ -14,9 +14,9 @@ import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.jira.license.MockLicensedApplications;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserGroupProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUsers;
 
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUsers;
 import com.google.common.collect.ImmutableSet;
 
 import org.junit.Before;
@@ -47,9 +47,9 @@ public class TestJiraLicenseChangeListener
     @Mock
     private ApplicationRoleManager applicationRoleManager;
     @Mock
-    private ConnectAddOnUsers connectAddOnUsers;
+    private ConnectAddonUsers connectAddonUsers;
     @Mock
-    private ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
+    private ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService;
 
     private User polonius;
     private User charles;
@@ -65,8 +65,8 @@ public class TestJiraLicenseChangeListener
         charles = mock(User.class);
         when(charles.getName()).thenReturn("cheidsieck");
 
-        jiraLicenseChangeListener = new JiraLicenseChangeListener(applicationRoleManager, connectAddOnUsers, connectAddOnUserGroupProvisioningService, applicationAuthorizationService);
-        when(connectAddOnUsers.getAddonUsers()).thenReturn(asList(polonius, charles));
+        jiraLicenseChangeListener = new JiraLicenseChangeListener(applicationRoleManager, connectAddonUsers, connectAddonUserGroupProvisioningService, applicationAuthorizationService);
+        when(connectAddonUsers.getAddonUsers()).thenReturn(asList(polonius, charles));
     }
 
     @SuppressWarnings ("unchecked")
@@ -77,8 +77,8 @@ public class TestJiraLicenseChangeListener
         jiraLicenseChangeListener.onLicenseChanged(event);
 
         verify(applicationRoleManager, never()).getDefaultGroups(any(ApplicationKey.class));
-        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
-        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
+        verify(connectAddonUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
+        verify(connectAddonUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
     }
 
     @SuppressWarnings ("unchecked")
@@ -89,8 +89,8 @@ public class TestJiraLicenseChangeListener
         jiraLicenseChangeListener.onLicenseChanged(event);
 
         verify(applicationRoleManager, never()).getDefaultGroups(any(ApplicationKey.class));
-        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
-        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
+        verify(connectAddonUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
+        verify(connectAddonUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
     }
 
     @SuppressWarnings ("unchecked")
@@ -101,8 +101,8 @@ public class TestJiraLicenseChangeListener
         jiraLicenseChangeListener.onLicenseChanged(event);
 
         verify(applicationRoleManager, never()).getDefaultGroups(any(ApplicationKey.class));
-        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
-        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
+        verify(connectAddonUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
+        verify(connectAddonUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
     }
 
     @SuppressWarnings ("unchecked")
@@ -114,8 +114,8 @@ public class TestJiraLicenseChangeListener
         jiraLicenseChangeListener.onLicenseChanged(event);
 
         verify(applicationRoleManager, never()).getDefaultGroups(any(ApplicationKey.class));
-        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
-        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
+        verify(connectAddonUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
+        verify(connectAddonUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
     }
 
 
@@ -134,8 +134,8 @@ public class TestJiraLicenseChangeListener
 
         verify(applicationRoleManager).getDefaultGroups(ApplicationKey.valueOf(newAppKey));
         verify(applicationRoleManager, never()).getDefaultGroups(ApplicationKey.valueOf(oldAppKey));
-        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(polonius.getName(), ImmutableSet.of(newAppGroup.getName()));
-        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(charles.getName(), ImmutableSet.of(newAppGroup.getName()));
+        verify(connectAddonUserGroupProvisioningService).ensureUserIsInGroups(polonius.getName(), ImmutableSet.of(newAppGroup.getName()));
+        verify(connectAddonUserGroupProvisioningService).ensureUserIsInGroups(charles.getName(), ImmutableSet.of(newAppGroup.getName()));
     }
 
     @Test
@@ -151,12 +151,12 @@ public class TestJiraLicenseChangeListener
         when(applicationRoleManager.getDefaultGroups(any(ApplicationKey.class))).thenReturn(ImmutableSet.of(newAppGroup));
 
         String missingUsername = polonius.getName();
-        doThrow(new UserNotFoundException(missingUsername)).when(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(eq(missingUsername), anySetOf(String.class));
+        doThrow(new UserNotFoundException(missingUsername)).when(connectAddonUserGroupProvisioningService).ensureUserIsInGroups(eq(missingUsername), anySetOf(String.class));
 
         jiraLicenseChangeListener.onLicenseChanged(event);
 
-        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(missingUsername, ImmutableSet.of(newAppGroup.getName()));
-        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(charles.getName(), ImmutableSet.of(newAppGroup.getName()));
+        verify(connectAddonUserGroupProvisioningService).ensureUserIsInGroups(missingUsername, ImmutableSet.of(newAppGroup.getName()));
+        verify(connectAddonUserGroupProvisioningService).ensureUserIsInGroups(charles.getName(), ImmutableSet.of(newAppGroup.getName()));
     }
 
     @SuppressWarnings ("unchecked")

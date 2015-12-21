@@ -11,7 +11,7 @@ import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.healthcheck.core.DefaultHealthStatus;
 import com.atlassian.healthcheck.core.HealthCheck;
 import com.atlassian.healthcheck.core.HealthStatus;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.Constants;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.Constants;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.validAddOnEmailAddress;
-import static com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserUtil.validAddOnUsername;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.validAddonEmailAddress;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.validAddonUsername;
 
 public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 {
@@ -56,13 +56,13 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
             for (User user : users)
             {
-                if (!validAddOnEmailAddress(user))
+                if (!validAddonEmailAddress(user))
                 {
                     log.warn("Add-on user '" + user.getName() + "' has incorrect email '" + user.getEmailAddress() + "'");
                     usersWithIncorrectEmails.add(user);
                 }
 
-                if (!validAddOnUsername(user))
+                if (!validAddonUsername(user))
                 {
                     log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
                     usersWithIncorrectPrefix.add(user);

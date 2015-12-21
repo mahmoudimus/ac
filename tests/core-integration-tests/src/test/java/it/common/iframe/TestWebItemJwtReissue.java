@@ -1,5 +1,7 @@
 package it.common.iframe;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,12 +49,15 @@ import static org.junit.Assert.assertTrue;
 public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
 {
 
+    private static final String JWT_EXPIRY_PAGE_KEY = "checkPageJwtExpiry";
     private static final String JWT_EXPIRY_DIALOG_KEY = "checkDialogJwtExpiry";
     private static final String JWT_EXPIRY_INLINE_DIALOG_KEY = "checkInlineDialogJwtExpiry";
 
+    private static final String PARAMETER_CAPTURE_PAGE_PATH = "/pcp";
     private static final String PARAMETER_CAPTURE_DIALOG_PATH = "/pcd";
     private static final String PARAMETER_CAPTURE_INLINE_DIALOG_PATH = "/pcid";
 
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_PAGE_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
     private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIALOG_SERVLET = ConnectAppServlets.parameterCapturingDialogServlet();
     private static final ParameterCapturingServlet PARAMETER_CAPTURING_INLINE_DIALOG_SERVLET = ConnectAppServlets.parameterCapturingInlineDialogServlet();
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
@@ -63,13 +68,22 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     private long lastIssuedAtTime;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         logout();
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT(INSTALL_HANDLER_SERVLET)
                 .addModules("webItems",
+                        newWebItemBean()
+                                .withKey(JWT_EXPIRY_PAGE_KEY)
+                                .withName(new I18nProperty("JWTP", null))
+                                .withUrl(PARAMETER_CAPTURE_PAGE_PATH)
+                                .withTarget(newWebItemTargetBean()
+                                        .withType(WebItemTargetType.page)
+                                        .build())
+                                .withLocation(getGloballyVisibleLocation())
+                                .build(),
                         newWebItemBean()
                                 .withKey(JWT_EXPIRY_DIALOG_KEY)
                                 .withName(new I18nProperty("JWTD", null))
@@ -89,13 +103,14 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
                                 .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
+                .addRoute(PARAMETER_CAPTURE_PAGE_PATH, ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_PAGE_SERVLET))
                 .addRoute(PARAMETER_CAPTURE_DIALOG_PATH, ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_DIALOG_SERVLET))
                 .addRoute(PARAMETER_CAPTURE_INLINE_DIALOG_PATH, ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_INLINE_DIALOG_SERVLET))
                 .start();
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -142,6 +157,26 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         verifyIssuedAtTime(lastIssuedAtTime, PARAMETER_CAPTURING_DIALOG_SERVLET);
     }
 
+    @Test
+    public void pageClicksGetsNewJwt() throws Exception
+    {
+        login(testUserFactory.basicUser());
+        RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_PAGE_KEY);
+        URL webItemUrl = new URL(page.findLinkElement().getAttribute("href"));
+
+        long timeBeforeClick = getSystemTimeBeforeJwtIssue();
+        webItemUrl.openConnection().getInputStream();
+
+        verifyIssuedAtTime(timeBeforeClick, PARAMETER_CAPTURING_PAGE_SERVLET);
+
+        // JWT token's sign time has one second precision.
+        // We have to wait one second to be sure that token from next request is new.
+        Thread.sleep(1000);
+
+        webItemUrl.openConnection().getInputStream();
+        verifyIssuedAtTime(lastIssuedAtTime, PARAMETER_CAPTURING_PAGE_SERVLET);
+    }
+
     // because we issue a new JWT when it is clicked
     @Test
     @Ignore
@@ -163,7 +198,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG_KEY);
-        page.clickAddOnLink();
+        page.clickAddonLink();
         RemoteInlineDialog inlineDialog = product.getPageBinder().bind(RemoteInlineDialog.class);
         verifyIframeURLHasVersionNumber(inlineDialog);
     }
@@ -188,9 +223,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey)
     {
         product.visit(HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, runner.getAddon().getKey());
-
-        return page;
+        return product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, runner.getAddon().getKey());
     }
 
     private JwtClaimVerifier newIssuedAtTimeClaimVerifier(final long minimumIssueTime)
@@ -225,14 +258,14 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
 
     private void openAndCloseDialog(RemotePluginAwarePage page)
     {
-        page.clickAddOnLink();
+        page.clickAddonLink();
         RemoteDialog dialog = product.getPageBinder().bind(RemoteDialog.class);
         dialog.cancelAndWaitUntilHidden();
     }
 
     private void openAndCloseInlineDialog(RemotePluginAwarePage page)
     {
-        page.clickAddOnLink();
+        page.clickAddonLink();
         RemoteInlineDialog inlineDialog = product.getPageBinder().bind(RemoteInlineDialog.class);
         inlineDialog.hideAndWaitUntilHidden();
     }

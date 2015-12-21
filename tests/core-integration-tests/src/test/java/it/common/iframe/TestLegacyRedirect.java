@@ -35,9 +35,9 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
     }
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()
@@ -51,7 +51,7 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

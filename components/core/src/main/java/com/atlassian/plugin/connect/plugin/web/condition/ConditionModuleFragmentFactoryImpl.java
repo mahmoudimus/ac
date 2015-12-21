@@ -72,8 +72,8 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
 
         if (isRemoteCondition(conditionBean))
         {
-            contextBuilder.put(AddOnCondition.ADDON_KEY, addonKey);
-            contextBuilder.put(AddOnCondition.URL, conditionBean.getCondition());
+            contextBuilder.put(AddonCondition.ADDON_KEY, addonKey);
+            contextBuilder.put(AddonCondition.URL, conditionBean.getCondition());
         }
         else
         {
@@ -86,7 +86,7 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
                 {
                     if (conditionClass.isAnnotationPresent(ConnectCondition.class))
                     {
-                        contextBuilder.putAddOnKey(addonKey);
+                        contextBuilder.putAddonKey(addonKey);
                     }
                 }
             });
@@ -165,7 +165,7 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
         Optional<Class<? extends Condition>> optionalConditionClass;
         if (isRemoteCondition(conditionBean))
         {
-            optionalConditionClass = Optional.of(AddOnCondition.class);
+            optionalConditionClass = Optional.of(AddonCondition.class);
         }
         else
         {

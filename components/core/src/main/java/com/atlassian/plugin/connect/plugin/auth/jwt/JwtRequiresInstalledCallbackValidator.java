@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.descriptor.AddOnBeanValidator;
+import com.atlassian.plugin.connect.plugin.descriptor.AddonBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 
 import javax.inject.Named;
@@ -16,7 +16,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * @since 1.0
  */
 @Named ("jwt-requires-installed-callback-validator")
-public class JwtRequiresInstalledCallbackValidator implements AddOnBeanValidator
+public class JwtRequiresInstalledCallbackValidator implements AddonBeanValidator
 {
     @Override
     public void validate(final ConnectAddonBean addon) throws InvalidDescriptorException

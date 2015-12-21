@@ -4,16 +4,17 @@ import javax.inject.Inject;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.pageobjects.elements.PageElement;
+import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.AdminPage;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,39 +30,49 @@ public final class JiraAdminPage implements AdminPage
 
     @Inject
     private PageBinder pageBinder;
-    private final String addOnKey;
+
+    @Inject
+    private PageElementFinder elementFinder;
+
+    private final String addonKey;
     private final String moduleKey;
 
-    private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
+    private final Supplier<Option<PageElement>> link = new Supplier<Option<PageElement>>()
     {
         @Override
-        public Option<WebElement> get()
+        public Option<PageElement> get()
         {
-            return driver.elementExists(link()) ? some(driver.findElement(link())) : Option.<WebElement>none();
+            return driver.elementExists(link()) ? some(elementFinder.find(link())) : Option.<PageElement>none();
         }
     };
 
-    public JiraAdminPage(String addOnKey, String moduleKey)
+    public JiraAdminPage(String addonKey, String moduleKey)
     {
-        this.addOnKey = addOnKey;
+        this.addonKey = addonKey;
         this.moduleKey = moduleKey;
     }
 
     @Override
-    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
+    public ConnectAddonEmbeddedTestPage clickAddonLink()
     {
-        final WebElement webElement = link.get().get();
-        webElement.click();
-        logger.debug("Link '{}' was found and clicked.", webElement);
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
+        final PageElement linkElement = link.get().get();
+        linkElement.click();
+        logger.debug("Link '{}' was found and clicked.", linkElement);
+        return pageBinder.bind(ConnectAddonEmbeddedTestPage.class, addonKey, moduleKey, true);
+    }
+
+    @Override
+    public PageElement findLinkElement()
+    {
+        return link.get().get();
     }
 
     public String getRemotePluginLinkHref()
     {
-        return withLinkElement(new Function<WebElement, String>()
+        return withLinkElement(new Function<PageElement, String>()
         {
             @Override
-            public String apply(WebElement linkElement)
+            public String apply(PageElement linkElement)
             {
                 return linkElement.getAttribute("href");
             }
@@ -70,17 +81,17 @@ public final class JiraAdminPage implements AdminPage
 
     public String getRemotePluginLinkText()
     {
-        return withLinkElement(new Function<WebElement, String>()
+        return withLinkElement(new Function<PageElement, String>()
         {
             @Override
-            public String apply(WebElement linkElement)
+            public String apply(PageElement linkElement)
             {
                 return linkElement.getText();
             }
         });
     }
 
-    private <T> T withLinkElement(Function<WebElement, T> function)
+    private <T> T withLinkElement(Function<PageElement, T> function)
     {
         return link.get().fold(
                 new Supplier<T>()
@@ -97,7 +108,7 @@ public final class JiraAdminPage implements AdminPage
 
     private By link()
     {
-        return By.id(ModuleKeyUtils.addonAndModuleKey(addOnKey, moduleKey));
+        return By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
     }
 
 }

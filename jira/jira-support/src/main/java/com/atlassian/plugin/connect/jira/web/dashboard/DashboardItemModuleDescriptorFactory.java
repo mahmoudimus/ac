@@ -70,7 +70,7 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
 
         // register an iframe rendering strategy
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(addonBean.getKey())
+                .addon(addonBean.getKey())
                 .module(moduleKey)
                 .genericBodyTemplate()
                 .urlTemplate(bean.getUrl())
@@ -107,14 +107,14 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
         }
     }
 
-    private DirectoryDefinition createDirectoryDefinition(final ConnectAddonBean addOnBean,
+    private DirectoryDefinition createDirectoryDefinition(final ConnectAddonBean addonBean,
             final DashboardItemModuleBean moduleBean,
             final VendorBean vendor)
     {
         return new ConnectDashboardItemDirectoryDefintion(moduleBean.getName().getRawValue(),
                 moduleBean.getName().getI18n(),
                 author(vendor),
-                iconUri(addOnBean, moduleBean.getThumbnailUrl()));
+                iconUri(addonBean, moduleBean.getThumbnailUrl()));
     }
 
     private URI iconUri(final ConnectAddonBean addonBean, final String thumbnailUrl)

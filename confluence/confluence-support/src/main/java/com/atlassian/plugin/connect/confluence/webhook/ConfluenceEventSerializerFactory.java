@@ -33,7 +33,6 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
         // list _before_ less-specific mappers such as PageEventMapper, or else they will never get invoked.
         mappers = ImmutableList.of(
                 new LabelEventMapper(userManager, confluenceSettingsManager),
-                new UserStatusEventMapper(userManager, confluenceSettingsManager),
                 new UserEventMapper(userManager, confluenceSettingsManager),
                 new SearchPerformedEventMapper(userManager, confluenceSettingsManager),
                 new AttachmentEventMapper(userManager, confluenceSettingsManager),

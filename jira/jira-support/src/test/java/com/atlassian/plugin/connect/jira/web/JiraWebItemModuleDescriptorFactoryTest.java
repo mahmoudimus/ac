@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -31,7 +31,7 @@ import org.mockito.stubbing.Answer;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
+import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
@@ -150,7 +150,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
                 "my-key",
                 moduleKey,
                 false,
-                AddOnUrlContext.page,
+                AddonUrlContext.page,
                 false,
                 "admin_system_menu");
 
@@ -170,7 +170,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
                 "my-key",
                 moduleKey,
                 false,
-                AddOnUrlContext.page,
+                AddonUrlContext.page,
                 false,
                 section);
 

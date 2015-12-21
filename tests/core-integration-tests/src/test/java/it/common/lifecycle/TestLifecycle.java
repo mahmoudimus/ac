@@ -24,7 +24,7 @@ public class TestLifecycle
     @Before
     public void setup()
     {
-        this.pluginKey = AddonTestUtils.randomAddOnKey();
+        this.pluginKey = AddonTestUtils.randomAddonKey();
     }
 
     @Test

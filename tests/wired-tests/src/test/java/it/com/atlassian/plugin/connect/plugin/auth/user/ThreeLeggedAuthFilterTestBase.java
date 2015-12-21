@@ -71,7 +71,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     protected final RequestUtil requestUtil;
 
-    protected ConnectAddonBean addOnBean;
+    protected ConnectAddonBean addonBean;
     private boolean globalImpersonationWasEnabled;
 
     private static final Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilterTestBase.class);
@@ -110,8 +110,8 @@ public abstract class ThreeLeggedAuthFilterTestBase
     public void oneTimeSetup() throws IOException
     {
         testAuthenticator.authenticateUser(ADMIN_USERNAME);
-        addOnBean = createAddOnBean(getScope());
-        installedPlugin.set(testPluginInstaller.installAddon(addOnBean));
+        addonBean = createAddonBean(getScope());
+        installedPlugin.set(testPluginInstaller.installAddon(addonBean));
     }
 
     @Before
@@ -175,9 +175,9 @@ public abstract class ThreeLeggedAuthFilterTestBase
         return createRequestUri(user.getName());
     }
 
-    protected String getAddOnUsername()
+    protected String getAddonUsername()
     {
-        return "addon_" + addOnBean.getKey().toLowerCase();
+        return "addon_" + addonBean.getKey().toLowerCase();
     }
 
     protected void ensureUserDoesNotExist(String username) throws OperationFailedException, ApplicationPermissionException
@@ -195,7 +195,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     protected ServletRequestSnapshot getCapturedRequest()
     {
-        ServletRequestSnapshot request = testFilterResults.getRequest(addOnBean.getKey(), REQUEST_PATH);
+        ServletRequestSnapshot request = testFilterResults.getRequest(addonBean.getKey(), REQUEST_PATH);
         assertNotNull(request);
         return request;
     }
@@ -212,14 +212,14 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     protected URI createRequestUri(String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        return createRequestUri(subject, addOnBean.getKey());
+        return createRequestUri(subject, addonBean.getKey());
     }
 
     protected URI createRequestUri(String subject, String issuer) throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         URI uri = createRequestUriWithoutJwt();
 
-        JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, connectAddonRegistry.getSecret(addOnBean.getKey()));
+        JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, connectAddonRegistry.getSecret(addonBean.getKey()));
         final String contextPath = URI.create(applicationProperties.getBaseUrl(UrlMode.CANONICAL)).getPath();
         final JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuer(issuer)
@@ -237,7 +237,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     protected URI createRequestUriWithoutJwt()
     {
-        final URI internalAddonBaseUrl = URI.create(testPluginInstaller.getInternalAddonBaseUrl(addOnBean.getKey()));
+        final URI internalAddonBaseUrl = URI.create(testPluginInstaller.getInternalAddonBaseUrl(addonBean.getKey()));
         return URI.create(internalAddonBaseUrl + REQUEST_PATH);
     }
 
@@ -246,7 +246,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         return getRequestAttribute(request, JwtConstants.HttpRequests.JWT_SUBJECT_ATTRIBUTE_NAME);
     }
 
-    protected Object getAddOnIdFromRequestAttribute(ServletRequestSnapshot request)
+    protected Object getAddonIdFromRequestAttribute(ServletRequestSnapshot request)
     {
         return getRequestAttribute(request, JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
     }
@@ -257,7 +257,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         return null == attributes ? null : attributes.get(attributeName);
     }
 
-    private ConnectAddonBean createAddOnBean(ScopeName scope)
+    private ConnectAddonBean createAddonBean(ScopeName scope)
     {
         final String addonKey = getAddonKey();
         return newConnectAddonBean()

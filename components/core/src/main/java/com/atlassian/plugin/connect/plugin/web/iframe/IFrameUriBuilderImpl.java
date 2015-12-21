@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -25,7 +25,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  *
  */
 public class IFrameUriBuilderImpl
-        implements IFrameUriBuilder, IFrameUriBuilder.AddOnUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
+        implements IFrameUriBuilder, IFrameUriBuilder.AddonUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
@@ -60,7 +60,7 @@ public class IFrameUriBuilderImpl
     }
 
     @Override
-    public AddOnUriBuilder addOn(final String key)
+    public AddonUriBuilder addon(final String key)
     {
         addonKey = Preconditions.checkNotNull(key);
         return this;

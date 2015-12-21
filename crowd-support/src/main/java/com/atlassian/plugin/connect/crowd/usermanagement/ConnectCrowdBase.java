@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -13,22 +17,17 @@ import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
 
 public abstract class ConnectCrowdBase
-        implements ConnectAddOnUserGroupProvisioningService
+        implements ConnectAddonUserGroupProvisioningService
 {
     private final UserReconciliation userReconciliation;
     private static final Logger log = LoggerFactory.getLogger(ConnectCrowdBase.class);
@@ -57,7 +56,7 @@ public abstract class ConnectCrowdBase
     }
 
     public void disableUser(String username)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         Optional<? extends User> user = findUserByName(username);
         if (user.isPresent())
@@ -68,9 +67,9 @@ public abstract class ConnectCrowdBase
                 userTemplate.setActive(false);
                 updateUser(userTemplate);
             }
-            catch (ConnectAddOnUserInitException e)
+            catch (ConnectAddonInitException e)
             {
-                throw new ConnectAddOnUserDisableException((e.getCause() instanceof Exception) ?
+                throw new ConnectAddonDisableException((e.getCause() instanceof Exception) ?
                         (Exception) e.getCause() : null);
             }
         }
@@ -91,10 +90,10 @@ public abstract class ConnectCrowdBase
             Optional<? extends User> user = findUserByName(username);
             if (!user.isPresent())
             {
-                throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!",
+                throw new ConnectAddonInitException(String.format("Tried to create user '%s' but the %s returned a null user!",
                         username,
                         CrowdClient.class.getSimpleName()),
-                        ConnectAddOnUserProvisioningService.USER_PROVISIONING_ERROR);
+                        ConnectAddonInitException.USER_PROVISIONING_ERROR);
             }
 
             return user.get();
@@ -148,7 +147,7 @@ public abstract class ConnectCrowdBase
             throws OperationFailedException, InvalidUserException;
 
     protected abstract void updateUser(UserTemplate fixes);
-    
+
     protected abstract void updateUserCredential(String username, PasswordCredential passwordCredential);
 
     protected abstract void addGroup(String groupName)

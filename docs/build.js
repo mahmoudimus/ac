@@ -29,12 +29,12 @@ var commonSchemaPath =       'target/schema/deref-common-schema.json';
 var jiraSchemaPath =       'target/schema/deref-jira-schema.json';
 var confluenceSchemaPath = 'target/schema/deref-confluence-schema.json';
 
-var jiraGlobalSchemaPath = 'target/schema/jira-global-schema.json'
+var jiraGlobalSchemaPath = 'target/schema/jira-global-schema.json';
 var confluenceGlobalSchemaPath = 'target/schema/confluence-global-schema.json';
 
 var commonScopesPath =     'target/scope/common-whitelist.json';
 var jiraScopesPath =       'target/scope/jira-whitelist.json';
-var agileScopesPath =      'target/scope/jira-agile-whitelist.json';
+var jiraSoftwareScopesPath =      'target/scope/jira-software-whitelist.json';
 var confluenceScopesPath = 'target/scope/confluence-whitelist.json';
 
 program
@@ -440,7 +440,7 @@ function rebuildHarpSite() {
 
     var scopes = {
         jira: fs.readJsonSync(jiraScopesPath),
-        agile: fs.readJsonSync(agileScopesPath),
+        jiraSoftware: fs.readJsonSync(jiraSoftwareScopesPath),
         confluence: fs.readJsonSync(confluenceScopesPath),
         common: fs.readJsonSync(commonScopesPath)
     };
@@ -456,8 +456,8 @@ function rebuildHarpSite() {
             jsonrpc: convertJsonRpcScopesToViewModel([scopes.jira, scopes.common]),
             soaprpc: convertSoapRpcScopesToViewModel([scopes.jira, scopes.common])
         },
-        agile: {
-            rest: convertRestScopesToViewModel([scopes.agile])
+        jiraSoftware: {
+            rest: convertRestScopesToViewModel([scopes.jiraSoftware])
         }
     };
 

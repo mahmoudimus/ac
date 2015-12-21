@@ -81,7 +81,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @BeforeClass
     public static void startAddon() throws Exception
     {
-        addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone();
         addWebItemsWithConditions();
         addon.start();

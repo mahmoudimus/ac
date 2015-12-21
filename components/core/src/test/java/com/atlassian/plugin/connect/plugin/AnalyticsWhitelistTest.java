@@ -8,9 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.reflections.Reflections;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -19,6 +17,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -58,32 +58,14 @@ public class AnalyticsWhitelistTest
     @BeforeClass
     public static void collectEventClasses() throws ClassNotFoundException
     {
-        ClassPathScanningCandidateComponentProvider scanner =
-                new ClassPathScanningCandidateComponentProvider(false);
-
-        scanner.addIncludeFilter(new AnnotationTypeFilter(EventName.class));
-
-        String[] eventPackages = new String[] {
-                "com.atlassian.plugin.connect.plugin.auth.scope",
-                "com.atlassian.plugin.connect.plugin.descriptor.event",
-                "com.atlassian.plugin.connect.plugin.lifecycle.event",
-                "com.atlassian.plugin.connect.plugin.web.condition"
-        };
-        for (String eventPackage : eventPackages)
+        Reflections reflections = new Reflections("com.atlassian.plugin.connect.plugin");
+        Set<Class<?>> eventClasses = reflections.getTypesAnnotatedWith(EventName.class);
+        for (Class<?> eventClass : eventClasses)
         {
-            for (BeanDefinition bd : scanner.findCandidateComponents(eventPackage))
-            {
-                Class<?> clazz = Class.forName(bd.getBeanClassName());
-                EventName en = clazz.getAnnotation(EventName.class);
-
-                List<String> fieldNames = new ArrayList<String>();
-                for (Field field : ConnectReflectionHelper.getAllFieldsInObjectChain(clazz))
-                {
-                    fieldNames.add(field.getName());
-                }
-
-                eventClassFields.put(en.value(), fieldNames);
-            }
+            List<Field> fields = ConnectReflectionHelper.getAllFieldsInObjectChain(eventClass);
+            List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
+            String eventName = eventClass.getAnnotation(EventName.class).value();
+            eventClassFields.put(eventName, fieldNames);
         }
     }
 

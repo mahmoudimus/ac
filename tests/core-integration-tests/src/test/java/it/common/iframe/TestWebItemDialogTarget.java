@@ -6,7 +6,7 @@ import java.net.URL;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
@@ -36,11 +36,11 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         logout();
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
                 .addModules("webItems",
                         newWebItemBean()
@@ -68,7 +68,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -83,7 +83,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
         HomePage homePage = product.visit(HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, REMOTE_PLUGIN_DIALOG_KEY, runner.getAddon().getKey());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();
         String location = remotePluginTest.getLocation();
         URL locationUrl = new URL(location);
         assertThat(locationUrl.getPath(), endsWith(homePage.getUrl()));
@@ -101,7 +101,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
         login(testUserFactory.basicUser());
         product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, SIZE_TO_PARENT_DIALOG_KEY, runner.getAddon().getKey());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();
         assertTrue(remotePluginTest.isNotFullSize());
     }
 }

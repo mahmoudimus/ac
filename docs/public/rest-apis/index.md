@@ -310,11 +310,11 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
     "keys" : [
           {
             "key" : "first_key",
-            "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/first_key"
+            "self" : "/rest/api/atlassian-connect/${addonKey}/properties/first_key"
           },
           {
             "key" : "another_key",
-            "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/another_key"
+            "self" : "/rest/api/atlassian-connect/${addonKey}/properties/another_key"
           }
     ]
 }</textarea>
@@ -402,7 +402,7 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
 {
   "key" : "abcd",
   "value" : true,
-  "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/abcd"
+  "self" : "/rest/api/atlassian-connect/${addonKey}/properties/abcd"
 }</textarea>
 </div>
             <h5><code>400</code> - application/json</h5>

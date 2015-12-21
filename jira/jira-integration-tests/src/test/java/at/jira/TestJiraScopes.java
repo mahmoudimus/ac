@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage.Scope;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
+import com.atlassian.testutils.annotations.Retry;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,6 +32,7 @@ import static org.hamcrest.core.Is.is;
 // at.confluence.TestConfluenceScopes and at.jira.TestConfluenceScopes are very similar.
 // If you make changes here, please check whether corresponding changes are needed in the other class.
 // Issue for extracting shared functionality: ACDEV-2364
+@Retry (maxAttempts=1)
 @Category (OnDemandAcceptanceTest.class)
 public class TestJiraScopes extends JiraWebDriverTestBase
 {

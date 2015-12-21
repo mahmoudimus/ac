@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
@@ -21,7 +21,7 @@ import static java.util.Arrays.asList;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class TempoRestScopesTest extends ScopeManagerTest
 {
-    public TempoRestScopesTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
+    public TempoRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
     {
             super(scopeManager, scopeTestHelper, testData());
     }

@@ -10,11 +10,10 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.group.Group;
-import com.atlassian.plugin.connect.api.auth.user.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.connect.spi.FeatureManager;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -46,7 +45,7 @@ import java.util.concurrent.TransferQueue;
 @ExportAsDevService
 @ConfluenceComponent
 @JiraComponent
-public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService, ConnectCrowdSyncService
+public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddonUserGroupProvisioningService, ConnectCrowdSyncService
 {
     private long syncTimeout = 10;
     private HostProperties hostProperties;
@@ -122,7 +121,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
                 // ( or in case Crowd said it had finished the sync before it really had )
                 if (!embedded.findUserByName(username).isPresent())
                 {
-                    throw new ConnectAddOnUserInitException("Could not find the user in the local Crowd cache");
+                    throw new ConnectAddonInitException("Could not find the user in the local Crowd cache");
                 }
             }
             if (!attributes.isEmpty())
@@ -133,7 +132,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         }
         catch (InterruptedException e)
         {
-            throw new ConnectAddOnUserInitException(e);
+            throw new ConnectAddonInitException(e);
         }
         return userCreationResult;
     }
@@ -180,7 +179,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
 
     @Override
     public void disableUser(String username)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonDisableException
     {
         if (isConfluence() && isOnDemand())
         {

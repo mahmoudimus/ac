@@ -91,7 +91,7 @@ public class ConnectRunner
      */
     public ConnectRunner(TestedProduct testedProduct)
     {
-        this(testedProduct, AddonTestUtils.randomAddOnKey());
+        this(testedProduct, AddonTestUtils.randomAddonKey());
     }
 
     /**

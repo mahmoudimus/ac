@@ -146,7 +146,7 @@ public class TestConfluenceContentProperties
 
             assertFalse("Key configurations should not be empty", moduleBean.getKeyConfigurations().isEmpty());
 
-            runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
+            runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddonKey())
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
                     .start();

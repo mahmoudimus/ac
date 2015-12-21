@@ -42,9 +42,9 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("spaceToolsTabs", newSpaceToolsTabBean()
                                 .withName(new I18nProperty("AC Space Tab", null))
@@ -59,7 +59,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

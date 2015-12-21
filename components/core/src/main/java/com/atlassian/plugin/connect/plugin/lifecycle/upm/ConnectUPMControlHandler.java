@@ -5,9 +5,10 @@ import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.PluginRestartState;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
-import com.atlassian.plugin.connect.spi.auth.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.spi.PluginControlHandler;
 import org.slf4j.Logger;
@@ -51,7 +52,14 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     {
         for (String key : pluginKeys)
         {
-            connectAddonManager.enableConnectAddon(key);
+            try
+            {
+                connectAddonManager.enableConnectAddon(key);
+            }
+            catch (ConnectAddonEnableException e)
+            {
+                log.error("Tried to enable Connect add-on " + e.getAddonKey() + " from UPM, but couldn't: " + e.getMessage(), e);
+            }
         }
     }
 
@@ -68,7 +76,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
         {
             connectAddonManager.disableConnectAddon(pluginKey);
         }
-        catch (ConnectAddOnUserDisableException e)
+        catch (ConnectAddonDisableException e)
         {
             log.error("Unable to disable connect addon fully...", e);
         }
@@ -118,7 +126,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
         {
             connectAddonManager.uninstallConnectAddon(plugin.getKey());
         }
-        catch (ConnectAddOnUserDisableException e)
+        catch (ConnectAddonDisableException e)
         {
             log.error("Unable to uninstall connect addon fully...", e);
         }

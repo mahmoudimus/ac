@@ -19,10 +19,10 @@ public class AddonUrlTemplatePair
     {
         addonUrlTemplate = new SignedUrlTemplate(urlTemplateStr);
 
-        RelativeAddOnUrl relativeAddOnUrl = new RelativeAddOnUrlConverter().addOnUrlToLocalServletUrl(pluginKey, urlTemplateStr);
-        String servletDescriptorUrl = relativeAddOnUrl.getServletDescriptorUrl();
+        RelativeAddonUrl relativeAddonUrl = new RelativeAddonUrlConverter().addonUrlToLocalServletUrl(pluginKey, urlTemplateStr);
+        String servletDescriptorUrl = relativeAddonUrl.getServletDescriptorUrl();
 
-        hostUrlPaths = new HostUrlPaths(new UrlTemplate(relativeAddOnUrl.getRelativeUri()),
+        hostUrlPaths = new HostUrlPaths(new UrlTemplate(relativeAddonUrl.getRelativeUri()),
                 ImmutableList.<String>of(servletDescriptorUrl, servletDescriptorUrl + "/*"));
     }
 

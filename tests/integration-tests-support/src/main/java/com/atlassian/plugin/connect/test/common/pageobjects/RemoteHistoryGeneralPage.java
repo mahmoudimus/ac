@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Page with buttons for executing the javascript history plugin
  */
-public class RemoteHistoryGeneralPage extends ConnectAddOnPage implements Page
+public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
 {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -32,7 +32,7 @@ public class RemoteHistoryGeneralPage extends ConnectAddOnPage implements Page
     @Override
     public String getUrl()
     {
-        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
+        return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
     public String hostUrl() {

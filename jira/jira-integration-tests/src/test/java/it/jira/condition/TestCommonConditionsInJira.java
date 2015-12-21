@@ -39,7 +39,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         betty = testUserFactory.admin();
         barney = testUserFactory.basicUser();
@@ -49,7 +49,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
         onlyBettyConditionUrl = "/only" + betty.getDisplayName() + "Condition";
         onlyBarneyConditionUrl = "/only" + barney.getDisplayName() + "Condition";
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
                     newWebItemBean()
@@ -95,7 +95,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {

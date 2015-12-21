@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.core.Clock;
-import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -41,7 +41,7 @@ public class ApiScopingFilterTest
     private static final String ADD_ON_KEY = "my-add-on";
 
     @Mock
-    private AddOnScopeManager addOnScopeManager;
+    private AddonScopeManager addonScopeManager;
     @Mock
     private UserManager userManager;
     @Mock
@@ -55,7 +55,7 @@ public class ApiScopingFilterTest
     @Mock
     private Clock clock;
     @Mock
-    AddOnKeyExtractor addOnKeyExtractor;
+    AddonKeyExtractor addonKeyExtractor;
 
     private ApiScopingFilter apiScopingFilter;
     private UserKey userKey = new UserKey("12345");
@@ -68,7 +68,7 @@ public class ApiScopingFilterTest
         when(userManager.getRemoteUserKey(any(HttpServletRequest.class))).thenReturn(userKey);
         when(clock.now()).thenReturn(new Date(0));
 
-        apiScopingFilter = new ApiScopingFilter(addOnScopeManager, userManager, eventPublisher, addOnKeyExtractor, clock);
+        apiScopingFilter = new ApiScopingFilter(addonScopeManager, userManager, eventPublisher, addonKeyExtractor, clock);
     }
 
     @Test
@@ -76,24 +76,24 @@ public class ApiScopingFilterTest
     {
         whenIsAddonRequestWithAddonKey();
         apiScopingFilter.doFilter(request, response, chain);
-        verify(addOnScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY));
+        verify(addonScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY));
     }
 
     @Test
-    public void testScopeIsNotCheckedForNonAddOnRequests() throws Exception
+    public void testScopeIsNotCheckedForNonAddonRequests() throws Exception
     {
-        when(addOnKeyExtractor.isAddOnRequest(request)).thenReturn(false);
+        when(addonKeyExtractor.isAddonRequest(request)).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
-        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString());
+        verify(addonScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString());
     }
 
     @Test
-    public void testScopeIsNotCheckedForMissingAddOnKey() throws Exception
+    public void testScopeIsNotCheckedForMissingAddonKey() throws Exception
     {
-        when(addOnKeyExtractor.isAddOnRequest(request)).thenReturn(true);
-        when(addOnKeyExtractor.getAddOnKeyFromHttpRequest(request)).thenReturn(null);
+        when(addonKeyExtractor.isAddonRequest(request)).thenReturn(true);
+        when(addonKeyExtractor.getAddonKeyFromHttpRequest(request)).thenReturn(null);
         apiScopingFilter.doFilter(request, response, chain);
-        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString());
+        verify(addonScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString());
     }
 
 
@@ -101,7 +101,7 @@ public class ApiScopingFilterTest
     public void testDeniedApiAccessPublishesDeniedEvent() throws Exception
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(isScopeRequestDeniedEvent()));
     }
@@ -109,7 +109,7 @@ public class ApiScopingFilterTest
     @Test
     public void testDeniedApiAccessDoesntPublishAllowedEvent() throws Exception
     {
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestAllowedEvent()));
     }
@@ -118,7 +118,7 @@ public class ApiScopingFilterTest
     public void testAllowedApiAccessPublishesEvent() throws Exception
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(isScopeRequestAllowedEvent()));
     }
@@ -127,7 +127,7 @@ public class ApiScopingFilterTest
     public void testAllowedApiAccessDoesntPublishDeniedEvent() throws Exception
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestDeniedEvent()));
     }
@@ -136,7 +136,7 @@ public class ApiScopingFilterTest
     public void testURIsAreTrimmedInDeniedEvents() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
@@ -146,7 +146,7 @@ public class ApiScopingFilterTest
     public void testURIsAreTrimmedInAllowedEvents() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
@@ -156,7 +156,7 @@ public class ApiScopingFilterTest
     public void testAllowedEventsADuration() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         Date start = new Date(0);
         Date end = new Date(101);
         when(clock.now()).thenReturn(start, end);
@@ -168,7 +168,7 @@ public class ApiScopingFilterTest
     public void testAllowedEventsHaveStatusCode() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         FilterChain wrappedChain = new FilterChainWrapper();
         apiScopingFilter.doFilter(request, response, wrappedChain);
         verify(eventPublisher).publish(argThat(hasResponseCode(200)));
@@ -188,7 +188,7 @@ public class ApiScopingFilterTest
     public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException
     {
         whenIsAddonRequestWithAddonKey();
-        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
+        when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         doThrow(new IOException("Something went wrong")).when(chain).doFilter(any(HttpServletRequest.class),
                                                                               any(HttpServletResponse.class));
         try
@@ -287,7 +287,7 @@ public class ApiScopingFilterTest
 
     private void whenIsAddonRequestWithAddonKey()
     {
-        when(addOnKeyExtractor.isAddOnRequest(request)).thenReturn(true);
-        when(addOnKeyExtractor.getAddOnKeyFromHttpRequest(request)).thenReturn(ADD_ON_KEY);
+        when(addonKeyExtractor.isAddonRequest(request)).thenReturn(true);
+        when(addonKeyExtractor.getAddonKeyFromHttpRequest(request)).thenReturn(ADD_ON_KEY);
     }
 }

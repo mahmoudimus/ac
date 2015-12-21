@@ -53,9 +53,9 @@ public class LinkedRemoteContent
         return webItem;
     }
 
-    public ConnectAddOnEmbeddedTestPage click()
+    public ConnectAddonEmbeddedTestPage click()
     {
-        return click(ConnectAddOnEmbeddedTestPage.class, extraPrefix, pageKey, true);
+        return click(ConnectAddonEmbeddedTestPage.class, extraPrefix, pageKey, true);
     }
 
     public <T> T click(Class<T> type, Object... args)
