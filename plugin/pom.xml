@@ -134,6 +134,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-jira-extensions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-crowd-support</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class DashoardItemModuleBeanTest
+public class DashboardItemModuleBeanTest
 {
     private static DashboardItemModuleBean expectedBean;
     private static DashboardItemModuleBean actualBean;
