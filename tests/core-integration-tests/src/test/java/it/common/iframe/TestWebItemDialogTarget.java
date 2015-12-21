@@ -1,8 +1,5 @@
 package it.common.iframe;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -13,18 +10,19 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.common.MultiProductWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.common.MultiProductWebDriverTestBase;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -140,20 +138,19 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
 
         // The first dialog should have a button to launch a second dialog.
         RemoteLayeredDialog dialog1 = product.getPageBinder().bind(RemoteLayeredDialog.class, dialog1Page, true);
-        assertThat(dialog1.getIFrameElementText("dialog-name"), containsString("Dialog1"));
+        assertThat(dialog1.getIFrameElementText("dialog-name"), is("Dialog1"));
         dialog1.clickCustomButton();
 
         // The second dialog should be opened, and have the expected content.
         ConnectAddOnEmbeddedTestPage dialog2Page = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, MULTIPLE_DIALOG_2_DIALOG_KEY, true);
         RemoteLayeredDialog dialog2 = product.getPageBinder().bind(RemoteLayeredDialog.class, dialog2Page, false);
-        assertThat(dialog2.getIFrameElementText("dialog-name"), containsString("Dialog2"));
+        assertThat(dialog2.getIFrameElementText("dialog-name"), is("Dialog2"));
 
-        // When the second dialog is closed, the first dialog should be visible.
+        // When the second dialog is closed, the first dialog should be visible and retain its original content.
         dialog2.cancelAndWaitUntilHidden();
-        dialog1.cancelAndWaitUntilHidden();
+        assertThat(dialog1.getIFrameElementText("dialog-name"), is("Dialog1"));
 
-        // TODO - assert dialog1 iframe contents still there.
-//        assertThat(dialog1.getIFrameElementText("something"), containsString("foo"));
+        dialog1.cancelAndWaitUntilHidden();
 
         // TODO - assert that dialog2 shown when custom button clicked again.
 //        dialog1.clickCustomButton("Launch Fullscreen Dialog");
