@@ -61,10 +61,14 @@ plan(
             key: 'maven.parameters',
             value: ''
     )
+    variable(
+            key: 'maven.test.parameters',
+            value: ''
+    )
 
     runTestsStage(
             installMavenParameters: '${bamboo.maven.parameters}',
-            testMavenParameters: '${bamboo.maven.parameters}'
+            testMavenParameters: '${bamboo.maven.parameters} ${bamboo.maven.test.parameters}'
     )
 }
 
