@@ -38,9 +38,11 @@ public class ConfluenceAppServlets
     /**
      * @return a servlet that contains 3 buttons to navigate to different parts of confluence
      */
-    public static HttpServlet navigatorServlet()
+    public static HttpServlet navigatorServlet(Long id)
     {
-        return wrapContextAwareServlet(new MustacheServlet("it/confluence/navigator/iframe-navigator.mu"));
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("it/confluence/navigator/iframe-navigator.mu"));
+        contextServlet.getBaseContext().put("contentId", id);
+        return contextServlet;
     }
 
 }
