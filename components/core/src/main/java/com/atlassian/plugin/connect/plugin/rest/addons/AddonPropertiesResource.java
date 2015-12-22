@@ -203,7 +203,7 @@ public class AddonPropertiesResource
             {
                 final UserProfile user = userManager.getRemoteUser(servletRequest);
                 // can be null, it is checked in the service.
-                final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
+                final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
 
                 return addonPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, propertyKey, propertyValue, eTagValidationFunction(request))
                         .fold(onPreconditionFailed(), onFailure(), onSuccess());
