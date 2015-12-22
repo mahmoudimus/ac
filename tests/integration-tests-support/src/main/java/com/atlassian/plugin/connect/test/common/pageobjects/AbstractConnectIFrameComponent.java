@@ -32,6 +32,15 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
 
     protected abstract String getFrameId();
 
+    protected AbstractConnectIFrameComponent()
+    {
+    }
+
+    protected AbstractConnectIFrameComponent(PageElement iframe)
+    {
+        this.iframe = iframe;
+    }
+
     @Init
     public void init()
     {
@@ -52,7 +61,11 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
 
     private void setIFrameAndSrcUnsafe()
     {
-        iframe = elementFinder.find(By.id(getFrameId()));
+        // A constructor variant allows the iframe element to be passed in, in which case we don't need to find it again.
+        if (iframe == null)
+        {
+            iframe = elementFinder.find(By.id(getFrameId()));
+        }
         iframeSrc = iframe.getAttribute("src");
     }
 
@@ -134,7 +147,7 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
     {
         try
         {
-            WebDriver frameDriver = driver.switchTo().frame(getFrameId());
+            WebDriver frameDriver = driver.switchTo().frame(iframe.getAttribute("id"));
             return iFrameConsumer.apply(frameDriver);
         }
         finally

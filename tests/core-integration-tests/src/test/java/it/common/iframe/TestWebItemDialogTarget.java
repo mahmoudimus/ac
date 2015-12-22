@@ -139,20 +139,29 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
         // The first dialog should have a button to launch a second dialog.
         RemoteLayeredDialog dialog1 = product.getPageBinder().bind(RemoteLayeredDialog.class, dialog1Page, true);
         assertThat(dialog1.getIFrameElementText("dialog-name"), is("Dialog1"));
-        dialog1.clickCustomButton();
+        RemoteLayeredDialog dialog2 = launchSecondDialog(dialog1, addonKey);
+
+        // When the second dialog is closed, the first dialog should be visible and retain its original content.
+        dialog2.cancelAndWaitUntilHidden();
+        assertThat(dialog1.getIFrameElementText("dialog-name"), is("Dialog1"));
+
+        // Dialog 1 custom button binding should still work.
+        dialog2 = launchSecondDialog(dialog1, addonKey);
+
+        // ... and finally, both dialogs should tear down neatly.
+        dialog2.cancelAndWaitUntilHidden();
+        dialog1.cancelAndWaitUntilHidden();
+    }
+
+    private RemoteLayeredDialog launchSecondDialog(RemoteLayeredDialog dialog1, String addonKey)
+    {
+        dialog1.clickButtonWithClass("ap-dialog-custom-button");
 
         // The second dialog should be opened, and have the expected content.
         ConnectAddOnEmbeddedTestPage dialog2Page = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, MULTIPLE_DIALOG_2_DIALOG_KEY, true);
         RemoteLayeredDialog dialog2 = product.getPageBinder().bind(RemoteLayeredDialog.class, dialog2Page, false);
         assertThat(dialog2.getIFrameElementText("dialog-name"), is("Dialog2"));
 
-        // When the second dialog is closed, the first dialog should be visible and retain its original content.
-        dialog2.cancelAndWaitUntilHidden();
-        assertThat(dialog1.getIFrameElementText("dialog-name"), is("Dialog1"));
-
-        dialog1.cancelAndWaitUntilHidden();
-
-        // TODO - assert that dialog2 shown when custom button clicked again.
-//        dialog1.clickCustomButton("Launch Fullscreen Dialog");
+        return dialog2;
     }
 }

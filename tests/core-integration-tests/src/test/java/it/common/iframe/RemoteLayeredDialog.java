@@ -4,6 +4,8 @@ import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbedded
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import org.openqa.selenium.By;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilFalse;
+
 /**
  * A dialog that may have other dialogs above or below it.
  */
@@ -19,19 +21,20 @@ public class RemoteLayeredDialog extends RemotePluginDialog
     }
 
     /**
-     * Click the first custom button in this dialog.
+     * Click a custom button in this dialog with the given class.
+     * @param className
      */
-    public void clickCustomButton()
+    public void clickButtonWithClass(String className)
     {
-        elementFinder.find(By.className("ap-dialog-custom-button")).click();
+        elementFinder.find(By.className(className)).click();
     }
 
-    @Override
-    protected void waitUntilAUIBlanketHidden()
+    public void waitUntilHidden()
     {
+        waitUntilFalse(iframe.timed().isVisible());
         if (isBottomDialog)
         {
-            super.waitUntilAUIBlanketHidden();
+            waitUntilAUIBlanketHidden();
         }
     }
 }

@@ -41,6 +41,7 @@ public class ConnectAddOnPage
     protected final String addOnKey;
     private final  boolean includedEmbeddedPrefix;
 
+    private PageElement containerDivElement;
     protected WebElement containerDiv;
 
     public ConnectAddOnPage(String addOnKey, String pageElementKey, boolean includedEmbeddedPrefix)
@@ -58,7 +59,7 @@ public class ConnectAddOnPage
                 ? pageElementKey
                 : ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
         final String id = prefix + suffix;
-        PageElement containerDivElement = elementFinder.find(By.id(id));
+        containerDivElement = elementFinder.find(By.id(id));
         final long startTime = System.currentTimeMillis();
 
         try
@@ -125,6 +126,12 @@ public class ConnectAddOnPage
     public Map<String, String> getIframeQueryParams()
     {
         return RemotePageUtil.findAllInContext(iframe().getAttribute("src"));
+    }
+
+    // Package-level, intended to only be used from AbstractConnectIFrameComponent subclasses.
+    PageElement getIFrame()
+    {
+        return containerDivElement.find(By.tagName("iframe"));
     }
 
     public String waitForValue(final String key)
