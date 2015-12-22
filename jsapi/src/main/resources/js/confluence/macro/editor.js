@@ -1,6 +1,6 @@
 (function($, define){
 
-    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog", "ac/confluence/macro"], function(_AP, dialog, saveMacro) {
+    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog", "ac/confluence/macro", "ajs"], function(_AP, dialog, saveMacro, AJS) {
 
         var openEditorMacroBody;
 
@@ -60,7 +60,7 @@
                             "height": "100%",
                             "ui-params": _AP.uiParams.encode({dlg: 1})
                         };
-                    $.extend(data, saveMacro.getCurrentMacroParameters());
+                    $.extend(data, macroData.params);
                     return $.ajax(url, {
                         data: data
                     });
