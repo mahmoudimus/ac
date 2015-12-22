@@ -144,6 +144,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `user_followed`
  * * `user_reactivated`
  * * `user_removed`
+ * * `blueprint_page_created`
  *
  *### Example Request
  *

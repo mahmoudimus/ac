@@ -34,35 +34,27 @@ public class TestConfluenceWebHooks2
     @Test
     public void testSearchPerformedWebHookFired() throws Exception
     {
-        WebHookTestServlet.runInJsonRunner(baseUrl, "search_performed", new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                final String testQuery = "test";
-                String results = String.valueOf(
-                        confluenceOps.search(Option.some(testUserFactory.basicUser()), testQuery));
-                final WebHookBody body = waiter.waitForHook();
-                assertNotNull(body);
-                assertEquals(testQuery, body.find("query"));
-                assertEquals(results, body.find("results"));
-            }
+        WebHookTestServlet.runInJsonRunner(baseUrl, "search_performed", waiter -> {
+            final String testQuery = "test";
+            String results = String.valueOf(
+                    confluenceOps.search(Option.some(testUserFactory.basicUser()), testQuery));
+            final WebHookBody body = waiter.waitForHook();
+            assertNotNull(body);
+            assertEquals(testQuery, body.find("query"));
+            assertEquals(results, body.find("results"));
         });
     }
 
     @Test
     public void testPageCreatedWebHookFired() throws Exception
     {
-        WebHookTestServlet.runInJsonRunner(baseUrl, "page_created", new WebHookTester() {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception {
-                String content = "<h1>Love me</h1>";
-                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(Option.some(testUserFactory.basicUser()), "ds", "testWebhook", content);
-                final WebHookBody body = waiter.waitForHook();
-                assertNotNull(body);
-                assertEquals(pageData.getId(), body.find("page/id"));
-                assertEquals(pageData.getCreator(), body.find("page/creatorName"));
-            }
+        WebHookTestServlet.runInJsonRunner(baseUrl, "page_created", waiter -> {
+            String content = "<h1>Love me</h1>";
+            ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(Option.some(testUserFactory.basicUser()), "ds", "testWebhook", content);
+            final WebHookBody body = waiter.waitForHook();
+            assertNotNull(body);
+            assertEquals(pageData.getId(), body.find("page/id"));
+            assertEquals(pageData.getCreator(), body.find("page/creatorName"));
         });
     }
 }
