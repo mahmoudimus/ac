@@ -103,11 +103,11 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
         ViewPage viewpage = loginAndClickToNavigate("navigate-to-page", ViewPage.class, createdPage.get().getId());
     }
 
-    @Test
-    public void testNavigateToEditPage() throws Exception
-    {
-        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, createdPage.get());
-    }
+//    @Test
+//    public void testNavigateToEditPage() throws Exception
+//    {
+//        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, createdPage.get());
+//    }
 
     @Test
     public void testNavigateToUserProfile() throws Exception

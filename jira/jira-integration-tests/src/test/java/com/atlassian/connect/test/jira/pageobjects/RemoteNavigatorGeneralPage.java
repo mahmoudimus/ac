@@ -1,4 +1,4 @@
-package com.atlassian.connect.test.confluence.pageobjects;
+package com.atlassian.connect.test.jira.pageobjects;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
@@ -31,10 +31,11 @@ public class RemoteNavigatorGeneralPage extends ConnectAddOnPage implements Page
         return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 
-    public <P extends com.atlassian.pageobjects.Page> P clickToNavigate(final String id, java.lang.Class<P> aPageClass, Object...args) {
+    public <P extends Page> P clickToNavigate(final String id, Class<P> aPageClass, Object... args)
+    {
         open(id);
 
-        return pageBinder.bind(aPageClass,args);
+        return pageBinder.bind(aPageClass, args);
     }
 
     public void open(final String id)
@@ -44,6 +45,15 @@ public class RemoteNavigatorGeneralPage extends ConnectAddOnPage implements Page
             waitUntilTrue(element.timed().isVisible());
             element.click();
             return null;
+        });
+    }
+
+    public String getMessage(final String id)
+    {
+        return runInFrame(() -> {
+            PageElement element = elementFinder.find(By.id(id));
+            waitUntilTrue(element.timed().isVisible());
+            return element.getText();
         });
     }
 
