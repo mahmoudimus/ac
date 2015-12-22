@@ -158,6 +158,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     }
 
     @Test
+    @Ignore
     public void pageClicksGetsNewJwt() throws Exception
     {
         login(testUserFactory.basicUser());
