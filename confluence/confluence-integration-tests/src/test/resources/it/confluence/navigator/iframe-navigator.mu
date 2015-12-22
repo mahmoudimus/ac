@@ -24,7 +24,7 @@
         <script type="text/javascript">
             function navigateToPage() {
                 AP.require('navigator', function(navigator) {
-                    navigator.go("contentview", {contentId: {{{contentId}}});
+                    navigator.go("contentview", {contentId: {{{contentId}}}});
                 });
             }
         </script>
@@ -45,14 +45,14 @@
         <script type="text/javascript">
             function navigateToSpace() {
                 AP.require('navigator', function(navigator) {
-                    navigator.go("spaceview", {spaceKey: "DS"});
+                    navigator.go("spaceview", {spaceKey: "{{{spaceKey}}}"});
                 });
             }
         </script>
         <script type="text/javascript">
             function navigateToSpaceTools() {
                 AP.require('navigator', function(navigator) {
-                    navigator.go("spacetools", {spaceKey: "DS"});
+                    navigator.go("spacetools", {spaceKey: "{{{spaceKey}}}"});
                 });
             }
         </script>

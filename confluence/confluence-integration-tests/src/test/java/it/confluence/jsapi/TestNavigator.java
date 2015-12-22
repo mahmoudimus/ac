@@ -4,22 +4,18 @@ import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.Space;
-import com.atlassian.confluence.api.model.longtasks.LongTaskStatus;
-import com.atlassian.confluence.api.model.longtasks.LongTaskSubmission;
 import com.atlassian.confluence.webdriver.pageobjects.page.SimpleDashboardPage;
 import com.atlassian.confluence.webdriver.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.webdriver.pageobjects.page.content.ViewPage;
 import com.atlassian.confluence.webdriver.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.confluence.webdriver.pageobjects.page.user.ViewProfilePage;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.util.concurrent.Promise;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.servlet.ConfluenceAppServlets;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static org.junit.Assert.fail;
 
 public class TestNavigator extends ConfluenceWebDriverTestBase
 {
@@ -48,16 +43,16 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        String spaceKey = "NAVTEST" + System.currentTimeMillis();
+        space = restClient.spaces().create(Space.builder().key(spaceKey).name("Nav Space").build(), false).get();
+        createdPage = restClient.content().create(Content.builder(ContentType.PAGE)
+                .space(space)
+                .body("<p>Page content</p>", ContentRepresentation.STORAGE)
+                .title("Page")
+                .build());
+
         try
         {
-            String spaceKey = "NAVTEST";
-            space = restClient.spaces().create(Space.builder().key(spaceKey).name("Nav Space").build(), false).get();
-            createdPage = restClient.content().create(Content.builder(ContentType.PAGE)
-                    .space(space)
-                    .body("<p>Page content</p>", ContentRepresentation.STORAGE)
-                    .title("Page")
-                    .build());
-
             remotePlugin = new ConnectRunner(ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                     .setAuthenticationToNone()
                     .addModules("generalPages",
@@ -68,9 +63,10 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
                                     .withLocation("system.header/left")
                                     .build()
                     )
-                    .addRoute("/nvg", ConfluenceAppServlets.navigatorServlet(createdPage.get().getId().asLong()))
+                    .addRoute("/nvg", ConfluenceAppServlets.navigatorServlet(createdPage.get().getId().asLong(), space.getKey()))
                     .start();
-        }catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             setupFailure.add(ex);
         }
@@ -90,25 +86,8 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     public void setUp() throws Exception
     {
         if (!setupFailure.isEmpty())
-            throw setupFailure.get(0);
-    }
-
-    @After
-    public void tearDown() throws Exception
-    {
-        Promise<LongTaskSubmission> task = restClient.spaces().delete(Space.builder().key(space.getKey()).build());
-
-        // this should be moved into RemoteLongTaskService
-        Option<LongTaskStatus> longTaskStatus = restClient.longTasks().get(task.get().getId()).get();
-
-        final int waitTime = 50;
-        final int retry = 100;
-        for (int i = 0 ; longTaskStatus.get().getPercentageComplete() < 100; i++)
         {
-            Thread.sleep(50); // wait for the space deletion to finish
-            longTaskStatus = restClient.longTasks().get(task.get().getId()).get();
-            if (i > 100)
-                fail("Delete space long task has not yet completed after " + waitTime * retry);
+            throw setupFailure.get(0);
         }
     }
 
@@ -121,13 +100,13 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     @Test
     public void testNavigateToPage() throws Exception
     {
-        ViewPage viewpage = loginAndClickToNavigate("navigate-to-page", ViewPage.class);
+        ViewPage viewpage = loginAndClickToNavigate("navigate-to-page", ViewPage.class, createdPage.get().getId());
     }
 
     @Test
     public void testNavigateToEditPage() throws Exception
     {
-        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, Content.builder(ContentType.PAGE, createdPage.get().getId().asLong()).build());
+        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, createdPage.get());
     }
 
     @Test
@@ -139,26 +118,14 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     @Test
     public void testNavigateToSpaceTools() throws Exception
     {
-        String spaceKey = "DS";
-        ViewSpaceSummaryPage viewSpaceSummaryPage = loginAndClickToNavigate("navigate-to-space-tools", ViewSpaceSummaryPage.class, Space.builder().key(spaceKey).build());
+        ViewSpaceSummaryPage viewSpaceSummaryPage = loginAndClickToNavigate("navigate-to-space-tools", ViewSpaceSummaryPage.class, space);
     }
 
-    public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass, Object...args)
+    public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass, Object... args)
     {
         RemoteNavigatorGeneralPage page = loginAndVisit(ConfluenceWebDriverTestBase.testUserFactory.basicUser(),
                 RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
         return page.clickToNavigate(id, aPageClass, args);
-    }
-
-    /*
-     Here we ask webdriver for the absolute url, and we ask the product for its base url.
-     Using both of them, we can be confident of what the relative url actually is, to test with.
-      */
-    public String getRelativeUrlFromWebDriver()
-    {
-        String absoluteUrl = ConfluenceWebDriverTestBase.product.getTester().getDriver().getCurrentUrl();
-        String baseUrl = ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl();
-        return absoluteUrl.replace(baseUrl, "");
     }
 }
