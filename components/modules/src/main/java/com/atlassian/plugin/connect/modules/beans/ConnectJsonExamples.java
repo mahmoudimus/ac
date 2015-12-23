@@ -71,6 +71,7 @@ public class ConnectJsonExamples
     public static final String AUTOCONVERT_EXAMPLE = createAutoconvertExample();
     public static final String AUTOCONVERT_MATCHER_EXAMPLE = createMatcherExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
+    public static final String CUSTOM_FIELD_TYPE_EXAMPLE = createCustomFieldTypeExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
     public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
     public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
@@ -973,5 +974,10 @@ public class ConnectJsonExamples
             builder = builder.withUiSupport(uiSupport);
         }
         return builder.build();
+    }
+
+    private static String createCustomFieldTypeExample()
+    {
+        return gson.toJson(CustomFieldTypeModuleBean.newBuilder().withType("text").build());
     }
 }

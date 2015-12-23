@@ -4,6 +4,7 @@ import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.CustomFieldTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
@@ -77,6 +78,11 @@ public class JiraModuleList extends BaseModuleBean
      * Add project permission to JIRA.
      */
     private List<ProjectPermissionModuleBean> jiraProjectPermissions;
+
+    /**
+     * Add custom field type to JIRA
+     */
+    private List<CustomFieldTypeModuleBean> jiraCustomFieldTypes;
 
     private JiraModuleList()
     {

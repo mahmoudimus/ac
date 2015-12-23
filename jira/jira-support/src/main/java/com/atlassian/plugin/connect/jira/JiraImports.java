@@ -25,6 +25,9 @@ import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.issue.RendererManager;
+import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
+import com.atlassian.jira.issue.customfields.persistence.CustomFieldValuePersister;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
@@ -34,6 +37,7 @@ import com.atlassian.jira.issue.watchers.WatcherManager;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
+import com.atlassian.jira.render.Encoder;
 import com.atlassian.jira.rest.v2.issue.builder.BeanBuilderFactory;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -112,7 +116,11 @@ public class JiraImports
             @JiraImport IssueTypePropertyService issueTypePropertyService,
             @JiraImport ProjectPropertyService projectPropertyService,
             @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
-            @JiraImport IssueTypeService issueTypeService)
+            @JiraImport IssueTypeService issueTypeService,
+            @JiraImport RendererManager rendererManager,
+            @JiraImport Encoder encoder,
+            @JiraImport CustomFieldValuePersister customFieldValuePersister,
+            @JiraImport GenericConfigManager genericConfigManager)
     {
     }
 }
