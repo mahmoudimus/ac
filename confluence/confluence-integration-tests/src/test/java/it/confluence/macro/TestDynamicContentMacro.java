@@ -14,7 +14,6 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluencePageWithRemoteMacro;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -40,14 +39,11 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebElement;
 import org.junit.rules.ExpectedException;
 
 import it.confluence.MacroStorageFormatBuilder;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
@@ -62,12 +58,8 @@ import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static it.confluence.servlet.ConfluenceAppServlets.dynamicMacroStaticServlet;
 import static it.confluence.servlet.ConfluenceAppServlets.macroBodyEditor;
 import static it.confluence.servlet.ConfluenceAppServlets.macroEditor;
-import static it.confluence.servlet.ConfluenceAppServlets.macroPropertyPanel;
-import static it.confluence.servlet.ConfluenceAppServlets.macroPropertyPanelWithDialog;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.CombinableMatcher.both;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
@@ -116,9 +108,6 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         DynamicContentMacroModuleBean shortBodyMacro = createShortBodyMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean parameterMacro = createParameterMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean editorMacro = createEditorMacro(newDynamicContentMacroModuleBean());
-        DynamicContentMacroModuleBean propertyPanelMacro = createPropertyPanelMacro(newDynamicContentMacroModuleBean());
-        DynamicContentMacroModuleBean propertyPanelWithDialogMacro = createPropertyPanelMacroWithDialog(newDynamicContentMacroModuleBean());
-        ConnectPageModuleBean propertyPanelDialogPage = createPropertyPanelDialogPage(newPageBean());
         DynamicContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean hiddenMacro = createHiddenMacro(newDynamicContentMacroModuleBean());
 
@@ -200,8 +189,6 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         parameterMacro,
                         smallInlineMacro,
                         editorMacro,
-                        propertyPanelMacro,
-                        propertyPanelWithDialogMacro,
                         customTitleEditorMacro,
                         hiddenMacro,
                         clientSideBodyEditingMacro,
@@ -210,13 +197,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         slowMacro,
                         dynamicMacroWithFallback
                 )
-                .addModules("generalPages",
-                        propertyPanelDialogPage
-                )
                 .addRoute(DEFAULT_MACRO_URL, helloWorldServlet())
                 .addRoute("/render-editor", macroEditor())
-                .addRoute(PROPERTY_PANEL_URL, macroPropertyPanel())
-                .addRoute(PROPERTY_PANEL_WITH_DIALOG_URL, macroPropertyPanelWithDialog())
                 .addRoute("/macro-body-editor", macroBodyEditor(EDITED_MACRO_BODY))
                 .addRoute("/macro-body-editor-script", macroBodyEditor(EDITED_MACRO_BODY_SCRIPT))
                 .addRoute("/echo/params", echoQueryParametersServlet())
@@ -488,90 +470,6 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             dialog.cancelAndWaitUntilHidden();
             cancelEditor(editorPage);
         }
-    }
-
-    @Test
-    public void testMacroPropertyPanelContainsIFrame() throws Exception
-    {
-        String macroBody = "My property panel iframe test";
-        String body = new MacroStorageFormatBuilder(PROPERTY_PANEL_MACRO_KEY).richTextBody(macroBody).build();
-        Content page = createPage(randomName(PROPERTY_PANEL_MACRO_KEY), body);
-
-        getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
-
-        final RemoteWebElement openPropertyPanel = (RemoteWebElement) connectPageOperations.openPropertyPanel();
-        assertThat(openPropertyPanel.findElementByTagName("iframe"), is(notNullValue()));
-    }
-
-    @Test
-    public void testMacroPropertyPanelIFrameChangesParameter() throws Exception
-    {
-        String macroBody = "My property panel iframe test";
-
-        String body = new MacroStorageFormatBuilder(PROPERTY_PANEL_MACRO_KEY).richTextBody(macroBody).build();
-        Content pageContent = createPage(randomName(PROPERTY_PANEL_MACRO_KEY), body);
-
-        final Page page = new Page(pageContent.getId().asLong());
-
-        EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), page);
-
-        RemoteWebElement openPropertyPanel = (RemoteWebElement) connectPageOperations.openPropertyPanel();
-
-        assertThat(openPropertyPanel.findElementByTagName("iframe"), is(notNullValue()));
-        editorPage.save();
-
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);
-        assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValue"));
-
-        //Now test that parameters can be read
-
-        editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), page);
-
-        openPropertyPanel = (RemoteWebElement) connectPageOperations.openPropertyPanel();
-
-        assertThat(openPropertyPanel.findElementByTagName("iframe"), is(notNullValue()));
-        editorPage.save();
-
-        renderedMacro = connectPageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);
-        assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValueThisIsMyGreatNewParamValue"));
-    }
-
-    @Test
-    public void testMacroPropertyPanelDoesNotContainIFrame() throws Exception
-    {
-        thrown.expect(NoSuchElementException.class);
-
-        String macroBody = "My property panel iframe test";
-
-        String body = new MacroStorageFormatBuilder(EDITOR_MACRO_KEY).richTextBody(macroBody).build();
-        Content page = createPage(randomName(EDITOR_MACRO_KEY), body);
-
-        getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
-
-        final RemoteWebElement openPropertyPanel = (RemoteWebElement) connectPageOperations.openPropertyPanel();
-        assertThat(openPropertyPanel.findElementByTagName("iframe"), is(nullValue()));
-    }
-
-    @Test
-    public void testMacroPropertyPanelCanLaunchDialog() throws Exception
-    {
-        String macroBody = "My property panel iframe test";
-
-        String body = new MacroStorageFormatBuilder(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY).richTextBody(macroBody).build();
-        Content pageContent = createPage(randomName(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY), body);
-
-        EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(pageContent.getId().asLong()));
-
-        connectPageOperations.openPropertyPanel();
-
-        RemotePluginDialog dialog = connectPageOperations.findDialog(addonKey + "__" + DIALOG_KEY);
-
-        dialog.submitAndWaitUntilHidden();
-
-        editorPage.save();
-
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
-        assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValue"));
     }
 
     @Test
