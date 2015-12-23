@@ -1,27 +1,27 @@
 package com.atlassian.plugin.connect.test.common.at.pageobjects;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonPage;
 
 import static com.atlassian.plugin.connect.test.common.util.IframeUtils.iframeServletPath;
 
-public class ScopesTestPage extends ConnectAddOnPage implements Page
+public class ScopesTestPage extends ConnectAddonPage implements Page
 {
-    public ScopesTestPage(String addOnKey, String pageElementKey, boolean includedEmbeddedPrefix)
+    public ScopesTestPage(String addonKey, String pageElementKey, boolean includedEmbeddedPrefix)
     {
-        super(addOnKey, pageElementKey, includedEmbeddedPrefix);
+        super(addonKey, pageElementKey, includedEmbeddedPrefix);
     }
 
     @SuppressWarnings ("unused")
-    public ScopesTestPage(String addOnKey)
+    public ScopesTestPage(String addonKey)
     {
-        this(addOnKey, "ac-acceptance-test-scope-checker-page", true);
+        this(addonKey, "ac-acceptance-test-scope-checker-page", true);
     }
 
     @Override
     public String getUrl()
     {
-        return iframeServletPath(addOnKey, pageElementKey);
+        return iframeServletPath(addonKey, pageElementKey);
     }
 
     public String getCodeForScope(Scope scope)

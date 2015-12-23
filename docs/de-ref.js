@@ -24,7 +24,7 @@ var scopeFiles = [
     'common-whitelist.json',
     'confluence-whitelist.json',
     'jira-whitelist.json',
-    'jira-agile-whitelist.json'
+    'jira-software-whitelist.json'
 ];
 
 function renamePropertyShortClassNameToId(object) {

@@ -21,30 +21,30 @@ import static org.junit.Assert.assertTrue;
 public class ConnectAddonAccessorTest
 {
     private final TestPluginInstaller testPluginInstaller;
-    private final ConnectAddonAccessor addOnService;
+    private final ConnectAddonAccessor addonService;
 
     public ConnectAddonAccessorTest(final TestPluginInstaller testPluginInstaller,
-            final ConnectAddonAccessor addOnService)
+            final ConnectAddonAccessor addonService)
     {
         this.testPluginInstaller = testPluginInstaller;
-        this.addOnService = addOnService;
+        this.addonService = addonService;
     }
 
     @Test
-    public void testIsAddOnEnabled() throws IOException
+    public void testIsAddonEnabled() throws IOException
     {
         final String addonKey = "ac-test-" + AddonUtil.randomPluginKey();
         installPlugin(addonKey);
 
-        assertTrue("ConnectAddonAccessor is expected to return true for enabled add-ons", addOnService.isAddonEnabled(addonKey));
+        assertTrue("ConnectAddonAccessor is expected to return true for enabled add-ons", addonService.isAddonEnabled(addonKey));
 
         testPluginInstaller.uninstallAddon(addonKey);
     }
 
     @Test
-    public void testAddOnIsNotEnabled()
+    public void testAddonIsNotEnabled()
     {
-        assertFalse("ConnectAddonAccessor is expected to return false for not installed add-ons", addOnService.isAddonEnabled("some-random-key" + AddonUtil.randomPluginKey()));
+        assertFalse("ConnectAddonAccessor is expected to return false for not installed add-ons", addonService.isAddonEnabled("some-random-key" + AddonUtil.randomPluginKey()));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class ConnectAddonAccessorTest
 
         testPluginInstaller.disableAddon(addonKey);
 
-        assertFalse("ConnectAddonAccessor is expected to return false for disabled add-ons", addOnService.isAddonEnabled(addonKey));
+        assertFalse("ConnectAddonAccessor is expected to return false for disabled add-ons", addonService.isAddonEnabled(addonKey));
 
         testPluginInstaller.uninstallAddon(addonKey);
     }

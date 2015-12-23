@@ -26,7 +26,7 @@ public class TestUpgrade
 {
     private final String baseUrl = TestedProductAccessor.get().getTestedProduct().getProductInstance().getBaseUrl();
 
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
     private static final String KEY_PAGE_ONE = "page-one";
     private static final String KEY_PAGE_TWO = "page-two";
 

@@ -12,16 +12,16 @@ import java.util.Map;
 public final class DynamicContentMacro extends AbstractMacro
 {
     private final RemoteMacroRenderer remoteMacroRenderer;
-    private final String addOnKey;
+    private final String addonKey;
     private final String moduleKey;
     private final MacroRenderModesBean renderModes;
 
-    public DynamicContentMacro(String addOnKey, String moduleKey, BodyType bodyType, OutputType outputType,
+    public DynamicContentMacro(String addonKey, String moduleKey, BodyType bodyType, OutputType outputType,
                                RemoteMacroRenderer remoteMacroRenderer, MacroRenderModesBean renderModes)
     {
         super(bodyType, outputType);
         this.remoteMacroRenderer = remoteMacroRenderer;
-        this.addOnKey = addOnKey;
+        this.addonKey = addonKey;
         this.moduleKey = moduleKey;
         this.renderModes = renderModes;
     }
@@ -30,7 +30,7 @@ public final class DynamicContentMacro extends AbstractMacro
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
             throws MacroExecutionException
     {
-        return remoteMacroRenderer.executeDynamic(addOnKey, moduleKey, renderModes,
+        return remoteMacroRenderer.executeDynamic(addonKey, moduleKey, renderModes,
                 parameters, storageFormatBody,conversionContext);
     }
 

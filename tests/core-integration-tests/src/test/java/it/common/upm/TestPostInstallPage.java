@@ -17,9 +17,9 @@ public class TestPostInstallPage extends AbstractUpmPageTest
     private static final String MODULE_NAME = "postInstallPage";
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        startConnectAddOn(MODULE_NAME, new PostInstallPageModuleMeta());
+        startConnectAddon(MODULE_NAME, new PostInstallPageModuleMeta());
     }
 
     @Test

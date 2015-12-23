@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.spi.web.item;
 
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 /**
@@ -13,7 +13,7 @@ public interface ProductSpecificWebItemModuleDescriptorFactory
             , String pluginKey
             , String moduleKey
             , boolean absolute
-            , AddOnUrlContext addOnUrlContext
+            , AddonUrlContext addonUrlContext
             , boolean isDialog
             , String section);
 }

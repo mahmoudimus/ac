@@ -13,7 +13,7 @@
     <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionModuleProviderImpl"/>
 
     <connect-api-scope-whitelist key="jira-api-scope-whitelist" resource="/scope/jira-whitelist.json"/>
-    <connect-api-scope-whitelist key="jira-agile-api-scope-whitelist" resource="/scope/jira-agile-whitelist.json"/>
+    <connect-api-scope-whitelist key="jira-software-api-scope-whitelist" resource="/scope/jira-software-whitelist.json"/>
     <connect-api-scope-whitelist key="tempo-api-scope-whitelist" resource="/scope/tempo-whitelist.json"/>
 
     <connect-context-parameter-mapper key="issue-context-parameter-mapper"

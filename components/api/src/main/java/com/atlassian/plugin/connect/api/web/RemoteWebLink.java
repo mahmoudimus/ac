@@ -2,17 +2,19 @@ package com.atlassian.plugin.connect.api.web;
 
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.UriBuilder;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
+import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.addon;
+import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.page;
 
 /**
  * Link which points to the dialog, inline-dialog or general page coming from the add-on.
@@ -26,13 +28,13 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     private final String pluginKey;
     private final String moduleKey;
     private final boolean absolute;
-    private final AddOnUrlContext addOnUrlContext;
+    private final AddonUrlContext addonUrlContext;
     private final boolean isDialog;
 
     public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor, WebFragmentHelper webFragmentHelper,
             IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
             PluggableParametersExtractor pluggableParametersExtractor,
-            String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
+            String url, String pluginKey, String moduleKey, boolean absolute, AddonUrlContext addonUrlContext, boolean isDialog)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
@@ -42,7 +44,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         this.pluginKey = pluginKey;
         this.moduleKey = moduleKey;
         this.absolute = absolute;
-        this.addOnUrlContext = addOnUrlContext;
+        this.addonUrlContext = addonUrlContext;
         this.isDialog = isDialog;
     }
 
@@ -52,7 +54,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         Map<String, String> moduleParams = pluggableParametersExtractor.extractParameters(context);
 
         return iFrameUriBuilderFactory.builder()
-                .addOn(pluginKey)
+                .addon(pluginKey)
                 .namespace(moduleKey)
                 .urlTemplate(url)
                 .context(moduleParams)
@@ -72,23 +74,23 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         {
             Map<String, String> moduleContext = pluggableParametersExtractor.extractParameters(context);
 
-            if (addOnUrlContext == addon)
+            if (addonUrlContext == addon)
             {
-                return isDialog
-                        ? urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext)
-                        : iFrameUriBuilderFactory.builder()
-                                .addOn(pluginKey)
-                                .namespace(moduleKey)
-                                .urlTemplate(url)
-                                .context(moduleContext)
-                                .dialog(isDialog)
-                                .build();
+                if (isDialog) {
+                    // Url to the the ConnectIFrameServlet does not need to have base url.
+                    // The url is only used by JS to parse url params from it.
+                    // Then JS compose new url to the ConnectIFrameServlet and do a request.
+                    return urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext);
+                } else {
+                    String urlToRedirectServlet = UriBuilder.fromPath(req.getContextPath()).path(RedirectServletPath.forModule(pluginKey, moduleKey)).build().toString();
+                    return urlVariableSubstitutor.append(urlToRedirectServlet, moduleContext);
+                }
             }
-            else if (addOnUrlContext == page)
+            else if (addonUrlContext == page)
             {
                 return req.getContextPath() + urlVariableSubstitutor.append(url, moduleContext);
             }
-            else // if (addOnUrlContext == product)
+            else // if (addonUrlContext == product)
             {
                 return req.getContextPath() + urlVariableSubstitutor.replace(url, moduleContext);
             }

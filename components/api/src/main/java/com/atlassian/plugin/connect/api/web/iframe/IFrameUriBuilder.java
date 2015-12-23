@@ -14,9 +14,9 @@ public interface IFrameUriBuilder
      * @param key the addon key
      * @return the builder
      */
-    AddOnUriBuilder addOn(String key);
+    AddonUriBuilder addon(String key);
 
-    interface AddOnUriBuilder
+    interface AddonUriBuilder
     {
         /**
          * @param namespace the namespace, used for the context iframe (if there is a context iframe). The usual pattern

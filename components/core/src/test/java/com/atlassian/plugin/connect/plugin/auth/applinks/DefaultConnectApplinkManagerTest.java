@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
 import com.atlassian.plugin.connect.spi.auth.applinks.MutatingApplicationLinkServiceProvider;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -47,7 +47,7 @@ public class DefaultConnectApplinkManagerTest
     @Mock private TypeAccessor typeAccessor;
     @Mock private PluginSettingsFactory pluginSettingsFactory;
     @Mock private OAuthLinkManager oAuthLinkManager;
-    @Mock private AddOnScopeManager addOnScopeManager;
+    @Mock private AddonScopeManager addonScopeManager;
     private TransactionTemplate transactionTemplate;
 
     private ConnectApplinkManager connectApplinkManager;
@@ -119,14 +119,14 @@ public class DefaultConnectApplinkManagerTest
     }
 
     @Test
-    public void creatingAnAddOnWithJwtAuthenticationSetsAuthenticationMethod()
+    public void creatingAnAddonWithJwtAuthenticationSetsAuthenticationMethod()
     {
         MutableApplicationLink appLink = createAppLink();
         verify(appLink).putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
     }
 
     @Test
-    public void creatingAnAddOnWithJwtAuthenticationSetsTheSharedSecret()
+    public void creatingAnAddonWithJwtAuthenticationSetsTheSharedSecret()
     {
         MutableApplicationLink appLink = createAppLink();
         verify(appLink).putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, "signing key");

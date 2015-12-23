@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.RemoteWebLink;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -65,11 +65,11 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog, String section)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddonUrlContext addonUrlContext, boolean isDialog, String section)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
                 iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor,
-                url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog, section);
+                url, pluginKey, moduleKey, absolute, addonUrlContext, isDialog, section);
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
@@ -82,7 +82,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         private final String pluginKey;
         private final String moduleKey;
         private boolean absolute;
-        private final AddOnUrlContext addOnUrlContext;
+        private final AddonUrlContext addonUrlContext;
         private final boolean isDialog;
         private final String section;
 
@@ -96,7 +96,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 String url,
                 String pluginKey,
                 String moduleKey,
-                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog, String section)
+                boolean absolute, AddonUrlContext addonUrlContext, boolean isDialog, String section)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
             this.webFragmentHelper = webFragmentHelper;
@@ -106,7 +106,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             this.pluginKey = pluginKey;
             this.moduleKey = moduleKey;
             this.absolute = absolute;
-            this.addOnUrlContext = addOnUrlContext;
+            this.addonUrlContext = addonUrlContext;
             this.isDialog = isDialog;
             this.section = section;
 
@@ -115,7 +115,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
 
         private String appendSourceQueryParameterToUrlIfNeeded(final String url)
         {
-            if (addOnUrlContext == AddOnUrlContext.page && isAdminSection(section))
+            if (addonUrlContext == AddonUrlContext.page && isAdminSection(section))
             {
                 return addWebItemSourceQueryParamIfNotPresent(url, moduleKey);
             }
@@ -127,7 +127,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         {
             return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory,
                     urlVariableSubstitutor, webFragmentModuleContextExtractor, url, pluginKey,
-                    moduleKey, absolute, addOnUrlContext, isDialog), authenticationContext);
+                    moduleKey, absolute, addonUrlContext, isDialog), authenticationContext);
         }
 
         @Override

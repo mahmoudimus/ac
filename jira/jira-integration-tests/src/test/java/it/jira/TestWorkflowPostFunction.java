@@ -36,9 +36,9 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     private static String addonKey;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        addonKey = AddonTestUtils.randomAddOnKey();
+        addonKey = AddonTestUtils.randomAddonKey();
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
                 .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
@@ -73,7 +73,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
 
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {

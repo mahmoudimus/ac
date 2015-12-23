@@ -50,9 +50,9 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModule("jiraProjectAdminTabPanels", newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(PROJECT_CONFIG_TAB_NAME, null))
@@ -72,7 +72,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -107,13 +107,13 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
         ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
-        assertThat("AddOn project config tab should be present", page.getTabs().getTabs(),
+        assertThat("Addon project config tab should be present", page.getTabs().getTabs(),
                 IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         page = product.visit(ProjectSummaryPageTab.class, project.getKey());
-        assertThat("AddOn project config tab should NOT be present", page.getTabs().getTabs(),
+        assertThat("Addon project config tab should NOT be present", page.getTabs().getTabs(),
                 not(IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME))));
     }
 

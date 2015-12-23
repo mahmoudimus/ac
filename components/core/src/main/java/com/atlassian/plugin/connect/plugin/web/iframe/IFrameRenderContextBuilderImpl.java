@@ -19,7 +19,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 /**
  *
  */
-public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilder, IFrameRenderContextBuilder.AddOnContextBuilder, IFrameRenderContextBuilder.NamespacedContextBuilder
+public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilder, IFrameRenderContextBuilder.AddonContextBuilder, IFrameRenderContextBuilder.NamespacedContextBuilder
 {
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
@@ -39,7 +39,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     }
 
     @Override
-    public AddOnContextBuilder addOn(final String key)
+    public AddonContextBuilder addon(final String key)
     {
         addonKey = key;
         return this;

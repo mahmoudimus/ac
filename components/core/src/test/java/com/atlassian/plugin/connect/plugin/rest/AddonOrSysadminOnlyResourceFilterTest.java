@@ -95,7 +95,7 @@ public class AddonOrSysadminOnlyResourceFilterTest
     }
 
     @Test
-    public void shouldAllowAddonRequestToResourceForSameAddOn()
+    public void shouldAllowAddonRequestToResourceForSameAddon()
     {
         String pluginKey = "my-addon";
 
@@ -107,7 +107,7 @@ public class AddonOrSysadminOnlyResourceFilterTest
     }
 
     @Test(expected = PermissionDeniedException.class)
-    public void shouldRejectAddonRequestToResourceForOtherAddOn()
+    public void shouldRejectAddonRequestToResourceForOtherAddon()
     {
         String pluginKey = "my-addon";
         String otherPluginKey = "other-addon";

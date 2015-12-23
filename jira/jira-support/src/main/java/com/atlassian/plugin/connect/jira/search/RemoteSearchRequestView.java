@@ -87,7 +87,7 @@ public class RemoteSearchRequestView implements SearchRequestView
         String issueKeysValue = getIssueKeysList(searchRequest, searchRequestParams);
 
         String signedAddonURL = iFrameUriBuilderFactory.builder()
-                .addOn(pluginKey)
+                .addon(pluginKey)
                 .namespace(moduleKey)
                 .urlTemplate(createUri.toString())
                 .context(new HashMap<>())

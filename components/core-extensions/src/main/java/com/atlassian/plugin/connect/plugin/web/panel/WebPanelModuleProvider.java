@@ -106,7 +106,7 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     private void registerIframeRenderStrategy(WebPanelModuleBean webPanel, ConnectAddonBean descriptor)
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(descriptor.getKey())
+                .addon(descriptor.getKey())
                 .module(webPanel.getKey(descriptor))
                 .genericBodyTemplate()
                 .urlTemplate(webPanel.getUrl())

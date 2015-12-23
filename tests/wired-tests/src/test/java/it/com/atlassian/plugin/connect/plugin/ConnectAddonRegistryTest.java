@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -62,7 +62,7 @@ public class ConnectAddonRegistryTest
                 .withKey(MODULE_KEY)
                 .withUrl("/my/addon")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.addon)
+                .withContext(AddonUrlContext.addon)
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -98,7 +98,7 @@ public class ConnectAddonRegistryTest
                 .withKey(MODULE_KEY)
                 .withUrl("/my/addon")
                 .withLocation("atl.admin/menu")
-                .withContext(AddOnUrlContext.addon)
+                .withContext(AddonUrlContext.addon)
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()

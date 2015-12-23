@@ -68,7 +68,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startAddon() throws Exception
     {
-        addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone();
         addWebItemsWithConditions();
         addon.start();

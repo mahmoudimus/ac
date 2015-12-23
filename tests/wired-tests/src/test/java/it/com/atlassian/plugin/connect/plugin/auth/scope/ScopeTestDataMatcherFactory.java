@@ -2,7 +2,7 @@ package it.com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import org.apache.commons.io.IOUtils;
@@ -23,35 +23,35 @@ import static org.mockito.Mockito.when;
 
 public class ScopeTestDataMatcherFactory
 {
-    final Map<ScopeName, Plugin> installedAddOns;
+    final Map<ScopeName, Plugin> installedAddons;
 
-    public ScopeTestDataMatcherFactory(final Map<ScopeName, Plugin> installedAddOns)
+    public ScopeTestDataMatcherFactory(final Map<ScopeName, Plugin> installedAddons)
     {
-        this.installedAddOns = installedAddOns;
+        this.installedAddons = installedAddons;
     }
 
-    public Iterable<Matcher<? super AddOnScopeManager>> toScopeTestDataMatchers(Iterable<ScopeTestData> scopeTestData)
+    public Iterable<Matcher<? super AddonScopeManager>> toScopeTestDataMatchers(Iterable<ScopeTestData> scopeTestData)
     {
-        return Iterables.transform(scopeTestData, new Function<ScopeTestData, Matcher<? super AddOnScopeManager>>()
+        return Iterables.transform(scopeTestData, new Function<ScopeTestData, Matcher<? super AddonScopeManager>>()
         {
             @Override
-            public Matcher<? super AddOnScopeManager> apply(final ScopeTestData data)
+            public Matcher<? super AddonScopeManager> apply(final ScopeTestData data)
             {
                 return performsCorrectActionForScope(data);
             }
         });
     }
 
-    public Matcher<? super AddOnScopeManager> performsCorrectActionForScope(final ScopeTestData data)
+    public Matcher<? super AddonScopeManager> performsCorrectActionForScope(final ScopeTestData data)
     {
-        return new TypeSafeMatcher<AddOnScopeManager>()
+        return new TypeSafeMatcher<AddonScopeManager>()
         {
             @Override
-            protected boolean matchesSafely(final AddOnScopeManager scopeManager)
+            protected boolean matchesSafely(final AddonScopeManager scopeManager)
             {
                 try
                 {
-                    return scopeManager.isRequestInApiScope(setupRequest(data), installedAddOns.get(data.scope).getKey()) == data.expectedOutcome;
+                    return scopeManager.isRequestInApiScope(setupRequest(data), installedAddons.get(data.scope).getKey()) == data.expectedOutcome;
                 }
                 catch (IOException e)
                 {

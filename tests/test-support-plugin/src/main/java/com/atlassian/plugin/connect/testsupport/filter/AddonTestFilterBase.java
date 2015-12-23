@@ -62,11 +62,11 @@ public abstract class AddonTestFilterBase implements Filter
             Matcher matcher = PATH_PATTERN.matcher(pathInfo);
             if (matcher.find())
             {
-                String addOnKey = matcher.group(2);
+                String addonKey = matcher.group(2);
                 String addonResource = matcher.group(3);
                 String parameter = matcher.group(4);
 
-                testFilterResults.put(addOnKey + "/" + addonResource, new ServletRequestSnapshot(req, userManager));
+                testFilterResults.put(addonKey + "/" + addonResource, new ServletRequestSnapshot(req, userManager));
 
                 Optional<PrecannedResponse> precannedResponse = addonPrecannedResponseHelper.poll();
 

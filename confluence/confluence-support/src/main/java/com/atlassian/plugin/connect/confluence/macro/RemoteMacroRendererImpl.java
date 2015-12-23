@@ -48,7 +48,7 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
     }
 
     @Override
-    public String executeDynamic(String addOnKey, String moduleKey, MacroRenderModesBean renderModes,
+    public String executeDynamic(String addonKey, String moduleKey, MacroRenderModesBean renderModes,
                                  Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
         // ACDEV-1705 null check on render modes, will be null if none are specified
@@ -58,21 +58,21 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
         if (fallback != null)
         {
             log.debug("execute dynamic macro [ {} ] from add on [ {} ] with render mode [ {} ] to device [ {} ] to fallback [ {} ]",
-                    new Object[]{moduleKey, addOnKey, conversionContext.getOutputType(), conversionContext.getOutputDeviceType(), fallback.getUrl()});
-            return executeStatic(addOnKey, moduleKey, fallback.getUrl(), parameters, storageFormatBody, conversionContext);
+                    new Object[]{moduleKey, addonKey, conversionContext.getOutputType(), conversionContext.getOutputDeviceType(), fallback.getUrl()});
+            return executeStatic(addonKey, moduleKey, fallback.getUrl(), parameters, storageFormatBody, conversionContext);
         }
         else
         {
             log.debug("execute dynamic macro [ {} ] from add on [ {} ] with render mode [ {} ] to device [ {} ] without fallback",
-                    new Object[]{moduleKey, addOnKey, conversionContext.getOutputType(), conversionContext.getOutputDeviceType()});
-            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addOnKey, moduleKey, CONTENT_CLASSIFIER);
+                    new Object[]{moduleKey, addonKey, conversionContext.getOutputType(), conversionContext.getOutputDeviceType()});
+            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKey, CONTENT_CLASSIFIER);
             Map<String, String> moduleContext = macroModuleContextExtractor.extractParameters(storageFormatBody, conversionContext, parameters);
             return IFrameRenderStrategyUtil.renderToString(moduleContext, renderStrategy);
         }
     }
 
     @Override
-    public String executeStatic(String addOnKey, String moduleKey, String uriTemplate,
+    public String executeStatic(String addonKey, String moduleKey, String uriTemplate,
                                 Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
             throws MacroExecutionException
     {
@@ -83,7 +83,7 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
         );
 
         String uri = iFrameUriBuilderFactory.builder()
-                .addOn(addOnKey)
+                .addon(addonKey)
                 .namespace(moduleKey)
                 .urlTemplate(uriTemplate)
                 .context(moduleContext)
@@ -94,18 +94,18 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
         {
             return macroContentManager.getStaticContent(HttpMethod.GET, URI.create(uri),
                     Collections.<String, String[]>emptyMap(), conversionContext,
-                    remotablePluginAccessorFactory.getOrThrow(addOnKey));
+                    remotablePluginAccessorFactory.getOrThrow(addonKey));
         }
         catch (Exception e)
         {
-            logError(addOnKey, e, conversionContext.getEntity(), uri);
+            logError(addonKey, e, conversionContext.getEntity(), uri);
             throw new MacroExecutionException(e);
         }
     }
 
-    private void logError(String addOnKey, Exception e, ContentEntityObject entity, String uri)
+    private void logError(String addonKey, Exception e, ContentEntityObject entity, String uri)
     {
-        String context = "Add-On: " + addOnKey + ", Entity: " + entity.getTitle() + ", URL: " + uri;
+        String context = "Add-On: " + addonKey + ", Entity: " + entity.getTitle() + ", URL: " + uri;
 
         if (e instanceof SocketTimeoutException)
         {

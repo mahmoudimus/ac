@@ -27,18 +27,18 @@ public class PluggableScopeService implements ScopeService
     }
 
     @Override
-    public Collection<AddOnScope> build()
+    public Collection<AddonScope> build()
     {
         Collection<ConnectApiScopeWhitelist> whitelists = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectApiScopeWhitelistModuleDescriptor.class));
 
-        Map<ScopeName, AddOnScope> scopes = new HashMap<>();
+        Map<ScopeName, AddonScope> scopes = new HashMap<>();
         for (ConnectApiScopeWhitelist whitelist : whitelists)
         {
-            AddOnScopeLoadJsonFileHelper.combineScopes(scopes, whitelist.getScopes());
+            AddonScopeLoadJsonFileHelper.combineScopes(scopes, whitelist.getScopes());
         }
 
-        List<AddOnScope> scopeList = new ArrayList<>(scopes.values());
+        List<AddonScope> scopeList = new ArrayList<>(scopes.values());
         Collections.sort(scopeList);
 
         return scopeList;

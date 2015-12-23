@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.rest.license;
 
-import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.upm.api.license.entity.PluginLicense;
@@ -23,12 +23,12 @@ import java.util.concurrent.TimeUnit;
 public class LicenseResource
 {
     private final LicenseRetriever licenseRetriever;
-    private final AddOnKeyExtractor addOnKeyExtractor;
+    private final AddonKeyExtractor addonKeyExtractor;
 
-    public LicenseResource(final LicenseRetriever licenseRetriever, final AddOnKeyExtractor addOnKeyExtractor)
+    public LicenseResource(final LicenseRetriever licenseRetriever, final AddonKeyExtractor addonKeyExtractor)
     {
         this.licenseRetriever = licenseRetriever;
-        this.addOnKeyExtractor = addOnKeyExtractor;
+        this.addonKeyExtractor = addonKeyExtractor;
     }
 
     @GET
@@ -36,7 +36,7 @@ public class LicenseResource
     @Produces("application/json")
     public Response getLicense(@Context javax.servlet.http.HttpServletRequest request)
     {
-        String pluginKey = addOnKeyExtractor.extractClientKey(request);
+        String pluginKey = addonKeyExtractor.extractClientKey(request);
         if (pluginKey == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                            .entity("Requests to this resource must be authenticated by an add-on.")

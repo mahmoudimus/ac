@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.confluence.macro;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -31,12 +31,12 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
             StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             HostContainer hostContainer,
-            AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
+            AbsoluteAddonUrlConverter absoluteAddonUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
     {
         super(pluginRetrievalService, schemaValidator, webItemModuleDescriptorFactory, hostContainer,
-                absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
+                absoluteAddonUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
         this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 

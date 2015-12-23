@@ -24,7 +24,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  *
  */
 public class IFrameUriBuilderImpl
-        implements IFrameUriBuilder, IFrameUriBuilder.AddOnUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
+        implements IFrameUriBuilder, IFrameUriBuilder.AddonUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
@@ -59,7 +59,7 @@ public class IFrameUriBuilderImpl
     }
 
     @Override
-    public AddOnUriBuilder addOn(final String key)
+    public AddonUriBuilder addon(final String key)
     {
         addonKey = Preconditions.checkNotNull(key);
         return this;
