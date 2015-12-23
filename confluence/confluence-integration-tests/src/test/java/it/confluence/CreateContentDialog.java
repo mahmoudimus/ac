@@ -3,6 +3,7 @@ package it.confluence;
 import java.util.concurrent.TimeUnit;
 
 import com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog;
+import com.atlassian.confluence.pageobjects.component.dialog.CreateDialog;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
@@ -16,21 +17,8 @@ import org.openqa.selenium.By;
 /**
  * A working replacement for the CreateDialog page object in Confluence.
  */
-public class CreateContentDialog extends AbstractDialog
+public class CreateContentDialog extends CreateDialog
 {
-    public CreateContentDialog()
-    {
-        super("create-dialog");
-    }
-
-    public PageElement waitForBlueprint(String completeKey)
-    {
-        By locator = By.cssSelector("[data-item-module-complete-key='" + completeKey + "']");
-        Poller.waitUntilTrue("blueprint is available in dialog",
-                getDialog().find(locator).timed().isPresent());
-        return getDialog().find(locator);
-    }
-
     public CreateContentDialog createWithBlueprintWizard(String completeKey)
     {
         clickBlueprintItem(completeKey);
