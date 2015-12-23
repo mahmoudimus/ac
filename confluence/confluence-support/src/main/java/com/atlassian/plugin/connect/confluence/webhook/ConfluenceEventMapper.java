@@ -16,7 +16,9 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang.StringUtils;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
 import java.util.Map;
 
@@ -143,7 +145,7 @@ public class ConfluenceEventMapper
         builder.put("id", ceo.getId());
         if (!idOnly)
         {
-            if (!StringUtils.isBlank(ceo.getTitle()))
+            if (!isBlank(ceo.getTitle()))
             {
                 builder.put("title", ceo.getTitle());
             }
@@ -175,12 +177,12 @@ public class ConfluenceEventMapper
 
         builder.put("id", blueprint.getId());
         builder.put("indexKey", blueprint.getIndexKey());
-        builder.put("spaceKey", StringUtils.defaultIfBlank(blueprint.getSpaceKey(), ""));
+        builder.put("spaceKey", defaultIfBlank(blueprint.getSpaceKey(), ""));
         builder.put("i18nNameKey", blueprint.getI18nNameKey());
-        builder.put("indexTitleI18nKey", StringUtils.defaultIfBlank(blueprint.getIndexTitleI18nKey(), ""));
+        builder.put("indexTitleI18nKey", defaultIfBlank(blueprint.getIndexTitleI18nKey(), ""));
         builder.put("moduleCompleteKey", blueprint.getModuleCompleteKey());
-        builder.put("createResult", StringUtils.defaultIfBlank(blueprint.getCreateResult(), ""));
-        builder.put("howToUseTemplate", StringUtils.defaultIfBlank(blueprint.getHowToUseTemplate(), ""));
+        builder.put("createResult", defaultIfBlank(blueprint.getCreateResult(), ""));
+        builder.put("howToUseTemplate", defaultIfBlank(blueprint.getHowToUseTemplate(), ""));
 
         return builder.build();
     }
@@ -195,7 +197,7 @@ public class ConfluenceEventMapper
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.put("fileName", attachment.getFileName());
         builder.put("version", attachment.getVersion());
-        builder.put("comment", StringUtils.defaultIfBlank(attachment.getComment(), ""));
+        builder.put("comment", defaultIfBlank(attachment.getComment(), ""));
         builder.put("fileSize", attachment.getFileSize());
         builder.put("id", attachment.getId());
         builder.put("creatorName", getUserUsername(attachment.getCreator()));
