@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.jira.workflow;
 
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
-import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFilter;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
@@ -21,15 +20,15 @@ public class RemoteWorkflowFunctionPluginFactory extends AbstractWorkflowPluginF
     @Override
     protected void getVelocityParamsForInput(final Map<String, Object> velocityParams)
     {
-        velocityParams.put(JiraModuleContextFilter.POSTFUNCTION_ID, UUID.randomUUID().toString());
+        velocityParams.put(WorkflowPostFunctionContextParameters.POSTFUNCTION_ID, UUID.randomUUID().toString());
     }
 
     @Override
     protected void getVelocityParamsForView(final Map<String, Object> velocityParams, final AbstractDescriptor descriptor)
     {
         final FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-        velocityParams.put(JiraModuleContextFilter.POSTFUNCTION_ID, functionDescriptor.getArgs().get(STORED_POSTFUNCTION_ID));
-        velocityParams.put(JiraModuleContextFilter.POSTFUNCTION_CONFIG, functionDescriptor.getArgs().get(STORED_POSTFUNCTION_CONFIG));
+        velocityParams.put(WorkflowPostFunctionContextParameters.POSTFUNCTION_ID, functionDescriptor.getArgs().get(STORED_POSTFUNCTION_ID));
+        velocityParams.put(WorkflowPostFunctionContextParameters.POSTFUNCTION_CONFIG, functionDescriptor.getArgs().get(STORED_POSTFUNCTION_CONFIG));
     }
 
     @Override
@@ -41,14 +40,12 @@ public class RemoteWorkflowFunctionPluginFactory extends AbstractWorkflowPluginF
     @Override
     public Map<String, ?> getDescriptorParams(final Map<String, Object> formParams)
     {
-        final String uuid = extractSingleParam(formParams, JiraModuleContextFilter.POSTFUNCTION_ID);
-        final String functionConfiguration = extractSingleParam(formParams, JiraModuleContextFilter.POSTFUNCTION_CONFIG + "-" + uuid);
+        final String uuid = extractSingleParam(formParams, WorkflowPostFunctionContextParameters.POSTFUNCTION_ID);
+        final String functionConfiguration = extractSingleParam(formParams, WorkflowPostFunctionContextParameters.POSTFUNCTION_CONFIG + "-" + uuid);
 
         return ImmutableMap.of(
                 STORED_POSTFUNCTION_CONFIG, functionConfiguration,
                 STORED_POSTFUNCTION_ID, uuid
         );
     }
-
 }
-

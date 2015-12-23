@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.web.model.WebPanel;
 
@@ -18,14 +17,12 @@ import java.util.Optional;
 public class ConnectIFrameWebPanel implements WebPanel
 {
     private final IFrameRenderStrategy renderStrategy;
-    private final ModuleContextFilter moduleContextFilter;
     private final PluggableParametersExtractor moduleContextExtractor;
 
-    public ConnectIFrameWebPanel(IFrameRenderStrategy renderStrategy, ModuleContextFilter moduleContextFilter,
+    public ConnectIFrameWebPanel(IFrameRenderStrategy renderStrategy,
             PluggableParametersExtractor moduleContextExtractor)
     {
         this.renderStrategy = renderStrategy;
-        this.moduleContextFilter = moduleContextFilter;
         this.moduleContextExtractor = moduleContextExtractor;
     }
 
@@ -34,9 +31,8 @@ public class ConnectIFrameWebPanel implements WebPanel
     {
         if (renderStrategy.shouldShow(context))
         {
-            Map<String, String> unfilteredContext = moduleContextExtractor.extractParameters(context);
-            Map<String, String> filteredContext = moduleContextFilter.filter(unfilteredContext);
-            renderStrategy.render(filteredContext, writer, Optional.empty());
+            Map<String, String> contextParameters = moduleContextExtractor.extractParameters(context);
+            renderStrategy.render(contextParameters, writer, Optional.empty());
         }
         else
         {

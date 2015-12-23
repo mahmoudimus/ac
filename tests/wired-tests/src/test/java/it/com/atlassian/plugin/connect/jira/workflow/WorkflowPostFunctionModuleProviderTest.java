@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
@@ -20,6 +19,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -102,7 +102,7 @@ public class WorkflowPostFunctionModuleProviderTest
     @Test
     public void uiParamsNotInUrlWhenNotProvided() throws URISyntaxException
     {
-        Map<String, String> moduleContextParameters = new HashMapModuleContextParameters();
+        Map<String, String> moduleContextParameters = new HashMap<>();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.<String>empty());
         final URI iframeUrl = new URI(iframeUrlStr);
@@ -112,7 +112,7 @@ public class WorkflowPostFunctionModuleProviderTest
     @Test
     public void uiParamsInUrlWhenProvided() throws URISyntaxException
     {
-        Map<String, String> moduleContextParameters = new HashMapModuleContextParameters();
+        Map<String, String> moduleContextParameters = new HashMap<>();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.of("blah"));
         final URI iframeUrl = new URI(iframeUrlStr);
@@ -121,7 +121,7 @@ public class WorkflowPostFunctionModuleProviderTest
 
     private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
     {
-        Map<String, String> moduleContextParameters = new HashMapModuleContextParameters();
+        Map<String, String> moduleContextParameters = new HashMap<>();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
 
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.<String>empty());

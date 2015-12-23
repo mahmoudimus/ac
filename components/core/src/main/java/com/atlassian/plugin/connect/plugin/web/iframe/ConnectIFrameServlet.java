@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -54,10 +55,10 @@ public class ConnectIFrameServlet extends HttpServlet
             if (renderStrategy != null)
             {
                 resp.setContentType(renderStrategy.getContentType());
-                Map<String, String> moduleContextParameters = moduleContextParser.parseContextParameters(req);
 
-                if (renderStrategy.shouldShow(moduleContextParameters))
+                if (renderStrategy.shouldShow(Collections.emptyMap()))
                 {
+                    Map<String, String> moduleContextParameters = moduleContextParser.parseContextParameters(req);
                     Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
                     renderStrategy.render(moduleContextParameters, resp.getWriter(), moduleUiParameters);
                 }

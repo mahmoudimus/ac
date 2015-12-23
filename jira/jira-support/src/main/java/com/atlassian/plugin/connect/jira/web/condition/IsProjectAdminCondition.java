@@ -8,12 +8,11 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.web.ExecutingHttpRequest;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.jira.web.context.ProjectKeyContextParameter;
 import com.atlassian.plugin.web.Condition;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-
-import static com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFilter.PROJECT_KEY;
 
 /**
  * Verifies if a user has permissions to edit the configuration of a project.
@@ -24,11 +23,14 @@ public class IsProjectAdminCondition implements Condition
 
     private final JiraAuthenticationContext authenticationContext;
     private final ProjectService projectService;
+    private ProjectKeyContextParameter projectKeyContextParameter;
 
-    public IsProjectAdminCondition(JiraAuthenticationContext authenticationContext, ProjectService projectService)
+    public IsProjectAdminCondition(JiraAuthenticationContext authenticationContext, ProjectService projectService,
+            ProjectKeyContextParameter projectKeyContextParameter)
     {
         this.authenticationContext = authenticationContext;
         this.projectService = projectService;
+        this.projectKeyContextParameter = projectKeyContextParameter;
     }
 
     @Override
@@ -76,10 +78,11 @@ public class IsProjectAdminCondition implements Condition
             if (project == null)
             {
                 // otherwise see if there's a request parameter specifying the project
-                Object projectKey = req.getParameterMap().get(PROJECT_KEY);
+                String projectContextParameterKey = projectKeyContextParameter.getKey();
+                Object projectKey = req.getParameterMap().get(projectContextParameterKey);
                 if (!(projectKey instanceof String[]))
                 {
-                    throw new IllegalStateException("No " + PROJECT_KEY + " parameter found in the query string!");
+                    throw new IllegalStateException("No " + projectContextParameterKey + " parameter found in the query string!");
                 }
                 final String key = ((String[]) projectKey)[0];
                 project = ComponentManager.getComponent(ProjectManager.class).getProjectObjByKey(key);

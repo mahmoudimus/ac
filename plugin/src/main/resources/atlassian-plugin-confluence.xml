@@ -9,6 +9,21 @@
 
     <connect-api-scope-whitelist key="confluence-api-scope-whitelist" resource="/scope/confluence-whitelist.json"/>
 
+    <connect-context-parameter-mapper key="action-support-context-parameter-mapper"
+                                      class="com.atlassian.plugin.connect.confluence.web.context.ActionSupportContextParameterMapper"/>
+    <connect-context-parameter-mapper key="profile-user-context-parameter-mapper"
+                                      class="com.atlassian.plugin.connect.confluence.web.context.ConfluenceProfileUserContextParameterMapper"/>
+    <connect-context-parameter-mapper key="content-context-parameter-mapper"
+                                      class="com.atlassian.plugin.connect.confluence.web.context.ContentContextParameterMapper"/>
+    <connect-context-parameter-mapper key="custom-content-context-parameter-mapper"
+                                      class="com.atlassian.plugin.connect.confluence.web.context.CustomContentContextParameterMapper"/>
+    <connect-context-parameter-mapper key="page-context-parameter-mapper"
+                                      class="com.atlassian.plugin.connect.confluence.web.context.PageContextParameterMapper"/>
+    <connect-context-parameter-mapper key="space-context-parameter-mapper"
+                                      class="com.atlassian.plugin.connect.confluence.web.context.SpaceContextParameterMapper"/>
+    <connect-context-parameter-mapper key="web-interface-context-parameter-mapper"
+                                      class="com.atlassian.plugin.connect.confluence.web.context.WebInterfaceContextParameterMapper"/>
+
     <connect-condition-class-resolver key="confluence-condition-class-resolver"
                                       class="com.atlassian.plugin.connect.confluence.web.ConfluenceConditionClassResolver"/>
 

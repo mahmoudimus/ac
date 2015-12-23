@@ -4,8 +4,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.gadgets.plugins.DashboardItemModule;
 import com.atlassian.gadgets.plugins.DashboardItemModule.DirectoryDefinition;
 import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
-import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
@@ -34,8 +32,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
     public ConnectDashboardItemModuleDescriptor(final ModuleFactory moduleFactory,
             final DirectoryDefinition directoryDefinition,
             final IFrameRenderStrategy renderStrategy,
-            final ModuleContextFilter moduleContextFilter,
-            final PluggableParametersExtractor parametersExtractor,
+            final ConnectDashboardItemContextParameterMapper dashboardItemContextParameterMapper,
             final Boolean configurable,
             final I18nProperty description,
             final Condition condition)
@@ -43,7 +40,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         super(moduleFactory);
         this.directoryDefinition = directoryDefinition;
         this.description = description;
-        this.module = new ConnectDashboardItemModule(parametersExtractor, directoryDefinition, renderStrategy, moduleContextFilter, configurable, condition);
+        this.module = new ConnectDashboardItemModule(dashboardItemContextParameterMapper, directoryDefinition, renderStrategy, configurable, condition);
     }
 
     @Override
@@ -79,24 +76,22 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
 
     private static class ConnectDashboardItemModule implements DashboardItemModule
     {
+
+        private ConnectDashboardItemContextParameterMapper dashboardItemContextParameterMapper;
         private final Boolean configurable;
         private final Condition condition;
         private final DirectoryDefinition directoryDefinition;
-        private final ModuleContextFilter moduleContextFilter;
-        private final PluggableParametersExtractor moduleContextExtractor;
         private final IFrameRenderStrategy renderStrategy;
 
-        private ConnectDashboardItemModule(final PluggableParametersExtractor moduleContextExtractor,
+        private ConnectDashboardItemModule(final ConnectDashboardItemContextParameterMapper dashboardItemContextParameterMapper,
                 final DirectoryDefinition directoryDefinition,
                 final IFrameRenderStrategy renderStrategy,
-                final ModuleContextFilter moduleContextFilter,
                 final Boolean configurable,
                 final Condition condition)
         {
-            this.moduleContextExtractor = moduleContextExtractor;
+            this.dashboardItemContextParameterMapper = dashboardItemContextParameterMapper;
             this.directoryDefinition = directoryDefinition;
             this.renderStrategy = renderStrategy;
-            this.moduleContextFilter = moduleContextFilter;
             this.configurable = configurable;
             this.condition = condition;
         }
@@ -127,11 +122,11 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         @Override
         public void renderContent(final Writer writer, final Map<String, Object> context)
         {
-            Map<String, String> unfilteredContext = moduleContextExtractor.extractParameters(context);
-            Map<String, String> filteredContext = moduleContextFilter.filter(unfilteredContext);
+
+            Map<String, String> contextParameters = dashboardItemContextParameterMapper.extractContextParameters(context);
             try
             {
-                renderStrategy.render(filteredContext, writer, Optional.empty());
+                renderStrategy.render(contextParameters, writer, Optional.empty());
             }
             catch (IOException e)
             {
@@ -154,5 +149,4 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
             return condition;
         }
     }
-
 }

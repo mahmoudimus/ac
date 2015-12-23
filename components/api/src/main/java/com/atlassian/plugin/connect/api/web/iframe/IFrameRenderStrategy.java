@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface IFrameRenderStrategy
 {
-    boolean shouldShow(Map<String, ? extends Object> conditionContext);
+    boolean shouldShow(Map<String, Object> conditionContext);
 
     void shouldShowOrThrow(Map<String, Object> conditionContext);
 

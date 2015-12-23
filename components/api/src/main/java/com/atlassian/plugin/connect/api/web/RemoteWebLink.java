@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.api.web;
 
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -22,8 +21,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
 {
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final PluggableParametersExtractor webFragmentModuleContextExtractor;
-    private final ModuleContextFilter moduleContextFilter;
+    private final PluggableParametersExtractor pluggableParametersExtractor;
     private final String url;
     private final String pluginKey;
     private final String moduleKey;
@@ -33,14 +31,13 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
 
     public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor, WebFragmentHelper webFragmentHelper,
             IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
-            PluggableParametersExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
+            PluggableParametersExtractor pluggableParametersExtractor,
             String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
-        this.moduleContextFilter = moduleContextFilter;
+        this.pluggableParametersExtractor = pluggableParametersExtractor;
         this.url = url;
         this.pluginKey = pluginKey;
         this.moduleKey = moduleKey;
@@ -52,8 +49,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getRenderedUrl(final Map<String, Object> context)
     {
-        Map<String, String> moduleParams = webFragmentModuleContextExtractor.extractParameters(context);
-        moduleParams = moduleContextFilter.filter(moduleParams);
+        Map<String, String> moduleParams = pluggableParametersExtractor.extractParameters(context);
 
         return iFrameUriBuilderFactory.builder()
                 .addOn(pluginKey)
@@ -74,8 +70,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         }
         else
         {
-            Map<String, String> moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
-            moduleContext = moduleContextFilter.filter(moduleContext);
+            Map<String, String> moduleContext = pluggableParametersExtractor.extractParameters(context);
 
             if (addOnUrlContext == addon)
             {

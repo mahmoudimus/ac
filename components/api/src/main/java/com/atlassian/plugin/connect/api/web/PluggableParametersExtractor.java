@@ -7,5 +7,8 @@ import java.util.Map;
  */
 public interface PluggableParametersExtractor
 {
+
     Map<String, String> extractParameters(Map<String, Object> context);
+
+    Map<String, String> getParametersAccessibleByCurrentUser(Map<String, String> contextParameters);
 }

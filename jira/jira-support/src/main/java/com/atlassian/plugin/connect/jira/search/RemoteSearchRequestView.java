@@ -14,7 +14,6 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -25,6 +24,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.util.HashMap;
 
 /**
  * A remote search request review that will do an html redirect to the remote plugin
@@ -90,7 +90,7 @@ public class RemoteSearchRequestView implements SearchRequestView
                 .addOn(pluginKey)
                 .namespace(moduleKey)
                 .urlTemplate(createUri.toString())
-                .context(new HashMapModuleContextParameters())
+                .context(new HashMap<>())
                 .param("link", link)
                 .param("startIssue", String.valueOf(startIssue))
                 .param("endIssue", endIssues)

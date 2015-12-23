@@ -6,17 +6,15 @@ import com.atlassian.gadgets.plugins.DashboardItemModule.Author;
 import com.atlassian.gadgets.plugins.DashboardItemModule.DirectoryDefinition;
 import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionElementParserFactory;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
@@ -37,8 +35,7 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
     private final ConditionElementParserFactory conditionElementParserFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final ModuleFactory moduleFactory;
-    private final PluggableParametersExtractor parametersExtractor;
-    private final ModuleContextFilter moduleContextFilter;
+    private ConnectDashboardItemContextParameterMapper dashboardItemContextParameterMapper;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
 
     @Autowired
@@ -46,16 +43,14 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
             final ConditionElementParserFactory conditionElementParserFactory,
             final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             final ModuleFactory moduleFactory,
-            final PluggableParametersExtractor parametersExtractor,
-            final ModuleContextFilter moduleContextFilter,
+            ConnectDashboardItemContextParameterMapper dashboardItemContextParameterMapper,
             final RemotablePluginAccessorFactory pluginAccessorFactory)
     {
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
         this.conditionElementParserFactory = conditionElementParserFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.moduleFactory = moduleFactory;
-        this.parametersExtractor = parametersExtractor;
-        this.moduleContextFilter = moduleContextFilter;
+        this.dashboardItemContextParameterMapper = dashboardItemContextParameterMapper;
         this.pluginAccessorFactory = pluginAccessorFactory;
     }
 
@@ -82,7 +77,7 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
 
         ConnectDashboardItemModuleDescriptor moduleDescriptor =
                 new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition, renderStrategy,
-                        moduleContextFilter, parametersExtractor, bean.isConfigurable(), bean.getDescription(), condition);
+                        dashboardItemContextParameterMapper, bean.isConfigurable(), bean.getDescription(), condition);
 
         Element dashboardItemModule = new DOMElement("dashboard-item");
         dashboardItemModule.addAttribute("key", moduleKey);

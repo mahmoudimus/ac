@@ -9,8 +9,6 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
-import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFilter;
-import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
@@ -93,18 +91,13 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()), resourceName);
 
-        if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
+        if (renderStrategy.shouldShow(Collections.emptyMap()))
         {
-            Map<String, String> moduleContext = new JiraModuleContextParametersImpl();
-            moduleContext.put(
-                    JiraModuleContextFilter.POSTFUNCTION_ID,
-                    (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_ID)
+            Map<String, String> contextParameters = ImmutableMap.of(
+                    WorkflowPostFunctionContextParameters.POSTFUNCTION_ID, (String) startingParams.get(WorkflowPostFunctionContextParameters.POSTFUNCTION_ID),
+                    WorkflowPostFunctionContextParameters.POSTFUNCTION_CONFIG, (String) startingParams.get(WorkflowPostFunctionContextParameters.POSTFUNCTION_CONFIG)
             );
-            moduleContext.put(
-                    JiraModuleContextFilter.POSTFUNCTION_CONFIG,
-                    (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_CONFIG)
-            );
-            renderStrategy.render(moduleContext, writer, java.util.Optional.empty());
+            renderStrategy.render(contextParameters, writer, java.util.Optional.empty());
         }
         else
         {

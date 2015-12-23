@@ -1,11 +1,12 @@
 package com.atlassian.plugin.connect.confluence.web.spacetools;
 
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.confluence.web.context.ConfluenceModuleContextParameters;
-import com.atlassian.plugin.connect.confluence.web.context.ConfluenceModuleContextParametersImpl;
+import com.atlassian.plugin.connect.confluence.web.context.SpaceContextParameterMapper;
+import com.atlassian.plugin.connect.spi.web.context.TypeBasedConnectContextParameterMapper;
+import com.google.common.collect.Maps;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -17,7 +18,8 @@ import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUt
 public class SpaceToolsIFrameAction extends SpaceAdminAction
 {
     private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private ModuleContextFilter moduleContextFilter;
+    private PluggableParametersExtractor pluggableParametersExtractor;
+    private SpaceContextParameterMapper spaceContextParameterMapper;
     private SpaceToolsTabContext context;
 
     public String getIFrameHtml() throws IOException
@@ -26,10 +28,7 @@ public class SpaceToolsIFrameAction extends SpaceAdminAction
 
         if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
         {
-            ConfluenceModuleContextParameters unfilteredContext = new ConfluenceModuleContextParametersImpl();
-            unfilteredContext.addSpace(this.space);
-            Map<String, String> filteredContext = moduleContextFilter.filter(unfilteredContext);
-            return renderToString(filteredContext, renderStrategy);
+            return renderToString(buildContextParameters(), renderStrategy);
         }
         else
         {
@@ -62,13 +61,25 @@ public class SpaceToolsIFrameAction extends SpaceAdminAction
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
-    public void setModuleContextFilter(final ModuleContextFilter moduleContextFilter)
+    public void setPluggableParametersExtractor(PluggableParametersExtractor pluggableParametersExtractor)
     {
-        this.moduleContextFilter = moduleContextFilter;
+        this.pluggableParametersExtractor = pluggableParametersExtractor;
+    }
+
+    public void setSpaceContextParameterMapper(SpaceContextParameterMapper spaceContextParameterMapper)
+    {
+        this.spaceContextParameterMapper = spaceContextParameterMapper;
     }
 
     public void provideContext(SpaceToolsTabContext context)
     {
         this.context = context;
+    }
+
+    private Map<String, String> buildContextParameters()
+    {
+        Map<String, Object> context = Maps.newHashMap();
+        TypeBasedConnectContextParameterMapper.addContextEntry(spaceContextParameterMapper, space, context);
+        return pluggableParametersExtractor.extractParameters(context);
     }
 }

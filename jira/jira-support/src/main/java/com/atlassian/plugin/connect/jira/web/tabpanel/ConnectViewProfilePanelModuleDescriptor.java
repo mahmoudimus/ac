@@ -3,11 +3,11 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 import com.atlassian.jira.plugin.profile.ViewProfilePanel;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.jira.web.context.JiraProfileUserContextParameterMapper;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.sal.api.user.UserManager;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
@@ -18,26 +18,26 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKey
 public class ConnectViewProfilePanelModuleDescriptor extends ViewProfilePanelModuleDescriptorImpl
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final ModuleContextFilter moduleContextFilter;
-    private final UserManager userManager;
+    private final PluggableParametersExtractor pluggableParametersExtractor;
+    private final JiraProfileUserContextParameterMapper profileUserContextParameterMapper;
 
     public ConnectViewProfilePanelModuleDescriptor(JiraAuthenticationContext authenticationContext,
             ModuleFactory moduleFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ModuleContextFilter moduleContextFilter,
-            UserManager userManager)
+            PluggableParametersExtractor pluggableParametersExtractor,
+            JiraProfileUserContextParameterMapper profileUserContextParameterMapper)
     {
         super(authenticationContext, moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-        this.moduleContextFilter = moduleContextFilter;
-        this.userManager = userManager;
+        this.pluggableParametersExtractor = pluggableParametersExtractor;
+        this.profileUserContextParameterMapper = profileUserContextParameterMapper;
     }
 
     @Override
     public ViewProfilePanel getModule()
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
-        return new ConnectIFrameProfileTabPanel(renderStrategy, moduleContextFilter, userManager);
+        return new ConnectIFrameProfileTabPanel(renderStrategy, pluggableParametersExtractor, profileUserContextParameterMapper);
     }
 
     @Override

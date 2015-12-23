@@ -51,12 +51,8 @@ JIRA supports these context variables.
 
  * `issue.id`, `issue.key`, `issuetype.id`
  * `project.id`, `project.key`
- * `version.id`
- * `component.id`
  * `profileUser.name`, `profileUser.key` (available for user profile pages)
  * `dashboardItem.id`, `dashboardItem.key`, `dashboardItem.viewType`, `dashboard.id` (available for dashboard items)
-JIRA issue pages only expose issue and project data. Similarly, version and component information is available only in
-project administration pages.
 
 Furthermore JIRA Agile supports these context variables.
  * `board.id`

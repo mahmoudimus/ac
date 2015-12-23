@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.jira.report;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.report.Report;
 import com.atlassian.jira.plugin.report.ReportModuleDescriptor;
 import com.atlassian.jira.web.action.ProjectActionSupport;
-import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters;
-import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,8 +42,7 @@ public class ConnectReport implements Report
     {
         StringWriter sw = new StringWriter();
         IFrameRenderStrategy frameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addOnKey, moduleKey);
-        JiraModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
-        frameRenderStrategy.render(moduleContextParameters, sw, Optional.empty());
+        frameRenderStrategy.render(Collections.emptyMap(), sw, Optional.empty());
         return sw.toString();
     }
 

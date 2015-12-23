@@ -39,8 +39,7 @@ public interface IFrameUriBuilder
     interface TemplatedBuilder
     {
         /**
-         * @param context the context parameters containing the context issue, project, space, etc. This
-         * builder does not do any permission checking, so it is up to the caller to apply the {@link com.atlassian.plugin.connect.api.web.context.ModuleContextFilter}
+         * @param context the context parameters containing the context issue, project, space, etc. Permission checking is up to the caller
          * if necessary.
          * @return the builder
          */
