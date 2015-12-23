@@ -4,11 +4,11 @@ import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.Space;
-import com.atlassian.confluence.webdriver.pageobjects.page.SimpleDashboardPage;
-import com.atlassian.confluence.webdriver.pageobjects.page.content.EditContentPage;
-import com.atlassian.confluence.webdriver.pageobjects.page.content.ViewPage;
-import com.atlassian.confluence.webdriver.pageobjects.page.space.ViewSpaceSummaryPage;
-import com.atlassian.confluence.webdriver.pageobjects.page.user.ViewProfilePage;
+import com.atlassian.confluence.pageobjects.page.DashboardPage;
+import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
+import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
+import com.atlassian.confluence.pageobjects.page.user.ViewProfilePage;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
 
 public class TestNavigator extends ConfluenceWebDriverTestBase
 {
@@ -94,31 +97,42 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     @Test
     public void testNavigateToDashboard() throws Exception
     {
-        SimpleDashboardPage dashboard = loginAndClickToNavigate("navigate-to-dashboard", SimpleDashboardPage.class);
+        DashboardPage dashboard = loginAndClickToNavigate("navigate-to-dashboard", DashboardPage.class);
+        assertNotNull(dashboard.getDashboardPanel());
     }
 
     @Test
     public void testNavigateToPage() throws Exception
     {
-        ViewPage viewpage = loginAndClickToNavigate("navigate-to-page", ViewPage.class, createdPage.get().getId());
+        ViewPage viewpage = loginAndClickToNavigate("navigate-to-page", ViewPage.class, createdPage.get().getId().serialise());
+        long idFromPageObject = viewpage.getPageId();
+        assertEquals(createdPage.get().getId().asLong(), idFromPageObject);
     }
 
-//    @Test
-//    public void testNavigateToEditPage() throws Exception
-//    {
-//        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, createdPage.get());
-//    }
+    @Test
+    public void testNavigateToEditPage() throws Exception
+    {
+        com.atlassian.confluence.it.Page page = new com.atlassian.confluence.it.Page(createdPage.get().getId().asLong());
+        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, page);
+        String titleFromPageObject = editContentPage.getTitle();
+        assertEquals(createdPage.get().getTitle(), titleFromPageObject);
+    }
 
     @Test
     public void testNavigateToUserProfile() throws Exception
     {
         ViewProfilePage viewProfilePage = loginAndClickToNavigate("navigate-to-user-profile", ViewProfilePage.class, "admin");
+        boolean hasProfileTitle = viewProfilePage.hasTitle().byDefaultTimeout();
+        assertTrue(hasProfileTitle);
     }
 
     @Test
     public void testNavigateToSpaceTools() throws Exception
     {
+        com.atlassian.confluence.it.Space space = new com.atlassian.confluence.it.Space(TestNavigator.space.getKey(), TestNavigator.space.getKey());
         ViewSpaceSummaryPage viewSpaceSummaryPage = loginAndClickToNavigate("navigate-to-space-tools", ViewSpaceSummaryPage.class, space);
+        // there is nothing on the view spaceSummaryPage that is appropriate to assert
+        // so this test really does nothing until we can convert to STR (https://ecosystem.atlassian.net/browse/ACDEV-2081)
     }
 
     public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass, Object... args)
