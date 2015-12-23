@@ -61,7 +61,7 @@ public class TestNavigator extends JiraWebDriverTestBase
     public void testNavigatorNotAvailable() throws Exception
     {
         RemoteNavigatorGeneralPage page = visitNavigatorPage();
-        assertEquals("navigator is undefined", "undefined", page.getMessage("navigator-go"));
+        assertEquals("navigator.go should be undefined", "undefined", page.getMessage("navigator-go"));
     }
 
 }
