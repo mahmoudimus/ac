@@ -1,9 +1,10 @@
 package com.atlassian.plugin.connect.jira.field;
 
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.plugin.customfield.CustomFieldDefaultVelocityParams;
-import com.atlassian.jira.plugin.customfield.CustomFieldTypeModuleDescriptor;
-import com.atlassian.jira.plugin.customfield.CustomFieldTypeModuleDescriptorImpl;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.render.Encoder;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
@@ -19,7 +20,7 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class CustomFieldTypeDescriptorFactory implements ConnectModuleDescriptorFactory<IssueFieldModuleBean, CustomFieldTypeModuleDescriptor>
+public class RemoteIssueFieldDescriptorFactory implements ConnectModuleDescriptorFactory<IssueFieldModuleBean, RemoteIssueFieldDescriptor>
 {
 
     private final JiraAuthenticationContext authenticationContext;
@@ -27,19 +28,26 @@ public class CustomFieldTypeDescriptorFactory implements ConnectModuleDescriptor
     private final ModuleFactory moduleFactory;
     private final Encoder encoder;
 
+    private final CustomFieldManager customFieldManager;
+    private final ProjectManager projectManager;
+    private final ManagedConfigurationItemService managedConfigurationItemService;
+
     @Autowired
-    public CustomFieldTypeDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder)
+    public RemoteIssueFieldDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService)
     {
         this.authenticationContext = authenticationContext;
         this.rendererManager = rendererManager;
         this.moduleFactory = moduleFactory;
         this.encoder = encoder;
+        this.customFieldManager = customFieldManager;
+        this.projectManager = projectManager;
+        this.managedConfigurationItemService = managedConfigurationItemService;
     }
 
     @Override
-    public CustomFieldTypeModuleDescriptor createModuleDescriptor(final IssueFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
+    public RemoteIssueFieldDescriptor createModuleDescriptor(final IssueFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
     {
-        CustomFieldTypeModuleDescriptorImpl descriptor = new CustomFieldTypeModuleDescriptorImpl(authenticationContext, rendererManager, moduleFactory, new CustomFieldDefaultVelocityParams(encoder));
+        RemoteIssueFieldDescriptor descriptor = new RemoteIssueFieldDescriptor(authenticationContext, rendererManager, moduleFactory, new CustomFieldDefaultVelocityParams(encoder), customFieldManager, projectManager, managedConfigurationItemService);
 
         Element element = new DOMElement("customfield-type");
 
@@ -47,6 +55,7 @@ public class CustomFieldTypeDescriptorFactory implements ConnectModuleDescriptor
 
         element.addAttribute("key", bean.getKey(addon));
         element.addAttribute("i18n-name-key", i18nKeyOrName);
+        element.addAttribute("managed-access-level", "locked");
 
         DOMElement description = new DOMElement("description");
         description.setText(bean.getDescription().getValue());

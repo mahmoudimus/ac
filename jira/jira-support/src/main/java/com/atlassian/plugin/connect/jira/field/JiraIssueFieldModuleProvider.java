@@ -21,15 +21,15 @@ public class JiraIssueFieldModuleProvider extends AbstractJiraConnectModuleProvi
 {
     private static final IssueFieldModuleMeta META = new IssueFieldModuleMeta();
 
-    private final CustomFieldTypeDescriptorFactory customFieldTypeDescriptorFactory;
+    private final RemoteIssueFieldDescriptorFactory remoteIssueFieldDescriptorFactory;
     private final CustomFieldSearcherDescriptorFactory customFieldSearcherDescriptorFactory;
 
     @Autowired
     public JiraIssueFieldModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator, CustomFieldTypeDescriptorFactory customFieldTypeDescriptorFactory, final CustomFieldSearcherDescriptorFactory customFieldSearcherDescriptorFactory)
+            ConnectJsonSchemaValidator schemaValidator, RemoteIssueFieldDescriptorFactory remoteIssueFieldDescriptorFactory, final CustomFieldSearcherDescriptorFactory customFieldSearcherDescriptorFactory)
     {
         super(pluginRetrievalService, schemaValidator);
-        this.customFieldTypeDescriptorFactory = customFieldTypeDescriptorFactory;
+        this.remoteIssueFieldDescriptorFactory = remoteIssueFieldDescriptorFactory;
         this.customFieldSearcherDescriptorFactory = customFieldSearcherDescriptorFactory;
     }
 
@@ -44,15 +44,15 @@ public class JiraIssueFieldModuleProvider extends AbstractJiraConnectModuleProvi
     {
         return modules.stream()
                 .map((bean) -> Lists.newArrayList(
-                        createCustomFieldTypeDescriptor(bean, addon),
-                        createCustomFieldSearcherDescriptor(bean, addon)))
+                        createCustomFieldSearcherDescriptor(bean, addon), //searcher needs to be created first
+                        createIssueFieldDescriptor(bean, addon)))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-    private ModuleDescriptor createCustomFieldTypeDescriptor(IssueFieldModuleBean bean, ConnectAddonBean addon)
+    private ModuleDescriptor createIssueFieldDescriptor(IssueFieldModuleBean bean, ConnectAddonBean addon)
     {
-        return customFieldTypeDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
+        return remoteIssueFieldDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
     }
 
     private ModuleDescriptor createCustomFieldSearcherDescriptor(IssueFieldModuleBean bean, ConnectAddonBean addon)

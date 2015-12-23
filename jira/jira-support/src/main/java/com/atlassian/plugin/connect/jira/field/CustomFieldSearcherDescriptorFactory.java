@@ -41,7 +41,7 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
 
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
-        element.addAttribute("key", bean.getKey(addon)+"_searcher");
+        element.addAttribute("key", searcherKeyFromCustomFieldTypeKey(bean.getKey(addon)));
         element.addAttribute("i18n-name-key", i18nKeyOrName);
 
         IssueFieldSearcherDefinition type = bean.getType().getSearcherBase();
@@ -71,5 +71,10 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
         resource.addAttribute("package", addOnKey);
         resource.addAttribute("key", customFieldKey);
         return resource;
+    }
+
+    public static String searcherKeyFromCustomFieldTypeKey(String completeKey)
+    {
+        return completeKey + "_searcher";
     }
 }

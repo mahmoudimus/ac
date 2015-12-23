@@ -23,7 +23,9 @@ import com.atlassian.jira.bc.user.UserPropertyService;
 import com.atlassian.jira.config.FeatureManager;
 import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.config.SubTaskManager;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
 import com.atlassian.jira.config.properties.ApplicationProperties;
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
@@ -124,7 +126,9 @@ public class JiraImports
             @JiraImport CustomFieldValuePersister customFieldValuePersister,
             @JiraImport GenericConfigManager genericConfigManager,
             @JiraImport JqlOperandResolver jqlOperandResolver,
-            @JiraImport CustomFieldInputHelper customFieldInputHelper)
+            @JiraImport CustomFieldInputHelper customFieldInputHelper,
+            @JiraImport CustomFieldManager customFieldManager,
+            @JiraImport ManagedConfigurationItemService managedConfigurationItemService)
     {
     }
 }

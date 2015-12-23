@@ -2,15 +2,17 @@ package it.jira.customfield;
 
 import com.atlassian.jira.functest.framework.RestoreBlankInstance;
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
-import com.atlassian.jira.pageobjects.pages.admin.customfields.AssociateCustomFieldToScreenPage;
-import com.atlassian.jira.pageobjects.pages.admin.customfields.ConfigureFieldDialog;
 import com.atlassian.jira.pageobjects.pages.admin.customfields.CreateCustomFieldPage;
-import com.atlassian.jira.pageobjects.pages.admin.customfields.TypeSelectionCustomFieldDialog;
-import com.atlassian.jira.pageobjects.pages.admin.customfields.ViewCustomFields;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.rest.api.issue.IssueFields;
+import com.atlassian.jira.rest.api.issue.IssueUpdateRequest;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
+import com.atlassian.jira.testkit.beans.Screen;
+import com.atlassian.jira.testkit.client.CustomFieldsControl;
+import com.atlassian.jira.testkit.client.ScreensControl;
 import com.atlassian.jira.testkit.client.restclient.Issue;
+import com.atlassian.jira.testkit.client.restclient.IssueClient;
 import com.atlassian.jira.testkit.client.restclient.SearchRequest;
 import com.atlassian.jira.testkit.client.restclient.SearchResult;
 import com.atlassian.pageobjects.elements.query.Poller;
@@ -24,6 +26,7 @@ import com.google.common.base.Objects;
 import it.jira.JiraTestBase;
 import it.jira.JiraWebDriverTestBase;
 import org.apache.commons.lang.RandomStringUtils;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -34,8 +37,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
+import static it.jira.customfield.CustomFieldMatchers.customFieldResponse;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -44,12 +50,16 @@ import static org.junit.Assert.assertThat;
 public class TestIssueField extends JiraWebDriverTestBase
 {
 
-    private static final String FIELD_TYPE_KEY = "customfieldtype-key";
-    private static final String FIELD_TYPE_DESCRIPTION = "my description";
-    private static String FIELD_TYPE_NAME = "custom field title" + RandomStringUtils.randomAlphabetic(4);
+    private static final String FIELD_KEY = "customfieldtype-key";
+    private static final String FIELD_DESCRIPTION = "my description";
+    private static String FIELD_NAME = "custom field title" + RandomStringUtils.randomAlphabetic(4);
 
     private static ConnectRunner addon;
     private static String addonKey;
+
+    private static CustomFieldsControl customFieldsControl;
+    private static ScreensControl screensControl;
+    private static IssueClient issueClient;
 
     @BeforeClass
     public static void setUpClass() throws Exception
@@ -57,13 +67,19 @@ public class TestIssueField extends JiraWebDriverTestBase
         project = JiraTestBase.addProject();
         addonKey = AddonTestUtils.randomAddonKey();
 
+        customFieldsControl = product.backdoor().customFields();
+        screensControl = product.backdoor().screensControl();
+        issueClient = new IssueClient(product.environmentData());
+
         addon = new ConnectRunner(product, addonKey)
                 .setAuthenticationToNone()
                 .setVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .addModules("jiraIssueFields",
-                        buildCustomFieldTypeModule(FIELD_TYPE_KEY, FIELD_TYPE_NAME, FIELD_TYPE_DESCRIPTION))
+                        buildIssueFieldModule(FIELD_KEY, FIELD_NAME, FIELD_DESCRIPTION))
                                 .addScopes(ScopeName.READ)
                                 .start();
+
+        product.quickLoginAsAdmin();
     }
 
     @AfterClass
@@ -73,84 +89,123 @@ public class TestIssueField extends JiraWebDriverTestBase
         {
             addon.stopAndUninstall();
         }
+        product.logout();
     }
 
     @Test
-    public void customFieldTypeIsVisibleOnCreateCustomFieldPage()
+    public void customFieldTypeIsNotVisibleOnCreateCustomFieldPage()
     {
         CreateCustomFieldPage page = product.quickLoginAsAdmin(CreateCustomFieldPage.class);
 
-        assertThat(page.getAvailableCustomFields(), hasItem(customFieldTypeEntry(FIELD_TYPE_NAME, FIELD_TYPE_DESCRIPTION)));
+        assertThat(page.getAvailableCustomFields(), not(hasItem(customFieldTypeEntry(FIELD_NAME, FIELD_DESCRIPTION))));
     }
 
     @Test
-    public void canCreateACustomFieldFromARemoteCustomFieldType() {
-        final ViewCustomFields viewCustomFields = product.quickLoginAsAdmin(ViewCustomFields.class);
+    public void issueFieldIsAvailable() {
+        List<CustomFieldResponse> customFields = customFieldsControl.getCustomFields();
 
-        String name = randomName();
-        String description = "description";
-
-        addCustomFieldType(viewCustomFields, name, description, FIELD_TYPE_NAME);
-
-        List<CustomFieldResponse> customFields = product.backdoor().customFields().getCustomFields();
         assertThat(customFields, hasItem(
-                customFieldResponse(name, description, getCustomFieldTypeKey(), getCustomFieldSearcherKey())));
+                customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey())));
     }
 
     @Test
-    public void customFieldIsVisibleOnScreenAndCreateIssueDialogAndViewIssue()
+    public void issueFieldIsVisibleOnCreateScreen()
+    {
+        String fieldId = getFieldId();
+        addIssueFieldToScreens(project.getKey());
+
+        IssueCreateResponse issue = createIssue();
+        CreateIssueDialog createIssueDialog = openCreateIssueDialog(issue.key);
+
+        List<String> visibleFields = createIssueDialog.getVisibleFields();
+        assertThat(visibleFields, hasItem(equalTo(fieldId)));
+    }
+
+    @Test
+    public void issueFieldIsEditableAndVisibleOnViewScreen()
     {
         String value = RandomStringUtils.randomAlphabetic(6);
 
-        String customFieldId = createCustomFieldFromType(FIELD_TYPE_NAME).id;
-        String issueKey = createIssueWithCustomField(customFieldId, value);
+        String fieldId = getFieldId();
+        addIssueFieldToScreens(project.getKey());
+
+        IssueCreateResponse issue = createIssue();
+        CreateIssueDialog createIssueDialog = openCreateIssueDialog(issue.key);
+
+        String issueKey = fillCreateIssueDialogCustomField(createIssueDialog, fieldId, value, issue);
 
         product.goToViewIssue(issueKey);
-        String result = findCustomFieldWithIdOnPage(customFieldId).getText();
+        String result = findCustomFieldWithIdOnPage(fieldId).getText();
 
         assertThat(result, equalTo(value));
     }
 
     @Test
-    public void jqlSearchWorksForTextCustomField()
+    public void jqlSearchWorksForIssueField()
     {
-        CustomFieldResponse customFieldId = createCustomFieldFromType(FIELD_TYPE_NAME);
         String value = RandomStringUtils.randomAlphabetic(6);
 
-        String issueKey = createIssueWithCustomField(customFieldId.id, value);
+        String fieldId = getFieldId();
+        addIssueFieldToScreens(project.getKey());
+        String issueKey = createIssueWithCustomFieldViaREST(fieldId, value).key;
 
-        String jql = "project = " + project.getKey() + " and \"" + customFieldId.name + "\" ~ " + value;
+        String jql = "project = " + project.getKey() + " and \"" + FIELD_NAME + "\" ~ " + value;
         SearchResult searchResult = product.backdoor().search().loginAs("admin").getSearch(new SearchRequest().jql(jql));
 
         assertThat(searchResult.issues, hasItem(issue(issueKey)));
     }
 
-    private String createIssueWithCustomField(final String customFieldId, final String value)
+    @Test
+    public void testEditableByREST() throws Exception
+    {
+        String fieldId = getFieldId();
+        addIssueFieldToScreens(project.getKey());
+
+        IssueCreateResponse issue = createIssueWithCustomFieldViaREST(fieldId, "edited via rest");
+
+        assertThat(issueClient.get(issue.key).fields.get(fieldId), CoreMatchers.equalTo("edited via rest"));
+    }
+
+    private IssueCreateResponse createIssueWithCustomFieldViaREST(final String fieldId, final String value)
     {
         IssueCreateResponse issue = createIssue();
-        CreateIssueDialog createIssueDialog = openCreateIssueDialog(issue.key);
 
-        List<String> visibleFields = createIssueDialog.getVisibleFields();
-        assertThat(visibleFields, hasItem(equalTo(customFieldId)));
+        Long realCfId = Long.parseLong(fieldId.split("_")[1]);
+        IssueUpdateRequest updateFieldRequest = new IssueUpdateRequest().fields(new IssueFields()
+                        .customField(realCfId, value)
+        );
 
-        return fillCreateIssueDialogCustomField(createIssueDialog, customFieldId, value, issue);
+        issueClient.update(issue.id, updateFieldRequest);
+
+        return issue;
     }
 
-    private CustomFieldResponse createCustomFieldFromType(final String type)
+    /**
+     * Currently depends on the name of the screen
+     * @return screens that are tied to a project
+     */
+    private List<Screen> getScreensForProject(String projectKey)
     {
-        ViewCustomFields viewCustomFields = product.quickLoginAsAdmin(ViewCustomFields.class);
-        String name = randomName();
-        String description = "description " + "testAddFromGlobalPage";
-
-        addCustomFieldType(viewCustomFields, name, description, type);
-        addFieldToAllScreens();
-
-        return getCustomFieldWithName(name).get();
+        List<Screen> allScreens = screensControl.getAllScreens();
+        return allScreens.stream()
+                .filter(screen -> screen.getName().startsWith(projectKey))
+                .collect(Collectors.toList());
     }
 
-    private String randomName()
+    private void addIssueFieldToScreens(final String projectKey)
     {
-        return "rfc " + RandomStringUtils.randomAlphabetic(5);
+        List<Screen> screensForProject = getScreensForProject(projectKey);
+        screensForProject.stream()
+                .forEach(screen -> screensControl.addFieldToScreen(screen.getName(), FIELD_NAME));
+    }
+
+    private String getFieldId()
+    {
+        return customFieldsControl.getCustomFields()
+                .stream().filter((cf) ->
+                        customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey()).matches(cf))
+                .map(cf -> cf.id)
+                .findFirst().get();
     }
 
     private WebElement findCustomFieldWithIdOnPage(final String customFieldId)
@@ -178,31 +233,17 @@ public class TestIssueField extends JiraWebDriverTestBase
 
     private String getCustomFieldTypeKey()
     {
-        return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + FIELD_TYPE_KEY;
-
+        return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + FIELD_KEY;
     }
 
     private String getCustomFieldSearcherKey()
     {
-        return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + FIELD_TYPE_KEY + "_searcher";
-    }
-
-    private java.util.Optional<CustomFieldResponse> getCustomFieldWithName(String name)
-    {
-        return product.backdoor().customFields().getCustomFields().stream().filter((customField) -> name.equals(customField.name)).findFirst();
+        return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + FIELD_KEY + "_searcher";
     }
 
     private IssueCreateResponse createIssue()
     {
         return product.backdoor().issues().createIssue(project.getKey(), "issue summary");
-    }
-
-        private void addFieldToAllScreens()
-    {
-        AssociateCustomFieldToScreenPage associateScreen = product.getPageBinder().bind(AssociateCustomFieldToScreenPage.class);
-
-        associateScreen.selectRow((s) -> true);
-        associateScreen.submit();
     }
 
     private String fillCreateIssueDialogCustomField(final CreateIssueDialog createIssueDialog, final String customFieldId, final String expectedValue, final IssueCreateResponse issue)
@@ -227,42 +268,6 @@ public class TestIssueField extends JiraWebDriverTestBase
         return createIssueDialog;
     }
 
-    private AssociateCustomFieldToScreenPage addCustomFieldType(final ViewCustomFields viewCustomFields, final String name, final String description, final String cftName)
-    {
-        TypeSelectionCustomFieldDialog typeSelectionDialog = viewCustomFields.addCustomField().showAllCustomFields();
-
-        ConfigureFieldDialog configureFieldDialog = typeSelectionDialog
-                .select(cftName).next()
-                .name(name).description(description);
-
-        AssociateCustomFieldToScreenPage associateCustomFieldToScreenPage = configureFieldDialog.nextAndThenAssociate();
-        return associateCustomFieldToScreenPage;
-    }
-
-    private Matcher<CustomFieldResponse> customFieldResponse(final String name, final String description, final String type, final String searcher)
-    {
-        return new TypeSafeMatcher<CustomFieldResponse>()
-        {
-            @Override
-            protected boolean matchesSafely(final CustomFieldResponse customFieldItem)
-            {
-                return Objects.equal(customFieldItem.name, name)
-                        && Objects.equal(customFieldItem.description, description)
-                        && Objects.equal(customFieldItem.type, type)
-                        && Objects.equal(customFieldItem.searcher, searcher);
-            }
-
-            @Override
-            public void describeTo(final Description desc)
-            {
-                desc.appendValue(name)
-                    .appendValue(description)
-                    .appendValue(type)
-                    .appendValue(searcher);
-            }
-        };
-    }
-
     private Matcher<CreateCustomFieldPage.CustomFieldItem> customFieldTypeEntry(final String name, final String description)
     {
         return new TypeSafeMatcher<CreateCustomFieldPage.CustomFieldItem>()
@@ -282,7 +287,7 @@ public class TestIssueField extends JiraWebDriverTestBase
         };
     }
 
-    private static IssueFieldModuleBean buildCustomFieldTypeModule(String key, String title, String description)
+    private static IssueFieldModuleBean buildIssueFieldModule(String key, String title, String description)
     {
         return IssueFieldModuleBean.newBuilder()
                 .withKey(key)
