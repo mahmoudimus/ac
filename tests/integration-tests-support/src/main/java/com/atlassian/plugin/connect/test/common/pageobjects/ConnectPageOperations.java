@@ -148,7 +148,7 @@ public class ConnectPageOperations
 
     public RemotePluginDialog editMacro(String macroKey)
     {
-        String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"[data-macro-name='" + macroKey + "']\")";
+        String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"table[data-macro-name='" + macroKey + "']\")";
         driver.executeScript("tinymce.confluence.macrobrowser.editMacro(" + macroNodeSelector + ")");
         return findDialog(macroKey);
     }
