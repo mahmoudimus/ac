@@ -153,15 +153,6 @@ public class ConnectPageOperations
         return findDialog(macroKey);
     }
 
-    public WebElement openPropertyPanel() {
-        final WebElement innerFrame = driver.findElement(ByJquery.$("#wysiwygTextarea_ifr"));
-        driver.switchTo().frame(innerFrame);
-        final WebElement macro = driver.findElement(ByJquery.$(".editor-inline-macro"));
-        macro.click();
-        driver.switchTo().defaultContent();
-        return driver.findElement(ByJquery.$("#property-panel"));
-    }
-
     public void reorderConfluenceTableOnPage()
     {
         driver.findElement(By.className("tablesorter-header-inner")).click();

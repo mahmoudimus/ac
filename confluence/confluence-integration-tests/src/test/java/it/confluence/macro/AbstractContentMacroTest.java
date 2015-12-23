@@ -9,16 +9,13 @@ import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 
@@ -67,16 +64,12 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     protected static final String EDITOR_MACRO_NAME = "Editor Macro";
     protected static final String EDITOR_MACRO_KEY = "editor-macro";
 
-    protected static final String DIALOG_KEY = "dialog-key";
-    protected static final String DIALOG_NAME = "Dialog";
-
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_NAME = "Custom Title Macro";
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_KEY = "custom-title-macro";
     private static final String CUSTOM_TITLE = "Custom Title";
 
     protected static final String HIDDEN_MACRO_NAME = "Hidden Macro";
     protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
-
 
     @BeforeClass
     public static void setUpClass()

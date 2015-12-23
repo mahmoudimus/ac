@@ -36,11 +36,9 @@ import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.junit.rules.ExpectedException;
 
 import it.confluence.MacroStorageFormatBuilder;
 
@@ -88,17 +86,13 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     private static final String DYNAMIC_MACRO_KEY = "dynamic-macro";
     private static final String DYNAMIC_MACRO_NAME = "Dynamic Macro";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private static ConnectRunner remotePlugin;
-    private static String addonKey;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
         final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
-        addonKey = AddonTestUtils.randomAddOnKey();
+        String addonKey = AddonTestUtils.randomAddOnKey();
 
         DynamicContentMacroModuleBean simpleMacro = createSimpleMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean allParameterTypesMacro = createAllParametersMacro(newDynamicContentMacroModuleBean());
