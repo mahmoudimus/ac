@@ -1,6 +1,6 @@
 package it.common.jsapi;
 
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -36,11 +36,11 @@ public class TestDialog extends MultiProductWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         logout();
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
                 .addModules("generalPages",
                         newPageBean()
@@ -68,7 +68,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                 .withUrl("/my-webitem-dialog?myuserid={user.id}")
                                 .withKey(ADDON_WEBITEM_DIALOG)
                                 .withLocation("none")
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withTarget(newWebItemTargetBean()
                                         .withType(WebItemTargetType.dialog)
                                         .build())
@@ -82,7 +82,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -95,9 +95,9 @@ public class TestDialog extends MultiProductWebDriverTestBase
      */
 
     @Test
-    public void testOpenCloseDialogKeyWithPrependedAddOnKey() throws Exception
+    public void testOpenCloseDialogKeyWithPrependedAddonKey() throws Exception
     {
-        testOpenAndCloseWithPrependedAddOnKey(ADDON_GENERALPAGE, ADDON_DIALOG);
+        testOpenAndCloseWithPrependedAddonKey(ADDON_GENERALPAGE, ADDON_DIALOG);
     }
 
     @Test
@@ -107,9 +107,9 @@ public class TestDialog extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void testWebItemDialogOpenByKeyWithPrependedAddOnKey() throws Exception
+    public void testWebItemDialogOpenByKeyWithPrependedAddonKey() throws Exception
     {
-        testOpenAndCloseWithPrependedAddOnKey(ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_WEBITEM_DIALOG);
+        testOpenAndCloseWithPrependedAddonKey(ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_WEBITEM_DIALOG);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
         testOpenAndClose(ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_WEBITEM_DIALOG);
     }
 
-    private void testOpenAndCloseWithPrependedAddOnKey(String pageKey, String dialogKey)
+    private void testOpenAndCloseWithPrependedAddonKey(String pageKey, String dialogKey)
     {
         testOpenAndClose(pageKey, ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), dialogKey));
     }

@@ -24,9 +24,9 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     private static ConnectRunner remotePluginB;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        remotePluginA = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePluginA = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webPanels",
                         newWebPanelBean()
@@ -52,7 +52,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
                 .addRoute("/xdmEventsPanelA3", newServlet(new XdmEventsPanelServlet("A3")))
                 .start();
 
-        remotePluginB = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePluginB = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webPanels",
                         newWebPanelBean()
@@ -127,7 +127,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         try
         {

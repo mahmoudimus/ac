@@ -42,24 +42,24 @@ public class JiraPermissionScopeTransitionNewTest extends AbstractJiraPermission
     @Test
     public void testAdminToProjectAdminTransitionForNewProjects() throws Exception
     {
-        checkHasPermissionForNewProjectAfterTransition(getAdminAddOn(), getProjectAdminAddOn(), Permission.PROJECT_ADMIN);
+        checkHasPermissionForNewProjectAfterTransition(getAdminAddon(), getProjectAdminAddon(), Permission.PROJECT_ADMIN);
     }
 
     @Test
     public void testProjectAdminToDeleteTransitionForNewProjects() throws Exception
     {
-        checkHasPermissionForNewProjectAfterTransition(getProjectAdminAddOn(), getDeleteAddOn(), Permission.DELETE_ISSUE);
+        checkHasPermissionForNewProjectAfterTransition(getProjectAdminAddon(), getDeleteAddon(), Permission.DELETE_ISSUE);
     }
 
     @Test
     public void testDeleteToWriteTransitionForNewProjects() throws Exception
     {
-        checkHasPermissionForNewProjectAfterTransition(getDeleteAddOn(), getWriteAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForNewProjectAfterTransition(getDeleteAddon(), getWriteAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
     public void testWriteToReadTransitionForNewProjects() throws Exception
     {
-        checkHasPermissionForNewProjectAfterTransition(getWriteAddOn(), getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForNewProjectAfterTransition(getWriteAddon(), getReadAddon(), Permission.EDIT_ISSUE);
     }
 }

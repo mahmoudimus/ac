@@ -8,7 +8,7 @@ import com.atlassian.connect.test.jira.pageobjects.InsufficientPermissionsViewPr
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProfilePage;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -51,9 +51,9 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModule("jiraProfileTabPanels",
                         newTabPanelBean()
@@ -72,7 +72,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -88,7 +88,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
         String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
                 Optional.<String>empty(),moduleKey);
-        ConnectAddOnEmbeddedTestPage remotePage = tabPanel.click();
+        ConnectAddonEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.getMessage(), equalTo("Success"));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();

@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.RemoteWebLink;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -42,7 +42,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(final String url, final String pluginKey, final String moduleKey, final boolean absolute, final AddOnUrlContext addOnUrlContext, final boolean isDialog, final String section)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(final String url, final String pluginKey, final String moduleKey, final boolean absolute, final AddonUrlContext addonUrlContext, final boolean isDialog, final String section)
     {
         WebFragmentHelper webFragmentHelper = ComponentLocator.getComponent(WebFragmentHelper.class);
         return new RemoteConfluenceWebItemModuleDescriptor(
@@ -55,7 +55,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
                 , pluginKey
                 , moduleKey
                 , absolute
-                , addOnUrlContext
+                , addonUrlContext
                 , isDialog);
     }
 
@@ -70,7 +70,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         private final String pluginKey;
         private final String moduleKey;
         private final boolean absolute;
-        private final AddOnUrlContext addOnUrlContext;
+        private final AddonUrlContext addonUrlContext;
         private final boolean isDialog;
 
         private RemoteConfluenceWebItemModuleDescriptor(
@@ -78,7 +78,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
                 IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 PluggableParametersExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
                 UrlVariableSubstitutor urlVariableSubstitutor, String url, String pluginKey, String moduleKey, boolean absolute,
-                AddOnUrlContext addOnUrlContext, boolean isDialog)
+                AddonUrlContext addonUrlContext, boolean isDialog)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
@@ -89,7 +89,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
             this.webFragmentHelper = webFragmentHelper;
             this.url = url;
             this.absolute = absolute;
-            this.addOnUrlContext = addOnUrlContext;
+            this.addonUrlContext = addonUrlContext;
             this.isDialog = isDialog;
         }
 
@@ -97,7 +97,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         public ConfluenceWebLink getLink()
         {
             return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor,
-                    webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog));
+                    webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addonUrlContext, isDialog));
         }
 
         @Override

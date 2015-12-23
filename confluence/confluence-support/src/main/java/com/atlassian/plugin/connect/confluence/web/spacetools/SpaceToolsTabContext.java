@@ -5,23 +5,23 @@ package com.atlassian.plugin.connect.confluence.web.spacetools;
  */
 public class SpaceToolsTabContext
 {
-    private final String addOnKey;
+    private final String addonKey;
     private final String moduleKey;
     private final String displayName;
     private final String spaceAdminWebItemKey;
 
-    public SpaceToolsTabContext(final String addOnKey, final String moduleKey, final String displayName,
+    public SpaceToolsTabContext(final String addonKey, final String moduleKey, final String displayName,
             final String spaceAdminWebItemKey)
     {
-        this.addOnKey = addOnKey;
+        this.addonKey = addonKey;
         this.moduleKey = moduleKey;
         this.displayName = displayName;
         this.spaceAdminWebItemKey = spaceAdminWebItemKey;
     }
 
-    public String getAddOnKey()
+    public String getAddonKey()
     {
-        return addOnKey;
+        return addonKey;
     }
 
     public String getModuleKey()

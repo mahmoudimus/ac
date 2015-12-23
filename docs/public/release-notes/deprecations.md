@@ -245,7 +245,7 @@ The `page.id`, `page.version`, `page.type` context variables available in Conflu
 
 Requests to the following resource:
 
-    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/2/my-property
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property
     
 Return json objects in the following format:
 
@@ -258,7 +258,7 @@ Return json objects in the following format:
 Starting immediately the addition of the `?jsonValue=true` query parameter to the response will result in the following
 response:
 
-    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/2/my-property?jsonValue=true
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?jsonValue=true
     {
        "key": "my-property",
        "value": {"object": "data"},

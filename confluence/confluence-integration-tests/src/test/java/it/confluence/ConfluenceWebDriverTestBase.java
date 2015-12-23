@@ -1,17 +1,7 @@
 package it.confluence;
 
-import java.util.concurrent.Callable;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.it.Space;
-import com.atlassian.confluence.it.maven.MavenDependencyHelper;
-import com.atlassian.confluence.it.maven.MavenUploadablePlugin;
-import com.atlassian.confluence.it.plugin.PluginHelper;
-import com.atlassian.confluence.it.plugin.SimplePlugin;
-import com.atlassian.confluence.it.plugin.UploadablePlugin;
-import com.atlassian.confluence.it.plugin.WebTestPluginHelper;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.it.rpc.StartOfTestLogger;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
@@ -23,6 +13,17 @@ import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDrop
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
+import com.atlassian.confluence.test.BaseUrlSelector;
+import com.atlassian.confluence.test.ConfluenceBaseUrlSelector;
+import com.atlassian.confluence.test.plugin.DefaultPluginHelper;
+import com.atlassian.confluence.test.plugin.PluginHelper;
+import com.atlassian.confluence.test.plugin.SimplePlugin;
+import com.atlassian.confluence.test.plugin.UploadablePlugin;
+import com.atlassian.confluence.test.plugin.maven.MavenDependencyHelper;
+import com.atlassian.confluence.test.plugin.maven.MavenUploadablePlugin;
+import com.atlassian.confluence.test.rest.ConfluenceJacksonClientBuilder;
+import com.atlassian.confluence.test.rpc.VersionedRpcBaseResolver;
+import com.atlassian.confluence.test.rpc.api.ConfluenceRpcClient;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
@@ -41,9 +42,8 @@ import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterfaceException;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -51,6 +51,9 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 
 import static com.atlassian.confluence.api.model.content.ContentRepresentation.STORAGE;
 import static com.atlassian.confluence.api.model.content.ContentType.PAGE;
@@ -76,6 +79,12 @@ public class ConfluenceWebDriverTestBase
     private final Logger logger = LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class);
 
     private boolean hasBeenFocused;
+
+    private static final BaseUrlSelector urlSelector = new ConfluenceBaseUrlSelector();
+    private static final ConfluenceRpcClient rpcClient = new ConfluenceRpcClient(urlSelector, VersionedRpcBaseResolver.V2);
+    private static final Client client = ConfluenceJacksonClientBuilder.newClient();
+    private static final com.atlassian.confluence.test.rest.api.ConfluenceRestClient internalRestClient = new com.atlassian.confluence.test.rest.api.ConfluenceRestClient(urlSelector, client);
+    private static final PluginHelper pluginHelper = new DefaultPluginHelper(rpcClient, internalRestClient);
 
     public static class TestSpace
     {
@@ -141,12 +150,12 @@ public class ConfluenceWebDriverTestBase
         final TestUser admin = testUserFactory.admin();
         rpc.logIn(toConfluenceUser(admin));
         restClient = new ConfluenceRestClient(getProduct(), admin);
-        installTestPlugins(rpc);
+        installTestPlugins();
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
         try
         {
-            rpc.getPluginHelper().disablePlugin(new SimplePlugin("com.atlassian.confluence.confluence-editor-hide-tools", null));
+            pluginHelper.disablePlugin(new SimplePlugin("com.atlassian.confluence.confluence-editor-hide-tools", null));
         }
         catch (UniformInterfaceException ignored)
         {
@@ -172,17 +181,11 @@ public class ConfluenceWebDriverTestBase
         StartOfTestLogger.instance().logTestStart(rpc, getClass(), name.getMethodName());
     }
 
-    // The three methods below are copied from com.atlassian.confluence.webdriver.WebDriverSetupTest,
-    // which unfortunately doesn't use the ConfluenceRpc base url
-
-    private static void installTestPlugins(ConfluenceRpc rpc) throws Exception
-    {
-        PluginHelper pluginHelper = rpc.getPluginHelper();
+    private static void installTestPlugins() {
         if (!pluginHelper.isPluginEnabled(FUNCTEST_RPC_PLUGIN_HOLDER.get()))
         {
-            new WebTestPluginHelper(rpc.getBaseUrl(), toConfluenceUser(testUserFactory.admin())).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
+            pluginHelper.installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
         }
-
         if (!pluginHelper.isPluginEnabled(SCRIPTS_FINISHED_PLUGIN_HOLDER.get()))
         {
             pluginHelper.installPlugin(SCRIPTS_FINISHED_PLUGIN_HOLDER.get());

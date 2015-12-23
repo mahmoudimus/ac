@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.plugin.auth.DefaultMessage;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -46,18 +46,18 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final AuthenticationController authenticationController;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
-    private final AddOnKeyExtractor addOnKeyExtractor;
+    private final AddonKeyExtractor addonKeyExtractor;
     private final ConsumerService consumerService;
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
             ApplicationProperties applicationProperties,
             OAuthLinkManager oAuthLinkManager, UserManager userManager,
-            ConsumerService consumerService, AddOnKeyExtractor addOnKeyExtractor)
+            ConsumerService consumerService, AddonKeyExtractor addonKeyExtractor)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
-        this.addOnKeyExtractor = addOnKeyExtractor;
+        this.addonKeyExtractor = addonKeyExtractor;
         this.authenticationController = notNull(authenticationController,
                 "authenticationController");
         this.applicationProperties = notNull(applicationProperties, "applicationProperties");
@@ -196,7 +196,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         the request needs
         to be authorized to ensure it has access to the appropriate API scope.
          */
-        addOnKeyExtractor.setClientKey(request, consumerKey);
+        addonKeyExtractor.setClientKey(request, consumerKey);
         log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, user.getName());
         return new Result.Success(user);
         /*!-helper methods*/

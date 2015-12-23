@@ -8,7 +8,7 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.AdminPage;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import org.openqa.selenium.By;
@@ -19,30 +19,27 @@ import org.openqa.selenium.By;
 public class ConfluenceAdminPage implements AdminPage
 {
     @Inject
-    private AtlassianWebDriver driver;
-
-    @Inject
     private PageElementFinder elementFinder;
 
     @Inject
     private PageBinder pageBinder;
-    private final String addOnKey;
+    private final String addonKey;
     private final String moduleKey;
 
     private PageElement linkElement;
 
 
-    public ConfluenceAdminPage(String addOnKey, String moduleKey)
+    public ConfluenceAdminPage(String addonKey, String moduleKey)
     {
-        this.addOnKey = addOnKey;
+        this.addonKey = addonKey;
         this.moduleKey = moduleKey;
     }
 
     @Override
-    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
+    public ConnectAddonEmbeddedTestPage clickAddonLink()
     {
         findLinkElement().click();
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
+        return pageBinder.bind(ConnectAddonEmbeddedTestPage.class, addonKey, moduleKey, true);
     }
 
     public String getRemotePluginLinkHref()
@@ -55,12 +52,13 @@ public class ConfluenceAdminPage implements AdminPage
         return findLinkElement().getText();
     }
 
-    private PageElement findLinkElement()
+    @Override
+    public PageElement findLinkElement()
     {
         if (linkElement == null)
         {
             // pageKey == linkId
-            linkElement = elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addOnKey, moduleKey)), TimeoutType.DEFAULT);
+            linkElement = elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey)), TimeoutType.DEFAULT);
         }
         return linkElement;
     }

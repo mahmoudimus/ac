@@ -7,7 +7,7 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePageUtil;
 import org.openqa.selenium.By;
@@ -40,20 +40,21 @@ public class ConfluenceGeneralPage implements GeneralPage
     }
 
     @Override
-    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
+    public ConnectAddonEmbeddedTestPage clickAddonLink()
     {
         PageElement link = findLinkElement();
         RemotePageUtil.clickAddonLinkWithKeyboardFallback(link);
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
+        return pageBinder.bind(ConnectAddonEmbeddedTestPage.class, addonKey, pageKey, true);
+    }
+
+    @Override
+    public PageElement findLinkElement()
+    {
+        return elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, pageKey)), TimeoutType.DEFAULT);
     }
 
     public String getRemotePluginLinkHref()
     {
         return findLinkElement().getAttribute("href");
-    }
-
-    private PageElement findLinkElement()
-    {
-        return elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, pageKey)), TimeoutType.DEFAULT);
     }
 }

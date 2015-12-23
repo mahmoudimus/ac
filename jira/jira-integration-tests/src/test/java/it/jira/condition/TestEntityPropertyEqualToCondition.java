@@ -32,7 +32,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     private EntityPropertyClient issueEntityPropertyClient;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         remotePlugin = new ConnectRunner(product)
                 .setAuthenticationToNone()
@@ -55,7 +55,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

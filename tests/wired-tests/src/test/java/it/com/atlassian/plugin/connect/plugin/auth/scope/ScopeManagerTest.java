@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import org.hamcrest.Matcher;
@@ -21,10 +21,10 @@ public abstract class ScopeManagerTest
     private final ScopeTestHelper scopeTestHelper;
     private final Collection<ScopeTestData> scopeTestData;
 
-    private AddOnScopeManager permissionManager;
-    private Map<ScopeName, Plugin> installedAddOns;
+    private AddonScopeManager permissionManager;
+    private Map<ScopeName, Plugin> installedAddons;
 
-    public ScopeManagerTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper, Collection<ScopeTestData> scopeTestData)
+    public ScopeManagerTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper, Collection<ScopeTestData> scopeTestData)
     {
         this.permissionManager = scopeManager;
         this.scopeTestHelper = scopeTestHelper;
@@ -34,19 +34,19 @@ public abstract class ScopeManagerTest
     @BeforeClass
     public void setup() throws IOException
     {
-        installedAddOns = scopeTestHelper.installScopedAddOns();
+        installedAddons = scopeTestHelper.installScopedAddons();
     }
 
     @AfterClass
     public void tearDown() throws IOException
     {
-        scopeTestHelper.uninstallScopedAddOns(installedAddOns);
+        scopeTestHelper.uninstallScopedAddons(installedAddons);
     }
 
     @Test
     public void testRequestsInApiScope() throws Exception
     {
-        Iterable<Matcher<? super AddOnScopeManager>> matchers = new ScopeTestDataMatcherFactory(installedAddOns).toScopeTestDataMatchers(scopeTestData);
+        Iterable<Matcher<? super AddonScopeManager>> matchers = new ScopeTestDataMatcherFactory(installedAddons).toScopeTestDataMatchers(scopeTestData);
         assertThat(permissionManager, Matchers.allOf(matchers));
     }
 }

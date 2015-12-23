@@ -16,7 +16,7 @@ import static java.util.Optional.ofNullable;
  */
 public class ConnectConditionContext
 {
-    public static final String CONNECT_ADD_ON_KEY_KEY = "addOnKey";
+    public static final String CONNECT_ADD_ON_KEY_KEY = "addonKey";
 
     private final Map<String, String> contextMap;
 
@@ -34,7 +34,7 @@ public class ConnectConditionContext
         return new Builder(initialState);
     }
 
-    public Optional<String> getAddOnKey()
+    public Optional<String> getAddonKey()
     {
         return ofNullable(contextMap.get(CONNECT_ADD_ON_KEY_KEY));
     }
@@ -66,9 +66,9 @@ public class ConnectConditionContext
             this.accumulator = Maps.newHashMap(initialState);
         }
 
-        public Builder putAddOnKey(String addOnKey)
+        public Builder putAddonKey(String addonKey)
         {
-            return this.put(CONNECT_ADD_ON_KEY_KEY, addOnKey);
+            return this.put(CONNECT_ADD_ON_KEY_KEY, addonKey);
         }
 
         public Builder put(String key, String value)

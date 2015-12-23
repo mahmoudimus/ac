@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.66-SNAPSHOT</version>
+        <version>1.1.67-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -774,81 +774,6 @@
                 </executions>
             </plugin>
 
-            <!-- this MUST run after compilation -->
-            <plugin>
-                <groupId>external.atlassian.json</groupId>
-                <artifactId>json-schemagen-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>schema-support</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-support-docs</goal>
-                        </goals>
-                        <configuration>
-                            <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
-                            <sourcepath>../components/modules/src/main/java</sourcepath>
-                            <debug>${debugSchemaGen}</debug>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>common-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.plugin.CommonModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jira-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.jira.JiraModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>confluence-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.confluence.ConfluenceModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>shallow-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -909,6 +834,98 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>jsonschema-gen</id>
+            <activation>
+                <file>
+                    <!--
+                    we can only use 1 file element...despite the fact that there are many we'd want to watch for (e.g., ./plugin/target/jsonSchemaDocs.json)
+                    -->
+                    <missing>target/jsonSchemaInterfaces.json</missing>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- this MUST run after compilation -->
+                    <plugin>
+                        <groupId>external.atlassian.json</groupId>
+                        <artifactId>json-schemagen-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>schema-support</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>generate-support-docs</goal>
+                                </goals>
+                                <configuration>
+                                    <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
+                                    <sourcepath>../components/modules/src/main/java</sourcepath>
+                                    <debug>${debugSchemaGen}</debug>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>common-schema</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>generate-schema</goal>
+                                </goals>
+                                <configuration>
+                                    <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                                    <rootClassName>com.atlassian.plugin.connect.plugin.CommonModuleList</rootClassName>
+                                    <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
+                                    <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
+                                    <enumCase>insensitive</enumCase>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>jira-schema</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>generate-schema</goal>
+                                </goals>
+                                <configuration>
+                                    <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                                    <rootClassName>com.atlassian.plugin.connect.jira.JiraModuleList</rootClassName>
+                                    <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
+                                    <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
+                                    <enumCase>insensitive</enumCase>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>confluence-schema</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>generate-schema</goal>
+                                </goals>
+                                <configuration>
+                                    <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                                    <rootClassName>com.atlassian.plugin.connect.confluence.ConfluenceModuleList</rootClassName>
+                                    <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
+                                    <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
+                                    <enumCase>insensitive</enumCase>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>shallow-schema</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>generate-schema</goal>
+                                </goals>
+                                <configuration>
+                                    <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                                    <rootClassName>com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean</rootClassName>
+                                    <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
+                                    <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
+                                    <enumCase>insensitive</enumCase>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <properties>
         <product>jira</product>
         <build.test.plugin>false</build.test.plugin>

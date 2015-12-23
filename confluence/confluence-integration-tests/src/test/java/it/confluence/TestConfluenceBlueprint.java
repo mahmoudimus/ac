@@ -30,9 +30,9 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     private static String completeKey;
 
     @BeforeClass
-    public static void setupConfluenceAndStartConnectAddOn() throws Exception
+    public static void setupConfluenceAndStartConnectAddon() throws Exception
     {
-        String key = AddonTestUtils.randomAddOnKey();
+        String key = AddonTestUtils.randomAddonKey();
         String moduleKey = "my-blueprint";
         completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key, moduleKey) + "-web-item";
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(),
@@ -53,7 +53,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
