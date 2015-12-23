@@ -29,6 +29,7 @@ public class BlueprintPageCreateEventMapper extends ConfluenceEventMapper
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.putAll(super.toMap(e));
+
         builder.put("blueprintContext", event.getContext());
         builder.put("blueprint", contentBlueprintToMap(event.getBlueprint()));
         builder.put("page", contentEntityObjectToMap(event.getPage()));

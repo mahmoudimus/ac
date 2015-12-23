@@ -18,9 +18,6 @@ import org.openqa.selenium.By;
  */
 public class CreateContentDialog extends AbstractDialog
 {
-
-    @ElementBy(cssSelector = ".create-dialog-create-button") PageElement saveButton;
-
     public CreateContentDialog()
     {
         super("create-dialog");
@@ -34,15 +31,46 @@ public class CreateContentDialog extends AbstractDialog
         return getDialog().find(locator);
     }
 
-    public EditorPage createWithBlueprint(String completeKey)
+    public CreateContentDialog createWithBlueprintWizard(String completeKey)
     {
-        waitForBlueprint(completeKey).click();
-        saveButton.click();
+        clickBlueprintItem(completeKey);
+        return this;
+    }
 
+    public CreateContentDialog clickCreateButton()
+    {
+        getCreateButton().click();
+        return this;
+    }
+
+    public EditContentPage getEditContentPage()
+    {
         Editor editor = pageBinder.bind(Editor.class);
         Poller.waitUntil("Waiting for editor to become active.",
                 editor.isEditorCurrentlyActive(), Matchers.is(true), Poller.by(1, TimeUnit.HOURS));
 
         return pageBinder.bind(EditContentPage.class);
+    }
+
+    public EditorPage createWithBlueprint(String completeKey)
+    {
+        clickBlueprintItem(completeKey);
+        return getEditContentPage();
+    }
+
+    private PageElement getCreateButton()
+    {
+        /**
+         * For blueprint with wizard. The page will have multiple create button presents
+         * We should choose one that isn't disabled.
+         */
+        By locator = By.cssSelector(".create-dialog-create-button:not([disabled])");
+        return getDialog().find(locator);
+    }
+
+    private void clickBlueprintItem(String completeKey)
+    {
+        waitForBlueprint(completeKey).click();
+        getCreateButton().click();
     }
 }

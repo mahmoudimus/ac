@@ -32,7 +32,6 @@ import static org.junit.Assert.fail;
  */
 public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
 {
-    private final String baseUrl = new ConfluenceTestedProductAccessor().getConfluenceProduct().getProductInstance().getBaseUrl();
     private static ConfluenceBlueprintTestHelper helper;
 
     @BeforeClass
@@ -71,38 +70,5 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
                         .getContent()
                         .getTimedHtml()
                         .byDefaultTimeout().contains("Hello Blueprint"));
-    }
-
-    @Test
-    public void testBlueprintPageCreatedWebHookFired() throws Exception
-    {
-        // TODO: Move to TestConfluenceWebHooks after Blueprint APIs are ready
-        // This test case currently need web driver
-
-        WebHookTestServlet.runInJsonRunner(baseUrl, "blueprint_page_created", waiter -> {
-            ConfluenceBlueprintTestHelper.runInRunner(product, (helper) -> {
-                try
-                {
-                    String title = "Test page for " + helper.getCompleteKey();
-
-                    login(testUserFactory.basicUser());
-                    product.visit(DashboardPage.class).createDialog.click();
-                    product.getPageBinder()
-                            .bind(CreateContentDialog.class)
-                            .createWithBlueprint(helper.getCompleteKey())
-                            .setTitle(title)
-                            .save();
-
-                    final WebHookBody body = waiter.waitForHook();
-
-                    assertNotNull(body);
-                    assertEquals(body.find("page/title"), title);
-                }
-                catch (Exception e)
-                {
-                    fail("Should not throw exception: " + e.getMessage());
-                }
-            });
-        });
     }
 }

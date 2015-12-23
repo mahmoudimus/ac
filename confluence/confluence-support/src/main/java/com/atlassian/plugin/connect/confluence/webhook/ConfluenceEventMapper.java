@@ -7,7 +7,6 @@ import com.atlassian.confluence.labels.Labelable;
 import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.confluence.pages.Comment;
 import com.atlassian.confluence.pages.Page;
-import com.atlassian.confluence.plugins.createcontent.api.events.BlueprintPageCreateEvent;
 import com.atlassian.confluence.plugins.createcontent.impl.ContentBlueprint;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
@@ -15,8 +14,6 @@ import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
@@ -73,11 +70,6 @@ public class ConfluenceEventMapper
     public boolean handles(ConfluenceEvent e)
     {
         return true; // can handle any kind of ConfluenceEvent, but not in any particularly meaningful way :-)
-    }
-
-    private String getValueOrEmpty(Supplier<String> supplier)
-    {
-        return StringUtils.isBlank(supplier.get()) ? "" : supplier.get();
     }
 
     protected Map<String, Object> labelableToMap(Labelable labelable)
@@ -183,12 +175,12 @@ public class ConfluenceEventMapper
 
         builder.put("id", blueprint.getId());
         builder.put("indexKey", blueprint.getIndexKey());
-        builder.put("spaceKey", getValueOrEmpty(blueprint::getSpaceKey));
+        builder.put("spaceKey", StringUtils.defaultIfBlank(blueprint.getSpaceKey(), ""));
         builder.put("i18nNameKey", blueprint.getI18nNameKey());
-        builder.put("indexTitleI18nKey", getValueOrEmpty(blueprint::getIndexTitleI18nKey));
+        builder.put("indexTitleI18nKey", StringUtils.defaultIfBlank(blueprint.getIndexTitleI18nKey(), ""));
         builder.put("moduleCompleteKey", blueprint.getModuleCompleteKey());
-        builder.put("createResult", getValueOrEmpty(blueprint::getCreateResult));
-        builder.put("howToUseTemplate", getValueOrEmpty(blueprint::getHowToUseTemplate));
+        builder.put("createResult", StringUtils.defaultIfBlank(blueprint.getCreateResult(), ""));
+        builder.put("howToUseTemplate", StringUtils.defaultIfBlank(blueprint.getHowToUseTemplate(), ""));
 
         return builder.build();
     }
@@ -203,7 +195,7 @@ public class ConfluenceEventMapper
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.put("fileName", attachment.getFileName());
         builder.put("version", attachment.getVersion());
-        builder.put("comment", getValueOrEmpty(attachment::getComment));
+        builder.put("comment", StringUtils.defaultIfBlank(attachment.getComment(), ""));
         builder.put("fileSize", attachment.getFileSize());
         builder.put("id", attachment.getId());
         builder.put("creatorName", getUserUsername(attachment.getCreator()));
