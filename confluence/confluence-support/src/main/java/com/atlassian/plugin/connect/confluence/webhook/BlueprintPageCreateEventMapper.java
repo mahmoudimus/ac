@@ -32,6 +32,7 @@ public class BlueprintPageCreateEventMapper extends ConfluenceEventMapper
 
         builder.put("blueprintContext", event.getContext());
         builder.put("blueprint", contentBlueprintToMap(event.getBlueprint()));
+        builder.put("creator", event.getCreator().getKey().getStringValue());
         builder.put("page", contentEntityObjectToMap(event.getPage()));
 
         return builder.build();
