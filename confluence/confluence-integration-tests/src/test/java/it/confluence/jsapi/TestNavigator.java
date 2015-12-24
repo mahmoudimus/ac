@@ -56,7 +56,7 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
 
         try
         {
-            remotePlugin = new ConnectRunner(ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+            remotePlugin = new ConnectRunner(ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                     .setAuthenticationToNone()
                     .addModules("generalPages",
                             newPageBean()
