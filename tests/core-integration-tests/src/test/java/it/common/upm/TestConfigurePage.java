@@ -17,9 +17,9 @@ public class TestConfigurePage extends AbstractUpmPageTest
     private static final String MODULE_NAME = "configurePage";
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        startConnectAddOn(MODULE_NAME, new ConfigurePageModuleMeta());
+        startConnectAddon(MODULE_NAME, new ConfigurePageModuleMeta());
     }
 
     @Test

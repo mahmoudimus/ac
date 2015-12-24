@@ -41,60 +41,60 @@ public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeT
     @Test
     public void addonIsMadeAdminOfExistingProjects() throws Exception
     {
-        checkHasPermissionForAllProjectsAfterInstall(getProjectAdminAddOn(), Permission.PROJECT_ADMIN);
+        checkHasPermissionForAllProjectsAfterInstall(getProjectAdminAddon(), Permission.PROJECT_ADMIN);
     }
 
     @Test
     public void addonIsMadeAdminOfNewProject() throws Exception
     {
-        checkHasPermissionForNewProjectAfterInstall(getProjectAdminAddOn(), Permission.PROJECT_ADMIN);
+        checkHasPermissionForNewProjectAfterInstall(getProjectAdminAddon(), Permission.PROJECT_ADMIN);
     }
 
     @Test
     public void addonCanCreateIssuesInExistingProjects() throws Exception
     {
-        checkHasPermissionForAllProjectsAfterInstall(getWriteAddOn(), Permission.CREATE_ISSUE);
+        checkHasPermissionForAllProjectsAfterInstall(getWriteAddon(), Permission.CREATE_ISSUE);
     }
 
     @Test
     public void addonCanCreateIssueInNewProject() throws Exception
     {
-        checkHasPermissionForNewProjectAfterInstall(getWriteAddOn(), Permission.CREATE_ISSUE);
+        checkHasPermissionForNewProjectAfterInstall(getWriteAddon(), Permission.CREATE_ISSUE);
     }
 
     @Test
     public void addonCanUpdateIssuesInExistingProjects() throws Exception
     {
-        checkHasPermissionForAllProjectsAfterInstall(getWriteAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForAllProjectsAfterInstall(getWriteAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
     public void addonCanUpdateIssueInNewProject() throws Exception
     {
-        checkHasPermissionForNewProjectAfterInstall(getWriteAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForNewProjectAfterInstall(getWriteAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
     public void addonCanDeleteIssuesInExistingProjects() throws Exception
     {
-        checkHasPermissionForAllProjectsAfterInstall(getDeleteAddOn(), Permission.DELETE_ISSUE);
+        checkHasPermissionForAllProjectsAfterInstall(getDeleteAddon(), Permission.DELETE_ISSUE);
     }
 
     @Test
     public void addonCanDeleteIssueInNewProject() throws Exception
     {
-        checkHasPermissionForNewProjectAfterInstall(getDeleteAddOn(), Permission.DELETE_ISSUE);
+        checkHasPermissionForNewProjectAfterInstall(getDeleteAddon(), Permission.DELETE_ISSUE);
     }
 
     @Test
     public void addonCannotEditIssuesInExistingProjects() throws Exception
     {
-        checkHasPermissionForAllProjectsAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForAllProjectsAfterInstall(getReadAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
     public void addonCannotEditIssueInNewProject() throws Exception
     {
-        checkHasPermissionForNewProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForNewProjectAfterInstall(getReadAddon(), Permission.EDIT_ISSUE);
     }
 }

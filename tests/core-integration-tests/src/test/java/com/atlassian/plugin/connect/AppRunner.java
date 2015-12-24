@@ -68,7 +68,7 @@ public class AppRunner
 //                                .withUrl("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}")
 //                                .build(),
 //                            newWebItemBean()
-//                                .withContext(AddOnUrlContext.product)
+//                                .withContext(AddonUrlContext.product)
 //                                .withName(new I18nProperty("Quick project link", "ac.qp"))
 //                                .withLocation("system.top.navigation.bar")
 //                                .withWeight(1)

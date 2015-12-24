@@ -22,7 +22,7 @@ public class SpaceToolsIFrameAction extends SpaceAdminAction
 
     public String getIFrameHtml() throws IOException
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(context.getAddOnKey(), context.getModuleKey());
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(context.getAddonKey(), context.getModuleKey());
 
         if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
         {

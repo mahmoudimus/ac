@@ -66,7 +66,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     private static EchoContextServlet contextServlet;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         StaticContentMacroModuleBean simpleMacro = createSimpleMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean allParameterTypesMacro = createAllParametersMacro(newStaticContentMacroModuleBean());
@@ -129,7 +129,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

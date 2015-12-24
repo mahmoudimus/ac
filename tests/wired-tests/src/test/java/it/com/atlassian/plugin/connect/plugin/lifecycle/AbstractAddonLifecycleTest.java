@@ -33,7 +33,7 @@ import com.atlassian.testutils.annotations.Retry;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.usernameForAddon;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.collect.Sets.newHashSet;
@@ -563,10 +563,10 @@ public abstract class AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            final boolean addOnShouldHaveUser = !addon.getAuthentication().getType().equals(AuthenticationType.NONE);
-            assertEquals("addon with auth=none should not have a user, all others should", addOnShouldHaveUser, connectCrowdService.isUserActive(usernameForAddon(addonKey)));
+            final boolean addonShouldHaveUser = !addon.getAuthentication().getType().equals(AuthenticationType.NONE);
+            assertEquals("addon with auth=none should not have a user, all others should", addonShouldHaveUser, connectCrowdService.isUserActive(usernameForAddon(addonKey)));
 
-            if (addOnShouldHaveUser)
+            if (addonShouldHaveUser)
             {
                 applicationService.removeUser(getApplication(), ADD_ON_USER_KEY_PREFIX + addonKey);
             }
@@ -576,7 +576,7 @@ public abstract class AbstractAddonLifecycleTest
 
             plugin = testPluginInstaller.installAddon(addon);
 
-            assertUserExistence(addon, addOnShouldHaveUser);
+            assertUserExistence(addon, addonShouldHaveUser);
         }
         finally
         {

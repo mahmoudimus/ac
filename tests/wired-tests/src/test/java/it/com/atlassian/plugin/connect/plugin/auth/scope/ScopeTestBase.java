@@ -47,7 +47,7 @@ import static org.junit.Assert.assertEquals;
  */
 public abstract class ScopeTestBase
 {
-    private final ScopeName addOnScope;
+    private final ScopeName addonScope;
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final JwtWriterFactory jwtWriterFactory;
@@ -55,19 +55,19 @@ public abstract class ScopeTestBase
     private final ApplicationProperties applicationProperties;
     protected final RequestUtil requestUtil;
 
-    private ConnectAddonBean addOnBean;
-    private Plugin addOn;
+    private ConnectAddonBean addonBean;
+    private Plugin addon;
 
     private static final Logger log = LoggerFactory.getLogger(ScopeTestBase.class);
 
-    public ScopeTestBase(@Nullable ScopeName addOnScope,
+    public ScopeTestBase(@Nullable ScopeName addonScope,
                          TestPluginInstaller testPluginInstaller,
                          TestAuthenticator testAuthenticator,
                          JwtWriterFactory jwtWriterFactory,
                          ConnectAddonRegistry connectAddonRegistry,
                          ApplicationProperties applicationProperties)
     {
-        this.addOnScope = addOnScope;
+        this.addonScope = addonScope;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.jwtWriterFactory = jwtWriterFactory;
@@ -98,29 +98,29 @@ public abstract class ScopeTestBase
                         .build());
 
         // scopes are optional so that we can have "no scopes" test classes
-        if (null != addOnScope)
+        if (null != addonScope)
         {
-            connectAddonBeanBuilder = connectAddonBeanBuilder.withScopes(new HashSet<ScopeName>(asList(addOnScope)));
+            connectAddonBeanBuilder = connectAddonBeanBuilder.withScopes(new HashSet<ScopeName>(asList(addonScope)));
         }
 
-        addOnBean = connectAddonBeanBuilder.build();
+        addonBean = connectAddonBeanBuilder.build();
 
         testAuthenticator.authenticateUser("admin");
-        addOn = testPluginInstaller.installAddon(addOnBean);
+        addon = testPluginInstaller.installAddon(addonBean);
     }
 
     @AfterClass
     public void tearDown()
     {
-        if (null != addOn)
+        if (null != addon)
         {
             try
             {
-                testPluginInstaller.uninstallAddon(addOn);
+                testPluginInstaller.uninstallAddon(addon);
             }
             catch (IOException e)
             {
-                log.error(String.format("Unable to uninstall add-on '%s'", addOn.getKey()), e);
+                log.error(String.format("Unable to uninstall add-on '%s'", addon.getKey()), e);
             }
         }
 
@@ -154,10 +154,10 @@ public abstract class ScopeTestBase
 
         // add JWT query param (request from add-on to host product)
         {
-            JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, connectAddonRegistry.getSecret(addOnBean.getKey()));
+            JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, connectAddonRegistry.getSecret(addonBean.getKey()));
             final String contextPath = hostProductBaseUrl.getPath();
             final JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
-                    .issuer(addOnBean.getKey())
+                    .issuer(addonBean.getKey())
                     .queryHash(HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(httpMethod.toString(), uri.getPath(), contextPath, constructParameterMap(uri))));
             String jwtToken = jwtWriter.jsonToJwt(jsonBuilder.build());
             final char queryStringSeparator = uriSuffix.contains("?") ? '&' : '?';

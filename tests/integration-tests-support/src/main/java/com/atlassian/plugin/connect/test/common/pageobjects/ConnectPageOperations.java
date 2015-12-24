@@ -131,7 +131,7 @@ public class ConnectPageOperations
 
     public <T extends RemotePluginDialog> T findDialog(String moduleKey, Class<T> dialogClass)
     {
-        ConnectAddOnEmbeddedTestPage dialogContent = pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, null, moduleKey, true);
+        ConnectAddonEmbeddedTestPage dialogContent = pageBinder.bind(ConnectAddonEmbeddedTestPage.class, null, moduleKey, true);
         return pageBinder.bind(dialogClass, dialogContent);
     }
 

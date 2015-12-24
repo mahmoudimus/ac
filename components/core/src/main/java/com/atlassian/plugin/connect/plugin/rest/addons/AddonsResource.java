@@ -22,7 +22,7 @@ import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilter;
@@ -73,7 +73,7 @@ public class AddonsResource
     private final LicenseRetriever licenseRetriever;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddonManager connectAddonManager;
-    private final ConnectAddOnInstaller connectAddOnInstaller;
+    private final ConnectAddonInstaller connectAddonInstaller;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
     private final ProductAccessor productAccessor;
@@ -81,14 +81,14 @@ public class AddonsResource
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
-            ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
+            ConnectAddonInstaller connectAddonInstaller, ApplicationProperties applicationProperties,
             UserManager userManager, ProductAccessor productAccessor, ConnectAddonAccessor addonAccessor)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddonManager = connectAddonManager;
-        this.connectAddOnInstaller = connectAddOnInstaller;
+        this.connectAddonInstaller = connectAddonInstaller;
         this.applicationProperties = applicationProperties;
         this.userManager = userManager;
         this.productAccessor = productAccessor;
@@ -168,7 +168,7 @@ public class AddonsResource
                 String descriptor = addonRegistry.getDescriptor(addonKey);
 
                 connectAddonManager.uninstallConnectAddonQuietly(addonKey);
-                connectAddOnInstaller.install(descriptor);
+                connectAddonInstaller.install(descriptor);
 
                 RestMinimalAddon restAddon = getRestAddonByKey(addonKey);
                 return Response.ok().entity(restAddon).build();

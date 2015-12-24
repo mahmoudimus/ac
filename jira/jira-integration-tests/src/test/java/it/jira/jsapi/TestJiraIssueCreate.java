@@ -40,9 +40,9 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        addonKey = AddonTestUtils.randomAddOnKey();
+        addonKey = AddonTestUtils.randomAddonKey();
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
                 .addModules(
@@ -58,7 +58,7 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

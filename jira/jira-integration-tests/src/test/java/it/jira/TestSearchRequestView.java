@@ -37,7 +37,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         searchRequestViewServlet = new EchoQueryParametersServlet();
 
@@ -59,7 +59,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -86,7 +86,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @Test
-    public void verifyEntryIsNotPresentWhenAddOnConditionIsFalse() throws Exception
+    public void verifyEntryIsNotPresentWhenAddonConditionIsFalse() throws Exception
     {
         login(testUserFactory.basicUser());
 

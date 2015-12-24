@@ -353,7 +353,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     }
 
     @Test
-    public void testMacroEditorShowsAddOnContent() throws Exception
+    public void testMacroEditorShowsAddonContent() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 

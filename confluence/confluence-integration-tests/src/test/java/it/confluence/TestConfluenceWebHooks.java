@@ -37,7 +37,7 @@ public class TestConfluenceWebHooks
     @Test
     public void testSearchPerformedWebHookFired() throws Exception
     {
-        final String pluginKey = AddonTestUtils.randomAddOnKey();
+        final String pluginKey = AddonTestUtils.randomAddonKey();
 
         runInRunner(baseUrl, "search_performed", pluginKey, new WebHookTester()
         {
@@ -59,7 +59,7 @@ public class TestConfluenceWebHooks
     public void testPageCreatedWebHookFired() throws Exception
     {
 
-        final String pluginKey = AddonTestUtils.randomAddOnKey();
+        final String pluginKey = AddonTestUtils.randomAddonKey();
 
         runInRunner(baseUrl, "page_created", pluginKey, new WebHookTester()
         {
@@ -79,7 +79,7 @@ public class TestConfluenceWebHooks
     @Test
     public void testVersionIsIncluded() throws Exception
     {
-        final String pluginKey = AddonTestUtils.randomAddOnKey();
+        final String pluginKey = AddonTestUtils.randomAddonKey();
 
         runInRunner(baseUrl, "page_created", pluginKey, new WebHookTester()
         {
@@ -98,7 +98,7 @@ public class TestConfluenceWebHooks
     @Test
     public void testContentPermissionsUpdatedWebHookFired() throws Exception
     {
-        final String pluginKey = AddonTestUtils.randomAddOnKey();
+        final String pluginKey = AddonTestUtils.randomAddonKey();
         final TestUser user = testUserFactory.basicUser();
 
         runInRunner(baseUrl, "content_permissions_updated", pluginKey, new WebHookTester()

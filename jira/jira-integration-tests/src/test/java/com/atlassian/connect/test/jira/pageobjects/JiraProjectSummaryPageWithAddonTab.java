@@ -3,7 +3,7 @@ package com.atlassian.connect.test.jira.pageobjects;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.SummaryPage;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Sidebar;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.util.WebItemUtils;
 
 /**
@@ -30,10 +30,10 @@ public class JiraProjectSummaryPageWithAddonTab extends SummaryPage
         return addonsLink.click(JiraProjectSummaryPageWithAddonTab.class, projectKey, addonKey, moduleKey);
     }
 
-    public ConnectAddOnEmbeddedTestPage goToEmbeddedTestPageAddon()
+    public ConnectAddonEmbeddedTestPage goToEmbeddedTestPageAddon()
     {
         Sidebar.SidebarLink addonLink = getAddonLink();
-        return addonLink.click(ConnectAddOnEmbeddedTestPage.class, addonKey, moduleKey, true);
+        return addonLink.click(ConnectAddonEmbeddedTestPage.class, addonKey, moduleKey, true);
     }
 
     private Sidebar.SidebarLink getSidebarAddonsLink()

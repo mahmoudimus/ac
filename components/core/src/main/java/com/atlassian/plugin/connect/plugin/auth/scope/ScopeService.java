@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddOnScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
 
 import java.util.Collection;
 
@@ -11,5 +11,5 @@ public interface ScopeService
      *
      * @return The scopes for the current product.
      */
-    Collection<AddOnScope> build();
+    Collection<AddonScope> build();
 }

@@ -62,10 +62,10 @@ public class ConnectApiScopeWhitelistModuleDescriptor extends AbstractModuleDesc
 
     private ConnectApiScopeWhitelist loadWhitelist(String resourcePath, URL resource)
     {
-        Map<ScopeName, AddOnScope> scopes = new HashMap<>();
+        Map<ScopeName, AddonScope> scopes = new HashMap<>();
         try
         {
-            AddOnScopeLoadJsonFileHelper.addProductScopesFromFile(scopes, resource);
+            AddonScopeLoadJsonFileHelper.addProductScopesFromFile(scopes, resource);
         }
         catch (JsonSyntaxException e)
         {

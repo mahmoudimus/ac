@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.jwt.core.SystemClock;
-import com.atlassian.plugin.connect.api.auth.scope.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -28,29 +28,29 @@ public class ApiScopingFilter implements Filter
 {
     private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
 
-    private final AddOnScopeManager addOnScopeManager;
+    private final AddonScopeManager addonScopeManager;
     private final UserManager userManager;
     private final EventPublisher eventPublisher;
     private final Clock clock;
-    private final AddOnKeyExtractor addOnKeyExtractor;
+    private final AddonKeyExtractor addonKeyExtractor;
 
-    public ApiScopingFilter(AddOnScopeManager addOnScopeManager, UserManager userManager,
-            EventPublisher eventPublisher, AddOnKeyExtractor addOnKeyExtractor)
+    public ApiScopingFilter(AddonScopeManager addonScopeManager, UserManager userManager,
+            EventPublisher eventPublisher, AddonKeyExtractor addonKeyExtractor)
     {
-        this(addOnScopeManager,
+        this(addonScopeManager,
              userManager,
              eventPublisher,
-                addOnKeyExtractor,
+                addonKeyExtractor,
              new SystemClock());
     }
 
-    public ApiScopingFilter(AddOnScopeManager addOnScopeManager, UserManager userManager,
-            EventPublisher eventPublisher, AddOnKeyExtractor addOnKeyExtractor, Clock clock)
+    public ApiScopingFilter(AddonScopeManager addonScopeManager, UserManager userManager,
+            EventPublisher eventPublisher, AddonKeyExtractor addonKeyExtractor, Clock clock)
     {
-        this.addOnScopeManager = addOnScopeManager;
+        this.addonScopeManager = addonScopeManager;
         this.userManager = userManager;
         this.eventPublisher = eventPublisher;
-        this.addOnKeyExtractor = addOnKeyExtractor;
+        this.addonKeyExtractor = addonKeyExtractor;
         this.clock = clock;
     }
 
@@ -65,7 +65,7 @@ public class ApiScopingFilter implements Filter
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        if (addOnKeyExtractor.isAddOnRequest(req))
+        if (addonKeyExtractor.isAddonRequest(req))
         {
             // Don't accept requests when the normalised and the original request uris are not the same -- see ACDEV-656
             if (ServletUtils.normalisedAndOriginalRequestUrisDiffer(req))
@@ -79,10 +79,10 @@ public class ApiScopingFilter implements Filter
             // apply scopes if this is an authenticated request from
             // a/ A server-to-server call using JWT or OAuth
             // b/ A XDM bridge call from an add-on that declared scopes (== JSON descriptor)
-            String addOnKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(req);
-            if (addOnKey != null)
+            String addonKey = addonKeyExtractor.getAddonKeyFromHttpRequest(req);
+            if (addonKey != null)
             {
-                handleScopedRequest(addOnKey, req, res, chain);
+                handleScopedRequest(addonKey, req, res, chain);
                 return;
             }
         }
@@ -96,7 +96,7 @@ public class ApiScopingFilter implements Filter
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
         HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res);
-        if (!addOnScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey))
+        if (!addonScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey))
         {
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{addonKey, user, req.getMethod(), req.getRequestURI()});

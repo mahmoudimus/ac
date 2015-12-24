@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
     private static final String ISSUE_TAB_PANEL_W_DIALOG = "issue-tab-panel-w-dialog";
 
     private static ConnectRunner remotePlugin;
@@ -41,7 +41,7 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     private IssueCreateResponse issue;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         product.logout();
 
@@ -70,7 +70,7 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

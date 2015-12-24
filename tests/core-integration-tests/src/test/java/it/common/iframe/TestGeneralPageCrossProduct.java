@@ -5,7 +5,7 @@ import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
@@ -41,11 +41,11 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     private static TestUser betty;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         betty = testUserFactory.admin();
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
                 .addModules("generalPages",
                         newPageBean()
@@ -83,7 +83,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -104,7 +104,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     {
         loginAndVisit(betty, HomePage.class);
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, ONLY_BETTY_PAGE_KEY, remotePlugin.getAddon().getKey());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();
 
         assertTrue(remotePluginTest.getTitle().contains(BETTY_PAGE_NAME));
     }
@@ -115,7 +115,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
         loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, ENCODED_SPACES_PAGE_KEY, remotePlugin.getAddon().getKey());
-        final ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        final ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();
 
         waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
         {
@@ -132,7 +132,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, SIZE_TO_PARENT_PAGE_KEY, remotePlugin.getAddon().getKey());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();
 
         assertTrue(remotePluginTest.isFullSize());
     }

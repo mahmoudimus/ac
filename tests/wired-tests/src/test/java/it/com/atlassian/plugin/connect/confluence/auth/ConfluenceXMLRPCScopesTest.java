@@ -1,6 +1,6 @@
 package it.com.atlassian.plugin.connect.confluence.auth;
 
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
@@ -18,7 +18,7 @@ import static it.com.atlassian.plugin.connect.confluence.auth.ConfluenceScopeTes
 @RunWith (AtlassianPluginsTestRunner.class)
 public class ConfluenceXMLRPCScopesTest extends ScopeManagerTest
 {
-    public ConfluenceXMLRPCScopesTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
+    public ConfluenceXMLRPCScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
     {
         super(scopeManager, scopeTestHelper, testData());
     }

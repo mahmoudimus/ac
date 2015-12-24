@@ -48,7 +48,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         DynamicContentMacroModuleBean dynamicContentMacroById = newDynamicContentMacroModuleBean()
                 .withUrl("/render-dynamic-by-id?pageId={page.id}&pageVersion={page.version}&macroId={macro.id}")
@@ -87,7 +87,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
                 .build();
 
         final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
-        String addonKey = AddonTestUtils.randomAddOnKey();
+        String addonKey = AddonTestUtils.randomAddonKey();
         String baseUrl = product.getProductInstance().getBaseUrl();
         BodyHandler dynamicMacroBodyHandler = (req, resp, context, body) -> {
             Map<String, Object> data = Maps.newHashMap(context);
@@ -127,7 +127,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

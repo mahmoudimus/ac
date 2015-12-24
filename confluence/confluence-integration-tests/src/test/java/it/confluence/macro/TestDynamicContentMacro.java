@@ -89,10 +89,10 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
-        String addonKey = AddonTestUtils.randomAddOnKey();
+        String addonKey = AddonTestUtils.randomAddonKey();
 
         DynamicContentMacroModuleBean simpleMacro = createSimpleMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean allParameterTypesMacro = createAllParametersMacro(newDynamicContentMacroModuleBean());
@@ -207,7 +207,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

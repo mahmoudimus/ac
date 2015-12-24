@@ -9,9 +9,9 @@ import org.openqa.selenium.WebDriver;
  */
 public class RemotePluginDialog extends RemoteDialog
 {
-    private final ConnectAddOnEmbeddedTestPage embeddedConnectPage;
+    private final ConnectAddonEmbeddedTestPage embeddedConnectPage;
 
-    public RemotePluginDialog(ConnectAddOnEmbeddedTestPage embeddedConnectPage)
+    public RemotePluginDialog(ConnectAddonEmbeddedTestPage embeddedConnectPage)
     {
         this.embeddedConnectPage = embeddedConnectPage;
     }

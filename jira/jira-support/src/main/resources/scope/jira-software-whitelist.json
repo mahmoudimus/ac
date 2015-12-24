@@ -1,0 +1,89 @@
+{
+    "scopes": [
+        {
+            "key": "READ",
+            "restPathKeys": ["rapidview", "planBacklogData", "rapidviewconfigEditmodel", "epics", "publicApi"],
+            "methods": ["GET"]
+        },
+        {
+            "key": "WRITE",
+            "restPathKeys": ["sprintRank", "rank", "addIssueToEpic", "removeIssuesFromEpic", "publicApi"],
+            "methods": ["PUT"]
+        },
+        {
+            "key": "WRITE",
+            "restPathKeys": [ "publicApi"],
+            "methods": ["POST"]
+        },
+        {
+            "key": "DELETE",
+            "restPathKeys": ["publicApi"],
+            "methods": ["DELETE"]
+        }
+    ],
+    "restPaths": [
+        {
+            "key": "rapidview",
+            "name": "greenhopper",
+            "basePaths": ["/rapidview(/[0-9]+)?$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "planBacklogData",
+            "name": "greenhopper",
+            "basePaths": ["/xboard/plan/backlog/data$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "rapidviewconfigEditmodel",
+            "name": "greenhopper",
+            "basePaths": ["/rapidviewconfig/editmodel$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "rank",
+            "name": "greenhopper",
+            "basePaths": ["/api/rank/(before|after)$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "sprintRank",
+            "name": "greenhopper",
+            "basePaths": ["/sprint/rank$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "epics",
+            "name": "greenhopper",
+            "basePaths": ["/epics$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "addIssueToEpic",
+            "name": "greenhopper",
+            "basePaths": ["/epics/.+/add$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "removeIssuesFromEpic",
+            "name": "greenhopper",
+            "basePaths": ["/epics/remove$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "publicApi",
+            "name": "agile",
+            "basePaths": [".+"],
+            "versions": ["1.0"],
+            "public": true
+        }
+    ]
+}

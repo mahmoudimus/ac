@@ -7,7 +7,7 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePageUtil;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -60,12 +60,12 @@ public final class JiraGeneralPage implements GeneralPage
     }
 
     @Override
-    public ConnectAddOnEmbeddedTestPage clickAddOnLink()
+    public ConnectAddonEmbeddedTestPage clickAddonLink()
     {
         final PageElement linkElement = findLinkElement();
         RemotePageUtil.clickAddonLinkWithKeyboardFallback(linkElement);
         logger.debug("Link '{}' was found and clicked.", linkElement);
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
+        return pageBinder.bind(ConnectAddonEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
     @Override

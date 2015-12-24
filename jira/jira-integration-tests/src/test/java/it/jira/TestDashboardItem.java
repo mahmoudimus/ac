@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
@@ -48,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestDashboardItem extends JiraWebDriverTestBase
 {
-    private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String ADDON_KEY = AddonTestUtils.randomAddonKey();
     private static final String DASHBOARD_ITEM_DESCRIPTION = "Dashboard item description";
 
     private static final String DASHBOARD_ITEM_KEY = "dashboard-item-key";
@@ -252,7 +252,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         String moduleKey = "dashboard-item-with-condition";
         DashboardItemConditionServlet conditionServlet =
                 new DashboardItemConditionServlet(TEST_USER.getUsername(), Lists.newArrayList("directory", "default"), moduleKey);
-        ConnectRunner addOnRunner = new ConnectRunner(product, AddonTestUtils.randomAddOnKey())
+        ConnectRunner addonRunner = new ConnectRunner(product, AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .setVendor(newVendorBean().withName(VENDOR_NAME).withUrl("http://www.atlassian.com").build())
                 .addModules("jiraDashboardItems",
@@ -289,12 +289,12 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         product.getTester().getDriver().navigate().refresh();
 
         Iterable<ConnectDashboardItemElement> dashboardItemsAfterRefresh =
-                bindConnectDashboardPage().getDashboardItems(addOnRunner.getAddon().getKey(), moduleKey);
+                bindConnectDashboardPage().getDashboardItems(addonRunner.getAddon().getKey(), moduleKey);
 
         // dashboard item is not visible in default view
         assertThat(dashboardItemsAfterRefresh, Matchers.emptyIterable());
 
-        addOnRunner.stopAndUninstall();
+        addonRunner.stopAndUninstall();
     }
 
     private static DashboardItemModuleBean buildDashboardItemModule(String title, String key, boolean configurable)
@@ -361,28 +361,28 @@ public class TestDashboardItem extends JiraWebDriverTestBase
             return Iterables.filter(dashboard.findAll(By.className("dashboard-item-title")), pageElement -> !pageElement.getAttribute("id").isEmpty());
         }
 
-        public Iterable<ConnectDashboardItemElement> getDashboardItems(final String addOnKey, final String moduleKey)
+        public Iterable<ConnectDashboardItemElement> getDashboardItems(final String addonKey, final String moduleKey)
         {
             final List<PageElement> iFrameContainers = elementFinder.findAll(By.className("iframe-init"));
             final Iterable<PageElement> gadgetsContainers = Iterables.filter(iFrameContainers, pageElement -> {
-                return pageElement.getAttribute("id").contains(ModuleKeyUtils.addonAndModuleKey(addOnKey, moduleKey));
+                return pageElement.getAttribute("id").contains(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
             });
             return Iterables.transform(gadgetsContainers, pageElement -> {
                 final String id = pageElement.getAttribute("id");
                 final String pageKey = id.substring(id.indexOf(moduleKey));
-                return pageBinder.bind(ConnectDashboardItemElement.class, addOnKey, pageKey);
+                return pageBinder.bind(ConnectDashboardItemElement.class, addonKey, pageKey);
             });
         }
     }
 
-    public static class ConnectDashboardItemElement extends ConnectAddOnEmbeddedTestPage
+    public static class ConnectDashboardItemElement extends ConnectAddonEmbeddedTestPage
     {
         @Inject
         protected PageElementFinder elementFinder;
 
-        public ConnectDashboardItemElement(final String addOnKey, final String pageElementKey)
+        public ConnectDashboardItemElement(final String addonKey, final String pageElementKey)
         {
-            super(addOnKey, pageElementKey, true);
+            super(addonKey, pageElementKey, true);
         }
 
         public String getDashboardItemId()

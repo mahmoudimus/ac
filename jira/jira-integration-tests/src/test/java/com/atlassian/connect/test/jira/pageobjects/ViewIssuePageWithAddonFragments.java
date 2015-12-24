@@ -34,9 +34,9 @@ public class ViewIssuePageWithAddonFragments extends ViewIssuePage
         return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 
-    public RemoteXdmEventPanel findXdmEventPanel(String addOnId, String moduleId)
+    public RemoteXdmEventPanel findXdmEventPanel(String addonId, String moduleId)
     {
-        return pageBinder.bind(RemoteXdmEventPanel.class, addOnId, moduleId);
+        return pageBinder.bind(RemoteXdmEventPanel.class, addonId, moduleId);
     }
 
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownMenuId)

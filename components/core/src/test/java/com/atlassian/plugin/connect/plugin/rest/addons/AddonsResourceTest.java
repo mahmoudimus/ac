@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
@@ -43,7 +43,7 @@ public class AddonsResourceTest
     private ConnectAddonManager connectAddonManager;
 
     @Mock
-    private ConnectAddOnInstaller connectAddOnInstaller;
+    private ConnectAddonInstaller connectAddonInstaller;
 
     @Mock
     private ApplicationProperties applicationProperties;

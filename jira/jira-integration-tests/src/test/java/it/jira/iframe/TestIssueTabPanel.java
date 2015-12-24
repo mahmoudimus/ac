@@ -36,7 +36,7 @@ import static org.hamcrest.core.Is.is;
  */
 public class TestIssueTabPanel extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
     private static final String MODULE_KEY = "issue-tab-panel";
     private static ConnectRunner remotePlugin;
 
@@ -48,7 +48,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     private IssueCreateResponse issue;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
@@ -70,7 +70,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

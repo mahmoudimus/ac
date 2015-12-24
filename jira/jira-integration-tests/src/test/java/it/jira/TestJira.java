@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
@@ -42,9 +42,9 @@ public class TestJira extends JiraWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("adminPages",
                         newPageBean()
@@ -81,7 +81,7 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -101,7 +101,7 @@ public class TestJira extends JiraWebDriverTestBase
                 .navigateToAndBind(IssueDetailPage.class, issue.key)
                 .details()
                 .openFocusShifter();
-        ConnectAddOnEmbeddedTestPage page = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, runner.getAddon().getKey(), JIRA_ISSUE_ACTION_KEY, true);
+        ConnectAddonEmbeddedTestPage page = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddonEmbeddedTestPage.class, runner.getAddon().getKey(), JIRA_ISSUE_ACTION_KEY, true);
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
 
         assertFalse(dialog.wasSubmitted());
@@ -115,9 +115,9 @@ public class TestJira extends JiraWebDriverTestBase
         login(testUserFactory.basicUser());
 
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
-        String addOnKey = runner.getAddon().getKey();
+        String addonKey = runner.getAddon().getKey();
         JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.key, addOnKey);
+                JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.key, addonKey);
         Assert.assertEquals("Success", page.getMessage());
     }
 
@@ -132,7 +132,7 @@ public class TestJira extends JiraWebDriverTestBase
 
         adminPageLink.click();
 
-        ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, ADVANCED_ADMIN_KEY, true);
+        ConnectAddonEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddonEmbeddedTestPage.class, addonKey, ADVANCED_ADMIN_KEY, true);
         assertEquals(user.getDisplayName(), nextPage.getFullName());
     }
 
@@ -146,7 +146,7 @@ public class TestJira extends JiraWebDriverTestBase
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADMIN_KEY);
         adminPageLink.click();
 
-        ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, ADMIN_KEY, true);
+        ConnectAddonEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddonEmbeddedTestPage.class, addonKey, ADMIN_KEY, true);
         assertEquals(user.getDisplayName(), nextPage.getFullName());
     }
 
