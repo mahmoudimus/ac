@@ -71,7 +71,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
-        addonKey = AddonTestUtils.randomAddOnKey();
+        addonKey = AddonTestUtils.randomAddonKey();
 
         DynamicContentMacroModuleBean propertyPanelMacro = createPropertyPanelMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean propertyPanelWithDialogMacro = createPropertyPanelMacroWithDialog(newDynamicContentMacroModuleBean());
