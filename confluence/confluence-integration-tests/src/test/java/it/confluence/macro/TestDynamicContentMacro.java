@@ -86,7 +86,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     private static final String DYNAMIC_MACRO_KEY = "dynamic-macro";
     private static final String DYNAMIC_MACRO_NAME = "Dynamic Macro";
 
-    
+
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
