@@ -137,7 +137,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         final String classifier = "property-panel";
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(addon.getKey())
+                .addon(addon.getKey())
                 .module(macroBean.getRawKey())
                 .dialogTemplate()
                 .urlTemplate(propertyPanel.getUrl())
