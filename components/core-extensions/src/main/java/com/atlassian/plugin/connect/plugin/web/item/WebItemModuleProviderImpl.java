@@ -1,8 +1,15 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
 import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
@@ -13,7 +20,7 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectDataBuilderFactory;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -26,18 +33,13 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+
 import com.google.common.annotations.VisibleForTesting;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 
@@ -157,8 +159,8 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         }
 
         if (bean.isAbsolute() ||
-            bean.getContext().equals(AddOnUrlContext.product) ||
-            bean.getContext().equals(AddOnUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
+            bean.getContext().equals(AddonUrlContext.product) ||
+            bean.getContext().equals(AddonUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
         {
             descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         }
@@ -177,7 +179,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     {
         // Link to the add-ons may require revalidation of JWT token so they need to do request though redirect servlet.
         // Absolute links points to the external servers like wikipedia, so they do not need to be signed, so they do not need go through redirect servlet.
-        return !bean.isAbsolute() && bean.getContext().equals(AddOnUrlContext.addon) && bean.getTarget().getType().equals(WebItemTargetType.page);
+        return !bean.isAbsolute() && bean.getContext().equals(AddonUrlContext.addon) && bean.getTarget().getType().equals(WebItemTargetType.page);
     }
 
     private void registerIframeRenderStrategy(WebItemModuleBean webItem, ConnectAddonBean descriptor)
@@ -188,7 +190,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         {
             List<ConditionalBean> iframeConditions = filterProductSpecificConditions(webItem.getConditions());
             final IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(descriptor.getKey())
+                    .addon(descriptor.getKey())
                     .module(webItem.getKey(descriptor))
                     .genericBodyTemplate()
                     .urlTemplate(webItem.getUrl())

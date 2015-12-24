@@ -3,11 +3,11 @@ package com.atlassian.connect.test.jira.pageobjects;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbeddedTestPage implements Page
+public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddonEmbeddedTestPage implements Page
 {
     private final String issueKey;
 
@@ -32,6 +32,6 @@ public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbed
 
     private String getTabLinkId()
     {
-        return ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
+        return ModuleKeyUtils.addonAndModuleKey(addonKey, pageElementKey);
     }
 }

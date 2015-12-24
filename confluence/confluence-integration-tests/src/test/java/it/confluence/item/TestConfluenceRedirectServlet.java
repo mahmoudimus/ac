@@ -1,12 +1,20 @@
 package it.confluence.item;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.ws.rs.core.UriBuilder;
+
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnHelloWorldPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonHelloWorldPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePageUtil;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
@@ -14,7 +22,7 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import it.confluence.ConfluenceWebDriverTestBase;
+
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -23,12 +31,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-import javax.ws.rs.core.UriBuilder;
+import it.confluence.ConfluenceWebDriverTestBase;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -50,7 +53,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
 
     private final String baseUrl = product.getProductInstance().getBaseUrl();
-    private final String addOnKey = AddonTestUtils.randomAddOnKey();
+    private final String addOnKey = AddonTestUtils.randomAddonKey();
     private ConnectRunner runner;
 
     @BeforeClass
@@ -110,7 +113,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         webItem.click();
-        product.getPageBinder().bind(ConnectAddOnHelloWorldPage.class);
+        product.getPageBinder().bind(ConnectAddonHelloWorldPage.class);
 
         Map<String, String> queryParams = PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET.getParamsFromLastRequest();
         assertThat(queryParams.get("always_allowed_param"), is("page"));

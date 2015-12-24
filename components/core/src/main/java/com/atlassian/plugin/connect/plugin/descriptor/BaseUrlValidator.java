@@ -14,7 +14,7 @@ import java.net.URI;
  * @since 1.0
  */
 @Named("base-url-validator")
-public class BaseUrlValidator implements AddOnBeanValidator
+public class BaseUrlValidator implements AddonBeanValidator
 {
     private final IsDevModeService isDevModeService;
 

@@ -46,7 +46,7 @@ public class TestEntityProperty extends JiraTestBase
 {
     private static final TestKitLocalEnvironmentData localEnvironmentData = new TestKitLocalEnvironmentData();
     private static final String ATTACHMENT_PROPERTY_KEY = "attachment";
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
     private static final String JQL_ALIAS_ATTACHMENT_SIZE = "attachmentSize";
     private static final String JQL_ALIAS_ATTACHMENT_EXTENSION = "attachmentExtension";
 
@@ -58,7 +58,7 @@ public class TestEntityProperty extends JiraTestBase
     private TestProject testProject;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
 
         List<EntityPropertyIndexExtractionConfigurationBean> extractions = newArrayList(
@@ -90,7 +90,7 @@ public class TestEntityProperty extends JiraTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -144,7 +144,7 @@ public class TestEntityProperty extends JiraTestBase
     }
 
     @Test
-    public void conflictingAliasFromTwoAddOns() throws Exception
+    public void conflictingAliasFromTwoAddons() throws Exception
     {
         final List<EntityPropertyIndexExtractionConfigurationBean> extractions = ImmutableList.of(
                 // the same alias

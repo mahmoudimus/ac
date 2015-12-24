@@ -72,12 +72,12 @@ public class ConnectIFrameServlet extends HttpServlet
         }
     }
 
-    private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
+    private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addonKey, final String moduleKey)
     {
         String classifier = req.getParameter(CLASSIFIER_PARAMETER);
         String lookupClassifier = JSON_CLASSIFIER.equals(classifier) ? null : classifier;
 
-        IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, lookupClassifier);
+        IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addonKey, moduleKey, lookupClassifier);
 
         if (null != renderStrategy && JSON_CLASSIFIER.equals(classifier))
         {

@@ -19,13 +19,13 @@ import java.util.Optional;
 public class ConnectReport implements Report
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final String addOnKey;
+    private final String addonKey;
     private final String moduleKey;
 
-    public ConnectReport(final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, final String addOnKey, final String moduleKey)
+    public ConnectReport(final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, final String addonKey, final String moduleKey)
     {
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-        this.addOnKey = addOnKey;
+        this.addonKey = addonKey;
         this.moduleKey = moduleKey;
     }
 
@@ -43,7 +43,7 @@ public class ConnectReport implements Report
     public String generateReportHtml(final ProjectActionSupport projectActionSupport, final Map map) throws Exception
     {
         StringWriter sw = new StringWriter();
-        IFrameRenderStrategy frameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addOnKey, moduleKey);
+        IFrameRenderStrategy frameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKey);
         JiraModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
         frameRenderStrategy.render(moduleContextParameters, sw, Optional.empty());
         return sw.toString();

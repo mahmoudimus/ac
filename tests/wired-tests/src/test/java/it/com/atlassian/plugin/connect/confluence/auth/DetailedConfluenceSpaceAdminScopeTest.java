@@ -22,7 +22,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.crowd.spi.CrowdAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.spi.CrowdAddonUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -75,7 +75,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private final JwtApplinkFinder jwtApplinkFinder;
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
-    private final CrowdAddOnUserProvisioningService crowdAddOnUserProvisioningService;
+    private final CrowdAddonUserProvisioningService crowdAddonUserProvisioningService;
 
     private List<Plugin> installedAddonPlugins;
     private List<Space> createdSpaceList;
@@ -87,7 +87,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
             JwtApplinkFinder jwtApplinkFinder,
             ApplicationService applicationService,
             ApplicationManager applicationManager,
-            CrowdAddOnUserProvisioningService crowdAddOnUserProvisioningService)
+            CrowdAddonUserProvisioningService crowdAddonUserProvisioningService)
     {
         this.spaceManager = spaceManager;
         this.spacePermissionManager = spacePermissionManager;
@@ -96,7 +96,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
         this.jwtApplinkFinder = jwtApplinkFinder;
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
-        this.crowdAddOnUserProvisioningService = crowdAddOnUserProvisioningService;
+        this.crowdAddonUserProvisioningService = crowdAddonUserProvisioningService;
     }
 
     @Before
@@ -308,8 +308,8 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private ConfluenceUser getAddonUserRemovedFromGroups(String addonKey)
     {
         final ConfluenceUser addonUser = getAddonUser(addonKey);
-        final Set<String> groups = new HashSet<>(crowdAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected());
-        groups.addAll(crowdAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected());
+        final Set<String> groups = new HashSet<>(crowdAddonUserProvisioningService.getDefaultProductGroupsAlwaysExpected());
+        groups.addAll(crowdAddonUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected());
         for (String group : groups)
         {
             removeUserFromGroup(addonUser.getName(), group);

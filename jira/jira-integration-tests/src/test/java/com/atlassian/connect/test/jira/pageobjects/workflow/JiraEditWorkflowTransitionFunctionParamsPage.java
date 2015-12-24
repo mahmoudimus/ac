@@ -1,7 +1,7 @@
 package com.atlassian.connect.test.jira.pageobjects.workflow;
 
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 import org.openqa.selenium.By;
 
@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import static com.atlassian.webdriver.utils.element.ElementConditions.isPresent;
 import static com.atlassian.webdriver.utils.element.ElementConditions.isVisible;
 
-public class JiraEditWorkflowTransitionFunctionParamsPage extends ConnectAddOnEmbeddedTestPage
+public class JiraEditWorkflowTransitionFunctionParamsPage extends ConnectAddonEmbeddedTestPage
 {
     @Inject private WebDriverPoller poller;
 

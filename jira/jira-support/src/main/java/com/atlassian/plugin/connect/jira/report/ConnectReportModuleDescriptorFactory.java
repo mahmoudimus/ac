@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.jira.report;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
@@ -25,18 +25,18 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
     private final ConnectContainerUtil containerUtil;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
-    private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
+    private final AbsoluteAddonUrlConverter absoluteAddonUrlConverter;
 
     @Autowired
     public ConnectReportModuleDescriptorFactory(final ConnectContainerUtil containerUtil,
             final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter)
+            final AbsoluteAddonUrlConverter absoluteAddonUrlConverter)
     {
         this.containerUtil = containerUtil;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
-        this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
+        this.absoluteAddonUrlConverter = absoluteAddonUrlConverter;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
         Element reportModule = createReportDescriptor(bean, connectAddonBean);
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(connectAddonBean.getKey())
+                .addon(connectAddonBean.getKey())
                 .module(bean.getKey(connectAddonBean))
                 .pageTemplate()
                 .urlTemplate(bean.getUrl())
@@ -92,6 +92,6 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
 
     private String getThumbnailUrl(ConnectAddonBean connectAddonBean, String thumbnailUrl)
     {
-        return StringUtils.isEmpty(thumbnailUrl) ? "" : absoluteAddOnUrlConverter.getAbsoluteUrl(connectAddonBean, thumbnailUrl);
+        return StringUtils.isEmpty(thumbnailUrl) ? "" : absoluteAddonUrlConverter.getAbsoluteUrl(connectAddonBean, thumbnailUrl);
     }
 }

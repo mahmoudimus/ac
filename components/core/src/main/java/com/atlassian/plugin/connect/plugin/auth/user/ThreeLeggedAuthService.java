@@ -6,7 +6,7 @@ import com.atlassian.sal.api.user.UserKey;
 public interface ThreeLeggedAuthService
 {
 
-    boolean hasGrant(UserKey userKey, ConnectAddonBean addOnBean);
+    boolean hasGrant(UserKey userKey, ConnectAddonBean addonBean);
 
-    boolean shouldSilentlyIgnoreUserAgencyRequest(String username, ConnectAddonBean addOnBean); // "String username" rather than UserKey because the user may not exist or may not be active
+    boolean shouldSilentlyIgnoreUserAgencyRequest(String username, ConnectAddonBean addonBean); // "String username" rather than UserKey because the user may not exist or may not be active
 }

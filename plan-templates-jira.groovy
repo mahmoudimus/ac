@@ -17,7 +17,8 @@ plan(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo.plugin.builds.jira.trunk.version}'
+                installMavenParameters: '',
+                testMavenParameters: '-Datlassian.jira.version=${bamboo.plugin.builds.jira.trunk.version}'
         )
     }
 }

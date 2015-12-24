@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
@@ -25,11 +25,11 @@ import org.junit.Test;
 import it.confluence.ConfluenceWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParameters;
 import static com.atlassian.plugin.connect.test.common.matcher.IsNotBlank.isNotBlank;
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
-import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddonKey;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -48,9 +48,9 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
     private String awesomePageModuleKey;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        startConnectAddOn("profilePages", new ProfilePageModuleMeta(), "/my-awesome-profile?profile_user={profileUser.name}&profile_key={profileUser.key}");
+        startConnectAddon("profilePages", new ProfilePageModuleMeta(), "/my-awesome-profile?profile_user={profileUser.name}&profile_key={profileUser.key}");
     }
 
     @Test
@@ -60,7 +60,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
 
         TestUser user = testUserFactory.basicUser();
         login(user);
-        ConnectAddOnEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(
+        ConnectAddonEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(
                 LINK_TEXT, MY_AWESOME_PAGE, user);
         Map<String,String> queryParams = page.getIframeQueryParams();
         assertThat(queryParams.get("profile_user"), is(user.getUsername()));
@@ -92,7 +92,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
     }
 
 
-    private ConnectAddOnEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(
+    private ConnectAddonEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(
             RemoteWebItem.ItemMatchingMode mode, String id, TestUser user)
             throws MalformedURLException, URISyntaxException
     {
@@ -103,17 +103,17 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
         LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(mode, id, Optional.<String>empty(),
                 awesomePageModuleKey);
 
-        ConnectAddOnEmbeddedTestPage addonContentPage = addonPage.click();
+        ConnectAddonEmbeddedTestPage addonContentPage = addonPage.click();
 
         assertThat(addonContentPage.getMessage(), equalTo("Success"));
 
-        verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),
+        verifyContainsStandardAddonQueryParameters(addonContentPage.getIframeQueryParams(),
                 product.getProductInstance().getContextPath());
 
         return addonContentPage;
     }
 
-    private static void startConnectAddOn(String fieldName, ConnectModuleMeta meta, String url) throws Exception
+    private static void startConnectAddon(String fieldName, ConnectModuleMeta meta, String url) throws Exception
     {
         ConnectPageModuleBeanBuilder pageBeanBuilder = new ConnectPageModuleBeanBuilder().withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
@@ -124,7 +124,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
         int query = url.indexOf("?");
         String route = query > -1 ? url.substring(0, query) : url;
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddonKey())
                 .addModule(fieldName, pageBeanBuilder.build())
                 .addModuleMeta(meta)
                 .setAuthenticationToNone()

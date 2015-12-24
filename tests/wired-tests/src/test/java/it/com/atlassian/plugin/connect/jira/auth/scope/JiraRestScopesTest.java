@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
@@ -21,7 +21,7 @@ import static java.util.Arrays.asList;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class JiraRestScopesTest extends ScopeManagerTest
 {
-    public JiraRestScopesTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
+    public JiraRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
     {
         super(scopeManager, scopeTestHelper, testData());
     }
@@ -124,6 +124,19 @@ public class JiraRestScopesTest extends ScopeManagerTest
                 // user picker requires READ
                 emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/user/picker?query", false),
                 emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/user/picker?query", true),
+
+                // User Properties for WRITE or ADMIN
+                emptyBodyForJira(null, HttpMethod.PUT, "/jira/rest/api/2/user/properties/some-propertyy", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "/jira/rest/api/2/user/properties/some-property", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/api/2/user/properties/some-property", true),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, "/jira/rest/api/2/user/properties/some-property", false),
+                emptyBodyForJira(ScopeName.ADMIN, HttpMethod.PUT, "/jira/rest/api/2/user/properties/some-property", true),
+                emptyBodyForJira(ScopeName.ADMIN, HttpMethod.DELETE, "/jira/rest/api/2/user/properties/some-property", true),
+
+                // Change user password should never be allowed
+                emptyBodyForJira(null, HttpMethod.PUT, "/rest/api/2/user/password", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "/rest/api/2/user/password", false),
+                emptyBodyForJira(ScopeName.ADMIN, HttpMethod.PUT, "/rest/api/2/user/password", false),
 
                 // configuration requires READ
                 emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/configuration", false),

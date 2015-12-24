@@ -37,21 +37,21 @@ public class RemoteXdmEventPanel
     @Inject
     protected PageElementFinder elementFinder;
 
-    private final String addOnId;
+    private final String addonId;
     private final String moduleId;
 
     protected WebElement containerDiv;
 
-    public RemoteXdmEventPanel(String addOnId, String moduleId)
+    public RemoteXdmEventPanel(String addonId, String moduleId)
     {
-        this.addOnId = addOnId;
+        this.addonId = addonId;
         this.moduleId = moduleId;
     }
 
     @Init
     public void init()
     {
-        By selector = By.id("embedded-" + ModuleKeyUtils.addonAndModuleKey(addOnId, moduleId));
+        By selector = By.id("embedded-" + ModuleKeyUtils.addonAndModuleKey(addonId, moduleId));
         driver.waitUntilElementIsLocated(selector);
         this.containerDiv = driver.findElement(selector);
         driver.waitUntil(new Function<WebDriver, Boolean>()

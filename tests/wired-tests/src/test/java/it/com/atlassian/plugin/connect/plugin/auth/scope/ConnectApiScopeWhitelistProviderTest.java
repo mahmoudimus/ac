@@ -2,7 +2,7 @@ package it.com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.Lists;
@@ -17,7 +17,7 @@ import java.util.Collection;
 public class ConnectApiScopeWhitelistProviderTest extends ScopeManagerTest
 {
 
-    public ConnectApiScopeWhitelistProviderTest(AddOnScopeManager scopeManager,
+    public ConnectApiScopeWhitelistProviderTest(AddonScopeManager scopeManager,
             ScopeTestHelper scopeTestHelper)
     {
         super(scopeManager, scopeTestHelper, testData());

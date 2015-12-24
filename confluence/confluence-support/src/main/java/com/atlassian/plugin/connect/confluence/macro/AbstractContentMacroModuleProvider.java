@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
@@ -44,7 +44,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
-    private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
+    private final AbsoluteAddonUrlConverter absoluteAddonUrlConverter;
     protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
@@ -52,7 +52,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             ConnectJsonSchemaValidator schemaValidator,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             HostContainer hostContainer,
-            AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
+            AbsoluteAddonUrlConverter absoluteAddonUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
 
@@ -60,7 +60,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
-        this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
+        this.absoluteAddonUrlConverter = absoluteAddonUrlConverter;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }
@@ -174,7 +174,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "ICON_URL")
-                .addAttribute("value", absoluteAddOnUrlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
+                .addAttribute("value", absoluteAddonUrlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(plugin, webResource);
@@ -189,7 +189,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         String height = StringUtils.isBlank(editor.getHeight()) ? "100%" : editor.getHeight();
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(addon.getKey())
+                .addon(addon.getKey())
                 .module(macroBean.getRawKey())
                 .dialogTemplate()
                 .urlTemplate(editor.getUrl())
