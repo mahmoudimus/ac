@@ -33,7 +33,11 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
                             getBookmark: sinon.spy(),
                             moveToBookmark: sinon.spy(),
                             getNode: function() {
-                                return {};
+                                return {
+                                    hasAttribute: function(attribute) {
+                                        return true;
+                                    }
+                                };
                             }
                         }
                     };

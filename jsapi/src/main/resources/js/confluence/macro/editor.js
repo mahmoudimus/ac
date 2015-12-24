@@ -50,7 +50,19 @@
                 // will occur in Internet Explorer, so restore focus just in case.
                 AJS.Rte.getEditor().focus();
                 var editorSelection = AJS.Rte.getEditor().selection;
-                saveMacro.setLastSelectedConnectMacroNode(editorSelection.getNode());
+                var node = editorSelection.getNode();
+                if(node.hasAttribute('data-macro-name')) {
+                    saveMacro.setLastSelectedConnectMacroNode(node);
+                } else {
+                    //Current macro is not on page.
+                    saveMacro.setLastSelectedConnectMacroNode(undefined);
+                    saveMacro.setUnsavedMacroData(
+                            macroData.name,
+                            (macroData.body ? macroData.body : ""),
+                            macroData.params,
+                            editorSelection.getBookmark()
+                    );
+                }
 
                 openEditorMacroBody = macroData.body;
 
