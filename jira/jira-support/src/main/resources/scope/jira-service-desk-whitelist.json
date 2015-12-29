@@ -1,0 +1,91 @@
+{
+    "scopes": [
+        {
+            "key": "READ",
+            "restPathKeys": ["info", "request", "comment", "participant", "sla", "status", "servicedesk", "queue", "requesttype", "field"],
+            "methods": ["GET"]
+        },
+        {
+            "key": "WRITE",
+            "restPathKeys": [ "request", "comment", "participant"],
+            "methods": ["POST"]
+        },
+        {
+            "key": "DELETE",
+            "restPathKeys": ["participant"],
+            "methods": ["DELETE"]
+        }
+    ],
+    "restPaths": [
+        {
+            "key": "info",
+            "name": "servicedeskapi",
+            "basePaths": ["/info$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "request",
+            "name": "servicedeskapi",
+            "basePaths": ["/request(/[a-zA-Z0-9\\-]+)?$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "comment",
+            "name": "servicedeskapi",
+            "basePaths": ["/comment(/[0-9]+)?$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "participant",
+            "name": "servicedeskapi",
+            "basePaths": ["/request/[a-zA-Z0-9\\-]+/participant$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "sla",
+            "name": "servicedeskapi",
+            "basePaths": ["/request/[a-zA-Z0-9\\-]+/sla(/[0-9]+)?$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "status",
+            "name": "servicedeskapi",
+            "basePaths": ["/request/[a-zA-Z0-9\\-]+/status$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "servicedesk",
+            "name": "servicedeskapi",
+            "basePaths": ["/servicedesk(/[0-9]+)?$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "queue",
+            "name": "servicedeskapi",
+            "basePaths": ["/servicedesk/[0-9]+/queue(/[0-9]+(/issue)?)?$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "requesttype",
+            "name": "servicedeskapi",
+            "basePaths": ["/servicedesk/[0-9]+/requesttype(/[0-9]+)?$"],
+            "versions": [],
+            "public": true
+        },
+        {
+            "key": "field",
+            "name": "servicedeskapi",
+            "basePaths": ["/servicedesk/[0-9]+/requesttype/[0-9]+/field$"],
+            "versions": [],
+            "public": true
+        }
+    ]
+}

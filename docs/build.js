@@ -35,6 +35,7 @@ var confluenceGlobalSchemaPath = 'target/schema/confluence-global-schema.json';
 var commonScopesPath =     'target/scope/common-whitelist.json';
 var jiraScopesPath =       'target/scope/jira-whitelist.json';
 var jiraSoftwareScopesPath =      'target/scope/jira-software-whitelist.json';
+var jiraServiceDeskScopesPath =      'target/scope/jira-service-desk-whitelist.json';
 var confluenceScopesPath = 'target/scope/confluence-whitelist.json';
 
 program
@@ -441,6 +442,7 @@ function rebuildHarpSite() {
     var scopes = {
         jira: fs.readJsonSync(jiraScopesPath),
         jiraSoftware: fs.readJsonSync(jiraSoftwareScopesPath),
+        jiraServiceDesk: fs.readJsonSync(jiraServiceDeskScopesPath),
         confluence: fs.readJsonSync(confluenceScopesPath),
         common: fs.readJsonSync(commonScopesPath)
     };
@@ -458,6 +460,9 @@ function rebuildHarpSite() {
         },
         jiraSoftware: {
             rest: convertRestScopesToViewModel([scopes.jiraSoftware])
+        },
+        jiraServiceDesk: {
+            rest: convertRestScopesToViewModel([scopes.jiraServiceDesk])
         }
     };
 
