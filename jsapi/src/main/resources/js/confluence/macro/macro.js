@@ -53,7 +53,7 @@ define("ac/confluence/macro", ["confluence-editor/editor/atlassian-editor", "con
                     macro: {
                         name: unsavedMacroName,
                         params: unsavedMacroParams,
-                        body: unsavedMacroBody
+                        body: unsavedMacroBody === null ? "" : unsavedMacroBody
                     }
                 };
                 AJS.Rte.getEditor().selection.moveToBookmark(locationToInsertMacro);
@@ -68,6 +68,7 @@ define("ac/confluence/macro", ["confluence-editor/editor/atlassian-editor", "con
                 return insertedMacro;
             }
 
+            //TODO: Move this to Confluence so we're not referencing an implementation detail like this.
             var macroName = lastSelectedConnectMacroNode.getAttribute('data-macro-name');
 
             if (macroName === null) {

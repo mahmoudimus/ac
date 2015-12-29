@@ -51,6 +51,8 @@
                 AJS.Rte.getEditor().focus();
                 var editorSelection = AJS.Rte.getEditor().selection;
                 var node = editorSelection.getNode();
+
+                //TODO: Move this to Confluence so we're not referencing an implementation detail like this.
                 if(node.hasAttribute('data-macro-name')) {
                     saveMacro.setLastSelectedConnectMacroNode(node);
                 } else {
