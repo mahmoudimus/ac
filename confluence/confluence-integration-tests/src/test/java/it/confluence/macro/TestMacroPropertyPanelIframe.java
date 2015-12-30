@@ -113,11 +113,12 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         String body = new MacroStorageFormatBuilder(PROPERTY_PANEL_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(PROPERTY_PANEL_MACRO_KEY), body);
 
-        getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
+        final EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
         MacroPropertyPanelWithIframe propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_KEY);
         assertThat("Property panel has iframe", propertyPanel.hasIframe());
+        editorPage.save();
     }
 
     @Test
@@ -161,11 +162,12 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         String body = new MacroStorageFormatBuilder(EDITOR_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(EDITOR_MACRO_KEY), body);
 
-        getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
+        final EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
         final MacroPropertyPanelWithIframe propertyPanel = editor.openPropertyPanel(EDITOR_MACRO_KEY);
         assertThat("Property panel does not have iframe", !propertyPanel.hasIframe());
+        editorPage.save();
     }
 
     @Test
