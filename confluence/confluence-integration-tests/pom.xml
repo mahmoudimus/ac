@@ -393,9 +393,6 @@
                             <includes>
                                 <include>it/confluence/macro/*.java</include>
                             </includes>
-                            <excludes>
-                                <exclude>it/confluence/macro/TestMacroPropertyPanelIframe.java</exclude>
-                            </excludes>
                         </testGroup>
                     </testGroups>
 
