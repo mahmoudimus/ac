@@ -34,7 +34,7 @@
         {
             "key": "comment",
             "name": "servicedeskapi",
-            "basePaths": ["/comment(/[0-9]+)?$"],
+            "basePaths": ["/request/[a-zA-Z0-9\\-]+/comment(/[0-9]+)?$"],
             "versions": [],
             "public": true
         },
