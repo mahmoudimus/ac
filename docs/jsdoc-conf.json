@@ -14,7 +14,8 @@
             "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/inline-dialog.js",
             "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/messages.js",
             "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/cookie.js",
-            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/history.js"
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/history.js",
+            "../jsapi/node_modules/atlassian-connect-js/src/js/iframe/plugin/navigator.js"
         ]
     },
     "plugins": ["plugins/markdown"],
