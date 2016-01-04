@@ -227,6 +227,11 @@
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
+            <plugin>
+                <groupId>external.atlassian.json</groupId>
+                <artifactId>json-schemagen-maven-plugin</artifactId>
+                <version>${schema.generator.version}</version>
+            </plugin>
         </plugins>
     </build>
     <reporting>
@@ -843,26 +848,6 @@
         </dependencies>
     </dependencyManagement>
     <profiles>
-        <profile>
-            <id>jsonschema-gen</id>
-            <activation>
-                <file>
-                    <!--
-                    we can only use 1 file element...despite the fact that there are many we'd want to watch for (e.g., ./plugin/target/jsonSchemaDocs.json)
-                    -->
-                    <missing>plugin/target/jsonSchemaInterfaces.json</missing>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>external.atlassian.json</groupId>
-                        <artifactId>json-schemagen-maven-plugin</artifactId>
-                        <version>${schema.generator.version}</version>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>clover</id>
             <build>
