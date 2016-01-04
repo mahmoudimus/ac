@@ -44,6 +44,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-extensions</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-user</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-navigator-routes</dependency>
 
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
@@ -74,6 +75,7 @@
         <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
         <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
         <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
+        <resource type="download" name="connect-navigator.js" location="/js/core/connect-host-navigator.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-iframe-host-js</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
@@ -110,6 +112,14 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro-api</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
+
+    <web-resource key="navigator-routes">
+        <resource type="download" name="navigator-routes.js" location="js/confluence/navigator/routes.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
 
     <web-resource key="macro-api">
         <resource type="download" name="macro.js" location="js/confluence/macro/macro.js"/>
