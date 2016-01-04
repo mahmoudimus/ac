@@ -28,6 +28,7 @@ import com.atlassian.confluence.event.events.user.UserCreateEvent;
 import com.atlassian.confluence.event.events.user.UserDeactivateEvent;
 import com.atlassian.confluence.event.events.user.UserReactivateEvent;
 import com.atlassian.confluence.event.events.user.UserRemoveEvent;
+import com.atlassian.confluence.plugins.createcontent.api.events.BlueprintPageCreateEvent;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
@@ -92,8 +93,7 @@ public class ConfluenceWebHookProvider implements WebHookProvider
         publish.webhook("page_moved").whenFired(PageMoveEvent.class).serializedWith(serializer);
         publish.webhook("page_viewed").whenFired(PageViewEvent.class).serializedWith(serializer);
         publish.webhook("page_children_reordered").whenFired(PageChildrenReorderEvent.class).serializedWith(serializer);
+        publish.webhook("blueprint_page_created").whenFired(BlueprintPageCreateEvent.class).serializedWith(serializer);
         publish.webhook("content_permissions_updated").whenFired(ContentPermissionEvent.class).matchedBy(new NonEmptyContentPermissionEventMatcher()).serializedWith(serializer);
     }
-
-    
 }
