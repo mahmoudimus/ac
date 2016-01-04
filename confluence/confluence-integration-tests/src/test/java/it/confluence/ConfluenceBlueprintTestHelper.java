@@ -13,6 +13,9 @@ import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.new
 import static com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean.newBlueprintTemplateBeanBuilder;
 import static it.confluence.servlet.ConfluenceAppServlets.blueprintTemplateServlet;
 
+/**
+ * Helper for creating a remote blueprint add-on for testing
+ */
 public final class ConfluenceBlueprintTestHelper
 {
     private final String key;
