@@ -74,10 +74,9 @@ define("ac/confluence/macro", ["confluence/root", "confluence-macro-browser/macr
                 return insertedMacro;
             }
 
-            //TODO: Move this to Confluence so we're not referencing an implementation detail like this.
-            var macroName = lastSelectedConnectMacroNode.getAttribute('data-macro-name');
+            var macroName = MacroBrowser.getMacroName(lastSelectedConnectMacroNode);
 
-            if (macroName === null) {
+            if (macroName === undefined) {
                 return undefined;
             }
 

@@ -1,6 +1,7 @@
 (function($, define){
 
-    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog", "ac/confluence/macro", "ajs"], function(_AP, dialog, saveMacro, AJS) {
+    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog", "ac/confluence/macro", "ajs", "confluence-macro-browser/macro-browser"],
+            function(_AP, dialog, saveMacro, AJS, MacroBrowser) {
 
         var openEditorMacroBody;
 
@@ -52,8 +53,8 @@
                 var editorSelection = AJS.Rte.getEditor().selection;
                 var node = editorSelection.getNode();
 
-                //TODO: Move this to Confluence so we're not referencing an implementation detail like this.
-                if(node.hasAttribute('data-macro-name')) {
+                var macroName = MacroBrowser.getMacroName(node);
+                if(macroName !== undefined) {
                     saveMacro.setLastSelectedConnectMacroNode(node);
                 } else {
                     //Current macro is not on page.

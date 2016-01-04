@@ -8,28 +8,21 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
 
 /**
  *
- * Defining a Macro Property panel allows you to add controls other than 'edit', and 'remove' to your macro's
- * property panel. You can then specify what effect those buttons have in javascript defined in your property panel
- * iframe.
+ * Defining a Macro Property panel allows you to add a hidden iframe to your macro's
+ * property panel.
  *
  * In order to persist custom data using your property panel, use the Javascript
- * [Confluence API](../../javascript/module-confluence.html) and the [Dialog API](../../javascript/module-Dialog.html).
+ * [Confluence API](../../javascript/module-confluence.html).
  * For example:
  *
- *    AP.require(["confluence", "dialog"], function (confluence, dialog) {
- *        function onSubmit() {
- *            var macroParams = {
- *                myParameter: value
- *            };
- *            confluence.saveMacro(macroParams);
- *            confluence.closePropertyPanel();
- *            return true;
- *        }
- *
- *        dialog.getButton("submit").bind(onSubmit);
+ *    AP.require(["confluence"], function (confluence) {
+ *        var macroParams = {
+ *            myParameter: value
+ *        };
+ *        confluence.saveMacro(macroParams);
  *    });
  *
- * In order to retrieve the custom data again when the editor is opened, use `confluence.getMacroData` (see
+ * In order to retrieve the custom data again when the property panel is opened, use `confluence.getMacroData` (see
  * [Confluence API](../../javascript/module-confluence.html)):
  *
  *    AP.require("confluence", function (confluence) {
@@ -38,10 +31,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
  *        });
  *    });
  *
- *#### Example
- * TODO: Replace this example JSON
- *
- * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
  * @schemaTitle Macro Property Panel
  * @since 1.0
  */
