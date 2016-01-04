@@ -26,7 +26,7 @@ public final class TestConfluenceBlueprintWebHooks extends ConfluenceWebDriverTe
                 String title = "Test page for blueprint webhook test" + AddonTestUtils.randomAddonKey();
 
                 login(testUserFactory.basicUser());
-                product.visit(DashboardPage.class).createDialog.click();
+                product.visit(DashboardPage.class).openCreateDialog();
                 product.getPageBinder()
                         .bind(CreateContentDialog.class)
                         .createWithBlueprintWizard(RETROSPECTIVES_ITEM_KEY)
