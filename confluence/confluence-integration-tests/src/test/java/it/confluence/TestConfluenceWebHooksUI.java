@@ -40,19 +40,14 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
     @Ignore
     public void testSearchPerformedWebHookFired() throws Exception
     {
-        WebHookTestServlet.runInJsonRunner(product.getProductInstance().getBaseUrl(), "search_performed", new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                search(SEARCH_TERMS);
+        WebHookTestServlet.runInJsonRunner(product.getProductInstance().getBaseUrl(), "search_performed", waiter -> {
+            search(SEARCH_TERMS);
 
-                final WebHookBody body = waiter.waitForHook();
-                assertNotNull(body);
-                assertEquals(SEARCH_TERMS, body.find("query"));
-                assertEquals(user.getUsername(), body.find("user"));
-                assertEquals("conf_all", body.find("spaceCategories[0]"));
-            }
+            final WebHookBody body = waiter.waitForHook();
+            assertNotNull(body);
+            assertEquals(SEARCH_TERMS, body.find("query"));
+            assertEquals(user.getUsername(), body.find("user"));
+            assertEquals("conf_all", body.find("spaceCategories[0]"));
         });
     }
 }

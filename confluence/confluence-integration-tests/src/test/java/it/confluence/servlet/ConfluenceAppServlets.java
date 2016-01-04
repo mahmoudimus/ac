@@ -42,7 +42,18 @@ public class ConfluenceAppServlets
 
     public static HttpServlet blueprintTemplateServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("it/confluence/blueprint/blueprint.mu"));
+        return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/test-blueprint.xml"));
+    }
+
+    /**
+     * @return a servlet that contains 3 buttons to navigate to different parts of confluence
+     */
+    public static HttpServlet navigatorServlet(Long id, String spaceKey)
+    {
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("it/confluence/navigator/iframe-navigator.mu"));
+        contextServlet.getBaseContext().put("contentId", id);
+        contextServlet.getBaseContext().put("spaceKey", spaceKey);
+        return contextServlet;
     }
 
     public static HttpServlet blueprintContextServlet()
