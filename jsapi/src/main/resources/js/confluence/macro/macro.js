@@ -1,5 +1,8 @@
-define("ac/confluence/macro", ["confluence-editor/editor/atlassian-editor", "confluence/root", "confluence-editor/utils/tinymce-macro-utils", "confluence-macro-browser/macro-browser"],
-        function(ConfluenceEditor, Confluence, MacroUtils, MacroBrowser) {
+/**
+ * @tainted tinymce.confluence.MacroUtils
+ */
+define("ac/confluence/macro", ["confluence/root", "confluence-macro-browser/macro-browser"],
+        function(Confluence, MacroBrowser) {
 
     var lastSelectedConnectMacroNode = undefined;
     var locationToInsertMacro = undefined;
@@ -34,7 +37,10 @@ define("ac/confluence/macro", ["confluence-editor/editor/atlassian-editor", "con
             return MacroBrowser.getMacroParams(lastSelectedConnectMacroNode);
         },
 
-        saveMacro: MacroUtils.updateMacro,
+        //Wrapped to avoid tinymce not defined race condition.
+        saveMacro: function() {
+            return tinymce.confluence.MacroUtils.updateMacro.apply(this, arguments);
+        },
 
         /**
          * Saves the last selected macro with the provided parameters and body.
@@ -57,7 +63,7 @@ define("ac/confluence/macro", ["confluence-editor/editor/atlassian-editor", "con
                     }
                 };
                 AJS.Rte.getEditor().selection.moveToBookmark(locationToInsertMacro);
-                var insertedMacro = MacroUtils.insertMacro(macroRenderRequest);
+                var insertedMacro = tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
 
                 //Reset unsaved macro data.
                 locationToInsertMacro = undefined;
@@ -75,7 +81,7 @@ define("ac/confluence/macro", ["confluence-editor/editor/atlassian-editor", "con
                 return undefined;
             }
 
-            return MacroUtils.updateMacro(updatedMacroParameters, updatedMacroBody, macroName, lastSelectedConnectMacroNode);
+            return tinymce.confluence.MacroUtils.updateMacro(updatedMacroParameters, updatedMacroBody, macroName, lastSelectedConnectMacroNode);
         }
     };
 });

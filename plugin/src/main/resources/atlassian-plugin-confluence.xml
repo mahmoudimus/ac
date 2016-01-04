@@ -123,7 +123,6 @@
 
     <web-resource key="macro-api">
         <resource type="download" name="macro.js" location="js/confluence/macro/macro.js"/>
-        <dependency>com.atlassian.confluence.editor:editor-javascript-resources</dependency>
         <dependency>com.atlassian.confluence.plugins.confluence-macro-browser:macro-browser-js</dependency>
         <dependency>confluence.web.components:core</dependency>
     </web-resource>
