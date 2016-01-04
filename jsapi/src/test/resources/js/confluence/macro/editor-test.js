@@ -33,11 +33,7 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
                             getBookmark: sinon.spy(),
                             moveToBookmark: sinon.spy(),
                             getNode: function() {
-                                return {
-                                    hasAttribute: function(attribute) {
-                                        return true;
-                                    }
-                                };
+                                return {};
                             }
                         }
                     };
@@ -74,6 +70,7 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
                     })
                     .mock('confluence-editor/editor/atlassian-editor', {})
                     .mock('ac/dialog', acDialog)
+                    .mock('confluence-macro-browser/macro-browser', {getMacroName: function(){return "MacroName";}})
                     .require(['ac/confluence/macro/editor', 'connect-host'], function(ConfluenceMacroEditor, AP) {
                         confluenceMacroEditor = ConfluenceMacroEditor;
                         _AP = AP;
