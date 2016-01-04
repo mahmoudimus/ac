@@ -574,7 +574,8 @@ function compileJsDocs() {
         './node_modules/atlassian-connect-js/dist/connect-host-request.js',
         './node_modules/atlassian-connect-js/dist/connect-host-history.js',
         './node_modules/atlassian-connect-js/dist/connect-host-dialog.js',
-        './node_modules/atlassian-connect-js/dist/connect-host-inline-dialog.js'
+        './node_modules/atlassian-connect-js/dist/connect-host-inline-dialog.js',
+        './node_modules/atlassian-connect-js/dist/connect-host-navigator.js'
     ];
     mergeFiles('target/gensrc/public/assets/js/connect-client.js', pluginFiles);
     mergeFiles('target/gensrc/public/assets/js/connect-host.js', hostFiles);

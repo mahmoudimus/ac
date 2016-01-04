@@ -106,6 +106,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `blog_trashed`
  * * `blog_updated`
  * * `blog_viewed`
+ * * `blueprint_page_created`
  * * `cache_statistics_changed`
  * * `comment_created`
  * * `comment_removed`
