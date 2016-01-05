@@ -227,6 +227,11 @@
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
+            <plugin>
+                <groupId>external.atlassian.json</groupId>
+                <artifactId>json-schemagen-maven-plugin</artifactId>
+                <version>${schema.generator.version}</version>
+            </plugin>
         </plugins>
     </build>
     <reporting>
@@ -844,26 +849,6 @@
     </dependencyManagement>
     <profiles>
         <profile>
-            <id>jsonschema-gen</id>
-            <activation>
-                <file>
-                    <!--
-                    we can only use 1 file element...despite the fact that there are many we'd want to watch for (e.g., ./plugin/target/jsonSchemaDocs.json)
-                    -->
-                    <missing>plugin/target/jsonSchemaInterfaces.json</missing>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>external.atlassian.json</groupId>
-                        <artifactId>json-schemagen-maven-plugin</artifactId>
-                        <version>${schema.generator.version}</version>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>clover</id>
             <build>
                 <pluginManagement>
@@ -900,7 +885,7 @@
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.20.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>7.1.0-OD-02-030</atlassian.jira.version>
+        <atlassian.jira.version>7.1.0-OD-03-048</atlassian.jira.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.testkit.version>7.0.103</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.5.4</atlassian.mail.version>
