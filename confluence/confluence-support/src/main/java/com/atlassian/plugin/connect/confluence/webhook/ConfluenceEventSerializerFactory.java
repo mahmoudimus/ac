@@ -38,6 +38,7 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
                 new AttachmentEventMapper(userManager, confluenceSettingsManager),
                 new PageChildrenReorderEventMapper(userManager, confluenceSettingsManager),
                 new PageMoveEventMapper(userManager, confluenceSettingsManager),
+                new BlueprintPageCreateEventMapper(userManager, confluenceSettingsManager),
                 new PageEventMapper(userManager, confluenceSettingsManager),
                 new BlogPostEventMapper(userManager, confluenceSettingsManager),
                 new SpaceEventMapper(userManager, confluenceSettingsManager),
