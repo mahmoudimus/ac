@@ -71,6 +71,7 @@
         <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
         <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
         <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
+        <resource type="download" name="connect-navigator.js" location="/js/core/connect-host-navigator.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-iframe-host-js</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
