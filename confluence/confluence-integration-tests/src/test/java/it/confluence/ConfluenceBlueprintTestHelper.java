@@ -11,6 +11,7 @@ import com.atlassian.plugin.util.collect.Consumer;
 
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean.newBlueprintTemplateBeanBuilder;
+import static it.confluence.servlet.ConfluenceAppServlets.blueprintContextServlet;
 import static it.confluence.servlet.ConfluenceAppServlets.blueprintTemplateServlet;
 
 /**
@@ -44,9 +45,11 @@ public final class ConfluenceBlueprintTestHelper
                                 .withKey(moduleKey)
                                 .withTemplate(newBlueprintTemplateBeanBuilder()
                                         .withUrl("/template.xml")
+                                        .withBlueprintContextUrl("/context")
                                         .build())
                                 .build())
                 .addRoute("/template.xml", blueprintTemplateServlet())
+                .addRoute("/context", blueprintContextServlet())
                 .addScope(ScopeName.READ)
                 .start();
     }

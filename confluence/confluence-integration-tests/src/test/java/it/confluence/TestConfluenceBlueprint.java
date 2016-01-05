@@ -24,6 +24,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void setupConfluenceAndStartConnectAddon() throws Exception
     {
+        rpc.setLogLevel("com.atlassian.plugin.connect.confluence", Level.DEBUG);
         helper = ConfluenceBlueprintTestHelper.getInstance(AddonTestUtils.randomAddonKey(), product);
     }
 
@@ -41,13 +42,15 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     public void testRemoteSimpleBlueprintVisibleInDialog()
     {
         login(testUserFactory.basicUser());
-        product.visit(DashboardPage.class).createDialog.click();
-        product.getPageBinder().bind(CreateContentDialog.class).waitForBlueprint(helper.getCompleteKey());
+        product.visit(DashboardPage.class)
+                .openCreateDialog()
+                .waitForBlueprint(helper.getCompleteKey());
     }
 
     @Test
     public void testRemoteSimpleBlueprintCanCreatePage()
     {
+        login(testUserFactory.basicUser());
         product.visit(DashboardPage.class).openCreateDialog();
         String editorHtml = product.getPageBinder()
                                    .bind(CreateContentDialog.class)
