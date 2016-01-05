@@ -10,7 +10,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * Defines where the blueprint template is located.
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#BLUEPRINT_TEMPLATE_EXAMPLE}
- * @schemaTitle Remote Blueprint Template
+ * @schemaTitle Blueprint Template
  * @since 1.1.5
  */
 public class BlueprintTemplateBean

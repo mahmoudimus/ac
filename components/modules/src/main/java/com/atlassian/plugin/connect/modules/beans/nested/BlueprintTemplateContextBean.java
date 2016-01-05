@@ -11,22 +11,24 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * Defines the context of the blueprint.
  *
  * @exampleJson {@link ConnectJsonExamples#BLUEPRINT_TEMPLATE_CONTEXT_EXAMPLE}
- * @schemaTitle Remote Blueprint Template Context
+ * @schemaTitle Blueprint Template Context
  */
 public class BlueprintTemplateContextBean
 {
     /**
-     * A URL which confluence will make a POST request to, during the rendering of the blueprint for which this context bean is
-     * associated. The expected return value is a JSON array of context values, e.g.:
+     * <p>A URL to which a POST request will be made during the rendering of the blueprint for which this context bean is
+     * associated. The expected return value is a JSON array of context values, e.g.:</p>
      *
      * @exampleJson {@link ConnectJsonExamples#BLUEPRINT_CONTEXT_RESPONSE_EXAMPLE}
      *
-     * The `identifier` must be unique
-     * The `representation` must be one of : "plain", "wiki", or "storage". If unset, it defaults to 'plain'
-     * The `value` must be a string that conforms to the `representation`. "plain" is plain text, "wiki" is wiki markup, and "storage" is
-     * valid confluence xhtml storage format as documented on https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format
+     * <p>The <tt>identifier</tt> must be unique
+     * The <tt>representation</tt> must be one of : "plain", "wiki", or "storage". If unset, it defaults to "plain"
+     * The <tt>value</tt> must be a string that conforms to the <tt>representation</tt>. "plain" is plain text, "wiki" is wiki markup, and "storage" is
+     * valid confluence xhtml storage format as documented on
+     * <a href="https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format">Confluence Storage Format</a></p>
      *
-     * #### Example JSON
+     * <h3>Example JSON</h3>
+     *
      * @exampleJson {@link ConnectJsonExamples#BLUEPRINT_POST_BODY_EXAMPLE}
      */
     @Required
