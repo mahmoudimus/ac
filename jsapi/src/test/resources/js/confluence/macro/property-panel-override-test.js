@@ -22,8 +22,8 @@ define(['Squire'], function(Squire) {
             .mock('confluence-editor/editor/atlassian-editor', {})
             .require(['ac/confluence/macro/property-panel-iframe'], function (propertyPanelIframeInjector) {
 
-                var MACRO_URL = "MACRO_URL";
-
+                const MACRO_URL = "MACRO_URL";
+                const macroUIParams = "eyJkbGciOjF9";
                 var currentPropertyPanel = {};
 
                 module("Property Panel tests");
@@ -48,8 +48,7 @@ define(['Squire'], function(Squire) {
                     equal($.ajax.calledOnce, true);
                     equal($.ajax.getCall(0).args[0], MACRO_URL);
                     equal($.ajax.getCall(0).args[1].data['classifier'], "property-panel");
-                    equal($.ajax.getCall(0).args[1].data['ui-params'], "eyJkbGciOjF9");
-
+                    equal($.ajax.getCall(0).args[1].data['ui-params'], macroUIParams);
                     equal(typeof propertyPanelIframeInjector(MACRO_URL), "object");
                     $.ajax.restore();
                 });
