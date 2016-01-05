@@ -61,4 +61,12 @@ public class JiraAppServlets
         return wrapContextAwareServlet(
                 new MustacheServlet("jira/iframe-quick-issue-create.mu"));
     }
+
+    /**
+     * @return a servlet that contains 3 buttons to navigate to different parts of confluence
+     */
+    public static HttpServlet navigatorServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("jira/iframe-navigator.mu"));
+    }
 }

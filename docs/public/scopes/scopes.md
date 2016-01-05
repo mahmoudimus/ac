@@ -24,6 +24,7 @@ See the following pages for details on which remote endpoints are available in J
 
 * [JIRA REST](../scopes/jira-rest-scopes.html)
 * [JIRA Software REST](../scopes/jira-software-rest-scopes.html)
+* [JIRA Service Desk REST](../scopes/jira-service-desk-rest-scopes.html)
 
 #### Confluence
 
