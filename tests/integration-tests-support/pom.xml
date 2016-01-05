@@ -158,7 +158,7 @@
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>
-            <version>${jersey.multipart.version}</version>
+            <version>${jersey.version}</version>
         </dependency>
     </dependencies>
 
