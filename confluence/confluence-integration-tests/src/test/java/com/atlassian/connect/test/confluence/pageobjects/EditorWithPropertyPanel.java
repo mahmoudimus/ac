@@ -33,7 +33,6 @@ public class EditorWithPropertyPanel
             PageElement inlineMacro = page.find(By.cssSelector(".editor-inline-macro[data-macro-name=\"" + macroName
                     + "\"]"));
 
-            javascriptTimedQueryFactory.forBooleanJavascript("return !$('#editor-content-loading').is(':visible')");
             waitUntilTrue(inlineMacro.timed().isVisible());
             inlineMacro.click();
 

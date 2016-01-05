@@ -1,17 +1,21 @@
 /**
  * @tainted tinymce.confluence.MacroUtils
+ * @tainted AJS
  */
-define("ac/confluence/macro", ["confluence/root", "confluence-macro-browser/macro-browser"],
-        function(Confluence, MacroBrowser) {
+define("ac/confluence/macro", ["confluence/root", "confluence-macro-browser/macro-browser", "ajs"],
+        function(Confluence, MacroBrowser, AJS) {
 
     var lastSelectedConnectMacroNode = undefined;
-    var locationToInsertMacro = undefined;
-    var unsavedMacroParams = undefined;
-    var unsavedMacroBody = undefined;
-    var unsavedMacroName = undefined;
+    var unsavedMacroData = {};
 
     return {
         setLastSelectedConnectMacroNode: function(node) {
+            //Reset unsaved macro data.
+            unsavedMacroData.locationToInsert = undefined;
+            unsavedMacroData.params = undefined;
+            unsavedMacroData.body = undefined;
+            unsavedMacroData.name = undefined;
+
             lastSelectedConnectMacroNode = node;
         },
 
@@ -20,10 +24,10 @@ define("ac/confluence/macro", ["confluence/root", "confluence-macro-browser/macr
         },
 
         setUnsavedMacroData: function(macroName, macroBody, macroParams, macroInsertLocation) {
-            unsavedMacroBody = macroBody;
-            unsavedMacroParams = macroParams;
-            locationToInsertMacro = macroInsertLocation;
-            unsavedMacroName = macroName;
+            unsavedMacroData.body = macroBody;
+            unsavedMacroData.params = macroParams;
+            unsavedMacroData.locationToInsert = macroInsertLocation;
+            unsavedMacroData.name = macroName;
         },
 
         /**
@@ -31,7 +35,7 @@ define("ac/confluence/macro", ["confluence/root", "confluence-macro-browser/macr
          */
         getCurrentMacroParameters: function() {
             if (lastSelectedConnectMacroNode === undefined) {
-                return unsavedMacroParams;
+                return unsavedMacroData.params;
             }
 
             return MacroBrowser.getMacroParams(lastSelectedConnectMacroNode);
@@ -51,27 +55,20 @@ define("ac/confluence/macro", ["confluence/root", "confluence-macro-browser/macr
         saveCurrentMacro: function (updatedMacroParameters, updatedMacroBody) {
             if (lastSelectedConnectMacroNode === undefined) {
                 //Must be saving macro that isn't yet on page. Store unsaved macro params
-                unsavedMacroParams = updatedMacroParameters;
-                unsavedMacroBody = updatedMacroBody;
+                unsavedMacroData.params = updatedMacroParameters;
+                unsavedMacroData.body = updatedMacroBody;
 
                 var macroRenderRequest = {
                     contentId: Confluence.getContentId(),
                     macro: {
-                        name: unsavedMacroName,
-                        params: unsavedMacroParams,
-                        body: unsavedMacroBody === null ? "" : unsavedMacroBody
+                        name: unsavedMacroData.name,
+                        params: unsavedMacroData.params,
+                        body: unsavedMacroData.body === null ? "" : unsavedMacroData.body
                     }
                 };
-                AJS.Rte.getEditor().selection.moveToBookmark(locationToInsertMacro);
-                var insertedMacro = tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
 
-                //Reset unsaved macro data.
-                locationToInsertMacro = undefined;
-                unsavedMacroParams = undefined;
-                unsavedMacroBody = undefined;
-                unsavedMacroName = undefined;
-
-                return insertedMacro;
+                AJS.Rte.getEditor().selection.moveToBookmark(unsavedMacroData.locationToInsert);
+                return tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
             }
 
             var macroName = MacroBrowser.getMacroName(lastSelectedConnectMacroNode);
