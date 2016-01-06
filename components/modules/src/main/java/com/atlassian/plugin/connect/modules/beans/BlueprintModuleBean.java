@@ -19,6 +19,11 @@ public class BlueprintModuleBean extends RequiredKeyBean
 
     private IconBean icon;
 
+    /**
+     * Defines where the blueprint template is located and the context for variable substitution.<br>
+     * For more about how to define variables in blueprint template and template context please follow the example in
+     * <a href="/modules/fragment/blueprint-template-context.html">BlueprintTemplateContextBean</a>
+     */
     @Required
     private BlueprintTemplateBean template;
 

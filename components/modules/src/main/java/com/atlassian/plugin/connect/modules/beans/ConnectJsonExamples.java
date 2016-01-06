@@ -447,7 +447,7 @@ public class ConnectJsonExamples
 
     private static BlueprintContextValue makeBlueprintContextValueExample3()
     {
-        return makeBlueprintContextValue("custom-key2", "<ac:structured-macro ac:name=\\\"cheese\\\" ac:schema-version=\\\"1\\\"/> ", "storage");
+        return makeBlueprintContextValue("custom-key2", "<ac:structured-macro ac:name=\"cheese\" ac:schema-version=\"1\"/> ", "storage");
     }
 
     private static String createBlueprintPostBodyExample()
@@ -626,8 +626,7 @@ public class ConnectJsonExamples
                 .withName(i18nProperty("Map View"))
                 .withDescription(i18nProperty("Allows switching between view types"))
                 .withType("enum")
-                .withDefaultValue("Map")
-                .withMultiple(false)
+                .withDefaultValue("Map").withMultiple(false)
                 .withRequired(true)
                 .withValues("Map", "Satellite")
                 .build();

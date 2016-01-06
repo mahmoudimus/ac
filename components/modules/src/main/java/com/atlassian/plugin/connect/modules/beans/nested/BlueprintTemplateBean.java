@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.BlueprintTemplateBeanB
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
 /**
- * Defines where the blueprint template is located.
+ * Defines where the blueprint template is located and the context for variable substitution.
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#BLUEPRINT_TEMPLATE_EXAMPLE}
  * @schemaTitle Blueprint Template
@@ -24,6 +24,11 @@ public class BlueprintTemplateBean
     @StringSchemaAttributes(format="uri")
     private String url;
 
+    /**
+     * Defines add-on server resource that provides JSON object used for substitute variables defined in template.<br>
+     * For more about how to define variables in blueprint template and template context please follow the example in
+     * <a href="/modules/fragment/blueprint-template-context.html">BlueprintTemplateContextBean</a>
+     */
     @Required
     private BlueprintTemplateContextBean blueprintContext;
 
