@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.permission.GlobalPermissionKey;
@@ -25,10 +25,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 @JiraComponent
 public class PermissionContextVariableResolver implements DynamicUriVariableResolver
 {
+    private interface PermissionResolver
+    {
+        Optional<Boolean> resolve(String addOnKey, String permissionKey, Map<String, ?> context);
+    }
+
     private static final String PROJECT_PERMISSION_PREFIX = "projectPermission.";
     private static final String GLOBABL_PERMISSION_PREFIX = "globalPermission.";
 
-    private final Map<String, BiFunction<String, Map<String, ?>, Optional<Boolean>>> resolvers = ImmutableMap.of(
+    private final Map<String, PermissionResolver> resolvers = ImmutableMap.of(
             PROJECT_PERMISSION_PREFIX, this::resolveProjectPermission,
             GLOBABL_PERMISSION_PREFIX, this::resolveGlobalPermission
     );
@@ -49,47 +54,71 @@ public class PermissionContextVariableResolver implements DynamicUriVariableReso
         this.issueManager = issueManager;
     }
 
-    public Optional<String> resolve(String variable, Map<String, ?> context)
+    public Optional<String> resolve(final String addOnKey, String variable, Map<String, ?> context)
     {
         return resolvers.entrySet().stream()
                 .filter(entry -> variable.startsWith(entry.getKey()))
                 .findFirst()
                 .flatMap(resolver -> {
                     String permissionKey = variable.substring(resolver.getKey().length());
-                    return resolver.getValue().apply(permissionKey, context).<String>map(String::valueOf);
-                });
+                    return resolver.getValue().resolve(addOnKey, permissionKey, context);
+                })
+                .map(String::valueOf);
     }
 
-    private Optional<Boolean> resolveProjectPermission(String permissionKey, Map<String, ?> context)
+    private Optional<Boolean> resolveProjectPermission(String addOnKey, String permissionKey, Map<String, ?> context)
     {
-        Option<ProjectPermission> projectPermission = permissionManager.getProjectPermission(new ProjectPermissionKey(permissionKey));
-        ProjectPermissionKey projectPermissionKey = projectPermission.map(ProjectPermission::getProjectPermissionKey).getOrElse(new ProjectPermissionKey(permissionKey.toUpperCase()));
+        Collection<ProjectPermission> allPermissions = permissionManager.getAllProjectPermissions();
 
-        ApplicationUser user = jiraAuthenticationContext.getLoggedInUser();
+        Optional<ProjectPermission> fullNameMatch = allPermissions.stream().filter(permission ->
+                permission.getKey().equalsIgnoreCase(permissionKey)).findFirst();
+        Optional<ProjectPermission> implicitAddOnPrefixMatch = allPermissions.stream().filter(permission ->
+                permission.getKey().startsWith(addOnKey + "__") && permission.getKey().substring(addOnKey.length() + 2).equalsIgnoreCase(permissionKey)).findFirst();
 
-        Object projectId = context.get("project.id");
-        Object issueId = context.get("issue.id");
-        if (projectId instanceof String)
-        {
-            Project project = projectManager.getProjectObj(Long.valueOf((String) projectId));
-            return Optional.of(permissionManager.hasPermission(projectPermissionKey, project, user));
-        }
-        else if (issueId instanceof String)
-        {
-            Issue issue = issueManager.getIssueObject(Long.valueOf((String) issueId));
-            return Optional.of(permissionManager.hasPermission(projectPermissionKey, issue, user));
-        }
-        else
-        {
-            return Optional.empty(); // we can't resolve because we are not in the project context
-        }
+        Optional<ProjectPermissionKey> projectPermissionKey = Stream.of(fullNameMatch, implicitAddOnPrefixMatch)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(ProjectPermission::getProjectPermissionKey)
+                .findFirst();
+
+        return projectPermissionKey.flatMap(key -> {
+
+            ApplicationUser user = jiraAuthenticationContext.getLoggedInUser();
+
+            Object projectId = context.get("project.id");
+            Object issueId = context.get("issue.id");
+            if (projectId instanceof String)
+            {
+                Project project = projectManager.getProjectObj(Long.valueOf((String) projectId));
+                return Optional.of(permissionManager.hasPermission(key, project, user));
+            }
+            else if (issueId instanceof String)
+            {
+                Issue issue = issueManager.getIssueObject(Long.valueOf((String) issueId));
+                return Optional.of(permissionManager.hasPermission(key, issue, user));
+            }
+            else
+            {
+                return Optional.empty(); // we can't resolve because we are not in the project context
+            }
+        });
     }
 
-    private Optional<Boolean> resolveGlobalPermission(String permissionKey, Map<String, ?> context)
+    private Optional<Boolean> resolveGlobalPermission(String addOnKey, String permissionKey, Map<String, ?> context)
     {
-        Option<GlobalPermissionType> globalPermission = globalPermissionManager.getGlobalPermission(permissionKey);
-        GlobalPermissionKey key = globalPermission.map(GlobalPermissionType::getGlobalPermissionKey).getOrElse(GlobalPermissionKey.of(permissionKey.toUpperCase()));
+        Collection<GlobalPermissionType> allPermissions = globalPermissionManager.getAllGlobalPermissions();
 
-        return Optional.of(globalPermissionManager.hasPermission(key, jiraAuthenticationContext.getLoggedInUser()));
+        Optional<GlobalPermissionType> fullNameMatch = allPermissions.stream().filter(permission ->
+                permission.getKey().equalsIgnoreCase(permissionKey)).findFirst();
+        Optional<GlobalPermissionType> implicitAddOnPrefixMatch = allPermissions.stream().filter(permission ->
+                permission.getKey().startsWith(addOnKey + "__") && permission.getKey().substring(addOnKey.length() + 2).equalsIgnoreCase(permissionKey)).findFirst();
+
+        Optional<GlobalPermissionKey> globalPermissionKey = Stream.of(fullNameMatch, implicitAddOnPrefixMatch)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(GlobalPermissionType::getGlobalPermissionKey)
+                .findFirst();
+
+        return globalPermissionKey.map(key -> globalPermissionManager.hasPermission(key, jiraAuthenticationContext.getLoggedInUser()));
     }
 }

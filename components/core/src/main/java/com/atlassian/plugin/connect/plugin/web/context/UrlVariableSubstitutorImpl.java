@@ -1,14 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
-import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
@@ -17,6 +8,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -45,11 +45,11 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         this.devModeService = checkNotNull(devModeService);
     }
 
-    public String replace(String source, Map<String, ?> context)
+    public String replace(String addOnKey, String source, Map<String, ?> context)
     {
         if (devModeService.isDevMode() && source.contains("${"))
         {
-            log.warn("Addon uses legacy variable format '${ variableName }' in url {}", new Object[] {source} );
+            log.warn("Addon uses legacy variable format '${ variableName }' in url {}", new Object[] { source });
         }
 
         Matcher m = PLACEHOLDER_PATTERN.matcher(source);
@@ -57,7 +57,7 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         while (m.find())
         {
             String term = m.group(1);
-            String value = getReplacement(term, context);
+            String value = getReplacement(addOnKey, term, context);
             m.appendReplacement(sb, encodeQuery(value));
         }
         m.appendTail(sb);
@@ -65,10 +65,10 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         return sb.toString();
     }
 
-    private String getReplacement(final String term, final Map<String, ?> context)
+    private String getReplacement(String addOnKey, final String term, final Map<String, ?> context)
     {
         return dynamicResolvers.stream()
-                .map(resolver -> resolver.resolve(term, context))
+                .map(resolver -> resolver.resolve(addOnKey, term, context))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
