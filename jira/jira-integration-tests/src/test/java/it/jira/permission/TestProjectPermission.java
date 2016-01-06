@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestProjectPermission extends JiraTestBase
 {
-    private static final String pluginKey = AddonTestUtils.randomAddOnKey();
+    private static final String pluginKey = AddonTestUtils.randomAddonKey();
     private static final String permissionKey = "plugged-project-permission";
     private static final String fullPermissionKey = ModuleKeyUtils.addonAndModuleKey(pluginKey, permissionKey);
     private static final String permissionName = "Custom connect project permission";
@@ -36,7 +36,7 @@ public class TestProjectPermission extends JiraTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         myPermissionRestClient = new MyPermissionRestClient(product);
         remotePlugin = new ConnectRunner(product.environmentData().getBaseUrl().toString(), pluginKey)
@@ -57,7 +57,7 @@ public class TestProjectPermission extends JiraTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

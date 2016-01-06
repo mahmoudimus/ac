@@ -43,6 +43,13 @@ For example, the following URL includes variables that are bound to the JIRA pro
 }
 ```
 
+Note that conventional URL encoding means that context parameters passed as a query parameter will be encoded
+slightly differently from those included as a path component. The path component will use 
+[percent encoding](https://en.wikipedia.org/wiki/Percent-encoding), while the query component will use 
+[`application/x-www-form-urlencoded` encoding](http://www.w3.org/TR/html5/forms.html#application/x-www-form-urlencoded-encoding-algorithm). 
+The primary difference to be aware of is that a space in a query parameter will be encoded as a `+`, while in the path 
+component it will be encoded as `%20`.
+
 If the application isn't able to bind a value to the variable at runtime for any reason, it passes an empty value instead.
 
 ## <a name="additional-parameters-jira"></a>JIRA

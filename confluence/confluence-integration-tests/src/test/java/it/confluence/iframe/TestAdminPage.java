@@ -8,7 +8,7 @@ import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminH
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -37,7 +37,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestAdminPage extends ConfluenceWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String PAGE_NAME = "My Admin Page";
     private static final String PAGE_KEY = "my-admin-page";
@@ -48,7 +48,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
@@ -66,7 +66,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -86,7 +86,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
 
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
-        final ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
+        final ConnectAddonEmbeddedTestPage addonContentsPage = adminPage.clickAddonLink();
         waitUntilTrue(forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
         {
             @Override

@@ -25,7 +25,7 @@ import redstone.xmlrpc.XmlRpcFault;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.echoQueryParametersServlet;
-import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddonKey;
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static org.junit.Assert.assertEquals;
@@ -43,9 +43,9 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("dynamicContentMacros",
                         newDynamicContentMacroModuleBean()
@@ -69,7 +69,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {

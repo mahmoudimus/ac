@@ -8,7 +8,7 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
@@ -20,7 +20,7 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
+public class RemoteDialogOpeningPage extends ConnectAddonPage implements Page
 {
 
     private  static final int REMOTE_DIALOG_WAIT_MS = 50000;
@@ -38,7 +38,7 @@ public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
     @Override
     public String getUrl()
     {
-        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
+        return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
     public RemoteCloseDialogPage openKey(String expectedNamespace)
@@ -54,16 +54,11 @@ public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
 
     private void open(final String id)
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id(id));
-                waitUntilTrue(element.timed().isVisible());
-                element.click();
-                return null;
-            }
+        runInFrame(() -> {
+            PageElement element = elementFinder.find(By.id(id));
+            waitUntilTrue(element.timed().isVisible());
+            element.click();
+            return null;
         });
     }
 }

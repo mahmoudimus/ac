@@ -10,8 +10,8 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
-import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsers;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserGroupProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUsers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +23,16 @@ public class JiraLicenseChangeListener
 {
     private static final Logger log = LoggerFactory.getLogger(JiraLicenseChangeListener.class);
     private final ApplicationRoleManager applicationRoleManager;
-    private final ConnectAddOnUsers connectAddOnUsers;
-    private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
+    private final ConnectAddonUsers connectAddonUsers;
+    private final ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService;
     private final ApplicationAuthorizationService applicationAuthorizationService;
 
     @Autowired
-    public JiraLicenseChangeListener(ApplicationRoleManager applicationRoleManager, ConnectAddOnUsers connectAddOnUsers, ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, ApplicationAuthorizationService applicationAuthorizationService)
+    public JiraLicenseChangeListener(ApplicationRoleManager applicationRoleManager, ConnectAddonUsers connectAddonUsers, ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService, ApplicationAuthorizationService applicationAuthorizationService)
     {
         this.applicationRoleManager = applicationRoleManager;
-        this.connectAddOnUsers = connectAddOnUsers;
-        this.connectAddOnUserGroupProvisioningService = connectAddOnUserGroupProvisioningService;
+        this.connectAddonUsers = connectAddonUsers;
+        this.connectAddonUserGroupProvisioningService = connectAddonUserGroupProvisioningService;
         this.applicationAuthorizationService = applicationAuthorizationService;
     }
 
@@ -87,11 +87,11 @@ public class JiraLicenseChangeListener
         }
         log.info(newAppsMessage.toString());
 
-        for (User addonUser : connectAddOnUsers.getAddonUsers())
+        for (User addonUser : connectAddonUsers.getAddonUsers())
         {
             try
             {
-                connectAddOnUserGroupProvisioningService.ensureUserIsInGroups(addonUser.getName(), newGroups);
+                connectAddonUserGroupProvisioningService.ensureUserIsInGroups(addonUser.getName(), newGroups);
             }
             catch (Exception e)
             {

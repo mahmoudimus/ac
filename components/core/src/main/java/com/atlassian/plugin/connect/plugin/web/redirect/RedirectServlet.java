@@ -1,5 +1,14 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
@@ -9,17 +18,11 @@ import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameRenderStrategyBuilderImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.ModuleUiParamParser;
 import com.atlassian.templaterenderer.TemplateRenderer;
+
 import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -80,7 +83,7 @@ public class RedirectServlet extends HttpServlet
         {
             Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
             String signedUrl = iFrameUriBuilderFactory.builder()
-                    .addOn(keys.get().getAddOnKey())
+                    .addon(keys.get().getAddOnKey())
                     .namespace(keys.get().getModuleKey())
                     .urlTemplate(redirectData.getUrlTemplate())
                     .context(moduleContextParameters)

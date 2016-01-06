@@ -3,9 +3,13 @@
     "filename": "jira-rest-scopes.html",
     "title": "JIRA REST"
   },
-  "jira-agile-rest-scopes": {
-    "filename": "jira-agile-rest-scopes.html",
-    "title": "JIRA Agile REST"
+  "jira-software-rest-scopes": {
+    "filename": "jira-software-rest-scopes.html",
+    "title": "JIRA Software REST"
+  },
+  "jira-service-desk-rest-scopes": {
+    "filename": "jira-service-desk-rest-scopes.html",
+    "title": "JIRA Service Desk REST"
   },
   "confluence-rest-scopes": {
     "filename": "confluence-rest-scopes.html",

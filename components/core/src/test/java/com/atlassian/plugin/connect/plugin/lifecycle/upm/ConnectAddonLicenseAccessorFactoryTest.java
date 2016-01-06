@@ -22,7 +22,7 @@ public class ConnectAddonLicenseAccessorFactoryTest
     private ConnectAddonLicenseAccessorFactory migrationFactory = new ConnectAddonLicenseAccessorFactory(mock(LicenseRetriever.class));
 
     @Test
-    public void addOnAccessorForMigrationFactoryProducesBeanOnlyForTempo()
+    public void addonAccessorForMigrationFactoryProducesBeanOnlyForTempo()
     {
         Bundle bundle = mockBundle(ConnectAddonLicenseAccessorFactory.TEMPO_PLUGIN_KEY);
 
@@ -32,7 +32,7 @@ public class ConnectAddonLicenseAccessorFactoryTest
     }
 
     @Test
-    public void addOnAccessorForMigrationFactoryThrowsExceptionForOtherPlugins()
+    public void addonAccessorForMigrationFactoryThrowsExceptionForOtherPlugins()
     {
 
         exception.expect(ConnectAddonLicenseAccessorFactory.UnauthorizedPluginException.class);

@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -16,7 +16,7 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
     private final RemoteMacroRenderer remoteMacroRenderer;
 
     @Autowired
-    public StaticContentMacroModuleDescriptorFactory(AbsoluteAddOnUrlConverter urlConverter,
+    public StaticContentMacroModuleDescriptorFactory(AbsoluteAddonUrlConverter urlConverter,
                                                      RemoteMacroRenderer remoteMacroRenderer)
     {
         super(urlConverter);

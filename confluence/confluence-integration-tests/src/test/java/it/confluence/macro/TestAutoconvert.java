@@ -35,7 +35,7 @@ import it.confluence.ConfluenceWebDriverTestBase;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
-import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddOnKey;
+import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddonKey;
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static it.confluence.servlet.ConfluenceAppServlets.dynamicMacroStaticServlet;
@@ -52,7 +52,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
                 .withUrl("/dynamic-macro?url={url}")
@@ -98,7 +98,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                         .build())
                 .build();
 
-        remotePlugin = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), randomAddOnKey())
+        remotePlugin = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), randomAddonKey())
                 .setAuthenticationToNone()
                 .addScope(ScopeName.ADMIN) // for using ap.request
                 .addModules("dynamicContentMacros", dynamicMacroWithAutoconvert)
@@ -109,7 +109,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {

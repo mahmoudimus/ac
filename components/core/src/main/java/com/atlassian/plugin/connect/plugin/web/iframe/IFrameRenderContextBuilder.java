@@ -4,9 +4,9 @@ import java.util.Map;
 
 public interface IFrameRenderContextBuilder
 {
-    AddOnContextBuilder addOn(String key);
+    AddonContextBuilder addon(String key);
 
-    interface AddOnContextBuilder
+    interface AddonContextBuilder
     {
         NamespacedContextBuilder namespace(String namespace);
     }

@@ -7,7 +7,7 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringEscapeUtils;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -36,10 +36,10 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
 {
     private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleDescriptorFactory.class);
 
-    private final AbsoluteAddOnUrlConverter urlConverter;
+    private final AbsoluteAddonUrlConverter urlConverter;
 
     public AbstractContentMacroModuleDescriptorFactory(
-            AbsoluteAddOnUrlConverter urlConverter)
+            AbsoluteAddonUrlConverter urlConverter)
     {
         this.urlConverter = urlConverter;
     }

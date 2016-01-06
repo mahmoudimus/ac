@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -14,7 +14,7 @@ public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuil
 {
     private String url;
     private String location;
-    private AddOnUrlContext context;
+    private AddonUrlContext context;
     private Integer weight;
     private List<String> styleClasses;
     private I18nProperty tooltip;
@@ -47,7 +47,7 @@ public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuil
         return this;
     }
 
-    public WebItemModuleBeanBuilder withContext(AddOnUrlContext context)
+    public WebItemModuleBeanBuilder withContext(AddonUrlContext context)
     {
         this.context = context;
         return this;

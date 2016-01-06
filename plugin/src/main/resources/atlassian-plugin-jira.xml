@@ -13,7 +13,8 @@
     <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionModuleProviderImpl"/>
 
     <connect-api-scope-whitelist key="jira-api-scope-whitelist" resource="/scope/jira-whitelist.json"/>
-    <connect-api-scope-whitelist key="jira-agile-api-scope-whitelist" resource="/scope/jira-agile-whitelist.json"/>
+    <connect-api-scope-whitelist key="jira-software-api-scope-whitelist" resource="/scope/jira-software-whitelist.json"/>
+    <connect-api-scope-whitelist key="jira-service-desk-api-scope-whitelist" resource="/scope/jira-service-desk-whitelist.json"/>
     <connect-api-scope-whitelist key="tempo-api-scope-whitelist" resource="/scope/tempo-whitelist.json"/>
 
     <connect-condition-class-resolver key="jira-condition-class-resolver"
@@ -70,6 +71,7 @@
         <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
         <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
         <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
+        <resource type="download" name="connect-navigator.js" location="/js/core/connect-host-navigator.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-iframe-host-js</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>

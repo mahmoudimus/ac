@@ -23,7 +23,8 @@ The following scopes are available for use by Atlassian Connect add-ons:
 See the following pages for details on which remote endpoints are available in JIRA:
 
 * [JIRA REST](../scopes/jira-rest-scopes.html)
-* [JIRA Agile REST](../scopes/jira-agile-rest-scopes.html)
+* [JIRA Software REST](../scopes/jira-software-rest-scopes.html)
+* [JIRA Service Desk REST](../scopes/jira-service-desk-rest-scopes.html)
 
 #### Confluence
 

@@ -27,7 +27,7 @@ import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResu
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
 
 public abstract class ConnectCrowdBase
-        implements ConnectAddOnUserGroupProvisioningService
+        implements ConnectAddonUserGroupProvisioningService
 {
     private final UserReconciliation userReconciliation;
     private static final Logger log = LoggerFactory.getLogger(ConnectCrowdBase.class);

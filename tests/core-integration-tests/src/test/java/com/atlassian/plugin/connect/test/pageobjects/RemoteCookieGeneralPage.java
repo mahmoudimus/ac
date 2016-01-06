@@ -35,46 +35,31 @@ public class RemoteCookieGeneralPage extends ConnectGeneralTestPage
 
     public void saveCookie()
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id("save-cookie"));
-                waitUntilTrue(element.timed().isVisible());
-                element.click();
-                return null;
-            }
+        runInFrame(() -> {
+            PageElement element = elementFinder.find(By.id("save-cookie"));
+            waitUntilTrue(element.timed().isVisible());
+            element.click();
+            return null;
         });
     }
 
     public void readCookie()
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id("read-cookie"));
-                waitUntilTrue(element.timed().isVisible());
-                element.click();
-                return null;
-            }
+        runInFrame(() -> {
+            PageElement element = elementFinder.find(By.id("read-cookie"));
+            waitUntilTrue(element.timed().isVisible());
+            element.click();
+            return null;
         });
     }
 
     public void eraseCookie()
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id("erase-cookie"));
-                waitUntilTrue(element.timed().isVisible());
-                element.click();
-                return null;
-            }
+        runInFrame(() -> {
+            PageElement element = elementFinder.find(By.id("erase-cookie"));
+            waitUntilTrue(element.timed().isVisible());
+            element.click();
+            return null;
         });
     }
 

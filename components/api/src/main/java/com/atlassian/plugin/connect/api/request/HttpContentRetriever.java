@@ -25,7 +25,7 @@ public interface HttpContentRetriever
      * @param url                    the url to hit
      * @param parameters             the parameters to use.
      * @param headers                the headers
-     * @param addOnKey               the key of the add-on from which to retrieve the content
+     * @param addonKey               the key of the add-on from which to retrieve the content
      * @return a promise of the retrieved content
      * @since 0.10
      */
@@ -34,6 +34,6 @@ public interface HttpContentRetriever
                                  URI url,
                                  Map<String, String[]> parameters,
                                  Map<String, String> headers,
-                                 String addOnKey);
+                                 String addonKey);
 
 }

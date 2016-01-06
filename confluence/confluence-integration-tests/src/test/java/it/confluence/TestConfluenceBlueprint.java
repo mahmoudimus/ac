@@ -8,7 +8,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
+import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -19,45 +22,30 @@ import redstone.xmlrpc.XmlRpcFault;
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean.newBlueprintTemplateBeanBuilder;
 import static it.confluence.servlet.ConfluenceAppServlets.blueprintTemplateServlet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Integration test that loads a blueprint addon and uses it in confluence.
  */
 public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
 {
-    private static ConnectRunner runner;
-    private static String completeKey;
+    private static ConfluenceBlueprintTestHelper helper;
 
     @BeforeClass
-    public static void setupConfluenceAndStartConnectAddOn() throws Exception
+    public static void setupConfluenceAndStartConnectAddon() throws Exception
     {
-        String key = AddonTestUtils.randomAddOnKey();
-        String moduleKey = "my-blueprint";
-        completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key, moduleKey) + "-web-item";
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(),
-                key)
-                .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
-                .addModule("blueprints",
-                        newBlueprintModuleBean()
-                                .withName(new I18nProperty("My Blueprint", null))
-                                .withKey(moduleKey)
-                                .withTemplate(newBlueprintTemplateBeanBuilder()
-                                        .withUrl("/template.xml")
-                                        .build())
-                                .build())
-                .addRoute("/template.xml", blueprintTemplateServlet())
-                .addScope(ScopeName.READ)
-                .start();
+        helper = ConfluenceBlueprintTestHelper.getInstance(AddonTestUtils.randomAddonKey(), product);
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
-        if (runner != null)
+        if (helper.getRunner() != null)
         {
-            runner.stopAndUninstall();
+            helper.getRunner().stopAndUninstall();
         }
     }
 
@@ -66,7 +54,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         product.visit(DashboardPage.class).createDialog.click();
-        product.getPageBinder().bind(CreateContentDialog.class).waitForBlueprint(completeKey);
+        product.getPageBinder().bind(CreateContentDialog.class).waitForBlueprint(helper.getCompleteKey());
     }
 
     @Test
@@ -77,12 +65,10 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
         assertTrue("new page includes blueprint content",
                 product.getPageBinder()
                         .bind(CreateContentDialog.class)
-                        .createWithBlueprint(completeKey)
+                        .createWithBlueprint(helper.getCompleteKey())
                         .getEditor()
                         .getContent()
                         .getTimedHtml()
                         .byDefaultTimeout().contains("Hello Blueprint"));
     }
-
-
 }

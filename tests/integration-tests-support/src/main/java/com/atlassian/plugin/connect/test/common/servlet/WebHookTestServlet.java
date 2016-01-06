@@ -49,7 +49,6 @@ public final class WebHookTestServlet extends HttpServlet
             {
                 throw new ServletException(e);
             }
-
         }
     }
 
@@ -69,14 +68,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -100,14 +92,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -127,14 +112,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -153,14 +131,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -179,14 +150,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -194,11 +158,11 @@ public final class WebHookTestServlet extends HttpServlet
         }
     }
 
-    public static void runInJsonRunner(String baseUrl, String addOnKey, String eventId, WebHookTester tester) throws Exception
+    public static void runInJsonRunner(String baseUrl, String addonKey, String eventId, WebHookTester tester) throws Exception
     {
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectRunner runner = new ConnectRunner(baseUrl, addOnKey)
+        ConnectRunner runner = new ConnectRunner(baseUrl, addonKey)
                 .setAuthenticationToNone()
                 .addModule("webhooks", newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)
@@ -208,14 +172,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {

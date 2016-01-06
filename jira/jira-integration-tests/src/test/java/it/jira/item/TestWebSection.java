@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestWebSection extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String JIRA_HEADER_LOCATION = "system.top.navigation.bar";
 
@@ -48,7 +48,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
@@ -80,7 +80,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (addon != null)
         {

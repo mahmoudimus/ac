@@ -21,7 +21,7 @@ import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Sidebar;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.test.common.pageobjects.LinkedRemoteContent;
@@ -53,7 +53,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestEscaping extends JiraWebDriverTestBase
 {
-    private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String ADDON_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String MODULE_NAME = "<b>${user}</b>";
     private static final String MODULE_NAME_JIRA_ESCAPED = "<b>\\${user}</b>";
@@ -78,7 +78,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
@@ -95,7 +95,7 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(WEB_ITEM_KEY)
                                 .withUrl(MODULE_URL)
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withLocation("system.top.navigation.bar")
                                 .withTooltip(new I18nProperty(MODULE_NAME, null))
                                 .withWeight(1) // avoid ending up in 'More' menu
@@ -172,7 +172,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {

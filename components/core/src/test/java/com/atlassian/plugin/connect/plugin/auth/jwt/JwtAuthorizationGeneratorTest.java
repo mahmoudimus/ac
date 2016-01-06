@@ -16,6 +16,7 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -174,7 +175,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
-    public void signedUrlDoesNotIncludeAddOnBaseUrlWhenBaseUrlContainsPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    public void signedUrlDoesNotIncludeAddonBaseUrlWhenBaseUrlContainsPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", CONTEXT_PATH, Collections.<String, String[]>emptyMap());
         generateGet("https://example.com/base/and/path", "https://example.com/base", Collections.<String, String[]>emptyMap());
@@ -182,7 +183,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
-    public void signedUrlDoesNotIncludeAddOnBaseUrlWhenBaseUrlContainsPathAndThereAreParams() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    public void signedUrlDoesNotIncludeAddonBaseUrlWhenBaseUrlContainsPathAndThereAreParams() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", CONTEXT_PATH, PARAMS);
         generateGet("https://example.com/base/and/path", "https://example.com/base", PARAMS);
@@ -190,7 +191,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
-    public void signedUrlDoesNotIncludeAddOnBaseUrlWhenBaseUrlContainsPathAndThereAreParamsInTheTargetPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    public void signedUrlDoesNotIncludeAddonBaseUrlWhenBaseUrlContainsPathAndThereAreParamsInTheTargetPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", CONTEXT_PATH, PARAMS);
         generateGet("https://example.com/base/and/path?a_param=a_value", "https://example.com/base", Collections.<String, String[]>emptyMap());
@@ -198,7 +199,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
-    public void signedUrlDoesNotIncludeAddOnBaseUrlWhenBaseUrlEndsInSlash() throws UnsupportedEncodingException, NoSuchAlgorithmException
+    public void signedUrlDoesNotIncludeAddonBaseUrlWhenBaseUrlEndsInSlash() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", CONTEXT_PATH, ALL_PARAMS);
         generateGet("https://example.com/path", "https://example.com/", ALL_PARAMS);
@@ -214,6 +215,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
+    @Ignore("AC-1799")
     public void canonicalRequestPreservesEncodedTargetPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/", Collections.emptyMap());
@@ -222,6 +224,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
+    @Ignore("AC-1799")
     public void canonicalRequestCorrectWithNoContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "", Collections.emptyMap());
@@ -230,6 +233,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
+    @Ignore("AC-1799")
     public void canonicalRequestCorrectWithEncodedContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/context%20path", Collections.emptyMap());
@@ -238,6 +242,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
+    @Ignore("AC-1799")
     public void canonicalRequestCorrectWithMultiSegmentContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/context/path", Collections.emptyMap());
