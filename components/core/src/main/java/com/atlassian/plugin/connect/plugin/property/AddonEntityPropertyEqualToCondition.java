@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.web.condition.AbstractConnectCondition;
+import com.atlassian.plugin.connect.api.web.condition.AbstractConnectCondition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 

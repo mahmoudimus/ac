@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.web.condition;
+package com.atlassian.plugin.connect.api.web.condition;
 
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
