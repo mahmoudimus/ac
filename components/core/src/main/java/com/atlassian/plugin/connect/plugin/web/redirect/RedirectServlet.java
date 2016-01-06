@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**

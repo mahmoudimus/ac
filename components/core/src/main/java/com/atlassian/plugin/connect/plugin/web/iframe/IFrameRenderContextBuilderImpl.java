@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.html.encode.JavascriptEncoder;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
@@ -34,7 +34,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     public IFrameRenderContextBuilderImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
                                           final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
                                           final UserPreferencesRetriever userPreferencesRetriever) {
-        this.pluginAccessorFactory = pluginAcbcessorFactory;
+        this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
         this.hostApplicationInfo = hostApplicationInfo;
         this.userPreferencesRetriever = userPreferencesRetriever;
@@ -176,7 +176,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             // origin is required by XDM to establish connection with iframe.
             // Since for some places iframe requires to be redirected,
             // in that case the origin can not obtain from the url because it points to the redirect servlet.
-            String origin = (baseUrl.getScheme() + "://" + baseUrl.getAuthority()).toLowerCase();
+            String origin = baseUrl.toString().toLowerCase();
 
             defaultContext.put("iframeSrcHtml", escapeQuotes(iframeUri));
             defaultContext.put("plugin", plugin);

@@ -63,7 +63,7 @@ public class ConnectUriFactoryImpl implements ConnectUriFactory
     @Override
     public String createRedirectServletUri(final String pluginKey, final String moduleKey, final ModuleContextParameters moduleContext)
     {
-        String urlToRedirectServlet = UriBuilder.fromPath(hostApplicationInfo.getContextPath()).path(RedirectServletPath.forModule(pluginKey, moduleKey)).build().toString();
+        String urlToRedirectServlet = UriBuilder.fromUri(hostApplicationInfo.getUrl()).path(hostApplicationInfo.getContextPath()).path(RedirectServletPath.forModule(pluginKey, moduleKey)).build().toString();
         return urlVariableSubstitutor.append(urlToRedirectServlet, moduleContext);
     }
 }

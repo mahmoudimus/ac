@@ -12,7 +12,9 @@ public class RedirectServletPath
     {
         checkNotNull(addOnKey);
         checkNotNull(moduleKey);
-        String moduleKeyOnly = ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey);
-        return SERVLET_PATH + addOnKey + "/" + moduleKeyOnly;
+
+        // Create complete module key if it was not provided.
+        String completeKey = ModuleKeyUtils.addonAndModuleKey(addOnKey, ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey));
+        return SERVLET_PATH + addOnKey + "/" + completeKey;
     }
 }

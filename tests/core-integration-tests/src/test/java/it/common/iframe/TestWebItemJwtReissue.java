@@ -1,6 +1,5 @@
 package it.common.iframe;
 
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,9 +56,9 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     private static final String PARAMETER_CAPTURE_DIALOG_PATH = "/pcd";
     private static final String PARAMETER_CAPTURE_INLINE_DIALOG_PATH = "/pcid";
 
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_PAGE_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIALOG_SERVLET = ConnectAppServlets.parameterCapturingDialogServlet();
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_INLINE_DIALOG_SERVLET = ConnectAppServlets.parameterCapturingInlineDialogServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_PAGE_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIALOG_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simpleDialogServlet());
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_INLINE_DIALOG_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simpleInlineDialogServlet());
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
 
     private static ConnectRunner runner;

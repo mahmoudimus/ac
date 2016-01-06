@@ -34,7 +34,7 @@ public final class TestWebPanelInMovableLocations extends JiraWebDriverTestBase
     // this is not a true movable location but it's defined as movable in reference plugin for the test purpose.
     private static final String MOVABLE_LOCATION = "atl.jira.proj.config.sidebar";
 
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.channelConnectionVerifyServlet());
 
     private static ConnectRunner runner;
 
@@ -53,12 +53,11 @@ public final class TestWebPanelInMovableLocations extends JiraWebDriverTestBase
                         newWebPanelBean()
                                 .withName(new I18nProperty("Panel in movable location", null))
                                 .withKey(WEB_PANEL)
-                                .withUrl("/ilwp?project_key=${project.key}&project_id=${project.id}")
+                                .withUrl("/servlet?project_key={project.key}&project_id={project.id}")
                                 .withLocation(MOVABLE_LOCATION)
-                                .withLayout(new WebPanelLayout("100%", "200px"))
                                 .build()
                 )
-                .addRoute("/ilwp", ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_SERVLET))
+                .addRoute("/servlet", ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_SERVLET))
                 .start();
     }
 
@@ -75,7 +74,7 @@ public final class TestWebPanelInMovableLocations extends JiraWebDriverTestBase
     public void webPanelInMovableLocationShouldPointsToRedirectServletAndDisplaysProperly()
     {
         JiraProjectAdministrationPage page = product.visit(JiraProjectAdministrationPage.class, project.getKey());
-        RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, WEB_PANEL)).waitUntilContentLoaded();
+        RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, WEB_PANEL)).waitUntilContentElementNotEmpty("channel-connected-message");
 
         String iframeUrl = panel.getIFrameSourceUrl();
         assertThat(iframeUrl, containsString(RedirectServletPath.forModule(runner.getAddon().getKey(), WEB_PANEL)));
