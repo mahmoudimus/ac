@@ -64,6 +64,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
                         "<li><code>user_is_admin</code>\n" +
                         "<li><code>user_is_logged_in</code>\n" +
                         "<li><code>user_is_sysadmin</code>\n" +
+                        "<li><code>addon_is_licensed</code>\n" +
                         "</ul>"
             )
     }

@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -11,4 +12,5 @@ import java.lang.annotation.RetentionPolicy;
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface ConnectCondition {}

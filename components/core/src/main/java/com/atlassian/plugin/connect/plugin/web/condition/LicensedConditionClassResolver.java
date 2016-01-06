@@ -13,7 +13,7 @@ public class LicensedConditionClassResolver implements ConnectConditionClassReso
     public List<Entry> getEntries()
     {
         return Collections.singletonList(
-            newEntry("is_licensed", IsLicensedCondition.class).contextFree().build()
+            newEntry("addon_is_licensed", IsLicensedCondition.class).contextFree().build()
         );
     }
 }
