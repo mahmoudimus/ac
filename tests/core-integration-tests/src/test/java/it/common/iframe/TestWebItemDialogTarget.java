@@ -134,7 +134,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
 
         final String addonKey = runner.getAddon().getKey();
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, MULTIPLE_DIALOG_1_DIALOG_KEY, addonKey);
-        ConnectAddOnEmbeddedTestPage dialog1Page = page.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage dialog1Page = page.clickAddonLink();
 
         // The first dialog should have a button to launch a second dialog.
         RemoteLayeredDialog dialog1 = product.getPageBinder().bind(RemoteLayeredDialog.class, dialog1Page, true);
@@ -158,7 +158,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
         dialog1.clickButtonWithClass("ap-dialog-custom-button");
 
         // The second dialog should be opened, and have the expected content.
-        ConnectAddOnEmbeddedTestPage dialog2Page = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, MULTIPLE_DIALOG_2_DIALOG_KEY, true);
+        ConnectAddonEmbeddedTestPage dialog2Page = product.getPageBinder().bind(ConnectAddonEmbeddedTestPage.class, addonKey, MULTIPLE_DIALOG_2_DIALOG_KEY, true);
         RemoteLayeredDialog dialog2 = product.getPageBinder().bind(RemoteLayeredDialog.class, dialog2Page, false);
         assertThat(dialog2.getIFrameElementText("dialog-name"), is("Dialog2"));
 

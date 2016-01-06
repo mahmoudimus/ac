@@ -1,6 +1,6 @@
 package it.common.iframe;
 
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import org.openqa.selenium.By;
 
@@ -14,7 +14,7 @@ public class RemoteLayeredDialog extends RemotePluginDialog
     // If true, this dialog is the lowest in a stack of dialogs.
     private final boolean isBottomDialog;
 
-    public RemoteLayeredDialog(ConnectAddOnEmbeddedTestPage embeddedConnectPage, boolean isBottomDialog)
+    public RemoteLayeredDialog(ConnectAddonEmbeddedTestPage embeddedConnectPage, boolean isBottomDialog)
     {
         super(embeddedConnectPage);
         this.isBottomDialog = isBottomDialog;
