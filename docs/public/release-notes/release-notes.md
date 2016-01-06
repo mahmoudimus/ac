@@ -41,7 +41,6 @@ or Confluence Cloud with Atlassian Connect as follows:
  * Add JavaScript API for refreshing the browser [CE-249](https://ecosystem.atlassian.net/browse/CE-249)
  * JIRA: Add scope whitelisting for user properties [AC-1809](https://ecosystem.atlassian.net/browse/AC-1809)
  * Web items with JWTs fail on stale pages [ACJIRA-294](https://ecosystem.atlassian.net/browse/ACJIRA-294)
- * Canonical request calculation for requests to add-ons does not respect encoding of path [AC-1799](https://ecosystem.atlassian.net/browse/AC-1799)
 
 ## [1.1.65](./1-1-0.html#1.1.65)
  * Add-on Properties GET request can provide the non-escaped JSON value with a query parameter [AC-1693](https://ecosystem.atlassian.net/browse/AC-1693)
