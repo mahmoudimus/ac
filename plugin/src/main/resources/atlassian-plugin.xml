@@ -20,6 +20,8 @@
                                       class="com.atlassian.plugin.connect.plugin.web.condition.CommonConditionClassResolver"/>
     <connect-condition-class-resolver key="addon-entity-property-equal-to-condition-class-resolver"
                                       class="com.atlassian.plugin.connect.plugin.property.AddonEntityPropertyEqualToConditionClassResolver"/>
+    <connect-condition-class-resolver key="licensed-condition-class-resolver"
+                                      class="com.atlassian.plugin.connect.plugin.web.condition.LicensedConditionClassResolver"/>
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
