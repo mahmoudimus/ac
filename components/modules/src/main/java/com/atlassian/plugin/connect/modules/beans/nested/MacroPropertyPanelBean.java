@@ -27,7 +27,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
  *
  *    AP.require("confluence", function (confluence) {
  *        var macroData = confluence.getMacroData(function(macroParams) {
- *            domeSomethingWith(macroParams.myParameter);
+ *            doSomethingWith(macroParams.myParameter);
  *        });
  *    });
  *
