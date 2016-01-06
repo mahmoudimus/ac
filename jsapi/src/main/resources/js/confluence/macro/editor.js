@@ -53,19 +53,15 @@
                 var editorSelection = AJS.Rte.getEditor().selection;
                 var node = editorSelection.getNode();
 
-                var macroName = MacroBrowser.getMacroName(node);
-                if(macroName !== undefined) {
-                    saveMacro.setLastSelectedConnectMacroNode(node);
-                } else {
-                    //Current macro is not on page.
-                    saveMacro.setLastSelectedConnectMacroNode(undefined);
-                    saveMacro.setUnsavedMacroData(
-                            macroData.name,
-                            (macroData.body ? macroData.body : ""),
-                            macroData.params,
-                            editorSelection.getBookmark()
-                    );
-                }
+                saveMacro.setLastSelectedConnectMacroNode(node);
+
+                //Give it the data we have here, in case the macro is not on the page yet.
+                saveMacro.setUnsavedMacroData(
+                        macroData.name,
+                        (macroData.body ? macroData.body : ""),
+                        macroData.params,
+                        editorSelection.getBookmark()
+                );
 
                 openEditorMacroBody = macroData.body;
 

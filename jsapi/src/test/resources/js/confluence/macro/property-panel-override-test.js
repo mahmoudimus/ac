@@ -18,7 +18,11 @@ define(['Squire'], function(Squire) {
             .mock('ajs', mockAjs)
             .mock('confluence/root', {})
             .mock('confluence-editor/utils/tinymce-macro-utils', {})
-            .mock('confluence-macro-browser/macro-browser', {})
+            .mock('confluence-macro-browser/macro-browser', {
+                getMacroName: function() {
+                    return "Macro Name from DOM";
+                }
+            })
             .mock('confluence-editor/editor/atlassian-editor', {})
             .require(['ac/confluence/macro/property-panel-iframe'], function (propertyPanelIframeInjector) {
 

@@ -16,7 +16,12 @@ define("ac/confluence/macro", ["confluence/root", "confluence-macro-browser/macr
             unsavedMacroData.body = undefined;
             unsavedMacroData.name = undefined;
 
-            lastSelectedConnectMacroNode = node;
+            var macroName = MacroBrowser.getMacroName(node);
+            if(macroName !== undefined) {
+                lastSelectedConnectMacroNode = node;
+            } else {
+                lastSelectedConnectMacroNode = undefined;
+            }
         },
 
         getLastSelectedConnectMacroNode: function() {
