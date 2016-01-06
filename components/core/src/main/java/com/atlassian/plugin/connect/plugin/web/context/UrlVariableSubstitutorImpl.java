@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
+import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,9 +36,12 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
     private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")");
     private final IsDevModeService devModeService;
 
+    private final List<DynamicUriVariableResolver> dynamicResolvers;
+
     @Autowired
-    public UrlVariableSubstitutorImpl(IsDevModeService devModeService)
+    public UrlVariableSubstitutorImpl(IsDevModeService devModeService, final List<DynamicUriVariableResolver> dynamicResolvers)
     {
+        this.dynamicResolvers = dynamicResolvers;
         this.devModeService = checkNotNull(devModeService);
     }
 
@@ -51,12 +57,22 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         while (m.find())
         {
             String term = m.group(1);
-            String value = fromContext(term, context);
+            String value = getReplacement(term, context);
             m.appendReplacement(sb, encodeQuery(value));
         }
         m.appendTail(sb);
 
         return sb.toString();
+    }
+
+    private String getReplacement(final String term, final Map<String, ?> context)
+    {
+        return dynamicResolvers.stream()
+                .map(resolver -> resolver.resolve(term, context))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElseGet(() -> fromContext(term, context));
     }
 
     public String append(String source, Map<String, String> parameters)

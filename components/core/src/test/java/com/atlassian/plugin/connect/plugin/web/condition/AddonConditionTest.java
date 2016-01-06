@@ -30,6 +30,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.annotation.Nullable;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -130,7 +131,7 @@ public class AddonConditionTest
     public void init()
     {
         final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(
-                new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl()),
+                new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), Collections.emptyList()),
                 remotablePluginAccessorFactory,
                 userManager,
                 new TestHostApplicationInfo(URL, "/"),

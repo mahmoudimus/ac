@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
+import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
 import org.hamcrest.MatcherAssert;
@@ -66,7 +67,7 @@ public class LegacyTestUrlVariableSubstitutor
         MatcherAssert.assertThat(SUBSTITUTOR.getContextVariableMap("http://server:80/path?my_page_id=${page.id}&thing=${stuff}"), is(expected));
     }
 
-    private static final UrlVariableSubstitutor SUBSTITUTOR = new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl());
+    private static final UrlVariableSubstitutor SUBSTITUTOR = new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), Collections.<DynamicUriVariableResolver>emptyList());
     private static final Map<String, Object> CONTEXT = createContext();
 
     private static Map<String, Object> createContext()
