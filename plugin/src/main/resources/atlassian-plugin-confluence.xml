@@ -110,7 +110,6 @@
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro-api</dependency>
-        <dependency>com.atlassian.confluence.plugins.confluence-macro-browser:macro-browser-js</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -120,7 +119,6 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
-
 
     <web-resource key="macro-api">
         <resource type="download" name="macro.js" location="js/confluence/macro/macro.js"/>

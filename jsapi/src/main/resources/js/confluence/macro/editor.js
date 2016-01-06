@@ -1,14 +1,14 @@
 (function($, define){
 
-    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog", "ac/confluence/macro", "ajs", "confluence-macro-browser/macro-browser"],
-            function(_AP, dialog, saveMacro, AJS, MacroBrowser) {
+    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog", "ac/confluence/macro", "ajs"],
+            function(_AP, dialog, macroApi, AJS) {
 
         var openEditorMacroBody;
 
         var module = {
 
             /**
-             * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
+             * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>macroApi</code>
              * before closing the editor.
              */
             close: function() {
@@ -20,7 +20,7 @@
              * @param callback the callback function which will be called with the parameter object
              */
             getMacroData: function(callback){
-                return callback(saveMacro.getCurrentMacroParameters());
+                return callback(macroApi.getCurrentMacroParameters());
             },
 
             /**
@@ -53,10 +53,10 @@
                 var editorSelection = AJS.Rte.getEditor().selection;
                 var node = editorSelection.getNode();
 
-                saveMacro.setLastSelectedConnectMacroNode(node);
+                macroApi.setLastSelectedConnectMacroNode(node);
 
                 //Give it the data we have here, in case the macro is not on the page yet.
-                saveMacro.setUnsavedMacroData(
+                macroApi.setUnsavedMacroData(
                         macroData.name,
                         (macroData.body ? macroData.body : ""),
                         macroData.params,

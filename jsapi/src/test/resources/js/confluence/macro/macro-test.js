@@ -54,13 +54,6 @@ define(['Squire'], function(Squire) {
                     }
                 });
 
-                test("Save and get last selected macro node", function() {
-                    var nodeName = "This is my node.";
-                    var node = {name: nodeName};
-                    Macro.setLastSelectedConnectMacroNode(node);
-                    ok(Macro.getLastSelectedConnectMacroNode().name === nodeName);
-                });
-
                 test("Unsaved macro data", function() {
                     //Last selected macro node will be undefined.
                     var macroParams = {paramOne: "One"};
