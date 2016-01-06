@@ -8,6 +8,7 @@ import com.atlassian.testutils.annotations.Retry;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import static com.atlassian.test.ondemand.data.JiraData.Projects.EntityLinkedPro
 
 @Category (OnDemandAcceptanceTest.class)
 @Retry (maxAttempts=1)
+@Ignore
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
 {
     private static final String WEB_ITEM_TEXT = "AC Action";
