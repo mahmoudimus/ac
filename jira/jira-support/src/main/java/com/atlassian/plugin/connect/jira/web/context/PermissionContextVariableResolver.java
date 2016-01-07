@@ -31,7 +31,6 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
  * <p>
  *  If the permission with the given key does not exist or it's not possible to resolve a project
  *  permission because we are not in the project context, then the resolver will not return anything.
- * </p>
  *
  * <p>
  *     This resolver is trying to be smart in two ways:
@@ -39,7 +38,6 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
  *         <li>it is case-insensitive for JIRA built-in permission keys</li>
  *         <li>for custom permission keys, the add-on does not have to (but may if it wishes so) prefix them with {@code <addOnKey>__} in the descriptor</li>
  *     </ul>
- * </p>
  */
 @JiraComponent
 public class PermissionContextVariableResolver implements DynamicUriVariableResolver
