@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -147,7 +148,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         }
         catch (JsonSyntaxException e)
         {
-            log.info(String.format("Blueprint context json syntax error (%s,%s,%s). %s.", addonKey, blueprintKey, contextUrl, e.getMessage()));
+            log.info(String.format("Blueprint context JSON syntax error (%s,%s,%s). %s.", addonKey, blueprintKey, contextUrl, e.getMessage()));
             if (log.isDebugEnabled())
             {
                 log.debug("response: " + json);
@@ -155,10 +156,10 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             }
             else
             {
-                log.info("Turn on debug for " + log.getName() + " to see the full stackdebug.");
+                log.info("Turn on debug for " + log.getName() + " to see the full stacktrace.");
             }
             eventPublisher.publish(new BlueprintContextResponseParseFailureEvent(addonKey, blueprintKey, contextUrl));
-            throw new RuntimeException("JSON syntax error, see logs for details", e);
+            throw new RuntimeException("Blueprint context JSON syntax error", e);
         }
 
         long timeTaken = System.currentTimeMillis() - start;
@@ -176,6 +177,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         log.debug("start retrieving response");
         long start = System.currentTimeMillis();
         String json = "{}";
+
         try
         {
             json = promise.get(MAX_TIMEOUT, SECONDS);
@@ -189,10 +191,18 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             }
             else
             {
-                log.info("Turn on debug for " + log.getName() + " to see the full stackdebug.");
+                log.info("Turn on debug for " + log.getName() + " to see the full stacktrace.");
             }
             eventPublisher.publish(new BlueprintContextRequestFailedEvent(addonKey, blueprintKey, contextUrl, e.getClass().getName()));
-            throw new RuntimeException("Error retrieving variables for blueprint", e);
+
+            if (e instanceof TimeoutException)
+            {
+                throw new RuntimeException("Timeout while retrieving blueprint context", e);
+            }
+            else
+            {
+                throw new RuntimeException("Error while retrieving blueprint context", e);
+            }
         }
 
         long timeTaken = System.currentTimeMillis() - start;

@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.connect.test.confluence.pageobjects.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextRequestTypeToken;
 import com.atlassian.plugin.connect.test.common.servlet.BodyExtractor;
+import com.atlassian.plugin.connect.test.common.servlet.ErrorServlet;
 import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
 
@@ -60,6 +62,24 @@ public class ConfluenceAppServlets
     {
         return wrapContextAwareServlet(
                 new MustacheServlet("it/confluence/blueprint/context.json", HttpMethod.POST),
+                Collections.emptyList(),
+                newArrayList(new JsonExtractor())
+        );
+    }
+
+    public static HttpServlet blueprintMalformedContextServlet()
+    {
+        return wrapContextAwareServlet(
+                new MustacheServlet("it/confluence/blueprint/contextMalformed.json.txt", HttpMethod.POST),
+                Collections.emptyList(),
+                newArrayList(new JsonExtractor())
+        );
+    }
+
+    public static HttpServlet blueprint404Servlet()
+    {
+        return wrapContextAwareServlet(
+                new ErrorServlet(HttpServletResponse.SC_NOT_FOUND, HttpMethod.POST),
                 Collections.emptyList(),
                 newArrayList(new JsonExtractor())
         );

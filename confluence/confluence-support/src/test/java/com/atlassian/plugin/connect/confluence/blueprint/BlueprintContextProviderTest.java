@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.confluence.blueprint;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Locale;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -99,6 +100,7 @@ public class BlueprintContextProviderTest
         exceptions.expect(RuntimeException.class);
         blueprintContextProvider.updateBlueprintContext(mockContextObj);
     }
+
     @Test
     public void testBlueprintContextUpdateFailsWhenExecutionInterrupted() throws Exception
     {

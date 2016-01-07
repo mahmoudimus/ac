@@ -7,12 +7,11 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.util.collect.Consumer;
+
+import javax.servlet.http.HttpServlet;
 
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean.newBlueprintTemplateBeanBuilder;
-import static it.confluence.servlet.ConfluenceAppServlets.blueprintContextServlet;
-import static it.confluence.servlet.ConfluenceAppServlets.blueprintTemplateServlet;
 
 /**
  * Helper for creating a remote blueprint add-on for testing
@@ -24,17 +23,18 @@ public final class ConfluenceBlueprintTestHelper
     private final String completeKey;
 
     private final ConnectRunner runner;
-
-    public static ConfluenceBlueprintTestHelper getInstance(String key, TestedProduct product) throws Exception {
-        return new ConfluenceBlueprintTestHelper(key, product);
+    public static ConfluenceBlueprintTestHelper getInstance(String key,
+                                                            HttpServlet blueprintTemplateServlet,
+                                                            HttpServlet blueprintContextServlet,
+                                                            TestedProduct product) throws Exception {
+        return new ConfluenceBlueprintTestHelper(key, blueprintTemplateServlet, blueprintContextServlet, product);
     }
 
-    private ConfluenceBlueprintTestHelper(String key, TestedProduct product) throws Exception
+    private ConfluenceBlueprintTestHelper(String key, HttpServlet blueprintTemplateServlet, HttpServlet blueprintContextServlet, TestedProduct product) throws Exception
     {
         this.key = key;
         this.moduleKey = "my-blueprint";
-        this.completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key,
-                moduleKey) + "-web-item";
+        this.completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key, moduleKey) + "-web-item";
 
         this.runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), key)
                 .addInstallLifecycle()
@@ -48,21 +48,24 @@ public final class ConfluenceBlueprintTestHelper
                                         .withBlueprintContextUrl("/context")
                                         .build())
                                 .build())
-                .addRoute("/template.xml", blueprintTemplateServlet())
-                .addRoute("/context", blueprintContextServlet())
+                .addRoute("/template.xml", blueprintTemplateServlet)
+                .addRoute("/context", blueprintContextServlet)
                 .addScope(ScopeName.READ)
                 .start();
     }
 
-    public static void runInRunner(TestedProduct product, Consumer<ConfluenceBlueprintTestHelper> action)
+    public static void runInRunner(TestedProduct product,
+                                   HttpServlet blueprintTemplateServlet,
+                                   HttpServlet blueprintContextServlet,
+                                   ConfluenceBlueprintTestAction<ConfluenceBlueprintTestHelper> action)
             throws Exception
     {
         ConfluenceBlueprintTestHelper helper = null;
 
         try
         {
-            helper = getInstance(AddonTestUtils.randomAddonKey(), product);
-            action.consume(helper);
+            helper = getInstance(AddonTestUtils.randomAddonKey(), blueprintTemplateServlet, blueprintContextServlet, product);
+            action.apply(helper);
         }
         finally
         {
@@ -91,5 +94,9 @@ public final class ConfluenceBlueprintTestHelper
     public String getCompleteKey()
     {
         return completeKey;
+    }
+
+    interface ConfluenceBlueprintTestAction<T> {
+        void apply(T t) throws Exception;
     }
 }
