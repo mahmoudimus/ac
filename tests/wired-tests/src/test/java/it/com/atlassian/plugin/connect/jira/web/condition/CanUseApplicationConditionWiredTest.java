@@ -15,7 +15,9 @@ import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

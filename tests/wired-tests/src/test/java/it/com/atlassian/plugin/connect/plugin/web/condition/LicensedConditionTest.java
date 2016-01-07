@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
-import com.atlassian.plugin.web.api.DynamicWebInterfaceManager;
+import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -46,11 +46,11 @@ public class LicensedConditionTest
     private final TestPluginInstaller testPluginInstaller;
     private final TimebombedLicenseManager timebombedLicenseManager;
     private final TestAuthenticator testAuthenticator;
-    private final DynamicWebInterfaceManager webInterfaceManager;
+    private final WebInterfaceManager webInterfaceManager;
 
     public LicensedConditionTest(TimebombedLicenseManager timebombedLicenseManager,
                                  TestPluginInstaller testPluginInstaller,
-                                 TestAuthenticator testAuthenticator, DynamicWebInterfaceManager webInterfaceManager)
+                                 TestAuthenticator testAuthenticator, WebInterfaceManager webInterfaceManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;

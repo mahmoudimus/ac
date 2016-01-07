@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.api.DynamicWebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -37,12 +38,12 @@ public class ConnectConditionClassResolverTest extends AbstractConnectAddonTest
 
     private static final String LOCATION = "fake-location";
 
-    private final DynamicWebInterfaceManager webInterfaceManager;
+    private final WebInterfaceManager webInterfaceManager;
 
     public ConnectConditionClassResolverTest(WebItemModuleProvider webItemModuleProvider,
             TestPluginInstaller testPluginInstaller,
             TestAuthenticator testAuthenticator,
-            DynamicWebInterfaceManager webInterfaceManager)
+            WebInterfaceManager webInterfaceManager)
     {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
         this.webInterfaceManager = webInterfaceManager;
