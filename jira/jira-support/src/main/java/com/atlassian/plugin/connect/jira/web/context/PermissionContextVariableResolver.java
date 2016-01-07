@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.atlassian.fugue.Maybe;
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.permission.GlobalPermissionKey;
-import com.atlassian.jira.permission.GlobalPermissionType;
-import com.atlassian.jira.permission.ProjectPermission;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.GlobalPermissionManager;
@@ -22,6 +23,24 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+
+/**
+ * A component that can resolve variables of the form {@code [project|global]Permission.<permissionKey>}.
+ *
+ * <p>
+ *  If the permission with the given key does not exist or it's not possible to resolve a project
+ *  permission because we are not in the project context, then the resolver will not return anything.
+ * </p>
+ *
+ * <p>
+ *     This resolver is trying to be smart in two ways:
+ *     <ul>
+ *         <li>it is case-insensitive for JIRA built-in permission keys</li>
+ *         <li>for custom permission keys, the add-on does not have to (but may if it wishes so) prefix them with {@code <addOnKey>__} in the descriptor</li>
+ *     </ul>
+ * </p>
+ */
 @JiraComponent
 public class PermissionContextVariableResolver implements DynamicUriVariableResolver
 {
@@ -68,18 +87,9 @@ public class PermissionContextVariableResolver implements DynamicUriVariableReso
 
     private Optional<Boolean> resolveProjectPermission(String addOnKey, String permissionKey, Map<String, ?> context)
     {
-        Collection<ProjectPermission> allPermissions = permissionManager.getAllProjectPermissions();
-
-        Optional<ProjectPermission> fullNameMatch = allPermissions.stream().filter(permission ->
-                permission.getKey().equalsIgnoreCase(permissionKey)).findFirst();
-        Optional<ProjectPermission> implicitAddOnPrefixMatch = allPermissions.stream().filter(permission ->
-                permission.getKey().startsWith(addOnKey + "__") && permission.getKey().substring(addOnKey.length() + 2).equalsIgnoreCase(permissionKey)).findFirst();
-
-        Optional<ProjectPermissionKey> projectPermissionKey = Stream.of(fullNameMatch, implicitAddOnPrefixMatch)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(ProjectPermission::getProjectPermissionKey)
-                .findFirst();
+        Optional<ProjectPermissionKey> projectPermissionKey = findPermissionKey(addOnKey, permissionKey,
+                ProjectPermissionKey::new,
+                permissionManager::getProjectPermission);
 
         return projectPermissionKey.flatMap(key -> {
 
@@ -106,19 +116,21 @@ public class PermissionContextVariableResolver implements DynamicUriVariableReso
 
     private Optional<Boolean> resolveGlobalPermission(String addOnKey, String permissionKey, Map<String, ?> context)
     {
-        Collection<GlobalPermissionType> allPermissions = globalPermissionManager.getAllGlobalPermissions();
-
-        Optional<GlobalPermissionType> fullNameMatch = allPermissions.stream().filter(permission ->
-                permission.getKey().equalsIgnoreCase(permissionKey)).findFirst();
-        Optional<GlobalPermissionType> implicitAddOnPrefixMatch = allPermissions.stream().filter(permission ->
-                permission.getKey().startsWith(addOnKey + "__") && permission.getKey().substring(addOnKey.length() + 2).equalsIgnoreCase(permissionKey)).findFirst();
-
-        Optional<GlobalPermissionKey> globalPermissionKey = Stream.of(fullNameMatch, implicitAddOnPrefixMatch)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(GlobalPermissionType::getGlobalPermissionKey)
-                .findFirst();
+        Optional<GlobalPermissionKey> globalPermissionKey = findPermissionKey(addOnKey, permissionKey,
+                GlobalPermissionKey::of,
+                globalPermissionManager::getGlobalPermission);
 
         return globalPermissionKey.map(key -> globalPermissionManager.hasPermission(key, jiraAuthenticationContext.getLoggedInUser()));
+    }
+
+    private <Key> Optional<Key> findPermissionKey(String addOnKey, String exactKey, Function<String, Key> keyConstructor, Function<Key, Option<?>> keyGetter)
+    {
+        String upperCaseKey = exactKey.toUpperCase();
+        String implicitAddOnPrefix = addonAndModuleKey(addOnKey, exactKey);
+
+        Stream<String> possibleMatches = Stream.of(exactKey, upperCaseKey, implicitAddOnPrefix);
+        Predicate<String> isKeyDefined = keyConstructor.andThen(keyGetter).andThen(Maybe::isDefined)::apply;
+
+        return possibleMatches.filter(isKeyDefined).findFirst().map(keyConstructor);
     }
 }
