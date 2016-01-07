@@ -1,25 +1,31 @@
 package it.com.atlassian.plugin.connect.plugin.rest.addons;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.core.HttpHeaders;
+
 import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.license.LicenseHandler;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import it.com.atlassian.plugin.connect.util.request.RequestUtil;
-import org.apache.commons.io.IOUtils;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.After;
@@ -27,12 +33,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.core.HttpHeaders;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import it.com.atlassian.plugin.connect.util.TimebombedLicenseManager;
+import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,19 +48,13 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonsResourceTest
 {
-    public static final int LICENSED_ADDON_KEY_COUNT = 100;
-    public static final String TIMEBOMB_100_PLUGIN_LICENSE_PATH = "testfiles.licenses/timebomb-ac-test-json-0..99.license";
-
     private static final String REST_BASE = "/atlassian-connect/1/addons";
-
-    private static int addonCount = 0;
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
-    private final LicenseHandler licenseHandler;
     private final RequestUtil requestUtil;
-    private final Random random;
+    private final TimebombedLicenseManager timebombedLicenseManager;
 
     private String addonKey;
     private String addonSecret;
@@ -70,20 +66,17 @@ public class AddonsResourceTest
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
-        this.licenseHandler = licenseHandler;
+        this.timebombedLicenseManager = new TimebombedLicenseManager(licenseHandler);
         this.requestUtil = new RequestUtil(applicationProperties);
-        this.random = new Random();
     }
 
     @Before
     public void setUp() throws IOException
     {
-        InputStream licenseResource = getClass().getClassLoader().getResourceAsStream(TIMEBOMB_100_PLUGIN_LICENSE_PATH);
-        String license = IOUtils.lineIterator(licenseResource, "UTF-8").nextLine();
-        licenseHandler.setLicense(license);
+        timebombedLicenseManager.setLicense();
 
         testAuthenticator.authenticateUser("admin");
-        addonKey = generateAddonKey();
+        addonKey = timebombedLicenseManager.generateLicensedAddonKey();
         installJsonAddon(addonKey);
         addonSecret = connectAddonRegistry.getSecret(addonKey);
     }
@@ -136,7 +129,7 @@ public class AddonsResourceTest
     @Test
     public void shouldReturnForbiddenWhenAddonMakesForbiddenRequest() throws IOException
     {
-        String otherAddonKey = generateAddonKey();
+        String otherAddonKey = timebombedLicenseManager.generateLicensedAddonKey();
         installJsonAddon(otherAddonKey);
 
         List<RequestUtil.Request.Builder> builders = Lists.newArrayList(
@@ -158,7 +151,7 @@ public class AddonsResourceTest
     @Test
     public void shouldReturnAddonsWhenRequestedByAdmin() throws IOException
     {
-        String otherAddonKey = generateAddonKey();
+        String otherAddonKey = timebombedLicenseManager.generateLicensedAddonKey();
         Plugin otherAddon = installJsonAddon(otherAddonKey);
 
         RequestUtil.Request request = getBuilderForGetAddons().setUsername("admin").setPassword("admin").build();
@@ -167,14 +160,15 @@ public class AddonsResourceTest
         assertResponseStatusCode(request, response, HttpStatus.OK);
         Object[] expectedAddonKeys = new String[]{addonKey, otherAddonKey};
         AddonsInterpretation addonsRepresentation = response.getJsonBody(AddonsInterpretation.class);
-        Iterable<String> addonKeys = Iterables.transform(addonsRepresentation.addons, new Function<AddonInterpretation, String>()
-        {
-            @Override
-            public String apply(AddonInterpretation addonInterpretation)
+        Iterable<String> addonKeys = Iterables.transform(addonsRepresentation.addons,
+            new Function<AddonInterpretation, String>()
             {
-                return addonInterpretation.key;
-            }
-        });
+                @Override
+                public String apply(AddonInterpretation addonInterpretation)
+                {
+                    return addonInterpretation.key;
+                }
+            });
         assertThat("Wrong addons in response", addonKeys, containsInAnyOrder(expectedAddonKeys));
 
         testPluginInstaller.uninstallAddon(otherAddon);
@@ -257,23 +251,6 @@ public class AddonsResourceTest
 
         AddonsInterpretation addonsInterpretation = response.getJsonBody(AddonsInterpretation.class);
         assertEquals("No JSON add-ons should be returned", 0, addonsInterpretation.addons.size());
-    }
-
-    private String generateAddonKey()
-    {
-        // We license the specific add-on keys that this method may generate (ac-test-json-0 to ac-test-json-99)
-        // using this license: /tests/wired-tests/src/test/resources/testfiles.licenses/timebomb-ac-test-json-0..99.license
-        // This is necessary because changes for https://ecosystem.atlassian.net/browse/UPM-4851 mean
-        // the wildcard license isn't returned if we ask for a specific add-on's license
-        //
-        // A range of 100 licenses, combined with our teardown method that uninstalls the add-on, makes conflicts very unlikely.
-
-        if (addonCount >= LICENSED_ADDON_KEY_COUNT)
-        {
-            throw new IllegalStateException("Ran out of licensed test add-ons");
-        }
-
-        return "ac-test-json-" + addonCount++;
     }
 
     private Plugin installJsonAddon(String addonKey) throws IOException
