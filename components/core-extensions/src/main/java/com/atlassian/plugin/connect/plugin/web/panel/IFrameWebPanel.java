@@ -86,7 +86,7 @@ public class IFrameWebPanel implements WebPanel
     private IFrameContext substituteContext(Map<String, Object> whiteListedContext)
     {
         return new IFrameContextImpl(iFrameContext.getPluginKey(),
-                urlVariableSubstitutor.replace(iFrameContext.getIframePath(), whiteListedContext),
+                urlVariableSubstitutor.replace(iFrameContext.getPluginKey(), iFrameContext.getIframePath(), whiteListedContext),
                 iFrameContext.getNamespace(),
                 iFrameContext.getIFrameParams());
     }

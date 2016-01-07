@@ -193,12 +193,12 @@ public class JiraWebItemModuleDescriptorFactoryTest
                 return invocationOnMock.getArguments()[0];
             }
         });
-        when(mock.replace(anyString(), anyMap())).then(new Answer<Object>()
+        when(mock.replace(anyString(), anyString(), anyMap())).then(new Answer<Object>()
         {
             @Override
             public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
             {
-                String template = (String) invocationOnMock.getArguments()[0];
+                String template = (String) invocationOnMock.getArguments()[1];
                 return template.replaceAll("\\{.*?\\}","");
             }
         });

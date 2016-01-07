@@ -83,7 +83,7 @@ public class IFrameUriBuilderImpl
     @Override
     public InitializedBuilder context(final ModuleContextParameters context)
     {
-        String substitutedUrl = urlVariableSubstitutor.replace(templateUri, context);
+        String substitutedUrl = urlVariableSubstitutor.replace(addonKey, templateUri, context);
         UriBuilder uriBuilder = new UriBuilder(Uri.parse(substitutedUrl));
         return new InitializedBuilderImpl(addonKey, namespace, uriBuilder);
     }
