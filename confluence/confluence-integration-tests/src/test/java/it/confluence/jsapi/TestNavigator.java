@@ -10,7 +10,10 @@ import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.confluence.pageobjects.page.user.ViewProfilePage;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.util.concurrent.Promise;
@@ -38,6 +41,7 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
 
     private static List<Exception> setupFailure = new ArrayList<>();
     private static final String PAGE_KEY = "ac-navigator-general-page";
+    private static final String WEB_PANEL_KEY = "ac-navigator-editor-web-panel";
     private static ConnectRunner remotePlugin;
 
     private static Promise<Content> createdPage;
@@ -66,7 +70,16 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
                                     .withLocation("system.header/left")
                                     .build()
                     )
+                    .addModule("webPanels",
+                            WebPanelModuleBean.newWebPanelBean()
+                                    .withName(new I18nProperty("Editor Web Panel", null))
+                                    .withUrl("/nvg-web-panel")
+                                    .withKey(WEB_PANEL_KEY)
+                                    .withLocation("atl.editor")
+                                    .build()
+                    )
                     .addRoute("/nvg", ConfluenceAppServlets.navigatorServlet(createdPage.get().getId().asLong(), space.getKey()))
+                    .addRoute("/nvg-web-panel", ConfluenceAppServlets.navigatorContextServlet())
                     .start();
         }
         catch (Exception ex)
@@ -133,6 +146,19 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
         ViewSpaceSummaryPage viewSpaceSummaryPage = loginAndClickToNavigate("navigate-to-space-tools", ViewSpaceSummaryPage.class, space);
         // there is nothing on the view spaceSummaryPage that is appropriate to assert
         // so this test really does nothing until we can convert to STR (https://ecosystem.atlassian.net/browse/ACDEV-2081)
+    }
+
+    @Test
+    public void testGetCurrentContextOfEditPage() throws Exception
+    {
+        com.atlassian.confluence.it.Page page = new com.atlassian.confluence.it.Page(createdPage.get().getId().asLong());
+        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, page);
+
+        // this web panel contains an API call to get the current page context, then inserts it into a div.
+        RemoteWebPanel webPanel = connectPageOperations.findWebPanel(WEB_PANEL_KEY);
+        String pageContext = webPanel.getIFrameElement("ac-current-page-context");
+
+        // 
     }
 
     public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass, Object... args)
