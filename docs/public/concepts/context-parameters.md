@@ -69,6 +69,24 @@ Furthermore JIRA Agile supports these context variables.
  * `board.id`
  * `board.mode` (available for plugin points that are displayed on different board screens)
  * `sprint.id`
+ 
+### Permission context variables
+
+It is possible to pass project and global permission to your add-on using the context variables of the form:
+ 
+ * `globalPermission.<permissionKey>` 
+ * `projectPermission.<permissionKey>`
+ 
+Built-in (a list of all possible keys can be found [here](../concepts/conditions.html#jira-condition-parameters) in the "JIRA condition parameters" column) as well as custom ([project](../modules/jira/project-permission.html) and [global](../modules/jira/global-permission.html)) permissions are supported.
+
+Example:
+
+```
+"webPanels": [{
+    "url": "/web-panel?hasCustomProjectPermission={projectPermission.projectPermissionKey}&canAdministerProject={globalPermissions.administer_projects}",
+    ....
+}]
+```
 
 ## <a name="additional-parameters-confluence"></a>Confluence
 
