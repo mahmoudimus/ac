@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
+import com.atlassian.plugin.connect.spi.web.context.DynamicUriVariableResolver;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
