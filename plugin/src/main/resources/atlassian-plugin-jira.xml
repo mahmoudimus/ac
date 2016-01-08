@@ -42,6 +42,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-create-issue-dialog</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-calendar-widget</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -118,6 +119,14 @@
         <resource type="download" name="create-issue-dialog-rpc.js" location="/js/jira/issue/issue-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="calendar-widget">
+        <resource type="download" name="calendar-widget.js" location="/js/jira/calendar/calendar.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <dependency>jira.webresources:calendar</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 

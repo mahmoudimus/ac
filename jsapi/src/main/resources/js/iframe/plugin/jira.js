@@ -145,6 +145,10 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 openCreateIssueDialog: function (callback, fields) {
                     issueCreateListener = callback || null;
                     remote.openCreateIssueDialog(fields);
+                },
+
+                showCalendar: function () {
+                    remote.showCalendar();
                 }
             },
 
