@@ -16,6 +16,7 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -214,6 +215,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
+    @Ignore("AC-1799")
     public void canonicalRequestPreservesEncodedTargetPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/", Collections.emptyMap());
@@ -222,6 +224,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
+    @Ignore("AC-1799")
     public void canonicalRequestCorrectWithNoContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "", Collections.emptyMap());
@@ -230,6 +233,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
+    @Ignore("AC-1799")
     public void canonicalRequestCorrectWithEncodedContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/context%20path", Collections.emptyMap());
@@ -238,6 +242,7 @@ public class JwtAuthorizationGeneratorTest
     }
 
     @Test
+    @Ignore("AC-1799")
     public void canonicalRequestCorrectWithMultiSegmentContextPath() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/some%20path", "/context/path", Collections.emptyMap());

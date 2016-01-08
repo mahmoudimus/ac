@@ -1,15 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.TimeUtil;
@@ -29,6 +19,16 @@ import org.apache.http.message.ParserCursor;
 import org.apache.http.util.CharArrayBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -118,7 +118,7 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
 
     private static String extractRelativePath(URI targetUri, URI addonBaseUri)
     {
-        String path = targetUri.getRawPath();
+        String path = targetUri.getPath();
         final String targetString = targetUri.toString();
         final String baseString = addonBaseUri.toString();
 
@@ -126,7 +126,7 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
         {
             if (targetString.startsWith(baseString))
             {
-                path = URI.create(StringUtils.removeStart(targetString, baseString)).getRawPath();
+                path = URI.create(StringUtils.removeStart(targetString, baseString)).getPath();
             }
             else
             {
