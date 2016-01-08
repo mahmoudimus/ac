@@ -35,6 +35,9 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  *&lt;h2&gt;&lt;ac:structured-macro ac:macro-id=&quot;b85c8297-ad77-410e-a747-560315a5c40e&quot; ac:name=&quot;cheese&quot; ac:schema-version=&quot;1&quot; /&gt;&lt;/h2&gt;
  * </code></pre>
  *
+ * A message will be shown on the content create dialog when Confluence having problem access to the blueprint template or context resource.
+ * Detailed error log and stacktrace can be found in the server log.
+ * <img src="/assets/images/confluence-blueprint-context-error.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
  */
 public class BlueprintTemplateContextBean
 {
