@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.context;
 import java.util.Map;
 import java.util.Optional;
 
-import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
+import com.atlassian.plugin.connect.spi.web.context.DynamicUriVariableResolver;
 import org.springframework.stereotype.Component;
 
 /**

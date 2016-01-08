@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.api.web;
+package com.atlassian.plugin.connect.spi.web.context;
 
 import java.util.Map;
 import java.util.Optional;

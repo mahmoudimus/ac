@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
+import com.atlassian.plugin.connect.spi.web.context.DynamicUriVariableResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
