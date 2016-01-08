@@ -46,10 +46,10 @@ public class CreateContentDialog extends CreateDialog
         return getEditContentPage();
     }
 
-    public PageElement getErrorLabel()
+    public PageElement getErrorMessage()
     {
-        By locator = By.cssSelector(".create-dialog-error-label");
-        return getDialog().find(locator);
+        By locator = By.cssSelector(".aui-flag .aui-message");
+        return this.pageElementFinder.find(locator);
     }
 
     public PageElement getCreateButton()

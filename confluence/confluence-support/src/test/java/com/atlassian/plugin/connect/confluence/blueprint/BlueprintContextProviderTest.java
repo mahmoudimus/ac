@@ -14,6 +14,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -55,6 +56,7 @@ public class BlueprintContextProviderTest
     @Mock private UserManager userManager;
     @Mock private RemotablePluginAccessor mockAccessor;
     @Mock private LocaleResolver localeResolver;
+    @Mock private I18nResolver i18nResolver;
 
     @Mock private Promise<String> mockPromise;
     @Mock private BlueprintContext mockContextObj;
@@ -64,7 +66,7 @@ public class BlueprintContextProviderTest
     @Before
     public void setUp() throws Exception
     {
-        blueprintContextProvider = new BlueprintContextProvider(accessorFactory, converter, userManager, localeResolver, eventPublisher);
+        blueprintContextProvider = new BlueprintContextProvider(accessorFactory, converter, userManager, localeResolver, eventPublisher, i18nResolver);
         when(localeResolver.getLocale(any(UserKey.class))).thenReturn(Locale.ENGLISH);
         when(converter.convert(any(), any())).thenAnswer(a -> a.getArguments()[0]);
         when(accessorFactory.getOrThrow("remote-addon-key")).thenReturn(mockAccessor);

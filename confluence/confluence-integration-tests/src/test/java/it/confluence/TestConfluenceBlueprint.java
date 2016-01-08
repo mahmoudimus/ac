@@ -77,11 +77,11 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
             String errorText = product.getPageBinder()
                     .bind(CreateContentDialog.class)
                     .clickBlueprintItem(helper.getCompleteKey())
-                    .getErrorLabel()
+                    .getErrorMessage()
                     .getText();
 
             assertThat("contains error message", errorText, notNullValue());
-            assertThat("contains detailed message", errorText.toLowerCase(), containsString("error while retrieving"));
+            assertThat("contains detailed message", errorText.toLowerCase(), containsString("a problem with"));
         });
     }
 
@@ -94,11 +94,11 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
             String errorText = product.getPageBinder()
                     .bind(CreateContentDialog.class)
                     .clickBlueprintItem(helper.getCompleteKey())
-                    .getErrorLabel()
+                    .getErrorMessage()
                     .getText();
 
             assertThat("contains error message", errorText, notNullValue());
-            assertThat("contains detailed message", errorText.toLowerCase(), containsString("json syntax error"));
+            assertThat("contains detailed message", errorText.toLowerCase(), containsString("problem parsing response"));
         });
     }
 }

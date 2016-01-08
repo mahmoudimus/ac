@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -26,6 +25,7 @@ import com.atlassian.plugin.connect.confluence.blueprint.event.BlueprintContextR
 import com.atlassian.plugin.connect.confluence.blueprint.event.BlueprintContextResponseParseSuccessEvent;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -60,14 +60,16 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     private static final Gson gson = new Gson();
     private static final Type responseType = new BlueprintContextResponseTypeToken().getType();
 
-    /* timeout in seconds for remote requests to get context values. Should be same value as set in ConnectHttpClientFactory*/
+    // timeout in seconds for remote requests to get context values. Should be same value as set in ConnectHttpClientFactory
     private static final long MAX_TIMEOUT = 10L;
-    /*the name of the param holding the context url*/
+    // the name of the param holding the context url
     static final String CONTEXT_URL_KEY = "context-url";
-    /*the name of the param holding the key of the addon that created this module*/
+    // the name of the param holding the key of the addon that created this module
     static final String REMOTE_ADDON_KEY = "addon-key";
-    /*the name of the param holding the key of the content template for this context provider*/
+    // the name of the param holding the key of the content template for this context provider
     static final String CONTENT_TEMPLATE_KEY = "content-template-key";
+    // readable name of blueprint
+    static final String BLUEPRINT_NAME = "name";
 
     private final RemotablePluginAccessorFactory accessorFactory;
     private final ContentBodyConversionService converter;
@@ -79,19 +81,22 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     private String addonKey;
     private String blueprintKey;
     private RemotablePluginAccessor pluginAccessor;
+    private I18nResolver i18nResolver;
 
     @Autowired
     public BlueprintContextProvider(RemotablePluginAccessorFactory httpAccessor,
                                     ContentBodyConversionService converter,
                                     UserManager userManager,
                                     LocaleResolver localeResolver,
-                                    EventPublisher eventPublisher)
+                                    EventPublisher eventPublisher,
+                                    I18nResolver i18nResolver)
     {
         accessorFactory = httpAccessor;
         this.converter = converter;
         this.userManager = userManager;
         this.localeResolver = localeResolver;
         this.eventPublisher = eventPublisher;
+        this.i18nResolver = i18nResolver;
     }
 
     @Override
@@ -130,17 +135,19 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
                                                               emptyMap(),
                                                               ImmutableMap.of(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()),
                                                               toInputStream(buildBody(blueprintContext)));
-        String json = retrieveResponse(promise);
-        List<BlueprintContextValue> contextMap = readJsonResponse(json);
+        String json = retrieveResponse(promise, blueprintContext);
+        List<BlueprintContextValue> contextMap = readJsonResponse(json, blueprintContext);
         contextMap.forEach(v -> blueprintContext.put(v.getIdentifier(), transformValue(v)));
         return blueprintContext;
     }
 
-    private List<BlueprintContextValue> readJsonResponse(String json)
+    private List<BlueprintContextValue> readJsonResponse(String json, BlueprintContext blueprintContext)
     {
         log.debug("start parsing response json into " + responseType.getTypeName());
         long start =  System.currentTimeMillis();
         List<BlueprintContextValue> contextMap = emptyList();
+        String blueprintName = (String) blueprintContext.get(BLUEPRINT_NAME);
+
         try
         {
 
@@ -159,7 +166,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
                 log.info("Turn on debug for " + log.getName() + " to see the full stacktrace.");
             }
             eventPublisher.publish(new BlueprintContextResponseParseFailureEvent(addonKey, blueprintKey, contextUrl));
-            throw new RuntimeException("Blueprint context JSON syntax error", e);
+            throw new RuntimeException(i18nResolver.getText("create.content.plugin.plugin.templates.error-message.parse-error", blueprintName), e);
         }
 
         long timeTaken = System.currentTimeMillis() - start;
@@ -172,11 +179,12 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         return contextMap;
     }
 
-    private String retrieveResponse(Promise<String> promise)
+    private String retrieveResponse(Promise<String> promise, BlueprintContext blueprintContext)
     {
         log.debug("start retrieving response");
         long start = System.currentTimeMillis();
         String json = "{}";
+        String blueprintName = (String) blueprintContext.get(BLUEPRINT_NAME);
 
         try
         {
@@ -197,11 +205,11 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
 
             if (e instanceof TimeoutException)
             {
-                throw new RuntimeException("Timeout while retrieving blueprint context", e);
+                throw new RuntimeException(i18nResolver.getText("create.content.plugin.plugin.templates.error-message.timeout", blueprintName), e);
             }
             else
             {
-                throw new RuntimeException("Error while retrieving blueprint context", e);
+                throw new RuntimeException(i18nResolver.getText("create.content.plugin.plugin.templates.error-message.generic", blueprintName), e);
             }
         }
 
