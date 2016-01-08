@@ -1,19 +1,26 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
-import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
-import org.hamcrest.MatcherAssert;
-import org.junit.Test;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import com.atlassian.plugin.connect.api.web.DynamicUriVariableResolver;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
+import com.google.common.collect.ImmutableList;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class TestUrlVariableSubstitutor
 {
+    private static final UrlVariableSubstitutor SUBSTITUTOR = new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), Collections.<DynamicUriVariableResolver>emptyList());
+    private static final Map<String, Object> CONTEXT = createContext();
+
     @Test
     public void testSubstitutionInSimpleCase()
     {
@@ -79,14 +86,28 @@ public class TestUrlVariableSubstitutor
         MatcherAssert.assertThat(SUBSTITUTOR.getContextVariableMap("http://server:80/path?my_page_id={page.id}&thing={stuff}"), is(expected));
     }
 
-    private static final UrlVariableSubstitutor SUBSTITUTOR = new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), Collections.<DynamicUriVariableResolver>emptyList());
-    private static final Map<String, Object> CONTEXT = createContext();
+    @Test
+    public void testDynamicSubstitution()
+    {
+        DynamicUriVariableResolver resolver1 = (addOnKey, variable, context) ->
+                variable.contains("addOn.key") ?
+                        Optional.of(variable.replace("addOn.key", addOnKey)) :
+                        Optional.<String>empty();
+
+        DynamicUriVariableResolver resolver2 = (addOnKey, variable, context) ->
+                variable.contains("context.size") ?
+                        Optional.of(variable.replace("context.size", context.size() + "")) :
+                        Optional.<String>empty();
+
+        UrlVariableSubstitutor substitutor = new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), ImmutableList.of(resolver1, resolver2));
+
+        assertThat(substitutor.replace("myKey", "http://server:3000/some/path?page_id={page.id}&nonExistingVar={aVar}&key={addOn.key}&contextSize={context.size}", createContext()),
+                equalTo("http://server:3000/some/path?page_id=1234&nonExistingVar=&key=myKey&contextSize=5"));
+    }
 
     private static Map<String, Object> createContext()
     {
-        Map<String, Object> pageContext = new HashMap<String, Object>();
-        pageContext.put("id", 1234);
-        Map<String, Object> context = new HashMap<String, Object>();
+        Map<String, Object> context = new HashMap<>();
         context.put("page", Collections.singletonMap("id", 1234));
         context.put("foo", "bah");
         context.put("uh_oh", null);
