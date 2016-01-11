@@ -4,9 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.web.condition.ConnectCondition;
-import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionContext;
-import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.connect.api.web.condition.AbstractConnectCondition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
@@ -17,15 +15,13 @@ import org.codehaus.jackson.JsonNode;
 
 import static com.atlassian.plugin.connect.plugin.property.JsonCommon.parseStringToJson;
 
-@ConnectCondition
-public class AddonEntityPropertyEqualToCondition implements Condition
+public class AddonEntityPropertyEqualToCondition extends AbstractConnectCondition
 {
     private final AddonPropertyService addonPropertyService;
     private final UserManager userManager;
 
     private String propertyKey;
     private String propertyValue;
-    private String addonKey;
 
     public AddonEntityPropertyEqualToCondition(final AddonPropertyService addonPropertyService, final UserManager userManager)
     {
@@ -36,14 +32,10 @@ public class AddonEntityPropertyEqualToCondition implements Condition
     @Override
     public void init(final Map<String, String> params) throws PluginParseException
     {
+        super.init(params);
+
         this.propertyKey = Strings.nullToEmpty(params.get("propertyKey"));
         this.propertyValue = Strings.nullToEmpty(params.get("value"));
-        Optional<String> maybeAddonKey = ConnectConditionContext.from(params).getAddonKey();
-        if (!maybeAddonKey.isPresent())
-        {
-            throw new IllegalStateException("Condition should have been invoked in the Atlassian Connect context, but apparently it was not, add-on key is missing");
-        }
-        this.addonKey = maybeAddonKey.get();
     }
 
     @Override
