@@ -37,7 +37,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  *
  * A message will be shown on the content create dialog when Confluence having problem access to the blueprint template or context resource.
  * Detailed error log and stacktrace can be found in the server log.
- * <img src="/assets/images/confluence-blueprint-context-error.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+ * <img src="/assets/images/confluence-blueprint-context-error.png" width="80%" style="border:1px solid #999;margin-top:10px;">
  */
 public class BlueprintTemplateContextBean
 {
