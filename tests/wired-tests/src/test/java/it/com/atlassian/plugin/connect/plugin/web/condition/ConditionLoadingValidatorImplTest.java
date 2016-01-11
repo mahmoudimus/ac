@@ -75,7 +75,7 @@ public class ConditionLoadingValidatorImplTest
     }
 
     /*
-     * @see com.atlassian.plugin.connect.plugin.web.condition.ConnectCondition
+     * @see com.atlassian.plugin.connect.api.web.condition.ConnectCondition
      */
     @Test
     public void shouldAcceptValidAnnotatedConditionWithSpecialParameters() throws ConnectModuleValidationException
