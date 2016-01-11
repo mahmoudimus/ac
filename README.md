@@ -54,25 +54,25 @@ Contributions are encouraged!
 
 * `bin` - utility scripts
 * `components` - the shared components of the plugin
-	* `api` - a draft application programming interface for the plugin
-	* `core` - the core cross-product implementation
-	* `core-extensions` - cross-product extensions for web fragments, webhooks etc.
-    * [`extension-spi`](components/extension-spi) - a draft service provider interface containing components that the 
+    * `api` - a draft application programming interface for the plugin
+    * `core` - the core cross-product implementation
+    * `core-extensions` - cross-product extensions for web fragments, webhooks etc.
+    * [`extension-spi`](components/extension-spi) - a draft service provider interface defining components that the
     host application or plugin can provide in order to extend Connect
-    * `host-spi` - a draft service provider interface containing components that a host application needs to provide in 
+    * `host-spi` - a draft service provider interface defining components that a host application needs to provide in
     order to support Connect
     * `modules` - bean representations of add-on JSON descriptor elements
-	* `reference-plugin` - a cross-product reference implementation of some SPI interfaces
+    * `reference-plugin` - a cross-product reference implementation of some SPI interfaces
 * `confluence` - the parent of all Confluence-specific modules
     * `confluence-integration-tests` - Confluence-specific integration tests for the plugin
-	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
-	* `confluence-support` - support for Atlassian Connect in Confluence
+    * `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
+    * `confluence-support` - support for Atlassian Connect in Confluence
 * `crowd-support` - support for Atlassian Connect in products that use Atlassian Crowd
 * [`docs`](docs) - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
 * `jira` - the parent of all JIRA-specific modules
-	* `jira-integration-tests` - JIRA-specific integration tests for the plugin
-	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
-	* `jira-support` - support for Atlassian Connect in JIRA
+    * `jira-integration-tests` - JIRA-specific integration tests for the plugin
+    * `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
+    * `jira-support` - support for Atlassian Connect in JIRA
 * [`jsapi`](jsapi) - builds the JavaScript API based on [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js)
 * `plugin` - groups the other modules into a plugin
 * `tests` - the parent of all non-product-specific test modules
@@ -105,6 +105,26 @@ e.g. the `jsapi` module which invokes a time-consuming Node.js build.
 Conversely, once the project has been built, it can be rebuilt with changes only from specific modules:
 
     mvn -pl jsapi,plugin clean install
+
+### Extending the platform
+
+Most functionality in Atlassian Connect is provided through the service provider interface for extensions.
+
+See the README in the [`extension-spi`](components/extension-spi) for more details.
+
+### Working with the JavaScript API
+
+This repository contains extensions to the cross-product functionality provided by [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js).
+
+See the README in the [`jsapi`](jsapi) directory for more details.
+
+### Updating developer documentation
+
+To generate [the developer documentation](https://connect.atlassian.com):
+
+    mvn clean install site
+
+See the README in the [`docs`](docs) directory for more details.
 
 ### Running tests
 
@@ -149,14 +169,6 @@ To run Confluence integration tests:
 To run add-on descriptor validation tests:
 
     mvn -pl tests/descriptor-validation-tests verify -PdescriptorValidation -DskipTests -DskipITs=false
-
-### Updating developer documentation
-
-To generate [the developer documentation](https://connect.atlassian.com):
-
-    mvn clean install site
-
-Also see the README in the [`docs`](docs) directory.
 
 ## License
 
