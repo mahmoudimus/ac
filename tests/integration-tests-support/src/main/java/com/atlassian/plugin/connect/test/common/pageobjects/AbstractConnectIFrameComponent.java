@@ -44,6 +44,12 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
     @Init
     public void init()
     {
+        setIFrameAndSrc();
+        waitUntilTrue(iframe.timed().isPresent());
+    }
+
+    private void setIFrameAndSrc()
+    {
         try
         {
             setIFrameAndSrcUnsafe();
@@ -55,8 +61,6 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
             // the re-creation but ask for its attributes after the re-creation
             setIFrameAndSrcUnsafe();
         }
-
-        waitUntilTrue(iframe.timed().isPresent());
     }
 
     private void setIFrameAndSrcUnsafe()
@@ -66,7 +70,10 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
         {
             iframe = elementFinder.find(By.id(getFrameId()));
         }
-        iframeSrc = iframe.getAttribute("src");
+        if (iframeSrc == null)
+        {
+            iframeSrc = iframe.getAttribute("src");
+        }
     }
 
     /**
@@ -145,6 +152,8 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
      */
     protected <T> T withinIFrame(Function<WebDriver, T> iFrameConsumer)
     {
+        setIFrameAndSrc();
+
         try
         {
             WebDriver frameDriver = driver.switchTo().frame(iframe.getAttribute("id"));
