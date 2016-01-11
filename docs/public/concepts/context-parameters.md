@@ -88,6 +88,16 @@ Example:
 }]
 ```
 
+Project permissions require a project (or issue, as each issue belongs to a project) context. 
+If the context is invalid for a project permission or a permission (project or global) with the given key does not exist
+then the variable will evaluate to an empty string.
+
+Hence the permission variable may evaluate to:
+
+* `true` – the user has the permission
+* `false` – the user does not have the permission
+* `""` – the permission key is invalid or it's not a project context (for project permissions)
+
 ## <a name="additional-parameters-confluence"></a>Confluence
 
 Confluence supports these context variables.

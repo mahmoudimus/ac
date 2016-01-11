@@ -72,6 +72,7 @@ public class PermissionContextVariableResolverTest
         assertThat(resolver.resolve("differentAddOn", "globalPermission.addOnKey__addOnPermission", emptyMap()), equalTo(Optional.of("true")));
 
         assertThat(resolver.resolve("", "globalPermission.unknownPermission", emptyMap()), equalTo(Optional.empty()));
+        assertThat(resolver.resolve("differentAddOn", "globalPermission.addOnPermission", emptyMap()), equalTo(Optional.empty()));
     }
 
     @Test
