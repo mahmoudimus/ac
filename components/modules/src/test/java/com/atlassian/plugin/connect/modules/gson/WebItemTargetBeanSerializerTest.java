@@ -24,6 +24,7 @@ public class WebItemTargetBeanSerializerTest
         final WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.dialog)
                 .withOptions(DialogOptions.newDialogOptions()
+                                .withSize("small")
                                 .withHeight("100px")
                                 .withWidth("200%")
                                 .build()

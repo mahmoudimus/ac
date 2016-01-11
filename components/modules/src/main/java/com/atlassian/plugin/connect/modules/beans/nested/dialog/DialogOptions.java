@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested.dialog;
 
 import com.atlassian.json.schema.annotation.SchemaDefinition;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -19,6 +18,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class DialogOptions extends BaseDialogOptions implements WebItemTargetOptions
 {
     /**
+     * Sets the size of the dialog. Available options are small, medium, large, x-large or fullscreen.
+     *
+     * <p>
+     *     This option is used instead of the 'height' and 'width' options.
+     * </p>
+     */
+    private String size;
+
+    /**
      * Sets how high the dialog is in pixels
      */
     private String height;
@@ -28,9 +36,10 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
      */
     private Boolean chrome;
 
-    public DialogOptions(String width, String height, Boolean chrome)
+    public DialogOptions(String size, String width, String height, Boolean chrome)
     {
         super(width);
+        this.size = size;
         this.height = height;
         this.chrome = chrome;
     }
@@ -43,6 +52,11 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
     public DialogOptions(DialogOptionsBuilder dialogOptionsBuilder)
     {
         super(dialogOptionsBuilder);
+    }
+
+    public String getSize()
+    {
+        return size;
     }
 
     public String getHeight()
@@ -82,6 +96,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
 
         return new EqualsBuilder()
                 .appendSuper(super.equals(other))
+                .append(size, other.size)
                 .append(height, other.height)
                 .append(chrome, other.chrome)
                 .isEquals();
@@ -92,6 +107,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
     {
         return new HashCodeBuilder(123, 99)
                 .appendSuper(super.hashCode())
+                .append(size)
                 .append(height)
                 .append(chrome)
                 .build();
