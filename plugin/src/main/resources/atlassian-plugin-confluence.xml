@@ -64,7 +64,7 @@
     <web-resource key="ap-core">
         <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
         <dependency>confluence.web.resources:almond</dependency>
-        <dependency>confluence.web.resources:navigation-targets</dependency>
+        <dependency>confluence.web.resources:navigator-context</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
