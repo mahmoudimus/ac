@@ -25,6 +25,16 @@ public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
 
     private static final String DIALOG_CONTAINER_CLASS = "ap-dialog-container";
 
+    public RemoteDialog()
+    {
+        super();
+    }
+
+    public RemoteDialog(PageElement iframe)
+    {
+        super(iframe);
+    }
+
     @Override
     protected String getContainerCssClassName()
     {
