@@ -245,11 +245,11 @@
                                 <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>com.atlassian.labs.plugins</groupId>-->
-                                    <!--<artifactId>quickreload</artifactId>-->
-                                    <!--<version>${quickreload.version}</version>-->
-                                <!--</pluginArtifact>-->
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
@@ -326,15 +326,13 @@
                             <log4jProperties>src/test/resources/log4j-confluence.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>confluence</product>
-                                <atlassian.darkfeature.confluence.onboarding.bypass>true</atlassian.darkfeature.confluence.onboarding.bypass>
-                                <atlassian.darkfeature.dashboard.onboarding.disabled>true</atlassian.darkfeature.dashboard.onboarding.disabled>
                             </systemPropertyVariables>
                             <pluginArtifacts>
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>com.atlassian.labs.plugins</groupId>-->
-                                    <!--<artifactId>quickreload</artifactId>-->
-                                    <!--<version>${quickreload.version}</version>-->
-                                <!--</pluginArtifact>-->
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
@@ -396,6 +394,7 @@
                             </bundledArtifacts>
                         </product>
                     </products>
+                    <enableFastdev>false</enableFastdev>
                     <testGroups>
                         <testGroup>
                             <id>confluence</id>
