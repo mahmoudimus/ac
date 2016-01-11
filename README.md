@@ -7,6 +7,8 @@ Atlassian application, or even a new product that runs within the Atlassian appl
 This repository contains `atlassian-connect-plugin`, the implementation of Atlassian Connect for a subset of the
 products based on [`atlassian-plugins`](https://bitbucket.org/atlassian/atlassian-plugins): JIRA and Confluence.
 
+**NOTE:** Atlassian developers, see the [internal developer's guide](https://extranet.atlassian.com/display/ECO/Atlassian+Connect+-+Internal+Developer%27s+Guide) for more details.
+
 ## Dependencies
 
 * JDK 8
@@ -43,12 +45,11 @@ Contributions are encouraged!
     * [AC](https://ecosystem.atlassian.net/browse/AC) (Atlassian Connect)
     * [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) (JIRA Ecosystem)
     * [CE](https://ecosystem.atlassian.net/browse/CE) (Confluence Ecosystem)
-2. If you are an Atlassian developer, follow the [internal developer's guide](https://extranet.atlassian.com/display/ECO/Atlassian+Connect+-+Internal+Developer%27s+Guide)
-3. Create your feature branch, e.g. `feature/AC-1-create-project`
+2. Create your feature branch, e.g. `feature/AC-1-create-project`
     * The prefix `feature/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
     * Include your issue key and a short description
-4. Push your changes, prefixing each commit message with the issue key
-5. Create a pull request against this repository
+3. Push your changes, prefixing each commit message with the issue key
+4. Create a pull request against this repository
 
 ### Repository structure
 
