@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.web.condition.ConnectConditionContext;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
