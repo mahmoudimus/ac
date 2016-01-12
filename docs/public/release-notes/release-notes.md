@@ -33,6 +33,11 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.68](./1-1-0.html#1.1.68)
+ * Add new `addon_is_licensed` condition [AC-1641](https://ecosystem.atlassian.net/browse/AC-1641)
+ * Allow multiple dialogs to be open at the same time [ACJS-91](https://ecosystem.atlassian.net/browse/ACJS-91)
+ * JIRA: Added in the `board.type` and `board.state` context parameters and deprecated the `board.mode` parameter in favour of `board.screen`. [ACJIRA-593](https://ecosystem.atlassian.net/browse/ACJIRA-593)
+
 ## [1.1.67](./1-1-0.html#1.1.67)
  * JIRA: Whitelist REST APIs for JIRA Service Desk [AC-1774](https://ecosystem.atlassian.net/browse/AC-1774)
  * JIRA: Whitelist REST APIs for JIRA Agile [ACJIRA-709](https://ecosystem.atlassian.net/browse/ACJIRA-709)
