@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "dashboardItemProperties"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "dashboardItemProperties", "worklog"],
       "pathKeys": ["download attachments", "project avatars", "user avatars", "avatars", "thumbnails"],
       "methods": ["GET"]
     },
@@ -281,6 +281,13 @@
       "key" : "role",
       "name" : "api",
       "basePaths": ["/role($|/.*)"],
+      "versions": ["2", "latest"],
+      "public": true
+    },
+    {
+      "key" : "worklog",
+      "name" : "api",
+      "basePaths": ["/worklog($|/.*)"],
       "versions": ["2", "latest"],
       "public": true
     }
