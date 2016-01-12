@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.web.condition;
+package com.atlassian.plugin.connect.api.web.condition;
 
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import static java.util.Optional.ofNullable;
 /**
  * Wrapper over context parameters which gives access to Connect-related context parameters.
  *
- * @see com.atlassian.plugin.connect.plugin.web.condition.ConnectCondition
+ * @see ConnectCondition
  */
 public class ConnectConditionContext
 {
