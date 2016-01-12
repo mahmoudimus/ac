@@ -3,6 +3,8 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
 
     var confluenceMacroEditor, _AP;
 
+    var dialogSpy;
+
     module("Confluence Macro Editor", {
         beforeEach: function(assert) {
 
@@ -23,8 +25,17 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
             };
             this.server = sinon.fakeServer.create();
 
-            AJS.dialog2 = sinon.stub().returns(this.dialogSpy);
-
+            AJS.dialog2 = function($el) {
+                dialogSpy = {
+                    show: sinon.spy(),
+                    on: sinon.spy(),
+                    remove: sinon.spy(),
+                    hide: sinon.spy(),
+                    $el: $el
+                };
+                return dialogSpy;
+            };
+            
             AJS.Rte = {
                 getEditor: function() {
                     return {
@@ -86,15 +97,19 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
             tinymce = null;
             MacroData = null;
             MacroEditorOpts = null;
-            this.dialogSpy = null;
+            dialogSpy = null;
             AJS.layer = null;
             AJS.dialog2 = null;
         }
     });
 
+    function dialogElement() {
+        return dialogSpy.$el;
+    }
+    
     test("Dialog is shown when openCustomEditor is called", function () {
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        ok(this.dialogSpy.show.calledOnce, 'Dialog show was called');
+        ok(dialogSpy.show.calledOnce, 'Dialog show was called');
     });
 
     test("Dialog width is set", function () {
@@ -113,7 +128,7 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
     test("Dialog header is set", function () {
         MacroEditorOpts.insertTitle = 'insert title';
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(AJS.dialog2.args[0][0].find('h1').text(), MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
+        equal(dialogElement().find('h1').text(), MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
     });
 
     test("dialog header uses edit title when editing", function () {
@@ -124,7 +139,7 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
             foo: 'bar'
         };
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(AJS.dialog2.args[0][0].find('h1').text(), MacroEditorOpts.editTitle, 'dialog header is set to "edit title"');
+        equal(dialogElement().find('h1').text(), MacroEditorOpts.editTitle, 'dialog header is set to "edit title"');
     });
 
     test("dialog header uses insert title when inserting", function () {
@@ -132,7 +147,7 @@ define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
         MacroEditorOpts.editTitle = 'edit title';
         MacroEditorOpts.url = '/servlet/atlassian-connect/modulekey/pluginkey/?foo';
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(AJS.dialog2.args[0][0].find('h1').text(), MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
+        equal(dialogElement().find('h1').text(), MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
     });
 
     test("dialog url contains parameters", function () {

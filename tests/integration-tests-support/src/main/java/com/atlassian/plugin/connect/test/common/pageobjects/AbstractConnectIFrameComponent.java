@@ -32,8 +32,23 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
 
     protected abstract String getFrameId();
 
+    protected AbstractConnectIFrameComponent()
+    {
+    }
+
+    protected AbstractConnectIFrameComponent(PageElement iframe)
+    {
+        this.iframe = iframe;
+    }
+
     @Init
     public void init()
+    {
+        setIFrameAndSrc();
+        waitUntilTrue(iframe.timed().isPresent());
+    }
+
+    private void setIFrameAndSrc()
     {
         try
         {
@@ -46,14 +61,19 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
             // the re-creation but ask for its attributes after the re-creation
             setIFrameAndSrcUnsafe();
         }
-
-        waitUntilTrue(iframe.timed().isPresent());
     }
 
     private void setIFrameAndSrcUnsafe()
     {
-        iframe = elementFinder.find(By.id(getFrameId()));
-        iframeSrc = iframe.getAttribute("src");
+        // A constructor variant allows the iframe element to be passed in, in which case we don't need to find it again.
+        if (iframe == null)
+        {
+            iframe = elementFinder.find(By.id(getFrameId()));
+        }
+        if (iframeSrc == null)
+        {
+            iframeSrc = iframe.getAttribute("src");
+        }
     }
 
     /**
@@ -132,9 +152,11 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
      */
     protected <T> T withinIFrame(Function<WebDriver, T> iFrameConsumer)
     {
+        setIFrameAndSrc();
+
         try
         {
-            WebDriver frameDriver = driver.switchTo().frame(getFrameId());
+            WebDriver frameDriver = driver.switchTo().frame(iframe.getAttribute("id"));
             return iFrameConsumer.apply(frameDriver);
         }
         finally
