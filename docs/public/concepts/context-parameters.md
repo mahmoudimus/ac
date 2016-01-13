@@ -6,8 +6,8 @@ Context parameters are additional values pairs that are sent to your add-on in t
 
 * [Standard parameters](#standard-parameters)
 * [Additional parameters](#additional-parameters)
-  * [JIRA](#jira)
-  * [Confluence](#confluence)
+  * [JIRA](#additional-parameters-jira)
+  * [Confluence](#additional-parameters-confluence)
 
 ## <a name="standard-parameters"></a>Standard parameters
 
@@ -62,13 +62,18 @@ JIRA supports these context variables.
  * `component.id`
  * `profileUser.name`, `profileUser.key` (available for user profile pages)
  * `dashboardItem.id`, `dashboardItem.key`, `dashboardItem.viewType`, `dashboard.id` (available for dashboard items)
+
 JIRA issue pages only expose issue and project data. Similarly, version and component information is available only in
 project administration pages.
 
-Furthermore JIRA Agile supports these context variables.
- * `board.id`
- * `board.mode` (available for plugin points that are displayed on different board screens)
- * `sprint.id`
+#### <a name="additional-parameters-jira-software"></a>JIRA Software
+
+JIRA Software supports these context variables.
+
+ * `board.id`, `board.type`, 
+ `board.screen` (available for plugin points that are displayed in multiple board screens),
+ `board.mode` <span class="aui-lozenge">DEPRECATED</span> in favor of `board.screen` 
+ * `sprint.id`, `sprint.state` 
 
 ## <a name="additional-parameters-confluence"></a>Confluence
 
