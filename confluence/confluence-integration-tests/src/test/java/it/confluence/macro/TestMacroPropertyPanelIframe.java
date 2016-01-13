@@ -181,9 +181,14 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(pageContent.getId().asLong()));
 
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
-        editor.openPropertyPanel(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
+        final MacroPropertyPanelWithIframe propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
 
         RemotePluginDialog dialog = connectPageOperations.findDialog(addonKey + "__" + DIALOG_KEY);
+
+        final long propertyPanelZIndex = propertyPanel.getZIndex();
+        final long auiBlanketZIndex = dialog.getAuiBlanketZIndex();
+
+        assertThat("The property panel is below the aui blanket", propertyPanelZIndex < auiBlanketZIndex);
 
         dialog.submitAndWaitUntilHidden();
 

@@ -13,4 +13,8 @@ public class MacroPropertyPanelWithIframe extends MacroPropertyPanel
 
         return iframe.isPresent();
     }
+
+    public long getZIndex() {
+        return (Long) propertyPanelElement.javascript().execute("return Number(window.document.defaultView.getComputedStyle(arguments[0]).getPropertyValue('z-index'));");
+    }
 }
