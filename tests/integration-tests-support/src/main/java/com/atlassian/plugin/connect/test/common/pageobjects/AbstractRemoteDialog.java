@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.common.pageobjects;
 
 import javax.inject.Inject;
 
+import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.webdriver.utils.element.ElementConditions;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 
@@ -14,6 +15,16 @@ public abstract class AbstractRemoteDialog<C extends AbstractRemoteDialog> exten
 
     @Inject
     protected WebDriverPoller poller;
+
+    protected AbstractRemoteDialog()
+    {
+        super();
+    }
+
+    protected AbstractRemoteDialog(PageElement iframe)
+    {
+        super(iframe);
+    }
 
     protected String getFrameId()
     {

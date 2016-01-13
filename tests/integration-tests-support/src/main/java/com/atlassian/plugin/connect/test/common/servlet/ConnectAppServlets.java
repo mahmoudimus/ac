@@ -18,7 +18,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet amdTestServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("amd-test.mu"));
+        return mustacheServlet("amd-test.mu");
     }
 
     /**
@@ -29,7 +29,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet apRequestServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-ap-request.mu"));
+        return mustacheServlet("iframe-ap-request.mu");
     }
 
     /**
@@ -39,7 +39,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet helloWorldServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-hello-world.mu", HttpMethod.GET, HttpMethod.POST));
+        return mustacheServlet("iframe-hello-world.mu", HttpMethod.GET, HttpMethod.POST);
     }
 
     /**
@@ -47,7 +47,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet sizeToParentServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-size-to-parent.mu"));
+        return mustacheServlet("iframe-size-to-parent.mu");
     }
 
     /**
@@ -55,7 +55,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet noResizeServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-no-resize.mu"));
+        return mustacheServlet("iframe-no-resize.mu");
     }
 
     /**
@@ -63,7 +63,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet historyServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-history.mu"));
+        return mustacheServlet("iframe-history.mu");
     }
 
     /**
@@ -129,7 +129,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet closeDialogServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-close-dialog.mu"));
+        return mustacheServlet("iframe-close-dialog.mu");
     }
 
     /**
@@ -137,7 +137,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet openMessageServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-open-message.mu"));
+        return mustacheServlet("iframe-open-message.mu");
     }
 
     /**
@@ -145,7 +145,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet cookieServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-cookie.mu"));
+        return mustacheServlet("iframe-cookie.mu");
     }
 
     public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
@@ -171,6 +171,11 @@ public class ConnectAppServlets
     public static HttpServlet resourceServlet(String resourcePath, String contentType)
     {
         return wrapContextAwareServlet(new ResourceServlet(resourcePath, contentType));
+    }
+
+    public static HttpServlet mustacheServlet(String templatePath, HttpMethod ... methods)
+    {
+        return wrapContextAwareServlet(new MustacheServlet(templatePath, methods));
     }
 
     public static InstallHandlerServlet installHandlerServlet()
