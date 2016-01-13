@@ -221,7 +221,6 @@
                 </executions>
                 <configuration>
                     <containerId>tomcat7x</containerId>
-                    <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
 
                     <!-- taken from https://bitbucket.org/atlassianlabs/quickreload -->

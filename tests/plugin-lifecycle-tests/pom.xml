@@ -102,7 +102,6 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <containerId>tomcat7x</containerId>
-                    <enableFastdev>false</enableFastdev>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
 
