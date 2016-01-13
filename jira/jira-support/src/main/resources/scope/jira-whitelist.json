@@ -8,7 +8,7 @@
     },
     {
       "key": "READ",
-      "restPathKeys": ["search"],
+      "restPathKeys": ["search", "worklog-list"],
       "methods": ["POST"]
     },
     {
@@ -281,6 +281,13 @@
       "key" : "role",
       "name" : "api",
       "basePaths": ["/role($|/.*)"],
+      "versions": ["2", "latest"],
+      "public": true
+    },
+    {
+      "key" : "worklog-list",
+      "name" : "api",
+      "basePaths": ["/worklog/list"],
       "versions": ["2", "latest"],
       "public": true
     },
