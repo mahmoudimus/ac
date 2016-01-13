@@ -17,6 +17,7 @@ public class MustacheServlet extends ContextServlet
 {
     private final String templatePath;
     private final Set<HttpMethod> methods;
+    private String responseContentType;
 
     public MustacheServlet(String templatePath, HttpMethod ... methods)
     {
@@ -52,6 +53,14 @@ public class MustacheServlet extends ContextServlet
 
     private void renderTemplate(HttpServletResponse resp, Map<String, Object> context) throws IOException
     {
-        HttpUtils.renderHtml(resp, templatePath, ImmutableMap.copyOf(context));
+        if (responseContentType == null) {
+            HttpUtils.renderHtml(resp, templatePath, ImmutableMap.copyOf(context));
+        } else {
+            HttpUtils.renderWithContentType(resp, responseContentType, templatePath, ImmutableMap.copyOf(context));
+        }
+    }
+
+    public void setResponseContentType(String responseContentType) {
+        this.responseContentType = responseContentType;
     }
 }

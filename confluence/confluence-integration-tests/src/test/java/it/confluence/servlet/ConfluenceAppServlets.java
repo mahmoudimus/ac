@@ -44,7 +44,9 @@ public class ConfluenceAppServlets
 
     public static HttpServlet blueprintTemplateServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("it/confluence/blueprint/blueprint.mu"));
+        MustacheServlet mustacheServlet = new MustacheServlet("it/confluence/blueprint/blueprint.mu");
+        mustacheServlet.setResponseContentType("application/xml");
+        return wrapContextAwareServlet(mustacheServlet);
     }
 
     /**
