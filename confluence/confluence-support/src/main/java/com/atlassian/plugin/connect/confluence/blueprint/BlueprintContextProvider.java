@@ -183,7 +183,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     {
         log.debug("start retrieving response");
         long start = System.currentTimeMillis();
-        String json = "{}";
+        String json;
         String blueprintName = (String) blueprintContext.get(BLUEPRINT_NAME);
 
         try
