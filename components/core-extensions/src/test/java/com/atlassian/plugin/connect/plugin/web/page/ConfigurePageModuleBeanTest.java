@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyVal
 
 import com.google.gson.Gson;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
@@ -20,8 +21,15 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class ConfigurePageModuleBeanTest
 {
-    private static Gson gson = ConnectModulesGsonFactory.getGson();
-    private static ConnectPageModuleBean bean = createBean();
+    private static Gson gson;
+    private static ConnectPageModuleBean bean;
+
+    @Before
+    public void setup()
+    {
+        gson = ConnectModulesGsonFactory.getGson();
+        bean = createBean();
+    }
 
     @Test
     public void producesCorrectJSON() throws Exception
