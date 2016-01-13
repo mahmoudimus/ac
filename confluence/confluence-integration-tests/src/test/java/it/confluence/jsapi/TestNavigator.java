@@ -42,6 +42,8 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     private static List<Exception> setupFailure = new ArrayList<>();
     private static final String PAGE_KEY = "ac-navigator-general-page";
     private static final String WEB_PANEL_KEY = "ac-navigator-editor-web-panel";
+    private static final int IFRAME_VIEW_HEIGHT = 50;
+    private static final int IFRAME_WIDTH = 300;
     private static ConnectRunner remotePlugin;
 
     private static Promise<Content> createdPage;
@@ -75,6 +77,8 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
                                     .withName(new I18nProperty("Editor Web Panel", null))
                                     .withUrl("/nvg-web-panel")
                                     .withKey(WEB_PANEL_KEY)
+                                    .withLayout(new WebPanelLayout(px(IFRAME_WIDTH), px(IFRAME_VIEW_HEIGHT)))
+                                    .withWeight(1)
                                     .withLocation("atl.editor")
                                     .build()
                     )
@@ -157,8 +161,6 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
         // this web panel contains an API call to get the current page context, then inserts it into a div.
         RemoteWebPanel webPanel = connectPageOperations.findWebPanel(WEB_PANEL_KEY);
         String pageContext = webPanel.getIFrameElement("ac-current-page-context");
-
-        // 
     }
 
     public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass, Object... args)
@@ -167,5 +169,10 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
                 RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
         return page.clickToNavigate(id, aPageClass, args);
+    }
+
+    private static String px(int px)
+    {
+        return px + "px";
     }
 }

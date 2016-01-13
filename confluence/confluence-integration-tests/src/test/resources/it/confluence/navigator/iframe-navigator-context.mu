@@ -5,19 +5,21 @@
         <link rel="stylesheet" type="text/css" href="{{baseurl}}/atlassian-connect/all.css">
         <script src="{{baseurl}}/atlassian-connect/all-debug.js" type="text/javascript"></script>
     </head>
-    <body>
-        <div id="ac-current-page-context">
-        </div>
+    <body bgcolor="#FF0000">
+        <div id="ac-target"></div>
+        <div id="ac-contentId"></div>
+        <div id="ac-contentType"></div>
         <script type="text/javascript">
-            function getContext() {
-                var showContext = function(context) {
-                    $('#ac-current-page-context').text(context);
-                }
+            var showContext = function(context) {
+                console.log(context);
+                $('#ac-target').text(context.target);
+                $('#ac-contentId').text(context.context.contentId);
+                $('#ac-contentType').text(context.context.contentType);
+            };
 
-                AP.require('navigator', function(navigator) {
-                    navigator.getCurrentContext(showContext);
-                });
-            }
+            AP.require('navigator', function(navigator) {
+                navigator.getCurrent(showContext);
+            });
         </script>
     </body>
 </html>
