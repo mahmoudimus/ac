@@ -251,7 +251,7 @@
                     <containerId>tomcat7x</containerId>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <installPlugin>false</installPlugin>
-                    <skipRestDocGeneration>true</skipRestDocGeneration>
+
                     <!-- taken from https://bitbucket.org/atlassianlabs/quickreload -->
                     <enableFastdev>false</enableFastdev>
                     <enableDevToolbox>false</enableDevToolbox>
