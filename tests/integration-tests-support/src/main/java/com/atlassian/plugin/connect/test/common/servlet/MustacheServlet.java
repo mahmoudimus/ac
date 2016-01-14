@@ -27,8 +27,7 @@ public class MustacheServlet extends ContextServlet
 
     public MustacheServlet(String templatePath, String responseContentType, HttpMethod ... methods)
     {
-        this.templatePath = templatePath;
-        this.methods = ImmutableSet.copyOf(methods.length == 0 ? new HttpMethod[] { HttpMethod.GET } : methods);
+        this(templatePath, methods);
         this.responseContentType = responseContentType;
     }
 
