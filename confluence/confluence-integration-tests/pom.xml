@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-confluence-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.68-SNAPSHOT</version>
+        <version>1.1.69-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -251,7 +251,7 @@
                     <containerId>tomcat7x</containerId>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <installPlugin>false</installPlugin>
-                    <skipRestDocGeneration>true</skipRestDocGeneration>
+
                     <!-- taken from https://bitbucket.org/atlassianlabs/quickreload -->
                     <enableFastdev>false</enableFastdev>
                     <enableDevToolbox>false</enableDevToolbox>
