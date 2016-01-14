@@ -9,7 +9,8 @@ package com.atlassian.plugin.connect.modules.beans.nested;
  * The {@link #value} is the textual value for use in the context of the blueprint variable substitution. If a {@link #representation}
  * is given, the value *must* be of the correct type. For example, if representation is 'storage', then value *must* be valid
  * confluence xhtml storage format as documented here https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format .
- * If the format does not match, then an error can occur during blueprint variable substitution.
+ *
+ * If the format does not match, an error will be logged and the unconverted value will be used during blueprint variable substitution.
  */
 public final class BlueprintContextValue
 {
