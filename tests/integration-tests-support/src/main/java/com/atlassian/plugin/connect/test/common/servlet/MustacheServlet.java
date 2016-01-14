@@ -25,6 +25,13 @@ public class MustacheServlet extends ContextServlet
         this.methods = ImmutableSet.copyOf(methods.length == 0 ? new HttpMethod[] { HttpMethod.GET } : methods);
     }
 
+    public MustacheServlet(String templatePath, String responseContentType, HttpMethod ... methods)
+    {
+        this.templatePath = templatePath;
+        this.methods = ImmutableSet.copyOf(methods.length == 0 ? new HttpMethod[] { HttpMethod.GET } : methods);
+        this.responseContentType = responseContentType;
+    }
+
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
@@ -58,9 +65,5 @@ public class MustacheServlet extends ContextServlet
         } else {
             HttpUtils.renderWithContentType(resp, responseContentType, templatePath, ImmutableMap.copyOf(context));
         }
-    }
-
-    public void setResponseContentType(String responseContentType) {
-        this.responseContentType = responseContentType;
     }
 }
