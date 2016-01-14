@@ -301,12 +301,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         UserKey remoteUserKey = userManager.getRemoteUserKey();
         String userKey = remoteUserKey != null ? remoteUserKey.getStringValue() : "";
         Locale userLocale = localeResolver.getLocale(remoteUserKey);
-        BlueprintContextPostBody body = new BlueprintContextPostBody(addonKey,
-                                                                     blueprintKey,
-                                                                     blueprintContext.getSpaceKey(),
-                                                                     userKey, userLocale);
-        //TODO: look into using a PipedInputStream/CircularBuffer if (when?) this body does becomes large (mitigates copying around large strings just to send it)
-        String bodyJson = gson.toJson(body);
+        String bodyJson = gson.toJson(new BlueprintContextPostBody(addonKey, blueprintKey, blueprintContext.getSpaceKey(), userKey, userLocale));
         if (log.isDebugEnabled())
         {
             log.debug("sending json " + bodyJson);
