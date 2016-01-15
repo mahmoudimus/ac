@@ -10,7 +10,7 @@ import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.confluence.pageobjects.page.user.ViewProfilePage;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
-import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -42,6 +45,7 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     private static List<Exception> setupFailure = new ArrayList<>();
     private static final String PAGE_KEY = "ac-navigator-general-page";
     private static final String WEB_PANEL_KEY = "ac-navigator-editor-web-panel";
+    private static final String WEB_ITEM_KEY = "ac-navigator-web-item";
     private static final int IFRAME_VIEW_HEIGHT = 50;
     private static final int IFRAME_WIDTH = 300;
     private static ConnectRunner remotePlugin;
@@ -72,8 +76,19 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
                                     .withLocation("system.header/left")
                                     .build()
                     )
+                    .addModule("webItems",
+                            newWebItemBean()
+                                    .withName(new I18nProperty("Context", null))
+                                    .withUrl("/nvg-context")
+                                    .withKey(WEB_ITEM_KEY)
+                                    .withLocation("system.header/left")
+                                    .withTarget(newWebItemTargetBean()
+                                            .withType(WebItemTargetType.dialog)
+                                            .build())
+                                    .build()
+                    )
                     .addModule("webPanels",
-                            WebPanelModuleBean.newWebPanelBean()
+                            newWebPanelBean()
                                     .withName(new I18nProperty("Editor Web Panel", null))
                                     .withUrl("/nvg-web-panel")
                                     .withKey(WEB_PANEL_KEY)
@@ -84,6 +99,7 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
                     )
                     .addRoute("/nvg", ConfluenceAppServlets.navigatorServlet(createdPage.get().getId().asLong(), space.getKey()))
                     .addRoute("/nvg-web-panel", ConfluenceAppServlets.navigatorContextServlet())
+                    .addRoute("/nvg-context", ConfluenceAppServlets.navigatorContextServlet())
                     .start();
         }
         catch (Exception ex)
