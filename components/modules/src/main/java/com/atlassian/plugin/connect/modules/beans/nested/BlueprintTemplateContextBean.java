@@ -64,6 +64,8 @@ public class BlueprintTemplateContextBean
      *
      * <p>
      * The <code>value</code> must be a string that conforms to the <code>representation</code>.
+     * If the format does not match, an error message will be used for blueprint variable substitution.
+     *
      * <ul>
      *     <li><code>plain</code>: Plain text</li>
      *     <li><code>wiki</code>: Wiki markup</li>

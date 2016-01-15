@@ -137,7 +137,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
                                                               toInputStream(buildBody(blueprintContext)));
         String json = retrieveResponse(promise, blueprintContext);
         List<BlueprintContextValue> contextMap = readJsonResponse(json, blueprintContext);
-        contextMap.forEach(v -> blueprintContext.put(v.getIdentifier(), transformValue(v)));
+        contextMap.forEach(v -> blueprintContext.put(v.getIdentifier(), transformValue(v, blueprintContext)));
         return blueprintContext;
     }
 
@@ -223,7 +223,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         return json;
     }
 
-    private String transformValue(BlueprintContextValue v)
+    private String transformValue(BlueprintContextValue v, BlueprintContext blueprintContext)
     {
         if (isValidForTransform(v))
         {
@@ -234,13 +234,15 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
             }
             catch (ServiceException e)
             {
-                //this really shouldn't fail, but we can recover and just don't convert on failure
-                log.error("conversion to STORAGE format failed for " + v + " :" + e.getMessage());
+                log.error(String.format("conversion to STORAGE format failed for %s: %s", v, e.getMessage()));
                 if (log.isDebugEnabled())
                 {
                     log.debug(String.format("(%s,%s,%s):", addonKey, blueprintKey, contextUrl), e);
                 }
-                converted = v.getValue();
+
+                // Use the error message as converted value
+                String blueprintName = (String) blueprintContext.get(BLUEPRINT_NAME);
+                converted = String.format("There is a problem converting variable %s in %s", v.getIdentifier(), blueprintName);
             }
 
             if (log.isDebugEnabled())

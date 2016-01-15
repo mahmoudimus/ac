@@ -10,7 +10,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
  * is given, the value *must* be of the correct type. For example, if representation is 'storage', then value *must* be valid
  * confluence xhtml storage format as documented here https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format .
  *
- * If the format does not match, an error will be logged and the unconverted value will be used during blueprint variable substitution.
+ * If the format does not match, an error will be logged and an error message will be used for blueprint variable substitution.
  */
 public final class BlueprintContextValue
 {
