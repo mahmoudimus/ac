@@ -12,8 +12,9 @@ import com.atlassian.confluence.pageobjects.page.user.ViewProfilePage;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
-import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.util.concurrent.Promise;
@@ -26,11 +27,11 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -44,10 +45,7 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
 
     private static List<Exception> setupFailure = new ArrayList<>();
     private static final String PAGE_KEY = "ac-navigator-general-page";
-    private static final String WEB_PANEL_KEY = "ac-navigator-editor-web-panel";
     private static final String WEB_ITEM_KEY = "ac-navigator-web-item";
-    private static final int IFRAME_VIEW_HEIGHT = 50;
-    private static final int IFRAME_WIDTH = 300;
     private static ConnectRunner remotePlugin;
 
     private static Promise<Content> createdPage;
@@ -87,18 +85,8 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
                                             .build())
                                     .build()
                     )
-                    .addModule("webPanels",
-                            newWebPanelBean()
-                                    .withName(new I18nProperty("Editor Web Panel", null))
-                                    .withUrl("/nvg-web-panel")
-                                    .withKey(WEB_PANEL_KEY)
-                                    .withLayout(new WebPanelLayout(px(IFRAME_WIDTH), px(IFRAME_VIEW_HEIGHT)))
-                                    .withWeight(1)
-                                    .withLocation("atl.editor")
-                                    .build()
-                    )
+
                     .addRoute("/nvg", ConfluenceAppServlets.navigatorServlet(createdPage.get().getId().asLong(), space.getKey()))
-                    .addRoute("/nvg-web-panel", ConfluenceAppServlets.navigatorContextServlet())
                     .addRoute("/nvg-context", ConfluenceAppServlets.navigatorContextServlet())
                     .start();
         }
@@ -174,9 +162,12 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
         com.atlassian.confluence.it.Page page = new com.atlassian.confluence.it.Page(createdPage.get().getId().asLong());
         EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, page);
 
-        // this web panel contains an API call to get the current page context, then inserts it into a div.
-        RemoteWebPanel webPanel = connectPageOperations.findWebPanel(WEB_PANEL_KEY);
-        String pageContext = webPanel.getIFrameElement("ac-current-page-context");
+        // this dialog contains an API call to get the current page context, then inserts it into a div.
+        RemoteDialog dialog = openDialog();
+
+        assertEquals("contentedit", dialog.getIFrameElement("ac-target"));
+        assertEquals(String.valueOf(page.getId()), dialog.getIFrameElement("ac-contentId"));
+        assertEquals("page", dialog.getIFrameElement("ac-contentType"));
     }
 
     public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass, Object... args)
@@ -185,6 +176,17 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
                 RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
         return page.clickToNavigate(id, aPageClass, args);
+    }
+
+    private RemoteDialog openDialog() {
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.<String>empty());
+        webItem.click();
+        return product.getPageBinder().bind(RemoteDialog.class);
+    }
+
+    private String getModuleKey(String module)
+    {
+        return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), module);
     }
 
     private static String px(int px)

@@ -11,7 +11,7 @@
 
         <script src="{{baseurl}}/atlassian-connect/all-debug.js" type="text/javascript"></script>
     </head>
-    <body bgcolor="#FF0000">
+    <body>
         <div id="ac-target"></div>
         <div id="ac-contentId"></div>
         <div id="ac-contentType"></div>
