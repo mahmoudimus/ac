@@ -123,6 +123,12 @@ public class WebItemTargetBean extends BaseModuleBean
      */
     private WebItemTargetOptions options;
 
+    /**
+     * The key of a WebItemTargetOptions-containing descriptor declared in
+     * the same addon as this target's web-item parent.
+     */
+    private String key;
+
     public WebItemTargetBean()
     {
         this.type = WebItemTargetType.page;
@@ -157,6 +163,11 @@ public class WebItemTargetBean extends BaseModuleBean
         return type;
     }
 
+    public String getKey()
+    {
+        return key;
+    }
+
     public WebItemTargetOptions getOptions()
     {
         return options;
@@ -189,6 +200,7 @@ public class WebItemTargetBean extends BaseModuleBean
 
         return new EqualsBuilder()
                 .append(type, other.type)
+                .append(key, other.key)
                 .append(options, other.options)
                 .isEquals();
     }
@@ -199,6 +211,7 @@ public class WebItemTargetBean extends BaseModuleBean
         return new HashCodeBuilder(19, 23)
                 .appendSuper(super.hashCode())
                 .append(type)
+                .append(key)
                 .append(options)
                 .build();
     }

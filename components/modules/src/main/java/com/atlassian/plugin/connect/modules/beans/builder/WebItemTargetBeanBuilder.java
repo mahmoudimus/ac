@@ -4,12 +4,10 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Maps.newHashMap;
-
 public class WebItemTargetBeanBuilder extends BaseModuleBeanBuilder<WebItemTargetBeanBuilder, WebItemTargetBean>
 {
     private WebItemTargetType type;
+    private String key;
     private WebItemTargetOptions options;
 
     public WebItemTargetBeanBuilder()
@@ -20,12 +18,19 @@ public class WebItemTargetBeanBuilder extends BaseModuleBeanBuilder<WebItemTarge
     public WebItemTargetBeanBuilder(final WebItemTargetBean defaultBean)
     {
         this.type = defaultBean.getType();
+        this.key = defaultBean.getKey();
         this.options = defaultBean.getOptions();
     }
 
     public WebItemTargetBeanBuilder withType(WebItemTargetType type)
     {
         this.type = type;
+        return this;
+    }
+
+    public WebItemTargetBeanBuilder withKey(String key)
+    {
+        this.key = key;
         return this;
     }
 

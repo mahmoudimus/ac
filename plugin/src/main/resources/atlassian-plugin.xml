@@ -6,6 +6,7 @@
     </plugin-info>
 
     <connect-module key="admin-page-module" class="com.atlassian.plugin.connect.plugin.web.page.AdminPageModuleProvider"/>
+    <connect-module key="dialog-module" class="com.atlassian.plugin.connect.plugin.web.dialog.DialogModuleProvider"/>
     <connect-module key="general-page-module" class="com.atlassian.plugin.connect.plugin.web.page.GeneralPageModuleProvider"/>
     <connect-module key="configure-page-module" class="com.atlassian.plugin.connect.plugin.web.page.ConfigurePageModuleProvider"/>
     <connect-module key="post-install-page-module" class="com.atlassian.plugin.connect.plugin.web.page.PostInstallPageModuleProvider"/>

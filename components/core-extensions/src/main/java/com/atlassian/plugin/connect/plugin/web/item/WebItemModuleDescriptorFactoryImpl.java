@@ -1,14 +1,18 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.DialogModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DialogModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.Condition;
@@ -26,9 +30,11 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.api.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Component
 @ExportAsDevService
@@ -116,22 +122,29 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
                     additionalConditions));
         }
 
-        if (bean.getTarget().isDialogTarget())
+        WebItemTargetBean target = bean.getTarget();
+        WebItemTargetOptions options = target.getOptions();
+        if (target.isDialogTarget())
         {
             styles.add("ap-dialog");
+
+            String targetKey = target.getKey();
+            if (isNotBlank(targetKey))
+            {
+                // Options will be declared within the linked module
+                options = getDialogOptions(targetKey, addon);
+            }
         }
-        else if (bean.getTarget().isInlineDialogTarget())
+        else if (target.isInlineDialogTarget())
         {
             styles.add("ap-inline-dialog");
         }
 
-        if (!bean.getTarget().isPageTarget())
+        if (!target.isPageTarget())
         {
             styles.add("ap-plugin-key-" + addon.getKey());
             styles.add("ap-module-key-" + webItemKey);
         }
-
-        final WebItemTargetOptions options = bean.getTarget().getOptions();
 
         // use gson to turn it into a map
         final Gson gson = ConnectModulesGsonFactory.getGson();
@@ -147,7 +160,7 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
             }
         }
 
-        final boolean isDialog = bean.getTarget().isDialogTarget() || bean.getTarget().isInlineDialogTarget();
+        final boolean isDialog = target.isDialogTarget() || target.isInlineDialogTarget();
 
         for(Map.Entry<String,String> entry : bean.getParams().entrySet())
         {
@@ -167,6 +180,30 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
         }
 
         return createWebItemDescriptor(addon, plugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog, section);
+    }
+
+    private WebItemTargetOptions getDialogOptions(String targetKey, ConnectAddonBean addon)
+    {
+        Optional<List<ModuleBean>> dialogs = addon.getModules().getValidModuleListOfType(new DialogModuleMeta().getDescriptorKey(), e -> {});
+        if (dialogs.isPresent())
+        {
+            Optional<ModuleBean> foundBean = dialogs.get().stream().filter(moduleBean ->
+            {
+                DialogModuleBean dialogBean = (DialogModuleBean) moduleBean;
+                return dialogBean.getRawKey().equals(targetKey);
+            }).findFirst();
+            if (!foundBean.isPresent())
+            {
+                // This target's key points to a non-existent module.
+                throw new IllegalArgumentException("Unknown dialog module key: " + targetKey);
+            }
+            return ((DialogModuleBean) foundBean.get()).getOptions();
+        }
+        else
+        {
+            // TODO - refactor these throws to not suck. dT
+            throw new IllegalArgumentException("No dialog modules?");
+        }
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(ConnectAddonBean addon, Plugin plugin, Element webItemElement, String moduleKey, String url,

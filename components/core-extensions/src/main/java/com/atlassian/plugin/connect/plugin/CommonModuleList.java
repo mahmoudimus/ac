@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DialogModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
@@ -60,6 +61,11 @@ public class CommonModuleList extends BaseModuleBean
      * It's link will appear in the add-ons entry in 'Manage Add-ons'.
      */
     private ConnectPageModuleBean postInstallPage;
+
+    /**
+     * The Dialog module allows you to define re-usable dialog components.
+     */
+    private List<DialogModuleBean> dialogs;
 
     private CommonModuleList()
     {
