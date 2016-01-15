@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition;
 import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.google.common.collect.ImmutableList;
 
@@ -44,6 +45,7 @@ public class JiraConditionClassResolver implements ConnectConditionClassResolver
                 newEntry("can_manage_attachments", com.atlassian.jira.plugin.webfragment.conditions.CanManageAttachmentsCondition.class).build(),
                 newEntry("has_issue_permission", com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition.class).build(),
                 newEntry("has_project_permission", com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition.class).build(),
+                newEntry("has_global_permission", JiraGlobalPermissionCondition.class).build(),
                 newEntry("has_sub_tasks_available", com.atlassian.jira.plugin.webfragment.conditions.HasSubTasksAvailableCondition.class).build(),
                 newEntry("has_voted_for_issue", com.atlassian.jira.plugin.webfragment.conditions.HasVotedForIssueCondition.class).build(),
                 newEntry("is_issue_assigned_to_current_user", com.atlassian.jira.plugin.webfragment.conditions.IsIssueAssignedToCurrentUserCondition.class).build(),

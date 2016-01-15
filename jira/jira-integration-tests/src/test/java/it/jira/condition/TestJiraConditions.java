@@ -62,6 +62,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
             "can_manage_attachments",
             "has_issue_permission",
             "has_project_permission",
+            "has_global_permission",
             "has_sub_tasks_available",
             "has_voted_for_issue",
             "is_issue_assigned_to_current_user",
@@ -73,7 +74,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
 
     private static final Map<String, Map<String, String>> CONDITION_PARAMETERS = ImmutableMap.of(
             "has_issue_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.EDIT_ISSUE)),
-            "has_project_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.PROJECT_ADMIN))
+            "has_project_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.PROJECT_ADMIN)),
+            "has_global_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.USER_PICKER))
     );
 
     private static ConnectRunner addon;
