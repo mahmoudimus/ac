@@ -354,176 +354,57 @@ Each product defines a set of conditions relevant to its domain.
 * `watching_enabled`
 * [`can_use_application`](#can-use-application)
 
-#### <a name="jira-condition-parameters"></a>Condition parameter mappings
+#### <a name="jira-condition-parameters"></a>JIRA permission keys
 
-The following table shows the condition parameters available for `has_issue_permission` and `has_project_permission`
-in Atlassian Connect module declarations and how they map to the permissions described in the
-[Permissions](https://docs.atlassian.com/jira/latest/com/atlassian/jira/security/Permissions.html) class documentation.<br><br>
 
-<table summary="JIRA condition parameter mappings">
-    <thead>
-        <tr>
-        	<th>JIRA condition parameters</th>
-        	<th>Atlassian Connect equivalent</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-        	<td>ADMINISTER</td>
-        	<td>admin</td>
-        </tr>
-        <tr>
-        	<td>USE</td>
-        	<td>use</td>
-        </tr>
-        <tr>
-        	<td>SYSTEM_ADMIN</td>
-        	<td>sysadmin</td>
-        </tr>
-        <tr>
-        	<td>PROJECT_ADMIN</td>
-        	<td>project</td>
-        </tr>
-        <tr>
-        	<td>BROWSE</td>
-        	<td>browse</td>
-        </tr>
-        <tr>
-        	<td>CREATE_ISSUE</td>
-        	<td>create</td>
-        </tr>
-        <tr>
-        	<td>EDIT_ISSUE</td>
-        	<td>edit</td>
-        </tr>
-        <tr>
-        	<td>EDIT_ISSUE</td>
-        	<td>update</td>
-        </tr>
-        <tr>
-        	<td>SCHEDULE_ISSUE</td>
-        	<td>scheduleissue</td>
-        </tr>
-        <tr>
-        	<td>ASSIGNABLE_USER</td>
-        	<td>assignable</td>
-        </tr>
-        <tr>
-        	<td>ASSIGN_ISSUE</td>
-        	<td>assign</td>
-        </tr>
-        <tr>
-        	<td>RESOLVE_ISSUE</td>
-        	<td>resolv</td>
-        </tr>
-        <tr>
-        	<td>CLOSE_ISSUE</td>
-        	<td>close</td>
-        </tr>
-        <tr>
-        	<td>WORKLOG_EDIT_ALL</td>
-        	<td>worklogeditall</td>
-        </tr>
-        <tr>
-        	<td>WORKLOG_EDIT_OWN</td>
-        	<td>worklogeditown</td>
-        </tr>
-        <tr>
-        	<td>WORKLOG_DELETE_OWN</td>
-        	<td>worklogdeleteown</td>
-        </tr>
-        <tr>
-        	<td>WORKLOG_DELETE_ALL</td>
-        	<td>worklogdeleteall</td>
-        </tr>
-        <tr>
-        	<td>WORK_ISSUE</td>
-        	<td>work</td>
-        </tr>
-        <tr>
-        	<td>LINK_ISSUE</td>
-        	<td>link</td>
-        </tr>
-        <tr>
-        	<td>DELETE_ISSUE</td>
-        	<td>delete</td>
-        </tr>
-        <tr>
-        	<td>CREATE_SHARED_OBJECTS</td>
-        	<td>sharefilters</td>
-        </tr>
-        <tr>
-        	<td>MANAGE_GROUP_FILTER_SUBSCRIPTIONS</td>
-        	<td>groupsubscriptions</td>
-        </tr>
-        <tr>
-        	<td>MOVE_ISSUE</td>
-        	<td>move</td>
-        </tr>
-        <tr>
-        	<td>SET_ISSUE_SECURITY</td>
-        	<td>setsecurity</td>
-        </tr>
-        <tr>
-        	<td>USER_PICKER</td>
-        	<td>pickusers</td>
-        </tr>
-        <tr>
-        	<td>VIEW_VERSION_CONTROL</td>
-        	<td>viewversioncontrol</td>
-        </tr>
-        <tr>
-        	<td>MODIFY_REPORTER</td>
-        	<td>modifyreporter</td>
-        </tr>
-        <tr>
-        	<td>VIEW_VOTERS_AND_WATCHERS</td>
-        	<td>viewvotersandwatchers</td>
-        </tr>
-        <tr>
-        	<td>MANAGE_WATCHER_LIST</td>
-        	<td>managewatcherlist</td>
-        </tr>
-        <tr>
-        	<td>BULK_CHANGE</td>
-        	<td>bulkchange</td>
-        </tr>
-        <tr>
-        	<td>COMMENT_EDIT_ALL</td>
-        	<td>commenteditall</td>
-        </tr>
-        <tr>
-        	<td>COMMENT_EDIT_OWN</td>
-        	<td>commenteditown</td>
-        </tr>
-        <tr>
-        	<td>COMMENT_DELETE_OWN</td>
-        	<td>commentdeleteown</td>
-        </tr>
-        <tr>
-        	<td>COMMENT_DELETE_ALL</td>
-        	<td>commentdeleteall</td>
-        </tr>
-        <tr>
-        	<td>ATTACHMENT_DELETE_OWN</td>
-        	<td>attachdeleteown</td>
-        </tr>
-        <tr>
-        	<td>ATTACHMENT_DELETE_ALL</td>
-        	<td>attachdeleteall</td>
-        </tr>
-        <tr>
-        	<td>CREATE_ATTACHMENT</td>
-        	<td>attach</td>
-        </tr>
-        <tr>
-        	<td>COMMENT_ISSUE</td>
-        	<td>comment</td>
-        </tr>
-        <tr>
-        	<td>VIEW_WORKFLOW_READONLY</td>
-        	<td>viewworkflowreadonly</td>
-        </tr>
-    </tbody>
-</table>
+`has_issue_permission`, `has_project_permission` and `has_global_permission` require a key of the permission that 
+will be checked for the current user. The first two conditions check project permissions and the last one checks global permissions. 
+Below you will find all the built-in permission keys. 
 
+Note that you may also provide any of your custom permission keys. Permissions defined by add-ons need to be prefixed with an add-on
+key followed by two underscores and only then the permission key as defined in the module descriptor, for example: `your.add.on.key__yourPermissionKey`.
+
+##### Project permission keys
+
+* ADD_COMMENTS
+* ADMINISTER_PROJECTS
+* ASSIGN_ISSUES
+* ASSIGNABLE_USER
+* BROWSE_PROJECTS
+* CLOSE_ISSUES
+* CREATE_ATTACHMENTS
+* CREATE_ISSUES
+* DELETE_ALL_ATTACHMENTS
+* DELETE_ALL_COMMENTS
+* DELETE_ALL_WORKLOGS
+* DELETE_ISSUES
+* DELETE_OWN_ATTACHMENTS
+* DELETE_OWN_COMMENTS
+* DELETE_OWN_WORKLOGS
+* EDIT_ALL_COMMENTS
+* EDIT_ALL_WORKLOGS
+* EDIT_ISSUES
+* EDIT_OWN_COMMENTS
+* EDIT_OWN_WORKLOGS
+* LINK_ISSUES
+* MANAGE_WATCHERS
+* MODIFY_REPORTER
+* MOVE_ISSUES
+* RESOLVE_ISSUES
+* SCHEDULE_ISSUES
+* SET_ISSUE_SECURITY
+* TRANSITION_ISSUES
+* VIEW_DEV_TOOLS
+* VIEW_READONLY_WORKFLOW
+* VIEW_VOTERS_AND_WATCHERS
+* WORK_ON_ISSUES
+
+
+##### Global permission keys
+
+* ADMINISTER
+* SYSTEM_ADMIN
+* USER_PICKER
+* CREATE_SHARED_OBJECTS
+* MANAGE_GROUP_FILTER_SUBSCRIPTIONS
+* BULK_CHANGE
