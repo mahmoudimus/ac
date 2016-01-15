@@ -11,6 +11,7 @@ import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -25,6 +26,7 @@ import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 
 @Category (OnDemandAcceptanceTest.class)
+@Ignore
 public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
 {
     private static final String WEB_ITEM_TEXT = "AC Action";

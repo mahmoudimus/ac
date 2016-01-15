@@ -54,16 +54,11 @@ public class RemoteDialogOpeningPage extends ConnectAddonPage implements Page
 
     private void open(final String id)
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id(id));
-                waitUntilTrue(element.timed().isVisible());
-                element.click();
-                return null;
-            }
+        runInFrame(() -> {
+            PageElement element = elementFinder.find(By.id(id));
+            waitUntilTrue(element.timed().isVisible());
+            element.click();
+            return null;
         });
     }
 }

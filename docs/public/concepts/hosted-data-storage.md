@@ -82,24 +82,24 @@ Add-on properties can be set like so:
 
 To request the value of the property we just set:
 
-    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?JSONValue=true
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?jsonValue=true
     
     {"key":"test-property","value":{"string":"string-value","number":5},"self":"..."}
     
-Please note the use of the `JSONValue=true` query param. If you do not include that parameter then the response will be:
+Please note the use of the `jsonValue=true` query param. If you do not include that parameter then the response will be:
 
     GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property
     
     {"key":"test-property","value":"{\"string\":\"string-value\",\"number\":5}","self":"..."}
      
 Which returns the value as a JSON-escaped string. This is deprecated behaviour and will be going away in June 2016. Please 
-always use the `JSONValue=true` query parameter.
+always use the `jsonValue=true` query parameter.
 
 Here is an example snippet that will show a pop-up with a JSON property named my-property-key for add-on with key my-add-on-key.
 
      AP.require(['request'], function(request) {
          request({
-             url: '/rest/atlassian-connect/1/addons/my-add-on-key/properties/my-property-key?JSONValue=true',
+             url: '/rest/atlassian-connect/1/addons/my-add-on-key/properties/my-property-key?jsonValue=true',
              success: function(response) {
                  // Convert the string response to JSON
                  response = JSON.parse(response);
@@ -109,7 +109,7 @@ Here is an example snippet that will show a pop-up with a JSON property named my
                  console.log("Error loading API (" + uri + ")");
                  console.log(arguments);
              },
-             contentType: "application/JSON"
+             contentType: "application/json"
          });
      });
 
