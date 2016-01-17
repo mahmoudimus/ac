@@ -5,6 +5,7 @@ import com.atlassian.jira.pageobjects.project.ProjectConfigHeader;
 import com.atlassian.jira.pageobjects.project.ProjectConfigPageTab;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.ProjectInfoLocator;
+import com.atlassian.jira.pageobjects.project.ProjectSettingsHeader;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.ElementBy;
@@ -62,6 +63,11 @@ public class JiraProjectAdministrationTab extends ConnectAddonEmbeddedTestPage i
     public ProjectConfigHeader getProjectHeader()
     {
         return pageBinder.bind(ProjectConfigHeader.class);
+    }
+
+    @Override
+    public ProjectSettingsHeader getProjectSettingsHeader() {
+        return pageBinder.bind(ProjectSettingsHeader.class);
     }
 
     @Override
