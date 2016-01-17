@@ -60,12 +60,14 @@ public class ConfluenceEventMapper
         UserProfile user = userManager.getRemoteUser();
         String username = user == null ? "" : user.getUsername();
         String userKey = user == null ? "" : user.getUserKey().getStringValue();
+        String email = user == null ? "" : user.getEmail();
 
         return ImmutableMap.<String, Object>of(
                 "timestamp", event.getTimestamp(),
                 "user", username, // deprecated
                 "username", username,
-                "userKey", userKey
+                "userKey", userKey,
+                "email", email
         );
     }
 
