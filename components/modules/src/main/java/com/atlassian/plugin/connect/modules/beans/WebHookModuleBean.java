@@ -179,7 +179,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *### Tutorials
  *
- * * [Confluence Webhooks: Writing a Multi-page Blueprint using Atlassian Connect](https://developer.atlassian.com/confdev/tutorials/writing-a-multi-page-blueprint-using-atlassian-connect)
+ * * [Confluence Webhooks: Writing a Multi-page Blueprint using Atlassian Connect](https://developer.atlassian.com/x/x4FKAg)
  *
  *#### Example
  *
