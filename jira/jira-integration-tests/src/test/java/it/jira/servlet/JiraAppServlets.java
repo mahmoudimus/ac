@@ -61,4 +61,10 @@ public class JiraAppServlets
         return wrapContextAwareServlet(
                 new MustacheServlet("jira/iframe-quick-issue-create.mu"));
     }
+
+    public static HttpServlet datePickerServlet()
+    {
+        return wrapContextAwareServlet(
+                new MustacheServlet("jira/iframe-date-picker.mu"));
+    }
 }

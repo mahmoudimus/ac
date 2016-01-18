@@ -1,9 +1,10 @@
 AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
-    var workflowListener,
-            validationListener,
-            dashboardItemEditListener,
-            issueCreateListener;
+    var workflowListener;
+    var validationListener;
+    var dashboardItemEditListener;
+    var issueCreateListener;
+    var dateSelectedListener;
 
     /**
      * @class WorkflowConfiguration
@@ -147,13 +148,30 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.openCreateIssueDialog(fields);
                 },
 
-                showCalendar: function () {
-                    remote.showCalendar();
+                datePicker: function (options) {
+                    var elBoundingBox;
+                    dateSelectedListener = options.onSelect;
+                    delete options.onSelect;
+
+                    if (options.element) {
+                        elBoundingBox = options.element.getBoundingClientRect();
+                        options.position = {
+                            left: elBoundingBox.left,
+                            top: elBoundingBox.top + elBoundingBox.height
+                        };
+                        delete options.element;
+                    }
+
+                    remote.datePicker(options);
                 }
             },
 
             internals: {
-
+                triggerDateSelectedListener: function (date, isoDate) {
+                    if ($.isFunction(dateSelectedListener)) {
+                        dateSelectedListener.call({}, date, isoDate);
+                    }
+                },
                 setWorkflowConfigurationMessage: function () {
                     return WorkflowConfiguration.trigger();
                 },
