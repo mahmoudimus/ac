@@ -361,8 +361,10 @@ Each product defines a set of conditions relevant to its domain.
 will be checked for the current user. The first two conditions check project permissions and the last one checks global permissions. 
 Below you will find all the built-in permission keys. 
 
-Note that you may also provide any of your custom permission keys. Permissions defined by add-ons need to be prefixed with an add-on
-key followed by two underscores and only then the permission key as defined in the module descriptor, for example: `your.add.on.key__yourPermissionKey`.
+Note that you may also provide any of your custom permission keys 
+(defined in the [project](../modules/jira/project-permission.html) or [global](../modules/jira/global-permission.html) permission module). 
+Permissions defined by add-ons need to be prefixed with an add-on key followed by two underscores and only then the custom permission key, 
+for example: `your.add.on.key__yourPermissionKey`.
 
 ##### Project permission keys
 
