@@ -4,6 +4,7 @@ import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.Space;
+import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
@@ -32,11 +33,11 @@ import java.util.Optional;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
+import static junit.framework.TestCase.*;
 
-public class TestNavigator extends ConfluenceWebDriverTestBase
+public class TestNavigatorContext extends ConfluenceWebDriverTestBase
 {
     /*
      These tests work by navigating to a page and then attempting to bind a page object to that page.
@@ -66,15 +67,18 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
         {
             remotePlugin = new ConnectRunner(ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                     .setAuthenticationToNone()
-                    .addModules("generalPages",
-                            newPageBean()
-                                    .withName(new I18nProperty("Nvg", null))
-                                    .withUrl("/nvg")
-                                    .withKey(PAGE_KEY)
+                    .addModule("webItems",
+                            newWebItemBean()
+                                    .withName(new I18nProperty("Context", null))
+                                    .withUrl("/nvg-context")
+                                    .withKey(WEB_ITEM_KEY)
                                     .withLocation("system.header/left")
+                                    .withTarget(newWebItemTargetBean()
+                                            .withType(WebItemTargetType.dialog)
+                                            .build())
                                     .build()
                     )
-                    .addRoute("/nvg", ConfluenceAppServlets.navigatorServlet(createdPage.get().getId().asLong(), space.getKey()))
+                    .addRoute("/nvg-context", ConfluenceAppServlets.navigatorContextServlet())
                     .start();
         }
         catch (Exception ex)
@@ -103,52 +107,44 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testNavigateToDashboard() throws Exception
+    public void testGetCurrentContextOfCreatePage() throws Exception
     {
-        DashboardPage dashboard = loginAndClickToNavigate("navigate-to-dashboard", DashboardPage.class);
-        assertNotNull(dashboard.getDashboardPanel());
+        getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), TestSpace.DEMO);
+        RemoteDialog dialog = openDialog();
+        assertEquals("unknown", dialog.getIFrameElement("ac-target"));
     }
 
     @Test
-    public void testNavigateToPage() throws Exception
+    public void testGetCurrentContextOfEditPage() throws Exception
     {
-        ViewPage viewpage = loginAndClickToNavigate("navigate-to-page", ViewPage.class, createdPage.get().getId().serialise());
-        long idFromPageObject = viewpage.getPageId();
-        assertEquals(createdPage.get().getId().asLong(), idFromPageObject);
+        Content page = createPage(randomName("testGetCurrentContextOfEditPage"), "");
+        getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
+        RemoteDialog dialog = openDialog();
+        assertEquals("contentedit", dialog.getIFrameElement("ac-target"));
+        assertEquals(String.valueOf(page.getId().asLong()), dialog.getIFrameElement("ac-contentId"));
+        assertEquals("page", dialog.getIFrameElement("ac-contentType"));
     }
 
     @Test
-    public void testNavigateToEditPage() throws Exception
+    public void testGetCurrentContextOfViewPage() throws Exception
     {
-        com.atlassian.confluence.it.Page page = new com.atlassian.confluence.it.Page(createdPage.get().getId().asLong());
-        EditContentPage editContentPage = loginAndClickToNavigate("navigate-to-edit-page", EditContentPage.class, page);
-        String titleFromPageObject = editContentPage.getTitle();
-        assertEquals(createdPage.get().getTitle(), titleFromPageObject);
+        Content page = createPage(randomName("testGetCurrentContextOfViewPage"), "");
+        getProduct().loginAndView(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
+        RemoteDialog dialog = openDialog();
+        assertEquals("contentview", dialog.getIFrameElement("ac-target"));
+        assertEquals(String.valueOf(page.getId().asLong()), dialog.getIFrameElement("ac-contentId"));
+        assertEquals("page", dialog.getIFrameElement("ac-contentType"));
     }
 
-    @Test
-    public void testNavigateToUserProfile() throws Exception
-    {
-        ViewProfilePage viewProfilePage = loginAndClickToNavigate("navigate-to-user-profile", ViewProfilePage.class, "admin");
-        boolean hasProfileTitle = viewProfilePage.hasTitle().byDefaultTimeout();
-        assertTrue(hasProfileTitle);
+    private RemoteDialog openDialog() {
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.<String>empty());
+        webItem.click();
+        return product.getPageBinder().bind(RemoteDialog.class);
     }
 
-    @Test
-    public void testNavigateToSpaceTools() throws Exception
+    private String getModuleKey(String module)
     {
-        com.atlassian.confluence.it.Space space = new com.atlassian.confluence.it.Space(TestNavigator.space.getKey(), TestNavigator.space.getKey());
-        ViewSpaceSummaryPage viewSpaceSummaryPage = loginAndClickToNavigate("navigate-to-space-tools", ViewSpaceSummaryPage.class, space);
-        // there is nothing on the view spaceSummaryPage that is appropriate to assert
-        // so this test really does nothing until we can convert to STR (https://ecosystem.atlassian.net/browse/ACDEV-2081)
-    }
-
-    public <P extends com.atlassian.pageobjects.Page> P loginAndClickToNavigate(String id, java.lang.Class<P> aPageClass, Object... args)
-    {
-        RemoteNavigatorGeneralPage page = loginAndVisit(ConfluenceWebDriverTestBase.testUserFactory.basicUser(),
-                RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
-
-        return page.clickToNavigate(id, aPageClass, args);
+        return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), module);
     }
 
 }
