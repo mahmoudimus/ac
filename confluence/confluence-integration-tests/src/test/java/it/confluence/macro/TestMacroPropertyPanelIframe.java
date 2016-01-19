@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -183,7 +184,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
         final MacroPropertyPanelWithIframe propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
 
-        RemotePluginDialog dialog = confluencePageOperations.findDialog(addonKey + "__" + DIALOG_KEY);
+        RemotePluginDialog dialog = confluencePageOperations.findDialog(ModuleKeyUtils.addonAndModuleKey(addonKey, DIALOG_KEY));
 
         final long propertyPanelZIndex = propertyPanel.getZIndex();
         final long auiBlanketZIndex = dialog.getAuiBlanketZIndex();

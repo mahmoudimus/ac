@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
 /**
  *
  * Defining a Macro Property panel allows you to add a hidden iframe to your macro's
- * property panel.
+ * property panel. The iframe is loaded as soon as the property panel is opened.
  *
  * In order to persist custom data using your property panel, use the Javascript
  * [Confluence API](../../javascript/module-confluence.html).
@@ -29,6 +29,17 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
  *        var macroData = confluence.getMacroData(function(macroParams) {
  *            doSomethingWith(macroParams.myParameter);
  *        });
+ *    });
+ *
+ *    Dialogs may also be created. (see [Dialog API](../../javascript/module-Dialog.html)):
+ *
+ *    AP.require('dialog', function(dialog) {
+ *        dialog.create({
+ *            key: 'my-module-key',
+ *            width: '500px',
+ *            height: '200px',
+ *            chrome: true
+ *        }).on("close", callbackFunc);
  *    });
  *
  * @schemaTitle Macro Property Panel
