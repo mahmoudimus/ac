@@ -58,7 +58,7 @@
     <!-- JavaScript API Core -->
 
     <web-resource key="ap-core">
-        <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
+        <resource type="download" name="main.js" location="../../../node_modules/atlassian-connect-js/dist/connect-host.js" />
         <dependency>jira.webresources:almond</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>

@@ -21,7 +21,9 @@
     "postinstall": "node_modules/atlassian-connect-js/src/**/*.js"
   },
   "scripts": {
-    "postinstall": "node ./bin/npm-postinstall.js",
     "watch": "npm-watch"
+  },
+  "dependencies": {
+    "simple-xdm": "^0.2.6"
   }
 }

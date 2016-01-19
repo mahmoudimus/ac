@@ -89,7 +89,7 @@
 
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
-        <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
+        <resource type="download" name="main.js" location="../../..//node_modules/atlassian-connect-js/dist/host.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
