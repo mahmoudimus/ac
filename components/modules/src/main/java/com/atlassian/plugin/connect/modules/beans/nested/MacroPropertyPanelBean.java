@@ -31,7 +31,8 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
  *        });
  *    });
  *
- *    Dialogs may also be created. (see [Dialog API](../../javascript/module-Dialog.html)):
+ * Dialogs may also be created. Use `dialog.create` (see
+ * [Dialog API](../../javascript/module-Dialog.html)):
  *
  *    AP.require('dialog', function(dialog) {
  *        dialog.create({
