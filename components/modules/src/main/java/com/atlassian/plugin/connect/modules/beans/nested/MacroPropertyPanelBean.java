@@ -32,7 +32,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
  *    });
  *
  * @schemaTitle Macro Property Panel
- * @since 1.0
  */
 public class MacroPropertyPanelBean extends BaseModuleBean
 {

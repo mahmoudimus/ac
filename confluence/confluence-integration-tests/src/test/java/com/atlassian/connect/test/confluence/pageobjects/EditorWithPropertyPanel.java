@@ -1,27 +1,13 @@
 package com.atlassian.connect.test.confluence.pageobjects;
 
-import javax.inject.Inject;
-
-import com.atlassian.confluence.pageobjects.JavascriptTimedQueryFactory;
-import com.atlassian.confluence.pageobjects.component.editor.MacroPropertyPanel;
-import com.atlassian.confluence.pageobjects.module.frame.ConfluenceFrameExecutor;
-import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.pageobjects.elements.PageElement;
-import com.atlassian.pageobjects.elements.PageElementFinder;
-
 import org.openqa.selenium.By;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-public class EditorWithPropertyPanel
+public class EditorWithPropertyPanel extends EditorContent
 {
-    @Inject
-    protected ConfluenceFrameExecutor execute;
-    @Inject protected PageBinder binder;
-    @Inject private JavascriptTimedQueryFactory javascriptTimedQueryFactory;
-    @Inject protected PageElementFinder page;
-
-
     /**
      * Click on the macro, then wait for the property panel to appear.
      * @param macroName
@@ -54,5 +40,4 @@ public class EditorWithPropertyPanel
 
         return binder.bind(MacroPropertyPanelWithIframe.class);
     }
-
 }
