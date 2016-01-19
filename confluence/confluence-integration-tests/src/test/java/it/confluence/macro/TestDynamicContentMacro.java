@@ -221,7 +221,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, createPageWithStorageFormatMacro());
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
     }
 
@@ -235,7 +235,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             {
                 ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
                 viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-                RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+                RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
                 assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
                 return null;
             }
@@ -249,7 +249,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
         login(testUserFactory.basicUser());
         final ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
 
@@ -271,7 +271,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
         login(testUserFactory.basicUser());
         final ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
 
@@ -327,7 +327,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SHORT_BODY_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SHORT_BODY_MACRO_KEY, 0);
         assertThat(renderedMacro.getFromQueryString("body"), is("a short body"));
     }
 
@@ -340,7 +340,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(PARAMETER_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PARAMETER_MACRO_KEY);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(PARAMETER_MACRO_KEY);
         assertThat(renderedMacro.getFromQueryString(SINGLE_PARAM_ID), is(parameterValue));
     }
 
@@ -379,7 +379,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         {
             // necessary to prevent Confluence from showing a navigate away alert
             macroInBrowser.macro.select();
-            RemotePluginDialog dialog = connectPageOperations.findDialog(CLIENT_SIDE_BODY_MACRO_KEY);
+            RemotePluginDialog dialog = confluencePageOperations.findDialog(CLIENT_SIDE_BODY_MACRO_KEY);
             dialog.submitAndWaitUntilHidden();
             cancelEditor(editorPage);
         }
@@ -392,12 +392,12 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String body = new MacroStorageFormatBuilder(SIMPLE_MACRO_KEY).build();
         Content page = createPage(randomName(SIMPLE_MACRO_KEY), body + body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
-        connectPageOperations.waitUntilNConnectIFramesPresent(2); // preempt flakiness
+        confluencePageOperations.waitUntilNConnectIFramesPresent(2); // preempt flakiness
 
-        RenderedMacro renderedMacro1 = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+        RenderedMacro renderedMacro1 = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content1 = renderedMacro1.getIFrameElementText("hello-world-message");
 
-        RenderedMacro renderedMacro2 = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 1);
+        RenderedMacro renderedMacro2 = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 1);
         String content2 = renderedMacro2.getIFrameElementText("hello-world-message");
 
         assertThat(content1, is("Hello world"));
@@ -411,7 +411,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String body = new MacroStorageFormatBuilder(SMALL_INLINE_MACRO_KEY).build();
         Content page = createPage(randomName(SMALL_INLINE_MACRO_KEY), body + body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SMALL_INLINE_MACRO_KEY);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SMALL_INLINE_MACRO_KEY);
         assertThat(renderedMacro.getIFrameSize(), both(hasProperty("width", is(60))).and(hasProperty("height", is(30))));
     }
 
@@ -423,7 +423,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
 
         editorPage.save();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(EDITOR_MACRO_KEY);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(EDITOR_MACRO_KEY);
         String content = renderedMacro.getIFrameElementText("footy");
 
         assertThat(content, is("footy: American Football"));
@@ -436,12 +436,12 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(TABLE_MACRO_NAME), loadResourceAsString("it/confluence/macro/test-page-table-macro.xhtml"));
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
         renderedMacro.waitUntilContentElementNotEmpty("client-http-status");
         assertThat(renderedMacro.getIFrameElementText("client-http-status"), is("200"));
 
-        connectPageOperations.reorderConfluenceTableOnPage();
-        RenderedMacro refreshedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
+        confluencePageOperations.reorderConfluenceTableOnPage();
+        RenderedMacro refreshedMacro = confluencePageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
         refreshedMacro.waitUntilContentElementNotEmpty("client-http-status");
         assertThat(refreshedMacro.getIFrameElementText("client-http-status"), is("200"));
     }
@@ -454,7 +454,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
-        RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
+        RemotePluginDialog dialog = confluencePageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
         try
         {
             String content = dialog.getValueById("macro-body");
@@ -473,11 +473,11 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).build();
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
-        RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
+        RemotePluginDialog dialog = confluencePageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
         dialog.submitAndWaitUntilHidden();
         editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
         assertThat(renderedMacro.getIFrameElementText("body"), is("body: " + EDITED_MACRO_BODY));
         assertThat(renderedMacro.getFromQueryString("cv"), isVersionNumber());
     }
@@ -489,11 +489,11 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME), body);
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
-        RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
+        RemotePluginDialog dialog = confluencePageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
         dialog.submitAndWaitUntilHidden();
         editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
         assertThat(renderedMacro.getIFrameElementText("body"), is("body: <strong>must</strong> be removed:"));
     }
 
@@ -517,7 +517,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         addCommentWithMacro(String.valueOf(page.getId().asLong()));
         product.visit(ConfluencePageWithRemoteMacro.class, title, SIMPLE_MACRO_KEY);
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
 
         assertThat(content, is("Hello world"));

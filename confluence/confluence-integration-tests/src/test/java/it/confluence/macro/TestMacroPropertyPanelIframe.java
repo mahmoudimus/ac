@@ -137,7 +137,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
 
         editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);
         assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValue"));
 
         //Now test that parameters can be read
@@ -150,7 +150,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
 
         editorPage.save();
 
-        renderedMacro = connectPageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);
+        renderedMacro = confluencePageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);
         assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValueThisIsMyGreatNewParamValue"));
     }
 
@@ -183,7 +183,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
         final MacroPropertyPanelWithIframe propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
 
-        RemotePluginDialog dialog = connectPageOperations.findDialog(addonKey + "__" + DIALOG_KEY);
+        RemotePluginDialog dialog = confluencePageOperations.findDialog(addonKey + "__" + DIALOG_KEY);
 
         final long propertyPanelZIndex = propertyPanel.getZIndex();
         final long auiBlanketZIndex = dialog.getAuiBlanketZIndex();
@@ -194,7 +194,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
 
         editorPage.save();
 
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
         assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValue"));
     }
 

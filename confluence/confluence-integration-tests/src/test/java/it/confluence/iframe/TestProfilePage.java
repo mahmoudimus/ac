@@ -74,7 +74,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
 
         // web item should not be displayed
         loginAndVisit(testUserFactory.basicUser(), ConfluenceUserProfilePage.class);
-        assertThat("Expected web-item for page to NOT be present", connectPageOperations
+        assertThat("Expected web-item for page to NOT be present", confluencePageOperations
                 .existsWebItem(MY_AWESOME_PAGE_KEY), is(false));
 
         // directly retrieving page should result in access denied
@@ -100,7 +100,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
 
         product.visit(ConfluenceUserProfilePage.class);
 
-        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(mode, id, Optional.<String>empty(),
+        LinkedRemoteContent addonPage = confluencePageOperations.findConnectPage(mode, id, Optional.<String>empty(),
                 awesomePageModuleKey);
 
         ConnectAddonEmbeddedTestPage addonContentPage = addonPage.click();
