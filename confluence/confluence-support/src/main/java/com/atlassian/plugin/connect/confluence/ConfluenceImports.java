@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.confluence;
 
 import com.atlassian.bandana.BandanaManager;
+import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
+import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.core.ContentEntityManager;
 import com.atlassian.confluence.license.LicenseService;
@@ -47,7 +49,9 @@ public class ConfluenceImports
             @ConfluenceImport UserAccessor userAccessor,
             @ConfluenceImport WebSudoManager webSudoManager,
             @ConfluenceImport XhtmlContent xhtmlContent,
-            @ConfluenceImport CoreFeaturesManager coreFeaturesManager)
+            @ConfluenceImport CoreFeaturesManager coreFeaturesManager,
+            @ConfluenceImport ApiSupportProvider apiSupportProvider,
+            @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams)
     {
     }
 }
