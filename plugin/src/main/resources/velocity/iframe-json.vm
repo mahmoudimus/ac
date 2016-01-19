@@ -1,15 +1,13 @@
 {
-    "ns":"$namespace",
-    "key":"$plugin.key",
+    "addon_key":"$plugin.key",
+    "key": "$namespace".split("__")[1],
     "cp":"$contextPath",
     "uid":"$userId",
     "ukey":"$userKey",
-    "dlg":"$!dialog",
-    "simpleDlg":"$!simpleDialog",
     "general":"$!general",
     "w":"$!width",
     "h":"$!height",
-    "src":"$iframeSrcHtml",
+    "url":"$iframeSrcHtml",
     "productCtx":"$productContextHtml",
     "timeZone":"$timeZone"
 }

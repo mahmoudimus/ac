@@ -1,5 +1,6 @@
 <script class="ap-iframe-body-script">
-    require(['connect-host', 'ac/cookie', 'ac/env', 'ac/inline-dialog', 'ac/dialog', 'ac/messages', 'ac/request', 'ac/history'], function(host){
-        host.create(#parse("velocity/iframe-json.vm"));
-    });
+  (function(){
+    var container = connectHost.create(#parse("velocity/iframe-json.vm"));
+    $("#ap-$namespace").append(container);
+  }());
 </script>

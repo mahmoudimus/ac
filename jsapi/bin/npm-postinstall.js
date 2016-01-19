@@ -1,15 +1,16 @@
 var helper = require('./bin-helper');
 
 var atlassianConnectJsPath = 'node_modules/atlassian-connect-js';
+var simpleXdmJsPath = 'node_modules/simple-xdm';
 
 helper.chain([
-    [   // build distribution of connect javascsript
-        helper.npmNormalize(atlassianConnectJsPath + '/node_modules/grunt-cli/bin/grunt'),
-        ['--gruntfile', atlassianConnectJsPath + '/Gruntfile.js', 'build']
-    ],
     [
         'cp',
         ['-a', helper.npmNormalize(atlassianConnectJsPath + '/dist') + '/.', 'src/main/resources/js/core']
+    ],
+    [
+        'cp',
+        ['-a', helper.npmNormalize(simpleXdmJsPath + '/dist') + '/iframe.js', 'src/main/resources/js/core/iframe.js']
     ],
     [
         'mkdir',
