@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.confluence;
 
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
+import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
+import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.core.ContentEntityManager;
 import com.atlassian.confluence.core.ContentPermissionManager;
@@ -24,6 +26,7 @@ import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.web.context.HttpContext;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.core.task.MultiQueueTaskManager;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ConfluenceImport;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -62,6 +65,9 @@ public class ConfluenceImports {
             @ConfluenceImport PageTemplateManager pageTemplateManager,
             @ConfluenceImport FavouriteManager favouriteManager,
             @ConfluenceImport NotificationManager notificationManager,
-            @ConfluenceImport ContentBodyConversionService converter) {
+            @ConfluenceImport ContentBodyConversionService converter,
+            @ConfluenceImport ApiSupportProvider apiSupportProvider,
+            @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams,
+            @ConfluenceImport ModuleFactory moduleFactory) {
     }
 }

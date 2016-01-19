@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 
@@ -19,7 +20,6 @@ import java.util.List;
 public class ConfluenceModuleList extends BaseModuleBean {
     /**
      * Dynamic content macros allow you to add a macro into a Confluence page which is rendered as an iframe.
-     *
      */
     private List<DynamicContentMacroModuleBean> dynamicContentMacros;
 
@@ -51,6 +51,11 @@ public class ConfluenceModuleList extends BaseModuleBean {
      * they can participate in a content search using CQL.
      */
     private List<ContentPropertyModuleBean> confluenceContentProperties;
+
+    /**
+     * Extensible content types
+     */
+    private List<ExtensibleContentTypeModuleBean> extensibleContentTypes;
 
     private ConfluenceModuleList() {
     }
