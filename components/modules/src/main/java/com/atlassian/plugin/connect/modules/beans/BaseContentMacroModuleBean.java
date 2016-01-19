@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaIgnore;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
@@ -179,6 +180,7 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     /**
      * The configuration of a property panel. Specify a hidden iframe to be loaded in the macro's property panel.
      */
+    @SchemaIgnore
     private MacroPropertyPanelBean propertyPanel;
 
     /**
