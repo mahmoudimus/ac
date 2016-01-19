@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
+import com.atlassian.plugin.connect.plugin.web.context.InlineConditionVariableSubstitutorFake;
 import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
@@ -130,7 +131,7 @@ public class AddonConditionTest
     public void init()
     {
         final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(
-                new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl()),
+                new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), new InlineConditionVariableSubstitutorFake()),
                 remotablePluginAccessorFactory,
                 userManager,
                 new TestHostApplicationInfo(URL, "/"),

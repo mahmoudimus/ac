@@ -66,7 +66,7 @@ public class LegacyTestUrlVariableSubstitutor
         MatcherAssert.assertThat(SUBSTITUTOR.getContextVariableMap("http://server:80/path?my_page_id=${page.id}&thing=${stuff}"), is(expected));
     }
 
-    private static final UrlVariableSubstitutor SUBSTITUTOR = new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl());
+    private static final UrlVariableSubstitutor SUBSTITUTOR = new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), new InlineConditionVariableSubstitutorFake());
     private static final Map<String, Object> CONTEXT = createContext();
 
     private static Map<String, Object> createContext()
