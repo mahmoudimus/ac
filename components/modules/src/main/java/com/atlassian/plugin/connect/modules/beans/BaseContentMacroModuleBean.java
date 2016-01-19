@@ -177,8 +177,7 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private MacroEditorBean editor;
 
     /**
-     * The configuration of a property panel. Buttons are specified in the descriptor, and events fired from those
-     * buttons are passed to an iframe.
+     * The configuration of a property panel. Specify a hidden iframe to be loaded in the macro's property panel.
      */
     private MacroPropertyPanelBean propertyPanel;
 
