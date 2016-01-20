@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeUISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeUISupportModuleBean;
 
 public class ExtensibleContentTypeUISupportModuleBeanBuilder
         extends BaseModuleBeanBuilder<ExtensibleContentTypeUISupportModuleBeanBuilder, ExtensibleContentTypeUISupportModuleBean>

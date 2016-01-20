@@ -6,6 +6,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
@@ -23,11 +24,16 @@ public class ExtensibleContentTypeModuleProviderImpl extends AbstractConfluenceC
 {
     private static final ExtensibleContentTypeModuleMeta META = new ExtensibleContentTypeModuleMeta();
 
+    private final ExtensibleContentTypeModuleDescriptorFactory extensibleContentTypeModuleDescriptorFactory;
+
     @Autowired
-    public ExtensibleContentTypeModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator)
+    public ExtensibleContentTypeModuleProviderImpl(final PluginRetrievalService pluginRetrievalService,
+            final ConnectJsonSchemaValidator schemaValidator,
+            final ExtensibleContentTypeModuleDescriptorFactory extensibleContentTypeModuleDescriptorFactory)
     {
         super(pluginRetrievalService, schemaValidator);
+
+        this.extensibleContentTypeModuleDescriptorFactory = extensibleContentTypeModuleDescriptorFactory;
     }
 
     @Override
@@ -42,7 +48,10 @@ public class ExtensibleContentTypeModuleProviderImpl extends AbstractConfluenceC
         Plugin plugin = pluginRetrievalService.getPlugin();
         List<ModuleDescriptor> descriptors = Lists.newArrayList();
 
-        // TODO: implement
+        for (ExtensibleContentTypeModuleBean extensibleContentType : modules)
+        {
+            descriptors.add(extensibleContentTypeModuleDescriptorFactory.createModuleDescriptor(extensibleContentType, addon, plugin));
+        }
 
         return descriptors;
     }

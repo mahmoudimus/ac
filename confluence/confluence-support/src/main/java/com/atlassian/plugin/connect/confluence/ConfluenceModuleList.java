@@ -1,13 +1,8 @@
 package com.atlassian.plugin.connect.confluence;
 
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
-import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
-import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
-import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.confluence.contenttype.ExtensibleContentType;
+import com.atlassian.plugin.connect.modules.beans.*;
 
 import java.util.List;
 
@@ -52,6 +47,11 @@ public class ConfluenceModuleList extends BaseModuleBean
      * they can participate in a content search using CQL.
      */
     private List<ContentPropertyModuleBean> confluenceContentProperties;
+
+    /**
+     * Extensible content types
+     */
+    private List<ExtensibleContentTypeModuleBean> extensibleContentTypes;
 
     private ConfluenceModuleList()
     {

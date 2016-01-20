@@ -1,12 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeAPISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeAPISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeUISupportModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CreateResultType;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeUISupportModuleBean;
 
 public class ExtensibleContentTypeModuleBeanBuilder extends RequiredKeyBeanBuilder<ExtensibleContentTypeModuleBeanBuilder, ExtensibleContentTypeModuleBean>
 {

@@ -8,14 +8,11 @@ import com.atlassian.confluence.api.model.pagination.LimitedRequest;
 import com.atlassian.confluence.api.model.pagination.PageResponse;
 import com.atlassian.confluence.api.model.validation.SimpleValidationResult;
 import com.atlassian.confluence.api.model.validation.ValidationResult;
-import com.atlassian.confluence.api.service.exceptions.unchecked.NotImplementedServiceException;
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.apisupport.CustomContentTypeApiSupport;
 import com.atlassian.confluence.pages.ContentConvertible;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
 {
