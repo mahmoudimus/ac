@@ -20,21 +20,18 @@ public class ExtensibleContentType extends BaseCustomContentType
     private final PermissionDelegate permissionDelegate;
     private final ContentUiSupport contentUiSupport;
     private final CustomContentApiSupportParams customContentApiSupportParams;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
     @Autowired
     public ExtensibleContentType(final ContentEntityAdapter contentEntityAdapter,
             final PermissionDelegate permissionDelegate,
             final ApiSupportProvider apiSupportProvider,
-            final CustomContentApiSupportParams customContentApiSupportParams,
-            final RemotablePluginAccessorFactory remotablePluginAccessorFactory)
+            final CustomContentApiSupportParams customContentApiSupportParams)
     {
         super(ExtensibleContentTypeSupport.contentType, apiSupportProvider);
         this.permissionDelegate = permissionDelegate;
         this.contentEntityAdapter = contentEntityAdapter;
         this.contentUiSupport = new ExtensibleUISupport();
         this.customContentApiSupportParams = customContentApiSupportParams;
-        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
     }
 
     @Override

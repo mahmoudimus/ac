@@ -6,7 +6,7 @@
     <connect-module key="profile-page-module" class="com.atlassian.plugin.connect.confluence.web.ProfilePageModuleProvider"/>
     <connect-module key="space-tools-tab-module" class="com.atlassian.plugin.connect.confluence.web.spacetools.SpaceToolsTabModuleProvider"/>
     <connect-module key="static-content-macro-module" class="com.atlassian.plugin.connect.confluence.macro.StaticContentMacroModuleProvider"/>
-    <connect-module key="extensible-content-type-module" class="com.atlassian.plugin.connect.confluence.contenttype.ExtensibleContentTypeModuleProviderImpl"/>
+    <connect-module key="extensible-content-type-module" class="com.atlassian.plugin.connect.confluence.contenttype.ExtensibleContentTypeModuleProvider"/>
 
 
     <connect-api-scope-whitelist key="confluence-api-scope-whitelist" resource="/scope/confluence-whitelist.json"/>
@@ -119,4 +119,9 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
+
+    <content-type key="extensible" name="Extensible Content Type Support"
+                  class="com.atlassian.plugin.connect.confluence.contenttype.ExtensibleContentType">
+        <description>Support for Extensible Content Type for Atlassian Connect add-ons</description>
+    </content-type>
 </application>
