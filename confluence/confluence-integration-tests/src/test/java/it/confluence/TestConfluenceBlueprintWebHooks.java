@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -18,13 +17,8 @@ public final class TestConfluenceBlueprintWebHooks extends ConfluenceWebDriverTe
             + ".confluence-software-blueprints:retrospectives-item";
 
     @Test
-    @Ignore("Temporary disable the test case until the fix deployed in production")
     public void testBlueprintPageCreatedWebHookFired() throws Exception
     {
-        // TODO: A legacy js code in create content plugin is causing the button panel disappear.
-        // Ignore this test case for now until the fix merged and correct version was bumped in Confluence
-        // https://bitbucket.org/atlassian/confluence-create-content-plugin/pull-requests/249/ce-282-the-legacy-user-multiselet-is/diff
-
 
         // This test case currently need web driver as Blueprint APIs are not ready
         WebHookTestServlet.runInJsonRunner(product.getProductInstance().getBaseUrl(), "blueprint_page_created", waiter -> {
