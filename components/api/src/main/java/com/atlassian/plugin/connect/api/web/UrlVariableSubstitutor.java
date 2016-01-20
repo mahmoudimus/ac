@@ -25,7 +25,7 @@ public interface UrlVariableSubstitutor
      * @param context context containing values to replace
      * @return source with variables replaced by values.
      */
-    public String replace(String source, Map<String, ?> context);
+    public String replace(String source, WebFragmentContext context);
 
     /**
      * Appends (rather than substitutes) a map of parameters to the end of the url.

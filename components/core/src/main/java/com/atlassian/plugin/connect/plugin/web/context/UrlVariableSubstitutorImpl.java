@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.web.context.condition.InlineConditionVariableSubstitutor;
@@ -43,7 +44,7 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         this.devModeService = checkNotNull(devModeService);
     }
 
-    public String replace(String source, Map<String, ?> context)
+    public String replace(String source, WebFragmentContext context)
     {
         if (devModeService.isDevMode() && source.contains("${"))
         {
@@ -55,7 +56,7 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         while (m.find())
         {
             String term = m.group(1);
-            String value = inlineConditionVariableSubstitutor.substitute(term, context).orElseGet(() -> fromContext(term, context));
+            String value = inlineConditionVariableSubstitutor.substitute(term, context.getProductContext()).orElseGet(() -> fromContext(term, context.getConnectContext()));
             m.appendReplacement(sb, encodeQuery(value));
         }
         m.appendTail(sb);

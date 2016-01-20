@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
+import java.util.Map;
+
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
@@ -11,6 +13,11 @@ import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParamete
  */
 public class JiraModuleContextParametersImpl extends HashMapModuleContextParameters implements JiraModuleContextParameters
 {
+    public JiraModuleContextParametersImpl(final Map<String, ?> originalContext)
+    {
+        super(originalContext);
+    }
+
     @Override
     public void addIssue(final Issue issue)
     {

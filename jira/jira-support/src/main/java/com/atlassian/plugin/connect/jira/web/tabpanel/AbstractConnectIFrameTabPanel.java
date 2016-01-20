@@ -52,7 +52,7 @@ public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDesc
 
     private JiraModuleContextParameters createUnfilteredContext(final C ctx)
     {
-        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl(ctx.createParameterMap());
         populateModuleContext(unfilteredContext, ctx);
         return unfilteredContext;
     }

@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Optional;
 
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
@@ -83,7 +84,7 @@ public class IFrameUriBuilderImpl
     @Override
     public InitializedBuilder context(final ModuleContextParameters context)
     {
-        String substitutedUrl = urlVariableSubstitutor.replace(templateUri, context);
+        String substitutedUrl = urlVariableSubstitutor.replace(templateUri, WebFragmentContext.from(context));
         UriBuilder uriBuilder = new UriBuilder(Uri.parse(substitutedUrl));
         return new InitializedBuilderImpl(addonKey, namespace, uriBuilder);
     }

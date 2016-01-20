@@ -34,7 +34,7 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
             return (ModuleContextParameters) webFragmentContext;
         }
 
-        JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
+        JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl(webFragmentContext);
 
         for (ParameterExtractor extractor : parameterExtractors)
         {

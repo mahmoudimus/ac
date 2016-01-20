@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
 import org.hamcrest.MatcherAssert;
@@ -79,18 +80,16 @@ public class TestUrlVariableSubstitutor
     }
 
     private static final UrlVariableSubstitutor SUBSTITUTOR = new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), new InlineConditionVariableSubstitutorFake());
-    private static final Map<String, Object> CONTEXT = createContext();
+    private static final WebFragmentContext CONTEXT = createContext();
 
-    private static Map<String, Object> createContext()
+    private static WebFragmentContext createContext()
     {
-        Map<String, Object> pageContext = new HashMap<String, Object>();
-        pageContext.put("id", 1234);
         Map<String, Object> context = new HashMap<String, Object>();
         context.put("page", Collections.singletonMap("id", 1234));
         context.put("foo", "bah");
         context.put("uh_oh", null);
         context.put("oh_my_encoding", "Æ æ");
         context.put("life_meaning", "21+21");
-        return context;
+        return new WebFragmentContext(context, context);
     }
 }

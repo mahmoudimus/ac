@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImp
 import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -31,11 +32,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.annotation.Nullable;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -146,6 +149,8 @@ public class AddonConditionTest
                     }
                 },
                 pluginRetrievalService);
+
+        when(webFragmentModuleContextExtractor.extractParameters(anyMap())).thenReturn(new HashMapModuleContextParameters(Collections.emptyMap()));
 
         addonCondition = new AddonCondition(remotablePluginAccessorFactory,
                 iFrameUriBuilderFactory,
