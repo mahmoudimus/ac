@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
 import com.atlassian.confluence.security.PermissionDelegate;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.user.User;
 
-@ConfluenceComponent
 public class ExtensiblePermissionDelegate implements PermissionDelegate
 {
     @Override

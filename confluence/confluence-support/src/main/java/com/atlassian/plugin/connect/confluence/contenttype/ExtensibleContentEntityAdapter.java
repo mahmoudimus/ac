@@ -5,24 +5,14 @@ import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.BodyType;
 import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-@ConfluenceComponent
 public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent
 {
     private final ContentTypeMapper mapper;
 
-    @Autowired
-    public ExtensibleContentEntityAdapter(final ContentTypeMapper mapper)
+    public ExtensibleContentEntityAdapter(ContentTypeMapper mapper)
     {
         this.mapper = mapper;
-    }
-
-    public static boolean isExtensibleContentType(CustomContentEntityObject o)
-    {
-        return o != null && ExtensibleContentTypeSupport.contentType.equals(o.getPluginModuleKey());
     }
 
     @Override

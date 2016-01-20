@@ -12,16 +12,19 @@ import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.apisupport.CustomContentTypeApiSupport;
 import com.atlassian.confluence.pages.ContentConvertible;
-import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
+import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 
 public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
 {
-    public static final String moduleKey = ConnectPluginInfo.getPluginKey() + ":confluence-extensible";
-    public static final ContentType contentType = ContentType.valueOf(moduleKey);
+    private final ContentType contentType;
 
-    public ExtensibleContentTypeSupport(CustomContentApiSupportParams params)
+    public ExtensibleContentTypeSupport(
+            String contentTypeKey,
+            ExtensibleContentTypeModuleBean bean,
+            CustomContentApiSupportParams params)
     {
         super(params);
+        this.contentType = ContentType.valueOf(contentTypeKey);
     }
 
     @Override

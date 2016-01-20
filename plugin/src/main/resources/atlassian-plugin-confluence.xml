@@ -119,9 +119,4 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
-
-    <content-type key="extensible" name="Extensible Content Type Support"
-                  class="com.atlassian.plugin.connect.confluence.contenttype.ExtensibleContentType">
-        <description>Support for Extensible Content Type for Atlassian Connect add-ons</description>
-    </content-type>
 </application>

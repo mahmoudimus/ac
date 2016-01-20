@@ -3,9 +3,7 @@ package com.atlassian.plugin.connect.confluence.contenttype;
 import com.atlassian.confluence.content.ui.ContentUiSupport;
 import com.atlassian.confluence.core.ConfluenceEntityObject;
 import com.atlassian.confluence.search.v2.SearchResult;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
-@ConfluenceComponent
 public class ExtensibleUISupport implements ContentUiSupport
 {
     @Override

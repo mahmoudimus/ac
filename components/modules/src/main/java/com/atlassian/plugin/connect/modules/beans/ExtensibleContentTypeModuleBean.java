@@ -32,4 +32,9 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
     {
         return apiSupport;
     }
+
+    public String getModuleKey()
+    {
+        return getRawKey();
+    }
 }
