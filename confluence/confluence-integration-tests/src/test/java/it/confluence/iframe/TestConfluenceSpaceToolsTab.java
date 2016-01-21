@@ -77,7 +77,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
 
         String pageKey = addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
         String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
-        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Optional.<String>empty(), pageKey);
+        LinkedRemoteContent addonPage = confluencePageOperations.findTabPanel(webItemId, Optional.<String>empty(), pageKey);
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
                 RemoteWebPanel.class,
@@ -94,7 +94,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
 
         loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, space);
 
-        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(LINK_TEXT, "AC Space Tab", Optional.<String>empty(), addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY));
+        LinkedRemoteContent addonPage = confluencePageOperations.findRemoteLinkedContent(LINK_TEXT, "AC Space Tab", Optional.<String>empty(), addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY));
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
                 RemoteWebPanel.class,

@@ -70,6 +70,10 @@ public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
     	}
     }
 
+    public long getAuiBlanketZIndex() {
+        return (Long) this.auiBlanket.javascript().execute("return Number(window.document.defaultView.getComputedStyle(arguments[0]).getPropertyValue('z-index'));");
+    }
+
     public String getTitle()
     {
         return titleElement.getText();

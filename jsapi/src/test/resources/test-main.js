@@ -15,11 +15,14 @@ requirejs.config({
     // dependencies
     'jquery': '../target/qunit/dependencies/js/external/jquery/jquery',
     'aui-soy': '//aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy',
+    'Squire' : '../node_modules/squirejs/src/Squire',
     // host side
     'connect-host': 'main/resources/js/core/connect-host',
     'ac/dialog': 'main/resources/js/core/connect-host-dialog',
     'ac/confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     'ac/confluence/macro/autoconvert': '../src/main/resources/js/confluence/macro/autoconvert',
+    'ac/confluence/macro/property-panel-iframe': '../src/main/resources/js/confluence/macro/property-panel-iframe',
+    'ac/confluence/macro': '../src/main/resources/js/confluence/macro/macro',
     'ac/jira/events': '../src/main/resources/js/jira/events/events',
     'ac/jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function/workflow-post-function'
   },
@@ -31,17 +34,11 @@ requirejs.config({
     ///////////////////
     //  SHARED SIDE  //
     ///////////////////
-  },
+  }
+});
 
-  // ask Require.js to load these files (all our tests)
-  deps: tests,
-
-    // start test run, once Require.js is done
-    callback: function(x){ 
-        setTimeout(function(){
-             window.__karma__.start(x);
-        }, 1000);
-    }
+require(tests, function() {
+  window.__karma__.start();
 });
 
 //tests will timeout after 5 seconds
