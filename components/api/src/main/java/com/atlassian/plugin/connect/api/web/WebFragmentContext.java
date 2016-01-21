@@ -29,7 +29,9 @@ public final class WebFragmentContext
 
     public static WebFragmentContext from(final ModuleContextParameters moduleContextParameters)
     {
-        Map<String, Object> connectContext = moduleContextParameters.entrySet().stream().collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, Object> connectContext = moduleContextParameters.entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
         return new WebFragmentContext(moduleContextParameters.getOriginalContext(), connectContext);
     }
 }
