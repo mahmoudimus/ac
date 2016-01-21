@@ -73,8 +73,8 @@
         <url-pattern>/ac-test-addon/*</url-pattern>
     </servlet-filter>
 
-    <movable-web-panel-locations-list key="test-movable-web-panel-locations-list">
+    <redirected-web-panel-location-list key="test-movable-web-panel-locations-list">
         <location>atl.jira.proj.config.sidebar</location>
         <location>atl.editor</location>
-    </movable-web-panel-locations-list>
+    </redirected-web-panel-location-list>
 </atlassian-plugin>
