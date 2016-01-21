@@ -5,12 +5,6 @@ import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.Space;
 import com.atlassian.confluence.it.Page;
-import com.atlassian.confluence.pageobjects.page.DashboardPage;
-import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
-import com.atlassian.confluence.pageobjects.page.content.ViewPage;
-import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
-import com.atlassian.confluence.pageobjects.page.user.ViewProfilePage;
-import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -30,12 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
-import static junit.framework.TestCase.*;
+import static junit.framework.TestCase.assertEquals;
 
 public class TestNavigatorContext extends ConfluenceWebDriverTestBase
 {
@@ -45,7 +38,6 @@ public class TestNavigatorContext extends ConfluenceWebDriverTestBase
      */
 
     private static List<Exception> setupFailure = new ArrayList<>();
-    private static final String PAGE_KEY = "ac-navigator-general-page";
     private static final String WEB_ITEM_KEY = "ac-navigator-web-item";
     private static ConnectRunner remotePlugin;
 
