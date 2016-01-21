@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeU
 public class ExtensibleContentTypeUISupportModuleBean extends BaseModuleBean
 {
     private String viewComponent;
+    private I18nProperty typeName;
 
     public ExtensibleContentTypeUISupportModuleBean(ExtensibleContentTypeUISupportModuleBeanBuilder builder)
     {
@@ -15,5 +16,10 @@ public class ExtensibleContentTypeUISupportModuleBean extends BaseModuleBean
     public String getViewComponent()
     {
         return viewComponent;
+    }
+
+    public I18nProperty getTypeName()
+    {
+        return typeName;
     }
 }

@@ -33,7 +33,7 @@ public class ExtensibleContentType extends BaseCustomContentType
         this.bean = bean;
         this.permissionDelegate = new ExtensiblePermissionDelegate();
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
-        this.contentUiSupport = new ExtensibleUISupport();
+        this.contentUiSupport = new ExtensibleUISupport(bean);
         this.customContentApiSupportParams = customContentApiSupportParams;
     }
 
