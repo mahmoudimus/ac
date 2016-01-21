@@ -148,21 +148,70 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.openCreateIssueDialog(fields);
                 },
 
+                /**
+                 * Shows a date picker component. A callback will be invoked when the date (and time) is selected by the user.
+                 *
+                 * @param {Object} options - contains data to pre-fill the dialog with
+                 * @param {HTMLElement} options.element - HTML element below which date picker will be positioned. If provided, it takes precedence over options.position.
+                 * @param {Object} options.position - Position of the element relative to the iframe. options.element takes precedence over it when provided.
+                 * @param {number} options.position.top - Distance in pixels from the top edge of the iframe date picker should be shown at.
+                 * @param {number} options.position.left- Distance in pixels from the left edge of the iframe date picker should be shown at.
+                 * @param {Boolean} options.showsTime - Flag determining whether the component should also have a time picker.
+                 * @param {String} options.date - Date (and time) that should be pre-selected when displaying the picker in the ISO 8601 format.
+                 * @param {Function} options.onSelect - Callback that will be invoked when the date (and time) is selected by the user.
+                 *
+                 * @noDemo
+                 * @example
+                 * AP.require('jira', function(jira){
+                 *     var dateField = document.querySelector("#date-field");
+                 *     var dateTrigger = document.querySelector("#date-trigger");
+                 *
+                 *     dateTrigger.addEventListener("click", function(e) {
+                 *         e.preventDefault();
+                 *         jira.datePicker({
+                 *             element: dateTrigger,
+                 *             date: "2011-12-13T15:20+01:00",
+                 *             showsTime: true,
+                 *             onSelect: function (isoDate, date) {
+                 *                 dateField.value = date;
+                 *                 dateField.setAttribute("data-iso", isoDate);
+                 *                 dateField.focus();
+                 *             }
+                 *         });
+                 *     });
+                 * });
+                 */
                 datePicker: function (options) {
-                    var elBoundingBox;
-                    dateSelectedListener = options.onSelect;
-                    delete options.onSelect;
+                    options = options || {};
+                    if (!options.position || typeof options.position !== "object") {
+                        options.position = {}
+                    }
 
-                    if (options.element) {
-                        elBoundingBox = options.element.getBoundingClientRect();
-                        options.position = {
+                    var sanitisedOptions =  {
+                        element: options.element,
+                        position: {
+                            top: options.position.top || 0,
+                            left: options.position.left || 0
+                        },
+                        date: options.date,
+                        showsTime: options.showsTime,
+                        onSelect: options.onSelect
+                    };
+
+                    var elBoundingBox;
+                    dateSelectedListener = sanitisedOptions.onSelect;
+                    delete sanitisedOptions.onSelect;
+
+                    if (sanitisedOptions.element) {
+                        elBoundingBox = sanitisedOptions.element.getBoundingClientRect();
+                        sanitisedOptions.position = {
                             left: elBoundingBox.left,
                             top: elBoundingBox.top + elBoundingBox.height
                         };
-                        delete options.element;
+                        delete sanitisedOptions.element;
                     }
 
-                    remote.datePicker(options);
+                    remote.datePicker(sanitisedOptions);
                 }
             },
 

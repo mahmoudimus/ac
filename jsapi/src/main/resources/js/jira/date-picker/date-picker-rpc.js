@@ -13,8 +13,10 @@
                 internals: {
                     datePicker: function(options) {
                         options.onSelect = function(calendarInstance, date) {
-                            this.triggerDateSelectedListener(date, calendarInstance.date.toISOString());
-                            calendarInstance.callCloseHandler();
+                            this.triggerDateSelectedListener(calendarInstance.date.toISOString(), date);
+                            if (calendarInstance.dateClicked) {
+                                calendarInstance.callCloseHandler();
+                            }
                         }.bind(this);
 
                         var iframeBox = this.iframe.getBoundingClientRect();
@@ -22,7 +24,7 @@
                         options.position.top += iframeBox.top;
                         options.position.left += iframeBox.left;
 
-                        DatePicker.create(options);
+                        DatePicker.show(options);
                     }
                 },
                 stubs: ['triggerDateSelectedListener']

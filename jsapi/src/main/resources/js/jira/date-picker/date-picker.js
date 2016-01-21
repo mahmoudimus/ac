@@ -5,60 +5,47 @@ define("ac/jira/date-picker", [
 ){
     var config = WRM.data.claim("com.atlassian.plugins.atlassian-connect-plugin:jira-date-picker-widget.config");
 
-    function create(params) {
-        params = params || {};
-        params.inputField = {};
-        params = _.extend(params, config, {
-            singleClick: "true"
-        });
-
+    function show(params) {
         var cal = window.calendar;
         if (cal) {
             cal.hide();
         }
 
+        params = params || {};
+        params = _.extend(params, config, {
+            singleClick: "true",
+            inputField: {}
+        });
+
         window.calendar = cal = new Calendar(
-            params.firstDay,
+            // Either use ISO week numbers or pass undefined so the component can decide based on locale
+            // ISO8601 assumes that first day of week is Monday
+            (params.useISO8601WeekNumbers) ? 1 : undefined,
             params.date,
             params.onSelect || function noop() {  },
-            params.onClose || function hideAndDestroy(cal) {
+            function hideAndDestroy(cal) {
                 cal.hide();
                 cal.destroy();
             }
         );
 
-        cal.weekNumbers = params.weekNumbers || true;
-        // BB - At the Date object level not Calendar
-        Date.useISO8601WeekNumbers = params.useISO8601WeekNumbers;
-        if (params.useISO8601WeekNumbers) {
-            // ISO8601 assumes that first day of week is Monday
-            cal.firstDayOfWeek = 1;
-        }
-
-        cal.showsOtherMonths = params.showOthers;
-        if (Array.isArray(params.range)) {
-            cal.setRange(params.range[0], params.range[1]);
-        }
+        cal.weekNumbers = true;
+        cal.showsOtherMonths = false;
         cal.params = params;
-        cal.setDateStatusHandler(params.dateStatusFunc);
-        cal.getDateText = params.dateText;
-
-
-        var formatString = params.showsTime ? params.dateTimeFormat : params.dateFormat;
         cal.showsTime = params.showsTime;
         cal.time24 = (params.timeFormat == "24");
+        var formatString = params.showsTime ? params.dateTimeFormat : params.dateFormat;
         cal.setDateFormat(formatString);
 
         cal.create();
         cal.refresh();
-
-        cal.showAt(params.position.left, params.position.top);
+        cal.showAt(params.position.left || 0, params.position.top || 0);
 
         return cal;
     }
 
     return {
-        create: create
+        show: show
     }
 });
 
