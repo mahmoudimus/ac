@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * Factory of different kinds of url's used in connect.
+ * Uri Factory that creates URIs to the connects servlets or to the connect add-on.
  * @since 1.0
  */
 @ThreadSafe

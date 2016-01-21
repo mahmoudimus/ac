@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @ModuleType (ListableModuleDescriptorFactory.class)
 @Component
-public class MovableWebPanelLocationProviderModuleDescriptorFactory extends SingleModuleDescriptorFactory<MovableWebPanelLocationProviderModuleDescriptor>
+public class RedirectedWebPanelLocationProviderModuleDescriptorFactory extends SingleModuleDescriptorFactory<RedirectedWebPanelLocationProviderModuleDescriptor>
 {
     @Autowired
-    public MovableWebPanelLocationProviderModuleDescriptorFactory(HostContainer hostContainer)
+    public RedirectedWebPanelLocationProviderModuleDescriptorFactory(HostContainer hostContainer)
     {
-        super(hostContainer, "movable-web-panel-locations-list", MovableWebPanelLocationProviderModuleDescriptor.class);
+        super(hostContainer, "redirected-web-panel-location-list", RedirectedWebPanelLocationProviderModuleDescriptor.class);
     }
 }

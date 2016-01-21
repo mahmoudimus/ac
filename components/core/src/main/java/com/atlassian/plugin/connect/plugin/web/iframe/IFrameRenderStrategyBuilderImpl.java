@@ -415,6 +415,12 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
+        public boolean needRedirection()
+        {
+            return redirect;
+        }
+
+        @Override
         public void shouldShowOrThrow(final Map<String, Object> conditionContext)
         {
             if (!shouldShow(conditionContext))

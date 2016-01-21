@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -80,7 +81,7 @@ public class RedirectServlet extends HttpServlet
         RedirectData redirectData = redirectDataOpt.get();
 
         ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
-        if (redirectData.shouldRedirect(moduleContextParameters))
+        if (redirectData.shouldRedirect(Collections.<String, Object>unmodifiableMap(moduleContextParameters)))
         {
             Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
             String signedUrl = connectUriFactory.createConnectAddonUriBuilder()

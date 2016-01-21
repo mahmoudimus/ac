@@ -4,7 +4,6 @@ package it.jira.iframe;
 import com.atlassian.connect.test.jira.pageobjects.JiraProjectAdministrationPage;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
@@ -25,14 +24,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test web panels in movable locations works and points to the redirect servlet.
+ * Test web panels in web panel redirected locations works and points to the redirect servlet.
  */
-public final class TestWebPanelInMovableLocations extends JiraWebDriverTestBase
+public final class TestRedirectedWebPanel extends JiraWebDriverTestBase
 {
     private static final String WEB_PANEL = "test-web-panel";
 
-    // this is not a true movable location but it's defined as movable in reference plugin for the test purpose.
-    private static final String MOVABLE_LOCATION = "atl.jira.proj.config.sidebar";
+    // this is not a true redirected location but it's defined as this in reference plugin for the test purpose.
+    private static final String REDIRECTED_LOCATION = "atl.jira.proj.config.sidebar";
 
     private static final ParameterCapturingServlet PARAMETER_CAPTURING_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.channelConnectionVerifyServlet());
 
@@ -51,10 +50,10 @@ public final class TestWebPanelInMovableLocations extends JiraWebDriverTestBase
                 .addModules(
                         "webPanels",
                         newWebPanelBean()
-                                .withName(new I18nProperty("Panel in movable location", null))
+                                .withName(new I18nProperty("Panel in redirected location", null))
                                 .withKey(WEB_PANEL)
                                 .withUrl("/servlet?project_key={project.key}&project_id={project.id}")
-                                .withLocation(MOVABLE_LOCATION)
+                                .withLocation(REDIRECTED_LOCATION)
                                 .build()
                 )
                 .addRoute("/servlet", ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_SERVLET))
@@ -71,7 +70,7 @@ public final class TestWebPanelInMovableLocations extends JiraWebDriverTestBase
     }
 
     @Test
-    public void webPanelInMovableLocationShouldPointsToRedirectServletAndDisplaysProperly()
+    public void webPanelInRedirectedLocationShouldPointsToRedirectServletAndDisplaysProperly()
     {
         JiraProjectAdministrationPage page = product.visit(JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, WEB_PANEL)).waitUntilContentElementNotEmpty("channel-connected-message");

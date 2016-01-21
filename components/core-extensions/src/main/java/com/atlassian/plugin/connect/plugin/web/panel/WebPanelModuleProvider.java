@@ -38,7 +38,7 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     private final ConditionLoadingValidator conditionLoadingValidator;
     private final RedirectRegistry redirectRegistry;
     private final RedirectDataBuilderFactory redirectDataBuilderFactory;
-    private final MovableWebSectionSearcher movableWebSectionSearcher;
+    private final RedirectedWebPanelSectionSearcher redirectedWebPanelSectionSearcher;
 
     public WebPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
             ConnectJsonSchemaValidator schemaValidator,
@@ -49,7 +49,7 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
             ConditionLoadingValidator conditionLoadingValidator,
             RedirectRegistry redirectRegistry,
             RedirectDataBuilderFactory redirectDataBuilderFactory,
-            MovableWebSectionSearcher movableWebSectionSearcher)
+            RedirectedWebPanelSectionSearcher redirectedWebPanelSectionSearcher)
     {
         super(pluginRetrievalService, schemaValidator);
         this.webPanelFactory = webPanelFactory;
@@ -59,7 +59,7 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
         this.conditionLoadingValidator = conditionLoadingValidator;
         this.redirectRegistry = redirectRegistry;
         this.redirectDataBuilderFactory = redirectDataBuilderFactory;
-        this.movableWebSectionSearcher = movableWebSectionSearcher;
+        this.redirectedWebPanelSectionSearcher = redirectedWebPanelSectionSearcher;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
 
     private void registerIframeRenderStrategy(WebPanelModuleBean webPanel, ConnectAddonBean descriptor)
     {
-        boolean webPanelNeedsRedirection = movableWebSectionSearcher.isWebPanelInMovableWebSection(webPanel, descriptor);
+        boolean webPanelNeedsRedirection = redirectedWebPanelSectionSearcher.doesWebPanelNeedsToBeRedirected(webPanel, descriptor);
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addon(descriptor.getKey())

@@ -187,4 +187,18 @@ parameter value to be provided to that web fragment. Declare your context parame
 
     <connect-context-parameter-mapper key="my-context-parameter-mapper" class="com.atlassian.plugin.MyContextParameterMapper"/>
 
+## Redirected web panel location list
 
+Redirected location is a location where web-panel's iframe will do requests through redirect-servlet that would sign them using JWT.
+Example of that type localisation is an AUI drop-down, that moves its content in the DOM each time is popped up.
+Every time web-panel's iframe is moved in the DOM it do the request.
+User can pop up drop-down at any time, so the jwt token may expire, therefore web-panel's iframe has to point to the redirect servlet.
+
+This plugins point allows to add locations in which web-panels requires to use the redirection technique. 
+
+ ```
+ <redirected-web-panel-location-list>
+     <location>...</location>
+     <location>...</location>
+ <redirected-web-panel-location-list>
+ ```

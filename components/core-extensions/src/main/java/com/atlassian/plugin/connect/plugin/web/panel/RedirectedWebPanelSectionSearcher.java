@@ -19,48 +19,48 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class MovableWebSectionSearcher
+public class RedirectedWebPanelSectionSearcher
 {
     private final PluginAccessor pluginAccessor;
 
     @Autowired
-    public MovableWebSectionSearcher(
+    public RedirectedWebPanelSectionSearcher(
             PluginAccessor pluginAccessor)
     {
         this.pluginAccessor = pluginAccessor;
     }
 
-    public boolean isWebPanelInMovableWebSection(WebPanelModuleBean bean, ConnectAddonBean connectAddonBean)
+    public boolean doesWebPanelNeedsToBeRedirected(WebPanelModuleBean bean, ConnectAddonBean connectAddonBean)
     {
-        Set<String> movableWebSectionLocations = getMovableWebSectionLocations();
+        Set<String> redirectedWebPanelLocations = getRedirectedWebPanelLocations();
         String beanLocation = bean.getLocation();
-        if (movableWebSectionLocations.contains(beanLocation))
+        if (redirectedWebPanelLocations.contains(beanLocation))
         {
             return true;
         }
 
         List<WebSectionModuleBean> webSections = getWebSectionModuleBeans(connectAddonBean);
-        return isInMovableWebSection(beanLocation, webSections, movableWebSectionLocations);
+        return isInRedirectedWebSection(beanLocation, webSections, redirectedWebPanelLocations);
     }
 
-    private Set<String> getMovableWebSectionLocations()
+    private Set<String> getRedirectedWebPanelLocations()
     {
-        return pluginAccessor.getEnabledModuleDescriptorsByClass(MovableWebPanelLocationProviderModuleDescriptor.class)
+        return pluginAccessor.getEnabledModuleDescriptorsByClass(RedirectedWebPanelLocationProviderModuleDescriptor.class)
                 .stream()
-                .flatMap(new Function<MovableWebPanelLocationProviderModuleDescriptor, Stream<String>>()
+                .flatMap(new Function<RedirectedWebPanelLocationProviderModuleDescriptor, Stream<String>>()
                 {
                     @Override
-                    public Stream<String> apply(MovableWebPanelLocationProviderModuleDescriptor connectWebFragmentLocationBlacklist)
+                    public Stream<String> apply(RedirectedWebPanelLocationProviderModuleDescriptor connectWebFragmentLocationBlacklist)
                     {
-                        return connectWebFragmentLocationBlacklist.getModule().getMovableLocations().stream();
+                        return connectWebFragmentLocationBlacklist.getModule().getRedirectedLocations().stream();
                     }
                 })
                 .collect(Collectors.toSet());
     }
 
-    private boolean isInMovableWebSection(String locationKey, List<WebSectionModuleBean> webSections, Set<String> movableLocations)
+    private boolean isInRedirectedWebSection(String locationKey, List<WebSectionModuleBean> webSections, Set<String> redirectedLocations)
     {
-        // Movable sections may have sub section. If web panel is in sub-section we need to check if that sub-section belongs to the movable sections.
+        // Location may be a section with sub sections. If web panel is in sub-section we need to check if that sub-section belongs to the locations that requires redirection.
         Optional<WebSectionModuleBean> parentSection = findParentSection(locationKey, webSections);
         if (!parentSection.isPresent())
         {
@@ -68,12 +68,12 @@ public class MovableWebSectionSearcher
         }
 
         String parentSectionLocation = parentSection.get().getLocation();
-        if (movableLocations.contains(parentSectionLocation))
+        if (redirectedLocations.contains(parentSectionLocation))
         {
             return true;
         }
 
-        return isInMovableWebSection(parentSectionLocation, webSections, movableLocations);
+        return isInRedirectedWebSection(parentSectionLocation, webSections, redirectedLocations);
     }
 
     private List<WebSectionModuleBean> getWebSectionModuleBeans(ConnectAddonBean connectAddonBean)
