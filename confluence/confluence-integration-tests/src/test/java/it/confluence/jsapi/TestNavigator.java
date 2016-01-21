@@ -10,11 +10,7 @@ import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.confluence.pageobjects.page.user.ViewProfilePage;
 import com.atlassian.connect.test.confluence.pageobjects.RemoteNavigatorGeneralPage;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
-import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.util.concurrent.Promise;
@@ -27,11 +23,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -45,7 +38,6 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
 
     private static List<Exception> setupFailure = new ArrayList<>();
     private static final String PAGE_KEY = "ac-navigator-general-page";
-    private static final String WEB_ITEM_KEY = "ac-navigator-web-item";
     private static ConnectRunner remotePlugin;
 
     private static Promise<Content> createdPage;
