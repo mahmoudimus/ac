@@ -8,13 +8,13 @@ import java.util.Map;
  * Variables are in the form {var.name}, and are looked up in a nested map.
  * <p>
  * For example, given the source string "hi={user.name}" and a context such as
- * createMapOf("user", createMapOf("name", "joe")), {@link UrlVariableSubstitutor#replace(String, java.util.Map)}
+ * createMapOf("user", createMapOf("name", "joe")), {@link UrlVariableSubstitutor#replace(String, WebFragmentContext)}
  * would return "hi=joe".
  * <p>
  * All values in the context will be percent-encoded for subsitution into a URL.
  * <p>
  * Variables that that cannot be found in the map are replaced by an empty string. For example,
- * given the source String "hi={foo.bar}" and an empty map, {@link UrlVariableSubstitutor#replace(String, java.util.Map)}
+ * given the source String "hi={foo.bar}" and an empty map, {@link UrlVariableSubstitutor#replace(String, WebFragmentContext)}
  * would return "hi="
  */
 public interface UrlVariableSubstitutor
