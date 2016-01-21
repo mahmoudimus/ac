@@ -1,18 +1,18 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.spi.web.context.ProductContextProducer;
+import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-
 
 /**
  *
@@ -23,15 +23,15 @@ public class ModuleContextParserImpl implements ModuleContextParser
     private static final Logger log = LoggerFactory.getLogger(ModuleContextParserImpl.class);
 
     private final ModuleContextFilter moduleContextFilter;
-    private final ProductContextProducer productContextProducer;
+    private final WebFragmentModuleContextExtractor contextExtractor;
 
     private final RequestJsonParameterUtil requestJsonParameterUtil = new RequestJsonParameterUtil();
 
     @Autowired
-    public ModuleContextParserImpl(ModuleContextFilter moduleContextFilter, final ProductContextProducer productContextProducer)
+    public ModuleContextParserImpl(ModuleContextFilter moduleContextFilter, final WebFragmentModuleContextExtractor contextExtractor)
     {
         this.moduleContextFilter = moduleContextFilter;
-        this.productContextProducer = productContextProducer;
+        this.contextExtractor = contextExtractor;
     }
 
     @Override
@@ -51,9 +51,14 @@ public class ModuleContextParserImpl implements ModuleContextParser
             queryParams.put(key, values[0]);
         }
 
-        ModuleContextParameters unfiltered = new HashMapModuleContextParameters(productContextProducer.produce(req, queryParams));
+        ModuleContextParameters unfiltered = new HashMapModuleContextParameters(Collections.emptyMap());
         unfiltered.putAll(queryParams);
 
-        return moduleContextFilter.filter(unfiltered);
+        ModuleContextParameters filtered = moduleContextFilter.filter(unfiltered);
+
+        ModuleContextParameters filteredWithProductContext = new HashMapModuleContextParameters(contextExtractor.reverseExtraction(req, filtered));
+        filteredWithProductContext.putAll(filtered);
+
+        return filteredWithProductContext;
     }
 }

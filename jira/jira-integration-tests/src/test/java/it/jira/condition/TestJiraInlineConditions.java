@@ -7,9 +7,12 @@ import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragmen
 import com.atlassian.elasticsearch.shaded.google.common.base.Joiner;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
@@ -35,7 +38,6 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
 {
     private static ConnectRunner runner;
 
-    private static final String CONTEXT_PARAMETERIZED_WEBITEM = "context-parameterized";
     private static final String WEB_PANEL_CONTENT_URL = "/web-panel";
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
@@ -74,12 +76,14 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
     @Test
     public void inlineConditionInWebItemsShouldEvaluateToTrue()
     {
-        login(user);
+        ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issueKey);
+
         CONDITION_NAMES.forEach(name -> {
-            ViewIssuePageWithAddonFragments viewIssuePage = product.getPageBinder().navigateToAndBind(ViewIssuePageWithAddonFragments.class, issueKey);
             String moduleKey = addonAndModuleKey(runner.getAddon().getKey(), webItemKey(name));
             RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>empty());
             webItem.click();
+            RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
+            dialogPage.submitAndWaitUntilHidden();
 
             Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
             assertThat(conditionParams, hasEntry(equalTo("condition"), equalTo("true")));
@@ -101,11 +105,12 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
     private static WebItemModuleBean[] webItems()
     {
         return CONDITION_NAMES.stream().map(name -> newWebItemBean()
-                .withName(new I18nProperty("Context Parameterized", CONTEXT_PARAMETERIZED_WEBITEM))
+                .withName(new I18nProperty(webItemKey(name), webItemKey(name)))
                 .withKey(webItemKey(name))
                 .withContext(AddonUrlContext.addon)
                 .withLocation("operations-operations") // issue operations
                 .withWeight(1)
+                .withTarget(new WebItemTargetBeanBuilder().withType(WebItemTargetType.dialog).build())
                 .withUrl(PARAMETER_CAPTURE_URL + "?condition={" + conditionVariable(name) + "}")
                 .build()).collect(toList()).toArray(new WebItemModuleBean[CONDITION_NAMES.size()]);
     }
@@ -113,7 +118,7 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
     private static WebPanelModuleBean[] webPanels()
     {
         return CONDITION_NAMES.stream().map(name -> new WebPanelModuleBeanBuilder()
-                .withName(new I18nProperty("Context Parameterized", CONTEXT_PARAMETERIZED_WEBITEM))
+                .withName(new I18nProperty(webPanelKey(name), webPanelKey(name)))
                 .withKey(webPanelKey(name))
                 .withLocation("atl.jira.view.issue.right.context")
                 .withWeight(1)

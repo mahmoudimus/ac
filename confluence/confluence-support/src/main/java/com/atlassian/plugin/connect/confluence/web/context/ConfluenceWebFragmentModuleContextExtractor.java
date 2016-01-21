@@ -13,8 +13,10 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
+import java.util.Collections;
 import java.util.Map;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -110,4 +112,9 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         return moduleContext;
     }
 
+    @Override
+    public Map<String, Object> reverseExtraction(final HttpServletRequest request, final Map<String, String> queryParams)
+    {
+        return Collections.emptyMap();
+    }
 }
