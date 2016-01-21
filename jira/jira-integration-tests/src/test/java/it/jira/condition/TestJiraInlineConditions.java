@@ -74,8 +74,13 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
     @Test
     public void inlineConditionInWebItemsShouldEvaluateToTrue()
     {
+        login(user);
         CONDITION_NAMES.forEach(name -> {
-            clickWebItem(user, name);
+            ViewIssuePageWithAddonFragments viewIssuePage = product.getPageBinder().navigateToAndBind(ViewIssuePageWithAddonFragments.class, issueKey);
+            String moduleKey = addonAndModuleKey(runner.getAddon().getKey(), webItemKey(name));
+            RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>empty());
+            webItem.click();
+
             Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
             assertThat(conditionParams, hasEntry(equalTo("condition"), equalTo("true")));
         });
@@ -84,8 +89,9 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
     @Test
     public void inlineConditionInWebPanelsShouldEvaluateToTrue()
     {
+        ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issueKey);
+
         CONDITION_NAMES.forEach(name -> {
-            ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issueKey);
             String panelId = addonAndModuleKey(runner.getAddon().getKey(), webPanelKey(name));
             RemoteWebPanel webPanel = viewIssuePage.findWebPanel(panelId);
             assertTrue(Boolean.valueOf(webPanel.getFromQueryString("condition")));
@@ -132,13 +138,5 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
                 "(" + Joiner.on(",").withKeyValueSeparator("=").join(parameters.entrySet()) + ")";
 
         return String.format("condition.%s%s", conditionName, params);
-    }
-
-    private void clickWebItem(TestUser user, String conditionName)
-    {
-        ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issueKey);
-        String moduleKey = addonAndModuleKey(runner.getAddon().getKey(), webItemKey(conditionName));
-        RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>empty());
-        webItem.click();
     }
 }
