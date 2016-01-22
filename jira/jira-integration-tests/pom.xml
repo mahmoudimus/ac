@@ -214,14 +214,6 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-project-config-pageobjects</artifactId>
-            <!-- TODO: This is hardcoded due to incompatibilities between the atlassian.jira.version being compiled
-                 and the integration test which is using 7.1.0-SNAPSHOT.  This dependency can be removed when a new
-                 production OD version of JIRA is released which includes the Project config plugin upgrade. See HELIX-280 -->
-            <version>8.2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
             <artifactId>atlassian-jira-pageobjects</artifactId>
             <version>${atlassian.jira.version}</version>
             <scope>test</scope>
