@@ -8,6 +8,7 @@ public class CustomFieldTypeModuleBeanBuilder
         extends RequiredKeyBeanBuilder<CustomFieldTypeModuleBeanBuilder, CustomFieldTypeModuleBean>
 {
     private String type;
+    private I18nProperty description;
 
     public CustomFieldTypeModuleBeanBuilder()
     {
@@ -18,11 +19,18 @@ public class CustomFieldTypeModuleBeanBuilder
     {
         super(customFieldTypeModuleBean);
         this.type = customFieldTypeModuleBean.getType();
+        this.description = customFieldTypeModuleBean.getDescription();
     }
 
     public CustomFieldTypeModuleBeanBuilder withType(String type)
     {
         this.type = type;
+        return this;
+    }
+
+    public CustomFieldTypeModuleBeanBuilder withDescription(I18nProperty description)
+    {
+        this.description = description;
         return this;
     }
 

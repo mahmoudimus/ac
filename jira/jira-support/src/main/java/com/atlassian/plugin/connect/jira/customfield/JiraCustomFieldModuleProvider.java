@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.CustomFieldTypeModuleMeta;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,14 +21,16 @@ public class JiraCustomFieldModuleProvider extends AbstractJiraConnectModuleProv
 {
     private static final CustomFieldTypeModuleMeta META = new CustomFieldTypeModuleMeta();
 
-    private final CustomFieldTypeDescriptorFactory descriptorFactory;
+    private final CustomFieldTypeDescriptorFactory customFieldTypeDescriptorFactory;
+    private final CustomFieldSearcherDescriptorFactory customFieldSearcherDescriptorFactory;
 
     @Autowired
     public JiraCustomFieldModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator, CustomFieldTypeDescriptorFactory descriptorFactory)
+            ConnectJsonSchemaValidator schemaValidator, CustomFieldTypeDescriptorFactory customFieldTypeDescriptorFactory, final CustomFieldSearcherDescriptorFactory customFieldSearcherDescriptorFactory)
     {
         super(pluginRetrievalService, schemaValidator);
-        this.descriptorFactory = descriptorFactory;
+        this.customFieldTypeDescriptorFactory = customFieldTypeDescriptorFactory;
+        this.customFieldSearcherDescriptorFactory = customFieldSearcherDescriptorFactory;
     }
 
     @Override
@@ -39,13 +42,24 @@ public class JiraCustomFieldModuleProvider extends AbstractJiraConnectModuleProv
     @Override
     public List<ModuleDescriptor> createPluginModuleDescriptors(final List<CustomFieldTypeModuleBean> modules, final ConnectAddonBean addon)
     {
-        return Lists.transform(modules, new Function<CustomFieldTypeModuleBean, ModuleDescriptor>()
+        List<ModuleDescriptor> typeDescriptors = Lists.transform(modules, new Function<CustomFieldTypeModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final CustomFieldTypeModuleBean bean)
             {
-                return descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
+                return customFieldTypeDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
             }
         });
+
+        List<ModuleDescriptor> searchers = Lists.transform(modules, new Function<CustomFieldTypeModuleBean, ModuleDescriptor>()
+        {
+            @Override
+            public ModuleDescriptor apply(final CustomFieldTypeModuleBean bean)
+            {
+                return customFieldSearcherDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
+            }
+        });
+
+        return Lists.newArrayList(Iterables.concat(typeDescriptors, searchers));
     }
 }

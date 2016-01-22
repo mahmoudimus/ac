@@ -1,9 +1,8 @@
 package com.atlassian.plugin.connect.jira.customfield;
 
-import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.plugin.customfield.CustomFieldDefaultVelocityParams;
-import com.atlassian.jira.plugin.customfield.CustomFieldTypeModuleDescriptor;
-import com.atlassian.jira.plugin.customfield.CustomFieldTypeModuleDescriptorImpl;
+import com.atlassian.jira.plugin.customfield.CustomFieldSearcherModuleDescriptor;
+import com.atlassian.jira.plugin.customfield.CustomFieldSearcherModuleDescriptorImpl;
 import com.atlassian.jira.render.Encoder;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
@@ -18,45 +17,39 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class CustomFieldTypeDescriptorFactory implements ConnectModuleDescriptorFactory<CustomFieldTypeModuleBean, CustomFieldTypeModuleDescriptor>
+public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescriptorFactory<CustomFieldTypeModuleBean, CustomFieldSearcherModuleDescriptor>
 {
-
     private final JiraAuthenticationContext authenticationContext;
-    private final RendererManager rendererManager;
     private final ModuleFactory moduleFactory;
     private final Encoder encoder;
 
     @Autowired
-    public CustomFieldTypeDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder)
+    public CustomFieldSearcherDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder)
     {
         this.authenticationContext = authenticationContext;
-        this.rendererManager = rendererManager;
         this.moduleFactory = moduleFactory;
         this.encoder = encoder;
     }
 
     @Override
-    public CustomFieldTypeModuleDescriptor createModuleDescriptor(final CustomFieldTypeModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
+    public CustomFieldSearcherModuleDescriptor createModuleDescriptor(final CustomFieldTypeModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
     {
-        CustomFieldTypeModuleDescriptorImpl descriptor = new CustomFieldTypeModuleDescriptorImpl(authenticationContext, rendererManager, moduleFactory, new CustomFieldDefaultVelocityParams(encoder));
+        CustomFieldSearcherModuleDescriptor descriptor = new CustomFieldSearcherModuleDescriptorImpl(authenticationContext, moduleFactory, new CustomFieldDefaultVelocityParams(encoder));
 
-        Element element = new DOMElement("customfield-type");
+        Element element = new DOMElement("customfield-searcher");
 
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
-        element.addAttribute("key", bean.getKey(addon));
+        element.addAttribute("key", bean.getKey(addon)+"_searcher");
         element.addAttribute("i18n-name-key", i18nKeyOrName);
 
-        DOMElement description = new DOMElement("description");
-        description.setText(bean.getDescription().getValue());
-
-        element.add(description);
-
-        CustomFieldBaseType type = CustomFieldArchetype.valueOf(bean.getType().toUpperCase()).getType();
+        CustomFieldSearcherBase type = CustomFieldArchetype.valueOf(bean.getType().toUpperCase()).getSearcherBase();
 
         element.addAttribute("class", type.getClassFQN());
         element.add(velocityResourceElement("view", type.getViewTemplate()));
-        element.add(velocityResourceElement("edit", type.getEditTemplate()));
+        element.add(velocityResourceElement("search", type.getSearchTemplate()));
+
+        element.add(validCustomFieldType(plugin.getKey(), bean.getKey(addon)));
 
         descriptor.init(plugin, element);
         return descriptor;
@@ -68,6 +61,14 @@ public class CustomFieldTypeDescriptorFactory implements ConnectModuleDescriptor
         resource.addAttribute("type", "velocity");
         resource.addAttribute("name", name);
         resource.addAttribute("location", location);
+        return resource;
+    }
+
+    private Element validCustomFieldType(String addOnKey, String customFieldKey)
+    {
+        DOMElement resource = new DOMElement("valid-customfield-type");
+        resource.addAttribute("package", addOnKey);
+        resource.addAttribute("key", customFieldKey);
         return resource;
     }
 }

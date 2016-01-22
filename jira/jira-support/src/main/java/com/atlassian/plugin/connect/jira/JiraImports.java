@@ -28,12 +28,14 @@ import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
 import com.atlassian.jira.issue.customfields.persistence.CustomFieldValuePersister;
+import com.atlassian.jira.issue.customfields.searchers.transformer.CustomFieldInputHelper;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls;
 import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.issue.vote.VoteManager;
 import com.atlassian.jira.issue.watchers.WatcherManager;
+import com.atlassian.jira.jql.operand.JqlOperandResolver;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
@@ -120,7 +122,9 @@ public class JiraImports
             @JiraImport RendererManager rendererManager,
             @JiraImport Encoder encoder,
             @JiraImport CustomFieldValuePersister customFieldValuePersister,
-            @JiraImport GenericConfigManager genericConfigManager)
+            @JiraImport GenericConfigManager genericConfigManager,
+            @JiraImport JqlOperandResolver jqlOperandResolver,
+            @JiraImport CustomFieldInputHelper customFieldInputHelper)
     {
     }
 }
