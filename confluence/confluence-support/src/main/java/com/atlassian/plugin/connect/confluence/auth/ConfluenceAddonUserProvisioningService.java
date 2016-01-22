@@ -295,7 +295,8 @@ public class ConfluenceAddonUserProvisioningService implements CrowdAddonUserPro
 
     private void grantAddonUserPermissionToSpace(String permissionName, Space space, ConfluenceUser confluenceAddonUser)
     {
-        if (!spacePermissionManager.hasPermissionNoExemptions(permissionName, space, confluenceAddonUser))
+        SpacePermission spacePermission = new SpacePermission(permissionName, space, null, confluenceAddonUser);
+        if (!spacePermissionManager.permissionExists(spacePermission))
         {
             SpacePermission permission = new SpacePermission(permissionName, space, null, confluenceAddonUser);
             spacePermissionManager.savePermission(permission);
