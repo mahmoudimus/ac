@@ -23,6 +23,8 @@ import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstallFailedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonLifecycleFailedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.LifecycleCallbackBadResponseException;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFactory;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
@@ -134,7 +136,21 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
         {
             if (null != pluginKey)
             {
-                eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage()));
+                // add some extra detail to the analytics events, if we have it, to facilitate analysis
+                if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackHttpCodeException)
+                {
+                    eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, ((LifecycleCallbackHttpCodeException) e.getCause()).getHttpCode(), e.getMessage(),
+                                                                              ConnectAddonLifecycleFailedEvent.Category.ADD_ON));
+                }
+                else if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackBadResponseException)
+                {
+                    eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.ADD_ON));
+                }
+                else
+                {
+                    eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.CONNECT));
+                }
+
                 if (!Strings.isNullOrEmpty(previousSettings.getDescriptor())
                     && maybePreviousApplink.isPresent()
                     && maybePreviousAuthType.isPresent())
