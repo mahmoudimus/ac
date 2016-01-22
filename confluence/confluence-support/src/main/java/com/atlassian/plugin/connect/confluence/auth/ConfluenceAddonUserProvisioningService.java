@@ -138,14 +138,9 @@ public class ConfluenceAddonUserProvisioningService implements CrowdAddonUserPro
                     // and some will be accordingly rejected (particularly if this is running anonymously on a task thread, as is the case
                     // when the UPM auto-updates Connect add-ons).
                     // An even less palatable alternative is that we impersonate an arbitrary admin user.
-                    confluencePermissionManager.withExemption(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            provisionAddonUserForScopeInTransaction(username, previousScopes, newScopes);
-                        }
-                    });
+                    confluencePermissionManager.withExemption(
+                            () -> provisionAddonUserForScopeInTransaction(username, previousScopes, newScopes)
+                    );
 
                     return null;
                 }
