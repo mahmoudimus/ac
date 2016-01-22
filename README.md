@@ -12,7 +12,8 @@ products based on [`atlassian-plugins`](https://bitbucket.org/atlassian/atlassia
 ## Dependencies
 
 * JDK 8
-* Maven 3.2
+* Maven 3.3.9
+* mvnvm 1.0.8
 
 ## Usage
 
