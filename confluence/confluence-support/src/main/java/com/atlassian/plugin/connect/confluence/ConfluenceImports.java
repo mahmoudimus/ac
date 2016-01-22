@@ -12,6 +12,8 @@ import com.atlassian.confluence.setup.settings.CoreFeaturesManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.status.service.SystemInformationService;
+import com.atlassian.confluence.themes.ThemeManager;
+import com.atlassian.confluence.user.PersonalInformationManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
@@ -47,7 +49,9 @@ public class ConfluenceImports
             @ConfluenceImport UserAccessor userAccessor,
             @ConfluenceImport WebSudoManager webSudoManager,
             @ConfluenceImport XhtmlContent xhtmlContent,
-            @ConfluenceImport CoreFeaturesManager coreFeaturesManager)
+            @ConfluenceImport CoreFeaturesManager coreFeaturesManager,
+            @ConfluenceImport ThemeManager themeManager,
+            @ConfluenceImport PersonalInformationManager personalInformationManager)
     {
     }
 }

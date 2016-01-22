@@ -43,6 +43,20 @@ public class PluggableConditionClassAccessor implements ConditionClassAccessor
     }
 
     @Override
+    public Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean)
+    {
+        return getConditionClass(new Function<ConnectConditionClassResolver.Entry, Optional<Class<? extends Condition>>>()
+        {
+
+            @Override
+            public Optional<Class<? extends Condition>> apply(ConnectConditionClassResolver.Entry resolverEntry)
+            {
+                return resolverEntry.getConditionClassForInline(conditionBean);
+            }
+        });
+    }
+
+    @Override
     public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean)
     {
         return getConditionClass(new Function<ConnectConditionClassResolver.Entry, Optional<Class<? extends Condition>>>()

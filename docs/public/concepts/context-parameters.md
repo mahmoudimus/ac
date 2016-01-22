@@ -82,7 +82,10 @@ For example:
  }
 ```
 
-WARNING: inline conditions are currently fully supported only in JIRA.
+The following conditions in Confluence do not work as context parameters:
+
+* tiny_url_supported
+* viewing_content
 
 ## <a name="additional-parameters-jira"></a>JIRA
 

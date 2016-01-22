@@ -76,6 +76,6 @@ public class LegacyTestUrlVariableSubstitutor
         context.put("page", Collections.singletonMap("id", 1234));
         context.put("foo", "bah");
         context.put("uh_oh", null);
-        return new WebFragmentContext(context, context);
+        return new WebFragmentContext(Collections.emptyMap(), context);
     }
 }

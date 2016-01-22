@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.spi.web.condition;
 
-import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.web.Condition;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +8,9 @@ import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.web.Condition;
 
 /**
  * A plugin module descriptor interface for providers of conditions for Atlassian Connect.
@@ -39,7 +39,8 @@ public interface ConnectConditionClassResolver
     /**
      * A condition class resolver entry, representing a mapping from symbolic condition name to condition class.
      */
-    final class Entry {
+    final class Entry
+    {
 
         private final String conditionName;
 
@@ -49,12 +50,15 @@ public interface ConnectConditionClassResolver
 
         private final boolean contextFree;
 
+        private final boolean inlineSupport;
+
         private Entry(Builder builder)
         {
             this.conditionName = builder.conditionName;
             this.conditionClass = builder.conditionClass;
             this.parameterPredicates = builder.parameterPredicates;
             this.contextFree = builder.contextFree;
+            this.inlineSupport = builder.inlineSupport;
         }
 
         /**
@@ -77,6 +81,11 @@ public interface ConnectConditionClassResolver
          * @return the condition class or {@link Optional#empty()}
          */
         public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean)
+        {
+            return getConditionClass(conditionBean, false);
+        }
+
+        public Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean)
         {
             return getConditionClass(conditionBean, false);
         }
@@ -135,7 +144,8 @@ public interface ConnectConditionClassResolver
         /**
          * A builder for condition class resolver entries.
          */
-        public static final class Builder {
+        public static final class Builder
+        {
 
             private String conditionName;
 
@@ -144,6 +154,7 @@ public interface ConnectConditionClassResolver
             private List<Predicate<Map<String, String>>> parameterPredicates = Collections.emptyList();
 
             private boolean contextFree;
+            public boolean inlineSupport = true;
 
             private Builder(String conditionName, Class<? extends Condition> conditionClass)
             {
@@ -174,6 +185,12 @@ public interface ConnectConditionClassResolver
             public Builder contextFree()
             {
                 this.contextFree = true;
+                return this;
+            }
+
+            public Builder withoutInlineSupport()
+            {
+                this.inlineSupport = false;
                 return this;
             }
 

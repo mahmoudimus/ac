@@ -90,6 +90,6 @@ public class TestUrlVariableSubstitutor
         context.put("uh_oh", null);
         context.put("oh_my_encoding", "Æ æ");
         context.put("life_meaning", "21+21");
-        return new WebFragmentContext(context, context);
+        return new WebFragmentContext(Collections.emptyMap(), context);
     }
 }

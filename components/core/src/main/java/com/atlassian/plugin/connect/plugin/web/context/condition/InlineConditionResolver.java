@@ -26,7 +26,7 @@ public class InlineConditionResolver
 
     public Optional<Boolean> resolve(InlineCondition inlineCondition, Map<String, Object> context)
     {
-        return conditionClassAccessor.getConditionClassForHostContext(toConditionBean(inlineCondition))
+        return conditionClassAccessor.getConditionClassForInline(toConditionBean(inlineCondition))
                 .map(conditionClass -> createAndInitCondition(conditionClass, inlineCondition.getParams()))
                 .map(condition -> condition.shouldDisplay(context));
     }

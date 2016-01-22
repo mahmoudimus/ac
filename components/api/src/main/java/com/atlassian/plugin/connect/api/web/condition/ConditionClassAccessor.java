@@ -22,6 +22,8 @@ public interface ConditionClassAccessor
      */
     public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean);
 
+    Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean);
+
     /**
      * Returns a condition class for use with the given condition element <b>where no context is available</b>.
      *
