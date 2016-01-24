@@ -16,7 +16,8 @@ public class AddonScopeLoadJsonFileHelper
 {
     private AddonScopeLoadJsonFileHelper() {}
 
-    public static void addProductScopesFromFile(Map<ScopeName, AddonScope> keyToScope, URL urlToScopeResource) throws IOException
+    public static void addProductScopesFromFile(Map<ScopeName, AddonScope> keyToScope, URL urlToScopeResource)
+            throws IOException
     {
         AddonScopeBeans scopeBeans = parseScopeBeans(urlToScopeResource);
 
@@ -28,23 +29,13 @@ public class AddonScopeLoadJsonFileHelper
 
     public static void combineScopes(final Map<ScopeName, AddonScope> source, final Map<ScopeName, AddonScope> addition)
     {
-        //TODO: use Map.merge when we will have Java 8
         for (ScopeName scopeName : addition.keySet())
         {
-            AddonScope additionalScope = addition.get(scopeName);
-            if (source.containsKey(scopeName))
-            {
-                AddonScope existingScope = source.get(scopeName);
-                AddonScopeApiPathBuilder pathsBuilder = new AddonScopeApiPathBuilder()
-                        .withPaths(existingScope.getPaths())
-                        .withPaths(additionalScope.getPaths());
-
-                source.put(scopeName, new AddonScope(existingScope.getKey(), pathsBuilder.build()));
-            }
-            else
-            {
-                source.put(scopeName, additionalScope);
-            }
+            source.merge(scopeName, addition.get(scopeName), (sourceValue, additionValue) ->
+                    new AddonScope(sourceValue.getKey(), new AddonScopeApiPathBuilder()
+                            .withPaths(sourceValue.getPaths())
+                            .withPaths(additionValue.getPaths())
+                            .build()));
         }
     }
 
@@ -98,7 +89,7 @@ public class AddonScopeLoadJsonFileHelper
                 if (pathBean.getKey().equals(pathKey))
                 {
                     found = true;
-                    pathsBuilder.withPaths(pathBean);
+                    pathsBuilder.withPaths(pathBean, scopeBean.getMethods());
                     break;
                 }
 
