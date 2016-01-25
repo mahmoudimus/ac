@@ -13,8 +13,7 @@ import java.io.IOException;
 @RunWith(MockitoJUnitRunner.class)
 public class IFrameRenderStrategyBuilderImplTest
 {
-    private @Mock
-    ConnectUriFactory connectUriFactory;
+    private @Mock ConnectUriFactory connectUriFactory;
     private @Mock IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private @Mock TemplateRenderer templateRenderer;
     private @Mock ConnectConditionFactory connectConditionFactory;

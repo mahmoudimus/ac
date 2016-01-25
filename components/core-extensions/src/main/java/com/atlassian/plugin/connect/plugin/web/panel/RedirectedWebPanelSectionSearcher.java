@@ -13,11 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class RedirectedWebPanelSectionSearcher
@@ -48,7 +44,7 @@ public class RedirectedWebPanelSectionSearcher
     {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(RedirectedWebPanelLocationProviderModuleDescriptor.class)
                 .stream()
-                .flatMap(connectWebFragmentLocationBlacklist -> connectWebFragmentLocationBlacklist.getModule().getRedirectedLocations().stream())
+                .flatMap(redirectedLocationsModule -> redirectedLocationsModule.getModule().getRedirectedLocations().stream())
                 .collect(Collectors.toSet());
     }
 
@@ -64,7 +60,8 @@ public class RedirectedWebPanelSectionSearcher
         String parentSectionLocation = parentSection.get().getLocation();
 
         // that prevent going in infinite cycle if there is a cycle in locations.
-        if (visitedLocations.contains(parentSectionLocation)){
+        if (visitedLocations.contains(parentSectionLocation))
+        {
             return false;
         }
         visitedLocations.add(parentSectionLocation);
