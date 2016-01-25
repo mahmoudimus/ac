@@ -8,6 +8,8 @@ public interface RemotablePluginAccessorFactory
      *
      * @param pluginKey The plugin key
      * @return An accessor for either local or remote plugin operations
+     * @throws IllegalStateException if no appropriate {@link RemotablePluginAccessor} can be created. This normally means
+     *  that data has been restored from an instance with a different base url, breaking the Applink. See: AC-1528
      */
     RemotablePluginAccessor get(String pluginKey) throws IllegalStateException;
 

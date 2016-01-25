@@ -122,14 +122,15 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
     @Override
     public RemotablePluginAccessor get(final String pluginKey) {
         Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
-        if (optionalAddon.isPresent()) {
+        if (optionalAddon.isPresent())
+        {
             return get(optionalAddon.get());
         }
         Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         return get(plugin, pluginKey);
     }
 
-    public RemotablePluginAccessor get(ConnectAddonBean addon)
+    private RemotablePluginAccessor get(ConnectAddonBean addon)
     {
         // this will potentially create multiple instances if called quickly, but we don't really
         // care as they shouldn't be cached
@@ -260,7 +261,9 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         {
             throw new IllegalStateException("No valid authentication method found for " + addon.getKey() +
                     ".\nThis was probably caused by a data restore from a different instance.\n" +
-                    "Please contact Atlassian support for assistance getting your add-ons up and running again.");
+                    "Please refer this instance to the Atlassian Connect developer on support for remediation.\n" +
+                    "DO NOT simply re-install the affected add-ons; this can cause data loss for some add-ons.\n" +
+                    "See https://ecosystem.atlassian.net/browse/AC-1528");
         }
     }
 
@@ -275,7 +278,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
      */
-    public RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl)
+    private RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl)
     {
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
