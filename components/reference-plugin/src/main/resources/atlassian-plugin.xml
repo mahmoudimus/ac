@@ -21,7 +21,7 @@
         </web-item-locations>
     </connect-web-fragment-location-blacklist>
 
-    <redirected-web-panel-location-list>
+    <redirected-web-panel-location-list key="reference-redirected-web-panel-location-list">
 		<location>dropdown.redirected.webpanel.location</location>
 		<location>popup.redirected.webpanel.location</location>
     </redirected-web-panel-location-list>
