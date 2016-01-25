@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test of general page in JIRA
+ * Test of AC date picker component in JIRA
  */
 public class TestJiraDatePicker extends JiraWebDriverTestBase
 {
