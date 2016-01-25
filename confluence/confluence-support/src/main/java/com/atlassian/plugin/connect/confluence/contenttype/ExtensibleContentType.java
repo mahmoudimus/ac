@@ -19,6 +19,7 @@ public class ExtensibleContentType extends BaseCustomContentType
     private final ContentEntityAdapter contentEntityAdapter;
     private final PermissionDelegate permissionDelegate;
     private final ContentUiSupport contentUiSupport;
+    private final ApiSupportProvider apiSupportProvider;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
     public ExtensibleContentType(
@@ -33,7 +34,8 @@ public class ExtensibleContentType extends BaseCustomContentType
         this.bean = bean;
         this.permissionDelegate = new ExtensiblePermissionDelegate();
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
-        this.contentUiSupport = new ExtensibleUISupport(bean);
+        this.contentUiSupport = new ExtensibleUISupport(contentTypeKey, bean);
+        this.apiSupportProvider = apiSupportProvider;
         this.customContentApiSupportParams = customContentApiSupportParams;
     }
 
@@ -57,6 +59,6 @@ public class ExtensibleContentType extends BaseCustomContentType
 
     @Override
     public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport() {
-        return new ExtensibleContentTypeSupport(contentTypeKey, bean, customContentApiSupportParams);
+        return new ExtensibleContentTypeSupport(contentTypeKey, bean, customContentApiSupportParams, apiSupportProvider);
     }
 }

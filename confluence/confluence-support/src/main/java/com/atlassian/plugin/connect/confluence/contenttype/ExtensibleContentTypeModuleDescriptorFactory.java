@@ -43,8 +43,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory implements ConnectModu
     @Override
     public ContentTypeModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
-        String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
-        String completeModuleKey = ExtensibleContentTypeUtils.getCompleteModuleKey(addon, bean);
+        String contentTypeKey = ExtensibleUtils.getContentType(addon, bean);
+        String completeModuleKey = ExtensibleUtils.getCompleteModuleKey(addon, bean);
 
         Element descriptionElement = new DOMElement("description");
         descriptionElement.addText("Support for Extensible Content Type for Atlassian Connect add-ons");
@@ -54,6 +54,9 @@ public class ExtensibleContentTypeModuleDescriptorFactory implements ConnectModu
         contentTypeElement.addAttribute("name", contentTypeKey);
         contentTypeElement.addAttribute("class", ExtensibleContentType.class.getName());
         contentTypeElement.add(descriptionElement);
+
+        Element webResourceElement = new DOMElement("web-resource");
+
 
         if(log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(contentTypeElement));

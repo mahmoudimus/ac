@@ -18,7 +18,7 @@ public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent
     @Override
     public Option<String> getUrlPath(final CustomContentEntityObject pluginContentEntityObject)
     {
-        return Option.none();
+        return Option.some("/rest/api/content/" + pluginContentEntityObject.getId());
     }
 
     @Override

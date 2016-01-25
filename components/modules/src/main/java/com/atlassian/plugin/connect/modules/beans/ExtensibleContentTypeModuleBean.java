@@ -4,6 +4,8 @@ import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeM
 import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeAPISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeUISupportModuleBean;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
 {
     private ExtensibleContentTypeUISupportModuleBean uiSupport;
@@ -21,6 +23,8 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
 
     private void initialise()
     {
+        uiSupport = ObjectUtils.defaultIfNull(uiSupport, new ExtensibleContentTypeUISupportModuleBean());
+        apiSupport = ObjectUtils.defaultIfNull(apiSupport, new ExtensibleContentTypeAPISupportModuleBean());
     }
 
     public ExtensibleContentTypeUISupportModuleBean getUiSupport()
