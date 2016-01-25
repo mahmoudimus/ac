@@ -8,12 +8,16 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.web.condition.PluggableConditionClassAccessor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.web.Condition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class InlineConditionResolver
 {
+    private static final Logger log = LoggerFactory.getLogger(InlineConditionResolver.class);
+
     private final PluggableConditionClassAccessor conditionClassAccessor;
     private final HostContainer hostContainer;
 
@@ -26,9 +30,17 @@ public class InlineConditionResolver
 
     public Optional<Boolean> resolve(InlineCondition inlineCondition, Map<String, Object> context)
     {
-        return conditionClassAccessor.getConditionClassForInline(toConditionBean(inlineCondition))
-                .map(conditionClass -> createAndInitCondition(conditionClass, inlineCondition.getParams()))
-                .map(condition -> condition.shouldDisplay(context));
+        try
+        {
+            return conditionClassAccessor.getConditionClassForInline(toConditionBean(inlineCondition))
+                    .map(conditionClass -> createAndInitCondition(conditionClass, inlineCondition.getParams()))
+                    .map(condition -> condition.shouldDisplay(context));
+        }
+        catch (RuntimeException exception)
+        {
+            log.warn(String.format("'%s' inline condition has thrown an exception. Context: %s", inlineCondition, context), exception);
+            return Optional.empty();
+        }
     }
 
     private SingleConditionBean toConditionBean(final InlineCondition condition)

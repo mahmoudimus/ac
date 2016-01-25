@@ -85,6 +85,13 @@ public interface ConnectConditionClassResolver
             return getConditionClass(conditionBean, false, false);
         }
 
+        /**
+         * Returns a condition class for use <b>as an inline condition</b>, if this entry
+         * applies to the given condition element.
+         *
+         * @param conditionBean a condition element from an add-on descriptor
+         * @return the condition class or {@link Optional#empty()}
+         */
         public Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean)
         {
             return getConditionClass(conditionBean, false, true);
@@ -189,6 +196,14 @@ public interface ConnectConditionClassResolver
                 return this;
             }
 
+            /**
+             * Some conditions may use ephemeral context variables which cannot be recreated
+             * at the time of URL variable substitution. Mark such conditions using this method.
+             * This will cause them not be resolved at all, in other words they will not be available
+             * in context parameters.
+             *
+             * @return this builder
+             */
             public Builder withoutInlineSupport()
             {
                 this.inlineSupport = false;
