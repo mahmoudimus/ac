@@ -47,14 +47,7 @@ public class RedirectedWebPanelSectionSearcher
     {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(RedirectedWebPanelLocationProviderModuleDescriptor.class)
                 .stream()
-                .flatMap(new Function<RedirectedWebPanelLocationProviderModuleDescriptor, Stream<String>>()
-                {
-                    @Override
-                    public Stream<String> apply(RedirectedWebPanelLocationProviderModuleDescriptor connectWebFragmentLocationBlacklist)
-                    {
-                        return connectWebFragmentLocationBlacklist.getModule().getRedirectedLocations().stream();
-                    }
-                })
+                .flatMap(connectWebFragmentLocationBlacklist -> connectWebFragmentLocationBlacklist.getModule().getRedirectedLocations().stream())
                 .collect(Collectors.toSet());
     }
 
@@ -78,35 +71,17 @@ public class RedirectedWebPanelSectionSearcher
 
     private List<WebSectionModuleBean> getWebSectionModuleBeans(ConnectAddonBean connectAddonBean)
     {
-        List<ModuleBean> webSection = connectAddonBean.getModules().getValidModuleListOfType("webSections", new Consumer<Exception>()
-        {
-            @Override
-            public void accept(Exception e)
-            {
-            }
-        }).orElse(Collections.emptyList());
+        List<ModuleBean> webSection = connectAddonBean.getModules().getValidModuleListOfType("webSections", e -> {}).orElse(Collections.emptyList());
 
         return webSection.stream()
-                .map(new Function<ModuleBean, WebSectionModuleBean>()
-                {
-                    @Override
-                    public WebSectionModuleBean apply(ModuleBean moduleBean)
-                    {
-                        return (WebSectionModuleBean) moduleBean;
-                    }
-                })
+                .map(moduleBean -> (WebSectionModuleBean) moduleBean)
                 .collect(Collectors.toList());
     }
 
     private Optional<WebSectionModuleBean> findParentSection(String location, List<WebSectionModuleBean> webSections)
     {
-        return webSections.stream().filter(new Predicate<WebSectionModuleBean>()
-        {
-            @Override
-            public boolean test(WebSectionModuleBean webSectionModuleBean)
-            {
-                return webSectionModuleBean.getRawKey().equals(location);
-            }
-        }).findFirst();
+        return webSections.stream()
+                .filter(webSectionModuleBean -> webSectionModuleBean.getRawKey().equals(location))
+                .findFirst();
     }
 }

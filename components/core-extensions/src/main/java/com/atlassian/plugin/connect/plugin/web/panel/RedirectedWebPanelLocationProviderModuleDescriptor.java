@@ -68,14 +68,7 @@ public final class RedirectedWebPanelLocationProviderModuleDescriptor
         // noinspection unchecked
         List<Element> locationElements = element.elements("location");
         final Set<String> locations = ImmutableSet.copyOf(locationElements.stream()
-                .map(new java.util.function.Function<Element, String>()
-                {
-                    @Override
-                    public String apply(Element location)
-                    {
-                        return location.getText();
-                    }
-                })
+                .map(Element::getText)
                 .collect(Collectors.toSet()));
         return new RedirectedWebPanelLocationProvider(locations);
     }
