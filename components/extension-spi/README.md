@@ -189,16 +189,17 @@ parameter value to be provided to that web fragment. Declare your context parame
 
 ## Redirected web panel location list
 
-Redirected location is a location where web-panel's iframe will do requests through redirect-servlet that would sign them using JWT.
-Example of that type localisation is an AUI drop-down, that moves its content in the DOM each time is popped up.
-Every time web-panel's iframe is moved in the DOM it do the request.
-User can pop up drop-down at any time, so the jwt token may expire, therefore web-panel's iframe has to point to the redirect servlet.
+A web panel in a location specified in this list will perform all requests through a redirect servlet. 
+This is necessary when the web panel's iframe might be moved in the DOM. For example, an AUI dropdown 
+might move its content in the DOM every time it's opened. 
+Every time a web panel's iframe is moved it will perform a request to the add-on server. 
+However, the user could open the dropdown at any time, so the JWT token may have expired. 
+Therefore the web panel's iframe has to point to a redirect servlet that will sign the request with a new JWT token. 
 
-This plugins point allows to add locations in which web-panels requires to use the redirection technique. 
 
  ```
  <redirected-web-panel-location-list>
-     <location>...</location>
-     <location>...</location>
- <redirected-web-panel-location-list>
+ 	<location>dropdown.redirected.webpanel.location</location>
+ 	<location>popup.redirected.webpanel.location</location>
+ </redirected-web-panel-location-list>
  ```

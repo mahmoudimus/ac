@@ -55,15 +55,15 @@ public class ConnectUriFactoryImpl implements ConnectUriFactory
     }
 
     @Override
-    public String createConnectIFrameServletUri(final String pluginKey, final String moduleKey, final ModuleContextParameters moduleContext)
+    public String createConnectIFrameServletUri(final String addOnKey, final String moduleKey, final ModuleContextParameters moduleContext)
     {
-        return urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext);
+        return urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(addOnKey, moduleKey), moduleContext);
     }
 
     @Override
-    public String createRedirectServletUri(final String pluginKey, final String moduleKey, final ModuleContextParameters moduleContext)
+    public String createRedirectServletUri(final String addOnKey, final String moduleKey, final ModuleContextParameters moduleContext)
     {
-        String urlToRedirectServlet = UriBuilder.fromUri(hostApplicationInfo.getUrl()).path(hostApplicationInfo.getContextPath()).path(RedirectServletPath.forModule(pluginKey, moduleKey)).build().toString();
+        String urlToRedirectServlet = UriBuilder.fromUri(hostApplicationInfo.getUrl()).path(hostApplicationInfo.getContextPath()).path(RedirectServletPath.forModule(addOnKey, moduleKey)).build().toString();
         return urlVariableSubstitutor.append(urlToRedirectServlet, moduleContext);
     }
 }

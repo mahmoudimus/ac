@@ -13,7 +13,7 @@ public interface ConnectUriFactory
 {
     ConnectAddonUriBuilder createConnectAddonUriBuilder();
 
-    String createConnectIFrameServletUri(String pluginKey, String moduleKey, ModuleContextParameters moduleContext);
+    String createConnectIFrameServletUri(String addOnKey, String moduleKey, ModuleContextParameters moduleContext);
 
-    String createRedirectServletUri(String pluginKey, String moduleKey, ModuleContextParameters moduleContext);
+    String createRedirectServletUri(String addOnKey, String moduleKey, ModuleContextParameters moduleContext);
 }
