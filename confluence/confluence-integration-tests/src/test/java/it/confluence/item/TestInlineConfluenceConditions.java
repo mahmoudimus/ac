@@ -3,6 +3,7 @@ package it.confluence.item;
 import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
@@ -32,10 +33,10 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
+import static java.util.Collections.emptySet;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class TestInlineConfluenceConditions extends AbstractConfluenceConditionsTest
 {
@@ -45,6 +46,17 @@ public class TestInlineConfluenceConditions extends AbstractConfluenceConditions
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     private static final ImmutableSet<String> EXCLUDED_CONDITIONS = ImmutableSet.of("tiny_url_supported", "viewing_content");
+
+    /**
+     * These conditions in web panels are apparently not supported and evaluate to false
+     */
+    private static final ImmutableSet<String> FALSE_IN_WEB_PANELS = ImmutableSet.of(
+            "has_page",
+            "has_space",
+            "latest_version",
+            "not_personal_space",
+            "showing_page_attachments",
+            "space_sidebar");
 
     private static ConnectRunner addon;
     private TestUser admin;
@@ -95,7 +107,7 @@ public class TestInlineConfluenceConditions extends AbstractConfluenceConditions
             dialogPage.submitAndWaitUntilHidden();
 
             Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-            assertThat(conditionParams, hasEntry(equalTo("condition"), equalTo(expectedValue(name))));
+            assertThat(conditionParams, hasEntry(equalTo("condition"), equalTo(expectedValue(name, emptySet()))));
         });
     }
 
@@ -107,19 +119,20 @@ public class TestInlineConfluenceConditions extends AbstractConfluenceConditions
 
         CONDITION_NAMES.forEach(name -> {
             RemoteWebPanel webPanel = confluencePageOperations.findWebPanel(getModuleKey(webPanelKey(name)));
-            assertThat(webPanel.getFromQueryString("condition"), equalTo(expectedValue(name)));
+            System.out.println("Testing: " + name);
+            assertThat(webPanel.getFromQueryString("condition"), equalTo(expectedValue(name, FALSE_IN_WEB_PANELS)));
         });
     }
 
-    private String expectedValue(String conditionName)
+    private String expectedValue(String conditionName, final Set<String> shouldBeFalse)
     {
-        return EXCLUDED_CONDITIONS.contains(conditionName) ? "" : "true";
+        return EXCLUDED_CONDITIONS.contains(conditionName) ? "" : "" + !shouldBeFalse.contains(conditionName);
     }
 
-    private void createAndVisitViewPage() throws MalformedURLException, XmlRpcFault
+    private ConfluenceViewPage createAndVisitViewPage() throws MalformedURLException, XmlRpcFault
     {
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
-        product.visit(ConfluenceViewPage.class, pageData.getId());
+        return product.visit(ConfluenceViewPage.class, pageData.getId());
     }
 
     private static WebItemModuleBean webItem(String conditionName)

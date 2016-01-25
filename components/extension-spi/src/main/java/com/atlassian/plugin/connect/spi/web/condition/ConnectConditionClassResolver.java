@@ -82,12 +82,12 @@ public interface ConnectConditionClassResolver
          */
         public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean)
         {
-            return getConditionClass(conditionBean, false);
+            return getConditionClass(conditionBean, false, false);
         }
 
         public Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean)
         {
-            return getConditionClass(conditionBean, false);
+            return getConditionClass(conditionBean, false, true);
         }
 
         /**
@@ -99,15 +99,16 @@ public interface ConnectConditionClassResolver
          */
         public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean)
         {
-            return getConditionClass(conditionBean, true);
+            return getConditionClass(conditionBean, true, false);
         }
 
-        private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean, boolean requireContextFree)
+        private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean, boolean requireContextFree, boolean inline)
         {
             Optional<Class<? extends Condition>> optionalClass = Optional.empty();
             if (isApplicableToContext(requireContextFree)
                     && this.conditionName.equals(conditionBean.getCondition())
-                    && isApplicableToParameters(conditionBean.getParams()))
+                    && isApplicableToParameters(conditionBean.getParams())
+                    && (!inline || inlineSupport))
             {
                 optionalClass = Optional.of(conditionClass);
             }
