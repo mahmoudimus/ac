@@ -92,6 +92,21 @@ public class RedirectedWebPanelSectionSearcherTest
         assertThat(isWebPanelInRedirectedWebSection, is(false));
     }
 
+    @Test
+    public void cyclesInLocationGraphDoesNotCauseInfinitiveLoop()
+    {
+        String sectionKey1 = "section-key-1";
+        String sectionKey2 = "section-key-2";
+        WebSectionModuleBean webSection1 = createWebSectionModuleBean(sectionKey1, sectionKey2);
+        WebSectionModuleBean webSection2 = createWebSectionModuleBean(sectionKey2, sectionKey1);
+
+        WebPanelModuleBean webPanelModuleBean = createWebPanelModuleBean(sectionKey2);
+        ConnectAddonBean connectAddonBean = createConnectAddonBean(webSection1, webSection2);
+
+        boolean isWebPanelInRedirectedWebSection = redirectedWebPanelSectionSearcher.doesWebPanelNeedsToBeRedirected(webPanelModuleBean, connectAddonBean);
+        assertThat(isWebPanelInRedirectedWebSection, is(false));
+    }
+
     private WebPanelModuleBean createWebPanelModuleBean(String location)
     {
         return WebPanelModuleBean.newWebPanelBean().withLocation(location).build();
