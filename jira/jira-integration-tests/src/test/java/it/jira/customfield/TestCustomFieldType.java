@@ -13,7 +13,9 @@ import com.atlassian.jira.testkit.client.restclient.Issue;
 import com.atlassian.jira.testkit.client.restclient.SearchRequest;
 import com.atlassian.jira.testkit.client.restclient.SearchResult;
 import com.atlassian.pageobjects.elements.query.Poller;
+import com.atlassian.plugin.connect.modules.beans.CustomFieldArchetype;
 import com.atlassian.plugin.connect.modules.beans.CustomFieldTypeModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.CFTArchetypeConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -296,7 +298,8 @@ public class TestCustomFieldType extends JiraWebDriverTestBase
                 .withKey(key)
                 .withName(new I18nProperty(title, null))
                 .withDescription(new I18nProperty(description, null))
-                .withType("text")
+                .withArchetypeConfiguration(
+                        new CFTArchetypeConfigurationBeanBuilder(CustomFieldArchetype.TEXT).build())
                 .build();
     }
 }

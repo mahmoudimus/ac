@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.plugin.connect.modules.beans.builder.CFTArchetypeConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
@@ -978,6 +979,9 @@ public class ConnectJsonExamples
 
     private static String createCustomFieldTypeExample()
     {
-        return gson.toJson(CustomFieldTypeModuleBean.newBuilder().withType("text").build());
+        return gson.toJson(
+                CustomFieldTypeModuleBean.newBuilder()
+                        .withArchetypeConfiguration(
+                                new CFTArchetypeConfigurationBeanBuilder(CustomFieldArchetype.TEXT).build()).build());
     }
 }

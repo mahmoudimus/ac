@@ -21,16 +21,16 @@ public class CustomFieldTypeModuleBean extends RequiredKeyBean
     private I18nProperty description;
 
     @Required
-    private String type;
+    private CFTArchetypeConfiguration archetypeConfiguration;
 
-    public String getType()
+    public CFTArchetypeConfiguration getArchetypeConfiguration()
     {
-        return type;
+        return archetypeConfiguration;
     }
 
-    public void setType(final String type)
+    public void setArchetypeConfiguration(CFTArchetypeConfiguration archetypeConfiguration)
     {
-        this.type = type;
+        this.archetypeConfiguration = archetypeConfiguration;
     }
 
     public I18nProperty getDescription()
@@ -45,7 +45,7 @@ public class CustomFieldTypeModuleBean extends RequiredKeyBean
 
     public CustomFieldTypeModuleBean()
     {
-        this.type = "";
+        this.archetypeConfiguration = new CFTArchetypeConfiguration();
         this.description = I18nProperty.empty();
     }
 
