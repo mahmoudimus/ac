@@ -1,5 +1,6 @@
 package it.jira.customfield;
 
+import com.atlassian.jira.functest.framework.RestoreBlankInstance;
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
 import com.atlassian.jira.pageobjects.pages.admin.customfields.AssociateCustomFieldToScreenPage;
 import com.atlassian.jira.pageobjects.pages.admin.customfields.ConfigureFieldDialog;
@@ -13,14 +14,13 @@ import com.atlassian.jira.testkit.client.restclient.Issue;
 import com.atlassian.jira.testkit.client.restclient.SearchRequest;
 import com.atlassian.jira.testkit.client.restclient.SearchResult;
 import com.atlassian.pageobjects.elements.query.Poller;
-import com.atlassian.plugin.connect.modules.beans.CustomFieldArchetype;
+import com.atlassian.plugin.connect.modules.beans.CustomFieldBaseType;
+import com.atlassian.plugin.connect.modules.beans.CustomFieldBaseTypeConfiguration;
 import com.atlassian.plugin.connect.modules.beans.CustomFieldTypeModuleBean;
-import com.atlassian.plugin.connect.modules.beans.builder.CFTArchetypeConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.plugin.connect.test.jira.pageobjects.AssociateCustomFieldToScreenPage2;
 import com.google.common.base.Objects;
 import it.jira.JiraTestBase;
 import it.jira.JiraWebDriverTestBase;
@@ -41,30 +41,30 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
+@RestoreBlankInstance
 public class TestCustomFieldType extends JiraWebDriverTestBase
 {
 
-    private final String CFT_KEY = "dashboarditemkey";
+    private final String CFT_KEY = "customfieldtype-key";
     private final String CFT_DESCRIPTION = "my description";
 
     private ConnectRunner addon;
     private String addonKey;
-    private String cft_name;
+    private String customFieldTypeName;
 
     @Before
     public void setUpClass() throws Exception
     {
-        product.backdoor().restoreBlankInstance();
         project = JiraTestBase.addProject();
         addonKey = AddonTestUtils.randomAddonKey();
 
-        cft_name = "custom field title" + RandomStringUtils.randomAlphabetic(4);
+        customFieldTypeName = "custom field title" + RandomStringUtils.randomAlphabetic(4);
 
         addon = new ConnectRunner(product, addonKey)
                 .setAuthenticationToNone()
                 .setVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .addModules("jiraCustomFieldTypes",
-                        buildCustomFieldTypeModule(CFT_KEY, cft_name, CFT_DESCRIPTION))
+                        buildCustomFieldTypeModule(CFT_KEY, customFieldTypeName, CFT_DESCRIPTION))
                                 .addScopes(ScopeName.READ)
                                 .start();
     }
@@ -83,17 +83,17 @@ public class TestCustomFieldType extends JiraWebDriverTestBase
     {
         CreateCustomFieldPage page = product.quickLoginAsAdmin(CreateCustomFieldPage.class);
 
-        assertThat(page.getAvailableCustomFields(), hasItem(customFieldTypeEntry(cft_name, CFT_DESCRIPTION)));
+        assertThat(page.getAvailableCustomFields(), hasItem(customFieldTypeEntry(customFieldTypeName, CFT_DESCRIPTION)));
     }
 
     @Test
-    public void canCreateACustomFieldFromARFCT() {
+    public void canCreateACustomFieldFromARemoteCustomFieldType() {
         final ViewCustomFields viewCustomFields = product.quickLoginAsAdmin(ViewCustomFields.class);
 
         String name = randomName();
         String description = "description";
 
-        addCustomFieldType(viewCustomFields, name, description, cft_name);
+        addCustomFieldType(viewCustomFields, name, description, customFieldTypeName);
 
         List<CustomFieldResponse> customFields = product.backdoor().customFields().getCustomFields();
         assertThat(customFields, hasItem(
@@ -104,13 +104,20 @@ public class TestCustomFieldType extends JiraWebDriverTestBase
     public void customFieldIsVisibleOnScreenAndCreateIssueDialogAndViewIssue()
     {
         String value = RandomStringUtils.randomAlphabetic(6);
-        createIssueWithCustomField(createCustomFieldFromType(cft_name).id, value);
+
+        String customFieldId = createCustomFieldFromType(customFieldTypeName).id;
+        String issueKey = createIssueWithCustomField(customFieldId, value);
+
+        product.goToViewIssue(issueKey);
+        String result = findCustomFieldWithIdOnPage(customFieldId).getText();
+
+        assertThat(result, equalTo(value));
     }
 
     @Test
-    public void jqlWorks()
+    public void jqlSearchWorksForTextCustomField()
     {
-        CustomFieldResponse customFieldId = createCustomFieldFromType(cft_name);
+        CustomFieldResponse customFieldId = createCustomFieldFromType(customFieldTypeName);
         String value = RandomStringUtils.randomAlphabetic(6);
 
         String issueKey = createIssueWithCustomField(customFieldId.id, value);
@@ -129,14 +136,7 @@ public class TestCustomFieldType extends JiraWebDriverTestBase
         List<String> visibleFields = createIssueDialog.getVisibleFields();
         assertThat(visibleFields, hasItem(equalTo(customFieldId)));
 
-        String newIssueKey = fillCreateIssueDialogCustomField(createIssueDialog, customFieldId, value, issue);
-
-        product.goToViewIssue(newIssueKey);
-        String result = findCustomFieldWithIdOnPage(customFieldId).getText();
-
-        assertThat(result, equalTo(value));
-
-        return newIssueKey;
+        return fillCreateIssueDialogCustomField(createIssueDialog, customFieldId, value, issue);
     }
 
     private CustomFieldResponse createCustomFieldFromType(final String type)
@@ -200,9 +200,9 @@ public class TestCustomFieldType extends JiraWebDriverTestBase
         return product.backdoor().issues().createIssue(project.getKey(), "issue summary");
     }
 
-    private void addFieldToAllScreens()
+        private void addFieldToAllScreens()
     {
-        AssociateCustomFieldToScreenPage2 associateScreen = product.getPageBinder().bind(AssociateCustomFieldToScreenPage2.class);
+        AssociateCustomFieldToScreenPage associateScreen = product.getPageBinder().bind(AssociateCustomFieldToScreenPage.class);
 
         associateScreen.selectRow((s) -> true);
         associateScreen.submit();
@@ -298,8 +298,9 @@ public class TestCustomFieldType extends JiraWebDriverTestBase
                 .withKey(key)
                 .withName(new I18nProperty(title, null))
                 .withDescription(new I18nProperty(description, null))
-                .withArchetypeConfiguration(
-                        new CFTArchetypeConfigurationBeanBuilder(CustomFieldArchetype.TEXT).build())
+                .withBaseTypeConfiguration(
+                        CustomFieldBaseTypeConfiguration.newBuilder()
+                                .withArchetype(CustomFieldBaseType.TEXT).build())
                 .build();
     }
 }

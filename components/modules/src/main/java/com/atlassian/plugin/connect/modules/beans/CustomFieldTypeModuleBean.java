@@ -21,16 +21,16 @@ public class CustomFieldTypeModuleBean extends RequiredKeyBean
     private I18nProperty description;
 
     @Required
-    private CFTArchetypeConfiguration archetypeConfiguration;
+    private CustomFieldBaseTypeConfiguration baseTypeConfiguration;
 
-    public CFTArchetypeConfiguration getArchetypeConfiguration()
+    public CustomFieldBaseTypeConfiguration getBaseTypeConfiguration()
     {
-        return archetypeConfiguration;
+        return baseTypeConfiguration;
     }
 
-    public void setArchetypeConfiguration(CFTArchetypeConfiguration archetypeConfiguration)
+    public void setBaseTypeConfiguration(CustomFieldBaseTypeConfiguration baseTypeConfiguration)
     {
-        this.archetypeConfiguration = archetypeConfiguration;
+        this.baseTypeConfiguration = baseTypeConfiguration;
     }
 
     public I18nProperty getDescription()
@@ -45,7 +45,7 @@ public class CustomFieldTypeModuleBean extends RequiredKeyBean
 
     public CustomFieldTypeModuleBean()
     {
-        this.archetypeConfiguration = new CFTArchetypeConfiguration();
+        this.baseTypeConfiguration = new CustomFieldBaseTypeConfiguration();
         this.description = I18nProperty.empty();
     }
 

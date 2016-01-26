@@ -8,8 +8,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.CustomFieldArchetype;
-import com.atlassian.plugin.connect.modules.beans.CustomFieldArchetype.CustomFieldSearcherBase;
+import com.atlassian.plugin.connect.modules.beans.CustomFieldBaseType.CustomFieldSearcherDefinition;
 import com.atlassian.plugin.connect.modules.beans.CustomFieldTypeModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -45,7 +44,7 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
         element.addAttribute("key", bean.getKey(addon)+"_searcher");
         element.addAttribute("i18n-name-key", i18nKeyOrName);
 
-        CustomFieldSearcherBase type = bean.getArchetypeConfiguration().getArchetype().getSearcherBase();
+        CustomFieldSearcherDefinition type = bean.getBaseTypeConfiguration().getBaseType().getSearcherBase();
 
         element.addAttribute("class", type.getClassFQN());
         element.add(velocityResourceElement("view", type.getViewTemplate()));

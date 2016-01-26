@@ -1,30 +1,18 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.CFTArchetypeConfiguration;
+import com.atlassian.plugin.connect.modules.beans.CustomFieldBaseTypeConfiguration;
 import com.atlassian.plugin.connect.modules.beans.CustomFieldTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 public class CustomFieldTypeModuleBeanBuilder
         extends RequiredKeyBeanBuilder<CustomFieldTypeModuleBeanBuilder, CustomFieldTypeModuleBean>
 {
-    private CFTArchetypeConfiguration archetypeConfiguration;
+    private CustomFieldBaseTypeConfiguration baseTypeConfiguration;
     private I18nProperty description;
 
-    public CustomFieldTypeModuleBeanBuilder()
+    public CustomFieldTypeModuleBeanBuilder withBaseTypeConfiguration(CustomFieldBaseTypeConfiguration type)
     {
-        this.archetypeConfiguration = new CFTArchetypeConfiguration();
-    }
-
-    public CustomFieldTypeModuleBeanBuilder(CustomFieldTypeModuleBean customFieldTypeModuleBean)
-    {
-        super(customFieldTypeModuleBean);
-        this.archetypeConfiguration = customFieldTypeModuleBean.getArchetypeConfiguration();
-        this.description = customFieldTypeModuleBean.getDescription();
-    }
-
-    public CustomFieldTypeModuleBeanBuilder withArchetypeConfiguration(CFTArchetypeConfiguration type)
-    {
-        this.archetypeConfiguration = type;
+        this.baseTypeConfiguration = type;
         return this;
     }
 

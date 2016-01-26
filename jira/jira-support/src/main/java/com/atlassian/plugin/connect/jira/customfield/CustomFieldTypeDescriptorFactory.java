@@ -9,8 +9,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.CustomFieldArchetype;
-import com.atlassian.plugin.connect.modules.beans.CustomFieldArchetype.CustomFieldBaseType;
+import com.atlassian.plugin.connect.modules.beans.CustomFieldBaseType.CustomFieldBaseTypeDefinition;
 import com.atlassian.plugin.connect.modules.beans.CustomFieldTypeModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -54,7 +53,7 @@ public class CustomFieldTypeDescriptorFactory implements ConnectModuleDescriptor
 
         element.add(description);
 
-        CustomFieldBaseType type = bean.getArchetypeConfiguration().getArchetype().getType();
+        CustomFieldBaseTypeDefinition type = bean.getBaseTypeConfiguration().getBaseType().getType();
 
         element.addAttribute("class", type.getClassFQN());
         element.add(velocityResourceElement("view", type.getViewTemplate()));

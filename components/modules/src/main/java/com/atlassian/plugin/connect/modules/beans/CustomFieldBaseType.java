@@ -4,32 +4,32 @@ package com.atlassian.plugin.connect.modules.beans;
  * This enum lists all archetypes that a remote custom field type can configure.
  * It consists of a custom field type definition and a custom field searcher.
  */
-public enum CustomFieldArchetype
+public enum CustomFieldBaseType
 {
-    STRING(CustomFieldBaseType.TEXT, CustomFieldSearcherBase.EXACT_TEXT),
-    TEXT(CustomFieldBaseType.TEXT, CustomFieldSearcherBase.LIKE_TEXT);
+    STRING(CustomFieldBaseTypeDefinition.TEXT, CustomFieldSearcherDefinition.EXACT_TEXT),
+    TEXT(CustomFieldBaseTypeDefinition.TEXT, CustomFieldSearcherDefinition.LIKE_TEXT);
 
-    private final CustomFieldBaseType type;
-    private final CustomFieldSearcherBase searcherBase;
+    private final CustomFieldBaseTypeDefinition type;
+    private final CustomFieldSearcherDefinition searcherBase;
 
-    CustomFieldArchetype(final CustomFieldBaseType type, final CustomFieldSearcherBase searcherBase)
+    private CustomFieldBaseType(final CustomFieldBaseTypeDefinition type, final CustomFieldSearcherDefinition searcherBase)
     {
         this.type = type;
         this.searcherBase = searcherBase;
     }
 
-    public CustomFieldBaseType getType()
+    public CustomFieldBaseTypeDefinition getType()
     {
         return type;
     }
 
-    public CustomFieldSearcherBase getSearcherBase()
+    public CustomFieldSearcherDefinition getSearcherBase()
     {
         return searcherBase;
     }
 
 
-    public enum CustomFieldBaseType
+    public enum CustomFieldBaseTypeDefinition
     {
         TEXT("com.atlassian.jira.issue.customfields.impl.GenericTextCFType",
                 "templates/plugins/fields/view/view-basictext.vm",
@@ -39,8 +39,7 @@ public enum CustomFieldArchetype
         private final String viewTemplate;
         private final String editTemplate;
 
-
-        CustomFieldBaseType(final String classFQN, final String viewTemplate, final String editTemplate)
+        CustomFieldBaseTypeDefinition(final String classFQN, final String viewTemplate, final String editTemplate)
         {
             this.classFQN = classFQN;
             this.viewTemplate = viewTemplate;
@@ -64,7 +63,7 @@ public enum CustomFieldArchetype
     }
 
 
-    public enum CustomFieldSearcherBase
+    public enum CustomFieldSearcherDefinition
     {
         EXACT_TEXT("com.atlassian.jira.issue.customfields.searchers.ExactTextSearcher",
                 "templates/plugins/fields/view-searcher/view-searcher-basictext.vm",
@@ -77,8 +76,7 @@ public enum CustomFieldArchetype
         private final String viewTemplate;
         private final String searchTemplate;
 
-
-        CustomFieldSearcherBase(final String classFQN, final String viewTemplate, final String searchTemplate)
+        CustomFieldSearcherDefinition(final String classFQN, final String viewTemplate, final String searchTemplate)
         {
             this.classFQN = classFQN;
             this.viewTemplate = viewTemplate;
