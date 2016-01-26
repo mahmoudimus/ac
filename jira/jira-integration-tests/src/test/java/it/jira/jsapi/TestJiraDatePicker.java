@@ -1,6 +1,7 @@
 package it.jira.jsapi;
 
 import com.atlassian.connect.test.jira.pageobjects.RemoteDatePickerGeneralPage;
+import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.pageobjects.components.CalendarPopup;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -77,7 +78,7 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
         calendar.increaseHour();
         calendar.selectDay(23);
         assertThat(generalPage.getSelectedDate("date-time-field"), equalTo("23/Jan/16 04:56 PM"));
-        assertThat(generalPage.getSelectedIsoDate("date-time-field"), equalTo("2016-01-23T15:56:00.000Z"));
+        assertThat("Make sure your timezone is set to +00, Greenwich.", generalPage.getSelectedIsoDate("date-time-field"), equalTo("2016-01-23T16:56:00.000Z"));
     }
 
     @Test
@@ -89,7 +90,7 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
         Poller.waitUntilTrue(calendar.isOpen());
         calendar.selectDay(23);
         assertThat(generalPage.getSelectedDate("date-field"), equalTo("23/Jan/16"));
-        assertThat(generalPage.getSelectedIsoDate("date-field"), equalTo("2016-01-22T23:00:00.000Z"));
+        assertThat("Make sure your timezone is set to +00, Greenwich.", generalPage.getSelectedIsoDate("date-field"), equalTo("2016-01-23T00:00:00.000Z"));
     }
 
     @Test
