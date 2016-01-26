@@ -2,17 +2,17 @@
     "scopes": [
         {
             "key": "READ",
-            "restPathKeys": ["planning", "teams", "core", "accounts"],
+            "restPathKeys": ["planning", "teams", "core", "accounts", "migration"],
             "methods": ["GET"]
         },
         {
             "key": "WRITE",
-            "restPathKeys": ["planning", "teams", "core", "accounts"],
+            "restPathKeys": ["planning", "teams", "core", "accounts", "migration"],
             "methods": ["POST", "PUT"]
         },
         {
             "key": "DELETE",
-            "restPathKeys": ["planning", "teams", "core", "accounts"],
+            "restPathKeys": ["planning", "teams", "core", "accounts", "migration"],
             "methods": ["DELETE"]
         }
     ],
@@ -41,6 +41,13 @@
         {
             "key": "accounts",
             "name": "tempo-accounts",
+            "basePaths": ["/.*"],
+            "versions": ["1", "2", "latest"],
+            "public": false
+        },
+        {
+            "key": "migration",
+            "name": "tempo-migration",
             "basePaths": ["/.*"],
             "versions": ["1", "2", "latest"],
             "public": false

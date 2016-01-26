@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-jira-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.68-tune-1-SNAPSHOT</version>
+        <version>1.1.68-tune-3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -211,6 +211,14 @@
                     <artifactId>hamcrest-library</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-project-config-pageobjects</artifactId>
+            <!-- TODO: This is hardcoded due to incompatibilities between the atlassian.jira.version being compiled
+                 and the integration test which is using 7.1.0-SNAPSHOT.  This dependency can be removed when a new
+                 production OD version of JIRA is released which includes the Project config plugin upgrade. See HELIX-280 -->
+            <version>8.2.4</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -421,10 +429,17 @@
 
                 <configuration>
                     <containerId>tomcat7x</containerId>
-                    <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <installPlugin>false</installPlugin>
+
+                    <!-- taken from https://bitbucket.org/atlassianlabs/quickreload -->
+                    <enableFastdev>false</enableFastdev>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enablePde>false</enablePde>
                     <skipRestDocGeneration>true</skipRestDocGeneration>
+                    <allowGoogleTracking>false</allowGoogleTracking>
+                    <skipManifestValidation>true</skipManifestValidation>
+                    <extractDependencies>false</extractDependencies>
 
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
@@ -446,6 +461,11 @@
                                 <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
                             </systemPropertyVariables>
                             <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>

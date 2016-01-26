@@ -686,11 +686,6 @@
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.confluence.plugins</groupId>
-                                    <artifactId>confluence-create-content-plugin</artifactId>
-                                    <version>${blueprints.version}</version>
-                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>

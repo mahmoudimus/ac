@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.google.common.collect.ImmutableList;
 import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeManagerTest;
 import org.junit.runner.RunWith;
@@ -31,81 +32,36 @@ public class TempoRestScopesTest extends ScopeManagerTest
      */
     public static Collection<ScopeTestData> testData()
     {
-        List<ScopeTestData> params = new ArrayList<>();
+        return ImmutableList.<ScopeTestData>builder()
+                .addAll(testDataForResource("tempo-planning"))
+                .addAll(testDataForResource("tempo-teams"))
+                .addAll(testDataForResource("tempo-core"))
+                .addAll(testDataForResource("tempo-accounts"))
+                .addAll(testDataForResource("tempo-migration"))
+                .build();
+    }
 
-        params.addAll(asList(
-                // Planning READ
-                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/tempo-planning/latest/anything", true),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "/jira/rest/tempo-planning/latest/anything", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "/jira/rest/tempo-planning/latest/anything", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, "/jira/rest/tempo-planning/latest/anything", false),
 
-                // Teams READ
-                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/tempo-teams/latest/anything", true),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "/jira/rest/tempo-teams/latest/anything", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "/jira/rest/tempo-teams/latest/anything", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, "/jira/rest/tempo-teams/latest/anything", false),
+    private static List<ScopeTestData> testDataForResource(String resource) {
 
-                // Core READ
-                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/tempo-core/latest/anything", true),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "/jira/rest/tempo-core/latest/anything", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "/jira/rest/tempo-core/latest/anything", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, "/jira/rest/tempo-core/latest/anything", false),
+        String path = "/jira/rest/" + resource + "/latest/anything";
 
-                // Accounts READ
-                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/tempo-accounts/latest/anything", true),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "/jira/rest/tempo-accounts/latest/anything", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "/jira/rest/tempo-accounts/latest/anything", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, "/jira/rest/tempo-accounts/latest/anything", false),
+        return ImmutableList.<ScopeTestData>builder()
+                .add(emptyBodyForJira(ScopeName.READ, HttpMethod.GET, path, true))
+                .add(emptyBodyForJira(ScopeName.READ, HttpMethod.POST, path, false))
+                .add(emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, path, false))
+                .add(emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, path, false))
 
-                // Planning WRITE
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, "/jira/rest/tempo-planning/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "/jira/rest/tempo-planning/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/tempo-planning/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, "/jira/rest/tempo-planning/latest/anything", false),
+                .add(emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, path, true))
+                .add(emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, path, true))
+                .add(emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, path, true))
+                .add(emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, path, false))
 
-                // Teams WRITE
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, "/jira/rest/tempo-teams/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "/jira/rest/tempo-teams/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/tempo-teams/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, "/jira/rest/tempo-teams/latest/anything", false),
+                .add(emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, path, true))
+                .add(emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, path, true))
+                .add(emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, path, true))
+                .add(emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, path, true))
 
-                // Core WRITE
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, "/jira/rest/tempo-core/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "/jira/rest/tempo-core/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/tempo-core/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, "/jira/rest/tempo-core/latest/anything", false),
-
-                // Accounts WRITE
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.GET, "/jira/rest/tempo-accounts/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "/jira/rest/tempo-accounts/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/tempo-accounts/latest/anything", true),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, "/jira/rest/tempo-accounts/latest/anything", false),
-
-                // Planning DELETE
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, "/jira/rest/tempo-planning/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "/jira/rest/tempo-planning/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/tempo-planning/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/tempo-planning/latest/anything", true),
-
-                // Teams DELETE
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, "/jira/rest/tempo-teams/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "/jira/rest/tempo-teams/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/tempo-teams/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/tempo-teams/latest/anything", true),
-
-                // Core DELETE
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, "/jira/rest/tempo-core/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "/jira/rest/tempo-core/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/tempo-core/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/tempo-core/latest/anything", true),
-
-                // Accounts DELETE
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.GET, "/jira/rest/tempo-accounts/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "/jira/rest/tempo-accounts/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/tempo-accounts/latest/anything", true),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/tempo-accounts/latest/anything", true)));
-
-        return params;
+                .build();
     }
 }
