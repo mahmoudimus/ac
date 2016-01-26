@@ -66,7 +66,7 @@ The syntax of such variables is as follows (in the BNF notation with optional it
 
 ```
 <variable>        ::=  "condition." <condition-name> [<parameters>]
-<parameters>      ::= "(" [<parameters>] ")"
+<parameters>      ::= "(" [<parameters-list>] ")"
 <parameters-list> ::=  <parameter-key> "=" <parameter-value> | <parameters-list> "," <parameters-list>
 ```
 
