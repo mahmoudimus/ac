@@ -198,8 +198,8 @@ Therefore the web panel's iframe has to point to a redirect servlet that will si
 
 
  ```
- <redirected-web-panel-location-list>
+ <connect-redirected-web-panel-location-list>
  	<location>dropdown.redirected.webpanel.location</location>
  	<location>popup.redirected.webpanel.location</location>
- </redirected-web-panel-location-list>
+ </connect-redirected-web-panel-location-list>
  ```

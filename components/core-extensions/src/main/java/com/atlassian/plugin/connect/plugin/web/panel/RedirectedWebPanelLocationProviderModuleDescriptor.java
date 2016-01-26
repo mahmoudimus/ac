@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
  * This descriptor expects XML of the form:
  * <pre>
  *     {@code
- *      <redirected-web-panel-location-list>
+ *      <connect-redirected-web-panel-location-list>
  *          <location>...</location>
  *          <location>...</location>
- *      </redirected-web-panel-location-list>
+ *      </connect-redirected-web-panel-location-list>
  *     }
  * </pre>
  */

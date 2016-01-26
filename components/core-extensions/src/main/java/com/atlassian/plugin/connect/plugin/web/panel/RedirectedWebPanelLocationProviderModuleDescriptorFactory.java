@@ -14,6 +14,6 @@ public class RedirectedWebPanelLocationProviderModuleDescriptorFactory extends S
     @Autowired
     public RedirectedWebPanelLocationProviderModuleDescriptorFactory(HostContainer hostContainer)
     {
-        super(hostContainer, "redirected-web-panel-location-list", RedirectedWebPanelLocationProviderModuleDescriptor.class);
+        super(hostContainer, "connect-redirected-web-panel-location-list", RedirectedWebPanelLocationProviderModuleDescriptor.class);
     }
 }
