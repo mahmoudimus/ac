@@ -62,11 +62,12 @@ depending on user permissions or other state that the conditions allow you to ch
 You can achieve this goal by putting the conditions in query parameters. The condition will be dynamically
 evaluated every time the URL is requested based on the current user and context.
 
-The syntax of such variables is as follows:
+The syntax of such variables is as follows (in the BNF notation with optional items enclosed in square brackets):
 
 ```
-<variable>   ::=  "condition." <condition-name> | "condition." <condition-name> "(" <parameters> ")"
-<parameters> ::=  <parameter-key> "=" <parameter-value> | <parameters> "," <parameters>
+<variable>        ::=  "condition." <condition-name> [<parameters>]
+<parameters>      ::= "(" [<parameters>] ")"
+<parameters-list> ::=  <parameter-key> "=" <parameter-value> | <parameters-list> "," <parameters-list>
 ```
 
 Any condition available in other places can be used as a `condition-name`; 
