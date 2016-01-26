@@ -136,20 +136,7 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
         {
             if (null != pluginKey)
             {
-                // add some extra detail to the analytics events, if we have it, to facilitate analysis
-                if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackHttpCodeException)
-                {
-                    eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, ((LifecycleCallbackHttpCodeException) e.getCause()).getHttpCode(), e.getMessage(),
-                                                                              ConnectAddonLifecycleFailedEvent.Category.ADDON));
-                }
-                else if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackBadResponseException)
-                {
-                    eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.ADDON));
-                }
-                else
-                {
-                    eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.CONNECT));
-                }
+                publishInstallFailedEvent(pluginKey, e);
 
                 if (!Strings.isNullOrEmpty(previousSettings.getDescriptor())
                     && maybePreviousApplink.isPresent()
@@ -195,6 +182,24 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
         log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
         return addonPluginWrapper;
+    }
+
+    // add some extra detail to the analytics events, if we have it, to facilitate analysis
+    private void publishInstallFailedEvent(String pluginKey, Exception e)
+    {
+        if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackHttpCodeException)
+        {
+            eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, ((LifecycleCallbackHttpCodeException) e.getCause()).getHttpCode(), e.getMessage(),
+                                                                      ConnectAddonLifecycleFailedEvent.Category.ADDON));
+        }
+        else if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackBadResponseException)
+        {
+            eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.ADDON));
+        }
+        else
+        {
+            eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.CONNECT));
+        }
     }
 
     private void validateModules(ConnectAddonBean addon) throws InvalidDescriptorException
