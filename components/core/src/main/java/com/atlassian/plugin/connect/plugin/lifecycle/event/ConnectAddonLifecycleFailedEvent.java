@@ -28,12 +28,22 @@ public abstract class ConnectAddonLifecycleFailedEvent extends ConnectAddonLifec
         /**
          * The problem appears to lie with the add-on (e.g. it did not respond nicely to a callback).
          */
-        ADD_ON,
+        ADDON,
 
         /**
          * The problem appears to lie with Connect (e.g. an exception that we couldn't explicitly categorise).
          */
         CONNECT;
+
+        /**
+         * Emit the {@link #name()} in lower case for easier readability in analytics logs.
+         * @return {@link #name()} in lower case
+         */
+        @Override
+        public String toString()
+        {
+            return name().toLowerCase();
+        }
     }
 
     public ConnectAddonLifecycleFailedEvent(String pluginKey, String message, Category category)

@@ -140,11 +140,11 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
                 if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackHttpCodeException)
                 {
                     eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, ((LifecycleCallbackHttpCodeException) e.getCause()).getHttpCode(), e.getMessage(),
-                                                                              ConnectAddonLifecycleFailedEvent.Category.ADD_ON));
+                                                                              ConnectAddonLifecycleFailedEvent.Category.ADDON));
                 }
                 else if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackBadResponseException)
                 {
-                    eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.ADD_ON));
+                    eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.ADDON));
                 }
                 else
                 {
