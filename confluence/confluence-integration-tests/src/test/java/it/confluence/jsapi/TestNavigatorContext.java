@@ -32,29 +32,13 @@ import static junit.framework.TestCase.assertEquals;
 
 public class TestNavigatorContext extends ConfluenceWebDriverTestBase
 {
-    /*
-     These tests work by navigating to a page and then attempting to bind a page object to that page.
-     If the navigation itself fails, the page will not bind successfully and the test will fail.
-     */
-
     private static List<Exception> setupFailure = new ArrayList<>();
     private static final String WEB_ITEM_KEY = "ac-navigator-web-item";
     private static ConnectRunner remotePlugin;
 
-    private static Promise<Content> createdPage;
-    private static Space space;
-
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        String spaceKey = "NAVTEST" + System.currentTimeMillis();
-        space = restClient.spaces().create(Space.builder().key(spaceKey).name("Nav Space").build(), false).get();
-        createdPage = restClient.content().create(Content.builder(ContentType.PAGE)
-                .space(space)
-                .body("<p>Page content</p>", ContentRepresentation.STORAGE)
-                .title("Page")
-                .build());
-
         try
         {
             remotePlugin = new ConnectRunner(ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())

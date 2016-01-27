@@ -17,7 +17,6 @@
         <div id="ac-contentType"></div>
         <script type="text/javascript">
             var showContext = function(context) {
-                console.log(context);
                 $('#ac-target').text(context.target);
                 $('#ac-contentId').text(context.context.contentId);
                 $('#ac-contentType').text(context.context.contentType);
