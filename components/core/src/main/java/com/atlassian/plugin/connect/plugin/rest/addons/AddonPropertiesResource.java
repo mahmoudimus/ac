@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import java.io.IOException;
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -19,9 +18,9 @@ import javax.ws.rs.core.Response;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
-import com.atlassian.plugin.connect.plugin.property.AddonProperty;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyIterable;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyService;
+import com.atlassian.plugin.connect.api.plugin.property.AddonProperty;
+import com.atlassian.plugin.connect.api.plugin.property.AddonPropertyIterable;
+import com.atlassian.plugin.connect.api.plugin.property.AddonPropertyService;
 import com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonPropertiesBean;
@@ -31,9 +30,7 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Function;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -96,7 +93,6 @@ public class AddonPropertiesResource
                     {
                         return getResponseBuilderFromOperationStatus(status).build();
                     }
-
                 }, new Function<AddonPropertyIterable, Response>()
                 {
                     @Override
@@ -134,7 +130,7 @@ public class AddonPropertiesResource
      */
     @GET
     @Path ("{propertyKey}")
-    public Response getAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") String propertyKey, @QueryParam("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
+    public Response getAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") String propertyKey, @QueryParam ("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
     {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
@@ -159,6 +155,7 @@ public class AddonPropertiesResource
             }
         });
     }
+
     /**
      * Creates or updates a property with the given property key.
      *

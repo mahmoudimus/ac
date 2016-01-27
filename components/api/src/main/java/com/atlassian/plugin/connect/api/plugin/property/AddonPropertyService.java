@@ -1,7 +1,6 @@
-package com.atlassian.plugin.connect.plugin.property;
+package com.atlassian.plugin.connect.api.plugin.property;
 
 import java.util.Optional;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -9,7 +8,6 @@ import javax.annotation.concurrent.Immutable;
 import com.atlassian.fugue.Either;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Function;
 
 /**
@@ -95,6 +93,15 @@ public interface AddonPropertyService
      */
     GetAllServiceResult getAddonProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addonKey);
 
+    /**
+     * Returns a list of all properties for a given add-on. This method does not check any permissions, but checks whether the add-on exists.
+     *
+     * @param addOnKey the key of the add-on that owns the property
+     * @return GetAllServiceResult which calls one of two callbacks: OnFailed or OnSuccess,
+     * OnFailed is called with OperationResult explaining the reason
+     * OnSuccess is called with AddOnPropertyIterable that was retrieved.
+     */
+    GetAllServiceResult getAddOnProperties(@Nonnull String addOnKey);
 
     /**
      * Represents a result of the Get operation in service. Can be folded by giving two functions, which are called depending on the result.
@@ -114,7 +121,7 @@ public interface AddonPropertyService
     interface FoldableServiceResult<T, SRT extends OperationStatus>
     {
         public <R> R fold(Function<T, R> onPreconditionFailed,
-                Function<OperationStatus,R> onFail,
+                Function<OperationStatus, R> onFail,
                 Function<SRT, R> onSuccess);
     }
 
@@ -129,7 +136,6 @@ public interface AddonPropertyService
 
         public String getKey();
     }
-
 
     /**
      * Represents a condition result which is a boolean along with an optional object
@@ -172,9 +178,9 @@ public interface AddonPropertyService
     @Immutable
     class ValidationResult<T>
     {
-        private final Either<OperationStatus,T> result;
+        private final Either<OperationStatus, T> result;
 
-        public ValidationResult(Either<OperationStatus,T> result)
+        public ValidationResult(Either<OperationStatus, T> result)
         {
             this.result = result;
         }
@@ -196,11 +202,12 @@ public interface AddonPropertyService
 
         public static <T> ValidationResult<T> fromValue(T value)
         {
-            return new ValidationResult<T>(Either.<OperationStatus,T>right(value));
+            return new ValidationResult<T>(Either.<OperationStatus, T>right(value));
         }
+
         public static <T> ValidationResult<T> fromError(OperationStatus error)
         {
-            return new ValidationResult<T>(Either.<OperationStatus,T>left(error));
+            return new ValidationResult<T>(Either.<OperationStatus, T>left(error));
         }
     }
 
@@ -214,12 +221,14 @@ public interface AddonPropertyService
             {
                 this.reason = reason;
             }
+
             @Override
             public <R> R fold(final Function<OperationStatus, R> onFail, final Function<AddonProperty, R> onSuccess)
             {
                 return onFail.apply(reason);
             }
         }
+
         class Success implements GetServiceResult
         {
             private final AddonProperty property;
@@ -228,6 +237,7 @@ public interface AddonPropertyService
             {
                 this.property = property;
             }
+
             @Override
             public <R> R fold(final Function<OperationStatus, R> onFail, final Function<AddonProperty, R> onSuccess)
             {
@@ -235,6 +245,7 @@ public interface AddonPropertyService
             }
         }
     }
+
     interface GetAllServiceResult extends FoldableGetServiceResult<AddonPropertyIterable>
     {
         class Fail implements GetAllServiceResult
@@ -268,7 +279,6 @@ public interface AddonPropertyService
                 return onSuccess.apply(propertyIterable);
             }
         }
-
     }
 
     @Immutable
@@ -329,6 +339,7 @@ public interface AddonPropertyService
                 return onPreconditionFailed.apply(object);
             }
         }
+
         class Fail<T> implements PutServiceResult<T>
         {
             private final OperationStatus reason;
@@ -344,6 +355,7 @@ public interface AddonPropertyService
                 return onFail.apply(reason);
             }
         }
+
         class Success<T> implements PutServiceResult<T>
         {
             private final PutOperationStatus result;
@@ -378,6 +390,7 @@ public interface AddonPropertyService
                 return onPreconditionFailed.apply(object);
             }
         }
+
         class Fail<T> implements DeleteServiceResult<T>
         {
             private final OperationStatus reason;
@@ -393,6 +406,7 @@ public interface AddonPropertyService
                 return onFail.apply(reason);
             }
         }
+
         class Success<T> implements DeleteServiceResult<T>
         {
             private final OperationStatus reason;
@@ -409,6 +423,4 @@ public interface AddonPropertyService
             }
         }
     }
-
-
 }

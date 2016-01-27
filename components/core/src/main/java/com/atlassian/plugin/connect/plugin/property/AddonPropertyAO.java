@@ -11,7 +11,7 @@ import net.java.ao.schema.Unique;
 
 /**
  * Active object representation of an add-on property.
- * @see com.atlassian.plugin.connect.plugin.property.AddonProperty
+ * @see com.atlassian.plugin.connect.api.plugin.property.AddonProperty
  */
 
 // The 'On' in 'AddOn' is deliberately capitalised for backwards compatibility.

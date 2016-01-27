@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.plugin.rest.data;
 import javax.annotation.concurrent.Immutable;
 
 import com.atlassian.fugue.Either;
-import com.atlassian.plugin.connect.plugin.property.AddonProperty;
-
+import com.atlassian.plugin.connect.api.plugin.property.AddonProperty;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -12,14 +11,14 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 /**
  * This class represents an add-on property
  */
-@JsonSerialize()
+@JsonSerialize ()
 @Immutable
 public class RestAddonProperty
 {
     @JsonProperty
     private final String key;
 
-    @JsonSerialize(using = RestAddonPropertyValueSerializer.class)
+    @JsonSerialize (using = RestAddonPropertyValueSerializer.class)
     @JsonProperty
     private final Either<String, JsonNode> value;
 

@@ -1,10 +1,6 @@
-package com.atlassian.plugin.connect.plugin.property;
-
-import java.util.Optional;
+package com.atlassian.plugin.connect.api.plugin.property;
 
 import javax.annotation.concurrent.Immutable;
-
-import com.google.common.base.Preconditions;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -12,7 +8,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.JsonNode;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 
 /**
  * This class represents an add-on property consisting of a key and a value.
@@ -55,7 +50,7 @@ public final class AddonProperty
         final AddonProperty that = (AddonProperty) o;
 
         return new EqualsBuilder()
-                .append(key,that.key)
+                .append(key, that.key)
                 .append(value, that.value)
                 .append(propertyID, that.propertyID)
                 .isEquals();
@@ -78,12 +73,4 @@ public final class AddonProperty
                 .append("propertyID", propertyID)
                 .toString();
     }
-
-    public static AddonProperty fromAO(AddonPropertyAO ao)
-    {
-        final Optional<JsonNode> potentialJsonValue = JsonCommon.parseStringToJson(ao.getValue());
-        Preconditions.checkState(potentialJsonValue.isPresent(), String.format("The addon property %s did not contain valid json: %s", ao.getPropertyKey(), ao.getValue()));
-        return new AddonProperty(ao.getPropertyKey(), potentialJsonValue.get(), ao.getID());
-    }
-
 }
