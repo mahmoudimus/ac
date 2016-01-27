@@ -137,41 +137,9 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
             if (null != pluginKey)
             {
                 publishInstallFailedEvent(pluginKey, e);
-
-                if (!Strings.isNullOrEmpty(previousSettings.getDescriptor())
-                    && maybePreviousApplink.isPresent()
-                    && maybePreviousAuthType.isPresent())
-                {
-                    log.error("An exception occurred while installing the plugin '["
-                              + pluginKey
-                              + "]. Restoring previous version...", e);
-                    ConnectAddonBean previousAddon = connectAddonBeanFactory.fromJson(previousSettings.getDescriptor());
-                    String addonUserKey = this.connectUserService.getOrCreateAddonUserName(pluginKey,
-                            previousAddon.getName());
-                    addonRegistry.storeAddonSettings(pluginKey, previousSettings);
-                    connectApplinkManager.createAppLink(previousAddon,
-                                                        baseUrl,
-                                                        maybePreviousAuthType.get(),
-                                                        maybePreviousPublicKeyOrSharedSecret.orElse(""),
-                                                        addonUserKey);
-                    setAddonState(targetState, pluginKey);
-                }
-                else
-                {
-                    log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...",
-                              e);
-                    connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
-
-                    // if we were trying to reinstall after uninstalling then leave the previous "uninstalled" settings behind
-                    // (i.e. nothing changed as a result of a failed re-installation attempt)
-                    if (PluginState.UNINSTALLED.equals(PluginState.valueOf(previousSettings.getRestartState())))
-                    {
-                        log.error("An exception occurred while installing the plugin '["
-                                + pluginKey
-                                + "]. Restoring previous uninstalled-remnant settings...", e);
-                        addonRegistry.storeAddonSettings(pluginKey, previousSettings);
-                    }
-                }
+                undoFailedInstallation(pluginKey, previousSettings, targetState, maybePreviousApplink, maybePreviousAuthType,
+                                       maybePreviousPublicKeyOrSharedSecret, baseUrl,
+                                       e);
             }
             Throwables.propagateIfInstanceOf(e, ConnectAddonInstallException.class);
             throw new ConnectAddonInstallException(e.getMessage(), e);
@@ -182,6 +150,53 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
         log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
         return addonPluginWrapper;
+    }
+
+    private void undoFailedInstallation(String pluginKey, AddonSettings previousSettings, PluginState targetState, Optional<ApplicationLink> maybePreviousApplink, Optional<AuthenticationType> maybePreviousAuthType, Optional<String> maybePreviousPublicKeyOrSharedSecret, String baseUrl, Exception e) throws ConnectAddonInstallException
+    {
+        if (!Strings.isNullOrEmpty(previousSettings.getDescriptor())
+            && maybePreviousApplink.isPresent()
+            && maybePreviousAuthType.isPresent())
+        {
+            rollBackToPreviousVersion(pluginKey, previousSettings, targetState, maybePreviousAuthType, maybePreviousPublicKeyOrSharedSecret, baseUrl, e);
+        }
+        else
+        {
+            removeFailedInstallation(pluginKey, previousSettings, e);
+        }
+    }
+
+    private void removeFailedInstallation(String pluginKey, AddonSettings previousSettings, Exception e)
+    {
+        log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...", e);
+        connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
+
+        // if we were trying to reinstall after uninstalling then leave the previous "uninstalled" settings behind
+        // (i.e. nothing changed as a result of a failed re-installation attempt)
+        if (PluginState.UNINSTALLED.equals(PluginState.valueOf(previousSettings.getRestartState())))
+        {
+            log.error("An exception occurred while installing the plugin '["
+                    + pluginKey
+                    + "]. Restoring previous uninstalled-remnant settings...", e);
+            addonRegistry.storeAddonSettings(pluginKey, previousSettings);
+        }
+    }
+
+    private void rollBackToPreviousVersion(String pluginKey, AddonSettings previousSettings, PluginState targetState, Optional<AuthenticationType> maybePreviousAuthType, Optional<String> maybePreviousPublicKeyOrSharedSecret, String baseUrl, Exception e) throws ConnectAddonInstallException
+    {
+        log.error("An exception occurred while installing the plugin '["
+                  + pluginKey
+                  + "]. Restoring previous version...", e);
+        ConnectAddonBean previousAddon = connectAddonBeanFactory.fromJson(previousSettings.getDescriptor());
+        String addonUserKey = this.connectUserService.getOrCreateAddonUserName(pluginKey,
+                previousAddon.getName());
+        addonRegistry.storeAddonSettings(pluginKey, previousSettings);
+        connectApplinkManager.createAppLink(previousAddon,
+                                            baseUrl,
+                                            maybePreviousAuthType.get(),
+                                            maybePreviousPublicKeyOrSharedSecret.orElse(""),
+                                            addonUserKey);
+        setAddonState(targetState, pluginKey);
     }
 
     // add some extra detail to the analytics events, if we have it, to facilitate analysis
