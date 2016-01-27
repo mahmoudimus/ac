@@ -107,7 +107,6 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
         String linkId = addon.getKey() + "-" + webItemKey;
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", linkId);
         String url = bean.getUrl();
-        linkElement.setText(url);
 
         List<String> styles = newArrayList(bean.getStyleClasses());
 
@@ -132,13 +131,17 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
             if (isNotBlank(targetKey))
             {
                 // Options will be declared within the linked module
-                options = getDialogOptions(targetKey, addon);
+                DialogModuleBean targetDialog = getTargetDialog(targetKey, addon);
+                options = targetDialog.getOptions();
+                url = targetDialog.getUrl();
             }
         }
         else if (target.isInlineDialogTarget())
         {
             styles.add("ap-inline-dialog");
         }
+
+        linkElement.setText(url);
 
         if (!target.isPageTarget())
         {
@@ -182,7 +185,7 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
         return createWebItemDescriptor(addon, plugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog, section);
     }
 
-    private WebItemTargetOptions getDialogOptions(String targetKey, ConnectAddonBean addon)
+    private DialogModuleBean getTargetDialog(String targetKey, ConnectAddonBean addon)
     {
         Optional<List<ModuleBean>> dialogs = addon.getModules().getValidModuleListOfType(new DialogModuleMeta().getDescriptorKey(), e -> {});
         if (dialogs.isPresent())
@@ -197,7 +200,7 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
                 // This target's key points to a non-existent module.
                 throw new IllegalArgumentException("Unknown dialog module key: " + targetKey);
             }
-            return ((DialogModuleBean) foundBean.get()).getOptions();
+            return (DialogModuleBean) foundBean.get();
         }
         else
         {

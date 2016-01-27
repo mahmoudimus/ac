@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.DialogModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.RequiredKeyBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
@@ -20,6 +22,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @SchemaDefinition("dialog")
 public class DialogModuleBean extends RequiredKeyBean
 {
+    /**
+     * Specifies the URL of the content displayed in the dialog. The URL can be absolute or relative to either the
+     * product URL or the add-on's base URL, depending on the _context_ attribute.
+     *
+     * Your add-on can receive [additional context](../../concepts/context-parameters.html) from the application by
+     * using variable tokens in the URL attribute.
+     */
+    @Required
+    @StringSchemaAttributes(format = "uri-template")
+    private String url;
+
     /**
      * TODO - this Javadoc copied from WebItemTargetBean - how to extract? dT
      * <p>An object containing options for this dialog.</p>
@@ -63,6 +76,11 @@ public class DialogModuleBean extends RequiredKeyBean
         }
     }
 
+    public String getUrl()
+    {
+        return url;
+    }
+
     public DialogOptions getOptions()
     {
         return options;
@@ -83,6 +101,7 @@ public class DialogModuleBean extends RequiredKeyBean
     {
         return Objects.toStringHelper(this)
                 .add("key", getRawKey())
+                .add("url", getUrl())
                 .add("name", getName())
                 .add("options", getOptions())
                 .toString();
@@ -104,6 +123,7 @@ public class DialogModuleBean extends RequiredKeyBean
         DialogModuleBean other = (DialogModuleBean) otherObj;
 
         return new EqualsBuilder()
+                .append(getUrl(), other.getUrl())
                 .append(options, other.options)
                 .isEquals();
     }
@@ -113,6 +133,7 @@ public class DialogModuleBean extends RequiredKeyBean
     {
         return new HashCodeBuilder(13, 61)
                 .appendSuper(super.hashCode())
+                .append(url)
                 .append(options)
                 .build();
     }
