@@ -20,8 +20,15 @@ public interface ConditionClassAccessor
      * @param conditionBean a condition element from an add-on descriptor
      * @return the condition class or {@link Optional#empty()}
      */
-    public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean);
+    Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean);
 
+
+    /**
+     * Returns a condition class for use when resolving an <b>inline parameter condition</b>.
+     *
+     * @param conditionBean a condition element from an add-on descriptor
+     * @return the condition class or {@link Optional#empty()}
+     */
     Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean);
 
     /**
@@ -30,5 +37,5 @@ public interface ConditionClassAccessor
      * @param conditionBean a condition element from an add-on descriptor
      * @return the condition class or {@link Optional#empty()}
      */
-    public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean);
+    Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean);
 }
