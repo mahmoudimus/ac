@@ -49,7 +49,6 @@ public final class WebHookTestServlet extends HttpServlet
             {
                 throw new ServletException(e);
             }
-
         }
     }
 
@@ -69,14 +68,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -100,14 +92,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -127,14 +112,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -153,14 +131,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -179,14 +150,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {
@@ -208,14 +172,7 @@ public final class WebHookTestServlet extends HttpServlet
 
         try
         {
-            tester.test(new WebHookWaiter()
-            {
-                @Override
-                public WebHookBody waitForHook() throws Exception
-                {
-                    return servlet.waitForHook();
-                }
-            });
+            tester.test(servlet::waitForHook);
         }
         finally
         {

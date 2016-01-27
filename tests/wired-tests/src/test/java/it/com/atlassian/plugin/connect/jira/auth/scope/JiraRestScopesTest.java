@@ -1,13 +1,13 @@
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeManagerTest;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
@@ -159,7 +159,17 @@ public class JiraRestScopesTest extends ScopeManagerTest
                 emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "/jira/rest/api/2/project/ABC-123/avatar", false),
                 emptyBodyForJira(ScopeName.PROJECT_ADMIN, HttpMethod.POST, "/jira/rest/api/2/project/ABC-123/avatar", true),
                 emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/api/2/project/ABC-123/avatar/123", false),
-                emptyBodyForJira(ScopeName.PROJECT_ADMIN, HttpMethod.DELETE, "/jira/rest/api/2/project/ABC-123/avatar/123", true)
+                emptyBodyForJira(ScopeName.PROJECT_ADMIN, HttpMethod.DELETE, "/jira/rest/api/2/project/ABC-123/avatar/123", true),
+
+                // worklog resource require READ
+                emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/worklog/updated?since=123", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/worklog/updated?since=123", true),
+
+                emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/worklog/deleted?since=123", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/worklog/deleted?since=123", true),
+
+                emptyBodyForJira(null, HttpMethod.POST, "/jira//rest/api/2/worklog/list", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "/jira//rest/api/2/worklog/list", true)
         ));
 
         // never allow an add-on to change a user's details or password
@@ -174,5 +184,4 @@ public class JiraRestScopesTest extends ScopeManagerTest
 
         return params;
     }
-
 }
