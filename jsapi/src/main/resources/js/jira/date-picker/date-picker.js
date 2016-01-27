@@ -22,6 +22,7 @@ define("ac/jira/date-picker", [
             // ISO8601 assumes that first day of week is Monday
             (params.useISO8601WeekNumbers) ? 1 : undefined,
             params.date,
+            new Date().toISOString(),
             params.onSelect || function noop() {  },
             function hideAndDestroy(cal) {
                 cal.hide();
