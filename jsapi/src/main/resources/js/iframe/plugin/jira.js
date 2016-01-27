@@ -156,8 +156,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                  * @param {Object} options.position - Position of the element relative to the iframe. options.element takes precedence over it when provided.
                  * @param {number} options.position.top - Distance in pixels from the top edge of the iframe date picker should be shown at.
                  * @param {number} options.position.left- Distance in pixels from the left edge of the iframe date picker should be shown at.
-                 * @param {Boolean} options.showsTime - Flag determining whether the component should also have a time picker.
-                 * @param {String} options.date - Date (and time) that should be pre-selected when displaying the picker in the ISO 8601 format.
+                 * @param {Boolean} options.showsTime - Flag determining whether the component should also have a time picker. Defaults to false.
+                 * @param {String} options.date - Date (and time) that should be pre-selected when displaying the picker in the format undersantable by Date.parse method in JavaScript. ISO 8601 is preferred. Timezone should be set to Z for UTC time or in the format of +/-hh:mm. Not setting it will cause JavaScript to use local timezone set in the browser. Defaults to current date/time.
                  * @param {Function} options.onSelect - Callback that will be invoked when the date (and time) is selected by the user.
                  *
                  * @noDemo
@@ -187,7 +187,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                         options.position = {}
                     }
 
-                    var sanitisedOptions =  {
+                    var sanitisedOptions = {
                         element: options.element,
                         position: {
                             top: options.position.top || 0,
