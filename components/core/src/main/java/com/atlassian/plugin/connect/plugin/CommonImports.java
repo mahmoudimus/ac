@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
@@ -14,8 +11,6 @@ import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
-import com.atlassian.oauth.serviceprovider.ServiceProviderTokenStore;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -42,6 +37,8 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 
+import javax.inject.Inject;
+
 /**
  * This class does nothing but is here to centralize the cross-product component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
@@ -61,7 +58,6 @@ public class CommonImports
             @ComponentImport ConsumerService consumerService,
             @ComponentImport RequestFactory requestFactory,
             @ComponentImport ApplicationProperties applicationProperties,
-            @ComponentImport ServiceProviderConsumerStore serviceProviderConsumerStore,
             @ComponentImport MutatingApplicationLinkService applicationLinkService,
             @ComponentImport AuthenticationConfigurationManager authenticationConfigurationManager,
             @ComponentImport UserManager userManager,
@@ -84,7 +80,6 @@ public class CommonImports
             @ComponentImport JwtJsonBuilderFactory jwtBuilderFactory,
             @ComponentImport JwtService jwtService,
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
-            @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
             @ComponentImport CrowdService crowdService,
             @ComponentImport DarkFeatureManager darkFeatureManager,
             @ComponentImport ActiveObjects activeObjects)

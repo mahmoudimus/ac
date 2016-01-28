@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
-import java.util.Optional;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -15,27 +14,24 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.plugin.AddonSettings;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkUtil;
-import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.ConnectAddonToPluginFactory;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 @ExportAsService(ConnectAddonInstaller.class)
@@ -44,7 +40,6 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
     private final EventPublisher eventPublisher;
-    private final OAuthLinkManager oAuthLinkManager;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final ConnectAddonToPluginFactory addonToPluginFactory;
     private final ConnectAddonManager connectAddonManager;
@@ -58,7 +53,6 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
     public DefaultConnectAddonInstaller(PluginController pluginController,
             PluginAccessor pluginAccessor,
             EventPublisher eventPublisher,
-            OAuthLinkManager oAuthLinkManager,
             ConnectAddonBeanFactory connectAddonBeanFactory,
             ConnectAddonToPluginFactory addonToPluginFactory,
             ConnectAddonManager connectAddonManager,
@@ -69,7 +63,6 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
         this.eventPublisher = eventPublisher;
-        this.oAuthLinkManager = oAuthLinkManager;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.addonToPluginFactory = addonToPluginFactory;
         this.connectAddonManager = connectAddonManager;
@@ -243,38 +236,12 @@ public class DefaultConnectAddonInstaller implements ConnectAddonInstaller
             if (appLink != null)
             {
                 // Blow away the applink
-                oAuthLinkManager.unassociateProviderWithLink(appLink);
                 connectApplinkManager.deleteAppLink(pluginKey);
             }
         }
         else if (connectAddonManager.hasDescriptor(pluginKey))
         {
             connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
-        }
-        else
-        {
-            /*!
-             However, if there is no previous app, then the app key is checked
-             to ensure it doesn't already exist as a OAuth client key.  This
-             prevents a malicious app that uses a key from an existing oauth
-             link from getting that link removed when the app is uninstalled.
-             If it was created by connect then it is ok
-            */
-            if (oAuthLinkManager.isAppAssociated(pluginKey))
-            {
-                final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
-                if (appLink != null)
-                {
-                    // Is an applink created by connect.
-                    // Blow away the applink
-                    oAuthLinkManager.unassociateProviderWithLink(appLink);
-                    connectApplinkManager.deleteAppLink(pluginKey);
-                }
-                else
-                {
-                    throw new PermissionDeniedException(pluginKey, "App key '" + pluginKey + "' is already associated with an OAuth link");
-                }
-            }
         }
     }
 }

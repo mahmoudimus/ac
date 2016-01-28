@@ -18,8 +18,7 @@ public class AddonKeyExtractorImpl implements AddonKeyExtractor
 {
     /**
      * Set by a {@link javax.servlet.Filter}, possibly using
-     * {@link com.atlassian.plugin.connect.plugin.auth.oauth.OAuth2LOAuthenticator} or
-     * com.atlassian.jwt.plugin.sal.JwtAuthenticatorImpl,
+     * {@link com.atlassian.jwt.core.http.auth.JwtAuthenticator},
      * indicating the Connect add-on that is the origin of the current request.
      */
     private static final String PLUGIN_KEY_ATTRIBUTE = JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME;
