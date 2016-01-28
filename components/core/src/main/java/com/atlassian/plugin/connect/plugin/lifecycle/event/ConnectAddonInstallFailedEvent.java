@@ -5,13 +5,13 @@ import com.atlassian.analytics.api.annotations.EventName;
 @EventName ("connect.addon.installFailed")
 public class ConnectAddonInstallFailedEvent extends ConnectAddonLifecycleFailedEvent
 {
-    public ConnectAddonInstallFailedEvent(String pluginKey, String message)
+    public ConnectAddonInstallFailedEvent(String pluginKey, String message, Category category)
     {
-        super(pluginKey, message);
+        super(pluginKey, message, category);
     }
 
-    public ConnectAddonInstallFailedEvent(String pluginKey, int statusCode, String statusText)
+    public ConnectAddonInstallFailedEvent(String pluginKey, int statusCode, String statusText, Category category)
     {
-        super(pluginKey, statusCode, statusText);
+        super(pluginKey, statusCode, statusText, category);
     }
 }

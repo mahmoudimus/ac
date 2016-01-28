@@ -166,7 +166,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         {
             Map<String, Object> defaultContext = Maps.newHashMap();
 
-            RemotablePluginAccessor plugin = pluginAccessorFactory.getOrThrow(addonKey);
+            RemotablePluginAccessor plugin = pluginAccessorFactory.get(addonKey);
             UserProfile profile = userManager.getRemoteUser();
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());
             String userKey = nullToEmpty(profile == null ? "" : profile.getUserKey().getStringValue());
