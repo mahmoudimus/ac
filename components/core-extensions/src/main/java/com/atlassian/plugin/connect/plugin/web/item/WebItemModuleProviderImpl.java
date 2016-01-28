@@ -153,13 +153,14 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             if (!foundBean.isPresent())
             {
                 // This target's key points to a non-existent module.
+                // TODO - refactor this throw to not suck. dT
                 throw new IllegalArgumentException("Unknown dialog module key: " + targetKey);
             }
             return (DialogModuleBean) foundBean.get();
         }
         else
         {
-            // TODO - refactor these throws to not suck. dT
+            // TODO - refactor this throw to not suck either. dT
             throw new IllegalArgumentException("No dialog modules?");
         }
     }
