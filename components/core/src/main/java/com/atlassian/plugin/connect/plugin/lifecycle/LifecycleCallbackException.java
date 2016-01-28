@@ -8,11 +8,6 @@ public class LifecycleCallbackException extends Exception
 
     private final Serializable[] params;
 
-    public LifecycleCallbackException(String message)
-    {
-        this(message, null, null);
-    }
-
     public LifecycleCallbackException(String message, String i18nKey)
     {
         this(message, i18nKey, null);

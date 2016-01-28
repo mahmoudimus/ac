@@ -33,7 +33,13 @@ import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.SharedSecretService;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.plugin.lifecycle.event.*;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonDisabledEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonEnableFailedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonEnabledEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstalledEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonUninstallFailedEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonUninstalledEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.LifecycleCallbackBadResponseException;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
@@ -489,7 +495,7 @@ public class ConnectAddonManager
         catch (LifecycleCallbackException e)
         {
             Serializable[] params = e.getParams() != null ? e.getParams() : new Serializable[] {};
-            throw new ConnectAddonInstallException(e.getMessage(), e.getI18nKey(), params);
+            throw new ConnectAddonInstallException(e.getMessage(), e, e.getI18nKey(), params);
         }
     }
 
@@ -545,7 +551,7 @@ public class ConnectAddonManager
             log.error("Error contacting remote application at " + callbackUri + " " + statusCode + ":[" + statusText + "]:" + responseEntity);
 
             String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]:" + responseEntity;
-            throw new LifecycleCallbackException(message, findI18nKeyForHttpErrorCode(statusCode));
+            throw new LifecycleCallbackHttpCodeException(message, findI18nKeyForHttpErrorCode(statusCode), statusCode);
         }
     }
 
@@ -591,15 +597,15 @@ public class ConnectAddonManager
             Throwable cause = e.getCause();
             if (cause instanceof UnknownHostException)
             {
-                throw new LifecycleCallbackException(message, "connect.install.error.remote.host.bad.domain", callbackUri.getHost());
+                throw new LifecycleCallbackBadResponseException(message, "connect.install.error.remote.host.bad.domain", callbackUri.getHost());
             }
             else if (cause instanceof SocketTimeoutException)
             {
-                throw new LifecycleCallbackException(message, "connect.install.error.remote.host.timeout", removeQuery(callbackUri));
+                throw new LifecycleCallbackBadResponseException(message, "connect.install.error.remote.host.timeout", removeQuery(callbackUri));
             }
             else if (cause instanceof SSLException)
             {
-                throw new LifecycleCallbackException(message, "connect.install.error.remote.host.ssl", removeQuery(callbackUri), cause.getMessage());
+                throw new LifecycleCallbackBadResponseException(message, "connect.install.error.remote.host.ssl", removeQuery(callbackUri), cause.getMessage());
             }
 
             throw new LifecycleCallbackException(message, "connect.remote.upm.install.exception");
@@ -724,9 +730,7 @@ public class ConnectAddonManager
         }
         catch (ConnectAddonInitException e)
         {
-            ConnectAddonInstallException exception = new ConnectAddonInstallException(e.getMessage(), e.getI18nKey(), addon.getName());
-            exception.initCause(e);
-            throw exception;
+            throw new ConnectAddonInstallException(e.getMessage(), e, e.getI18nKey(), addon.getName());
         }
 
     }
