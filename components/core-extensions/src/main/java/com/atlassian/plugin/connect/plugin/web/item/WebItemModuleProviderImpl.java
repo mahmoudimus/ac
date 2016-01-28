@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
@@ -25,6 +19,9 @@ import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.modules.beans.DialogModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DialogModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
@@ -35,13 +32,20 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import com.google.common.annotations.VisibleForTesting;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 @Component
 @ExportAsDevService
@@ -105,10 +109,59 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (WebItemModuleBean bean : modules)
         {
-            descriptors.add(beanToDescriptor(addon, pluginRetrievalService.getPlugin(), bean));
-            registerIframeRenderStrategy(bean, addon);
+            WebItemModuleBean resolvedBean = resolveBean(bean, addon);
+            descriptors.add(beanToDescriptor(addon, pluginRetrievalService.getPlugin(), resolvedBean));
+            registerIframeRenderStrategy(resolvedBean, addon);
         }
         return descriptors;
+    }
+
+    // WebItems with a dialog target specified by key will inherit properties from the dialog.
+    private WebItemModuleBean resolveBean(WebItemModuleBean bean, ConnectAddonBean addon)
+    {
+        WebItemTargetBean target = bean.getTarget();
+        String targetKey = target.getKey();
+        if (!target.isDialogTarget() || isBlank(targetKey))
+        {
+            // The bean doesn't need resolving.
+            return bean;
+        }
+
+        // Options and Url will be declared within the linked dialog module
+        DialogModuleBean targetDialog = getTargetDialog(targetKey, addon);
+
+        WebItemTargetBean resolvedTarget = newWebItemTargetBean(bean.getTarget())
+                .withOptions(targetDialog.getOptions())
+                .build();
+
+        return newWebItemBean(bean)
+                .withTarget(resolvedTarget)
+                .withUrl(targetDialog.getUrl())
+                .build();
+    }
+
+    private DialogModuleBean getTargetDialog(String targetKey, ConnectAddonBean addon)
+    {
+        Optional<List<ModuleBean>> dialogs = addon.getModules().getValidModuleListOfType(new DialogModuleMeta().getDescriptorKey(), e -> {});
+        if (dialogs.isPresent())
+        {
+            Optional<ModuleBean> foundBean = dialogs.get().stream().filter(moduleBean ->
+            {
+                DialogModuleBean dialogBean = (DialogModuleBean) moduleBean;
+                return dialogBean.getRawKey().equals(targetKey);
+            }).findFirst();
+            if (!foundBean.isPresent())
+            {
+                // This target's key points to a non-existent module.
+                throw new IllegalArgumentException("Unknown dialog module key: " + targetKey);
+            }
+            return (DialogModuleBean) foundBean.get();
+        }
+        else
+        {
+            // TODO - refactor these throws to not suck. dT
+            throw new IllegalArgumentException("No dialog modules?");
+        }
     }
 
     @VisibleForTesting
