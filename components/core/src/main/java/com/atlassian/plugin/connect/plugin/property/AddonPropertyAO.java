@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.property;
 
+import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
 import net.java.ao.Entity;
@@ -11,7 +12,7 @@ import net.java.ao.schema.Unique;
 
 /**
  * Active object representation of an add-on property.
- * @see com.atlassian.plugin.connect.api.plugin.property.AddonProperty
+ * @see AddonProperty
  */
 
 // The 'On' in 'AddOn' is deliberately capitalised for backwards compatibility.

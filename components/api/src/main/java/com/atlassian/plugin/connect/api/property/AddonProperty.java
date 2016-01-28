@@ -1,7 +1,8 @@
-package com.atlassian.plugin.connect.api.plugin.property;
+package com.atlassian.plugin.connect.api.property;
 
 import javax.annotation.concurrent.Immutable;
 
+import com.atlassian.annotations.PublicApi;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -13,6 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * This class represents an add-on property consisting of a key and a value.
  */
 @Immutable
+@PublicApi
 public final class AddonProperty
 {
     private final String key;

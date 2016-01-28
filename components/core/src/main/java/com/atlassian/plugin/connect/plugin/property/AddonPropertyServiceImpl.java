@@ -5,8 +5,8 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.atlassian.plugin.connect.api.plugin.property.AddonProperty;
-import com.atlassian.plugin.connect.api.plugin.property.AddonPropertyService;
+import com.atlassian.plugin.connect.api.property.AddonProperty;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.sal.api.message.I18nResolver;

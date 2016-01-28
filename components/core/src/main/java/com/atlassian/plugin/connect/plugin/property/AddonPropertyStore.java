@@ -5,8 +5,8 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.plugin.connect.api.plugin.property.AddonProperty;
-import com.atlassian.plugin.connect.api.plugin.property.AddonPropertyIterable;
+import com.atlassian.plugin.connect.api.property.AddonProperty;
+import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import net.java.ao.DBParam;

@@ -18,9 +18,9 @@ import javax.ws.rs.core.Response;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
-import com.atlassian.plugin.connect.api.plugin.property.AddonProperty;
-import com.atlassian.plugin.connect.api.plugin.property.AddonPropertyIterable;
-import com.atlassian.plugin.connect.api.plugin.property.AddonPropertyService;
+import com.atlassian.plugin.connect.api.property.AddonProperty;
+import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonPropertiesBean;
