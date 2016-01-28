@@ -29,7 +29,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
-import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
@@ -59,6 +58,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
 import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -443,7 +443,8 @@ public class ConnectJsonExamples
     private static String createDialogExample() {
         DialogModuleBean bean = DialogModuleBean.newDialogBean()
                 .withKey("dialog-example")
-                .withOptions(DialogOptions.newDialogOptions().withSize("fullscreen").build())
+                .withUrl("/my-dialog-content")
+                .withOptions(newDialogOptions().withSize("fullscreen").build())
                 .build();
 
         return gson.toJson(createModuleArray("dialogs", bean));
@@ -626,7 +627,7 @@ public class ConnectJsonExamples
     {
         WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.dialog)
-                .withOptions(DialogOptions.newDialogOptions()
+                .withOptions(newDialogOptions()
                                 .withHeight("100px")
                                 .withWidth("200px")
                                 .build()

@@ -47,14 +47,23 @@ public class DialogModuleBean extends RequiredKeyBean
      *    </tr></thead>
      *    <tbody>
      *        <tr>
+     *            <td><code>size</code></td>
+     *            <td>String</td>
+     *            <td>
+     *                sets the size of the dialog without needing width and height specified. Options are
+     *                small, medium, large, x-large or fullscreen. Fullscreen-size dialogs will always show a header
+     *                with buttons.
+     *            </td>
+     *        </tr>
+     *        <tr>
      *            <td><code>width</code></td>
      *            <td>Number | String</td>
-     *            <td>sets how wide the inline-dialog is in pixels</td>
+     *            <td>sets how wide the dialog is in pixels</td>
      *        </tr>
      *        <tr>
      *            <td><code>height</code></td>
      *            <td>Number | String</td>
-     *            <td>sets how high the inline-dialog is in pixels</td>
+     *            <td>sets how high the dialog is in pixels</td>
      *        </tr>
      *        <tr>
      *            <td><code>chrome</code></td>
