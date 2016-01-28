@@ -31,7 +31,7 @@ public enum CustomFieldBaseType
 
     public enum CustomFieldBaseTypeDefinition
     {
-        TEXT("com.atlassian.jira.issue.customfields.impl.GenericTextCFType",
+        TEXT("com.atlassian.plugin.connect.jira.customfield.type.TextConnectCustomFieldType",
                 "templates/plugins/fields/view/view-basictext.vm",
                 "templates/plugins/fields/edit/edit-maxlengthtext.vm");
 
