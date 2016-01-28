@@ -98,7 +98,7 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.1.0-SNAPSHOT'
+            productVersion: '7.2.0-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'

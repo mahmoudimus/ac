@@ -152,7 +152,7 @@ public class AddonConditionTest
                 eventPublisher,
                 pluginRetrievalService);
 
-        when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
+        when(remotablePluginAccessorFactory.get(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
         when(localeHelper.getLocaleTag()).thenReturn("foo");
 
