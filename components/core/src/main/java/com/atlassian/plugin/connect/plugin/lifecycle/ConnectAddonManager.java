@@ -1,19 +1,5 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
-import java.io.Serializable;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.net.ssl.SSLException;
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
@@ -26,10 +12,12 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.auth.ReKeyableAuthorizationGenerator;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
@@ -45,19 +33,12 @@ import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.SharedSecretService;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonDisabledEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonEnableFailedEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonEnabledEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonInstalledEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonUninstallFailedEvent;
-import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonUninstalledEvent;
+import com.atlassian.plugin.connect.plugin.lifecycle.event.*;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.request.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -66,16 +47,27 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.net.ssl.SSLException;
+import javax.ws.rs.core.MediaType;
+import java.io.Serializable;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
@@ -398,7 +390,7 @@ public class ConnectAddonManager
                                             addonUsesJwtAuthentication(addon),
                                             callbackUri,
                                             createEventDataForUninstallation(pluginKey, addon),
-                                            getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator()));
+                                            getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon.getKey()).getAuthorizationGenerator()));
                         }
                         catch (LifecycleCallbackException e)
                         {
@@ -458,7 +450,7 @@ public class ConnectAddonManager
     private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, final boolean sign) throws ConnectAddonInstallException
     {
         final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
-        final Optional<String> authHeader = sign ? getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator()) : Optional.<String>empty();
+        final Optional<String> authHeader = sign ? getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon.getKey()).getAuthorizationGenerator()) : Optional.<String>empty();
         requestInstallCallback(addon, sharedSecret, callbackUri, authHeader);
     }
 
@@ -466,7 +458,7 @@ public class ConnectAddonManager
     private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, String previousSharedSecret) throws ConnectAddonInstallException
     {
         final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
-        final AuthorizationGenerator authorizationGenerator = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator();
+        final AuthorizationGenerator authorizationGenerator = remotablePluginAccessorFactory.get(addon.getKey()).getAuthorizationGenerator();
 
         // NB: check that the auth generator matches the request/non-request to sign with an arbitrary key on installation, not on every callback,
         // because signing with a previous key happens only on installation

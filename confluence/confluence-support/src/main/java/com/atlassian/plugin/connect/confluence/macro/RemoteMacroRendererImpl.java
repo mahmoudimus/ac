@@ -95,7 +95,7 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
         {
             return macroContentManager.getStaticContent(HttpMethod.GET, URI.create(uri),
                     Collections.<String, String[]>emptyMap(), conversionContext,
-                    remotablePluginAccessorFactory.getOrThrow(addonKey));
+                    remotablePluginAccessorFactory.get(addonKey));
         }
         catch (Exception e)
         {
