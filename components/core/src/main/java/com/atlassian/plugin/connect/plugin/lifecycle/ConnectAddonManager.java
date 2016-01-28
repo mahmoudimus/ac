@@ -730,9 +730,7 @@ public class ConnectAddonManager
         }
         catch (ConnectAddonInitException e)
         {
-            ConnectAddonInstallException exception = new ConnectAddonInstallException(e.getMessage(), e, e.getI18nKey(), addon.getName());
-            exception.initCause(e);
-            throw exception;
+            throw new ConnectAddonInstallException(e.getMessage(), e, e.getI18nKey(), addon.getName());
         }
 
     }
