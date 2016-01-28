@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Collections.emptyMap;
 
 /**
  * Web panel that displays in an iframe.
@@ -75,7 +76,7 @@ public class IFrameWebPanel implements WebPanel
 
             final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context);
 
-            writer.write(iFrameRenderer.render(substituteContext(new WebFragmentContext(context, whiteListedContext)), "", Collections.EMPTY_MAP, remoteUsername, whiteListedContext));
+            writer.write(iFrameRenderer.render(substituteContext(new WebFragmentContext(context, whiteListedContext)), "", emptyMap(), remoteUsername, whiteListedContext));
         }
         else
         {
