@@ -15,7 +15,8 @@ public class RedirectServletPath
 
         // Create complete module key if it was not provided.
         // This url is parsed by connect JS that requires complete module key.
-        String completeKey = ModuleKeyUtils.addonAndModuleKey(addOnKey, ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey));
-        return SERVLET_PATH + addOnKey + "/" + completeKey;
+//        String completeKey = ModuleKeyUtils.addonAndModuleKey(addOnKey, ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey));
+
+        return SERVLET_PATH + addOnKey + "/" + ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey);
     }
 }

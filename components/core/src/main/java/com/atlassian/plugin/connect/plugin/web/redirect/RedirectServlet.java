@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.util.KeysFromPathMatcher;
 import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameRenderStrategyBuilderImpl;
@@ -86,7 +87,7 @@ public class RedirectServlet extends HttpServlet
             Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
             String signedUrl = connectUriFactory.createConnectAddonUriBuilder()
                     .addon(keys.get().getAddOnKey())
-                    .namespace(keys.get().getModuleKey())
+                    .namespace(ModuleKeyUtils.addonAndModuleKey(keys.get().getAddOnKey(), keys.get().getModuleKey()))
                     .urlTemplate(redirectData.getUrlTemplate())
                     .context(moduleContextParameters)
                     .uiParams(moduleUiParameters)
