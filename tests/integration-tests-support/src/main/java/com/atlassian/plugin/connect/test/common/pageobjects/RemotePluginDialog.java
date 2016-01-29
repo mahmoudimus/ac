@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
 import com.google.common.base.Function;
-
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -13,6 +12,7 @@ public class RemotePluginDialog extends RemoteDialog
 
     public RemotePluginDialog(ConnectAddonEmbeddedTestPage embeddedConnectPage)
     {
+        super(embeddedConnectPage.getIFrame());
         this.embeddedConnectPage = embeddedConnectPage;
     }
 

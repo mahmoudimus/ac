@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.web.condition.ConnectConditionContext;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -99,7 +100,7 @@ public class AddonCondition implements Condition
         final String uriPath = uri.getPath();
         final String version = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
         final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
-        Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddonKey())
+        Promise<String> responsePromise = remotablePluginAccessorFactory.get(cfg.getAddonKey())
                 .executeAsync(HttpMethod.GET, uri, Collections.<String, String[]>emptyMap(), httpHeaders);
 
         String response;

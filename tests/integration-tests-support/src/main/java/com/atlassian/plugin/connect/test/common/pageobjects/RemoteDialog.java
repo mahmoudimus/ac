@@ -25,6 +25,16 @@ public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
 
     private static final String DIALOG_CONTAINER_CLASS = "ap-dialog-container";
 
+    public RemoteDialog()
+    {
+        super();
+    }
+
+    public RemoteDialog(PageElement iframe)
+    {
+        super(iframe);
+    }
+
     @Override
     protected String getContainerCssClassName()
     {
@@ -58,6 +68,10 @@ public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
     	{
     		return false;
     	}
+    }
+
+    public long getAuiBlanketZIndex() {
+        return (Long) this.auiBlanket.javascript().execute("return Number(window.document.defaultView.getComputedStyle(arguments[0]).getPropertyValue('z-index'));");
     }
 
     public String getTitle()

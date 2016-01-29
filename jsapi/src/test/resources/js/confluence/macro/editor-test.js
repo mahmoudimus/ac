@@ -1,75 +1,115 @@
-var mockSimpleDialog;
-var mockConfluence = {};
+define(['Squire', 'ac/dialog'], function(Squire, acDialog) {
+    var injector = new Squire();
 
-define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroEditor, _AP) {
+    var confluenceMacroEditor, _AP;
+
+    var dialogSpy;
 
     module("Confluence Macro Editor", {
-      setup: function() {
-        this.dialogSpy = {
-            show: sinon.spy(),
-            on: sinon.spy(),
-            remove: sinon.spy(),
-            hide: sinon.spy()
-        };
+        beforeEach: function(assert) {
 
-        MacroEditorOpts = {
-            insertTitle: 'insert foo bar'
-        };
-        MacroData = {
-            name: 'foo bar'
-        };
-        AJS.Rte = {
-          getEditor: function() {
-            return {
-              focus: sinon.spy(),
-              selection: {
-                getBookmark: sinon.spy(),
-                moveToBookmark: sinon.spy()
-              }
+            var done = assert.async();
+
+            this.dialogSpy = {
+                show: sinon.spy(),
+                on: sinon.spy(),
+                remove: sinon.spy(),
+                hide: sinon.spy()
             };
-          }
-        };
-        this.server = sinon.fakeServer.create();
 
-        AJS.dialog2 = sinon.stub().returns(this.dialogSpy);
-        //mock main Confluence object
-        window.Confluence = {
-            Editor: {
-                getContentId: sinon.stub().returns('12345')
-            }
-        };
-        //mock tinymce
-        tinymce = {
-            confluence: {
-                MacroUtils: {
-                    insertMacro: sinon.spy()
+            MacroEditorOpts = {
+                insertTitle: 'insert foo bar'
+            };
+            MacroData = {
+                name: 'foo bar'
+            };
+            this.server = sinon.fakeServer.create();
+
+            AJS.dialog2 = function($el) {
+                dialogSpy = {
+                    show: sinon.spy(),
+                    on: sinon.spy(),
+                    remove: sinon.spy(),
+                    hide: sinon.spy(),
+                    $el: $el
+                };
+                return dialogSpy;
+            };
+            
+            AJS.Rte = {
+                getEditor: function() {
+                    return {
+                        focus: sinon.spy(),
+                        selection: {
+                            getBookmark: sinon.spy(),
+                            moveToBookmark: sinon.spy(),
+                            getNode: function() {
+                                return {};
+                            }
+                        }
+                    };
                 }
-            }
-        };
-        this.layerSpy = {
-            changeSize: sinon.spy()
-        };
-        AJS.layer = sinon.stub().returns(this.layerSpy);
+            };
 
-      },
-      teardown: function() {
-        this.server.restore();
-        // remove any dialog elements
-        // clean up mocks
-        AJS.Rte = null;
-        window.Confluence = null;
-        tinymce = null;
-        MacroData = null;
-        MacroEditorOpts = null;
-        this.dialogSpy = null;
-        AJS.layer = null;
-        AJS.dialog2 = null;
-      }
+            //mock main Confluence object
+            window.Confluence = {
+                Editor: {
+                    getContentId: sinon.stub().returns('12345')
+                }
+            };
+            //mock tinymce
+            tinymce = {
+                confluence: {
+                    MacroUtils: {
+                        insertMacro: sinon.spy()
+                    }
+                }
+            };
+            this.layerSpy = {
+                changeSize: sinon.spy()
+            };
+            AJS.layer = sinon.stub().returns(this.layerSpy);
+
+            injector
+                    .mock('ajs', AJS)
+                    .mock('confluence/root', {})
+                    .mock('confluence-editor/utils/tinymce-macro-utils', {})
+                    .mock('confluence-macro-browser/macro-browser', {
+                        getMacroParams: function(){
+                            return {};
+                        }
+                    })
+                    .mock('confluence-editor/editor/atlassian-editor', {})
+                    .mock('ac/dialog', acDialog)
+                    .mock('confluence-macro-browser/macro-browser', {getMacroName: function(){return "MacroName";}})
+                    .require(['ac/confluence/macro/editor', 'connect-host'], function(ConfluenceMacroEditor, AP) {
+                        confluenceMacroEditor = ConfluenceMacroEditor;
+                        _AP = AP;
+                        done();
+                    });
+        },
+        teardown: function() {
+            this.server.restore();
+            // remove any dialog elements
+            // clean up mocks
+            AJS.Rte = null;
+            window.Confluence = null;
+            tinymce = null;
+            MacroData = null;
+            MacroEditorOpts = null;
+            dialogSpy = null;
+            AJS.layer = null;
+            AJS.dialog2 = null;
+        }
     });
 
+    function dialogElement() {
+        return dialogSpy.$el;
+    }
+    
     test("Dialog is shown when openCustomEditor is called", function () {
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        ok(this.dialogSpy.show.calledOnce, 'Dialog show was called');
+        ok(dialogSpy.show.calledOnce, 'Dialog show was called');
     });
 
     test("Dialog width is set", function () {
@@ -88,7 +128,7 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
     test("Dialog header is set", function () {
         MacroEditorOpts.insertTitle = 'insert title';
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(AJS.dialog2.args[0][0].find('h1').text(), MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
+        equal(dialogElement().find('h1').text(), MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
     });
 
     test("dialog header uses edit title when editing", function () {
@@ -99,7 +139,7 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
             foo: 'bar'
         };
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(AJS.dialog2.args[0][0].find('h1').text(), MacroEditorOpts.editTitle, 'dialog header is set to "edit title"');
+        equal(dialogElement().find('h1').text(), MacroEditorOpts.editTitle, 'dialog header is set to "edit title"');
     });
 
     test("dialog header uses insert title when inserting", function () {
@@ -107,7 +147,7 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
         MacroEditorOpts.editTitle = 'edit title';
         MacroEditorOpts.url = '/servlet/atlassian-connect/modulekey/pluginkey/?foo';
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(AJS.dialog2.args[0][0].find('h1').text(), MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
+        equal(dialogElement().find('h1').text(), MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
     });
 
     test("dialog url contains parameters", function () {
@@ -124,31 +164,13 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
         this.server.restore();
     });
 
-    test("saveMacro writes macro to page", function () {
-        MacroEditorOpts.url = '/servlet/atlassian-connect/modulekey/pluginkey/';
-        confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        confluenceMacroEditor.saveMacro();
-        ok(tinymce.confluence.MacroUtils.insertMacro.calledOnce, 'saveMacro calls the confluence macro save function');
-    });
-
-    test("getMacroData returns the macro data", function () {
-        MacroData.params = {
-            foo: 'bar'
-        };
+    test("getMacroBody returns the macro body", function () {
+        MacroData.body = "<p>macro body</p>";
         MacroEditorOpts.url = '/servlet/atlassian-connect/modulekey/pluginkey/';
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
         var spy = sinon.spy();
-        confluenceMacroEditor.getMacroData(spy);
-        equal(spy.args[0][0], MacroData.params, 'getMacroData passes the macro data to the callback function');
-    });
-
-    test("getMacroBody returns the macro body", function () {
-      MacroData.body = "<p>macro body</p>";
-      MacroEditorOpts.url = '/servlet/atlassian-connect/modulekey/pluginkey/';
-      confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-      var spy = sinon.spy();
-      confluenceMacroEditor.getMacroBody(spy);
-      equal(spy.args[0][0], MacroData.body, 'getMacroBody passes the macro body to the callback function');
+        confluenceMacroEditor.getMacroBody(spy);
+        equal(spy.args[0][0], MacroData.body, 'getMacroBody passes the macro body to the callback function');
     });
 
 });

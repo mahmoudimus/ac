@@ -25,6 +25,7 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     private MacroEditorBean editor;
     private ImagePlaceholderBean imagePlaceholder;
     private AutoconvertBean autoconvert;
+    private MacroPropertyPanelBean propertyPanel;
 
     public BaseContentMacroModuleBeanBuilder()
     {
@@ -135,6 +136,12 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     public T withAutoconvert(AutoconvertBean autoconvert)
     {
         this.autoconvert = autoconvert;
+        return (T) this;
+    }
+
+    public T withPropertyPanel(MacroPropertyPanelBean propertyPanel)
+    {
+        this.propertyPanel = propertyPanel;
         return (T) this;
     }
 

@@ -21,7 +21,8 @@ public class CommonConditionClassResolver implements ConnectConditionClassResolv
                 newEntry("feature_flag", com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class).contextFree().build(),
                 newEntry("user_is_sysadmin", UserIsSysAdminCondition.class).contextFree().build(),
                 newEntry("user_is_logged_in", UserIsLoggedInCondition.class).contextFree().build(),
-                newEntry("user_is_admin", com.atlassian.plugin.connect.api.web.condition.UserIsAdminCondition.class).contextFree().build()
+                newEntry("user_is_admin", com.atlassian.plugin.connect.api.web.condition.UserIsAdminCondition.class).contextFree().build(),
+                newEntry("addon_is_licensed", IsLicensedCondition.class).contextFree().build()
         );
     }
 }

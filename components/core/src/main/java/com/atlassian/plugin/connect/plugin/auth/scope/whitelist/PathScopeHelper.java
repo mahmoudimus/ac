@@ -2,10 +2,6 @@ package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.plugin.auth.scope.ApiResourceInfo;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,23 +9,24 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.transform;
+import static java.util.Arrays.asList;
 
 /**
  * Download scope for GET requests on paths that start with a certain prefix
  */
 public final class PathScopeHelper
 {
-    private final Iterable<ApiResourceInfo> apiResourceInfo;
-    private final Iterable<String> paths;
+    private final Collection<ApiResourceInfo> apiResourceInfo;
+    private final Collection<String> paths;
     private final boolean isRegex;
     private final String httpMethod;
 
-    public PathScopeHelper(final boolean isRegex, final Collection<String> paths)
+    public PathScopeHelper(final boolean isRegex, final String path)
     {
-        this(isRegex, paths, "GET");
+        this(isRegex, asList(checkNotNull(path)), "GET");
     }
 
     public PathScopeHelper(final boolean isRegex, final Collection<String> paths, String httpMethod)
@@ -37,19 +34,9 @@ public final class PathScopeHelper
         this.paths = checkNotNull(paths);
         this.isRegex = isRegex;
         this.httpMethod = checkNotNull(httpMethod);
-        this.apiResourceInfo = transform(paths, new Function<String, ApiResourceInfo>()
-        {
-            @Override
-            public ApiResourceInfo apply(String from)
-            {
-                return new ApiResourceInfo(from, PathScopeHelper.this.httpMethod);
-            }
-        });
-    }
-
-    public PathScopeHelper(final boolean isRegex, final String... paths)
-    {
-        this(isRegex, Lists.newArrayList(paths));
+        this.apiResourceInfo = paths.stream()
+                .map(from -> new ApiResourceInfo(from, PathScopeHelper.this.httpMethod))
+                .collect(Collectors.toList());
     }
 
     public boolean allow(final HttpServletRequest request)
@@ -60,16 +47,9 @@ public final class PathScopeHelper
         }
 
         final String pathInfo = ServletUtils.extractPathInfo(request);
-        return Iterables.any(paths, new Predicate<String>()
-        {
-            @Override
-            public boolean apply(final String path)
-            {
-                return isRegex
-                    ? pathInfo.matches(path)
-                    : pathInfo.startsWith(path);
-            }
-        });
+        return paths.stream().anyMatch(path -> isRegex
+                ? pathInfo.matches(path)
+                : pathInfo.startsWith(path));
     }
 
     public Iterable<ApiResourceInfo> getApiResourceInfos()

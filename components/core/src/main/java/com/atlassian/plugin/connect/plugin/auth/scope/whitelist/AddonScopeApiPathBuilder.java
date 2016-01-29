@@ -1,20 +1,18 @@
 package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
 import com.atlassian.plugin.connect.modules.beans.nested.AddonScopeBean;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class AddonScopeApiPathBuilder
 {
     Collection<RestApiScopeHelper.RestScope> restResources = new ArrayList<>();
     Collection<RpcEncodedSoapApiScopeHelper> soapResources = new ArrayList<>();
-    Collection<JsonRpcApiScopeHelper>        jsonResources = new ArrayList<>();
-    Collection<XmlRpcApiScopeHelper>         xmlResources = new ArrayList<>();
-    Collection<PathScopeHelper>              paths         = new ArrayList<>();
+    Collection<JsonRpcApiScopeHelper> jsonResources = new ArrayList<>();
+    Collection<XmlRpcApiScopeHelper> xmlResources = new ArrayList<>();
+    Collection<PathScopeHelper> paths = new ArrayList<>();
 
     public AddonScopeApiPathBuilder withRestPaths(AddonScopeBean.RestPathBean restPathBean, Collection<String> methods)
     {
@@ -59,9 +57,11 @@ public class AddonScopeApiPathBuilder
         return this;
     }
 
-    public AddonScopeApiPathBuilder withPaths(AddonScopeBean.PathBean path)
+    public AddonScopeApiPathBuilder withPaths(AddonScopeBean.PathBean path, Collection<String> httpMethods)
     {
-        paths.add(new PathScopeHelper(true, path.getPaths()));
+        paths.addAll(httpMethods.stream()
+                .map(method -> new PathScopeHelper(true, path.getPaths(), method))
+                .collect(Collectors.toList()));
         return this;
     }
 
@@ -110,21 +110,16 @@ public class AddonScopeApiPathBuilder
     private static String prefixWithSlash(String path)
     {
         return null == path
-            ? null
-            : path.startsWith("/")
-                ? path
-                : "/" + path;
+                ? null
+                : path.startsWith("/")
+                        ? path
+                        : "/" + path;
     }
 
     private static Collection<String> prefixXmlRpcMethods(Collection<String> rpcMethods, final String prefix)
     {
-        return Collections2.transform(rpcMethods, new Function<String, String>()
-        {
-            @Override
-            public String apply(@Nullable String method)
-            {
-                return prefix + "." + method;
-            }
-        });
+        return rpcMethods.stream()
+                .map(method -> prefix + "." + method)
+                .collect(Collectors.toList());
     }
 }
