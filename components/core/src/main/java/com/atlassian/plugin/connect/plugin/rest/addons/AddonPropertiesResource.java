@@ -184,11 +184,8 @@ public class AddonPropertiesResource
     @Path ("{propertyKey}")
     public Response putAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
     {
-        final UserProfile user = userManager.getRemoteUser(servletRequest);
-        // can be null, it is checked in the service.
-        final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
-
         Either<RestParamError, String> errorStringEither = propertyValue(servletRequest);
+
         return errorStringEither.fold(new Function<RestParamError, Response>()
         {
             @Override
@@ -201,6 +198,10 @@ public class AddonPropertiesResource
             @Override
             public Response apply(final String propertyValue)
             {
+                final UserProfile user = userManager.getRemoteUser(servletRequest);
+                // can be null, it is checked in the service.
+                final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
+
                 return addonPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, propertyKey, propertyValue, eTagValidationFunction(request))
                         .fold(onPreconditionFailed(), onFailure(), onSuccess());
             }
@@ -337,12 +338,25 @@ public class AddonPropertiesResource
 
         try
         {
-            char[] charData = IOUtils.toCharArray(request.getReader());
-            return Either.right(new String(charData));
+            return Either.right(readHttpServletRequestBody(request));
         }
         catch (IOException e)
         {
             return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
+        }
+    }
+
+    private static String readHttpServletRequestBody(final HttpServletRequest request) throws IOException
+    {
+        // If a previous section of code has grabbed data using getReader or getInput stream before the execution path
+        // goes through this method then we need to use the same getter that the previous codepath used. This method
+        // unfortunately needs to rely upon exceptions for logic to decide which is the correct getter to get the content
+        // of this HttpServletRequest.
+        try
+        {
+            return new String(IOUtils.toCharArray(request.getInputStream()));
+        } catch(IllegalStateException e) {
+            return new String(IOUtils.toCharArray(request.getReader()));
         }
     }
 
