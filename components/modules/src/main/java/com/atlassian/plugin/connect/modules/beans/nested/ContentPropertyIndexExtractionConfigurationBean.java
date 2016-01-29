@@ -63,12 +63,12 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
 
     /**
      * <code>uiSupport</code> can be used to define how your aliased field will be displayed in the CQL query builder.
-     * By defining uiSupport, your content property will appear in the CQL query builder for all macros and search
+     * By defining <code>uiSupport</code>, your content property will appear in the CQL query builder for all macros and search
      * features built on CQL. For example, your property will become usable in the
      * <a href="https://confluence.atlassian.com/doc/content-by-label-macro-145566.html">Content By Label macro</a>, and
      * filterable by users on the Confluence search screen.
      *
-     * Note: You need to define an alias to use <code>uiSupport</code>.
+     * Note: You need to define an <code>alias</code> to use <code>uiSupport</code>.
      */
     private final UISupportModuleBean uiSupport;
 
