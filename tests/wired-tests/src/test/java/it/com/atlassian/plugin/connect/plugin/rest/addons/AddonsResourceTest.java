@@ -1,11 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.rest.addons;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.HttpHeaders;
-
 import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
@@ -20,12 +14,12 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.license.LicenseHandler;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import it.com.atlassian.plugin.connect.util.TimebombedLicenseManager;
+import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.After;
@@ -33,8 +27,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.util.TimebombedLicenseManager;
-import it.com.atlassian.plugin.connect.util.request.RequestUtil;
+import javax.annotation.Nullable;
+import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -81,8 +78,9 @@ public class AddonsResourceTest
         addonSecret = connectAddonRegistry.getSecret(addonKey);
     }
 
+    @Before
     @After
-    public void tearDown() throws IOException
+    public void uninstallAllAddons() throws IOException
     {
         for (String key : testPluginInstaller.getInstalledAddonKeys())
         {
