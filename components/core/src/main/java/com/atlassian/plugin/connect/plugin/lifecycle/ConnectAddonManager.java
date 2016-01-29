@@ -468,18 +468,8 @@ public class ConnectAddonManager
 
         // NB: check that the auth generator matches the request/non-request to sign with an arbitrary key on installation, not on every callback,
         // because signing with a previous key happens only on installation
-        // (the runtime "instanceof ReKeyableAuthorizationGenerator" check is necessary because the OAuthSigningRemotablePluginAccessor is explicitly not re-keyable: it must sign with the same oauth key every time)
-        if (authorizationGenerator instanceof ReKeyableAuthorizationGenerator)
-        {
-            String authHeader = getAuthHeader(callbackUri, (ReKeyableAuthorizationGenerator) authorizationGenerator, previousSharedSecret);
-            requestInstallCallback(addon, sharedSecret, callbackUri, Optional.of(authHeader));
-        }
-        else
-        {
-            // this should never happen; if it does then it will result in a "something bad happened; talk to an admin" error message in the UI
-            throw new IllegalArgumentException(String.format("Cannot sign outgoing request to %s with an arbitrary secret because the authorization generator for add-on %s is a %s, which is not a %s!",
-                    callbackUri, addon.getKey(), authorizationGenerator.getClass().getSimpleName(), ReKeyableAuthorizationGenerator.class.getSimpleName()));
-        }
+        String authHeader = getAuthHeader(callbackUri, (ReKeyableAuthorizationGenerator) authorizationGenerator, previousSharedSecret);
+        requestInstallCallback(addon, sharedSecret, callbackUri, Optional.of(authHeader));
     }
 
     private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Optional<String> authHeader) throws ConnectAddonInstallException
