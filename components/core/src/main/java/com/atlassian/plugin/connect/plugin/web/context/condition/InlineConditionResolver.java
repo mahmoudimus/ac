@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBui
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.web.condition.PluggableConditionClassAccessor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@ExportAsDevService
 public class InlineConditionResolver
 {
     private static final Logger log = LoggerFactory.getLogger(InlineConditionResolver.class);

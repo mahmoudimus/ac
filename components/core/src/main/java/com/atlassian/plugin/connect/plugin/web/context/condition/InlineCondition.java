@@ -11,7 +11,7 @@ public final class InlineCondition
     private final String conditionName;
     private final Map<String, String> params;
 
-    InlineCondition(String conditionName, Map<String, String> params)
+    public InlineCondition(String conditionName, Map<String, String> params)
     {
         this.conditionName = Preconditions.checkNotNull(conditionName);
         this.params = ImmutableMap.copyOf(params);

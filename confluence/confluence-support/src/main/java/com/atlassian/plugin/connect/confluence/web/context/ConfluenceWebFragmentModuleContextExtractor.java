@@ -1,26 +1,5 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
-import com.atlassian.confluence.core.ConfluenceActionSupport;
-import com.atlassian.confluence.core.ContentEntityObject;
-import com.atlassian.confluence.labels.LabelManager;
-import com.atlassian.confluence.pages.AbstractPage;
-import com.atlassian.confluence.pages.Page;
-import com.atlassian.confluence.pages.PageManager;
-import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
-import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
-import com.atlassian.confluence.plugin.descriptor.web.conditions.TinyUrlSupportedCondition;
-import com.atlassian.confluence.spaces.Space;
-import com.atlassian.confluence.spaces.SpaceManager;
-import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
-import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.elasticsearch.shaded.google.common.base.Strings;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,10 +7,29 @@ import java.util.function.Function;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import com.atlassian.confluence.core.ConfluenceActionSupport;
+import com.atlassian.confluence.core.ContentEntityObject;
+import com.atlassian.confluence.pages.AbstractPage;
+import com.atlassian.confluence.pages.Page;
+import com.atlassian.confluence.pages.PageManager;
+import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
+import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
+import com.atlassian.confluence.spaces.Space;
+import com.atlassian.confluence.spaces.SpaceManager;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
+import com.atlassian.confluence.user.ConfluenceUser;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+
 /**
  *
  */
 @ConfluenceComponent
+@ExportAsDevService
 public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
 {
     private final UserManager userManager;
@@ -49,16 +47,16 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
     @Override
     public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
-        if(ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
+        if (ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
         {
             return (ModuleContextParameters) webFragmentContext;
         }
-        
+
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl((Map) webFragmentContext);
 
         {
-            @SuppressWarnings("unchecked") // it is what it is
-                    WebInterfaceContext webInterfaceContext = (WebInterfaceContext) webFragmentContext.get("webInterfaceContext");
+            @SuppressWarnings ("unchecked") // it is what it is
+            WebInterfaceContext webInterfaceContext = (WebInterfaceContext) webFragmentContext.get("webInterfaceContext");
             if (webInterfaceContext != null)
             {
                 moduleContext.addPage(webInterfaceContext.getPage());
@@ -71,7 +69,7 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
 
         if (action instanceof ConfluenceActionSupport)
         {
-            WebInterfaceContext webInterfaceContext = ((ConfluenceActionSupport)action).getWebInterfaceContext();
+            WebInterfaceContext webInterfaceContext = ((ConfluenceActionSupport) action).getWebInterfaceContext();
 
             if (webInterfaceContext != null)
             {
@@ -107,7 +105,7 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         Object content = webFragmentContext.get("content");
         if (content != null && content instanceof ContentEntityObject)
         {
-            moduleContext.addContent((ContentEntityObject)content);
+            moduleContext.addContent((ContentEntityObject) content);
         }
 
         ConfluenceUser profileUser = (ConfluenceUser) webFragmentContext.get("targetUser");

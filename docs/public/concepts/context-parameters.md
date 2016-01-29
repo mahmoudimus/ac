@@ -83,10 +83,11 @@ For example:
  }
 ```
 
-The following conditions in Confluence do not work as context parameters:
+The following conditions do not work as context parameters:
 
-* tiny_url_supported
-* viewing_content
+* user_is_the_logged_in_user (JIRA)
+* tiny_url_supported (Confluence)
+* viewing_content (Confluence)
 
 ## <a name="additional-parameters-jira"></a>JIRA
 

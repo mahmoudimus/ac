@@ -6,11 +6,9 @@ import java.util.Map;
 import com.atlassian.confluence.security.SpacePermission;
 import com.google.common.collect.ImmutableMap;
 import it.confluence.ConfluenceWebDriverTestBase;
-import org.junit.Ignore;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-@Ignore
 public abstract class AbstractConfluenceConditionsTest extends ConfluenceWebDriverTestBase
 {
     protected static final List<String> CONDITION_NAMES = newArrayList(

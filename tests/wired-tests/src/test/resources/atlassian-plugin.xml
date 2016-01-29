@@ -40,6 +40,8 @@
     <component-import key="upmControlHandler" interface="com.atlassian.upm.spi.PluginControlHandler" />
     <component-import key="webFragmentLocationBlacklist" interface="com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist" />
     <component-import key="conditionLoadingValidator" interface="com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator" />
+    <component-import key="inlineConditionResolver" interface="com.atlassian.plugin.connect.plugin.web.context.condition.InlineConditionResolver" />
+    <component-import key="webFragmentModuleContextExtractor" interface="com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor" />
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider" />

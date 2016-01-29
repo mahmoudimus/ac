@@ -11,11 +11,9 @@ import com.atlassian.jira.testkit.client.restclient.WatchersClient;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.google.common.collect.ImmutableMap;
 import it.jira.JiraWebDriverTestBase;
-import org.junit.Ignore;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-@Ignore
 public abstract class AbstractJiraConditionsTest extends JiraWebDriverTestBase
 {
     protected static final List<String> CONDITION_NAMES = newArrayList(

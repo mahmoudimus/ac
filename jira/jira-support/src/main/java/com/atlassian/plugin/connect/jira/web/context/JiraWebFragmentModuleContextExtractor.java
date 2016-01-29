@@ -9,6 +9,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableList;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @JiraComponent
+@ExportAsDevService
 public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
 {
     private final List<ParameterExtractor<?>> parameterExtractors;

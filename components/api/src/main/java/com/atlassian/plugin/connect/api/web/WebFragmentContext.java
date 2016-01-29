@@ -9,9 +9,9 @@ import static java.util.stream.Collectors.toMap;
 public final class WebFragmentContext
 {
     private final Map<String, ?> productContext;
-    private final Map<String, Object> connectContext;
+    private final Map<String, ?> connectContext;
 
-    public WebFragmentContext(final Map<String, ?> productContext, final Map<String, Object> connectContext)
+    public WebFragmentContext(final Map<String, ?> productContext, final Map<String, ?> connectContext)
     {
         this.productContext = productContext;
         this.connectContext = connectContext;
@@ -22,7 +22,7 @@ public final class WebFragmentContext
         return productContext;
     }
 
-    public Map<String, Object> getConnectContext()
+    public Map<String, ?> getConnectContext()
     {
         return connectContext;
     }
