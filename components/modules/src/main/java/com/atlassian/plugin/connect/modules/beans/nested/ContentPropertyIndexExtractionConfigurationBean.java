@@ -12,26 +12,25 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
  * index and made available to CQL queries as a field.  This can allow you to track custom information
  * and make it look like a simple field on the content object.
  *
- * You can further improve the field definition by including
+ * You can further extend the field definition by including
  * <a href="../fragment/user-interface-support.html">UI support</a>.
  *
  * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a> documentation for
  * a complete example.
  *
  *#### Example
- *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Extraction Configuration
  */
 public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleBean
 {
     /**
-     * The objectName to the JSON data which is supposed to be indexed. The objectName will be the key of a flatten JSON object with '.' as the delimiter.
+     * The objectName of the JSON data which should be indexed. The objectName is the key of a flattened JSON object with '.' as the delimiter.
      *
      * For instance, for JSON <code>"{"label": {"color": "red", "text":"connect"}}</code> the valid objectName
      * referencing the color is label.color.
      *
-     * Currently, specifying of index for JSON arrays is not supported.
+     * Currently, specifying indexes for JSON arrays is not supported.
      */
     @Required
     private final String objectName;
@@ -41,9 +40,9 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
      *
      * The type can be one of the following values:
      *
-     * * `number` - Extracted number will be indexed as a double value for efficient range filtering and sorting.
-     * * `text` - Extracted value will be tokenized before indexing, allowing searching for a particular words.
-     * * `string` - Entire extracted value will be indexed as a single token, without any filtering. When extraction
+     * * `number` - The extracted number will be indexed as a double value for efficient range filtering and sorting.
+     * * `text` - The extracted value will be tokenized before indexing, allowing searching for a particular words.
+     * * `string` - The entire extracted value will be indexed as a single token, without any filtering. When extraction
      * expression evaluates to a JSON array, each element will be indexed separately. Enables searching for an exact value, e.g. unique identifier.
      * * `date` - Two representation are possible, either a String following the ISO 8601 datetime format,
      * or a long value in the Unix time. Enables efficient range filtering and sorting.
@@ -58,19 +57,18 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
      * By defining an alias you are exposing it to CQL and allow other macros and search features to easily use
      * your content property in their search.
      *
-     * Note: Aliases are defined globally so take care in your naming strategy and if possible, prefix them with
-     * your plugin name.
+     * Note: Aliases must be globally unique. Prefixing it with the name of your add-on is the best way to ensure this.
      */
     private final String alias;
 
     /**
-     * The uiSupport can be used to define how your aliased field will be displayed in the CQL query builder.  Any
-     * macro or search feature that uses CQL build to build up the CQL query.
+     * <code>uiSupport</code> can be used to define how your aliased field will be displayed in the CQL query builder.
+     * By defining uiSupport, your content property will appear in the CQL query builder for all macros and search
+     * features built on CQL. For example, your property will become usable in the
+     * <a href="https://confluence.atlassian.com/doc/content-by-label-macro-145566.html">Content By Label macro</a>, and
+     * filterable by users on the Confluence search screen.
      *
-     * By defining uiSupport your content property will appear in the CQL query builder for all macros and search
-     * features built on CQL.
-     *
-     * Note: Requires an alias to be defined.
+     * Note: You need to define an alias to use <code>uiSupport</code>.
      */
     private final UISupportModuleBean uiSupport;
 
