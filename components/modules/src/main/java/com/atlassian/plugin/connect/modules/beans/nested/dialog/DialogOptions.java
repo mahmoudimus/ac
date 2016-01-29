@@ -18,13 +18,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class DialogOptions extends BaseDialogOptions implements WebItemTargetOptions
 {
     /**
-     * Sets the size of the dialog. Available options are small, medium, large, x-large or fullscreen.
+     * Sets the size of the dialog.
      *
      * <p>
      *     This option is used instead of the 'height' and 'width' options.
      * </p>
      */
-    private String size;
+    private DialogSize size;
 
     /**
      * Sets how high the dialog is in pixels
@@ -36,7 +36,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
      */
     private Boolean chrome;
 
-    public DialogOptions(String size, String width, String height, Boolean chrome)
+    public DialogOptions(DialogSize size, String width, String height, Boolean chrome)
     {
         super(width);
         this.size = size;
@@ -54,7 +54,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
         super(dialogOptionsBuilder);
     }
 
-    public String getSize()
+    public DialogSize getSize()
     {
         return size;
     }

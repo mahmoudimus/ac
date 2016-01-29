@@ -39,8 +39,6 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     @BeforeClass
     public static void startConnectAddon() throws Exception
     {
-        logout();
-
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
                 .addModules("webItems",

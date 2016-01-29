@@ -34,8 +34,6 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
     @BeforeClass
     public static void startConnectAddon() throws Exception
     {
-        logout();
-
         // This dialog and webItem pair are used in tests that a webItem target can be a common dialog module.
         DialogModuleBean linkedDialogDialog = newDialogBean()
                 .withKey(LINKED_DIALOG_KEY)

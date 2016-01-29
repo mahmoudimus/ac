@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogSize.fullscreen;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -16,7 +17,7 @@ public class DialogModuleBeanTest
     {
         // Trivial test - the incoming immutable DialogOptions instance should be retained by the bean.
         DialogOptions options = DialogOptions.newDialogOptions()
-                .withSize("fullscreen")
+                .withSize(fullscreen)
                 .build();
 
         DialogModuleBean bean = DialogModuleBean.newDialogBean().withOptions(options).build();

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * <p>Defines a dialog that may be reused by multiple components, e.g. as the target of a web-item.</p>
+ * <p>Defines a dialog that may be reused by multiple components, e.g. as the target of a web item.</p>
  *
  *#### Example
  *

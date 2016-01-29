@@ -59,6 +59,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
+import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogSize.fullscreen;
 import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -442,9 +443,10 @@ public class ConnectJsonExamples
 
     private static String createDialogExample() {
         DialogModuleBean bean = DialogModuleBean.newDialogBean()
+                .withName(i18nProperty("Fullscreen Dialog"))
                 .withKey("dialog-example")
                 .withUrl("/my-dialog-content")
-                .withOptions(newDialogOptions().withSize("fullscreen").build())
+                .withOptions(newDialogOptions().withSize(fullscreen).build())
                 .build();
 
         return gson.toJson(createModuleArray("dialogs", bean));

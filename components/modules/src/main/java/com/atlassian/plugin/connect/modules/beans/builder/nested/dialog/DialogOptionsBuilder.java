@@ -1,10 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans.builder.nested.dialog;
 
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogSize;
 
 public class DialogOptionsBuilder extends BaseDialogOptionsBuilder<DialogOptionsBuilder, DialogOptions>
 {
-    private String size;
+    private DialogSize size;
     private String height;
     private Boolean chrome;
 
@@ -19,7 +20,7 @@ public class DialogOptionsBuilder extends BaseDialogOptionsBuilder<DialogOptions
         this.height = defaultBean.getHeight();
     }
 
-    public DialogOptionsBuilder withSize(String size)
+    public DialogOptionsBuilder withSize(DialogSize size)
     {
         this.size = size;
         return this;

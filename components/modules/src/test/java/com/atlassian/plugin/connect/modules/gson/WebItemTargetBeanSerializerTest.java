@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.junit.Test;
 
+import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogSize.small;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +25,7 @@ public class WebItemTargetBeanSerializerTest
         final WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.dialog)
                 .withOptions(DialogOptions.newDialogOptions()
-                                .withSize("small")
+                                .withSize(small)
                                 .withHeight("100px")
                                 .withWidth("200%")
                                 .build()
