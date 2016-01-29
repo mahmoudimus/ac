@@ -1,8 +1,6 @@
 package it.common.iframe;
 
 import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.plugin.connect.modules.beans.DialogModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
@@ -16,15 +14,12 @@ import it.common.MultiProductWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.Dimension;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.atlassian.plugin.connect.modules.beans.DialogModuleBean.newDialogBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
@@ -38,8 +33,6 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     private static final String SIZE_TO_PARENT_DIALOG_KEY = "sizeToParentDialog";
     private static final String MULTIPLE_DIALOG_1_DIALOG_KEY = "multipleDialogs1Dialog";
     private static final String MULTIPLE_DIALOG_2_DIALOG_KEY = "multipleDialogs2Dialog";
-    private static final String LINKED_DIALOG_KEY_WEBITEM = "linkedDialogWebItem";
-    private static final String LINKED_DIALOG_KEY = "linkedDialog";
 
     private static ConnectRunner runner;
 
@@ -47,24 +40,6 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     public static void startConnectAddon() throws Exception
     {
         logout();
-
-        // This dialog and webItem pair are used in tests that a webItem target can be a common dialog module.
-        DialogModuleBean linkedDialogDialog = newDialogBean()
-                .withKey(LINKED_DIALOG_KEY)
-                .withName(new I18nProperty("The Linked dialog", null))
-                .withUrl("/ld")
-                .withOptions(newDialogOptions().withWidth("456px").withHeight("567px").build())
-                .build();
-        WebItemModuleBean linkedDialogWebItem = newWebItemBean()
-                .withKey(LINKED_DIALOG_KEY_WEBITEM)
-                .withName(new I18nProperty("Links to dialog", null))
-                .withUrl("/neverused")
-                .withTarget(newWebItemTargetBean()
-                        .withType(WebItemTargetType.dialog)
-                        .withKey(LINKED_DIALOG_KEY)   // Note! This target key matches the key of the dialog.
-                        .build())
-                .withLocation(getGloballyVisibleLocation())
-                .build();
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
@@ -104,17 +79,12 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
                                         .withType(WebItemTargetType.dialog)
                                         .build())
                                 .withLocation("not-shown")
-                                .build(),
-                        linkedDialogWebItem
-                )
-                .addModules("dialogs",
-                        linkedDialogDialog
+                                .build()
                 )
                 .addRoute("/rpd", ConnectAppServlets.dialogServlet())
                 .addRoute("/fsd", ConnectAppServlets.sizeToParentServlet())
                 .addRoute("/mdd1", ConnectAppServlets.mustacheServlet("multiple-dialog-1.mu"))
                 .addRoute("/mdd2", ConnectAppServlets.mustacheServlet("multiple-dialog-2.mu"))
-                .addRoute("/ld", ConnectAppServlets.mustacheServlet("linked-dialog.mu"))
                 .start();
     }
 
@@ -181,24 +151,6 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
         // ... and finally, both dialogs should tear down neatly.
         dialog2.cancelAndWaitUntilHidden();
         dialog1.cancelAndWaitUntilHidden();
-    }
-
-    @Test
-    public void testLinkedDialog()
-    {
-        login(testUserFactory.basicUser());
-        product.visit(HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, LINKED_DIALOG_KEY_WEBITEM, runner.getAddon().getKey());
-        ConnectAddonEmbeddedTestPage dialogPage = page.clickAddonLink();
-        RemoteLayeredDialog dialog = product.getPageBinder().bind(RemoteLayeredDialog.class, dialogPage, true);
-
-        // Check that the dialog options are used by the webItem.
-        Dimension size = dialog.getIFrameSize();
-        assertThat(size.getWidth(), is(456));
-        assertThat(size.getHeight(), is(567));
-
-        // Check that the dialog url overrides the web-item one.
-        assertThat(dialog.getIFrameElementText("dialog-name"), is("Linked Dialog"));
     }
 
     private RemoteLayeredDialog launchSecondDialog(RemoteLayeredDialog dialog1, String addonKey)
