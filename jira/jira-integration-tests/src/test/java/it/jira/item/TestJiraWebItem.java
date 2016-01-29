@@ -63,7 +63,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String ADDON_WEBITEM_DIALOG = "ac-general-web-item-dialog";
     private static final String ABSOLUTE_WEBITEM_DIALOG = "ac-general-web-item-dialog-absolute";
 
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
 
     private static ConnectRunner runner;
 

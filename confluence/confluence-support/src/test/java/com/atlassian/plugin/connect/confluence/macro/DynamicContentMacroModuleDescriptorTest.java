@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
@@ -19,7 +19,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
 {
     @Mock private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     @Mock private MacroModuleContextExtractor macroModuleContextExtractor;
-    @Mock private IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    @Mock private ConnectUriFactory connectUriFactory;
     @Mock private MacroContentManager macroContentManager;
 
     @Override
@@ -29,7 +29,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
 
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
                 absoluteAddonUrlConverter,
-                new RemoteMacroRendererImpl(iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager, remotablePluginAccessorFactoryForTests, iFrameRenderStrategyRegistry));
+                new RemoteMacroRendererImpl(connectUriFactory, macroModuleContextExtractor, macroContentManager, remotablePluginAccessorFactoryForTests, iFrameRenderStrategyRegistry));
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
 

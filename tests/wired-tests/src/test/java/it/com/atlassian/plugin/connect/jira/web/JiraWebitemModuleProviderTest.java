@@ -18,6 +18,8 @@ import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertTrue;
 
 @Application ("jira")
@@ -46,8 +48,7 @@ public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
 
         String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
 
-        String expectedUrlPrefix = UriBuilder.fromPath(CONTEXT_PATH).path(RedirectServletPath.forModule(PLUGIN_KEY, MODULE_KEY)).build().toString();
-        assertTrue("wrong url prefix. expected: " + expectedUrlPrefix + ", but got: " + convertedUrl, convertedUrl.startsWith(expectedUrlPrefix));
-        assertTrue("project key not found in: " + convertedUrl, convertedUrl.contains("project.key=" + project.getKey()));
+        assertThat(convertedUrl, containsString(RedirectServletPath.forModule(PLUGIN_KEY, MODULE_KEY)));
+        assertThat(convertedUrl, containsString("project.key=" + project.getKey()));
     }
 }
