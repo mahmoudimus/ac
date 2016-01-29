@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.util.List;
@@ -70,6 +69,7 @@ public class AddonsResourceTest
     @Before
     public void setUp() throws IOException
     {
+        uninstallAllAddons();
         timebombedLicenseManager.setLicense();
 
         testAuthenticator.authenticateUser("admin");
@@ -78,7 +78,6 @@ public class AddonsResourceTest
         addonSecret = connectAddonRegistry.getSecret(addonKey);
     }
 
-    @Before
     @After
     public void uninstallAllAddons() throws IOException
     {
