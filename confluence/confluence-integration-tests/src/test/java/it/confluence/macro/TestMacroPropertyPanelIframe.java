@@ -136,6 +136,8 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
         editor.openPropertyPanel(PROPERTY_PANEL_MACRO_KEY);
 
+        editor.focus();
+
         editorPage.save();
 
         RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);
@@ -148,6 +150,8 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
 
         editor.openPropertyPanel(PROPERTY_PANEL_MACRO_KEY);
+
+        editor.focus();
 
         editorPage.save();
 
