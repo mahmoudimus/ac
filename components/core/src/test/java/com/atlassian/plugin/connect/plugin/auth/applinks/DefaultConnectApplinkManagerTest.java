@@ -10,12 +10,13 @@ import com.atlassian.applinks.spi.link.MutableApplicationLink;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
 import com.atlassian.plugin.connect.spi.auth.applinks.MutatingApplicationLinkServiceProvider;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
+import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
@@ -31,7 +32,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -43,6 +46,7 @@ public class DefaultConnectApplinkManagerTest
     @Mock private MutatingApplicationLinkService applicationLinkService;
     @Mock private TypeAccessor typeAccessor;
     @Mock private PluginSettingsFactory pluginSettingsFactory;
+    @Mock private OAuthLinkManager oAuthLinkManager;
     @Mock private AddonScopeManager addonScopeManager;
     private TransactionTemplate transactionTemplate;
 
@@ -157,11 +161,11 @@ public class DefaultConnectApplinkManagerTest
     private MutableApplicationLink createAppLink()
     {
         MutableApplicationLink appLink = mock(MutableApplicationLink.class);
-        ConnectAddonBean addonBean = mock(ConnectAddonBean.class);
-        when(addonBean.getKey()).thenReturn("my-connect-addon");
+        Plugin plugin = mock(Plugin.class);
+        when(plugin.getKey()).thenReturn("my-connect-addon");
         when(applicationLinkService.addApplicationLink(any(ApplicationId.class), any(ApplicationType.class), any(ApplicationLinkDetails.class))).thenReturn(appLink);
         when(applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)).thenReturn(Collections.<ApplicationLink>emptyList());
-        connectApplinkManager.createAppLink(addonBean, "/baseUrl", AuthenticationType.JWT, "signing key", USER_KEY);
+        connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key", USER_KEY);
         return appLink;
     }
 }
