@@ -85,9 +85,11 @@ For example:
 
 The following conditions do not work as context parameters:
 
-* user_is_the_logged_in_user (JIRA)
-* tiny_url_supported (Confluence)
-* viewing_content (Confluence)
+* `user_is_the_logged_in_user` (JIRA)
+* `following_target_user` (Confluence)
+* `tiny_url_supported` (Confluence)
+* `viewing_content` (Confluence)
+* `viewing_own_profile` (Confluence)
 
 ## <a name="additional-parameters-jira"></a>JIRA
 

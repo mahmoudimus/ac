@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.web.Condition;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * A plugin module descriptor interface for providers of conditions for Atlassian Connect.
@@ -59,6 +60,12 @@ public interface ConnectConditionClassResolver
             this.parameterPredicates = builder.parameterPredicates;
             this.contextFree = builder.contextFree;
             this.inlineSupport = builder.inlineSupport;
+        }
+
+        @VisibleForTesting
+        public String getConditionName()
+        {
+            return conditionName;
         }
 
         /**

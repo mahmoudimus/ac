@@ -64,16 +64,19 @@
                interface="com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator"
                application="jira" />
     <component key="confluenceTestAuthenticator"
-               class="it.com.atlassian.plugin.connect.confluence.ConfluenceTestAuthenticator"
+               class="it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestAuthenticator"
                interface="com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator"
                application="confluence" />
     <component key="jiraWorkflowImporter"
                class="it.com.atlassian.plugin.connect.jira.workflow.DefaultWorkflowImporter"
                interface="it.com.atlassian.plugin.connect.jira.workflow.WorkflowImporter"
                application="jira" />
-    <component key="jiraScopeTestUtil"
+    <component key="jiraTestUtil"
                class="it.com.atlassian.plugin.connect.jira.util.JiraTestUtil"
                application="jira" />
+    <component key="confluenceTestUtil"
+               class="it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestUtil"
+               application="confluence" />
     <component key="timebombedLicenseManager"
                class="it.com.atlassian.plugin.connect.util.TimebombedLicenseManager"
                />

@@ -16,6 +16,9 @@ import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
+import com.atlassian.confluence.themes.Theme;
+import com.atlassian.confluence.themes.ThemeContext;
+import com.atlassian.confluence.themes.ThemeManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
@@ -35,13 +38,15 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
     private final UserManager userManager;
     private final PageManager pageManager;
     private final SpaceManager spaceManager;
+    private final ThemeManager themeManager;
 
     @Inject
-    public ConfluenceWebFragmentModuleContextExtractor(final UserManager userManager, final PageManager pageManager, final SpaceManager spaceManager)
+    public ConfluenceWebFragmentModuleContextExtractor(final UserManager userManager, final PageManager pageManager, final SpaceManager spaceManager, final ThemeManager themeManager)
     {
         this.userManager = userManager;
         this.pageManager = pageManager;
         this.spaceManager = spaceManager;
+        this.themeManager = themeManager;
     }
 
     @Override
@@ -133,9 +138,15 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         Optional<Page> page = mapParam(queryParams, "page.id", id -> pageManager.getPage(Long.valueOf(id)));
         Optional<Space> space = mapParam(queryParams, "space.id", id -> spaceManager.getSpace(Long.valueOf(id)));
 
-        context.put("user", user);
+        context.put(WebInterfaceContext.CONTEXT_KEY_USER, user);
+        context.put(WebInterfaceContext.CONTEXT_KEY_TARGET_USER, user);
         page.ifPresent(value -> context.put("page", value));
-        space.ifPresent(value -> context.put("space", value));
+        space.ifPresent(value -> {
+            context.put("space", value);
+            Theme spaceTheme = themeManager.getSpaceTheme(value.getKey());
+            Theme globalTheme = themeManager.getGlobalTheme();
+            request.setAttribute(ThemeContext.ATTRIBUTE_KEY, new ThemeContext(value, spaceTheme, globalTheme));
+        });
 
         return context;
     }
