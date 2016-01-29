@@ -70,8 +70,7 @@ import com.atlassian.json.schema.annotation.Required;
  * <strong>NOTE:</strong> the <code>alias</code> must also be globally unique. Prefixing it with the name of your
  * add-on is the best way to ensure this.
  *
- * #### Example
- *
+ *#### Example
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Key Configuration
  */

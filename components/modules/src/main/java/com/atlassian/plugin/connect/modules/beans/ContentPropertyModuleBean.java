@@ -10,9 +10,10 @@ import com.google.common.collect.Lists;
 /**
  * Content properties are one of the forms of persistence available for Confluence Connect add-ons, allowing you
  * to store key-value pairs against a piece of content. Content Properties are stored as JSON objects, and
- * allow you to track extra information that your add-on needs, without a backing server. Values from these
+ * allow you to track extra information that your add-on needs, without the use of a backing server. Values from these
  * JSON objects can be extracted, indexed and made available to CQL queries.
  *
+ *#### Using Content Properties
  * The most simple version of a Content Property doesn't require any descriptor changes. Simply
  * <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">use the REST API</a> to
  * store your JSON data against page.
