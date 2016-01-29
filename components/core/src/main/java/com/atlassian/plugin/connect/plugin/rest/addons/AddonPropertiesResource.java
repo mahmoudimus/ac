@@ -348,6 +348,10 @@ public class AddonPropertiesResource
 
     private static String readHttpServletRequestBody(final HttpServletRequest request) throws IOException
     {
+        // If a previous section of code has grabbed data using getReader or getInput stream before the execution path
+        // goes through this method then we need to use the same getter that the previous codepath used. This method
+        // unfortunately needs to rely upon exceptions for logic to decide which is the correct getter to get the content
+        // of this HttpServletRequest.
         try
         {
             return new String(IOUtils.toCharArray(request.getInputStream()));
