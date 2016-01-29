@@ -42,6 +42,10 @@ public abstract class ConnectCustomFieldType<T> implements CustomFieldType<T, T>
 
     protected abstract T fromJson(String json);
 
+    protected abstract T viewToValue(String viewValue);
+
+    protected abstract String valueToEditMode(T value);
+
     protected abstract ErrorCollection validateInput(@Nullable String value);
 
     protected abstract T getDefaultValue();
@@ -57,7 +61,7 @@ public abstract class ConnectCustomFieldType<T> implements CustomFieldType<T, T>
     @Override
     public final String getKey()
     {
-        return descriptor.getKey().replace("com.atlassian.plugins.atlassian-connect-plugin:", "");
+        return descriptor.getCompleteKey();//.replace("com.atlassian.plugins.atlassian-connect-plugin:", "");
     }
 
     @Override
@@ -81,7 +85,7 @@ public abstract class ConnectCustomFieldType<T> implements CustomFieldType<T, T>
     @Override
     public final String getStringFromSingularObject(final T t)
     {
-        return toJson(t);
+        return valueToEditMode(t);
     }
 
     @Override
@@ -120,7 +124,7 @@ public abstract class ConnectCustomFieldType<T> implements CustomFieldType<T, T>
     public final T getValueFromCustomFieldParams(final CustomFieldParams parameters) throws FieldValidationException
     {
         return Optional.ofNullable(getStringValueFromCustomFieldParams(parameters))
-                .map(this::fromJson)
+                .map(this::viewToValue)
                 .orElse(null);
     }
 

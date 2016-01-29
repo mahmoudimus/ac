@@ -8,14 +8,17 @@ import com.atlassian.jira.entity.property.EntityPropertyService.SetPropertyValid
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+@JiraComponent
 public class JsonPropertyStoreImpl implements JsonPropertyStore
 {
     private final IssuePropertyService issuePropertyService;
     private final JiraAuthenticationContext authContext;
 
+    @Autowired
     public JsonPropertyStoreImpl(final IssuePropertyService issuePropertyService, final JiraAuthenticationContext authContext)
     {
         this.issuePropertyService = issuePropertyService;

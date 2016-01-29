@@ -22,13 +22,25 @@ public class TextConnectCustomFieldType extends ConnectCustomFieldType<String>
     @Override
     protected String toJson(final String value)
     {
-        return "\"" + value + "\"";
+        return gson.toJson(value, String.class);
     }
 
     @Override
     protected String fromJson(final String json)
     {
-        return json.substring(1, json.length() - 1);
+        return json == null? null : json.substring(1, json.length() - 1);
+    }
+
+    @Override
+    protected String viewToValue(final String viewValue)
+    {
+        return viewValue;
+    }
+
+    @Override
+    protected String valueToEditMode(final String value)
+    {
+        return value;
     }
 
     @Override

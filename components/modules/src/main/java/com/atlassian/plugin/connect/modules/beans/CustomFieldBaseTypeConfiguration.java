@@ -23,9 +23,9 @@ public class CustomFieldBaseTypeConfiguration extends BaseModuleBean
         return baseType;
     }
 
-    public void setType(final CustomFieldBaseType archetype)
+    public void setType(final CustomFieldBaseType baseType)
     {
-        this.baseType = archetype;
+        this.baseType = baseType;
     }
 
     public static CustomFieldBaseTypeConfigurationBeanBuilder newBuilder()
