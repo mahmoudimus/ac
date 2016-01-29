@@ -28,6 +28,11 @@
                             <includes>
                                 <include>at/**</include>
                             </includes>
+                            <forkCount>3</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <parallel>all</parallel>
+                            <useUnlimitedThreads>true</useUnlimitedThreads>
+                            <threadCountSuites>3</threadCountSuites>
                         </configuration>
                     </plugin>
                     <plugin>
