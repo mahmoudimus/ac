@@ -21,7 +21,7 @@
                     jira.openDatePicker({
                         element: dateTrigger,
                         date: "2016/1/2 03:56 PM",
-                        showsTime: true,
+                        showTime: true,
                         onSelect: function (isoDate, date) {
                             dateField.value = date;
                             dateField.setAttribute("data-iso", isoDate);
@@ -45,7 +45,7 @@
                     jira.openDatePicker({
                         element: dateTrigger,
                         date: "2016/1/2",
-                        showsTime: false,
+                        showTime: false,
                         onSelect: function (isoDate, date) {
                             dateField.value = date;
                             dateField.setAttribute("data-iso", isoDate);
@@ -68,7 +68,7 @@
                 dateTrigger.addEventListener("click", function() {
                     jira.openDatePicker({
                         element: dateTrigger,
-                        showsTime: true,
+                        showTime: true,
                         onSelect: function (isoDate, date) {
                             dateField.value = date;
                             dateField.setAttribute("data-iso", isoDate);

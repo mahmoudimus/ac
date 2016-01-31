@@ -156,7 +156,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                  * @param {Object} options.position - Position of the element relative to the iframe. options.element takes precedence over it when provided.
                  * @param {number} options.position.top - Distance in pixels from the top edge of the iframe date picker should be shown at.
                  * @param {number} options.position.left - Distance in pixels from the left edge of the iframe date picker should be shown at.
-                 * @param {Boolean} options.showsTime - Flag determining whether the component should also have a time picker. Defaults to `false`.
+                 * @param {Boolean} options.showTime - Flag determining whether the component should also have a time picker. Defaults to `false`.
                  * @param {String} options.date - Date (and time) that should be pre-selected when displaying the picker in the format understandable by Date.parse method in JavaScript. ISO 8601 is preferred. Timezone should be set to Z for UTC time or in the format of +/-hh:mm. Not setting it will cause JavaScript to use local timezone set in the browser. Defaults to current date/time.
                  * @param {Function} options.onSelect - Callback that will be invoked when the date (and time) is selected by the user.
                  *
@@ -171,7 +171,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                  *         jira.openDatePicker({
                  *             element: dateTrigger,
                  *             date: "2011-12-13T15:20+01:00",
-                 *             showsTime: true,
+                 *             showTime: true,
                  *             onSelect: function (isoDate, date) {
                  *                 dateField.value = date;
                  *                 dateField.setAttribute("data-iso", isoDate);
@@ -194,7 +194,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                             left: options.position.left || 0
                         },
                         date: options.date,
-                        showsTime: options.showsTime,
+                        showTime: options.showTime,
                         onSelect: options.onSelect
                     };
 

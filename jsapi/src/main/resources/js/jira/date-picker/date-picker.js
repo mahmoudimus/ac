@@ -35,9 +35,9 @@ define("ac/jira/date-picker", [
         cal.weekNumbers = true;
         cal.showsOtherMonths = false;
         cal.params = params;
-        cal.showsTime = params.showsTime;
+        cal.showsTime = params.showTime;
         cal.time24 = (params.timeFormat == "24");
-        var formatString = params.showsTime ? params.dateTimeFormat : params.dateFormat;
+        var formatString = params.showTime ? params.dateTimeFormat : params.dateFormat;
         cal.setDateFormat(formatString);
 
         cal.create();
