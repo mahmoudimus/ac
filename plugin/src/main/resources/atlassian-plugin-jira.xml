@@ -125,7 +125,7 @@
     </web-resource>
 
     <web-resource key="date-picker-widget">
-        <data key="config" class="com.atlassian.plugin.connect.jira.data.DatePickerDataProvider" />
+        <data key="config" class="com.atlassian.plugin.connect.jira.web.jsapi.DatePickerDataProvider" />
 
         <resource type="download" name="date-picker-widget.js" location="/js/jira/date-picker/date-picker.js" />
         <resource type="download" name="date-picker-widget-rpc.js" location="/js/jira/date-picker/date-picker-rpc.js" />

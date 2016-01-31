@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.data;
+package com.atlassian.plugin.connect.jira.web.jsapi;
 
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
@@ -25,14 +25,11 @@ public class DatePickerDataProvider implements WebResourceDataProvider {
 
     @Override
     public Jsonable get() {
-        return new Jsonable() {
-            @Override
-            public void write(final Writer writer) throws IOException {
-                try {
-                    getJsonData().write(writer);
-                } catch (JSONException e) {
-                    throw new JsonMappingException(e);
-                }
+        return (writer) -> {
+            try {
+                getJsonData().write(writer);
+            } catch (JSONException e) {
+                throw new Jsonable.JsonMappingException(e);
             }
         };
     }

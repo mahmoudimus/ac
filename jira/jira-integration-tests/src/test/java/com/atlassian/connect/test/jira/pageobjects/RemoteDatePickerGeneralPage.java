@@ -19,6 +19,8 @@ import java.util.concurrent.Callable;
 public class RemoteDatePickerGeneralPage extends ConnectAddonPage implements Page
 {
 
+    public static String TEMPLATE_PATH = "jira/iframe-date-picker.mu";
+
     protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
     @Inject
@@ -37,40 +39,21 @@ public class RemoteDatePickerGeneralPage extends ConnectAddonPage implements Pag
 
     public CalendarPopup openDatePicker(String triggerId)
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                driver.findElement(By.id(triggerId)).click();
-                return null;
-            }
+        runInFrame(() -> {
+            driver.findElement(By.id(triggerId)).click();
+            return null;
         });
         return product.getPageBinder().bind(CalendarPopup.class);
     }
 
     public String getSelectedDate(String fieldId)
     {
-        return runInFrame(new Callable<String>()
-        {
-            @Override
-            public String call() throws Exception
-            {
-                return driver.findElement(By.id(fieldId)).getAttribute("value");
-            }
-        });
+        return runInFrame(() -> driver.findElement(By.id(fieldId)).getAttribute("value"));
     }
 
     public String getSelectedIsoDate(String fieldId)
     {
-        return runInFrame(new Callable<String>()
-        {
-            @Override
-            public String call() throws Exception
-            {
-                return driver.findElement(By.id(fieldId)).getAttribute("data-iso");
-            }
-        });
+        return runInFrame(() -> driver.findElement(By.id(fieldId)).getAttribute("data-iso"));
     }
 
 }

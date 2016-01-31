@@ -2,6 +2,7 @@ package it.jira.servlet;
 
 import javax.servlet.http.HttpServlet;
 
+import com.atlassian.connect.test.jira.pageobjects.RemoteDatePickerGeneralPage;
 import com.atlassian.connect.test.jira.pageobjects.RemoteRefreshIssuePageWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
 import com.atlassian.plugin.connect.test.common.servlet.TestServletContextExtractor;
@@ -73,6 +74,6 @@ public class JiraAppServlets
     public static HttpServlet datePickerServlet()
     {
         return wrapContextAwareServlet(
-                new MustacheServlet("jira/iframe-date-picker.mu"));
+                new MustacheServlet(RemoteDatePickerGeneralPage.TEMPLATE_PATH));
     }
 }
