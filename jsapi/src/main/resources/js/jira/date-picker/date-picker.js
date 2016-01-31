@@ -17,6 +17,8 @@ define("ac/jira/date-picker", [
             inputField: {}
         });
 
+        // Exposing this as a global variable in order for JIRA to recognize it properly as its calendar control.
+        // This way it will be able to hide it when showing other calendars (e.g. for the date picker).
         window.calendar = cal = new Calendar(
             // Either use ISO week numbers or pass undefined so the component can decide based on locale
             // ISO8601 assumes that first day of week is Monday
