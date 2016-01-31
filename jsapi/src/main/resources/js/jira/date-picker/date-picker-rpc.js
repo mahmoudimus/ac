@@ -11,7 +11,7 @@
         _AP.extend(function () {
             return {
                 internals: {
-                    datePicker: function(options) {
+                    openDatePicker: function(options) {
                         options.onSelect = function(calendarInstance, date) {
                             this.triggerDateSelectedListener(calendarInstance.date.toISOString(), date);
                             if (calendarInstance.dateClicked) {

@@ -18,7 +18,7 @@
                 var dateTrigger = document.querySelector("#date-time-trigger");
 
                 dateTrigger.addEventListener("click", function() {
-                    jira.datePicker({
+                    jira.openDatePicker({
                         element: dateTrigger,
                         date: "2016/1/2 03:56 PM",
                         showsTime: true,
@@ -42,7 +42,7 @@
                 var dateTrigger = document.querySelector("#date-trigger");
 
                 dateTrigger.addEventListener("click", function() {
-                    jira.datePicker({
+                    jira.openDatePicker({
                         element: dateTrigger,
                         date: "2016/1/2",
                         showsTime: false,
@@ -66,7 +66,7 @@
                 var dateTrigger = document.querySelector("#today-trigger");
 
                 dateTrigger.addEventListener("click", function() {
-                    jira.datePicker({
+                    jira.openDatePicker({
                         element: dateTrigger,
                         showsTime: true,
                         onSelect: function (isoDate, date) {

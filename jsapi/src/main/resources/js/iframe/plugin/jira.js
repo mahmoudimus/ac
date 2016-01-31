@@ -168,7 +168,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                  *
                  *     dateTrigger.addEventListener("click", function(e) {
                  *         e.preventDefault();
-                 *         jira.datePicker({
+                 *         jira.openDatePicker({
                  *             element: dateTrigger,
                  *             date: "2011-12-13T15:20+01:00",
                  *             showsTime: true,
@@ -181,7 +181,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                  *     });
                  * });
                  */
-                datePicker: function (options) {
+                openDatePicker: function (options) {
                     options = options || {};
                     if (!options.position || typeof options.position !== "object") {
                         options.position = {}
@@ -211,7 +211,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                         delete sanitisedOptions.element;
                     }
 
-                    remote.datePicker(sanitisedOptions);
+                    remote.openDatePicker(sanitisedOptions);
                 }
             },
 
