@@ -151,13 +151,13 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 /**
                  * Shows a date picker component. A callback will be invoked when the date (and time) is selected by the user.
                  *
-                 * @param {Object} options - contains data to pre-fill the dialog with
-                 * @param {HTMLElement} options.element - HTML element below which date picker will be positioned. If provided, it takes precedence over options.position.
+                 * @param {Object} options - contains data to pre-fill the dialog with.
+                 * @param {HTMLElement} options.element - HTML element below which date picker will be positioned. If provided, it takes precedence over `options.position`.
                  * @param {Object} options.position - Position of the element relative to the iframe. options.element takes precedence over it when provided.
                  * @param {number} options.position.top - Distance in pixels from the top edge of the iframe date picker should be shown at.
-                 * @param {number} options.position.left- Distance in pixels from the left edge of the iframe date picker should be shown at.
-                 * @param {Boolean} options.showsTime - Flag determining whether the component should also have a time picker. Defaults to false.
-                 * @param {String} options.date - Date (and time) that should be pre-selected when displaying the picker in the format undersantable by Date.parse method in JavaScript. ISO 8601 is preferred. Timezone should be set to Z for UTC time or in the format of +/-hh:mm. Not setting it will cause JavaScript to use local timezone set in the browser. Defaults to current date/time.
+                 * @param {number} options.position.left - Distance in pixels from the left edge of the iframe date picker should be shown at.
+                 * @param {Boolean} options.showsTime - Flag determining whether the component should also have a time picker. Defaults to `false`.
+                 * @param {String} options.date - Date (and time) that should be pre-selected when displaying the picker in the format understandable by Date.parse method in JavaScript. ISO 8601 is preferred. Timezone should be set to Z for UTC time or in the format of +/-hh:mm. Not setting it will cause JavaScript to use local timezone set in the browser. Defaults to current date/time.
                  * @param {Function} options.onSelect - Callback that will be invoked when the date (and time) is selected by the user.
                  *
                  * @noDemo
