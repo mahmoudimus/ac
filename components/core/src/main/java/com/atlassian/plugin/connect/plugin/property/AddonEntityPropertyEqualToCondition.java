@@ -37,9 +37,18 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
     {
         super.init(params);
 
-        this.propertyKey = Strings.nullToEmpty(params.get("propertyKey"));
-        this.propertyValue = Strings.nullToEmpty(params.get("value"));
+        // Required values
+        this.propertyKey = getRequiredProperty(params, "propertyKey");
+        this.propertyValue = getRequiredProperty(params, "value");
+
+        // Optional values
         this.jsonPath = Strings.nullToEmpty(params.get("objectName"));
+    }
+
+    private static String getRequiredProperty(Map<String, String> params, String paramName) {
+        final String property = params.get(paramName);
+        if(property == null) throw new PluginParseException("Add-on entity_property_equal_to condition is missing parameter: " + paramName);
+        return property;
     }
 
     @Override
