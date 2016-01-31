@@ -21,6 +21,13 @@ public class RemoteDatePickerGeneralPage extends ConnectAddonPage implements Pag
 
     public static String TEMPLATE_PATH = "jira/iframe-date-picker.mu";
 
+    public static String DATE_TRIGGER = "date-trigger";
+    public static String DATE_FIELD = "date-field";
+    public static String DATE_TIME_TRIGGER = "date-time-trigger";
+    public static String DATE_TIME_FIELD = "date-time-field";
+    public static String TODAY_TRIGGER = "today-trigger";
+    public static String TODAY_FIELD = "today-field";
+
     protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
     @Inject

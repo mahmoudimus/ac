@@ -72,40 +72,40 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
     public void shouldPickDateWithTime()
     {
         RemoteDatePickerGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteDatePickerGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
-        assertThat(generalPage.getSelectedDate("date-time-field"), equalTo(""));
-        CalendarPopup calendar = generalPage.openDatePicker("date-time-trigger");
+        assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.DATE_TIME_FIELD), equalTo(""));
+        CalendarPopup calendar = generalPage.openDatePicker(RemoteDatePickerGeneralPage.DATE_TIME_TRIGGER);
         Poller.waitUntilTrue("Calendar popup should be open", calendar.isOpen());
         calendar.increaseHour();
         calendar.selectDay(23);
-        assertThat(generalPage.getSelectedDate("date-time-field"), equalTo("23/Jan/16 04:56 PM"));
-        assertThat("Make sure your timezone is set to +00, Greenwich.", generalPage.getSelectedIsoDate("date-time-field"), equalTo("2016-01-23T16:56:00.000Z"));
+        assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.DATE_TIME_FIELD), equalTo("23/Jan/16 04:56 PM"));
+        assertThat("Make sure your timezone is set to +00, Greenwich.", generalPage.getSelectedIsoDate(RemoteDatePickerGeneralPage.DATE_TIME_FIELD), equalTo("2016-01-23T16:56:00.000Z"));
     }
 
     @Test
     public void shouldPickDate()
     {
         RemoteDatePickerGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteDatePickerGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
-        assertThat(generalPage.getSelectedDate("date-field"), equalTo(""));
-        CalendarPopup calendar = generalPage.openDatePicker("date-trigger");
+        assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.DATE_FIELD), equalTo(""));
+        CalendarPopup calendar = generalPage.openDatePicker(RemoteDatePickerGeneralPage.DATE_TRIGGER);
         Poller.waitUntilTrue(calendar.isOpen());
         calendar.selectDay(23);
-        assertThat(generalPage.getSelectedDate("date-field"), equalTo("23/Jan/16"));
-        assertThat("Make sure your timezone is set to +00, Greenwich.", generalPage.getSelectedIsoDate("date-field"), equalTo("2016-01-23T00:00:00.000Z"));
+        assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.DATE_FIELD), equalTo("23/Jan/16"));
+        assertThat("Make sure your timezone is set to +00, Greenwich.", generalPage.getSelectedIsoDate(RemoteDatePickerGeneralPage.DATE_FIELD), equalTo("2016-01-23T00:00:00.000Z"));
     }
 
     @Test
     public void shouldUseTodayAsDefaultDate()
     {
         RemoteDatePickerGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteDatePickerGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
-        assertThat(generalPage.getSelectedDate("today-field"), equalTo(""));
-        CalendarPopup calendar = generalPage.openDatePicker("today-trigger");
+        assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.TODAY_FIELD), equalTo(""));
+        CalendarPopup calendar = generalPage.openDatePicker(RemoteDatePickerGeneralPage.TODAY_TRIGGER);
         Poller.waitUntilTrue(calendar.isOpen());
         calendar.selectDay(calendar.getSelectedDay().now());
 
         DateFormat dateFormat = new SimpleDateFormat("dd/MMM/yy hh:mm aaa");
         Date date = new Date();
 
-        assertThat(generalPage.getSelectedDate("today-field"), equalTo(dateFormat.format(date)));
+        assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.TODAY_FIELD), equalTo(dateFormat.format(date)));
     }
 
     @Test
