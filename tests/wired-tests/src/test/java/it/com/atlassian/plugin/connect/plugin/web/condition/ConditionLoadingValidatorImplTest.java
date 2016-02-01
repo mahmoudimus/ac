@@ -14,6 +14,8 @@ import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.ImmutableMap;
+
+import org.codehaus.jackson.node.JsonNodeFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -83,7 +85,7 @@ public class ConditionLoadingValidatorImplTest
         Map<String, String> params = ImmutableMap.of(
                 "entity", "addon",
                 "propertyKey", "some-property-key",
-                "value", "some-value"
+                "value", JsonNodeFactory.instance.textNode("some-value").toString()
         );
         validate(newSingleConditionBean().withCondition("entity_property_equal_to").withParams(params).build());
     }
