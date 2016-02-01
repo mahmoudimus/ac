@@ -422,8 +422,8 @@ To create a query string hash, follow the detailed instructions below:
 The format of a JWT token is simple: ```<base64url-encoded header>.<base64url-encoded claims>.<signature>```.
 
 * Each section is separated from the others by a period character (```.```).
-* Each section is base64url encoded, so you will need to decode each one to make them human-readable. Note that ordinary
-  base64 encoding will produce incorrect results for some special characters.
+* Each section is base64url encoded, so you will need to decode each one to make them human-readable. Note that encoding
+  with base64 and not base64url will result in an incorrect JWT token for payloads with non UTF-8 characters.
 * The header specifies a very small amount of information that the receiver needs in order to parse and verify the JWT token.
  * All JWT token headers state that the type is "JWT".
  * The algorithm used to sign the JWT token is needed so that the receiver can verify the signature.
