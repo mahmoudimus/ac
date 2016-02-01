@@ -192,23 +192,6 @@ public class AddonEntityPropertyEqualToConditionTest
     }
 
     @Test
-    public void testShouldDisplay__with_actual_value_and_objectName_shoud_be_displayed() {
-        final AddonProperty propertyResult = new AddonProperty("unimportant-key", createComplicatedJsonNode(), 12345L);
-
-        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
-
-        sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "objectName", "life.universe.everything",
-            "value", "42"
-        ));
-
-        assertTrue(sut.shouldDisplay(ImmutableMap.of()));
-    }
-
-    @Test
     public void testShouldDisplay__with_array_objects_matching_ordering_should_display() {
         final ObjectNode root = JsonNodeFactory.instance.objectNode();
 
@@ -396,8 +379,25 @@ public class AddonEntityPropertyEqualToConditionTest
     }
 
     @Test
+    public void testShouldDisplay__with_actual_value_and_objectName_shoud_be_displayed() {
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", createThreeLayelJsonNode(), 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "objectName", "life.universe.everything",
+            "value", "42"
+        ));
+
+        assertTrue(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
     public void testShouldDisplay__with_actual_value_and_missing_objectName_shoud_not_be_displayed() {
-        final AddonProperty propertyResult = new AddonProperty("unimportant-key", createComplicatedJsonNode(), 12345L);
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", createThreeLayelJsonNode(), 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
             .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
@@ -412,7 +412,7 @@ public class AddonEntityPropertyEqualToConditionTest
         assertFalse(sut.shouldDisplay(ImmutableMap.of()));
     }
 
-    private static JsonNode createComplicatedJsonNode() {
+    private static JsonNode createThreeLayelJsonNode() {
         final ObjectNode root = JsonNodeFactory.instance.objectNode();
         root.put("not-important", "this data will not be read");
 
