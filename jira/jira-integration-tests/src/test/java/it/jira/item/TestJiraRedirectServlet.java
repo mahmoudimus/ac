@@ -48,7 +48,7 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
     private static final String ADDON_WEBITEM_JIRA_CONDITION = "ac-general-web-item-jira-condition";
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
     private static final String WEB_ITEM_ON_URL = "/irwi";
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
 
     private final String baseUrl = product.getProductInstance().getBaseUrl();
     private final String addOnKey = AddonTestUtils.randomAddonKey();

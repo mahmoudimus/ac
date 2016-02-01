@@ -4,7 +4,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
@@ -57,7 +57,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
     private HttpServletRequest servletRequest;
 
     @Mock
-    private IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private ConnectUriFactory connectUriFactory;
 
     @Mock
     private PluggableParametersExtractor webFragmentModuleContextExtractor;
@@ -77,7 +77,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
         UrlVariableSubstitutor urlVariableSubstitutor = createUrlSubstitutor();
 
         webItemFactory = new JiraWebItemModuleDescriptorFactory(
-                webFragmentHelper, webInterfaceManager, iFrameUriBuilderFactory, jiraAuthenticationContext,
+                webFragmentHelper, webInterfaceManager, connectUriFactory, jiraAuthenticationContext,
                 webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
