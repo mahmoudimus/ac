@@ -125,23 +125,6 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void iFrameUrlIsCorrectOnEditPage() throws Exception
-    {
-        RemoteWebPanel webPanel = findEditPageWebPanel();
-        assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_EDIT));
-    }
-
-    @Test
-    public void iFrameParametersAreCorrectOnEditPage() throws Exception
-    {
-        ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
-        RemoteWebPanel webPanel = connectPageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
-        assertThat(webPanel.getSpaceKey(), is(SPACE));
-        assertThat(webPanel.getPageId(), is(editPage.getPageId()));
-        assertThat(webPanel.getContentId(), is(editPage.getPageId()));
-    }
-
-    @Test
     public void iFrameHeightIsCorrectOnEditPage() throws Exception
     {
         RemoteWebPanel webPanel = findEditPageWebPanel();
