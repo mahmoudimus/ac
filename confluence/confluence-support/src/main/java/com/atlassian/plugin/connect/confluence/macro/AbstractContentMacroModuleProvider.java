@@ -18,7 +18,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.hostcontainer.HostContainer;
@@ -121,33 +120,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             descriptors.add(createEditorWebResource(addon, plugin, macroBean));
         }
 
-        if (macroBean.hasPropertyPanel()) {
-            createPropertyPanelIFrame(macroBean, addon);
-            descriptors.add(createPropertyPanelWebResource(addon, plugin, macroBean));
-        }
-
         return ImmutableList.copyOf(descriptors);
-    }
-
-    private void createPropertyPanelIFrame(T macroBean, ConnectAddonBean addon)
-    {
-        MacroPropertyPanelBean propertyPanel = macroBean.getPropertyPanel();
-        final String width = "0";
-        final String height = "0";
-        final String classifier = "property-panel";
-
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addon(addon.getKey())
-                .module(macroBean.getRawKey())
-                .dialogTemplate()
-                .urlTemplate(propertyPanel.getUrl())
-                .title(macroBean.getDisplayName())
-                .dimensions(width, height)
-                .simpleDialog(true)
-                .ensureUniqueNamespace(true)
-                .build();
-
-        iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), classifier, renderStrategy);
     }
 
     private WebItemModuleBean createFeaturedWebItem(T bean)
@@ -234,8 +207,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         webResource.addElement("resource")
                 .addAttribute("type", "download")
-                .addAttribute("name", "editor-override.js")
-                .addAttribute("location", "js/confluence/macro/editor-override.js");
+                .addAttribute("name", "override.js")
+                .addAttribute("location", "js/confluence/macro/override.js");
 
         webResource.addElement("dependency")
                 .setText(ConnectPluginInfo.getPluginKey() + ":confluence-ap-core");
@@ -264,44 +237,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         createInsertTitle(macroBean, transformer);
         createEditTitle(macroBean, transformer);
-
-        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
-        jsDescriptor.init(plugin, webResource);
-
-        return jsDescriptor;
-    }
-
-    private ModuleDescriptor createPropertyPanelWebResource(ConnectAddonBean addon, Plugin plugin, T macroBean)
-    {
-        String macroKey = macroBean.getRawKey();
-
-        Element webResource = new DOMElement("web-resource")
-                .addElement("web-resource")
-                .addAttribute("key", macroKey + "-macro-property-panel-resources");
-
-        webResource.addElement("resource")
-                .addAttribute("type", "download")
-                .addAttribute("name", "property-panel-override.js")
-                .addAttribute("location", "js/confluence/macro/property-panel-override.js");
-
-        webResource.addElement("dependency")
-                .setText(ConnectPluginInfo.getPluginKey() + ":confluence-ap-core");
-
-        webResource.addElement("context")
-                .setText("editor");
-
-        Element transformation = webResource.addElement("transformation")
-                .addAttribute("extension", "js");
-
-        Element transformer = transformation
-                .addElement("transformer")
-                .addAttribute("key", "confluence-macroVariableTransformer")
-                .addElement("var")
-                .addAttribute("name", "MACRONAME")
-                .addAttribute("value", macroKey).getParent()
-                .addElement("var")
-                .addAttribute("name", "URL")
-                .addAttribute("value", ConnectIFrameServletPath.forModule(addon.getKey(), macroBean.getRawKey())).getParent();
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(plugin, webResource);

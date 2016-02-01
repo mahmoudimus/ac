@@ -82,7 +82,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         createAndVisitPage(STORAGE_FORMAT);
-        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(MACRO_KEY);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(MACRO_KEY);
         String macroParameter = renderedMacro.getIFrameElementText("data");
         assertEquals("data: macro data", macroParameter);
     }
