@@ -1,5 +1,7 @@
 package it.common;
 
+import java.util.UUID;
+
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.pageobjects.page.HomePage;
@@ -13,6 +15,9 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 import com.google.common.base.Supplier;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -49,6 +54,7 @@ public class TestAddonPropertyCondition extends MultiProductWebDriverTestBase
                                         .withCondition("entity_property_equal_to")
                                         .withParam("propertyKey", "prop")
                                         .withParam("entity", "addon")
+                                        .withParam("objectName", "level-one.level-two")
                                         .withParam("value", "true")
                                         .build())
                                 .build())
@@ -76,7 +82,7 @@ public class TestAddonPropertyCondition extends MultiProductWebDriverTestBase
     @Test
     public void pageShouldBeVisibleIfAddonPropertyIsSetToTrue() throws Exception
     {
-        addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "true");
+        addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", generateTestData(true).toString());
 
         waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
         {
@@ -89,9 +95,17 @@ public class TestAddonPropertyCondition extends MultiProductWebDriverTestBase
     }
 
     @Test
+    public void pageShouldNotBeVisibleIfAddonPropertyIsNotSetButSubPropertyMissing() throws Exception
+    {
+        addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", generateIncorrectTestData(true).toString());
+
+        assertThat(webPageIsVisible(), equalTo(false));
+    }
+
+    @Test
     public void pageShouldNotBeVisibleIfAddonPropertyIsSetToFalse() throws Exception
     {
-        addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "false");
+        addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", generateTestData(false).toString());
 
         assertThat(webPageIsVisible(), equalTo(false));
     }
@@ -99,9 +113,31 @@ public class TestAddonPropertyCondition extends MultiProductWebDriverTestBase
     @Test
     public void pageShouldNotBeVisibleIfAddonPropertyIsNotSet() throws Exception
     {
-        addonPropertyClient.deleteProperty(remotePlugin.getAddon().getKey(), "prop", "false");
+        addonPropertyClient.deleteProperty(remotePlugin.getAddon().getKey(), "prop", generateTestData(false).toString());
 
         assertThat(webPageIsVisible(), equalTo(false));
+    }
+
+    private static JsonNode generateTestData(boolean data) {
+        final ObjectNode root = JsonNodeFactory.instance.objectNode();
+        root.put("random-data", UUID.randomUUID().toString());
+
+        final ObjectNode one = root.putObject("level-one");
+        one.put("level-two", data);
+        one.put("more-random-data", UUID.randomUUID().toString());
+
+        return root;
+    }
+
+    private static JsonNode generateIncorrectTestData(boolean data) {
+        final ObjectNode root = JsonNodeFactory.instance.objectNode();
+        root.put("random-data", UUID.randomUUID().toString());
+
+        final ObjectNode one = root.putObject("level-one");
+        one.put("level-three", data);
+        one.put("more-random-data", UUID.randomUUID().toString());
+
+        return root;
     }
 
     private boolean webPageIsVisible()
