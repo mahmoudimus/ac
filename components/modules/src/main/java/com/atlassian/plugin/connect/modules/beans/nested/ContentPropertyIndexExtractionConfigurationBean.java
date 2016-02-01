@@ -41,18 +41,18 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
      * The type can be one of the following values:
      *
      * * <code>number</code> - The extracted number will be indexed as a double value for efficient range filtering and sorting.
-     * * <code>text</code> - The extracted value will be tokenized before indexing, allowing searching for a particular words.
-     * * <code>string</code> - The entire extracted value will be indexed as a single token, without any filtering. When extraction
-     * expression evaluates to a JSON array, each element will be indexed separately. Enables searching for an exact value, e.g. unique identifier.
-     * * <code>date</code> - Two representation are possible, either a String following the ISO 8601 datetime format,
-     * or a long value in the Unix time. Enables efficient range filtering and sorting.
+     * * <code>text</code> - The extracted value will be tokenized before indexing, allowing searching for particular words.
+     * * <code>string</code> - The entire extracted value will be indexed as a single token, without any filtering. When the extraction
+     * expression evaluates to a JSON array, each element will be indexed separately. This Enables searching for an exact value, e.g. a unique identifier.
+     * * <code>date</code> - Two representations are possible: either a string following the ISO 8601 datetime format,
+     * or a long value in Unix time. This enables efficient range filtering and sorting.
      *
      */
     @Required
     private final ContentPropertyIndexFieldType type;
 
     /**
-     * CQL Field name alias for this content property.
+     * A CQL field name alias for this content property.
      *
      * By defining an alias you are exposing it to CQL and allow other macros and search features to easily use
      * your content property in their search.
