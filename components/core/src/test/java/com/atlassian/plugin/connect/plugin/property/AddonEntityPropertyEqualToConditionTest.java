@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.property.AddonProperty;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.api.web.condition.ConnectConditionContext;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
