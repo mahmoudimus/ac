@@ -102,7 +102,7 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
         Poller.waitUntilTrue(calendar.isOpen());
         calendar.selectDay(calendar.getSelectedDay().now());
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MMM/yy hh:mm aaa");
+        DateFormat dateFormat = new SimpleDateFormat("d/MMM/yy hh:mm aaa");
         Date date = new Date();
 
         assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.TODAY_FIELD), equalTo(dateFormat.format(date)));
