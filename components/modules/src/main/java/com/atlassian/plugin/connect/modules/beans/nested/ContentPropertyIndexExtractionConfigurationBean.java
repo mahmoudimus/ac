@@ -18,14 +18,14 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
  * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a> documentation for
  * a complete example.
  *
- *#### Example
+ * <h4>Example</h4>
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Extraction Configuration
  */
 public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleBean
 {
     /**
-     * The objectName of the JSON data which should be indexed. The objectName is the key of a flattened JSON object with '.' as the delimiter.
+     * The <code>objectName</code> of the JSON data which should be indexed. The objectName is the key of a flattened JSON object with '.' as the path separator.
      *
      * For instance, for JSON <code>"{"label": {"color": "red", "text":"connect"}}</code> the valid objectName
      * referencing the color is label.color.
@@ -40,11 +40,11 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
      *
      * The type can be one of the following values:
      *
-     * * `number` - The extracted number will be indexed as a double value for efficient range filtering and sorting.
-     * * `text` - The extracted value will be tokenized before indexing, allowing searching for a particular words.
-     * * `string` - The entire extracted value will be indexed as a single token, without any filtering. When extraction
+     * * <code>number</code> - The extracted number will be indexed as a double value for efficient range filtering and sorting.
+     * * <code>text</code> - The extracted value will be tokenized before indexing, allowing searching for a particular words.
+     * * <code>string</code> - The entire extracted value will be indexed as a single token, without any filtering. When extraction
      * expression evaluates to a JSON array, each element will be indexed separately. Enables searching for an exact value, e.g. unique identifier.
-     * * `date` - Two representation are possible, either a String following the ISO 8601 datetime format,
+     * * <code>date</code> - Two representation are possible, either a String following the ISO 8601 datetime format,
      * or a long value in the Unix time. Enables efficient range filtering and sorting.
      *
      */
@@ -57,7 +57,7 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
      * By defining an alias you are exposing it to CQL and allow other macros and search features to easily use
      * your content property in their search.
      *
-     * Note: Aliases must be globally unique. Prefixing it with the name of your add-on is the best way to ensure this.
+     * <strong>Important:</strong> Aliases must be globally unique. Prefixing it with the name of your add-on is the best way to ensure this.
      */
     private final String alias;
 

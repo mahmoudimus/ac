@@ -11,7 +11,7 @@ import com.atlassian.json.schema.annotation.Required;
  * Each content property key will define one or more
  * <a href="../fragment/content-property-index-extraction-configuration.html">extractions</a> which will
  * allow for multiple values from your JSON content property to be used in CQL. Each extraction defines a single field
- * that will be queryable using the relevant CQL syntax.
+ * that will be queryable using the relevant CQL syntax as seen below.
  *
  * In the <a href="https://bitbucket.org/mjensen/wordcount">wordcount</a> example, we store details of the page
  * that describe the word and character counts.
@@ -67,10 +67,10 @@ import com.atlassian.json.schema.annotation.Required;
  * space = currentSpace() and wordcount &lt;= 1000
  * </code></pre>
  *
- * <strong>NOTE:</strong> the <code>alias</code> must also be globally unique. Prefixing it with the name of your
+ * <strong>Important:</strong> the <code>alias</code> must also be globally unique. Prefixing it with the name of your
  * add-on is the best way to ensure this.
  *
- *#### Example
+ * <h4>Example</h4>
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Key Configuration
  */
