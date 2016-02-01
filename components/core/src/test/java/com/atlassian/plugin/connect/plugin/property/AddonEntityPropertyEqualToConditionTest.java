@@ -209,6 +209,193 @@ public class AddonEntityPropertyEqualToConditionTest
     }
 
     @Test
+    public void testShouldDisplay__with_array_objects_matching_ordering_should_display() {
+        final ObjectNode root = JsonNodeFactory.instance.objectNode();
+
+        final ArrayNode array = root.putArray("array");
+        array.add(true);
+        array.add(false);
+
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", root, 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "objectName", "array",
+            "value", "[true, false]"
+        ));
+
+        assertTrue(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_array_objects_mismatching_ordering_should_not_display() {
+        final ObjectNode root = JsonNodeFactory.instance.objectNode();
+
+        final ArrayNode array = root.putArray("array");
+        array.add(true);
+        array.add(false);
+
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", root, 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "objectName", "array",
+            "value", "[false, true]"
+        ));
+
+        assertFalse(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_array_objects_extra_actual_nodes_should_not_display() {
+        final ObjectNode root = JsonNodeFactory.instance.objectNode();
+
+        final ArrayNode array = root.putArray("array");
+        array.add(true);
+        array.add(false);
+        array.add(true);
+
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", root, 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "objectName", "array",
+            "value", "[true, false]"
+        ));
+
+        assertFalse(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_array_objects_extra_expected_nodes_should_not_display() {
+        final ObjectNode root = JsonNodeFactory.instance.objectNode();
+
+        final ArrayNode array = root.putArray("array");
+        array.add(true);
+        array.add(false);
+
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", root, 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "objectName", "array",
+            "value", "[true, false, false]"
+        ));
+
+        assertFalse(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_json_objects_ordered_and_identical_fields_should_display() {
+        final ObjectNode actual = JsonNodeFactory.instance.objectNode();
+        actual.put("one", "one");
+        actual.put("two", "two");
+
+        final ObjectNode expected = JsonNodeFactory.instance.objectNode();
+        expected.put("one", "one");
+        expected.put("two", "two");
+
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", actual, 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "value", expected.toString()
+        ));
+
+        assertTrue(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_json_objects_unordered_but_identical_fields_should_display() {
+        final ObjectNode actual = JsonNodeFactory.instance.objectNode();
+        actual.put("one", "one");
+        actual.put("two", "two");
+
+        final ObjectNode expected = JsonNodeFactory.instance.objectNode();
+        expected.put("two", "two");
+        expected.put("one", "one");
+
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", actual, 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "value", expected.toString()
+        ));
+
+        assertTrue(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_json_objects_extra_actual_fields_should_not_display() {
+        final ObjectNode actual = JsonNodeFactory.instance.objectNode();
+        actual.put("one", "one");
+        actual.put("two", "two");
+
+        final ObjectNode expected = JsonNodeFactory.instance.objectNode();
+        expected.put("one", "one");
+
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", actual, 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "value", expected.toString()
+        ));
+
+        assertFalse(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_json_objects_extra_expected_fields_should_not_display() {
+        final ObjectNode actual = JsonNodeFactory.instance.objectNode();
+        actual.put("one", "one");
+
+        final ObjectNode expected = JsonNodeFactory.instance.objectNode();
+        expected.put("one", "one");
+        expected.put("two", "two");
+
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", actual, 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "value", expected.toString()
+        ));
+
+        assertFalse(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
     public void testShouldDisplay__with_actual_value_and_missing_objectName_shoud_not_be_displayed() {
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", createComplicatedJsonNode(), 12345L);
 
