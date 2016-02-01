@@ -160,6 +160,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                  * @property {DatePicker~position} position - Position of the element relative to the iframe. options.element takes precedence over it when provided.
                  * @property {Boolean} showTime - Flag determining whether the component should also have a time picker. Defaults to `false`.
                  * @property {String} date - Date (and time) that should be pre-selected when displaying the picker in the format understandable by Date.parse method in JavaScript.
+                 *
                  * ISO 8601 is preferred. Timezone should be set to Z for UTC time or in the format of +/-hh:mm. Not setting it will cause JavaScript to use local timezone set in the browser. Defaults to current date/time.
                  * @property {Function} onSelect - Callback that will be invoked when the date (and time) is selected by the user.
                  */
@@ -191,8 +192,15 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                  * });
                  */
                 openDatePicker: function (options) {
+                    function isDomElement(el) {
+                        return el.nodeType && el.nodeType == 1;
+                    }
+
                     options = options || {};
                     if (!options.position || typeof options.position !== "object") {
+                        if (!isDomElement(options.element)) {
+                            throw Error("Providing either options.position or options.element is required.")
+                        }
                         options.position = {}
                     }
 
