@@ -152,7 +152,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         final Content page = createPageWithRichTextMacroAndBody(macroKey, "<h1>Hello world</h1>");
         ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, valueOf(page.getId().asLong()));
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(macroKey, 0);
         String content1 = renderedMacro.getIFrameElement("body");
         assertThat(content1, CoreMatchers.is("<h1>Hello world</h1>"));
     }

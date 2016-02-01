@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import java.net.URI;
-import java.util.Optional;
-
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
@@ -15,9 +12,11 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+
+import java.net.URI;
+import java.util.Optional;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -159,7 +158,7 @@ public class IFrameUriBuilderImpl
             if (sign)
             {
                 URI uri = uriBuilder.toUri().toJavaUri();
-                return pluginAccessorFactory.getOrThrow(addonKey).signGetUrl(uri, ImmutableMap.<String, String[]>of());
+                return pluginAccessorFactory.get(addonKey).signGetUrl(uri, ImmutableMap.<String, String[]>of());
             }
             else
             {

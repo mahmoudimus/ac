@@ -36,19 +36,19 @@ public class StaticAddonScopesTest
         MatcherAssert.assertThat(scopes, Is.is(AddonScopeBuilderForTests.buildScopes()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void dereferencingANullScopeReferenceResultsInException() throws IOException
     {
         StaticAddonScopes.dereference(getTestScopes(), asList((ScopeName) null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void whitelistWithInvalidScopeNameResultsInException() throws IOException
     {
         getTestScopes("bad-test");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void scopesWithDuplicateKeysResultsInAnException() throws IOException
     {
         List<AddonScope> scopes = new ArrayList<>(getTestScopes());

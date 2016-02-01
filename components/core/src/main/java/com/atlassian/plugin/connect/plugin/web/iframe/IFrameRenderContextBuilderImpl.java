@@ -170,7 +170,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             String timeZone = userPreferencesRetriever.getTimeZoneFor(username).getID();
 
             defaultContext.put("iframeSrcHtml", escapeQuotes(iframeUri));
-            defaultContext.put("plugin", pluginAccessorFactory.getOrThrow(addonKey));
+            defaultContext.put("plugin", pluginAccessorFactory.get(addonKey));
             defaultContext.put("namespace", namespace);
             defaultContext.put("contextPath", hostApplicationInfo.getContextPath());
             defaultContext.put("userId", username);

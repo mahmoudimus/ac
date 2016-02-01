@@ -4,12 +4,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.api.web.condition.AbstractConnectCondition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
 import org.apache.commons.lang3.StringUtils;
@@ -61,30 +61,20 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
     {
         UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUserKey());
         return addonPropertyService.getPropertyValue(userProfile, addonKey, addonKey, propertyKey).fold(
-            new Function<AddonPropertyService.OperationStatus, Boolean>()
-            {
-                @Override
-                public Boolean apply(final AddonPropertyService.OperationStatus input)
-                {
-                    return false;
-                }
-            }, new Function<AddonProperty, Boolean>()
-            {
-                @Override
-                public Boolean apply(final AddonProperty input)
-                {
-                    // Load the actual value
-                    JsonNode actualValue = input.getValue();
+            input -> false,
+            input -> {
+                // Load the actual value
+                JsonNode actualValue = input.getValue();
 
-                    // If an objectName has been specified then attempt to extract that node
-                    if(StringUtils.isNotBlank(jsonPath)) {
-                        final Optional<JsonNode> potentialValue = getValueForPath(actualValue, jsonPath);
-                        if(!potentialValue.isPresent()) return false;
-                        actualValue = potentialValue.get();
-                    }
-
-                    return expectedValue.equals(actualValue);
+                // If an objectName has been specified then attempt to extract that node
+                if (StringUtils.isNotBlank(jsonPath))
+                {
+                    final Optional<JsonNode> potentialValue = getValueForPath(actualValue, jsonPath);
+                    if (!potentialValue.isPresent()) return false;
+                    actualValue = potentialValue.get();
                 }
+
+                return expectedValue.equals(actualValue);
             }
         );
     }

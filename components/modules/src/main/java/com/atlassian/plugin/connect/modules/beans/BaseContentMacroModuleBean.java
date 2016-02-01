@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaIgnore;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
@@ -174,8 +175,13 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * The configuration of a custom macro editor. This is useful if the parameter input field types are
      * not sufficient to configure the macro.
      */
-
     private MacroEditorBean editor;
+
+    /**
+     * The configuration of a property panel. Specify a hidden iframe to be loaded in the macro's property panel.
+     */
+    @SchemaIgnore
+    private MacroPropertyPanelBean propertyPanel;
 
     /**
      * The image rendered in the editor as the macro placeholder. It can only be used with bodyless macros and will behave
@@ -288,6 +294,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return editor;
     }
 
+    public MacroPropertyPanelBean getPropertyPanel()
+    {
+        return propertyPanel;
+    }
+
     public ImagePlaceholderBean getImagePlaceholder()
     {
         return imagePlaceholder;
@@ -296,6 +307,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public boolean hasEditor()
     {
         return editor != null;
+    }
+
+    public boolean hasPropertyPanel()
+    {
+        return propertyPanel != null;
     }
 
     public boolean hasIcon()
