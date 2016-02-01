@@ -23,7 +23,7 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
     private final UserManager userManager;
 
     private String propertyKey;
-    private String propertyValue;
+    private JsonNode expectedValue;
     private String jsonPath;
 
     public AddonEntityPropertyEqualToCondition(final AddonPropertyService addonPropertyService, final UserManager userManager)
@@ -39,7 +39,12 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
 
         // Required values
         this.propertyKey = getRequiredProperty(params, "propertyKey");
-        this.propertyValue = getRequiredProperty(params, "value");
+        final String rawValue = getRequiredProperty(params, "value");
+
+        // Validate the required values
+        final Optional<JsonNode> potentialValue = parseStringToJson(rawValue);
+        if(!potentialValue.isPresent()) throw new PluginParseException("The 'value' of the add-on entity_property_equal_to condition could not be parsed into JSON. Please check that it is valid json: " + rawValue);
+        this.expectedValue = potentialValue.get();
 
         // Optional values
         this.jsonPath = Strings.nullToEmpty(params.get("objectName"));
@@ -68,11 +73,6 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
                 @Override
                 public Boolean apply(final AddonProperty input)
                 {
-                    // Get the expected value
-                    final Optional<JsonNode> potentialExpectedValue = parseStringToJson(propertyValue);
-                    if(!potentialExpectedValue.isPresent()) return false;
-                    final JsonNode expectedValue = potentialExpectedValue.get();
-
                     // Load the actual value
                     JsonNode actualValue = input.getValue();
 

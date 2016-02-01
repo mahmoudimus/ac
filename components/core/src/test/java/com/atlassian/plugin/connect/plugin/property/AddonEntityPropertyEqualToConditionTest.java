@@ -3,20 +3,37 @@ package com.atlassian.plugin.connect.plugin.property;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.web.condition.ConnectConditionContext;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.plugin.property.AddonEntityPropertyEqualToCondition.getValueForPath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AddonEntityPropertyEqualToConditionTest
 {
     public static final JsonNode COMPLICATED_EXAMPLE, LEVEL_ONE, LEVEL_TWO;
+    public static final String FAKE_ADD_ON_KEY = "fake.add-on.key";
 
     static {
         final JsonNode root = getComplicatedExample();
@@ -39,6 +56,15 @@ public class AddonEntityPropertyEqualToConditionTest
 
         return root;
     }
+
+    @Mock
+    private AddonPropertyService addonPropertyService;
+
+    @Mock
+    private UserManager userManager;
+
+    @InjectMocks
+    private AddonEntityPropertyEqualToCondition sut;
 
     @Test
     public void testGetValueForPath__null_json_entity_returns_nothing() {
@@ -119,5 +145,96 @@ public class AddonEntityPropertyEqualToConditionTest
 
         final Optional<JsonNode> result = getValueForPath(root, "one.two.three");
         assertEquals(Optional.empty(), result);
+    }
+
+    @Test(expected = PluginParseException.class)
+    public void testInit__missing_property_key_param_throws_plugin_parse_exception() {
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "value", "true"
+        ));
+    }
+
+    @Test(expected = PluginParseException.class)
+    public void testInit__missing_value_param_throws_plugin_parse_exception() {
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key"
+        ));
+    }
+
+    @Test(expected = PluginParseException.class)
+    public void testInit__invalid_value_throws_plugin_parse_exception() {
+        // The value JSON is invalid because it is missing an extra quote after element
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "value", "{\"some\", \"element}"
+        ));
+    }
+
+    @Test
+    public void testInit__provided_property_key_and_value_throws_no_exception() {
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "value", "true"
+        ));
+    }
+
+
+    @Test
+    public void testShouldDisplay__mising_actual_value_results_in_not_displayed() {
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Fail(AddonPropertyServiceImpl.OperationStatusImpl.PROPERTY_NOT_FOUND));
+
+        assertFalse(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_actual_value_and_objectName_shoud_be_displayed() {
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", createComplicatedJsonNode(), 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "objectName", "life.universe.everything",
+            "value", "42"
+        ));
+
+        assertTrue(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__with_actual_value_and_missing_objectName_shoud_not_be_displayed() {
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", createComplicatedJsonNode(), 12345L);
+
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "some-key",
+            "objectName", "life.universe.allthethings",
+            "value", "42"
+        ));
+
+        assertFalse(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    private static JsonNode createComplicatedJsonNode() {
+        final ObjectNode root = JsonNodeFactory.instance.objectNode();
+        root.put("not-important", "this data will not be read");
+
+        final ObjectNode levelOne = root.putObject("life");
+        levelOne.put("ignored", "data");
+
+        final ObjectNode levelTwo = levelOne.putObject("universe");
+        levelTwo.put("everything", 42);
+        levelTwo.put("help", "it's dangerous to go alone. Here, take this towel");
+        return root;
     }
 }
