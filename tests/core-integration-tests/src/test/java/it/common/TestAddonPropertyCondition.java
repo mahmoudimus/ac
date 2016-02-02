@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -12,8 +13,6 @@ import com.atlassian.plugin.connect.test.client.AddonPropertyClient;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
-import com.google.common.base.Supplier;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
@@ -31,7 +30,7 @@ import static org.junit.Assert.assertThat;
 public class TestAddonPropertyCondition extends MultiProductWebDriverTestBase
 {
     private static final String PAGE_KEY = "add-on-property-page";
-    private static final String PAGE_NAME = "Prop";
+    private static final String PAGE_KEY_WITH_OBJECT_NAME = PAGE_KEY +  "-with-object-name";
 
     private static ConnectRunner remotePlugin;
 
@@ -40,24 +39,38 @@ public class TestAddonPropertyCondition extends MultiProductWebDriverTestBase
     @BeforeClass
     public static void startConnectAddon() throws Exception
     {
+        final ConnectPageModuleBean pageWithoutObjectName = newPageBean()
+            .withName(new I18nProperty(PAGE_KEY, null))
+            .withKey(PAGE_KEY)
+            .withUrl("/pg")
+            .withLocation(getGloballyVisibleLocation())
+            .withWeight(1234)
+            .withConditions(new SingleConditionBeanBuilder()
+                .withCondition("entity_property_equal_to")
+                .withParam("propertyKey", "prop")
+                .withParam("entity", "addon")
+                .withParam("value", "true")
+                .build())
+            .build();
+
+        final ConnectPageModuleBean pageWithObjectName = newPageBean()
+            .withName(new I18nProperty(PAGE_KEY_WITH_OBJECT_NAME, null))
+            .withKey(PAGE_KEY_WITH_OBJECT_NAME)
+            .withUrl("/pg")
+            .withLocation(getGloballyVisibleLocation())
+            .withWeight(1234)
+            .withConditions(new SingleConditionBeanBuilder()
+                .withCondition("entity_property_equal_to")
+                .withParam("propertyKey", "prop")
+                .withParam("entity", "addon")
+                .withParam("objectName", "level-one.level-two")
+                .withParam("value", "true")
+                .build())
+            .build();
+
         remotePlugin = new ConnectRunner(product)
                 .addJWT()
-                .addModules(
-                        "generalPages",
-                        newPageBean()
-                                .withName(new I18nProperty(PAGE_NAME, null))
-                                .withKey(PAGE_KEY)
-                                .withUrl("/pg")
-                                .withLocation(getGloballyVisibleLocation())
-                                .withWeight(1234)
-                                .withConditions(new SingleConditionBeanBuilder()
-                                        .withCondition("entity_property_equal_to")
-                                        .withParam("propertyKey", "prop")
-                                        .withParam("entity", "addon")
-                                        .withParam("objectName", "level-one.level-two")
-                                        .withParam("value", "true")
-                                        .build())
-                                .build())
+                .addModules("generalPages", pageWithObjectName, pageWithoutObjectName)
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }
@@ -80,42 +93,59 @@ public class TestAddonPropertyCondition extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void pageShouldBeVisibleIfAddonPropertyIsSetToTrue() throws Exception
+    public void pageShouldBeVisibleIfAddonPropertyIsSetToTrueWithoutObjectName() throws Exception
+    {
+        addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "true");
+
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), () -> webPageIsVisible(PAGE_KEY)));
+    }
+
+    @Test
+    public void pageShouldNotBeVisibleIfAddonPropertyIsSetToFalseWithoutObjectName() throws Exception
+    {
+        addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "false");
+
+        assertThat(webPageIsVisible(PAGE_KEY), equalTo(false));
+    }
+
+    @Test
+    public void pageShouldNotBeVisibleIfAddonPropertyIsNotSetWithoutObjectName() throws Exception
+    {
+        addonPropertyClient.deleteProperty(remotePlugin.getAddon().getKey(), "prop", "false");
+
+        assertThat(webPageIsVisible(PAGE_KEY), equalTo(false));
+    }
+
+    @Test
+    public void pageShouldBeVisibleIfAddonPropertyIsSetToTrueWithObjectName() throws Exception
     {
         addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", generateTestData(true).toString());
 
-        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
-        {
-            @Override
-            public Boolean get()
-            {
-                return webPageIsVisible();
-            }
-        }));
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), () -> webPageIsVisible(PAGE_KEY_WITH_OBJECT_NAME)));
     }
 
     @Test
-    public void pageShouldNotBeVisibleIfAddonPropertyIsNotSetButSubPropertyMissing() throws Exception
+    public void pageShouldNotBeVisibleIfAddonPropertyIsNotSetButSubPropertyMissingWithObjectName() throws Exception
     {
         addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", generateIncorrectTestData(true).toString());
 
-        assertThat(webPageIsVisible(), equalTo(false));
+        assertThat(webPageIsVisible(PAGE_KEY_WITH_OBJECT_NAME), equalTo(false));
     }
 
     @Test
-    public void pageShouldNotBeVisibleIfAddonPropertyIsSetToFalse() throws Exception
+    public void pageShouldNotBeVisibleIfAddonPropertyIsSetToFalseWithObjectName() throws Exception
     {
         addonPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", generateTestData(false).toString());
 
-        assertThat(webPageIsVisible(), equalTo(false));
+        assertThat(webPageIsVisible(PAGE_KEY_WITH_OBJECT_NAME), equalTo(false));
     }
 
     @Test
-    public void pageShouldNotBeVisibleIfAddonPropertyIsNotSet() throws Exception
+    public void pageShouldNotBeVisibleIfAddonPropertyIsNotSetWithObjectName() throws Exception
     {
         addonPropertyClient.deleteProperty(remotePlugin.getAddon().getKey(), "prop", generateTestData(false).toString());
 
-        assertThat(webPageIsVisible(), equalTo(false));
+        assertThat(webPageIsVisible(PAGE_KEY_WITH_OBJECT_NAME), equalTo(false));
     }
 
     private static JsonNode generateTestData(boolean data) {
@@ -140,9 +170,9 @@ public class TestAddonPropertyCondition extends MultiProductWebDriverTestBase
         return root;
     }
 
-    private boolean webPageIsVisible()
+    private boolean webPageIsVisible(final String expectedKey)
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        return connectPageOperations().existsWebItem(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
+        return connectPageOperations().existsWebItem(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), expectedKey));
     }
 }

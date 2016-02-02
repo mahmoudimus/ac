@@ -48,12 +48,28 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
 
         // Optional values
         this.jsonPath = Strings.nullToEmpty(params.get("objectName"));
+        validateObjectNameHasCorrectSyntax(this.jsonPath);
     }
 
     private static String getRequiredProperty(Map<String, String> params, String paramName) {
         final String property = params.get(paramName);
         if(property == null) throw new PluginParseException("Add-on entity_property_equal_to condition is missing parameter: " + paramName);
         return property;
+    }
+
+    private void validateObjectNameHasCorrectSyntax(final String objectName) {
+        if(StringUtils.isNotBlank(objectName)) {
+            final Optional<String> potentialError = validateObjectName(objectName);
+            if(potentialError.isPresent()) {
+                throw new PluginParseException("Failed to read the objectName property: " + potentialError.get() + " (" + objectName + ")");
+            }
+        }
+    }
+
+    private static Optional<String> validateObjectName(String objectName) {
+        if(objectName.contains("..")) return Optional.of("Two '.' characters in a row is not valid in an objectName");
+
+        return Optional.empty();
     }
 
     @Override
