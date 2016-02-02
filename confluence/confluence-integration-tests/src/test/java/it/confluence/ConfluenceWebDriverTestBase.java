@@ -27,7 +27,6 @@ import com.atlassian.confluence.test.rpc.api.ConfluenceRpcClient;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
-import com.atlassian.connect.test.confluence.pageobjects.ConfluencePageOperations;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
@@ -75,7 +74,7 @@ public class ConfluenceWebDriverTestBase
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
     protected static ConfluenceRestClient restClient;
     protected static ConnectTestUserFactory testUserFactory;
-    protected static ConfluencePageOperations confluencePageOperations = new ConfluencePageOperations(
+    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
             product.getPageBinder(), product.getTester().getDriver());
     private final Logger logger = LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class);
 
@@ -286,7 +285,7 @@ public class ConfluenceWebDriverTestBase
             @Override
             public void run()
             {
-                RemotePluginDialog dialog = confluencePageOperations.findDialog(moduleKey);
+                RemotePluginDialog dialog = connectPageOperations.findDialog(moduleKey);
                 dialog.submitAndWaitUntilHidden();
             }
         };
@@ -299,7 +298,7 @@ public class ConfluenceWebDriverTestBase
             @Override
             public void run()
             {
-                RemotePluginDialog dialog = confluencePageOperations.findDialog(moduleKey);
+                RemotePluginDialog dialog = connectPageOperations.findDialog(moduleKey);
                 dialog.cancelAndWaitUntilHidden();
             }
         };

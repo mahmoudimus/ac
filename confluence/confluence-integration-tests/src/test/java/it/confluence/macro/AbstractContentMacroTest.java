@@ -306,7 +306,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         {
             Assert.assertTrue(macroBrowserAndEditor.macroForm.getField(SINGLE_PARAM_ID).isVisible());
 
-            WebElement label = confluencePageOperations.findLabel("macro-param-" + SINGLE_PARAM_ID);
+            WebElement label = connectPageOperations.findLabel("macro-param-" + SINGLE_PARAM_ID);
             Assert.assertThat(label.getText(), CoreMatchers.is(SINGLE_PARAM_NAME));
         }
         finally
@@ -365,7 +365,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
 
                 try
                 {
-                    dialog = confluencePageOperations.findDialog(EDITOR_MACRO_KEY);
+                    dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
                     String content = dialog.getValueById("description");
                     Assert.assertThat(content, CoreMatchers.is("Select from:"));
                 }
@@ -403,7 +403,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
 
                 try
                 {
-                    dialog = confluencePageOperations.findDialog(CUSTOM_TITLE_EDITOR_MACRO_KEY);
+                    dialog = connectPageOperations.findDialog(CUSTOM_TITLE_EDITOR_MACRO_KEY);
                     Assert.assertThat(dialog.getTitle(), CoreMatchers.is(CUSTOM_TITLE));
                 }
                 finally
@@ -432,7 +432,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
 
                 try
                 {
-                    dialog = confluencePageOperations.findDialog(EDITOR_MACRO_KEY);
+                    dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
                     Assert.assertThat(dialog.getTitle(), CoreMatchers.containsString(EDITOR_MACRO_NAME));
                 }
                 finally
