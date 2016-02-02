@@ -48,7 +48,6 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * Your add-on can receive [additional context](../../concepts/context-parameters.html) from the application by
      * using variable tokens in the URL attribute.
      */
-    @Required
     @StringSchemaAttributes(format = "uri-template")
     private String url;
 

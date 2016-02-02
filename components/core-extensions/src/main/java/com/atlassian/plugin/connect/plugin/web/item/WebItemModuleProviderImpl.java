@@ -22,6 +22,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationExcepti
 import com.atlassian.plugin.connect.modules.beans.DialogModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DialogModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
@@ -29,7 +30,10 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
+import com.atlassian.plugin.connect.plugin.web.dialog.DialogOptionsValidator;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
@@ -41,11 +45,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetType.dialog;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Component
 @ExportAsDevService
@@ -99,6 +105,9 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     {
         final List<WebItemModuleBean> webItems = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         assertLocationNotBlacklisted(descriptor, webItems);
+        validateUrls(descriptor, webItems);
+        // TODO ACDEV-2430 Uncomment this when confident that it won't break existing plugins.
+        // validateTargetOptions(descriptor, webItems);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), webItems);
         return webItems;
     }
@@ -130,7 +139,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         // Options and Url will be declared within the linked dialog module
         DialogModuleBean targetDialog = getTargetDialog(targetKey, addon);
 
-        WebItemTargetBean resolvedTarget = newWebItemTargetBean(bean.getTarget())
+        WebItemTargetBean resolvedTarget = newWebItemTargetBean(target)
                 .withOptions(targetDialog.getOptions())
                 .build();
 
@@ -186,12 +195,50 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
                         return webItemModuleBean.getLocation();
                     }
                 })
-                .collect(Collectors.toList());
+                .collect(toList());
 
         if (blacklistedLocationsUsed.size() > 0)
         {
             final String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
             throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
+        }
+    }
+
+    @VisibleForTesting
+    void validateUrls(ShallowConnectAddonBean descriptor, List<WebItemModuleBean> webItems)
+            throws ConnectModuleValidationException
+    {
+        List<String> invalidItemKeys = webItems.stream()
+                .filter(webItem -> {
+                    if (isNotBlank(webItem.getUrl()))
+                        return false;  // this one's fine
+
+                    // All web-items have urls UNLESS they target another bean (which has a required url)
+                    WebItemTargetType type = webItem.getTarget().getType();
+                    String key = webItem.getTarget().getKey();
+
+                    // If type was dialog and key was set we could rely on other validation to catch any missing
+                    // url in the target dialog module.
+                    return !type.equals(dialog) || isBlank(key);
+                })
+                .map(RequiredKeyBean::getRawKey)
+                .collect(toList());
+
+        if (!invalidItemKeys.isEmpty())
+        {
+            String exceptionMsg = String.format("Installation failed. The add-on includes web-items (%s) with no url.", invalidItemKeys);
+            throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.missing.url", invalidItemKeys.toArray(new String[invalidItemKeys.size()]));
+        }
+    }
+
+    private void validateTargetOptions(ShallowConnectAddonBean descriptor, List<WebItemModuleBean> webItems)
+            throws ConnectModuleValidationException
+    {
+        DialogOptionsValidator validator = new DialogOptionsValidator(descriptor, getMeta());
+        for (WebItemModuleBean webItem : webItems) {
+            WebItemTargetOptions options = webItem.getTarget().getOptions();
+            if (options instanceof DialogOptions)
+                validator.validate((DialogOptions) options);
         }
     }
 

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.modules.beans.WebItemTargetType.dialog;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -127,6 +129,36 @@ public class WebItemModuleProviderImplTest
         expectedException.expect(ConnectModuleValidationException.class);
         expectedException.expectMessage(format("Installation failed. The add-on includes a web fragment with an unsupported location ([%s]).", BLACKLISTED_LOCATION));
         provider.assertLocationNotBlacklisted(descriptor, webItemModuleBeans);
+    }
+
+    @Test
+    public void shouldThrowExceptionIfWebItemIsMissingUrlAndHasNoTargetDialogKey() throws ConnectModuleValidationException
+    {
+        ShallowConnectAddonBean descriptor = mock(ShallowConnectAddonBean.class);
+        List<WebItemModuleBean> webItemModuleBeans = Lists.newArrayList(
+                newWebItemBean()
+                        .withKey("with-url")
+                        .withUrl("http://atlassian.com")
+                        .build(),
+                newWebItemBean()
+                        .withKey("no-url1")
+                        .build(),
+                newWebItemBean()
+                        .withKey("no-url2")
+                        .build(),
+                newWebItemBean()
+                        .withKey("no-url3")
+                        .withTarget(newWebItemTargetBean()
+                                .withType(dialog)
+                                .withKey("dialog-key")
+                                .build())
+                        .build()
+        );
+
+        expectedException.expect(ConnectModuleValidationException.class);
+        expectedException.expectMessage("Installation failed. The add-on includes web-items ([no-url1, no-url2]) with no url.");
+
+        provider.validateUrls(descriptor, webItemModuleBeans);
     }
 
     private WebItemModuleBean newWebItemWithConditions(Collection<ConditionalBean> conditions)

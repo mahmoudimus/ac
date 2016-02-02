@@ -13,6 +13,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * <p>Defines a dialog that may be reused by multiple components, e.g. as the target of a web item.</p>
  *
+ * The defined dialog uses the same options documented at
+ * https://developer.atlassian.com/static/connect/docs/latest/javascript/module-Dialog.html#.create
+ *
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DIALOG_EXAMPLE}

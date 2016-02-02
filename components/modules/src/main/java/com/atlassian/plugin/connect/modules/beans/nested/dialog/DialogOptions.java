@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested.dialog;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -32,8 +33,9 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
     private String height;
 
     /**
-     * Whether the dialog should contain the AUI header and buttons. Default is true
+     * Whether the dialog should contain the AUI header and buttons.
      */
+    @CommonSchemaAttributes(defaultValue = "true")
     private Boolean chrome;
 
     public DialogOptions(DialogSize size, String width, String height, Boolean chrome)

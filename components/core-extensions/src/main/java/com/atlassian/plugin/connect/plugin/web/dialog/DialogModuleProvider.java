@@ -4,8 +4,10 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.DialogModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DialogModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableList;
@@ -36,5 +38,20 @@ public class DialogModuleProvider extends AbstractConnectCoreModuleProvider<Dial
     public List<ModuleDescriptor> createPluginModuleDescriptors(List<DialogModuleBean> modules, ConnectAddonBean addon)
     {
         return ImmutableList.of();
+    }
+
+    @Override
+    public List<DialogModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry,
+                                                                    ShallowConnectAddonBean descriptor)
+            throws ConnectModuleValidationException
+    {
+        // First validate against the schema
+        List<DialogModuleBean> beans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+
+        DialogOptionsValidator validator = new DialogOptionsValidator(descriptor, getMeta());
+        for (DialogModuleBean bean : beans)
+            validator.validate(bean.getOptions());
+
+        return beans;
     }
 }
