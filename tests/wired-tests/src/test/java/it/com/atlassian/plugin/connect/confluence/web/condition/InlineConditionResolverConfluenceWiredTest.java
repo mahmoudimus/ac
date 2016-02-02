@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.jira.web.condition;
+package it.com.atlassian.plugin.connect.confluence.web.condition;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestUtil;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
