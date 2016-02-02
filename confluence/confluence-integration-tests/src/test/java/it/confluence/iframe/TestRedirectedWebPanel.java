@@ -81,7 +81,7 @@ public final class TestRedirectedWebPanel extends ConfluenceWebDriverTestBase
     public void webPanelInRedirectedLocationShouldPointsToRedirectServletAndDisplaysProperly() throws Exception
     {
         ConfluenceEditPage page = createAndVisitPage(ConfluenceEditPage.class);
-        RemoteWebPanel panel = confluencePageOperations.findWebPanel(webPanel.getKey(remotePlugin.getAddon()));
+        RemoteWebPanel panel = connectPageOperations.findWebPanel(webPanel.getKey(remotePlugin.getAddon()));
 
         String iframeUrl = panel.getIFrameSourceUrl();
         assertThat(iframeUrl, containsString(RedirectServletPath.forModule(remotePlugin.getAddon().getKey(), "test-web-panel")));
