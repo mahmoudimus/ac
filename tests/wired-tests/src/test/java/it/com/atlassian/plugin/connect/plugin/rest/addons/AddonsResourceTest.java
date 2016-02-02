@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.license.LicenseHandler;
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -158,14 +157,7 @@ public class AddonsResourceTest
         Object[] expectedAddonKeys = new String[]{addonKey, otherAddonKey};
         AddonsInterpretation addonsRepresentation = response.getJsonBody(AddonsInterpretation.class);
         Iterable<String> addonKeys = Iterables.transform(addonsRepresentation.addons,
-            new Function<AddonInterpretation, String>()
-            {
-                @Override
-                public String apply(AddonInterpretation addonInterpretation)
-                {
-                    return addonInterpretation.key;
-                }
-            });
+                addonInterpretation -> addonInterpretation.key);
         assertThat("Wrong addons in response", addonKeys, containsInAnyOrder(expectedAddonKeys));
 
         testPluginInstaller.uninstallAddon(otherAddon);
