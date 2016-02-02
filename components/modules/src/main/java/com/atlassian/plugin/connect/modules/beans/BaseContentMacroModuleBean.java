@@ -15,7 +15,8 @@ import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-@ObjectSchemaAttributes(docOverrides = {@FieldDocOverride
+@ObjectSchemaAttributes(additionalProperties = true,
+    docOverrides = {@FieldDocOverride
     (
         fieldName = "key",
         description =
