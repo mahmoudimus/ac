@@ -161,7 +161,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     {
         ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(testUserFactory.admin(), ConnectConfluenceAdminHomePage.class);
         adminHomePage.openHelpMenu();
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>empty());
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>empty());
         assertIsEscaped(webItem.getLinkText());
     }
 
@@ -170,7 +170,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         createAndVisitViewPage();
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.of("action-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.of("action-menu-link"));
         webItem.hover();
         assertIsEscaped(webItem.getTitle());
         assertIsEscaped(webItem.getLinkText());
@@ -231,7 +231,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
         {
             assertNotNull(macroBrowserAndEditor.macroForm);
             assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
-            WebElement label = confluencePageOperations.findLabel("macro-param-test");
+            WebElement label = connectPageOperations.findLabel("macro-param-test");
             assertIsEscaped(label.getText());
         }
         finally
@@ -244,7 +244,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     public void testProfilePage() throws Exception
     {
         loginAndVisit(testUserFactory.basicUser(), ConfluenceUserProfilePage.class);
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
+        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
                 "a[href*='" + getServletPath(PROFILE_PAGE_KEY) + "']", Optional.<String>empty());
         assertIsEscaped(webItem.getLinkText());
     }
@@ -253,7 +253,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     public void testSpaceAdminTab() throws Exception
     {
         loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, TestSpace.DEMO);
-        LinkedRemoteContent addonPage = confluencePageOperations.findRemoteLinkedContent(
+        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(
                 RemoteWebItem.ItemMatchingMode.LINK_TEXT, MODULE_NAME, Optional.<String>empty(), getModuleKey(SPACE_TOOLS_TAB_KEY));
         assertIsEscaped(addonPage.getWebItem().getLinkText());
     }

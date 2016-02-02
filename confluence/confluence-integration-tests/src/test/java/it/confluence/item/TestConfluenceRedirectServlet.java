@@ -150,7 +150,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     {
         ConfluenceOps.ConfluencePageData page = confluenceOps.setPage(some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
         product.visit(ConfluenceViewPage.class, page.getId());
-        return confluencePageOperations.findWebItem(moduleKey, Optional.<String>empty());
+        return connectPageOperations.findWebItem(moduleKey, Optional.<String>empty());
     }
 
     private String getModuleKey(String module)
