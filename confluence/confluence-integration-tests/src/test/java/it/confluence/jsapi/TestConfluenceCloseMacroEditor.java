@@ -58,7 +58,7 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
             @Override
             public void run()
             {
-                RemoteMacroEditorDialog remoteMacroEditor = connectPageOperations.findDialog(
+                RemoteMacroEditorDialog remoteMacroEditor = confluencePageOperations.findDialog(
                         editorMacroModuleBean.getRawKey(), RemoteMacroEditorDialog.class);
                 remoteMacroEditor.closeMacroEditorAndWaitUntilHidden();
             }
