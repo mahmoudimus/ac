@@ -18,9 +18,6 @@ import com.atlassian.confluence.test.ConfluenceBaseUrlSelector;
 import com.atlassian.confluence.test.plugin.DefaultPluginHelper;
 import com.atlassian.confluence.test.plugin.PluginHelper;
 import com.atlassian.confluence.test.plugin.SimplePlugin;
-import com.atlassian.confluence.test.plugin.UploadablePlugin;
-import com.atlassian.confluence.test.plugin.maven.MavenDependencyHelper;
-import com.atlassian.confluence.test.plugin.maven.MavenUploadablePlugin;
 import com.atlassian.confluence.test.rest.ConfluenceJacksonClientBuilder;
 import com.atlassian.confluence.test.rpc.VersionedRpcBaseResolver;
 import com.atlassian.confluence.test.rpc.api.ConfluenceRpcClient;
@@ -32,7 +29,6 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
@@ -40,7 +36,6 @@ import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProd
 import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
 import com.atlassian.testutils.annotations.Retry;
 import com.atlassian.testutils.junit.RetryRule;
-import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.sun.jersey.api.client.Client;
@@ -109,24 +104,6 @@ public class ConfluenceWebDriverTestBase
     @Rule
     public TestName name = new TestName();
 
-    private static final LazyReference<UploadablePlugin> FUNCTEST_RPC_PLUGIN_HOLDER = new LazyReference<UploadablePlugin>()
-    {
-        @Override
-        protected UploadablePlugin create() throws Exception
-        {
-            return resolveFuncTestRpcPlugin();
-        }
-    };
-
-    private static final LazyReference<UploadablePlugin> SCRIPTS_FINISHED_PLUGIN_HOLDER = new LazyReference<UploadablePlugin>()
-    {
-        @Override
-        protected UploadablePlugin create() throws Exception
-        {
-            return resolveScriptsFinishedPlugin();
-        }
-    };
-
     protected static ConfluenceTestedProduct getProduct()
     {
         return product;
@@ -151,7 +128,6 @@ public class ConfluenceWebDriverTestBase
         final TestUser admin = testUserFactory.admin();
         rpc.logIn(toConfluenceUser(admin));
         restClient = new ConfluenceRestClient(getProduct(), admin);
-        installTestPlugins();
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
         try
@@ -180,31 +156,6 @@ public class ConfluenceWebDriverTestBase
     public void setupTest() throws Exception
     {
         StartOfTestLogger.instance().logTestStart(rpc, getClass(), name.getMethodName());
-    }
-
-    private static void installTestPlugins() {
-        if (!pluginHelper.isPluginEnabled(FUNCTEST_RPC_PLUGIN_HOLDER.get()))
-        {
-            pluginHelper.installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
-        }
-        if (!pluginHelper.isPluginEnabled(SCRIPTS_FINISHED_PLUGIN_HOLDER.get()))
-        {
-            pluginHelper.installPlugin(SCRIPTS_FINISHED_PLUGIN_HOLDER.get());
-        }
-    }
-
-    private static UploadablePlugin resolveFuncTestRpcPlugin()
-    {
-        return new MavenUploadablePlugin("confluence.extra.functestrpc",
-                "Confluence Functional Test Remote API",
-                MavenDependencyHelper.resolve("com.atlassian.confluence.plugins", "confluence-functestrpc-plugin"));
-    }
-
-    private static UploadablePlugin resolveScriptsFinishedPlugin()
-    {
-        return new MavenUploadablePlugin("com.atlassian.confluence.plugins.confluence-scriptsfinished-plugin",
-                "Confluence Scripts Finished Plugin",
-                MavenDependencyHelper.resolve("com.atlassian.confluence.plugins", "confluence-scriptsfinished-plugin"));
     }
 
     protected MacroBrowserAndEditor selectMacro(CreatePage editorPage, String macroName)
