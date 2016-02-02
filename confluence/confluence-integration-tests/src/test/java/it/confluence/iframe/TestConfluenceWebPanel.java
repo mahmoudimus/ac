@@ -64,6 +64,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddon() throws Exception
     {
+        // iframe url and params are checked by it.confluence.iframe.TestRedirectedWebPanel.webPanelInRedirectedLocationShouldPointsToRedirectServletAndDisplaysProperly the
         editorWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("Editor Panel", null))
                 .withKey("editor-panel")
@@ -121,23 +122,6 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         RemoteWebPanel webPanel = findEditPageWebPanel();
         assertThat(webPanel, is(not(nullValue())));
-    }
-
-    @Test
-    public void iFrameUrlIsCorrectOnEditPage() throws Exception
-    {
-        RemoteWebPanel webPanel = findEditPageWebPanel();
-        assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_EDIT));
-    }
-
-    @Test
-    public void iFrameParametersAreCorrectOnEditPage() throws Exception
-    {
-        ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
-        RemoteWebPanel webPanel = confluencePageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
-        assertThat(webPanel.getSpaceKey(), is(SPACE));
-        assertThat(webPanel.getPageId(), is(editPage.getPageId()));
-        assertThat(webPanel.getContentId(), is(editPage.getPageId()));
     }
 
     @Test

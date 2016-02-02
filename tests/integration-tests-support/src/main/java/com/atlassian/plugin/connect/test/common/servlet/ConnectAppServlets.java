@@ -92,20 +92,11 @@ public class ConnectAppServlets
 
     /**
      * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
+     * @param delegate
      */
-    public static ParameterCapturingServlet parameterCapturingDialogServlet()
+    public static ParameterCapturingServlet parameterCapturingServlet(ContextServlet delegate)
     {
-        return new ParameterCapturingServlet(simpleDialogServlet());
-    }
-
-    public static ParameterCapturingServlet parameterCapturingInlineDialogServlet()
-    {
-        return new ParameterCapturingServlet(simpleInlineDialogServlet());
-    }
-
-    public static ParameterCapturingServlet parameterCapturingPageServlet()
-    {
-        return new ParameterCapturingServlet(simplePageServlet());
+        return new ParameterCapturingServlet(delegate);
     }
 
     /**
@@ -177,12 +168,12 @@ public class ConnectAppServlets
         return new InstallHandlerServlet();
     }
 
-    private static ContextServlet simpleDialogServlet()
+    public static ContextServlet simpleDialogServlet()
     {
         return new MustacheServlet("dialog.mu");
     }
 
-    private static ContextServlet simpleInlineDialogServlet()
+    public static ContextServlet simpleInlineDialogServlet()
     {
         return new MustacheServlet("iframe-inline-dialog.mu");
     }
@@ -190,5 +181,10 @@ public class ConnectAppServlets
     public static ContextServlet simplePageServlet()
     {
         return new MustacheServlet("iframe-hello-world.mu");
+    }
+
+    public static ContextServlet channelConnectionVerifyServlet()
+    {
+        return new MustacheServlet("iframe-channel-connection-verify.mu");
     }
 }

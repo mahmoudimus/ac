@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.iframe;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectAddonUriBuilder;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
@@ -23,8 +23,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 /**
  *
  */
-public class IFrameUriBuilderImpl
-        implements IFrameUriBuilder, IFrameUriBuilder.AddonUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
+public class ConnectAddonUriBuilderImpl
+        implements ConnectAddonUriBuilder, ConnectAddonUriBuilder.AddonUriBuilder, ConnectAddonUriBuilder.NamespacedUriBuilder, ConnectAddonUriBuilder.TemplatedBuilder
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
@@ -39,7 +39,7 @@ public class IFrameUriBuilderImpl
     private String namespace;
     private String templateUri;
 
-    public IFrameUriBuilderImpl(UrlVariableSubstitutor urlVariableSubstitutor,
+    public ConnectAddonUriBuilderImpl(UrlVariableSubstitutor urlVariableSubstitutor,
             RemotablePluginAccessorFactory pluginAccessorFactory,
             UserManager userManager,
             HostApplicationInfo hostApplicationInfo,

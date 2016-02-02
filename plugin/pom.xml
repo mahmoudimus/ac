@@ -915,7 +915,7 @@
         <debugSchemaGen>false</debugSchemaGen>
         <od.testing.configuration>
             use-java,8
-            use-maven,3
+            use-maven,3.3.9
             include-artifact,com.atlassian.plugins:atlassian-connect-confluence-integration-tests
             include-artifact,com.atlassian.plugins:atlassian-connect-jira-integration-tests
         </od.testing.configuration>
