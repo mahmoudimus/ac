@@ -1,14 +1,5 @@
 package com.atlassian.plugin.connect.confluence.blueprint;
 
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
 import com.atlassian.confluence.api.model.content.ContentBody;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
@@ -30,18 +21,26 @@ import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.net.HttpHeaders;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.lang.reflect.Type;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import static com.atlassian.plugin.connect.api.request.HttpMethod.POST;
 import static java.util.Collections.emptyList;
@@ -66,6 +65,8 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
     static final String CONTEXT_URL_KEY = "context-url";
     // the name of the param holding the key of the addon that created this module
     static final String REMOTE_ADDON_KEY = "addon-key";
+    // the name of the param holding the vendor name - used for error messages
+    static final String REMOTE_VENDOR_NAME = "vendor-name";
     // the name of the param holding the key of the content template for this context provider
     static final String CONTENT_TEMPLATE_KEY = "content-template-key";
     // readable name of blueprint
@@ -79,6 +80,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
 
     private String contextUrl;
     private String addonKey;
+    private String vendorName;
     private String blueprintKey;
     private RemotablePluginAccessor pluginAccessor;
     private I18nResolver i18nResolver;
@@ -114,6 +116,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         contextUrl = params.get(CONTEXT_URL_KEY);
         addonKey = params.get(REMOTE_ADDON_KEY);
         blueprintKey = params.get(CONTENT_TEMPLATE_KEY);
+        vendorName = StringUtils.isBlank(params.get(REMOTE_VENDOR_NAME)) ? addonKey : params.get(REMOTE_VENDOR_NAME);
         pluginAccessor = accessorFactory.getOrThrow(addonKey);
     }
 
@@ -146,7 +149,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         log.debug("start parsing response json into " + responseType.getTypeName());
         long start =  System.currentTimeMillis();
         List<BlueprintContextValue> contextMap = emptyList();
-        String blueprintName = (String) blueprintContext.get(BLUEPRINT_NAME);
+        String blueprintName = blueprintContext.get(BLUEPRINT_NAME) + "(" + vendorName + ")";
 
         try
         {

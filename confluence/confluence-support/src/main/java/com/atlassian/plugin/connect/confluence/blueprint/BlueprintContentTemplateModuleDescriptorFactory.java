@@ -83,6 +83,9 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                                .addAttribute("name", BlueprintContextProvider.REMOTE_ADDON_KEY)
                                .addAttribute("value", addon.getKey());
                 contextProvider.addElement("param")
+                               .addAttribute("name", BlueprintContextProvider.REMOTE_VENDOR_NAME)
+                               .addAttribute("value", addon.getVendor().getName());
+                contextProvider.addElement("param")
                                .addAttribute("name", BlueprintContextProvider.CONTENT_TEMPLATE_KEY)
                                //we want the raw key since this is going to be sent to the connect plugin, and they can't decode our full key format
                                .addAttribute("value", bean.getRawKey());
