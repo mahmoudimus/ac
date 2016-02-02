@@ -192,7 +192,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                  */
                 openDatePicker: function (options) {
                     function isDomElement(el) {
-                        return el.nodeType && el.nodeType == 1;
+                        return el && el.nodeType && el.nodeType == 1;
                     }
 
                     options = options || {};
@@ -203,6 +203,10 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                         options.position = {}
                     }
 
+                    if (!options.onSelect || typeof options.onSelect !== "function") {
+                        throw new Error("options.onSelect function is a required parameter.");
+                    }
+
                     var sanitisedOptions = {
                         element: options.element,
                         position: {
@@ -210,7 +214,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                             left: options.position.left || 0
                         },
                         date: options.date,
-                        showTime: options.showTime,
+                        showTime: !!options.showTime,
                         onSelect: options.onSelect
                     };
 
