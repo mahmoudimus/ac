@@ -101,7 +101,7 @@ public class TestInlineConfluenceConditions extends AbstractConfluenceConditions
         createAndVisitViewPage();
 
         CONDITION_NAMES.forEach(name -> {
-            RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(webItemKey(name)), Optional.<String>empty());
+            RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(webItemKey(name)), Optional.<String>empty());
             webItem.click();
             RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
             dialogPage.submitAndWaitUntilHidden();
@@ -118,7 +118,7 @@ public class TestInlineConfluenceConditions extends AbstractConfluenceConditions
         createAndVisitViewPage();
 
         CONDITION_NAMES.forEach(name -> {
-            RemoteWebPanel webPanel = confluencePageOperations.findWebPanel(getModuleKey(webPanelKey(name)));
+            RemoteWebPanel webPanel = connectPageOperations.findWebPanel(getModuleKey(webPanelKey(name)));
             System.out.println("Testing: " + name);
             assertThat(webPanel.getFromQueryString("condition"), equalTo(expectedValue(name, FALSE_IN_WEB_PANELS)));
         });
