@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.confluence.web;
 
+import java.util.List;
+
 import com.atlassian.plugin.connect.api.web.condition.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.google.common.collect.ImmutableList;
-
-import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 
@@ -25,7 +25,7 @@ public class ConfluenceConditionClassResolver implements ConnectConditionClassRe
                 newEntry("email_address_public", com.atlassian.confluence.plugin.descriptor.web.conditions.EmailAddressPublicCondition.class).build(),
                 newEntry("favourite_page", com.atlassian.confluence.plugin.descriptor.web.conditions.FavouritePageCondition.class).build(),
                 newEntry("favourite_space", com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class).build(),
-                newEntry("following_target_user", com.atlassian.confluence.plugin.descriptor.web.conditions.user.FollowingTargetUserCondition.class).build(),
+                newEntry("following_target_user", com.atlassian.confluence.plugin.descriptor.web.conditions.user.FollowingTargetUserCondition.class).withoutInlineSupport().build(),
                 newEntry("has_attachment", com.atlassian.confluence.plugin.descriptor.web.conditions.HasAttachmentCondition.class).build(),
                 newEntry("has_blog_post", com.atlassian.confluence.plugin.descriptor.web.conditions.HasBlogPostCondition.class).build(),
                 newEntry("has_page", com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition.class).build(),
@@ -40,7 +40,7 @@ public class ConfluenceConditionClassResolver implements ConnectConditionClassRe
                 newEntry("target_user_has_personal_blog", com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserHasPersonalBlogCondition.class).build(),
                 newEntry("target_user_has_personal_space", com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserHasPersonalSpaceCondition.class).build(),
                 newEntry("threaded_comments", com.atlassian.confluence.plugin.descriptor.web.conditions.ThreadedCommentsCondition.class).build(),
-                newEntry("tiny_url_supported", com.atlassian.confluence.plugin.descriptor.web.conditions.TinyUrlSupportedCondition.class).build(),
+                newEntry("tiny_url_supported", com.atlassian.confluence.plugin.descriptor.web.conditions.TinyUrlSupportedCondition.class).withoutInlineSupport().build(),
                 newEntry("user_can_create_personal_space", com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserCanCreatePersonalSpaceCondition.class).build(),
                 newEntry("user_can_use_confluence", com.atlassian.confluence.plugin.descriptor.web.conditions.user.TargetUserCanUseConfluenceCondition.class).build(),
                 newEntry("user_favouriting_target_user_personal_space", com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserFavouritingTargetUserPersonalSpaceCondition.class).build(),
@@ -50,9 +50,8 @@ public class ConfluenceConditionClassResolver implements ConnectConditionClassRe
                 newEntry("user_watching_page", com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingPageCondition.class).build(),
                 newEntry("user_watching_space", com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingSpaceCondition.class).build(),
                 newEntry("user_watching_space_for_content_type", com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingSpaceForContentTypeCondition.class).build(),
-                newEntry("viewing_content", com.atlassian.confluence.plugin.descriptor.web.conditions.ViewingContentCondition.class).build(),
-                newEntry("viewing_own_profile", com.atlassian.confluence.plugin.descriptor.web.conditions.ViewingOwnProfileCondition.class).build(),
-
+                newEntry("viewing_content", com.atlassian.confluence.plugin.descriptor.web.conditions.ViewingContentCondition.class).withoutInlineSupport().build(),
+                newEntry("viewing_own_profile", com.atlassian.confluence.plugin.descriptor.web.conditions.ViewingOwnProfileCondition.class).withoutInlineSupport().build(),
                 //just here for backwards compatibility.
                 newEntry("user_is_confluence_administrator", UserIsAdminCondition.class).build()
         );

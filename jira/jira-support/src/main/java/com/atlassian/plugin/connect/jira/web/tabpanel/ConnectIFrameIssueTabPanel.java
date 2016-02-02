@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.jira.web.tabpanel;
 
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
@@ -17,13 +20,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.util.List;
-import java.util.Map;
-
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_HELPER;
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USERNAME;
 import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil.renderToString;
 import static com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
+import static java.util.Collections.emptyMap;
 
 public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
 {
@@ -75,9 +76,8 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
 
     private JiraModuleContextParameters createUnfilteredContext(final Issue issue)
     {
-        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl(emptyMap());
         unfilteredContext.addIssue(issue);
         return unfilteredContext;
     }
-
 }

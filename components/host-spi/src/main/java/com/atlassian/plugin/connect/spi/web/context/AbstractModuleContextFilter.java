@@ -60,7 +60,7 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
     @Override
     public ModuleContextParameters filter(final ModuleContextParameters unfiltered)
     {
-        final ModuleContextParameters filtered = new HashMapModuleContextParameters();
+        final ModuleContextParameters filtered = new HashMapModuleContextParameters(unfiltered.getOriginalContext());
         final T currentUser = getCurrentUser();
 
         Multimap<String, PermissionCheck<T>> permissionChecksMultimap = getFieldNameToPermissionChecksMap();

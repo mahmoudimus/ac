@@ -3,7 +3,6 @@ package it.com.atlassian.plugin.connect.plugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
-import com.atlassian.plugin.predicate.ModuleDescriptorPredicate;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,14 +23,8 @@ public class PluginDescriptorTest
     @Test
     public void shouldReturnModulesForDescriptors()
     {
-        final Collection<ModuleDescriptor<Object>> moduleDescriptors = pluginAccessor.getModuleDescriptors(new ModuleDescriptorPredicate<Object>()
-        {
-            @Override
-            public boolean matches(ModuleDescriptor<?> moduleDescriptor)
-            {
-                return ConnectPluginInfo.getPluginKey().equals(moduleDescriptor.getPluginKey());
-            }
-        });
+        final Collection<ModuleDescriptor<Object>> moduleDescriptors = pluginAccessor.getModuleDescriptors(
+                moduleDescriptor -> ConnectPluginInfo.getPluginKey().equals(moduleDescriptor.getPluginKey()));
         for (ModuleDescriptor<Object> moduleDescriptor : moduleDescriptors)
         {
             if (moduleDescriptor.getKey().equals("analyticsWhitelist"))

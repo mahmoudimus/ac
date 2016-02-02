@@ -42,7 +42,7 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
     @Override
     public ModuleContextParameters extractParameters(final String storageFormatBody, final ConversionContext conversionContext, final Map<String, String> parameters)
     {
-        ModuleContextParameters moduleContext = new HashMapModuleContextParameters();
+        ModuleContextParameters moduleContext = new HashMapModuleContextParameters(parameters);
 
         moduleContext.putAll(parameters);
 

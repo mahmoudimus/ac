@@ -21,7 +21,6 @@ module.exports = function(config) {
       {pattern: 'node_modules/atlassian-connect-js/bower_components/aui/src/js/atlassian.js', included: true},
       {pattern: 'src/main/resources/js/core/connect-host.js',
       included: false},
-      {pattern: 'node_modules/squirejs/src/Squire.js', included: false},
       'src/test/resources/test-main.js',
       {pattern: 'src/test/resources/**/*-test.js', included: false},
       {pattern: 'src/test/resources/fixtures/**', included: false},
