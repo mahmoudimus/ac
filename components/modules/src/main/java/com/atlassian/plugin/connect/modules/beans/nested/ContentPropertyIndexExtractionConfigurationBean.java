@@ -18,7 +18,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
  * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a> documentation for
  * a complete example.
  *
- * <h4>Example</h4>
+ * <h3>Example</h3>
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Extraction Configuration
  */

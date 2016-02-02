@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
  * stored as JSON objects, and allow you to track extra information that your add-on needs, without the use of a
  * backing data-store. Values from these JSON objects can be extracted, indexed and made available to CQL queries.
  *
- * <h4>Using Content Properties</h4>
+ * <h3>Using Content Properties</h3>
  * To start creating and manipulating content properties, you don't need to declare anything in your descriptor. Just use the
  * <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">REST API</a> to
  * store your JSON data against a piece of content.
@@ -25,7 +25,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
  * Once you've done that, you can use <a href="https://developer.atlassian.com/display/CONFDEV/Advanced+Searching+using+CQL">CQL</a>
  * to query content based on your custom content property.
  *
- * <h4>Example</h4>
+ * <h3>Example</h3>
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
  * @schemaTitle Content Property
  * @since 1.0
