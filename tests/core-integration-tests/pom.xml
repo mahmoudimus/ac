@@ -440,6 +440,11 @@
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-functestrpc-plugin</artifactId>
+                                    <version>${atlassian.confluence.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
