@@ -109,7 +109,7 @@ The JWT claims object contains security information about the message. For examp
             <ul>
                 <li>If the Atlassian product is the calling application: contains the unique identifier of the tenant.
              This is the `clientKey` that you receive in the `installed` callback. You should reject unrecognised issuers.
-                <li>If the add-on is the calling application: the add-on key specified in the add-on descriptor
+                <li>If the add-on is the calling application then use the top level 'key' specified in your descriptor as the iss.
             </ul>
         </td>
     </tr>
