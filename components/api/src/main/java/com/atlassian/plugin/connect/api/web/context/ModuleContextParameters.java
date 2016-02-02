@@ -10,4 +10,9 @@ import java.util.Map;
 public interface ModuleContextParameters extends Map<String, String>
 {
     void addProfileUser(UserProfile userProfile);
+
+    /**
+     * Context understood by product components, e.g. conditions.
+     */
+    Map<String, ?> getOriginalContext();
 }

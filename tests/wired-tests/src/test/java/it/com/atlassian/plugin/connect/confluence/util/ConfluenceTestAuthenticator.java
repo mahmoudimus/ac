@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.confluence;
+package it.com.atlassian.plugin.connect.confluence.util;
 
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;
