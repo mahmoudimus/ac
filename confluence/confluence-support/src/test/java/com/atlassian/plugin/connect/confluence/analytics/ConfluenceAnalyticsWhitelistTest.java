@@ -1,5 +1,6 @@
-package com.atlassian.plugin.connect.plugin;
+package com.atlassian.plugin.connect.confluence.analytics;
 
+import com.atlassian.plugin.connect.plugin.AnalyticsWhitelistTestHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,18 +18,17 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.collection.IsMapContaining.hasKey;
 
 /**
- * Checks whether the JSON whitelist entries have corresponding classes and fields.
- * Syntax errors and typos in the whitelist JSON will be caught.
+ *
  */
 @RunWith(Parameterized.class)
-public class AnalyticsWhitelistTest
+public class ConfluenceAnalyticsWhitelistTest
 {
     private static Map<String, List<String>> eventClassFields = new HashMap<>();
 
     private final String eventName;
     private final List<String> whiteListedFields;
 
-    public AnalyticsWhitelistTest(String eventName, List<String> whiteListedFields)
+    public ConfluenceAnalyticsWhitelistTest(String eventName, List<String> whiteListedFields)
     {
         this.eventName = eventName;
         this.whiteListedFields = whiteListedFields;
@@ -37,7 +37,7 @@ public class AnalyticsWhitelistTest
     @Parameterized.Parameters(name = "Event {0}")
     public static Collection<Object[]> testData() throws IOException
     {
-        Map<String, List<String>> whiteList = AnalyticsWhitelistTestHelper.getAnalyticsWhitelistFrom("/analytics/connect-analytics-whitelist.json");
+        Map<String, List<String>> whiteList = AnalyticsWhitelistTestHelper.getAnalyticsWhitelistFrom("/analytics/confluence-analytics-whitelist.json");
         Collection<Object[]> toTest = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : whiteList.entrySet())
         {
@@ -49,7 +49,7 @@ public class AnalyticsWhitelistTest
     @BeforeClass
     public static void collectEventClasses()
     {
-        eventClassFields.putAll(AnalyticsWhitelistTestHelper.reflectAllEventClassesFrom("com.atlassian.plugin.connect.plugin"));
+        eventClassFields.putAll(AnalyticsWhitelistTestHelper.reflectAllEventClassesFrom("com.atlassian.plugin.connect.confluence"));
     }
 
     @Test
@@ -65,4 +65,5 @@ public class AnalyticsWhitelistTest
         String[] jsonWhitelistFields = whiteListedFields.toArray(new String[whiteListedFields.size()]);
         assertThat(eventClassFields.get(eventName), hasItems(jsonWhitelistFields));
     }
+
 }

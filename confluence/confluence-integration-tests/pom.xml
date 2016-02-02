@@ -281,6 +281,7 @@
                                     ${addonconfig.maxpropertiesperplugin}
                                 </com.atlassian.plugin.connect.add_on_properties.max_properties>
                                 <atlassian.darkfeature.confluence.onboarding.bypass>true</atlassian.darkfeature.confluence.onboarding.bypass>
+                                <atlassian.darkfeature.dashboard.onboarding.disabled>true</atlassian.darkfeature.dashboard.onboarding.disabled>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>

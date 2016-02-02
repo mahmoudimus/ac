@@ -1,21 +1,19 @@
 package it.confluence.servlet;
 
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.connect.test.confluence.pageobjects.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextRequestTypeToken;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
 import com.atlassian.plugin.connect.test.common.servlet.BodyExtractor;
 import com.atlassian.plugin.connect.test.common.servlet.ErrorServlet;
 import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
-
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets.wrapContextAwareServlet;
 import static com.google.common.collect.Lists.newArrayList;
@@ -42,9 +40,9 @@ public class ConfluenceAppServlets
         return contextServlet;
     }
 
-    public static HttpServlet blueprintTemplateServlet()
+    public static HttpServlet blueprintTemplateServlet(final String templatePath)
     {
-        MustacheServlet mustacheServlet = new MustacheServlet("it/confluence/blueprint/blueprint.mu", "application/xml");
+        MustacheServlet mustacheServlet = new MustacheServlet(templatePath, "application/xml");
         return wrapContextAwareServlet(mustacheServlet);
     }
 
@@ -89,13 +87,18 @@ public class ConfluenceAppServlets
     private static class JsonExtractor implements BodyExtractor
     {
         private static final Gson GSON = new Gson();
-        private static final Type requestType = new BlueprintContextRequestTypeToken().getType();
 
         @Override
         public Map<String, String> extractAll(String jsonString)
         {
-            Map<String, String> json = GSON.fromJson(jsonString, requestType);
-            return json;
+            BlueprintContextPostBody postBody = GSON.fromJson(jsonString, BlueprintContextPostBody.class);
+            return ImmutableMap.of(
+                    "addonKey", postBody.getAddonKey(),
+                    "blueprintKey", postBody.getBlueprintKey(),
+                    "spaceKey", postBody.getSpaceKey(),
+                    "userKey", postBody.getUserKey(),
+                    "userLocale", postBody.getUserLocale().toString()
+            );
         }
     }
 }

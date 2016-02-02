@@ -4,15 +4,16 @@ import com.atlassian.confluence.languages.DefaultLocaleManager;
 import com.atlassian.confluence.plugins.createcontent.extensions.ContentTemplateModuleDescriptor;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateContextBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.sal.api.net.RequestFactory;
-
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -62,21 +63,30 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                 .addAttribute("type", "download")
                 .addAttribute("location", createTemplateURL(addon.getBaseUrl(), bean.getBlueprintTemplate().getUrl()));
 
-        String contextUrl = bean.getBlueprintTemplate().getBlueprintContext().getUrl();
-        if (contextUrl != null)
+        BlueprintTemplateContextBean blueprintContext = bean.getBlueprintTemplate().getBlueprintContext();
+
+        if (blueprintContext != null)
         {
-            Element contextProvider = contentTemplateElement.addElement("context-provider");
-            contextProvider.addAttribute("class", BlueprintContextProvider.class.getName());
-            contextProvider.addElement("param")
-                                  .addAttribute("name", BlueprintContextProvider.CONTEXT_URL_KEY)
-                                  .addAttribute("value", contextUrl);
-            contextProvider.addElement("param")
-                                  .addAttribute("name", BlueprintContextProvider.REMOTE_ADDON_KEY)
-                                  .addAttribute("value", addon.getKey());
-            contextProvider.addElement("param")
-                                  .addAttribute("name", BlueprintContextProvider.CONTENT_TEMPLATE_KEY)
-                                  //we want the raw key since this is going to be sent to the connect plugin, and they can't decode our full key format
-                                  .addAttribute("value", bean.getRawKey());
+            String contextUrl = blueprintContext.getUrl();
+            if (StringUtils.isBlank(contextUrl))
+            {
+                throw new RuntimeException("The connect addon module '" + bean.getKey(addon)  + "' has a blueprint template context url field, but it is blank.");
+            }
+            else
+            {
+                Element contextProvider = contentTemplateElement.addElement("context-provider");
+                contextProvider.addAttribute("class", BlueprintContextProvider.class.getName());
+                contextProvider.addElement("param")
+                               .addAttribute("name", BlueprintContextProvider.CONTEXT_URL_KEY)
+                               .addAttribute("value", contextUrl);
+                contextProvider.addElement("param")
+                               .addAttribute("name", BlueprintContextProvider.REMOTE_ADDON_KEY)
+                               .addAttribute("value", addon.getKey());
+                contextProvider.addElement("param")
+                               .addAttribute("name", BlueprintContextProvider.CONTENT_TEMPLATE_KEY)
+                               //we want the raw key since this is going to be sent to the connect plugin, and they can't decode our full key format
+                               .addAttribute("value", bean.getRawKey());
+            }
         }
 
         if (log.isDebugEnabled())

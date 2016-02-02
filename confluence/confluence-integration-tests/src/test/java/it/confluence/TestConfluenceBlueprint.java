@@ -1,7 +1,7 @@
 package it.confluence;
 
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
-
+import com.atlassian.plugin.connect.test.common.util.TestUser;
 import org.apache.log4j.Level;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,11 +9,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static it.confluence.servlet.ConfluenceAppServlets.blueprintContextServlet;
-import static it.confluence.servlet.ConfluenceAppServlets.blueprintTemplateServlet;
-import static it.confluence.servlet.ConfluenceAppServlets.blueprintMalformedContextServlet;
 import static it.confluence.servlet.ConfluenceAppServlets.blueprint404Servlet;
-
+import static it.confluence.servlet.ConfluenceAppServlets.blueprintContextServlet;
+import static it.confluence.servlet.ConfluenceAppServlets.blueprintMalformedContextServlet;
+import static it.confluence.servlet.ConfluenceAppServlets.blueprintTemplateServlet;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -24,10 +23,14 @@ import static org.junit.Assert.assertThat;
  */
 public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
 {
+    //use only 1 static user since the default test license contains a limit of 5
+    private static TestUser user;
+
     @BeforeClass
     public static void setupConfluenceAndStartConnectAddon()
     {
         rpc.setLogLevel("com.atlassian.plugin.connect.confluence", Level.DEBUG);
+        user = testUserFactory.basicUser();
     }
 
     @AfterClass
@@ -39,8 +42,15 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     @Test
     public void testRemoteSimpleBlueprintVisibleInDialog() throws Exception
     {
-        ConfluenceBlueprintTestHelper.runInRunner(product, blueprintTemplateServlet(), blueprintContextServlet(), (helper) -> {
-            login(testUserFactory.basicUser());
+        ConfluenceBlueprintTestHelper.run(product, blueprintTemplateServlet("it/confluence/blueprint/blueprint.mu"), (helper) -> {
+            login(user);
+            product.visit(DashboardPage.class)
+                    .openCreateDialog()
+                    .waitForBlueprint(helper.getCompleteKey());
+        });
+
+        ConfluenceBlueprintTestHelper.runWithBlueprintContext(product, blueprintTemplateServlet("it/confluence/blueprint/blueprint.mu"), blueprintContextServlet(), (helper) -> {
+            login(user);
             product.visit(DashboardPage.class)
                     .openCreateDialog()
                     .waitForBlueprint(helper.getCompleteKey());
@@ -50,8 +60,26 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     @Test
     public void testRemoteSimpleBlueprintCanCreatePage() throws Exception
     {
-        ConfluenceBlueprintTestHelper.runInRunner(product, blueprintTemplateServlet(), blueprintContextServlet(), (helper) -> {
-            login(testUserFactory.basicUser());
+        ConfluenceBlueprintTestHelper.run(product, blueprintTemplateServlet("it/confluence/blueprint/blueprint-no-context.mu"), (helper) -> {
+            login(user);
+            product.visit(DashboardPage.class).openCreateDialog();
+            String editorHtml = product.getPageBinder()
+                    .bind(CreateContentDialog.class)
+                    .createWithBlueprint(helper.getCompleteKey())
+                    .getEditor()
+                    .getContent()
+                    .getTimedHtml()
+                    .byDefaultTimeout();
+            assertThat("new page includes blueprint content", editorHtml, containsString("Hello Blueprint"));
+        });
+    }
+
+    @Test
+    public void testRemoteSimpleBlueprintWithContextCanCreatePage() throws Exception
+    {
+        ConfluenceBlueprintTestHelper.runWithBlueprintContext(product, blueprintTemplateServlet(
+                "it/confluence/blueprint/blueprint.mu"), blueprintContextServlet(), (helper) -> {
+            login(user);
             product.visit(DashboardPage.class).openCreateDialog();
             String editorHtml = product.getPageBinder()
                     .bind(CreateContentDialog.class)
@@ -71,8 +99,9 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     @Test
     public void testShowErrorTextWhenCantRetrieveContext() throws Exception
     {
-        ConfluenceBlueprintTestHelper.runInRunner(product, blueprintTemplateServlet(), blueprint404Servlet(), (helper) -> {
-            login(testUserFactory.basicUser());
+        ConfluenceBlueprintTestHelper.runWithBlueprintContext(product, blueprintTemplateServlet(
+                "it/confluence/blueprint/blueprint.mu"), blueprint404Servlet(), (helper) -> {
+            login(user);
             product.visit(DashboardPage.class).openCreateDialog();
             String errorText = product.getPageBinder()
                     .bind(CreateContentDialog.class)
@@ -88,8 +117,9 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     @Test
     public void testShowErrorTextWhenCantParseContextJSON() throws Exception
     {
-        ConfluenceBlueprintTestHelper.runInRunner(product, blueprintTemplateServlet(), blueprintMalformedContextServlet(), (helper) -> {
-            login(testUserFactory.basicUser());
+        ConfluenceBlueprintTestHelper.runWithBlueprintContext(product, blueprintTemplateServlet(
+                "it/confluence/blueprint/blueprint.mu"), blueprintMalformedContextServlet(), (helper) -> {
+            login(user);
             product.visit(DashboardPage.class).openCreateDialog();
             String errorText = product.getPageBinder()
                     .bind(CreateContentDialog.class)

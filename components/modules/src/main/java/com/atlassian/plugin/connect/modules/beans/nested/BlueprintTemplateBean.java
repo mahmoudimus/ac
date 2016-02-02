@@ -29,7 +29,6 @@ public class BlueprintTemplateBean
      * For more about how to define variables in blueprint template and template context please follow the example in
      * <a href="/modules/fragment/blueprint-template-context.html">BlueprintTemplateContextBean</a>
      */
-    @Required
     private BlueprintTemplateContextBean blueprintContext;
 
     public static BlueprintTemplateBeanBuilder newBlueprintTemplateBeanBuilder()
