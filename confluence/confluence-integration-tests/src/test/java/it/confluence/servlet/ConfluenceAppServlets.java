@@ -23,16 +23,6 @@ public class ConfluenceAppServlets
         return wrapContextAwareServlet(new MustacheServlet(RemoteMacroEditorDialog.TEMPLATE_PATH));
     }
 
-    public static HttpServlet macroPropertyPanel()
-    {
-        return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/property-panel.mu"));
-    }
-
-    public static HttpServlet macroPropertyPanelWithDialog()
-    {
-        return wrapContextAwareServlet(new MustacheServlet("it/confluence/macro/property-panel-dialog.mu"));
-    }
-
     public static HttpServlet macroBodyEditor(String newMacroBody)
     {
         HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("it/confluence/macro/editor-macro-body.mu"));
