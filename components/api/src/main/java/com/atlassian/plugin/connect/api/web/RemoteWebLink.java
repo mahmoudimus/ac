@@ -8,7 +8,7 @@ import javax.ws.rs.core.UriBuilder;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -24,7 +24,7 @@ import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.page;
  */
 public class RemoteWebLink extends AbstractWebItem implements WebLink
 {
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
@@ -36,12 +36,12 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     private final boolean isDialog;
 
     public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor, WebFragmentHelper webFragmentHelper,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
+            ConnectUriFactory connectUriFactory, UrlVariableSubstitutor urlVariableSubstitutor,
             PluggableParametersExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
             String url, String pluginKey, String moduleKey, boolean absolute, AddonUrlContext addonUrlContext, boolean isDialog)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
-        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.connectUriFactory = connectUriFactory;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
         this.moduleContextFilter = moduleContextFilter;
@@ -59,7 +59,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         ModuleContextParameters moduleParams = webFragmentModuleContextExtractor.extractParameters(context);
         moduleParams = moduleContextFilter.filter(moduleParams);
 
-        return iFrameUriBuilderFactory.builder()
+        return connectUriFactory.createConnectAddonUriBuilder()
                 .addon(pluginKey)
                 .namespace(moduleKey)
                 .urlTemplate(url)
@@ -87,10 +87,9 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
                     // Url to the the ConnectIFrameServlet does not need to have base url.
                     // The url is only used by JS to parse url params from it.
                     // Then JS compose new url to the ConnectIFrameServlet and do a request.
-                    return urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext);
+                    return connectUriFactory.createConnectIFrameServletUri(pluginKey, moduleKey, moduleContext);
                 } else {
-                    String urlToRedirectServlet = UriBuilder.fromPath(req.getContextPath()).path(RedirectServletPath.forModule(pluginKey, moduleKey)).build().toString();
-                    return urlVariableSubstitutor.append(urlToRedirectServlet, moduleContext);
+                    return connectUriFactory.createRedirectServletUri(pluginKey, moduleKey, moduleContext);
                 }
             }
             else if (addonUrlContext == page)

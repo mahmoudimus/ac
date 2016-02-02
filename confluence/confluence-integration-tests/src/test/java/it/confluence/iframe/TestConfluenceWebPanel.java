@@ -64,6 +64,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddon() throws Exception
     {
+        // iframe url and params are checked by it.confluence.iframe.TestRedirectedWebPanel.webPanelInRedirectedLocationShouldPointsToRedirectServletAndDisplaysProperly the
         editorWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("Editor Panel", null))
                 .withKey("editor-panel")
@@ -124,23 +125,6 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void iFrameUrlIsCorrectOnEditPage() throws Exception
-    {
-        RemoteWebPanel webPanel = findEditPageWebPanel();
-        assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_EDIT));
-    }
-
-    @Test
-    public void iFrameParametersAreCorrectOnEditPage() throws Exception
-    {
-        ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
-        RemoteWebPanel webPanel = confluencePageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
-        assertThat(webPanel.getSpaceKey(), is(SPACE));
-        assertThat(webPanel.getPageId(), is(editPage.getPageId()));
-        assertThat(webPanel.getContentId(), is(editPage.getPageId()));
-    }
-
-    @Test
     public void iFrameHeightIsCorrectOnEditPage() throws Exception
     {
         RemoteWebPanel webPanel = findEditPageWebPanel();
@@ -173,7 +157,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         remotePlugin.setToggleableConditionShouldDisplay(false);
         createAndVisitPage(ConfluenceViewPage.class); // revisit the view page now that condition has been set to false
-        assertThat(confluencePageOperations.existsWebPanel(viewWebPanel.getKey(remotePlugin.getAddon())), is(false));
+        assertThat(connectPageOperations.existsWebPanel(viewWebPanel.getKey(remotePlugin.getAddon())), is(false));
     }
 
     @Test
@@ -187,7 +171,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public void iFrameParametersAreCorrectOnViewPage() throws Exception
     {
         ConfluenceViewPage viewPage = createAndVisitPage(ConfluenceViewPage.class);
-        RemoteWebPanel webPanel = confluencePageOperations.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
+        RemoteWebPanel webPanel = connectPageOperations.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
         assertThat(webPanel.getSpaceKey(), is(SPACE));
         assertThat(webPanel.getPageId(), is(viewPage.getPageId()));
         assertThat(webPanel.getContentId(), is(viewPage.getPageId()));
@@ -252,19 +236,19 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     private RemoteWebPanel findEditPageWebPanel() throws Exception
     {
         createAndVisitPage(ConfluenceEditPage.class);
-        return confluencePageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
+        return connectPageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private RemoteWebPanel findViewPageWebPanel() throws Exception
     {
         createAndVisitPage(ConfluenceViewPage.class);
-        return confluencePageOperations.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
+        return connectPageOperations.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private RemoteWebPanel findProfilePageWebPanel() throws Exception
     {
         product.visit(ConfluenceUserProfilePage.class);
-        return confluencePageOperations.findWebPanel(profileWebPanel.getKey(remotePlugin.getAddon()));
+        return connectPageOperations.findWebPanel(profileWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception

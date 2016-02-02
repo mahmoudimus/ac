@@ -38,7 +38,7 @@ could open your application up to XSS attacks.
 <script>
 (function() {
   var getUrlParam = function (param) {
-    var codedParam = (new RegExp(param + '=([^&]+)')).exec(window.location.search)[1];
+    var codedParam = (new RegExp(param + '=([^&]*)')).exec(window.location.search)[1];
     return decodeURIComponent(codedParam);
   };
   

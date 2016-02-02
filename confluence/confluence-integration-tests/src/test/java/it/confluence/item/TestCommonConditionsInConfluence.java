@@ -156,7 +156,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(betty);
 
         visitEditPage();
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(onlyBettyWebItem), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(onlyBettyWebItem), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -166,7 +166,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(barney);
 
         visitEditPage();
-        assertFalse("Web item should NOT be found", confluencePageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
@@ -175,7 +175,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(testUserFactory.admin());
 
         visitEditPage();
-        assertFalse("Web item should NOT be found", confluencePageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
@@ -184,7 +184,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(betty);
 
         visitEditPage();
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -194,7 +194,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(barney);
 
         visitEditPage();
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -204,7 +204,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(testUserFactory.admin());
 
         visitEditPage();
-        assertFalse("Web item should NOT be found", confluencePageOperations.existsWebItem(getModuleKey(bettyAndBarneyWebItem)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(bettyAndBarneyWebItem)));
     }
 
     @Test
@@ -213,7 +213,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(betty);
 
         visitEditPage();
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -222,7 +222,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     {
         login(barney);
         visitEditPage();
-        assertFalse("Web item should NOT be found", confluencePageOperations.existsWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
     }
 
     @Test
@@ -231,7 +231,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(testUserFactory.admin());
 
         visitEditPage();
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -240,7 +240,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(user);
 
         ConfluenceEditPage editPage = visitEditPage();
-        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
         return editPage;
     }
@@ -277,7 +277,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         login(testUserFactory.basicUser());
         ConfluenceEditPage editPage = visitEditPage();
 
-        confluencePageOperations.findWebPanel(getModuleKey(SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL));
+        connectPageOperations.findWebPanel(getModuleKey(SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL));
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET2.getParamsFromLastRequest();
 
         assertThat(conditionParams, hasEntry(equalTo("pageId"), equalTo(editPage.getPageId())));

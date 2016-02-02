@@ -5,17 +5,12 @@
     <link rel="stylesheet" type="text/css" href="{{baseurl}}/atlassian-connect/all.css">
     <script src="{{baseurl}}/atlassian-connect/all-debug.js" type="text/javascript"></script>
   </head>
+  <script>
+  AP.getLocation(function(location){
+    document.getElementById('channel-connected-message').innerHTML = 'Connected with connect channel!';
+  });
+  </script>
   <body>
-    <script type="text/javascript">
-      AP.require(["dialog"], function (dialog) {
-          dialog.create({
-              key: 'dialog-key',
-              width: '500px',
-              height: '200px',
-              chrome: true
-            });
-      });
-    </script>
+  <p id="channel-connected-message"></p>
   </body>
 </html>
-

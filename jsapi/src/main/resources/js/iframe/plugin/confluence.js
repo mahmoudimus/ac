@@ -72,4 +72,5 @@ AP.define("confluence", ["_dollar", "_rpc"],
             stubs: ["saveMacro", "getMacroData", "getMacroBody", "closeMacroEditor"]
         };
     });
+
 });

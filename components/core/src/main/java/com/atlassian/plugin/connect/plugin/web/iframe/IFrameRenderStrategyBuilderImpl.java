@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.api.web.ModuleTemplate;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilder;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
@@ -48,7 +48,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
     public static final String ATL_GENERAL = "atl.general";
 
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private final TemplateRenderer templateRenderer;
     private final ConnectConditionFactory connectConditionFactory;
@@ -70,16 +70,18 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private boolean isSimpleDialog;
     private boolean resizeToParent;
     private boolean sign = true; // should this url be signed?
+    private boolean redirect = false;
 
     private final List<ConditionalBean> conditionalBeans = Lists.newArrayList();
     private final List<Class<? extends Condition>> conditionClasses = Lists.newArrayList();
 
     public IFrameRenderStrategyBuilderImpl(
-            final IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            final ConnectUriFactory connectUriFactory,
             final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-            final TemplateRenderer templateRenderer, final ConnectConditionFactory connectConditionFactory)
+            final TemplateRenderer templateRenderer,
+            final ConnectConditionFactory connectConditionFactory)
     {
-        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.connectUriFactory = connectUriFactory;
         this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
         this.templateRenderer = templateRenderer;
         this.connectConditionFactory = connectConditionFactory;
@@ -218,13 +220,15 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public InitializedBuilder dialog(boolean isDialog) {
+    public InitializedBuilder dialog(boolean isDialog)
+    {
         this.isDialog = isDialog;
         return this;
     }
 
     @Override
-    public InitializedBuilder simpleDialog(boolean isSimpleDialog) {
+    public InitializedBuilder simpleDialog(boolean isSimpleDialog)
+    {
         if (isSimpleDialog)
         {
             this.isDialog = true;
@@ -248,26 +252,33 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
+    public InitializedBuilder redirect(final boolean redirect)
+    {
+        this.redirect = redirect;
+        return this;
+    }
+
+    @Override
     public IFrameRenderStrategy build()
     {
         Condition condition = connectConditionFactory.createCondition(addonKey, conditionalBeans, conditionClasses);
 
-        return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                templateRenderer, addonKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
+        return new IFrameRenderStrategyImpl(connectUriFactory, iFrameRenderContextBuilderFactory, templateRenderer,
+                addonKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
                 decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
-                resizeToParent, sign, contentType);
+                resizeToParent, sign, contentType, redirect);
     }
 
     @VisibleForTesting
     public static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
     {
 
-        private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+        private final ConnectUriFactory connectUriFactory;
         private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
         private final TemplateRenderer templateRenderer;
 
         private final Map<String, Object> additionalRenderContext;
-        private final String addonKey;
+        private final String addOnKey;
         private final String moduleKey;
         private final String template;
         private final String accessDeniedTemplate;
@@ -283,20 +294,35 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final Condition condition;
         private final boolean resizeToParent;
         private final boolean sign;
+        private final boolean redirect;
 
-        private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
+        private IFrameRenderStrategyImpl(
+                final ConnectUriFactory connectUriFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-                final TemplateRenderer templateRenderer, final String addonKey, final String moduleKey,
-                final String template, final String accessDeniedTemplate, final String urlTemplate,
-                final String title, final String decorator, final Condition condition,
-                final Map<String, Object> additionalRenderContext, String width, String height,
-                final boolean uniqueNamespace, final boolean isDialog, final boolean isSimpleDialog, final boolean resizeToParent,
-                final boolean sign, final String contentType)
+                final TemplateRenderer templateRenderer,
+                final String addOnKey,
+                final String moduleKey,
+                final String template,
+                final String accessDeniedTemplate,
+                final String urlTemplate,
+                final String title,
+                final String decorator,
+                final Condition condition,
+                final Map<String, Object> additionalRenderContext,
+                final String width,
+                final String height,
+                final boolean uniqueNamespace,
+                final boolean isDialog,
+                final boolean isSimpleDialog,
+                final boolean resizeToParent,
+                final boolean sign,
+                final String contentType,
+                boolean redirect)
         {
-            this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+            this.connectUriFactory = connectUriFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
             this.templateRenderer = templateRenderer;
-            this.addonKey = addonKey;
+            this.addOnKey = addOnKey;
             this.moduleKey = moduleKey;
             this.template = template;
             this.accessDeniedTemplate = accessDeniedTemplate;
@@ -313,6 +339,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.resizeToParent = resizeToParent;
             this.sign = sign;
             this.contentType = contentType;
+            this.redirect = redirect;
         }
 
         @Override
@@ -324,7 +351,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             String signedUri = buildUrl(moduleContextParameters, uiParameters, namespace);
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
-                    .addon(addonKey)
+                    .addon(addOnKey)
                     .namespace(namespace)
                     .iframeUri(signedUri)
                     .decorator(decorator)
@@ -355,8 +382,12 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         private String buildUrl(ModuleContextParameters moduleContextParameters, Optional<String> uiParameters, String namespace)
         {
-            return iFrameUriBuilderFactory.builder()
-                            .addon(addonKey)
+            if (redirect)
+            {
+                return connectUriFactory.createRedirectServletUri(addOnKey, namespace, moduleContextParameters);
+            }
+            return connectUriFactory.createConnectAddonUriBuilder()
+                            .addon(addOnKey)
                             .namespace(namespace)
                             .urlTemplate(urlTemplate)
                             .context(moduleContextParameters)
@@ -384,11 +415,17 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
+        public boolean needRedirection()
+        {
+            return redirect;
+        }
+
+        @Override
         public void shouldShowOrThrow(final Map<String, Object> conditionContext)
         {
             if (!shouldShow(conditionContext))
             {
-                throw new PermissionDeniedException(addonKey, "Cannot render iframe for this page.");
+                throw new PermissionDeniedException(addOnKey, "Cannot render iframe for this page.");
             }
         }
 
@@ -401,11 +438,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         @Override
         public IFrameRenderStrategy toJsonRenderStrategy()
         {
-            return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                    templateRenderer, addonKey, moduleKey, TEMPLATE_JSON, TEMPLATE_ACCESS_DENIED_JSON, urlTemplate, title,
+            return new IFrameRenderStrategyImpl(connectUriFactory, iFrameRenderContextBuilderFactory, templateRenderer,
+                    addOnKey, moduleKey, TEMPLATE_JSON, TEMPLATE_ACCESS_DENIED_JSON, urlTemplate, title,
                     decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
-                    resizeToParent, sign, ContentType.APPLICATION_JSON.getMimeType());
+                    resizeToParent, sign, ContentType.APPLICATION_JSON.getMimeType(), redirect);
         }
     }
-
 }

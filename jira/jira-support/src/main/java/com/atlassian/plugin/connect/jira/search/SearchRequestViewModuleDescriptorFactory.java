@@ -9,7 +9,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -40,7 +40,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
 
     @Autowired
     public SearchRequestViewModuleDescriptorFactory(JiraAuthenticationContext authenticationContext,
@@ -49,7 +49,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                                                     ApplicationProperties applicationProperties,
                                                     SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
                                                     TemplateRenderer templateRenderer,
-                                                    IFrameUriBuilderFactory iFrameUriBuilderFactory,
+                                                    ConnectUriFactory connectUriFactory,
                                                     DelegatingComponentAccessor componentAccessor)
     {
         this.authenticationContext = checkNotNull(authenticationContext);
@@ -59,7 +59,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
+        this.connectUriFactory = checkNotNull(connectUriFactory);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                             applicationProperties,
                             searchRequestViewBodyWriterUtil,
                             templateRenderer,
-                            iFrameUriBuilderFactory,
+                            connectUriFactory,
                             addon.getKey(),
                             bean.getKey(addon),
                             bean.createUri(),

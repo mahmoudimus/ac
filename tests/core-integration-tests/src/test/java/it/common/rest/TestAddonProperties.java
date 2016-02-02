@@ -34,6 +34,7 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.eclipse.jetty.server.Response;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.After;
@@ -41,6 +42,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -267,6 +269,18 @@ public class TestAddonProperties
         RestAddonPropertiesBean expected = RestAddonPropertiesBean.fromRestAddonProperties(property);
         assertThat(result, isEqualToIgnoringBaseUrl(expected));
         deleteAndAssertDeleted(propertyKey);
+    }
+
+    @Test
+    public void testSuccessfulListRequestWithoutAuthentication() throws IOException, URISyntaxException
+    {
+        // Generate request to properties without authentication
+        URL url = new URL(restPath + "/properties");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setDoInput(true);
+
+        assertEquals(Response.SC_UNAUTHORIZED, connection.getResponseCode());
     }
 
     private String getSelfForPropertyKey(final String propertyKey)

@@ -7,11 +7,6 @@ public class ConnectAddonUninstallFailedEvent extends ConnectAddonLifecycleFaile
 {
     public ConnectAddonUninstallFailedEvent(String pluginKey, String message)
     {
-        super(pluginKey, message);
-    }
-
-    public ConnectAddonUninstallFailedEvent(String pluginKey, int statusCode, String message)
-    {
-        super(pluginKey, statusCode, message);
+        super(pluginKey, message, Category.CONNECT); // we never fail to uninstall because of the add-on
     }
 }

@@ -18,7 +18,7 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestParams;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -36,7 +36,7 @@ public class RemoteSearchRequestView implements SearchRequestView
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
 
     private final String pluginKey;
     private final String moduleKey;
@@ -48,7 +48,7 @@ public class RemoteSearchRequestView implements SearchRequestView
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
             TemplateRenderer templateRenderer,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            ConnectUriFactory connectUriFactory,
             String pluginKey,
             String moduleKey,
             URI createUri,
@@ -58,7 +58,7 @@ public class RemoteSearchRequestView implements SearchRequestView
         this.applicationProperties = applicationProperties;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
         this.templateRenderer = templateRenderer;
-        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.connectUriFactory = connectUriFactory;
         this.createUri = createUri;
         this.displayName = displayName;
         this.pluginKey = pluginKey;
@@ -88,7 +88,7 @@ public class RemoteSearchRequestView implements SearchRequestView
         String endIssues = String.valueOf(Math.min(startIssue + tempMax, totalIssues));
         String issueKeysValue = getIssueKeysList(searchRequest, searchRequestParams);
 
-        String signedAddonURL = iFrameUriBuilderFactory.builder()
+        String signedAddonURL = connectUriFactory.createConnectAddonUriBuilder()
                 .addon(pluginKey)
                 .namespace(moduleKey)
                 .urlTemplate(createUri.toString())

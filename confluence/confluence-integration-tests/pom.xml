@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-confluence-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.70-SNAPSHOT</version>
+        <version>1.1.73-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -322,6 +322,11 @@
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-functestrpc-plugin</artifactId>
+                                    <version>${atlassian.confluence.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
@@ -417,7 +422,7 @@
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
-            use-maven,3
+            use-maven,3.3.9
         </od.testing.configuration>
     </properties>
 

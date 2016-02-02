@@ -1,14 +1,33 @@
 (function($, define){
 
-    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog", "ac/confluence/macro", "ajs"],
-            function(_AP, dialog, macroApi, AJS) {
+    define("ac/confluence/macro/editor", ["connect-host", "ac/dialog"], function(_AP, dialog) {
 
-        var openEditorMacroBody;
+        // When openCustomEditor is invoked, it will assign a function for saving the macro
+        // being edited to this field. This simplifies the client's job of saving the macro
+        // values - they only need to pass back the updated values - and works because only
+        // a single macro editor can be open at a time.
+        var saveMacro,
+            openEditorMacroBody,
+            openEditorMacroData;
+
 
         var module = {
+            /**
+             * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
+             *
+             * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
+             * @param {String} updatedMacroBody the (optional) body of the macro
+             */
+            saveMacro: function(updatedMacroParameters, updatedMacroBody) {
+                if (!saveMacro) {
+                    $.handleError("Illegal state: no macro currently being edited!");
+                }
+                saveMacro(updatedMacroParameters, updatedMacroBody);
+                saveMacro = undefined;
+            },
 
             /**
-             * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>macroApi</code>
+             * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
              * before closing the editor.
              */
             close: function() {
@@ -20,7 +39,7 @@
              * @param callback the callback function which will be called with the parameter object
              */
             getMacroData: function(callback){
-                return callback(macroApi.getCurrentMacroParameters());
+                return callback(openEditorMacroData);
             },
 
             /**
@@ -33,7 +52,7 @@
 
             /**
              * Constructs a new AUI dialog containing a custom editor proxied from a remote app. Should be passed to the
-             * MacroBrowser as a macro editor override. (See editor-override.js for more details)
+             * MacroBrowser as a macro editor override. (See override.js for more details)
              *
              * @param {Object} macroData Data associated with the macro being edited.
              * @param {String} [macroData.name] the macro's name.
@@ -51,18 +70,9 @@
                 // will occur in Internet Explorer, so restore focus just in case.
                 AJS.Rte.getEditor().focus();
                 var editorSelection = AJS.Rte.getEditor().selection;
-                var node = editorSelection.getNode();
+                var bm = editorSelection.getBookmark();
 
-                macroApi.setLastSelectedConnectMacroNode(node);
-
-                //Give it the data we have here, in case the macro is not on the page yet.
-                macroApi.setUnsavedMacroData(
-                        macroData.name,
-                        (macroData.body ? macroData.body : ""),
-                        macroData.params,
-                        editorSelection.getBookmark()
-                );
-
+                openEditorMacroData = macroData.params;
                 openEditorMacroBody = macroData.body;
 
                 function getIframeHtmlForMacro(url) {
@@ -71,11 +81,28 @@
                             "height": "100%",
                             "ui-params": _AP.uiParams.encode({dlg: 1})
                         };
-                    $.extend(data, macroData.params);
+                    $.extend(data, openEditorMacroData);
                     return $.ajax(url, {
                         data: data
                     });
                 }
+
+                saveMacro = function(updatedParameters, updatedMacroBody) {
+                    // Render the macro
+                    var macroRenderRequest = {
+                        contentId: Confluence.Editor.getContentId(),
+                        macro: {
+                            name: macroData.name,
+                            params: updatedParameters,
+                            // AC-741: MacroUtils clients in Confluence core set a non-existent macro body to the empty string.
+                            // In the absence of a public API, let's do the same to minimize the chance of breakage in the future.
+                            body: updatedMacroBody || (macroData.body ? macroData.body : "")
+                        }
+                    };
+
+                    editorSelection.moveToBookmark(bm);
+                    tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
+                };
 
                 var dialogOpts = {
                     header: macroData.params ? opts.editTitle : opts.insertTitle,

@@ -14,9 +14,9 @@ AP.define("user", ["_dollar", "_rpc"], function ($, rpc) {
                  * @noDemo
                  * @example
                  * AP.getUser(function(user){
-                 *   console.log("user id", + user.id);
-                 *   console.log("user key", + user.key);
-                 *   console.log("user name", + user.fullName);
+                 *   console.log("user id", user.id);
+                 *   console.log("user key", user.key);
+                 *   console.log("user name", user.fullName);
                  * });
                  */
                 getUser: function (callback) {
