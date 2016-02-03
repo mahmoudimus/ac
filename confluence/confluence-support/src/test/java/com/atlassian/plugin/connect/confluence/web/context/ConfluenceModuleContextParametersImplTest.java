@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
+import java.util.Collections;
+
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
 import org.junit.Before;
@@ -17,7 +19,7 @@ public class ConfluenceModuleContextParametersImplTest
     @Before
     public void setup()
     {
-        this.moduleContextParameters = new ConfluenceModuleContextParametersImpl();
+        this.moduleContextParameters = new ConfluenceModuleContextParametersImpl(Collections.emptyMap());
     }
 
     @Test

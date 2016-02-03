@@ -6,6 +6,7 @@ Context parameters are additional values pairs that are sent to your add-on in t
 
 * [Standard parameters](#standard-parameters)
 * [Additional parameters](#additional-parameters)
+  * [Inline conditions](#inline-conditions)
   * [JIRA](#additional-parameters-jira)
   * [Confluence](#additional-parameters-confluence)
 
@@ -51,6 +52,44 @@ The primary difference to be aware of is that a space in a query parameter will 
 component it will be encoded as `%20`.
 
 If the application isn't able to bind a value to the variable at runtime for any reason, it passes an empty value instead.
+
+## <a name="inline-conditions"></a>Inline conditions
+
+[Conditions](../concepts/conditions.html) are a powerful way to control whether your UI elements should be shown or not. 
+However, sometimes you may want your element to always be shown but behave differently 
+depending on user permissions or other state that the conditions allow you to check. 
+
+You can achieve this goal by putting the conditions in query parameters. The condition will be dynamically
+evaluated every time the URL is requested based on the current user and context.
+
+The syntax of such variables is as follows (in the BNF notation with optional items enclosed in square brackets):
+
+```
+<variable>        ::=  "condition." <condition-name> [<parameters>]
+<parameters>      ::= "(" [<parameters-list>] ")"
+<parameters-list> ::=  <parameter-key> "=" <parameter-value> | <parameters-list> "," <parameters-list>
+```
+
+Any condition available in other places can be used as a `condition-name`; 
+`parameter-key` and `parameter-value` are expected to be simple alphanumeric strings with some additional characters
+ like underscores or hyphens.
+
+For example:
+ 
+```
+ {
+     "url": "/myPage/?adminMode={condition.is_admin_mode}",  
+     "url2": "/myPage/?adminMode={condition.has_project_permission(permission=browse)}"
+ }
+```
+
+The following conditions do not work as context parameters:
+
+* `user_is_the_logged_in_user` (JIRA)
+* `following_target_user` (Confluence)
+* `tiny_url_supported` (Confluence)
+* `viewing_content` (Confluence)
+* `viewing_own_profile` (Confluence)
 
 ## <a name="additional-parameters-jira"></a>JIRA
 

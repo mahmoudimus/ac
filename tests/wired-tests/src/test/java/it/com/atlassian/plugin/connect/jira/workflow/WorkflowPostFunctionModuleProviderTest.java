@@ -3,6 +3,7 @@ package it.com.atlassian.plugin.connect.jira.workflow;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.Optional;
 
 import com.atlassian.plugin.Plugin;
@@ -103,7 +104,7 @@ public class WorkflowPostFunctionModuleProviderTest
     @Test
     public void uiParamsNotInUrlWhenNotProvided() throws URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters(Collections.emptyMap());
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.<String>empty());
         final URI iframeUrl = new URI(iframeUrlStr);
@@ -113,7 +114,7 @@ public class WorkflowPostFunctionModuleProviderTest
     @Test
     public void uiParamsInUrlWhenProvided() throws URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters(Collections.emptyMap());
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.of("blah"));
         final URI iframeUrl = new URI(iframeUrlStr);
@@ -122,7 +123,7 @@ public class WorkflowPostFunctionModuleProviderTest
 
     private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
     {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters(Collections.emptyMap());
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
 
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.<String>empty());
