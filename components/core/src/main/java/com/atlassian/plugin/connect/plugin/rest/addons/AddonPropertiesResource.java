@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import java.io.IOException;
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -19,9 +18,9 @@ import javax.ws.rs.core.Response;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
-import com.atlassian.plugin.connect.plugin.property.AddonProperty;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyIterable;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyService;
+import com.atlassian.plugin.connect.api.property.AddonProperty;
+import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonPropertiesBean;
@@ -31,9 +30,7 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Function;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -96,7 +93,6 @@ public class AddonPropertiesResource
                     {
                         return getResponseBuilderFromOperationStatus(status).build();
                     }
-
                 }, new Function<AddonPropertyIterable, Response>()
                 {
                     @Override
@@ -134,7 +130,7 @@ public class AddonPropertiesResource
      */
     @GET
     @Path ("{propertyKey}")
-    public Response getAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") String propertyKey, @QueryParam("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
+    public Response getAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") String propertyKey, @QueryParam ("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
     {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
@@ -159,6 +155,7 @@ public class AddonPropertiesResource
             }
         });
     }
+
     /**
      * Creates or updates a property with the given property key.
      *
@@ -187,11 +184,8 @@ public class AddonPropertiesResource
     @Path ("{propertyKey}")
     public Response putAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
     {
-        final UserProfile user = userManager.getRemoteUser(servletRequest);
-        // can be null, it is checked in the service.
-        final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
-
         Either<RestParamError, String> errorStringEither = propertyValue(servletRequest);
+
         return errorStringEither.fold(new Function<RestParamError, Response>()
         {
             @Override
@@ -204,6 +198,10 @@ public class AddonPropertiesResource
             @Override
             public Response apply(final String propertyValue)
             {
+                final UserProfile user = userManager.getRemoteUser(servletRequest);
+                // can be null, it is checked in the service.
+                final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
+
                 return addonPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, propertyKey, propertyValue, eTagValidationFunction(request))
                         .fold(onPreconditionFailed(), onFailure(), onSuccess());
             }
@@ -340,12 +338,25 @@ public class AddonPropertiesResource
 
         try
         {
-            char[] charData = IOUtils.toCharArray(request.getReader());
-            return Either.right(new String(charData));
+            return Either.right(readHttpServletRequestBody(request));
         }
         catch (IOException e)
         {
             return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
+        }
+    }
+
+    private static String readHttpServletRequestBody(final HttpServletRequest request) throws IOException
+    {
+        // If a previous section of code has grabbed data using getReader or getInput stream before the execution path
+        // goes through this method then we need to use the same getter that the previous codepath used. This method
+        // unfortunately needs to rely upon exceptions for logic to decide which is the correct getter to get the content
+        // of this HttpServletRequest.
+        try
+        {
+            return new String(IOUtils.toCharArray(request.getInputStream()));
+        } catch(IllegalStateException e) {
+            return new String(IOUtils.toCharArray(request.getReader()));
         }
     }
 

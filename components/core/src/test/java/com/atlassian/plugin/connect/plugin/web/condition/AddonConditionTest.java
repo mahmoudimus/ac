@@ -20,7 +20,7 @@ import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImpl;
-import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImpl;
+import com.atlassian.plugin.connect.plugin.web.iframe.ConnectUriFactoryImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
@@ -132,7 +132,7 @@ public class AddonConditionTest
     @Before
     public void init()
     {
-        final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(
+        final ConnectUriFactoryImpl iFrameUriBuilderFactory = new ConnectUriFactoryImpl(
                 new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl()),
                 remotablePluginAccessorFactory,
                 userManager,
@@ -155,7 +155,7 @@ public class AddonConditionTest
                 eventPublisher,
                 pluginRetrievalService);
 
-        when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
+        when(remotablePluginAccessorFactory.get(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
         when(localeHelper.getLocaleTag()).thenReturn("foo");
 

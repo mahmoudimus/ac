@@ -58,7 +58,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private static final String ADDON_WEBITEM_INLINE_DIALOG = "wikipedia-link";
     private static final String SPACE = "ds";
 
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
 
     private static ConnectRunner remotePlugin;
 

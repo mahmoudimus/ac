@@ -11,6 +11,8 @@ public interface IFrameRenderStrategy
 {
     boolean shouldShow(Map<String, ? extends Object> conditionContext);
 
+    boolean needRedirection();
+
     void shouldShowOrThrow(Map<String, Object> conditionContext);
 
     void render(ModuleContextParameters moduleContextParameters, Writer writer, Optional<String> uiParameters) throws IOException;

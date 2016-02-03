@@ -33,6 +33,12 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.70](./1-1-0.html#1.1.70)
+ * Confluence: Enable chromeless dialogs for custom macro editors [CE-283](https://ecosystem.atlassian.net/browse/CE-283)
+
+## [1.1.69](./1-1-0.html#1.1.69)
+ * JIRA: Whitelist worklog resource (see the [JIRA REST Scopes page](../scopes/jira-rest-scopes.html)) [AC-1826](https://ecosystem.atlassian.net/browse/AC-1826)
+
 ## [1.1.68](./1-1-0.html#1.1.68)
  * Add new `addon_is_licensed` condition [AC-1641](https://ecosystem.atlassian.net/browse/AC-1641)
  * Allow multiple dialogs to be open at the same time [ACJS-91](https://ecosystem.atlassian.net/browse/ACJS-91)

@@ -1,12 +1,9 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import java.net.URI;
-import java.util.Optional;
-
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectAddonUriBuilder;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
@@ -15,17 +12,19 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+
+import java.net.URI;
+import java.util.Optional;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
 /**
  *
  */
-public class IFrameUriBuilderImpl
-        implements IFrameUriBuilder, IFrameUriBuilder.AddonUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
+public class ConnectAddonUriBuilderImpl
+        implements ConnectAddonUriBuilder, ConnectAddonUriBuilder.AddonUriBuilder, ConnectAddonUriBuilder.NamespacedUriBuilder, ConnectAddonUriBuilder.TemplatedBuilder
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
@@ -40,7 +39,7 @@ public class IFrameUriBuilderImpl
     private String namespace;
     private String templateUri;
 
-    public IFrameUriBuilderImpl(UrlVariableSubstitutor urlVariableSubstitutor,
+    public ConnectAddonUriBuilderImpl(UrlVariableSubstitutor urlVariableSubstitutor,
             RemotablePluginAccessorFactory pluginAccessorFactory,
             UserManager userManager,
             HostApplicationInfo hostApplicationInfo,
@@ -159,7 +158,7 @@ public class IFrameUriBuilderImpl
             if (sign)
             {
                 URI uri = uriBuilder.toUri().toJavaUri();
-                return pluginAccessorFactory.getOrThrow(addonKey).signGetUrl(uri, ImmutableMap.<String, String[]>of());
+                return pluginAccessorFactory.get(addonKey).signGetUrl(uri, ImmutableMap.<String, String[]>of());
             }
             else
             {

@@ -4,13 +4,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.api.web.condition.AbstractConnectCondition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
-
 import org.codehaus.jackson.JsonNode;
 
 import static com.atlassian.plugin.connect.plugin.property.JsonCommon.parseStringToJson;
@@ -43,22 +41,11 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
     {
         UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUserKey());
         return addonPropertyService.getPropertyValue(userProfile, addonKey, addonKey, propertyKey).fold(
-            new Function<AddonPropertyService.OperationStatus, Boolean>()
-            {
-                @Override
-                public Boolean apply(final AddonPropertyService.OperationStatus input)
-                {
-                    return false;
-                }
-            }, new Function<AddonProperty, Boolean>()
-            {
-                @Override
-                public Boolean apply(final AddonProperty input)
-                {
+                input -> false,
+                input -> {
                     final Optional<JsonNode> propertyJson = parseStringToJson(propertyValue);
                     return propertyJson.equals(Optional.of(input.getValue()));
                 }
-            }
         );
     }
 }
