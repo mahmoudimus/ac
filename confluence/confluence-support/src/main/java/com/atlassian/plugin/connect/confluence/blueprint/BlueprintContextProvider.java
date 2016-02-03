@@ -117,7 +117,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         addonKey = params.get(REMOTE_ADDON_KEY);
         blueprintKey = params.get(CONTENT_TEMPLATE_KEY);
         vendorName = StringUtils.isBlank(params.get(REMOTE_VENDOR_NAME)) ? addonKey : params.get(REMOTE_VENDOR_NAME);
-        pluginAccessor = accessorFactory.getOrThrow(addonKey);
+        pluginAccessor = accessorFactory.get(addonKey);
     }
 
     private static void checkContainsKey(Map<String, String> params, String key, String message)
@@ -187,7 +187,7 @@ public class BlueprintContextProvider extends AbstractBlueprintContextProvider
         log.debug("start retrieving response");
         long start = System.currentTimeMillis();
         String json;
-        String blueprintName = (String) blueprintContext.get(BLUEPRINT_NAME);
+        String blueprintName = blueprintContext.get(BLUEPRINT_NAME) + "(" + vendorName + ")";
 
         try
         {

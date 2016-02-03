@@ -66,7 +66,7 @@ public class BlueprintContextProviderTest
         blueprintContextProvider = new BlueprintContextProvider(accessorFactory, converter, userManager, localeResolver, eventPublisher, i18nResolver);
         when(localeResolver.getLocale(any(UserKey.class))).thenReturn(Locale.ENGLISH);
         when(converter.convert(any(), any())).thenAnswer(a -> a.getArguments()[0]);
-        when(accessorFactory.getOrThrow("remote-addon-key")).thenReturn(mockAccessor);
+        when(accessorFactory.get("remote-addon-key")).thenReturn(mockAccessor);
         when(mockAccessor.executeAsync(eq(POST), eq(URI.create("/context-url")), anyMap(), anyMap(), any())).thenReturn(mockPromise);
         mockResponse(mockPromise, "testfiles/blueprint/context-response.json");
 
@@ -140,7 +140,7 @@ public class BlueprintContextProviderTest
     @Test(expected = IllegalStateException.class)
     public void testInitFailsWhenAddonKeyDoesNotExist()
     {
-        when(accessorFactory.getOrThrow("remote-addon-key")).thenAnswer(a -> {
+        when(accessorFactory.get("remote-addon-key")).thenAnswer(a -> {
             throw new IllegalStateException();
         });
         blueprintContextProvider.init(ImmutableMap.of(
