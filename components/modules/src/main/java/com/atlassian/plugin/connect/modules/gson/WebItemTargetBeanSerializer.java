@@ -26,7 +26,10 @@ public class WebItemTargetBeanSerializer implements JsonDeserializer<WebItemTarg
                 WebItemTargetType.class);
         builder.withType(type);
 
-        builder.withKey(context.<String>deserialize(webItemTargetJson.get("key"), String.class));
+        JsonElement key = webItemTargetJson.get("key");
+        if (key != null) {
+            builder.withKey(key.getAsString());
+        }
 
         Class<? extends WebItemTargetOptions> optionsType = null;
 
