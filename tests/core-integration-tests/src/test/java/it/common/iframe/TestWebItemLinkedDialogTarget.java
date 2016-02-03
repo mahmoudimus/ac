@@ -87,12 +87,12 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
         ConnectAddonEmbeddedTestPage dialogPage = page.clickAddonLink();
         RemoteLayeredDialog dialog = product.getPageBinder().bind(RemoteLayeredDialog.class, dialogPage, true);
 
-        // Check that the dialog options are used by the webItem.
+        // Check that the dialog options are used by the web item.
         Dimension size = dialog.getIFrameSize();
         assertThat(size.getWidth(), is(456));
         assertThat(size.getHeight(), is(567));
 
-        // Check that the dialog url overrides the web-item one.
+        // Check that the dialog url overrides the web item one.
         assertThat(dialog.getIFrameElementText("dialog-name"), is("Linked Dialog"));
     }
 
@@ -104,7 +104,7 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
         ConnectAddonEmbeddedTestPage dialogPage = page.clickAddonLink();
         RemoteLayeredDialog dialog = product.getPageBinder().bind(RemoteLayeredDialog.class, dialogPage, true);
 
-        // Even though the dialog linked by the web-item's target.key is incorrect, the web-item should
+        // Even though the dialog linked by the web item's target.key is incorrect, the web item should
         // launch a dialog.
         assertThat(dialog.getIFrameElementText("dialog-name"), is("Linked Dialog"));
     }

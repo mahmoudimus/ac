@@ -11,13 +11,20 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * <p>Defines a dialog that may be reused by multiple components, e.g. as the target of a web item.</p>
+ * <p>Defines a dialog that may be reused by multiple components</p>
+ *
+ * <p>
+ *     For example, a dialog defined in this module might be referenced from a web item target, so that
+ *     triggering the web item launches the dialog. The dialog might also be referenced by key via a
+ *     Dialog.create() call* from the JavaScript API, or as the target of a control-bar item*.
+ * </p>
  *
  * <p>
  *     The specified dialog uses the same options allowed by the Connect Dialog [JavaScript API](https://developer.atlassian.com/static/connect/docs/latest/javascript/module-Dialog.html#.create),
  *     which in turn uses options provided by the Atlassian User Interface [dialog component](https://docs.atlassian.com/aui/latest/docs/dialog.html)
  * </p>
  *
+ * <p>* upcoming features</p>
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DIALOG_EXAMPLE}
@@ -39,45 +46,12 @@ public class DialogModuleBean extends RequiredKeyBean
     private String url;
 
     /**
-     * TODO - this Javadoc copied from WebItemTargetBean - how to extract? dT
      * <p>An object containing options for this dialog.</p>
      *
-     * <div id="modalDialog">
-     * <code>Dialog Options</code>
-     * <table class="props table table-striped aui">
-     *    <thead>
-     *        <tr><th>Name</th>
-     *        <th>Type</th>
-     *        <th>Description</th>
-     *    </tr></thead>
-     *    <tbody>
-     *        <tr>
-     *            <td><code>size</code></td>
-     *            <td>String</td>
-     *            <td>
-     *                sets the size of the dialog without needing width and height specified. Options are
-     *                small, medium, large, x-large or fullscreen. Fullscreen-size dialogs will always show a header
-     *                with buttons.
-     *            </td>
-     *        </tr>
-     *        <tr>
-     *            <td><code>width</code></td>
-     *            <td>Number | String</td>
-     *            <td>sets how wide the dialog is in pixels</td>
-     *        </tr>
-     *        <tr>
-     *            <td><code>height</code></td>
-     *            <td>Number | String</td>
-     *            <td>sets how high the dialog is in pixels</td>
-     *        </tr>
-     *        <tr>
-     *            <td><code>chrome</code></td>
-     *            <td>Boolean</td>
-     *            <td>Whether the dialog should contain the AUI header and buttons. Default is true</td>
-     *        </tr>
-     *    </tbody>
-     * </table>
-     * </div>
+     * <p>
+     *     These options are described on the [Dialog Options](https://developer.atlassian.com/static/connect/docs/latest/javascript/Dialog-DialogOptions.html)
+     *     API page.
+     * </p>
      */
     private DialogOptions options;
 

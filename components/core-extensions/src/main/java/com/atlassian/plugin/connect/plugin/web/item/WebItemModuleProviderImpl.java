@@ -146,7 +146,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             // This target's key points to a non-existent module. A decision was made to not throw a
             // validation exception here because this is not running in a validation method stack.
             // See https://stash.atlassian.com/projects/AC/repos/atlassian-connect/pull-requests/1225/overview?commentId=343138
-            log.warn("Unknown dialog module key ({}), returning unresolved web-item", targetKey);
+            log.warn("Unknown dialog module key ({}), returning unresolved web item", targetKey);
             return bean;
         }
 
@@ -211,7 +211,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
                     if (isNotBlank(webItem.getUrl()))
                         return false;  // this one's fine
 
-                    // All web-items have urls UNLESS they target another bean (which has a required url)
+                    // All web items have urls UNLESS they target another bean (which has a required url)
                     WebItemTargetType type = webItem.getTarget().getType();
                     String key = webItem.getTarget().getKey();
 
@@ -224,7 +224,7 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
 
         if (!invalidItemKeys.isEmpty())
         {
-            String exceptionMsg = String.format("Installation failed. The add-on includes web-items (%s) with no url.", invalidItemKeys);
+            String exceptionMsg = String.format("Installation failed. The add-on includes web items (%s) with no url.", invalidItemKeys);
             throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.missing.url", invalidItemKeys.toArray(new String[invalidItemKeys.size()]));
         }
     }

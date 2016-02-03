@@ -156,7 +156,7 @@ public class WebItemModuleProviderImplTest
         );
 
         expectedException.expect(ConnectModuleValidationException.class);
-        expectedException.expectMessage("Installation failed. The add-on includes web-items ([no-url1, no-url2]) with no url.");
+        expectedException.expectMessage("Installation failed. The add-on includes web items ([no-url1, no-url2]) with no url.");
 
         provider.validateUrls(descriptor, webItemModuleBeans);
     }
