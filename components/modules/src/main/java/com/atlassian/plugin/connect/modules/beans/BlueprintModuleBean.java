@@ -22,7 +22,7 @@ public class BlueprintModuleBean extends RequiredKeyBean
     /**
      * Defines where the blueprint template is located and the context for variable substitution.<br>
      * For more about how to define variables in blueprint template and template context please follow the example in
-     * <a href="../fragment/blueprint-template-context.html">Blueprint Template Context</a>
+     * <a href="../fragment/blueprint-template-context.html">Blueprint Template Context</a>.
      */
     @Required
     private BlueprintTemplateBean template;
