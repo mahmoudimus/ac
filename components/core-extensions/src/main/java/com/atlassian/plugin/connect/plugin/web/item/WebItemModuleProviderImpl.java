@@ -44,13 +44,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetType.dialog;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -206,26 +210,37 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     void validateUrls(ShallowConnectAddonBean descriptor, List<WebItemModuleBean> webItems)
             throws ConnectModuleValidationException
     {
-        List<String> invalidItemKeys = webItems.stream()
-                .filter(webItem -> {
-                    if (isNotBlank(webItem.getUrl()))
-                        return false;  // this one's fine
+        Map<String,List<String>> keyMap = webItems.stream()
+                .collect(groupingBy(webItem -> {
+                    WebItemTargetBean target = webItem.getTarget();
+                    boolean hasLinkedDialogTarget = target.getType().equals(dialog) && isNotBlank(target.getKey());
+                    boolean hasUrl = isNotBlank(webItem.getUrl());
 
-                    // All web items have urls UNLESS they target another bean (which has a required url)
-                    WebItemTargetType type = webItem.getTarget().getType();
-                    String key = webItem.getTarget().getKey();
+                    // All web items have urls UNLESS they target another bean (which has a required url).
+                    // If hasLinkedDialogTarget we can rely on the linked dialog's validation to
+                    // catch a missing url.
+                    if (hasUrl && hasLinkedDialogTarget)
+                        return "url+dialog";
 
-                    // If type was dialog and key was set we could rely on other validation to catch any missing
-                    // url in the target dialog module.
-                    return !type.equals(dialog) || isBlank(key);
-                })
-                .map(RequiredKeyBean::getRawKey)
-                .collect(toList());
+                    if (!hasUrl && !hasLinkedDialogTarget)
+                        return "no url";
 
-        if (!invalidItemKeys.isEmpty())
+                    return "ok";
+                }, TreeMap::new,
+                mapping(RequiredKeyBean::getRawKey, toList())));
+
+        List<String> invalidItemKeys;
+        if (keyMap.containsKey("no url"))
         {
+            invalidItemKeys = keyMap.get("no url");
             String exceptionMsg = String.format("Installation failed. The add-on includes web items (%s) with no url.", invalidItemKeys);
             throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.missing.url", invalidItemKeys.toArray(new String[invalidItemKeys.size()]));
+        }
+        if (keyMap.containsKey("url+dialog"))
+        {
+            invalidItemKeys = keyMap.get("url+dialog");
+            String exceptionMsg = String.format("Installation failed. The add-on includes web items (%s) with both a url and a target dialog key.", invalidItemKeys);
+            throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.url.and.target.dialog.key", invalidItemKeys.toArray(new String[invalidItemKeys.size()]));
         }
     }
 

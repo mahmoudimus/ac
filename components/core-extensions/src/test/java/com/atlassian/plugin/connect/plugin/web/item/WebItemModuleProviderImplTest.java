@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.web.Condition;
@@ -136,27 +137,61 @@ public class WebItemModuleProviderImplTest
     {
         ShallowConnectAddonBean descriptor = mock(ShallowConnectAddonBean.class);
         List<WebItemModuleBean> webItemModuleBeans = Lists.newArrayList(
+                // No Url + No target dialog is bad
                 newWebItemBean()
-                        .withKey("with-url")
-                        .withUrl("http://atlassian.com")
-                        .build(),
-                newWebItemBean()
-                        .withKey("no-url1")
-                        .build(),
-                newWebItemBean()
-                        .withKey("no-url2")
-                        .build(),
-                newWebItemBean()
-                        .withKey("no-url3")
-                        .withTarget(newWebItemTargetBean()
-                                .withType(dialog)
-                                .withKey("dialog-key")
-                                .build())
+                        .withKey("no-url")
                         .build()
         );
 
         expectedException.expect(ConnectModuleValidationException.class);
-        expectedException.expectMessage("Installation failed. The add-on includes web items ([no-url1, no-url2]) with no url.");
+        expectedException.expectMessage("Installation failed. The add-on includes web items ([no-url]) with no url.");
+
+        provider.validateUrls(descriptor, webItemModuleBeans);
+    }
+
+    @Test
+    public void shouldThrowExceptionIfWebItemHasUrlAndTargetDialogKey() throws ConnectModuleValidationException
+    {
+        ShallowConnectAddonBean descriptor = mock(ShallowConnectAddonBean.class);
+        WebItemTargetBean target = newWebItemTargetBean()
+                .withType(dialog)
+                .withKey("dialog-key")
+                .build();
+        List<WebItemModuleBean> webItemModuleBeans = Lists.newArrayList(
+                // Url + target dialog is bad
+                newWebItemBean()
+                        .withKey("with-url-and-target")
+                        .withUrl("http://atlassian.com")
+                        .withTarget(target)
+                        .build()
+        );
+
+        expectedException.expect(ConnectModuleValidationException.class);
+        expectedException.expectMessage("Installation failed. The add-on includes web items ([with-url-and-target]) with both a url and a target dialog key.");
+
+        provider.validateUrls(descriptor, webItemModuleBeans);
+    }
+
+    @Test
+    public void shouldAcceptWebItemsWithUrlOrTargetDialogKey() throws ConnectModuleValidationException
+    {
+        ShallowConnectAddonBean descriptor = mock(ShallowConnectAddonBean.class);
+        WebItemTargetBean target = newWebItemTargetBean()
+                .withType(dialog)
+                .withKey("dialog-key")
+                .build();
+        List<WebItemModuleBean> webItemModuleBeans = Lists.newArrayList(
+                // Url + No target dialog is good
+                newWebItemBean()
+                        .withKey("with-url")
+                        .withUrl("http://atlassian.com")
+                        .build(),
+                // No Url + target dialog is good
+                newWebItemBean()
+                        .withKey("no-url")
+                        .withTarget(target)
+                        .build()
+        );
 
         provider.validateUrls(descriptor, webItemModuleBeans);
     }
