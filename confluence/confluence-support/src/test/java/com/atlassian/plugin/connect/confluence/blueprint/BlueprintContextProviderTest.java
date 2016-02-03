@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.confluence.blueprint;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Locale;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
 import com.atlassian.confluence.plugins.createcontent.api.contextproviders.BlueprintContext;
 import com.atlassian.event.api.EventPublisher;
@@ -19,9 +11,7 @@ import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,6 +20,13 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnit44Runner;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.atlassian.plugin.connect.api.request.HttpMethod.POST;
 import static com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider.CONTENT_TEMPLATE_KEY;
@@ -98,7 +95,7 @@ public class BlueprintContextProviderTest
     public void testBlueprintContextUpdateFailsWhenTimeout() throws Exception
     {
         mockResponseException(mockPromise, new TimeoutException("not a real exception"));
-        //we are using RuntimeException (pending addition of a new blueprint specific exception).
+        //we are using RuntimeException (pending addition of a new blueprint specific exception - https://jira.atlassian.com/browse/CONFDEV-40379).
         exceptions.expect(RuntimeException.class);
         blueprintContextProvider.updateBlueprintContext(mockContextObj);
     }
@@ -116,7 +113,7 @@ public class BlueprintContextProviderTest
     public void testBlueprintContextUpdateFailsWhenExecutionHasError() throws Exception
     {
         mockResponseException(mockPromise, new ExecutionException("not a real exception", new Throwable()));
-        //we are using RuntimeException (pending addition of a new blueprint specific exception).
+        //we are using RuntimeException (pending addition of a new blueprint specific exception - https://jira.atlassian.com/browse/CONFDEV-40379).
         exceptions.expect(RuntimeException.class);
         blueprintContextProvider.updateBlueprintContext(mockContextObj);
     }

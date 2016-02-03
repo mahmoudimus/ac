@@ -25,8 +25,10 @@ public class BlueprintTemplateBean
     private String url;
 
     /**
-     * Defines add-on server resource that provides JSON object used for substitute variables defined in template.<br>
-     * For more about how to define variables in blueprint template and template context please follow the example in
+     * Defines the add-on server endpoint that provides the JSON objects used for substituting variables in the blueprint template.
+     *
+     *
+     * For more information on defining variables in blueprint templates, check out the examples in
      * <a href="/modules/fragment/blueprint-template-context.html">Blueprint Template Context</a>
      */
     private BlueprintTemplateContextBean blueprintContext;

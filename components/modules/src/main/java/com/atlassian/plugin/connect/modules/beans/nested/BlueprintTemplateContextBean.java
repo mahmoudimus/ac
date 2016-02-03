@@ -19,7 +19,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * substitution. This data is collectively called the context for substitution.
  *
  * The context is made up of a list of objects, retrieved from the context url specified by the blueprint context <code>url</code>
- * field in this module descriptor. See the <a href="#IDENTIFIERFIELD">properties section</a>for the definition of each of the fields in the context.
+ * field in this module descriptor. See the <a href="#IDENTIFIERFIELD">properties section</a> for the definition of each of the fields in the context.
  *
  * <h3>Substituting dynamic variables in a blueprint</h3>
  *
@@ -67,9 +67,8 @@ public class BlueprintTemplateContextBean
 {
     /**
      *
-     * A URL to which a POST request will be made during the rendering of the blueprint for which this context bean is
-     * associated (see <a href="#POSTBODYEXAMPLE">'Example of the request POST body' below</a> for an example
-     * of what will be POST'ed to this resource). The response returned is then used for blueprint variable substitution, to enable
+     * A URL to which a POST request will be made during the rendering of the blueprint (see <a href="#POSTBODYEXAMPLE">'Example of the request POST body' below</a> for an example
+     * of what will be POST'ed to this resource). The response is then used for blueprint variable substitution, to enable
      * blueprints to create pages that have dynamic content.
      * <br>
      * <h4>Expected response format</h4>
@@ -111,7 +110,7 @@ public class BlueprintTemplateContextBean
      *
      * <h4>The <code>representation</code> field</h4>
      *
-     * The <code>representation</code> must be one of following value. If unset, will be default to <code>plain</code>.
+     * The <code>representation</code> must be one of the following values. If unset, it will default to <code>plain</code>.
      * <ul>
      *     <li><code>plain</code></li>
      *     <li><code>wiki</code></li>
