@@ -5,6 +5,11 @@ import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBeanBuilder;
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  *
@@ -54,6 +59,8 @@ public class MacroPropertyPanelBean extends BaseModuleBean
     @StringSchemaAttributes(format = "uri-template")
     private String url;
 
+    private List<ControlBean> controls;
+
     public MacroPropertyPanelBean()
     {
         init();
@@ -71,11 +78,21 @@ public class MacroPropertyPanelBean extends BaseModuleBean
         {
             url = "";
         }
+
+        if (null == controls)
+        {
+            controls = newArrayList();
+        }
     }
 
     public String getUrl()
     {
         return url;
+    }
+
+    public List<ControlBean> getControls()
+    {
+        return controls;
     }
 
     public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean()
