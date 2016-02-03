@@ -13,8 +13,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * <p>Defines a dialog that may be reused by multiple components, e.g. as the target of a web item.</p>
  *
- * The defined dialog uses the same options documented at
- * https://developer.atlassian.com/static/connect/docs/latest/javascript/module-Dialog.html#.create
+ * <p>
+ *     The specified dialog uses the same options allowed by the Connect Dialog [JavaScript API](https://developer.atlassian.com/static/connect/docs/latest/javascript/module-Dialog.html#.create),
+ *     which in turn uses options provided by the Atlassian User Interface [dialog component](https://docs.atlassian.com/aui/latest/docs/dialog.html)
+ * </p>
  *
  *#### Example
  *

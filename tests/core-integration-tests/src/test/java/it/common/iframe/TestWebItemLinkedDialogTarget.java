@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
 {
     private static final String LINKED_DIALOG_KEY_WEBITEM = "linkedDialogWebItem";
+    private static final String BADLY_LINKED_DIALOG_KEY_WEBITEM = "badlyLinkedDialogWebItem";
     private static final String LINKED_DIALOG_KEY = "linkedDialog";
 
     private static ConnectRunner runner;
@@ -44,17 +45,26 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
         WebItemModuleBean linkedDialogWebItem = newWebItemBean()
                 .withKey(LINKED_DIALOG_KEY_WEBITEM)
                 .withName(new I18nProperty("Links to dialog", null))
-                .withUrl("/neverused")
                 .withTarget(newWebItemTargetBean()
                         .withType(WebItemTargetType.dialog)
                         .withKey(LINKED_DIALOG_KEY)   // Note! This target key matches the key of the dialog.
                         .build())
                 .withLocation(getGloballyVisibleLocation())
                 .build();
+        WebItemModuleBean badlyLinkedDialogWebItem = newWebItemBean()
+                .withKey(BADLY_LINKED_DIALOG_KEY_WEBITEM)
+                .withName(new I18nProperty("Bad link", null))
+                .withUrl("/ld")
+                .withTarget(newWebItemTargetBean()
+                        .withType(WebItemTargetType.dialog)
+                        .withKey("i-am-wrong")
+                        .build())
+                .withLocation(getGloballyVisibleLocation())
+                .build();
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
-                .addModules("webItems", linkedDialogWebItem)
+                .addModules("webItems", linkedDialogWebItem, badlyLinkedDialogWebItem)
                 .addModules("dialogs", linkedDialogDialog)
                 .addRoute("/ld", ConnectAppServlets.mustacheServlet("linked-dialog.mu"))
                 .start();
@@ -72,8 +82,7 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
     @Test
     public void testLinkedDialog()
     {
-        login(testUserFactory.basicUser());
-        product.visit(HomePage.class);
+        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, LINKED_DIALOG_KEY_WEBITEM, runner.getAddon().getKey());
         ConnectAddonEmbeddedTestPage dialogPage = page.clickAddonLink();
         RemoteLayeredDialog dialog = product.getPageBinder().bind(RemoteLayeredDialog.class, dialogPage, true);
@@ -84,6 +93,19 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
         assertThat(size.getHeight(), is(567));
 
         // Check that the dialog url overrides the web-item one.
+        assertThat(dialog.getIFrameElementText("dialog-name"), is("Linked Dialog"));
+    }
+
+    @Test
+    public void testBadlyLinkedDialog()
+    {
+        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, BADLY_LINKED_DIALOG_KEY_WEBITEM, runner.getAddon().getKey());
+        ConnectAddonEmbeddedTestPage dialogPage = page.clickAddonLink();
+        RemoteLayeredDialog dialog = product.getPageBinder().bind(RemoteLayeredDialog.class, dialogPage, true);
+
+        // Even though the dialog linked by the web-item's target.key is incorrect, the web-item should
+        // launch a dialog.
         assertThat(dialog.getIFrameElementText("dialog-name"), is("Linked Dialog"));
     }
 }

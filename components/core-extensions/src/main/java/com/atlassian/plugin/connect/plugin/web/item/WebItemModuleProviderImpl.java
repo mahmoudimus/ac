@@ -37,6 +37,8 @@ import com.atlassian.plugin.connect.plugin.web.dialog.DialogOptionsValidator;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,6 +59,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 @ExportAsDevService
 public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider<WebItemModuleBean> implements WebItemModuleProvider
 {
+    private static final Logger log = LoggerFactory.getLogger(WebItemModuleProviderImpl.class);
 
     private static final WebItemModuleMeta META = new WebItemModuleMeta();
 
@@ -138,6 +141,14 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
 
         // Options and Url will be declared within the linked dialog module
         DialogModuleBean targetDialog = getTargetDialog(targetKey, addon);
+        if (targetDialog == null)
+        {
+            // This target's key points to a non-existent module. A decision was made to not throw a
+            // validation exception here because this is not running in a validation method stack.
+            // See https://stash.atlassian.com/projects/AC/repos/atlassian-connect/pull-requests/1225/overview?commentId=343138
+            log.warn("Unknown dialog module key ({}), returning unresolved web-item", targetKey);
+            return bean;
+        }
 
         WebItemTargetBean resolvedTarget = newWebItemTargetBean(target)
                 .withOptions(targetDialog.getOptions())
@@ -152,26 +163,13 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     private DialogModuleBean getTargetDialog(String targetKey, ConnectAddonBean addon)
     {
         Optional<List<ModuleBean>> dialogs = addon.getModules().getValidModuleListOfType(new DialogModuleMeta().getDescriptorKey(), e -> {});
-        if (dialogs.isPresent())
-        {
-            Optional<ModuleBean> foundBean = dialogs.get().stream().filter(moduleBean ->
-            {
-                DialogModuleBean dialogBean = (DialogModuleBean) moduleBean;
-                return dialogBean.getRawKey().equals(targetKey);
-            }).findFirst();
-            if (!foundBean.isPresent())
-            {
-                // This target's key points to a non-existent module.
-                // TODO - refactor this throw to not suck. dT
-                throw new IllegalArgumentException("Unknown dialog module key: " + targetKey);
-            }
-            return (DialogModuleBean) foundBean.get();
-        }
-        else
-        {
-            // TODO - refactor this throw to not suck either. dT
-            throw new IllegalArgumentException("No dialog modules?");
-        }
+        if (!dialogs.isPresent())
+            return null;
+
+        return (DialogModuleBean) dialogs.get().stream().filter(moduleBean -> {
+            DialogModuleBean dialogBean = (DialogModuleBean) moduleBean;
+            return dialogBean.getRawKey().equals(targetKey);
+        }).findFirst().orElse(null);
     }
 
     @VisibleForTesting
