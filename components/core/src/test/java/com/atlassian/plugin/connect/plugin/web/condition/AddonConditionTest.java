@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
@@ -28,7 +20,6 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Before;
@@ -36,6 +27,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;

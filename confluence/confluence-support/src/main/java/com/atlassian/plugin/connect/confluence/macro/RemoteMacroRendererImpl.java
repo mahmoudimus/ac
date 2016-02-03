@@ -1,27 +1,26 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.confluence.macro.DynamicContentMacroModuleProvider.CONTENT_CLASSIFIER;
 
@@ -96,7 +95,7 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
         {
             return macroContentManager.getStaticContent(HttpMethod.GET, URI.create(uri),
                     Collections.emptyMap(), conversionContext,
-                    remotablePluginAccessorFactory.getOrThrow(addonKey));
+                    remotablePluginAccessorFactory.get(addonKey));
         }
         catch (Exception e)
         {
