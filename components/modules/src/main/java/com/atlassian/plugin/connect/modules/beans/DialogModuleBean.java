@@ -11,17 +11,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * <p>Defines a dialog that may be reused by multiple components</p>
+ * <p>A common dialog definition that may be referenced by other Connect modules and from JavaScript API calls.</p>
  *
  * <p>
  *     For example, a dialog defined in this module might be referenced from a web item target, so that
  *     triggering the web item launches the dialog. The dialog might also be referenced by key via a
- *     Dialog.create() call* from the JavaScript API, or as the target of a control-bar item*.
- * </p>
- *
- * <p>
- *     The specified dialog uses the same options allowed by the Connect Dialog [JavaScript API](https://developer.atlassian.com/static/connect/docs/latest/javascript/module-Dialog.html#.create),
- *     which in turn uses options provided by the Atlassian User Interface [dialog component](https://docs.atlassian.com/aui/latest/docs/dialog.html)
+ *     Dialog.create() call* from the JavaScript API, or as the target of a control-bar item*. The dialog url and
+ *     options would then not need to be defined in multiple places.
  * </p>
  *
  * <p>* upcoming features</p>
@@ -38,7 +34,7 @@ public class DialogModuleBean extends RequiredKeyBean
      * Specifies the URL of the content displayed in the dialog. The URL can be absolute or relative to either the
      * product URL or the add-on's base URL, depending on the _context_ attribute.
      *
-     * Your add-on can receive [additional context](../../concepts/context-parameters.html) from the application by
+     * Your add-on can receive <a href="../../concepts/context-parameters.html">additional context</a> from the application by
      * using variable tokens in the URL attribute.
      */
     @Required
@@ -47,11 +43,6 @@ public class DialogModuleBean extends RequiredKeyBean
 
     /**
      * <p>An object containing options for this dialog.</p>
-     *
-     * <p>
-     *     These options are described on the [Dialog Options](https://developer.atlassian.com/static/connect/docs/latest/javascript/Dialog-DialogOptions.html)
-     *     API page.
-     * </p>
      */
     private DialogOptions options;
 

@@ -7,11 +7,16 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Options for a normal dialog target
+ * Options for a modal dialog <a href="web-item-target.html">web item target</a> or <a href="../common/dialog.html">common module</a>.
+ *
+ * <p>
+ *     These options are a subset of those available via the <a href="../../javascript/Dialog-DialogOptions.html">JavaScript API</a>.
+ * </p>
  *
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_DIALOG_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DIALOG_EXAMPLE}
  * @schemaTitle Dialog Options
  * @since 1.1
  */

@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_COMMON_DIALOG_EXAMPLE}
  * @schemaTitle Web Item Target
  * @since 1.0
  */
@@ -28,20 +29,20 @@ public class WebItemTargetBean extends BaseModuleBean
     /**
      * <p>An object containing options which vary based on the type of web item target you are implementing.</p>
      *
-     * <p>Current target types are:</p>
+     * <p>Currently-allowed options are:</p>
      * <ul>
-     *     <li>[Inline Dialog Options](https://developer.atlassian.com/static/connect/docs/latest/modules/fragment/inline-dialog-options.html)</li>
-     *     <li>[Dialog Options](https://developer.atlassian.com/static/connect/docs/latest/javascript/Dialog-DialogOptions.html)</li>
+     *     <li><a href="inline-dialog-options.html">Inline Dialog Options</a> when <code>type</code> is "inlinedialog", and</li>
+     *     <li><a href="dialog-options.html">Dialog Options</a> when <code>type</code> is "dialog"</li>
      * </ul>
      */
     private WebItemTargetOptions options;
 
     /**
-     * <p>The key of a dialog module descriptor declared in this Connect add-on.</p>
+     * <p>The key of a <a href="../common/dialog.html"><code>Dialog</code></a> module declared in this Connect add-on.</p>
      *
      * <p>
-     *     The dialog module will include the [Dialog Options](https://developer.atlassian.com/static/connect/docs/latest/javascript/Dialog-DialogOptions.html)
-     *     that would otherwise need to be specified in this target's "options" object.
+     *     The dialog module will include the <a href="dialog-options.html">Dialog Options</a>
+     *     that would otherwise need to be specified in this target's <code>options</code> object.
      * </p>
      */
     private String key;

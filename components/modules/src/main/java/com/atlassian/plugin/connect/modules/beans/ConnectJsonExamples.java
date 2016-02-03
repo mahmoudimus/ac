@@ -106,6 +106,7 @@ public class ConnectJsonExamples
     public static final String WEBITEM_EXAMPLE = createWebItemExample();
     public static final String WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE = createWebitemTargetInlineDialogOptionsExample();
     public static final String WEBITEM_TARGET_DIALOG_EXAMPLE = createWebitemTargetDialogOptionsExample();
+    public static final String WEBITEM_TARGET_COMMON_DIALOG_EXAMPLE = createWebitemTargetCommonDialogExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
 
@@ -634,6 +635,16 @@ public class ConnectJsonExamples
                                 .withWidth("200px")
                                 .build()
                 )
+                .build();
+
+        return gson.toJson(createJsonObject("target", bean));
+    }
+
+    private static String createWebitemTargetCommonDialogExample()
+    {
+        WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
+                .withType(WebItemTargetType.dialog)
+                .withKey("dialog-key")
                 .build();
 
         return gson.toJson(createJsonObject("target", bean));
