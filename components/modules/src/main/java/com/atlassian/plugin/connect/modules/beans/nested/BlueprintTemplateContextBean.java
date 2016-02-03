@@ -44,12 +44,12 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  *</code></pre>
  *
  * The above is then used as the Confluence page, to be saved to the database, and displayed to the user according to the
- * <code>createResult</code> field of the blueprint module (see <a href="/modules/fragment/blueprint.html">Blueprint Template Module</a>).
+ * <code>createResult</code> field of the blueprint module (see <a href="../confluence/blueprint.html">Blueprint Template Module</a>).
  *
  * An error message will be shown on the Content Create Dialog if Confluence experiences any problem accessing the blueprint
  * template or context URL (e.g., your add-on server failed to respond in 10 seconds, or the JSON returned is invalid).
  * Detailed error and/or stacktrace may be obtained via Atlassian support, but the end user will see an error like the one shown below:
- * <img src="/assets/images/confluence-blueprint-context-error.png" alt="Blueprint context error" width="80%" style="border:1px solid #999;margin-top:10px;">
+ * <img src="../../assets/images/confluence-blueprint-context-error.png" alt="Blueprint context error" width="80%" style="border:1px solid #999;margin-top:10px;">
  *
  * <h3 id="BACKWARDSCOMPATIBILITY">Note on backwards compatibility of the <code>identifier</code> field</h3>
  * A blueprint template containing variables, may over time, change as the add-on evolves. However, because an end user has
