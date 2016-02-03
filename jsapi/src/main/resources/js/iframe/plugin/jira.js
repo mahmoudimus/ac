@@ -1,10 +1,9 @@
 AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
-    var workflowListener;
-    var validationListener;
-    var dashboardItemEditListener;
-    var issueCreateListener;
-    var dateSelectedListener;
+    var workflowListener,
+            validationListener,
+            dashboardItemEditListener,
+            issueCreateListener;
 
     /**
      * @class WorkflowConfiguration
@@ -146,101 +145,11 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 openCreateIssueDialog: function (callback, fields) {
                     issueCreateListener = callback || null;
                     remote.openCreateIssueDialog(fields);
-                },
-
-                /**
-                 * @class DatePicker~position
-                 * @property {number} top - Distance in pixels from the top edge of the iframe date picker should be shown at.
-                 * @property {number} left - Distance in pixels from the left edge of the iframe date picker should be shown at.
-                 */
-
-                /**
-                 * @class DatePicker~options
-                 * @property {HTMLElement} element - HTML element below which date picker will be positioned. If provided, it takes precedence over `options.position`.
-                 * @property {DatePicker~position} position - Position of the element relative to the iframe. options.element takes precedence over it when provided.
-                 * @property {Boolean} showTime - Flag determining whether the component should also have a time picker. Defaults to `false`.
-                 * @property {String} date - <p>Date (and time) that should be pre-selected when displaying the picker in the format understandable by Date.parse method in JavaScript.</p>
-                 * <p>ISO 8601 is preferred. Timezone should be set to Z for UTC time or in the format of +/-hh:mm. Not setting it will cause JavaScript to use local timezone set in the browser. Defaults to current date/time.</p>
-                 * @property {Function} onSelect - Callback that will be invoked when the date (and time) is selected by the user.
-                 */
-
-                /**
-                 * Shows a date picker component. A callback will be invoked when the date (and time) is selected by the user.
-                 *
-                 * @param {DatePicker~options} options - Configuration of the date picker.
-                 *
-                 * @noDemo
-                 * @example
-                 * AP.require('jira', function(jira){
-                 *     var dateField = document.querySelector("#date-field");
-                 *     var dateTrigger = document.querySelector("#date-trigger");
-                 *
-                 *     dateTrigger.addEventListener("click", function(e) {
-                 *         e.preventDefault();
-                 *         jira.openDatePicker({
-                 *             element: dateTrigger,
-                 *             date: "2011-12-13T15:20+01:00",
-                 *             showTime: true,
-                 *             onSelect: function (isoDate, date) {
-                 *                 dateField.value = date;
-                 *                 dateField.setAttribute("data-iso", isoDate);
-                 *                 dateField.focus();
-                 *             }
-                 *         });
-                 *     });
-                 * });
-                 */
-                openDatePicker: function (options) {
-                    function isDomElement(el) {
-                        return el && el.nodeType && el.nodeType == 1;
-                    }
-
-                    options = options || {};
-                    if (!options.position || typeof options.position !== "object") {
-                        if (!isDomElement(options.element)) {
-                            throw new Error("Providing either options.position or options.element is required.");
-                        }
-                        options.position = {}
-                    }
-
-                    if (!options.onSelect || typeof options.onSelect !== "function") {
-                        throw new Error("options.onSelect function is a required parameter.");
-                    }
-
-                    var sanitisedOptions = {
-                        element: options.element,
-                        position: {
-                            top: options.position.top || 0,
-                            left: options.position.left || 0
-                        },
-                        date: options.date,
-                        showTime: !!options.showTime,
-                        onSelect: options.onSelect
-                    };
-
-                    var elBoundingBox;
-                    dateSelectedListener = sanitisedOptions.onSelect;
-                    delete sanitisedOptions.onSelect;
-
-                    if (sanitisedOptions.element) {
-                        elBoundingBox = sanitisedOptions.element.getBoundingClientRect();
-                        sanitisedOptions.position = {
-                            left: elBoundingBox.left,
-                            top: elBoundingBox.top + elBoundingBox.height
-                        };
-                        delete sanitisedOptions.element;
-                    }
-
-                    remote.openDatePicker(sanitisedOptions);
                 }
             },
 
             internals: {
-                triggerDateSelectedListener: function (date, isoDate) {
-                    if ($.isFunction(dateSelectedListener)) {
-                        dateSelectedListener.call({}, date, isoDate);
-                    }
-                },
+
                 setWorkflowConfigurationMessage: function () {
                     return WorkflowConfiguration.trigger();
                 },

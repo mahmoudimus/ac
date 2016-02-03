@@ -7,8 +7,7 @@
     window.xdmMock = {
         init: function() {},
         getWorkflowConfiguration: sinon.spy(),
-        triggerJiraEvent: sinon.spy(),
-        openDatePicker: sinon.spy()
+        triggerJiraEvent: sinon.spy()
     };
 
 
@@ -17,13 +16,11 @@
 
             xdmMock.getWorkflowConfiguration = sinon.spy();
             xdmMock.triggerJiraEvent = sinon.spy();
-            xdmMock.openDatePicker = sinon.spy();
 
             module("Jira plugin", {
                 setup: function(){
                     xdmMock.getWorkflowConfiguration.reset();
                     xdmMock.triggerJiraEvent.reset();
-                    xdmMock.openDatePicker.reset();
                 }
             });
 
@@ -79,96 +76,6 @@
             test('refreshIssuePage calls triggerJiraEvent with correct event name', function(){
                 jira.refreshIssuePage();
                 equal(xdmMock.triggerJiraEvent.args[0][0], 'refreshIssuePage');
-            });
-
-            test('openDatePicker opens if only position is provided', function(){
-                var onSelected = sinon.stub();
-
-                jira.openDatePicker({
-                    position: {
-                        top: 0,
-                        left: 0
-                    },
-                    date: "2011-12-13T15:20+01:00",
-                    onSelect: onSelected
-                });
-
-                ok(xdmMock.openDatePicker.calledOnce);
-            });
-
-            test('openDatePicker uses position of the element if both options.position and options.element are provided', function(){
-                var onSelected = sinon.stub();
-                var mockDiv = {
-                    nodeType: 1,
-                    getBoundingClientRect: function() {
-                        return {
-                            top: 900,
-                            left: 1000,
-                            height: 100
-                        }
-                    }
-                };
-
-                jira.openDatePicker({
-                    element: mockDiv,
-                    position: {
-                        top: 123,
-                        left: 456
-                    },
-                    date: "2011-12-13T15:20+01:00",
-                    onSelect: onSelected
-                });
-
-                ok(xdmMock.openDatePicker.calledOnce);
-
-                var firstCallOptions = xdmMock.openDatePicker.args[0][0];
-                deepEqual(
-                    firstCallOptions.position,
-                    {
-                        top: 1000,
-                        left: 1000
-                    }
-                );
-            });
-
-            test('openDatePicker opens if only element is provided', function(){
-                var div = document.createElement("div");
-                var onSelected = sinon.stub();
-
-                jira.openDatePicker({
-                    element: div,
-                    date: "2011-12-13T15:20+01:00",
-                    onSelect: onSelected
-                });
-
-                ok(xdmMock.openDatePicker.calledOnce);
-            });
-
-
-            test('openDatePicker throws exception when neither element nor position is provided', function(){
-                var onSelected = sinon.stub();
-
-                throws(function() {
-                    jira.openDatePicker({
-                        date: "2011-12-13T15:20+01:00",
-                        onSelect: onSelected
-                    });
-                }, new Error("Providing either options.position or options.element is required."));
-
-                ok(xdmMock.openDatePicker.notCalled);
-            });
-
-            test('openDatePicker throws exception onSelected callback is not provided', function(){
-                var div = document.createElement("div");
-
-                throws(function() {
-                    jira.openDatePicker({
-                        element: div,
-                        date: "2011-12-13T15:20+01:00"
-                    });
-                }, new Error("options.onSelect function is a required parameter."));
-
-                ok(xdmMock.openDatePicker.notCalled);
             });
 
         });
