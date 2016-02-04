@@ -97,12 +97,12 @@ public class BlueprintTemplateContextBean
      *          characters that cannot be used as a Confluence page title. If this reserved <code>identifier</code> is not
      *          found in the context, the page created from the blueprint will not have a title set and
      *          will require the user to set it before it can be saved. The blueprint module must also specify
-     *          'edit' as the value of the <code>createResult</code> field in this case. Note: the capitalization 'C'
+     *          'edit' as the value of the <code>createResult</code> field in this case. Note: the capital 'C'
      *          in the name is not a mistake or typo.
      *     </li>
      *     <li>
      *         <code>labelString</code>: A space separated list of labels. The labels will be added to the page being created
-     *         by this blueprint. See <a href="https://confluence.atlassian.com/doc/Add%2C+Remove+and+Search+for+Labels">
+     *         by this blueprint. See <a href="https://confluence.atlassian.com/display/doc/Add%2C+Remove+and+Search+for+Labels">
      *             the Confluence docs about labels</a> for more information.
      *     </li>
      * </ul>
@@ -112,7 +112,7 @@ public class BlueprintTemplateContextBean
      *
      * <h4>The <code>representation</code> field</h4>
      *
-     * The <code>representation</code> must be one of the following values. If unset, it will default to <code>plain</code>.
+     * The <code>representation</code> field must be one of the following values. If unset, it will default to <code>plain</code>.
      * <ul>
      *     <li><code>plain</code></li>
      *     <li><code>wiki</code></li>
@@ -130,7 +130,7 @@ public class BlueprintTemplateContextBean
      *         <code>plain</code>: Plain text, which is HTML escaped during variable substitution. Use this for simple textual substitution.
      *     </li>
      *     <li>
-     *         <code>wiki</code>: Valid <a href="https://confluence.atlassian.com/DOC/Confluence+Wiki+Markup">
+     *         <code>wiki</code>: Valid <a href="https://confluence.atlassian.com/display/DOC/Confluence+Wiki+Markup">
      *         Confluence Wiki Markup</a>. The wiki markup will be rendered into html during substitution into the page.
      *         The resulting page will not contain any wiki markup. Use this format when simple styling
      *         is required (such as emphasis, underlines or and tables etc).
