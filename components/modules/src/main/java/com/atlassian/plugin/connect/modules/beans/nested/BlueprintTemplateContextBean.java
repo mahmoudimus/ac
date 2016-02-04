@@ -18,7 +18,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * use variable substitution to produce the dynamic parts. Variable substitution requires the add-on to provide data
  * for substitution. Collectively, this data is called the context for substitution.
  *
- * The context is made up of a list of objects which are retrieved from the context url specified by the blueprint 
+ * The context is made up of a list of objects which are retrieved from the context url specified by the blueprint
  * context <code>url</code> field in this module descriptor. See <a href="#IDENTIFIERFIELD">Properties</a> for the definition of each field in the context.
  *
  * <h3>Substituting dynamic variables in a blueprint</h3>
@@ -40,6 +40,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * The final, variable substituted, storage format will look like this:
  * <pre><code>&lt;h2&gt;Hello Blueprint&lt;/h2&gt;
  *&lt;h2&gt;Unique Page Title 1&lt;/h2&gt;
+ *&lt;h2&gt;custom value 1&lt;/h2&gt;
  *&lt;h2&gt;&lt;ac:structured-macro ac:name=&quot;cheese&quot; ac:schema-version=&quot;1&quot; /&gt;&lt;/h2&gt;
  *</code></pre>
  *
@@ -47,9 +48,9 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * <code>createResult</code> field of the blueprint module (see <a href="../confluence/blueprint.html">Blueprint Template Module</a>).
  *
  * An error message appears in the Content Create Dialog if Confluence has any problems accessing the blueprint
- * template or context URL (for example if your add-on server failed to respond in 10 seconds or the JSON 
+ * template or context URL (for example if your add-on server failed to respond in 10 seconds or the JSON
  * returned is invalid). A detailed error and/or stacktrace may be accessible by Atlassian support, but the end user will see an
- * error like the one shown here: 
+ * error like the one shown here:
  * <img src="../../assets/images/confluence-blueprint-context-error.png" alt="Blueprint context error" width="80%" style="border:1px solid #999;margin-top:10px;">
  *
  * <h3 id="BACKWARDSCOMPATIBILITY">Backwards compatibility of the <code>identifier</code> field</h3>
@@ -59,8 +60,8 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * still being returned as part of the context url.
  *
  * Add-ons wanting to retain backwards compatibility for their blueprint templates should ensure that any variables
- * used in a template are always returned in the context url, even if a new version of the blueprint template no 
- * longer uses it (for example if users are relying on an old or customized version of the template). This ensures that the template 
+ * used in a template are always returned in the context url, even if a new version of the blueprint template no
+ * longer uses it (for example if users are relying on an old or customized version of the template). This ensures that the template
  * continues to function when the add-on updates the template.
  *
  */
@@ -96,7 +97,7 @@ public class BlueprintTemplateContextBean
      *          characters that cannot be used as a Confluence page title. If this reserved <code>identifier</code> is not
      *          found in the context, the page created from the blueprint will not have a title set and
      *          will require the user to set it before it can be saved. The blueprint module must also specify
-     *          'view' as the value of the <code>createResult</code> field in this case. Note: the capitalization 'C'
+     *          'edit' as the value of the <code>createResult</code> field in this case. Note: the capitalization 'C'
      *          in the name is not a mistake or typo.
      *     </li>
      *     <li>
@@ -130,8 +131,8 @@ public class BlueprintTemplateContextBean
      *     </li>
      *     <li>
      *         <code>wiki</code>: Valid <a href="https://confluence.atlassian.com/DOC/Confluence+Wiki+Markup">
-     *         Confluence Wiki Markup</a>. The wiki markup will be rendered into html during substitution into the page. 
-     *         The resulting page will not contain any wiki markup. Use this format when simple styling 
+     *         Confluence Wiki Markup</a>. The wiki markup will be rendered into html during substitution into the page.
+     *         The resulting page will not contain any wiki markup. Use this format when simple styling
      *         is required (such as emphasis, underlines or and tables etc).
      *     </li>
      *     <li>
