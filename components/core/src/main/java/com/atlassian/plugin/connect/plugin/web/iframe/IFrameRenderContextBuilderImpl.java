@@ -171,12 +171,13 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());
             String userKey = nullToEmpty(profile == null ? "" : profile.getUserKey().getStringValue());
             String timeZone = userPreferencesRetriever.getTimeZoneFor(username).getID();
-            URI baseUrl = plugin.getBaseUrl();
+            URI addOnUrl = plugin.getBaseUrl();
 
             // origin is required by XDM to establish connection with iframe.
             // Since for some places iframe requires to be redirected,
             // in that case the origin can not obtain from the url because it points to the redirect servlet.
-            String origin = baseUrl.toString().toLowerCase();
+            // addOn baseUrl may contains a path but we are interested only in url with protocol and domain.
+            String origin = (addOnUrl.getScheme() + "://" + addOnUrl.getAuthority()).toLowerCase();
 
             defaultContext.put("iframeSrcHtml", escapeQuotes(iframeUri));
             defaultContext.put("plugin", plugin);
