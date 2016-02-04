@@ -107,6 +107,7 @@
         <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
         <resource type="download" name="rpc.js" location="js/confluence/macro/rpc.js" />
         <resource type="download" name="property-panel-iframe.js" location="js/confluence/macro/property-panel-iframe.js" />
+        <resource type="download" name="property-panel-controls.js" location="js/confluence/macro/property-panel-controls.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro-api</dependency>
