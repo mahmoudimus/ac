@@ -54,7 +54,6 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
         WebItemModuleBean badlyLinkedDialogWebItem = newWebItemBean()
                 .withKey(BADLY_LINKED_DIALOG_KEY_WEBITEM)
                 .withName(new I18nProperty("Bad link", null))
-                .withUrl("/ld")
                 .withTarget(newWebItemTargetBean()
                         .withType(WebItemTargetType.dialog)
                         .withKey("i-am-wrong")
@@ -102,10 +101,9 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
         loginAndVisit(testUserFactory.basicUser(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, BADLY_LINKED_DIALOG_KEY_WEBITEM, runner.getAddon().getKey());
         ConnectAddonEmbeddedTestPage dialogPage = page.clickAddonLink();
-        RemoteLayeredDialog dialog = product.getPageBinder().bind(RemoteLayeredDialog.class, dialogPage, true);
 
-        // Even though the dialog linked by the web item's target.key is incorrect, the web item should
-        // launch a dialog.
-        assertThat(dialog.getIFrameElementText("dialog-name"), is("Linked Dialog"));
+        // Even though the dialog linked by the web item's target.key is incorrect, the web item should still
+        // launch a dialog that gets bound. It's up to the vendor to notice that the dialog contents are incorrect.
+        product.getPageBinder().bind(RemoteLayeredDialog.class, dialogPage, true);
     }
 }
