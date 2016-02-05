@@ -140,6 +140,34 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.selenium</groupId>
+            <artifactId>atlassian-webdriver-core</artifactId>
+            <version>${atlassian.selenium.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.collections</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.browsers</groupId>
+                    <artifactId>atlassian-browsers-linux64</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-connect-plugin</artifactId>
             <version>${project.version}</version>
@@ -206,6 +234,12 @@
                     <artifactId>hamcrest-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.test.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -426,6 +460,8 @@
             use-java,8
             use-maven,3.3.9
         </od.testing.configuration>
+        <atlassian.selenium.version>2.3-m12</atlassian.selenium.version>
+        <guava.test.version>14.0.1</guava.test.version> <!-- needs minimum of 12.0 for com.google.common.net.MediaType -->
     </properties>
 
 </project>

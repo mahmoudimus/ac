@@ -36,6 +36,7 @@ import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProd
 import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
 import com.atlassian.testutils.annotations.Retry;
 import com.atlassian.testutils.junit.RetryRule;
+import com.atlassian.webdriver.testing.rule.JavaScriptErrorsRule;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.sun.jersey.api.client.Client;
@@ -116,6 +117,9 @@ public class ConfluenceWebDriverTestBase
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+
+    @Rule
+    public JavaScriptErrorsRule javaScriptErrorsRule = new JavaScriptErrorsRule().failOnJavaScriptErrors(true);
 
     @Rule
     public RetryRule retryRule = new RetryRule();
