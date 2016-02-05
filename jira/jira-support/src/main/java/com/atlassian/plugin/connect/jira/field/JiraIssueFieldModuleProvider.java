@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.customfield;
+package com.atlassian.plugin.connect.jira.field;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;

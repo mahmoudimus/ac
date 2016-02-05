@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.customfield;
+package com.atlassian.plugin.connect.jira.field;
 
 import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.plugin.customfield.CustomFieldDefaultVelocityParams;

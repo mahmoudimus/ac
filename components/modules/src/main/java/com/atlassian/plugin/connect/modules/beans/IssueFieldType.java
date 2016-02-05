@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 /**
- * This enum lists all archetypes that a remote custom field type can configure.
- * It consists of a custom field type definition and a custom field searcher.
+ * This enum lists all types that a remote issue field can have.
+ * It consists of an issue field type definition and a issue field searcher.
  */
 public enum IssueFieldType
 {
@@ -32,9 +32,9 @@ public enum IssueFieldType
     public enum IssueFieldBaseTypeDefinition
     {
         TEXT("com.atlassian.jira.issue.customfields.impl.GenericTextCFType",
-                "templates/customfield/text/view-basictext.vm",
-                "templates/customfield/text/edit-maxlengthtext.vm",
-                "templates/customfield/text/xml-basictext.vm");
+                "templates/field/text/view-basictext.vm",
+                "templates/field/text/edit-maxlengthtext.vm",
+                "templates/field/text/xml-basictext.vm");
 
         private final String baseCFTypeClassFullyQualifiedName;
         private final String viewTemplate;
@@ -74,11 +74,11 @@ public enum IssueFieldType
     public enum IssueFieldSearcherDefinition
     {
         EXACT_TEXT("com.atlassian.jira.issue.customfields.searchers.ExactTextSearcher",
-                "templates/customfield/text/view-searcher-basictext.vm",
-                "templates/customfield/text/search-basictext.vm"),
+                "templates/field/searcher/view-searcher-basictext.vm",
+                "templates/field/searcher/search-basictext.vm"),
         LIKE_TEXT("com.atlassian.jira.issue.customfields.searchers.TextSearcher",
-                "templates/customfield/text/view-searcher-basictext.vm",
-                "templates/customfield/text/search-basictext.vm");
+                "templates/field/searcher/view-searcher-basictext.vm",
+                "templates/field/searcher/search-basictext.vm");
 
         private final String searcherClassFullyQualifiedName;
         private final String viewTemplate;
