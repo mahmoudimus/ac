@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.condition;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.request.ContentRetrievalException;
+import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
@@ -101,7 +102,7 @@ public class AddonCondition implements Condition
         final String version = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
         final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
         Promise<String> responsePromise = remotablePluginAccessorFactory.get(cfg.getAddonKey())
-                .executeAsync(HttpMethod.GET, uri, Collections.<String, String[]>emptyMap(), httpHeaders);
+                                                                        .executeAsync(HttpMethod.GET, uri, Collections.emptyMap(), httpHeaders, HttpContentRetriever.EMPTY_STREAM);
 
         String response;
         try

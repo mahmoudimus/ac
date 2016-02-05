@@ -1,13 +1,16 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
+import java.io.IOException;
+
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
-import com.google.gson.Gson;
-import org.junit.Test;
 
-import java.io.IOException;
+import com.google.gson.Gson;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -18,12 +21,19 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class ConfigurePageModuleBeanTest
 {
+    private static Gson gson;
+    private static ConnectPageModuleBean bean;
+
+    @Before
+    public void setup()
+    {
+        gson = ConnectModulesGsonFactory.getGson();
+        bean = createBean();
+    }
 
     @Test
     public void producesCorrectJSON() throws Exception
     {
-        ConnectPageModuleBean bean = createBean();
-        Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(bean, ConnectPageModuleBean.class);
         String expectedJson = readTestFile();
 
@@ -34,9 +44,7 @@ public class ConfigurePageModuleBeanTest
     public void producesCorrectBean() throws Exception
     {
         String json = readTestFile();
-        Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectPageModuleBean deserializedBean = gson.fromJson(json, ConnectPageModuleBean.class);
-        ConnectPageModuleBean bean = createBean();
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
     }
@@ -44,12 +52,10 @@ public class ConfigurePageModuleBeanTest
     @Test
     public void roundTrippingIsPreserving()
     {
-        ConnectPageModuleBean originalBean = createBean();
-        Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = gson.toJson(originalBean, ConnectPageModuleBean.class);
+        String json = gson.toJson(bean, ConnectPageModuleBean.class);
         ConnectPageModuleBean deserializedBean = gson.fromJson(json, ConnectPageModuleBean.class);
 
-        assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
+        assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
     }
 
     private static ConnectPageModuleBean createBean()
