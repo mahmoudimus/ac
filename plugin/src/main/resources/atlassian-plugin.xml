@@ -124,4 +124,9 @@
         <entity>com.atlassian.plugin.connect.plugin.property.AddonPropertyAO</entity>
     </ao>
 
+    <ao key="issue-fields-ao-module" name="Active Objects Module">
+        <description>All tables related to issue fields</description>
+        <entity>com.atlassian.plugin.connect.jira.field.option.AvailableOptionAO</entity>
+    </ao>
+
 </atlassian-plugin>

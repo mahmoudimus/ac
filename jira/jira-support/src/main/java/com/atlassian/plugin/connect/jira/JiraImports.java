@@ -31,6 +31,7 @@ import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.issue.vote.VoteManager;
 import com.atlassian.jira.issue.watchers.WatcherManager;
+import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
@@ -112,7 +113,8 @@ public class JiraImports
             @JiraImport IssueTypePropertyService issueTypePropertyService,
             @JiraImport ProjectPropertyService projectPropertyService,
             @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
-            @JiraImport IssueTypeService issueTypeService)
+            @JiraImport IssueTypeService issueTypeService,
+            @JiraImport OfBizDelegator ofBizDelegator)
     {
     }
 }
