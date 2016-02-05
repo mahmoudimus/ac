@@ -52,6 +52,7 @@ import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.spi.PluginInstallException;
+import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -630,9 +631,10 @@ public class ConnectAddonManager
         return i18nKey;
     }
 
-    private URI getURI(String addonBaseUrl, String endpointRelativePath)
+    @VisibleForTesting
+    URI getURI(String addonBaseUrl, String endpointRelativePath)
     {
-        UriBuilder builder = new UriBuilder().setPath(addonBaseUrl + endpointRelativePath);
+        UriBuilder builder = new UriBuilder(Uri.parse(addonBaseUrl + endpointRelativePath));
 
         UserProfile user = userManager.getRemoteUser();
         if (null != user)
