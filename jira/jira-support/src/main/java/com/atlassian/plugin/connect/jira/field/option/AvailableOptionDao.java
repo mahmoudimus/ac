@@ -70,7 +70,8 @@ public class AvailableOptionDao
         return existingOption.flatMap(this::toAvailableOption);
     }
 
-    private Optional<AvailableOptionAO> getAvailableOptionAO(final String addonKey, final String fieldKey, final Integer optionId) {
+    private Optional<AvailableOptionAO> getAvailableOptionAO(final String addonKey, final String fieldKey, final Integer optionId)
+    {
         AvailableOptionAO[] availableOptions = ao.find(AvailableOptionAO.class, Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ? AND OPTION_ID = ?", addonKey, fieldKey, optionId));
         return Stream.of(availableOptions).findFirst();
     }

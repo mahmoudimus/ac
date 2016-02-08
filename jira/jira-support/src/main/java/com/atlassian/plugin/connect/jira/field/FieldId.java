@@ -15,7 +15,8 @@ public final class FieldId
         return new FieldId(addonKey, fieldKey);
     }
 
-    public String getFullKey() {
+    public String getFullKey()
+    {
         return addonKey + "/" + fieldKey;
     }
 
