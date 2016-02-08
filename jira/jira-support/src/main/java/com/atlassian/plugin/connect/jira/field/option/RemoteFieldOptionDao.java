@@ -17,21 +17,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static java.util.stream.Collectors.toList;
 
 @JiraComponent
-public class AvailableOptionDao
+public class RemoteFieldOptionDao
 {
     private final ActiveObjects ao;
 
     @Autowired
-    public AvailableOptionDao(final ActiveObjects activeObjects)
+    public RemoteFieldOptionDao(final ActiveObjects activeObjects)
     {
         this.ao = activeObjects;
     }
 
-    public Either<ErrorCollection, AvailableOption> create(final String addonKey, final String fieldKey, final String value)
+    public Either<ErrorCollection, RemoteFieldOption> create(final String addonKey, final String fieldKey, final String value)
     {
-        AvailableOptionAO[] greatestOption = ao.find(AvailableOptionAO.class, "OPTION_ID", Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ?", addonKey, fieldKey).order("OPTION_ID DESC").limit(1));
+        RemoteFieldOptionAO[] greatestOption = ao.find(RemoteFieldOptionAO.class, "OPTION_ID", Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ?", addonKey, fieldKey).order("OPTION_ID DESC").limit(1));
         int id = greatestOption.length > 0 ? greatestOption[0].getOptionId() + 1 : 1;
-        AvailableOptionAO created = ao.create(AvailableOptionAO.class,
+        RemoteFieldOptionAO created = ao.create(RemoteFieldOptionAO.class,
                 new DBParam("ADDON_KEY", addonKey),
                 new DBParam("FIELD_KEY", fieldKey),
                 new DBParam("VALUE", value),
@@ -40,9 +40,9 @@ public class AvailableOptionDao
         return Either.right(toAvailableOption(created).get());
     }
 
-    public List<AvailableOption> getAll(final String addonKey, final String fieldKey)
+    public List<RemoteFieldOption> getAll(final String addonKey, final String fieldKey)
     {
-        AvailableOptionAO[] availableOptions = ao.find(AvailableOptionAO.class, Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ?", addonKey, fieldKey).order("OPTION_ID"));
+        RemoteFieldOptionAO[] availableOptions = ao.find(RemoteFieldOptionAO.class, Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ?", addonKey, fieldKey).order("OPTION_ID"));
         return Stream.of(availableOptions)
                 .map(this::toAvailableOption)
                 .filter(Optional::isPresent)
@@ -50,21 +50,21 @@ public class AvailableOptionDao
                 .collect(toList());
     }
 
-    public Optional<AvailableOption> get(final String addonKey, final String fieldKey, final Integer optionId)
+    public Optional<RemoteFieldOption> get(final String addonKey, final String fieldKey, final Integer optionId)
     {
         return getAvailableOptionAO(addonKey, fieldKey, optionId).flatMap(this::toAvailableOption);
     }
 
     public boolean delete(final String addonKey, final String fieldKey, final Integer optionId)
     {
-        Optional<AvailableOptionAO> dbRow = getAvailableOptionAO(addonKey, fieldKey, optionId);
+        Optional<RemoteFieldOptionAO> dbRow = getAvailableOptionAO(addonKey, fieldKey, optionId);
         dbRow.ifPresent(ao::delete);
         return dbRow.isPresent();
     }
 
-    public Optional<AvailableOption> update(final String addonKey, final String fieldKey, final Integer id, final JsonNode value)
+    public Optional<RemoteFieldOption> update(final String addonKey, final String fieldKey, final Integer id, final JsonNode value)
     {
-        Optional<AvailableOptionAO> existingOption = getAvailableOptionAO(addonKey, fieldKey, id);
+        Optional<RemoteFieldOptionAO> existingOption = getAvailableOptionAO(addonKey, fieldKey, id);
         existingOption.ifPresent(dbRow -> {
             dbRow.setValue(value.toString());
             dbRow.save();
@@ -72,14 +72,14 @@ public class AvailableOptionDao
         return existingOption.flatMap(this::toAvailableOption);
     }
 
-    private Optional<AvailableOptionAO> getAvailableOptionAO(final String addonKey, final String fieldKey, final Integer optionId)
+    private Optional<RemoteFieldOptionAO> getAvailableOptionAO(final String addonKey, final String fieldKey, final Integer optionId)
     {
-        AvailableOptionAO[] availableOptions = ao.find(AvailableOptionAO.class, Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ? AND OPTION_ID = ?", addonKey, fieldKey, optionId));
+        RemoteFieldOptionAO[] availableOptions = ao.find(RemoteFieldOptionAO.class, Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ? AND OPTION_ID = ?", addonKey, fieldKey, optionId));
         return Stream.of(availableOptions).findFirst();
     }
 
-    private Optional<AvailableOption> toAvailableOption(final AvailableOptionAO dbRow)
+    private Optional<RemoteFieldOption> toAvailableOption(final RemoteFieldOptionAO dbRow)
     {
-        return JsonCommon.parseStringToJson(dbRow.getValue()).map(jsonValue -> AvailableOption.option(dbRow.getOptionId(), jsonValue));
+        return JsonCommon.parseStringToJson(dbRow.getValue()).map(jsonValue -> RemoteFieldOption.option(dbRow.getOptionId(), jsonValue));
     }
 }

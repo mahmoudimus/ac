@@ -8,7 +8,7 @@ import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
 @Table ("AvailableOptionAO")
-public interface AvailableOptionAO extends Entity
+public interface RemoteFieldOptionAO extends Entity
 {
     @Indexed
     @NotNull

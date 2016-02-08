@@ -5,16 +5,16 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 import org.codehaus.jackson.JsonNode;
 
-public final class AvailableOption
+public final class RemoteFieldOption
 {
     private final Integer id;
     private final JsonNode value;
 
-    public static AvailableOption option(Integer id, JsonNode value) {
-        return new AvailableOption(id, value);
+    public static RemoteFieldOption option(Integer id, JsonNode value) {
+        return new RemoteFieldOption(id, value);
     }
 
-    private AvailableOption(Integer id, JsonNode value)
+    private RemoteFieldOption(Integer id, JsonNode value)
     {
         this.id = Preconditions.checkNotNull(id);
         this.value = Preconditions.checkNotNull(value);
@@ -36,7 +36,7 @@ public final class AvailableOption
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
 
-        AvailableOption that = (AvailableOption) o;
+        RemoteFieldOption that = (RemoteFieldOption) o;
 
         return Objects.equals(this.getId(), that.getId()) &&
                 Objects.equals(this.getValue(), that.getValue());

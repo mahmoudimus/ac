@@ -21,25 +21,25 @@ import static com.atlassian.jira.util.ErrorCollection.Reason.NOT_FOUND;
 
 @JiraComponent
 @ExportAsDevService
-public class AvailableOptionsServiceImpl implements AvailableOptionsService
+public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
 {
 
-    private final AvailableOptionDao availableOptionDao;
+    private final RemoteFieldOptionDao remoteFieldOptionDao;
     private final I18nResolver i18n;
     private final CustomFieldDao customFieldDao;
 
     @Autowired
-    public AvailableOptionsServiceImpl(final AvailableOptionDao availableOptionDao, final I18nResolver i18n, final CustomFieldDao customFieldDao)
+    public RemoteFieldOptionServiceImpl(final RemoteFieldOptionDao remoteFieldOptionDao, final I18nResolver i18n, final CustomFieldDao customFieldDao)
     {
-        this.availableOptionDao = availableOptionDao;
+        this.remoteFieldOptionDao = remoteFieldOptionDao;
         this.i18n = i18n;
         this.customFieldDao = customFieldDao;
     }
 
     @Override
-    public ServiceOutcome<AvailableOption> create(final FieldId fieldId, final JsonNode value)
+    public ServiceOutcome<RemoteFieldOption> create(final FieldId fieldId, final JsonNode value)
     {
-        Either<ErrorCollection, AvailableOption> result = availableOptionDao.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
+        Either<ErrorCollection, RemoteFieldOption> result = remoteFieldOptionDao.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
         return result.fold(
                 ServiceOutcomeImpl::new,
                 created -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), created)
@@ -47,15 +47,15 @@ public class AvailableOptionsServiceImpl implements AvailableOptionsService
     }
 
     @Override
-    public ServiceOutcome<List<AvailableOption>> get(final FieldId fieldId)
+    public ServiceOutcome<List<RemoteFieldOption>> get(final FieldId fieldId)
     {
-        return new ServiceOutcomeImpl<>(ErrorCollections.empty(), availableOptionDao.getAll(fieldId.getAddonKey(), fieldId.getFieldKey()));
+        return new ServiceOutcomeImpl<>(ErrorCollections.empty(), remoteFieldOptionDao.getAll(fieldId.getAddonKey(), fieldId.getFieldKey()));
     }
 
     @Override
-    public ServiceOutcome<AvailableOption> get(final FieldId fieldId, final Integer optionId)
+    public ServiceOutcome<RemoteFieldOption> get(final FieldId fieldId, final Integer optionId)
     {
-        return availableOptionDao.get(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId)
+        return remoteFieldOptionDao.get(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId)
                 .map(val -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), val))
                 .orElseGet(this::notFound);
     }
@@ -66,7 +66,7 @@ public class AvailableOptionsServiceImpl implements AvailableOptionsService
         Collection<Long> issuesWithTheFieldSet = customFieldDao.findIssues(fieldId, optionId);
         if (issuesWithTheFieldSet.isEmpty())
         {
-            availableOptionDao.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
+            remoteFieldOptionDao.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
             return new ServiceResultImpl(ErrorCollections.empty());
         }
         else
@@ -76,9 +76,9 @@ public class AvailableOptionsServiceImpl implements AvailableOptionsService
     }
 
     @Override
-    public ServiceOutcome<AvailableOption> update(final FieldId fieldId, final AvailableOption option)
+    public ServiceOutcome<RemoteFieldOption> update(final FieldId fieldId, final RemoteFieldOption option)
     {
-        return availableOptionDao.update(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
+        return remoteFieldOptionDao.update(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
                 .map(result -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), result))
                 .orElseGet(this::notFound);
     }

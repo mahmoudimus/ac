@@ -10,7 +10,7 @@ import org.codehaus.jackson.JsonNode;
 /**
  * Service for accessing and manipulating available options storage for select custom fields.
  */
-public interface AvailableOptionsService
+public interface RemoteFieldOptionService
 {
     /**
      * Create a new option.
@@ -19,7 +19,7 @@ public interface AvailableOptionsService
      * @param value value of the new option
      * @return the created option if successful, errors otherwise
      */
-    ServiceOutcome<AvailableOption> create(FieldId fieldId, JsonNode value);
+    ServiceOutcome<RemoteFieldOption> create(FieldId fieldId, JsonNode value);
 
     /**
      * Get all options for a specific field.
@@ -27,7 +27,7 @@ public interface AvailableOptionsService
      * @param fieldId the field to get the options for
      * @return a list of all options
      */
-    ServiceOutcome<List<AvailableOption>> get(FieldId fieldId);
+    ServiceOutcome<List<RemoteFieldOption>> get(FieldId fieldId);
 
     /**
      * Get an option with a particular id for a specified field
@@ -36,7 +36,7 @@ public interface AvailableOptionsService
      * @param optionId the option id
      * @return the option or errors if not found
      */
-    ServiceOutcome<AvailableOption> get(FieldId fieldId, Integer optionId);
+    ServiceOutcome<RemoteFieldOption> get(FieldId fieldId, Integer optionId);
 
     /**
      * Delete a specified option
@@ -54,14 +54,14 @@ public interface AvailableOptionsService
      * @param option the new option
      * @return the updated option if successful, errors if the option to update does not exist
      */
-    ServiceOutcome<AvailableOption> update(FieldId fieldId, AvailableOption option);
+    ServiceOutcome<RemoteFieldOption> update(FieldId fieldId, RemoteFieldOption option);
 
     /**
      * Reset the {@code from} value to the {@code to} value in all issues that have the field
      * specified by the {@code fieldId} parameter set to {@code from}.
      *
      * <p>
-     *     Useful when you wish to {@link AvailableOptionsService#delete(FieldId, Integer)} an option but there are
+     *     Useful when you wish to {@link RemoteFieldOptionService#delete(FieldId, Integer)} an option but there are
      *     still some issues that have the option assigned.
      * </p>
      *

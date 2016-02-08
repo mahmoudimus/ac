@@ -8,8 +8,8 @@ import java.util.stream.Stream;
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.plugin.connect.api.util.JsonCommon;
 import com.atlassian.plugin.connect.jira.field.FieldId;
-import com.atlassian.plugin.connect.jira.field.option.AvailableOption;
-import com.atlassian.plugin.connect.jira.field.option.AvailableOptionsService;
+import com.atlassian.plugin.connect.jira.field.option.RemoteFieldOption;
+import com.atlassian.plugin.connect.jira.field.option.RemoteFieldOptionService;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.ImmutableList;
@@ -27,15 +27,15 @@ import static org.junit.Assert.assertTrue;
 
 @Application ("jira")
 @RunWith (AtlassianPluginsTestRunner.class)
-public class AvailableOptionsServiceWiredTest
+public class RemoteFieldOptionsServiceWiredTest
 {
-    private final AvailableOptionsService availableOptionsService;
+    private final RemoteFieldOptionService remoteFieldOptionService;
 
     private FieldId fieldId;
 
-    public AvailableOptionsServiceWiredTest(final AvailableOptionsService availableOptionsService)
+    public RemoteFieldOptionsServiceWiredTest(final RemoteFieldOptionService remoteFieldOptionService)
     {
-        this.availableOptionsService = availableOptionsService;
+        this.remoteFieldOptionService = remoteFieldOptionService;
     }
 
     @Before
@@ -48,13 +48,13 @@ public class AvailableOptionsServiceWiredTest
     public void optionCanBeCreated()
     {
         JsonNode jsonValue = parseStringToJson("42").get();
-        AvailableOption expectedResult = AvailableOption.option(1, jsonValue);
+        RemoteFieldOption expectedResult = RemoteFieldOption.option(1, jsonValue);
 
-        ServiceOutcome<AvailableOption> result = availableOptionsService.create(fieldId, jsonValue);
+        ServiceOutcome<RemoteFieldOption> result = remoteFieldOptionService.create(fieldId, jsonValue);
         assertTrue(result.isValid());
         assertEquals(expectedResult, result.get());
 
-        List<AvailableOption> allOptions = availableOptionsService.get(fieldId).get();
+        List<RemoteFieldOption> allOptions = remoteFieldOptionService.get(fieldId).get();
         assertEquals(ImmutableList.of(expectedResult), allOptions);
     }
 
@@ -63,7 +63,7 @@ public class AvailableOptionsServiceWiredTest
     {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"", "\"d\"", "\"e\"");
 
-        List<Integer> ids = availableOptionsService.get(fieldId).get().stream().map(AvailableOption::getId).collect(toList());
+        List<Integer> ids = remoteFieldOptionService.get(fieldId).get().stream().map(RemoteFieldOption::getId).collect(toList());
         assertEquals(ImmutableList.of(1, 2, 3, 4, 5), ids);
     }
 
@@ -71,12 +71,12 @@ public class AvailableOptionsServiceWiredTest
     public void everyOptionIsAlwaysAssignedAUniqueId()
     {
         createOptions(fieldId, "1", "2", "3", "4");
-        availableOptionsService.delete(fieldId, 3);
-        availableOptionsService.delete(fieldId, 2);
+        remoteFieldOptionService.delete(fieldId, 3);
+        remoteFieldOptionService.delete(fieldId, 2);
         createOption(fieldId, "\"a\"").getId();
         createOption(fieldId, "\"b\"").getId();
 
-        Set<Integer> ids = availableOptionsService.get(fieldId).get().stream().map(AvailableOption::getId).collect(toSet());
+        Set<Integer> ids = remoteFieldOptionService.get(fieldId).get().stream().map(RemoteFieldOption::getId).collect(toSet());
 
         assertEquals(4, ids.size());
     }
@@ -89,32 +89,32 @@ public class AvailableOptionsServiceWiredTest
         createOptions(field1, "\"a\"", "\"b\"", "\"c\"");
         createOptions(field2, "1", "2", "3");
 
-        assertEquals(AvailableOption.option(2, parseStringToJson("\"b\"").get()), availableOptionsService.get(field1, 2).get());
-        assertEquals(AvailableOption.option(2, parseStringToJson("2").get()), availableOptionsService.get(field2, 2).get());
+        assertEquals(RemoteFieldOption.option(2, parseStringToJson("\"b\"").get()), remoteFieldOptionService.get(field1, 2).get());
+        assertEquals(RemoteFieldOption.option(2, parseStringToJson("2").get()), remoteFieldOptionService.get(field2, 2).get());
     }
 
     @Test
     public void updatingWorks()
     {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"");
-        AvailableOption expectedValue = AvailableOption.option(2, parseStringToJson("\"B\"").get());
-        AvailableOption result = availableOptionsService.update(fieldId, expectedValue).get();
+        RemoteFieldOption expectedValue = RemoteFieldOption.option(2, parseStringToJson("\"B\"").get());
+        RemoteFieldOption result = remoteFieldOptionService.update(fieldId, expectedValue).get();
         assertEquals(expectedValue, result);
-        assertEquals(expectedValue, availableOptionsService.get(fieldId, 2).get());
+        assertEquals(expectedValue, remoteFieldOptionService.get(fieldId, 2).get());
     }
 
-    private List<AvailableOption> createOptions(final FieldId fieldId, String... values)
+    private List<RemoteFieldOption> createOptions(final FieldId fieldId, String... values)
     {
         return Stream.of(values)
                 .map(JsonCommon::parseStringToJson)
-                .map(Optional::get).map(json -> availableOptionsService.create(fieldId, json))
+                .map(Optional::get).map(json -> remoteFieldOptionService.create(fieldId, json))
                 .map(ServiceOutcome::get)
                 .collect(toList());
     }
 
-    private AvailableOption createOption(FieldId fieldId, String value)
+    private RemoteFieldOption createOption(FieldId fieldId, String value)
     {
-        return availableOptionsService.create(fieldId, parseStringToJson(value).get()).get();
+        return remoteFieldOptionService.create(fieldId, parseStringToJson(value).get()).get();
     }
 
     private static FieldId randomFieldId()
