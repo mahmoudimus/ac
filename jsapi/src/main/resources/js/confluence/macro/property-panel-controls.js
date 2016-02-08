@@ -1,15 +1,24 @@
 (function($, define){
 
     define("ac/confluence/macro/property-panel-controls", [], function() {
-        return function(macroUrl) {
+        return function(addonName, macroName) {
             return {
                 getControls: function(callback) {
-                    callback([
+                    $.ajax(AJS.contextPath() + '/rest/atlassian-connect/1/controls/' + addonName + '/' + macroName + '/property-panel').done(function(response)
+                    {
+                        var buttonModel = {};
+                        var response = JSON.parse(response);
+                        if (response.length == 1 && response[0].type === "button")
                         {
-                            className: "macro-placeholder-property-panel-hello-button",
-                            text: "Hello"
+                            buttonModel.className = "macro-placeholder-property-panel-hello-button";
+                            buttonModel.text = response[0].displayName;
+                            callback([buttonModel]);
                         }
-                    ]);
+                        else
+                        {
+                            callback([]);
+                        }
+                    });
                 }
             };
         };
