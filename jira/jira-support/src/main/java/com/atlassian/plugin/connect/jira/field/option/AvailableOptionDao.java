@@ -27,7 +27,7 @@ public class AvailableOptionDao
 
     public Either<ErrorCollection, AvailableOption> create(final String addonKey, final String fieldKey, final String value)
     {
-        AvailableOptionAO[] greatestOption = ao.find(AvailableOptionAO.class, Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ?", addonKey, fieldKey).order("OPTION_ID DESC").limit(1));
+        AvailableOptionAO[] greatestOption = ao.find(AvailableOptionAO.class, "OPTION_ID", Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ?", addonKey, fieldKey).order("OPTION_ID DESC").limit(1));
         int id = greatestOption.length > 0 ? greatestOption[0].getOptionId() + 1 : 1;
         AvailableOptionAO created = ao.create(AvailableOptionAO.class,
                 new DBParam("ADDON_KEY", addonKey),
@@ -50,17 +50,27 @@ public class AvailableOptionDao
 
     public Optional<AvailableOption> get(final String addonKey, final String fieldKey, final Integer optionId)
     {
-        return getDbRow(addonKey, fieldKey, optionId).flatMap(this::toAvailableOption);
+        return getAvailableOptionAO(addonKey, fieldKey, optionId).flatMap(this::toAvailableOption);
     }
 
     public boolean delete(final String addonKey, final String fieldKey, final Integer optionId)
     {
-        Optional<AvailableOptionAO> dbRow = getDbRow(addonKey, fieldKey, optionId);
+        Optional<AvailableOptionAO> dbRow = getAvailableOptionAO(addonKey, fieldKey, optionId);
         dbRow.ifPresent(ao::delete);
         return dbRow.isPresent();
     }
 
-    private Optional<AvailableOptionAO> getDbRow(final String addonKey, final String fieldKey, final Integer optionId) {
+    public Optional<AvailableOption> update(final String addonKey, final String fieldKey, final Integer id, final JsonValue value)
+    {
+        Optional<AvailableOptionAO> existingOption = getAvailableOptionAO(addonKey, fieldKey, id);
+        existingOption.ifPresent(dbRow -> {
+            dbRow.setValue(value.toJson());
+            dbRow.save();
+        });
+        return existingOption.flatMap(this::toAvailableOption);
+    }
+
+    private Optional<AvailableOptionAO> getAvailableOptionAO(final String addonKey, final String fieldKey, final Integer optionId) {
         AvailableOptionAO[] availableOptions = ao.find(AvailableOptionAO.class, Query.select().where("ADDON_KEY = ? AND FIELD_KEY = ? AND OPTION_ID = ?", addonKey, fieldKey, optionId));
         return Stream.of(availableOptions).findFirst();
     }
@@ -68,15 +78,5 @@ public class AvailableOptionDao
     private Optional<AvailableOption> toAvailableOption(final AvailableOptionAO dbRow)
     {
         return JsonValue.parse(dbRow.getValue()).map(jsonValue -> AvailableOption.option(dbRow.getOptionId(), jsonValue));
-    }
-
-    public Optional<AvailableOption> update(final String addonKey, final String fieldKey, final Integer id, final JsonValue value)
-    {
-        Optional<AvailableOptionAO> existingOption = getDbRow(addonKey, fieldKey, id);
-        existingOption.ifPresent(dbRow -> {
-            dbRow.setValue(value.toJson());
-            dbRow.save();
-        });
-        return existingOption.flatMap(this::toAvailableOption);
     }
 }

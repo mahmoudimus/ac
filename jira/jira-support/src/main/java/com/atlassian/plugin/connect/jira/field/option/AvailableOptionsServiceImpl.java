@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.field.option;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.atlassian.fugue.Either;
@@ -59,17 +60,21 @@ public class AvailableOptionsServiceImpl implements AvailableOptionsService
     }
 
     @Override
-    public ServiceResult delete(final FieldId fieldId, final Integer valueId)
+    public ServiceResult delete(final FieldId fieldId, final Integer optionId)
     {
-        availableOptionDao.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), valueId);
-        customFieldDao.remove(fieldId, valueId);
-        return new ServiceResultImpl(ErrorCollections.empty());
+        Collection<Long> issuesWithTheFieldSet = customFieldDao.findIssues(fieldId, optionId);
+        if (issuesWithTheFieldSet.isEmpty()) {
+            availableOptionDao.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
+            return new ServiceResultImpl(ErrorCollections.empty());
+        } else {
+            return new ServiceResultImpl(ErrorCollections.create(i18n.getText("connect.issue.field.option.delete.used", issuesWithTheFieldSet.toString()), ErrorCollection.Reason.CONFLICT));
+        }
     }
 
     @Override
-    public ServiceOutcome<AvailableOption> update(final FieldId fieldId, final AvailableOption value)
+    public ServiceOutcome<AvailableOption> update(final FieldId fieldId, final AvailableOption option)
     {
-        return availableOptionDao.update(fieldId.getAddonKey(), fieldId.getFieldKey(), value.getId(), value.getValue())
+        return availableOptionDao.update(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
                 .map(result -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), result))
                 .orElseGet(this::notFound);
     }
@@ -77,7 +82,7 @@ public class AvailableOptionsServiceImpl implements AvailableOptionsService
     @Override
     public ServiceResult replace(final FieldId fieldId, final Integer from, final Integer to)
     {
-        customFieldDao.remove(fieldId, from);
+        customFieldDao.replace(fieldId, from, to);
         return new ServiceResultImpl(ErrorCollections.empty());
     }
 

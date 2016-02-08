@@ -1,14 +1,19 @@
 package com.atlassian.plugin.connect.jira.field.option;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.atlassian.plugin.connect.jira.field.FieldId;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableMap;
+import org.ofbiz.core.entity.GenericValue;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+import static java.util.stream.Collectors.toList;
+
+@JiraComponent
 public class CustomFieldDao
 {
     public static final String CF_VALUE_TABLE_NAME = "CustomFieldValue";
@@ -34,6 +39,12 @@ public class CustomFieldDao
                 CF_VALUE_TABLE_NAME,
                 ImmutableMap.of(VALUE_COLUMN, to),
                 getSelectClause(fieldId, from));
+    }
+
+    public Collection<Long> findIssues(final FieldId fieldId, final Integer optionId)
+    {
+        List<GenericValue> fields = ofBizDelegator.findByAnd(CF_VALUE_TABLE_NAME, getSelectClause(fieldId, optionId));
+        return fields.stream().map(gv -> gv.getLong("issue")).collect(toList());
     }
 
     private Map<String, Object> getSelectClause(FieldId fieldId, Integer optionId)

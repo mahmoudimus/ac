@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.jira.field.option;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.atlassian.jira.bc.ServiceOutcome;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -64,17 +66,17 @@ public class AvailableOptionsServiceWiredTest
     }
 
     @Test
-    public void idGreaterThanEveryOtherIsAssignedToNewOptions()
+    public void everyOptionIsAlwaysAssignedAUniqueId()
     {
         createOptions(fieldId, "1", "2", "3", "4");
         availableOptionsService.delete(fieldId, 3);
         availableOptionsService.delete(fieldId, 2);
+        createOption(fieldId, "a").getId();
+        createOption(fieldId, "b").getId();
 
-        assertEquals(Integer.valueOf(5), createOption(fieldId, "a").getId());
-        assertEquals(Integer.valueOf(6), createOption(fieldId, "b").getId());
-        availableOptionsService.delete(fieldId, 5);
-        availableOptionsService.delete(fieldId, 6);
-        assertEquals(Integer.valueOf(5), createOption(fieldId, "a").getId());
+        Set<Integer> ids = availableOptionsService.get(fieldId).get().stream().map(AvailableOption::getId).collect(toSet());
+
+        assertEquals(4, ids.size());
     }
 
     @Test
