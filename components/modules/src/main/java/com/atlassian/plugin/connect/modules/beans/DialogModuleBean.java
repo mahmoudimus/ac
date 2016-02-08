@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * <p>A common dialog definition that may be referenced by other Connect modules and from JavaScript API calls.</p>
  *
  * <p>
- *     For example, a dialog defined in this module might be referenced from a web item target, so that
+ *     For example, a dialog defined in this module might be referenced from a <a href="../fragment/web-item-target.html">web item target</a>, so that
  *     triggering the web item launches the dialog.
  * </p>
  *#### Example
