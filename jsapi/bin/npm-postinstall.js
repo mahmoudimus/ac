@@ -6,7 +6,7 @@ var simpleXdmJsPath = 'node_modules/simple-xdm';
 helper.chain([
     [
         'cp',
-        ['-a', helper.npmNormalize(atlassianConnectJsPath + '/dist') + '/.', 'src/main/resources/js/core']
+        ['-af', helper.npmNormalize(atlassianConnectJsPath + '/dist') + '/.', 'src/main/resources/js/core']
     ],
     [
         'cp',
