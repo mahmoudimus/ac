@@ -7,9 +7,11 @@ import java.util.stream.Stream;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.fugue.Either;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.plugin.connect.api.util.JsonCommon;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
+import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.util.stream.Collectors.toList;
@@ -60,11 +62,11 @@ public class AvailableOptionDao
         return dbRow.isPresent();
     }
 
-    public Optional<AvailableOption> update(final String addonKey, final String fieldKey, final Integer id, final JsonValue value)
+    public Optional<AvailableOption> update(final String addonKey, final String fieldKey, final Integer id, final JsonNode value)
     {
         Optional<AvailableOptionAO> existingOption = getAvailableOptionAO(addonKey, fieldKey, id);
         existingOption.ifPresent(dbRow -> {
-            dbRow.setValue(value.toJson());
+            dbRow.setValue(value.toString());
             dbRow.save();
         });
         return existingOption.flatMap(this::toAvailableOption);
@@ -78,6 +80,6 @@ public class AvailableOptionDao
 
     private Optional<AvailableOption> toAvailableOption(final AvailableOptionAO dbRow)
     {
-        return JsonValue.parse(dbRow.getValue()).map(jsonValue -> AvailableOption.option(dbRow.getOptionId(), jsonValue));
+        return JsonCommon.parseStringToJson(dbRow.getValue()).map(jsonValue -> AvailableOption.option(dbRow.getOptionId(), jsonValue));
     }
 }

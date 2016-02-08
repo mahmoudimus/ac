@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.message.I18nResolver;
+import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.jira.util.ErrorCollection.Reason.NOT_FOUND;
@@ -36,9 +37,9 @@ public class AvailableOptionsServiceImpl implements AvailableOptionsService
     }
 
     @Override
-    public ServiceOutcome<AvailableOption> create(final FieldId fieldId, final JsonValue value)
+    public ServiceOutcome<AvailableOption> create(final FieldId fieldId, final JsonNode value)
     {
-        Either<ErrorCollection, AvailableOption> result = availableOptionDao.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toJson());
+        Either<ErrorCollection, AvailableOption> result = availableOptionDao.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
         return result.fold(
                 ServiceOutcomeImpl::new,
                 created -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), created)
@@ -63,10 +64,13 @@ public class AvailableOptionsServiceImpl implements AvailableOptionsService
     public ServiceResult delete(final FieldId fieldId, final Integer optionId)
     {
         Collection<Long> issuesWithTheFieldSet = customFieldDao.findIssues(fieldId, optionId);
-        if (issuesWithTheFieldSet.isEmpty()) {
+        if (issuesWithTheFieldSet.isEmpty())
+        {
             availableOptionDao.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
             return new ServiceResultImpl(ErrorCollections.empty());
-        } else {
+        }
+        else
+        {
             return new ServiceResultImpl(ErrorCollections.create(i18n.getText("connect.issue.field.option.delete.used", issuesWithTheFieldSet.toString()), ErrorCollection.Reason.CONFLICT));
         }
     }

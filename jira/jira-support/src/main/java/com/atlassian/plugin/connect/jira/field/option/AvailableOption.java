@@ -3,17 +3,18 @@ package com.atlassian.plugin.connect.jira.field.option;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
+import org.codehaus.jackson.JsonNode;
 
 public final class AvailableOption
 {
     private final Integer id;
-    private final JsonValue value;
+    private final JsonNode value;
 
-    public static AvailableOption option(Integer id, JsonValue value) {
+    public static AvailableOption option(Integer id, JsonNode value) {
         return new AvailableOption(id, value);
     }
 
-    private AvailableOption(Integer id, JsonValue value)
+    private AvailableOption(Integer id, JsonNode value)
     {
         this.id = Preconditions.checkNotNull(id);
         this.value = Preconditions.checkNotNull(value);
@@ -24,7 +25,7 @@ public final class AvailableOption
         return id;
     }
 
-    public JsonValue getValue()
+    public JsonNode getValue()
     {
         return value;
     }

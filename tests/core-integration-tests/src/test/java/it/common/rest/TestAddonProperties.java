@@ -10,7 +10,7 @@ import java.util.Collection;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.property.JsonCommon;
+import com.atlassian.plugin.connect.api.util.JsonCommon;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.SignedRequestHandler;
@@ -34,7 +34,6 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.eclipse.jetty.server.Response;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.After;

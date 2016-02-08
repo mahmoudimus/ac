@@ -5,6 +5,7 @@ import java.util.List;
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.plugin.connect.jira.field.FieldId;
+import org.codehaus.jackson.JsonNode;
 
 /**
  * Service for accessing and manipulating available options storage for select custom fields.
@@ -18,7 +19,7 @@ public interface AvailableOptionsService
      * @param value value of the new option
      * @return the created option if successful, errors otherwise
      */
-    ServiceOutcome<AvailableOption> create(FieldId fieldId, JsonValue value);
+    ServiceOutcome<AvailableOption> create(FieldId fieldId, JsonNode value);
 
     /**
      * Get all options for a specific field.

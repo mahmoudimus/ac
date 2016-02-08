@@ -52,6 +52,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
         </dependency>
