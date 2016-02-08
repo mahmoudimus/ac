@@ -15,12 +15,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * <p>
  *     For example, a dialog defined in this module might be referenced from a web item target, so that
- *     triggering the web item launches the dialog. The dialog might also be referenced by key via a
- *     Dialog.create() call* from the JavaScript API, or as the target of a control-bar item*. The dialog url and
- *     options would then not need to be defined in multiple places.
+ *     triggering the web item launches the dialog.
  * </p>
- *
- * <p>* upcoming features</p>
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DIALOG_EXAMPLE}

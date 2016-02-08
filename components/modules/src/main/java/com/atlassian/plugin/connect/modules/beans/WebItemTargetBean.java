@@ -10,10 +10,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Defines the way a web item link is opened in the browser, such as in a modal or inline dialog.
  *
- *#### Example
+ *#### Inline Dialog Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE}
+ *
+ *#### Dialog Example
+ *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_COMMON_DIALOG_EXAMPLE}
+ *
  * @schemaTitle Web Item Target
  * @since 1.0
  */

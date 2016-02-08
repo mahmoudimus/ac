@@ -13,10 +13,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *     These options are a subset of those available via the <a href="../../javascript/Dialog-DialogOptions.html">JavaScript API</a>.
  * </p>
  *
- *#### Example
+ *#### Web Item Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_DIALOG_EXAMPLE}
+ *
+ *#### Dialog Example
+ *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DIALOG_EXAMPLE}
+ *
  * @schemaTitle Dialog Options
  * @since 1.1
  */
