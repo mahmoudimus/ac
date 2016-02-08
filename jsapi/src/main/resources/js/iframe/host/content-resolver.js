@@ -3,12 +3,12 @@ connectHost.registerContentResolver.resolveByExtension(function(params){
         return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(moduleKey);
     }
     console.log(arguments);
-    return $.ajax(getContentUrl(params.extension.addon_key, params.extension.key), {
+    return $.ajax(getContentUrl(params.addon_key, params.key), {
         dataType: "html",
         data: {
-            "plugin-key": params.extension.addon_key,
+            "plugin-key": params.addon_key,
             // "product-context": JSON.stringify(params.productContext),
-            "key": params.extension.key,
+            "key": params.key,
             "width": params.width || "100%",
             "height": params.height || "100%",
             "classifier": params.classifier || "raw"

@@ -1,6 +1,6 @@
 <script class="ap-iframe-body-script">
   (function(){
     var container = connectHost.create(#parse("velocity/iframe-json.vm"));
-    $("#ap-$namespace").append(container);
+    $("#embedded-" + _AP.util.escapeSelector("$namespace")).append(container);
   }());
 </script>

@@ -6,5 +6,5 @@
 //    return _AP;
 //});
 connectHost.onIframeEstablished(function(data){
-    $("#embedded-" + data.extension.addon_key + "__" + data.extension.key).addClass('iframe-init');
+  data.$el.closest(".ap-content").addClass('iframe-init');
 });
