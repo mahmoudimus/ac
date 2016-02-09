@@ -1,9 +1,9 @@
 (function ($, require) {
     "use strict";
     require(["ac/request"], function (request) {
-        request.defineSetExperimentalHeader(function(headers) {
-            headers["X-ExperimentalApi"] = "opt-in";
-            return headers;
+        request.setExperimentify(function(ajaxOptions) {
+            ajaxOptions.headers["X-ExperimentalApi"] = "opt-in";
+            return ajaxOptions;
         })
     });
 })(AJS.$, require);
