@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.plugin.property;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Optional;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
@@ -425,5 +427,35 @@ public class AddonEntityPropertyEqualToConditionTest
         levelTwo.put("everything", 42);
         levelTwo.put("help", "it's dangerous to go alone. Here, take this towel");
         return root;
+    }
+
+    @Test
+    public void testShouldDisplay__should_coerce_expected_boolean_into_string_comparison() {
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", JsonNodeFactory.instance.textNode("true"), 12345L);
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "unimportant-key",
+            "value", "true"
+        ));
+
+        assertTrue(sut.shouldDisplay(ImmutableMap.of()));
+    }
+
+    @Test
+    public void testShouldDisplay__should_coerce_expected_number_into_string_comparison() {
+        final AddonProperty propertyResult = new AddonProperty("unimportant-key", JsonNodeFactory.instance.textNode("10"), 12345L);
+        when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
+            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+
+        sut.init(ImmutableMap.of(
+            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+            "propertyKey", "unimportant-key",
+            "value", "10"
+        ));
+
+        assertTrue(sut.shouldDisplay(ImmutableMap.of()));
     }
 }

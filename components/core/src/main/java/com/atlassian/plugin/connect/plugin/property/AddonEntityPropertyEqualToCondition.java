@@ -14,11 +14,14 @@ import com.google.common.base.Strings;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.plugin.property.JsonCommon.parseStringToJson;
 
-public class AddonEntityPropertyEqualToCondition extends AbstractConnectCondition
-{
+public class AddonEntityPropertyEqualToCondition extends AbstractConnectCondition {
+    private static final Logger log = LoggerFactory.getLogger(AddonEntityPropertyEqualToCondition.class);
+
     private final AddonPropertyService addonPropertyService;
     private final UserManager userManager;
 
@@ -90,7 +93,23 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
                     actualValue = potentialValue.get();
                 }
 
-                return expectedValue.equals(actualValue);
+                if(expectedValue.equals(actualValue)) return true;
+
+                // All of the code below this point in this method should be deleted by https://ecosystem.atlassian.net/browse/ACJIRA-825
+                // In the past this condition worked purely on string comparison and therefore boolean values and numerical values
+                // would successfully compare against their string equivalents.
+                if(StringUtils.isNotBlank(jsonPath)) return false;
+                if (!expectedValue.isValueNode() || !actualValue.isValueNode()) return false;
+                final boolean stringComparisonEqual = actualValue.isTextual() && expectedValue.asText().equals(
+                    actualValue.getTextValue());
+                if (stringComparisonEqual) {
+                    log.warn("Deprecation Warning: entity_property_equal_to condition was not equivalent by JSON comparison but was by String comparison. "
+                        + "Please ensure that the entity property values and the condition 'value' are of the same json type. "
+                        + "Type coercion has made the actual value: '" + actualValue + "' be equivalent to the expected value"
+                        + "'" + expectedValue + "'. Please update the expected 'value' in the entity property condition"
+                        + "to match the actual value. This condition was defined in the add-on: " + addonKey);
+                }
+                return stringComparisonEqual;
             }
         );
     }
