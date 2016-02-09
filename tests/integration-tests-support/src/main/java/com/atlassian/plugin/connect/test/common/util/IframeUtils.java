@@ -7,7 +7,8 @@ public class IframeUtils
 
     public static String iframeId(String moduleKey)
     {
-        return IFRAME_ID_PREFIX + moduleKey + IFRAME_ID_SUFFIX;
+//        return IFRAME_ID_PREFIX + moduleKey + IFRAME_ID_SUFFIX;
+        return moduleKey;
     }
 
     public static String iframeServletPath(String addonKey, String moduleKey)

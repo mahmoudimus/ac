@@ -3,8 +3,14 @@
     var data = #parse("velocity/iframe-json.vm");
     data.options = { 
       isFullPage: (data.general === "1"),
-      autoresize: (data.general === "1")
-      };
+      autoresize: (data.general === "1"),
+      user: {
+        timeZone: data.timeZone,
+        fullName: data.fullName,
+        uid: data.uid,
+        ukey: data.ukey
+      }
+    };
     var container = connectHost.create(data);
     $("#embedded-" + _AP.util.escapeSelector("$namespace")).append(container);
   }());

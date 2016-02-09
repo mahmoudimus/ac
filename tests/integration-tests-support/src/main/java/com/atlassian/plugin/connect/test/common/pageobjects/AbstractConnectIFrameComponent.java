@@ -68,7 +68,9 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
         // A constructor variant allows the iframe element to be passed in, in which case we don't need to find it again.
         if (iframe == null)
         {
-            iframe = elementFinder.find(By.id(getFrameId()));
+            iframe = elementFinder.find(By.cssSelector("iframe[id^=\"" + getFrameId() + "\"]"));
+
+            // iframe = elementFinder.find(By.id(getFrameId()));
         }
         if (iframeSrc == null)
         {
