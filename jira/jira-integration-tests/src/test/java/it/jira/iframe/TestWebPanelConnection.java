@@ -26,10 +26,11 @@ import static org.junit.Assert.assertThat;
 /**
  * Test web panels in web panel redirected locations works and points to the redirect servlet.
  */
-public final class TestRedirectedWebPanel extends JiraWebDriverTestBase
+public final class TestWebPanelConnection extends JiraWebDriverTestBase
 {
     // this is not a true redirected location but it's defined as this in reference plugin for the test purpose.
     private static final String REDIRECTED_LOCATION = "atl.jira.proj.config.sidebar";
+    private static final String LOCATION = "webpanels.admin.summary.right-panels";
 
     private static final String WEB_PANEL_KEY = "test-web-panel";
     private static final ParameterCapturingServlet PARAMETER_CAPTURING_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.channelConnectionVerifyServlet());
@@ -45,6 +46,20 @@ public final class TestRedirectedWebPanel extends JiraWebDriverTestBase
     {
         product.quickLoginAsAdmin();
 
+    }
+
+    @AfterClass
+    public static void stopConnectAddOn() throws Exception
+    {
+        if (runner != null)
+        {
+            runner.stopAndUninstall();
+        }
+    }
+
+    @Test
+    public void webPanelInRedirectedLocationShouldConnectionWithConnectJsAndParamsShouldBeResolvedProperly() throws Exception
+    {
         webPanel = newWebPanelBean()
                 .withName(new I18nProperty("Panel in redirected location", null))
                 .withKey("test-web-panel")
@@ -60,20 +75,7 @@ public final class TestRedirectedWebPanel extends JiraWebDriverTestBase
                 )
                 .addRoute("/servlet", ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_SERVLET))
                 .start();
-    }
 
-    @AfterClass
-    public static void stopConnectAddOn() throws Exception
-    {
-        if (runner != null)
-        {
-            runner.stopAndUninstall();
-        }
-    }
-
-    @Test
-    public void webPanelInRedirectedLocationShouldPointsToRedirectServletAndDisplaysProperly()
-    {
         JiraProjectAdministrationPage page = product.visit(JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = page.findWebPanel(webPanel.getKey(runner.getAddon())).waitUntilContentElementNotEmpty("channel-connected-message");
 
@@ -83,5 +85,31 @@ public final class TestRedirectedWebPanel extends JiraWebDriverTestBase
         Map<String, String> params = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertThat(params.get("project_id"), is(project.getId()));
         assertThat(params.get("project_key"), is(project.getKey()));
+    }
+
+    @Test
+    public void webPanelWithAddOnBaseUrlWithPathShouldConnectionWithConnectJs() throws Exception
+    {
+        webPanel = newWebPanelBean()
+                .withName(new I18nProperty("Panel in redirected location", null))
+                .withKey("test-web-panel")
+                .withUrl("/servlet")
+                .withLocation(LOCATION)
+                .build();
+
+        runner = new ConnectRunner(product)
+                .setBaseUrlPath("/path")
+                .setAuthenticationToNone()
+                .addModules(
+                        "webPanels",
+                        webPanel
+                )
+                .addRoute("/servlet", ConnectAppServlets.wrapContextAwareServlet(ConnectAppServlets.channelConnectionVerifyServlet()))
+                .start();
+
+        JiraProjectAdministrationPage page = product.visit(JiraProjectAdministrationPage.class, project.getKey());
+
+        // Check if iframe connected with connect JS. The "channel-connected-message" element is displayed after connection is established.
+        page.findWebPanel(webPanel.getKey(runner.getAddon())).waitUntilContentElementNotEmpty("channel-connected-message");
     }
 }
