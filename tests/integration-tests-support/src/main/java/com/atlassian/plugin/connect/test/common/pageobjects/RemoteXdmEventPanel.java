@@ -51,7 +51,8 @@ public class RemoteXdmEventPanel
     @Init
     public void init()
     {
-        By selector = By.id("embedded-" + ModuleKeyUtils.addonAndModuleKey(addonId, moduleId));
+//        By selector = By.id("embedded-" + ModuleKeyUtils.addonAndModuleKey(addonId, moduleId));
+        By selector = By.cssSelector("div[id^=\"embedded-" + ModuleKeyUtils.addonAndModuleKey(addonId, moduleId) + "\"]");
         driver.waitUntilElementIsLocated(selector);
         this.containerDiv = driver.findElement(selector);
         driver.waitUntil(new Function<WebDriver, Boolean>()

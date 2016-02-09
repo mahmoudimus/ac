@@ -101,7 +101,8 @@ public class ConnectPageOperations
 
     private boolean existsElementWithId(final String id)
     {
-        return driver.elementExists(By.id(id));
+//        return driver.elementExists(By.id(id));
+        return driver.elementExists(By.cssSelector("iframe[id^=\"" + id + "\"]"));
     }
 
     public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Optional<String> dropDownMenuId, String pageKey)
