@@ -1,8 +1,10 @@
 <script class="ap-iframe-body-script">
   (function(){
     var data = #parse("velocity/iframe-json.vm");
-    data.options = { autoresize: (data.general === "1") };
-
+    data.options = { 
+      isFullPage: (data.general === "1"),
+      autoresize: (data.general === "1")
+      };
     var container = connectHost.create(data);
     $("#embedded-" + _AP.util.escapeSelector("$namespace")).append(container);
   }());

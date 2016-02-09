@@ -99,7 +99,8 @@ public class StaticResourcesFilter implements Filter
             final String moduleDir = "js/";
             // note: any changes here must also be made in plugin/pom.xml!
             final String[] modules = {
-                    "core/iframe.js"
+                    "core/iframe.js",
+                    "core/plugin-compat.js"
 //                    "iframe/plugin/jira.js",
 //                    "iframe/plugin/confluence.js",
 //                    "iframe/plugin/user.js",

@@ -120,6 +120,7 @@
                                     <includes>
                                         <!-- note: any changes here must also be made in StaticResourcesFilter.java -->
                                         <include>../../node_modules/simple-xdm/dist/iframe.js</include>
+                                        <include>../../node_modules/atlassian-connect-js/dist/plugin-compat.js</include>
                                         <include>js-min/iframe/plugin/user-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js-min/iframe/plugin/jira-min.js</include>
