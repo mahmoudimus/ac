@@ -1,5 +1,7 @@
 <application key="confluence">
 
+    <analytics-whitelist key="confluence-analytics-whitelist" resource="analytics/confluence-analytics-whitelist.json"/>
+
     <connect-module key="blueprint-module" class="com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProviderImpl"/>
     <connect-module key="content-property-module" class="com.atlassian.plugin.connect.confluence.property.ContentPropertyModuleProvider"/>
     <connect-module key="dynamic-content-macro-module" class="com.atlassian.plugin.connect.confluence.macro.DynamicContentMacroModuleProvider"/>

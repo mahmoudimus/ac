@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.api.property;
 
-import javax.annotation.concurrent.Immutable;
-
 import com.atlassian.annotations.PublicApi;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.JsonNode;
+
+import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
