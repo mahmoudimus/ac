@@ -25,6 +25,7 @@
     "postinstall": "node ./bin/npm-postinstall.js"
   },
   "dependencies": {
-    "simple-xdm": "^0.2.6"
+    "simple-xdm": "^0.2.6",
+    "atlassian-connect-cookie": "^0.1.0"
   }
 }

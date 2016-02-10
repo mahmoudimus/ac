@@ -96,13 +96,15 @@ public class ConnectPageOperations
 
     public boolean existsWebPanel(String webPanelId)
     {
-        return existsElementWithId(IframeUtils.iframeId(webPanelId));
+        return existsElementBeginsWithId(IframeUtils.iframeId(webPanelId));
     }
 
     private boolean existsElementWithId(final String id)
     {
-//        return driver.elementExists(By.id(id));
-        return driver.elementExists(By.cssSelector("iframe[id^=\"" + id + "\"]"));
+        return driver.elementExists(By.id(id));
+    }
+    private boolean existsElementBeginsWithId(final String id) {
+        return driver.elementExists(By.cssSelector("[id^=\"" + id + "\"]"));
     }
 
     public LinkedRemoteContent findConnectPage(ItemMatchingMode mode, String linkText, Optional<String> dropDownMenuId, String pageKey)
