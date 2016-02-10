@@ -33,7 +33,7 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
-## [1.1.74](./1-1-0.html#1.1.74)
+## [1.1.75](./1-1-0.html#1.1.75)
  * Added context parameters for conditions [ACJIRA-778](https://ecosystem.atlassian.net/browse/ACJIRA-778)
  * Confluence: Added ability to pass in dynamic variables to Connect Blueprints [CE-252](https://ecosystem.atlassian.net/browse/CE-252)
  * URLs for web panels in drop-downs can no longer become stale [ACJIRA-724](https://ecosystem.atlassian.net/browse/ACJIRA-724)
