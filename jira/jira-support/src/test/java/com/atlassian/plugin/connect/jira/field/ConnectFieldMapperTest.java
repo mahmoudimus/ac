@@ -5,16 +5,16 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
-public class IssueFieldMapperTest
+public class ConnectFieldMapperTest
 {
     @Test
     public void testFieldMapperMapsAllTypes() throws Exception
     {
-        IssueFieldMapper issueFieldMapper = new IssueFieldMapper();
+        ConnectFieldMapper connectFieldMapper = new ConnectFieldMapper();
 
         for (IssueFieldType issueFieldType : IssueFieldType.values())
         {
-            IssueFieldMapper.IssueFieldTypeDefinition mapping = issueFieldMapper.getMapping(issueFieldType);
+            ConnectFieldMapper.ConnectFieldTypeDefinition mapping = connectFieldMapper.getMapping(issueFieldType);
             assertNotNull("Mapping for " + issueFieldType.toString() + " was missing", mapping);
         }
     }

@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ISSUE_FIELD_EXAMPLE}
  * @since 1.0
  */
-public class IssueFieldModuleBean extends RequiredKeyBean
+public class ConnectFieldModuleBean extends RequiredKeyBean
 {
     /**
      * Description of the custom field type. This will be displayed for a user on the create custom field page.
@@ -33,13 +33,13 @@ public class IssueFieldModuleBean extends RequiredKeyBean
         return description;
     }
 
-    public IssueFieldModuleBean()
+    public ConnectFieldModuleBean()
     {
         this.type = IssueFieldType.TEXT;
         this.description = I18nProperty.empty();
     }
 
-    public IssueFieldModuleBean(IssueFieldModuleBeanBuilder builder)
+    public ConnectFieldModuleBean(IssueFieldModuleBeanBuilder builder)
     {
         super(builder);
     }

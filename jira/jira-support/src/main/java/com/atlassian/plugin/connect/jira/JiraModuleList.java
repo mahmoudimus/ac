@@ -4,7 +4,7 @@ import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
@@ -82,7 +82,7 @@ public class JiraModuleList extends BaseModuleBean
     /**
      * Add remote issue field to JIRA
      */
-    private List<IssueFieldModuleBean> jiraIssueFields;
+    private List<ConnectFieldModuleBean> jiraIssueFields;
 
     private JiraModuleList()
     {

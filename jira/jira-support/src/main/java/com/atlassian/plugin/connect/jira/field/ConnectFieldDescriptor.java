@@ -27,7 +27,7 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.jira.field.CustomFieldSearcherDescriptorFactory.searcherKeyFromCustomFieldTypeKey;
 
-public class RemoteIssueFieldDescriptor extends CustomFieldTypeModuleDescriptorImpl
+public class ConnectFieldDescriptor extends CustomFieldTypeModuleDescriptorImpl
 {
     private final CustomFieldManager customFieldManager;
     private final ProjectManager projectManager;
@@ -35,7 +35,7 @@ public class RemoteIssueFieldDescriptor extends CustomFieldTypeModuleDescriptorI
 
     private String customFieldTypeKey;
 
-    public RemoteIssueFieldDescriptor(
+    public ConnectFieldDescriptor(
             JiraAuthenticationContext authenticationContext,
             RendererManager rendererManager,
             ModuleFactory moduleFactory,

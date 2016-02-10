@@ -3,7 +3,7 @@ package it.jira.customfield;
 import com.atlassian.jira.functest.framework.RestoreBlankInstance;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.atlassian.jira.testkit.client.CustomFieldsControl;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.connect.modules.beans.IssueFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 @RestoreBlankInstance
-public class TestIssueFieldPluginLifecycle  extends JiraWebDriverTestBase
+public class TestConnectFieldPluginLifecycle extends JiraWebDriverTestBase
 {
     private String addonKey;
     private ConnectRunner addon;
@@ -72,9 +72,9 @@ public class TestIssueFieldPluginLifecycle  extends JiraWebDriverTestBase
                 customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey()))));
     }
 
-    private static IssueFieldModuleBean buildIssueFieldModule(String key, String title, String description)
+    private static ConnectFieldModuleBean buildIssueFieldModule(String key, String title, String description)
     {
-        return IssueFieldModuleBean.newBuilder()
+        return ConnectFieldModuleBean.newBuilder()
                 .withKey(key)
                 .withName(new I18nProperty(title, null))
                 .withDescription(new I18nProperty(description, null))

@@ -17,7 +17,7 @@ import com.atlassian.jira.testkit.client.restclient.SearchRequest;
 import com.atlassian.jira.testkit.client.restclient.SearchResult;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.IssueFieldType;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -47,7 +47,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 @RestoreBlankInstance
-public class TestIssueField extends JiraWebDriverTestBase
+public class TestConnectField extends JiraWebDriverTestBase
 {
 
     private static final String FIELD_KEY = "customfieldtype-key";
@@ -287,9 +287,9 @@ public class TestIssueField extends JiraWebDriverTestBase
         };
     }
 
-    private static IssueFieldModuleBean buildIssueFieldModule(String key, String title, String description)
+    private static ConnectFieldModuleBean buildIssueFieldModule(String key, String title, String description)
     {
-        return IssueFieldModuleBean.newBuilder()
+        return ConnectFieldModuleBean.newBuilder()
                 .withKey(key)
                 .withName(new I18nProperty(title, null))
                 .withDescription(new I18nProperty(description, null))

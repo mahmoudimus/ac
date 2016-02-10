@@ -4,56 +4,56 @@ import com.atlassian.plugin.connect.modules.beans.IssueFieldType;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableMap;
 
-import static com.atlassian.plugin.connect.jira.field.IssueFieldMapper.IssueFieldTypeDefinition.mapping;
+import static com.atlassian.plugin.connect.jira.field.ConnectFieldMapper.ConnectFieldTypeDefinition.mapping;
 import static com.atlassian.plugin.connect.modules.beans.IssueFieldType.STRING;
 import static com.atlassian.plugin.connect.modules.beans.IssueFieldType.TEXT;
 
 @JiraComponent
-public class IssueFieldMapper
+public class ConnectFieldMapper
 {
-    private final ImmutableMap<IssueFieldType, IssueFieldTypeDefinition> map;
+    private final ImmutableMap<IssueFieldType, ConnectFieldTypeDefinition> map;
 
-    public IssueFieldMapper()
+    public ConnectFieldMapper()
     {
-        map = ImmutableMap.<IssueFieldType,IssueFieldTypeDefinition>builder()
-                .put(STRING, mapping(IssueFieldBaseTypeDefinition.TEXT, IssueFieldSearcherDefinition.EXACT_TEXT))
-                .put(TEXT, mapping(IssueFieldBaseTypeDefinition.TEXT, IssueFieldSearcherDefinition.LIKE_TEXT))
+        map = ImmutableMap.<IssueFieldType,ConnectFieldTypeDefinition>builder()
+                .put(STRING, mapping(ConnectFieldBaseTypeDefinition.TEXT, ConnectFieldSearcherDefinition.EXACT_TEXT))
+                .put(TEXT, mapping(ConnectFieldBaseTypeDefinition.TEXT, ConnectFieldSearcherDefinition.LIKE_TEXT))
                 .build();
     }
 
-    public IssueFieldTypeDefinition getMapping(IssueFieldType fieldType)
+    public ConnectFieldTypeDefinition getMapping(IssueFieldType fieldType)
     {
         return map.get(fieldType);
     }
 
-    public static class IssueFieldTypeDefinition
+    public static class ConnectFieldTypeDefinition
     {
-        IssueFieldBaseTypeDefinition typeDefinition;
-        IssueFieldSearcherDefinition searcherDefinition;
+        ConnectFieldBaseTypeDefinition typeDefinition;
+        ConnectFieldSearcherDefinition searcherDefinition;
 
-        public IssueFieldTypeDefinition(final IssueFieldBaseTypeDefinition typeDefinition, final IssueFieldSearcherDefinition searcherDefinition)
+        public ConnectFieldTypeDefinition(final ConnectFieldBaseTypeDefinition typeDefinition, final ConnectFieldSearcherDefinition searcherDefinition)
         {
             this.typeDefinition = typeDefinition;
             this.searcherDefinition = searcherDefinition;
         }
 
-        public static IssueFieldTypeDefinition mapping(final IssueFieldBaseTypeDefinition typeDefinition, final IssueFieldSearcherDefinition searcherDefinition)
+        public static ConnectFieldTypeDefinition mapping(final ConnectFieldBaseTypeDefinition typeDefinition, final ConnectFieldSearcherDefinition searcherDefinition)
         {
-            return new IssueFieldTypeDefinition(typeDefinition, searcherDefinition);
+            return new ConnectFieldTypeDefinition(typeDefinition, searcherDefinition);
         }
 
-        public IssueFieldBaseTypeDefinition getType()
+        public ConnectFieldBaseTypeDefinition getType()
         {
             return typeDefinition;
         }
 
-        public IssueFieldSearcherDefinition getSearcherBase()
+        public ConnectFieldSearcherDefinition getSearcherBase()
         {
             return searcherDefinition;
         }
     }
 
-    public enum IssueFieldBaseTypeDefinition
+    public enum ConnectFieldBaseTypeDefinition
     {
         TEXT(com.atlassian.jira.issue.customfields.impl.GenericTextCFType.class,
                 "templates/field/text/view-basictext.vm",
@@ -65,7 +65,7 @@ public class IssueFieldMapper
         private final String editTemplate;
         private final String xmlTemplate;
 
-        IssueFieldBaseTypeDefinition(final Class baseCFTypeClass, final String viewTemplate, final String editTemplate, final String xmlTemplate)
+        ConnectFieldBaseTypeDefinition(final Class baseCFTypeClass, final String viewTemplate, final String editTemplate, final String xmlTemplate)
         {
             this.baseCFTypeClass = baseCFTypeClass;
             this.viewTemplate = viewTemplate;
@@ -95,7 +95,7 @@ public class IssueFieldMapper
     }
 
 
-    public enum IssueFieldSearcherDefinition
+    public enum ConnectFieldSearcherDefinition
     {
         EXACT_TEXT(com.atlassian.jira.issue.customfields.searchers.ExactTextSearcher.class,
                 "templates/field/searcher/view-searcher-basictext.vm",
@@ -108,7 +108,7 @@ public class IssueFieldMapper
         private final String viewTemplate;
         private final String searchTemplate;
 
-        IssueFieldSearcherDefinition(final Class searcherClassFullyQualifiedName, final String viewTemplate, final String searchTemplate)
+        ConnectFieldSearcherDefinition(final Class searcherClassFullyQualifiedName, final String viewTemplate, final String searchTemplate)
         {
             this.searcherClassFullyQualifiedName = searcherClassFullyQualifiedName;
             this.viewTemplate = viewTemplate;

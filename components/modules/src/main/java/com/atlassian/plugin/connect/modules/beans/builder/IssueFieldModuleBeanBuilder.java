@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.IssueFieldType;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 public class IssueFieldModuleBeanBuilder
-        extends RequiredKeyBeanBuilder<IssueFieldModuleBeanBuilder, IssueFieldModuleBean>
+        extends RequiredKeyBeanBuilder<IssueFieldModuleBeanBuilder, ConnectFieldModuleBean>
 {
     private IssueFieldType type;
     private I18nProperty description;
@@ -23,9 +23,9 @@ public class IssueFieldModuleBeanBuilder
     }
 
     @Override
-    public IssueFieldModuleBean build()
+    public ConnectFieldModuleBean build()
     {
-        return new IssueFieldModuleBean(this);
+        return new ConnectFieldModuleBean(this);
     }
 
 }

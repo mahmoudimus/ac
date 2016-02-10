@@ -1040,7 +1040,7 @@ public class ConnectJsonExamples
     private static String createIssueFieldExample()
     {
         return gson.toJson(
-                IssueFieldModuleBean.newBuilder()
+                ConnectFieldModuleBean.newBuilder()
                         .withBaseType(IssueFieldType.TEXT).build());
     }
 }

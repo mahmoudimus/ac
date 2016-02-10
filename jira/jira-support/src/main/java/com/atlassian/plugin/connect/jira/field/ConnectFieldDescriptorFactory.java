@@ -10,7 +10,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Strings;
@@ -19,7 +19,7 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class RemoteIssueFieldDescriptorFactory implements ConnectModuleDescriptorFactory<IssueFieldModuleBean, RemoteIssueFieldDescriptor>
+public class ConnectFieldDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, ConnectFieldDescriptor>
 {
 
     private final JiraAuthenticationContext authenticationContext;
@@ -31,10 +31,10 @@ public class RemoteIssueFieldDescriptorFactory implements ConnectModuleDescripto
     private final ProjectManager projectManager;
     private final ManagedConfigurationItemService managedConfigurationItemService;
 
-    private final IssueFieldMapper issueFieldMapper;
+    private final ConnectFieldMapper connectFieldMapper;
 
     @Autowired
-    public RemoteIssueFieldDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final IssueFieldMapper issueFieldMapper)
+    public ConnectFieldDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final ConnectFieldMapper connectFieldMapper)
     {
         this.authenticationContext = authenticationContext;
         this.rendererManager = rendererManager;
@@ -43,13 +43,13 @@ public class RemoteIssueFieldDescriptorFactory implements ConnectModuleDescripto
         this.customFieldManager = customFieldManager;
         this.projectManager = projectManager;
         this.managedConfigurationItemService = managedConfigurationItemService;
-        this.issueFieldMapper = issueFieldMapper;
+        this.connectFieldMapper = connectFieldMapper;
     }
 
     @Override
-    public RemoteIssueFieldDescriptor createModuleDescriptor(final IssueFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
+    public ConnectFieldDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
     {
-        RemoteIssueFieldDescriptor descriptor = new RemoteIssueFieldDescriptor(authenticationContext, rendererManager, moduleFactory, new CustomFieldDefaultVelocityParams(encoder), customFieldManager, projectManager, managedConfigurationItemService);
+        ConnectFieldDescriptor descriptor = new ConnectFieldDescriptor(authenticationContext, rendererManager, moduleFactory, new CustomFieldDefaultVelocityParams(encoder), customFieldManager, projectManager, managedConfigurationItemService);
 
         Element element = new DOMElement("customfield-type");
 
@@ -64,7 +64,7 @@ public class RemoteIssueFieldDescriptorFactory implements ConnectModuleDescripto
 
         element.add(description);
 
-        IssueFieldMapper.IssueFieldBaseTypeDefinition type = issueFieldMapper.getMapping(bean.getType()).getType();
+        ConnectFieldMapper.ConnectFieldBaseTypeDefinition type = connectFieldMapper.getMapping(bean.getType()).getType();
 
         element.addAttribute("class", type.getBaseCFTypeClassFullyQualifiedName());
         element.add(velocityResourceElement("view", type.getViewTemplate()));

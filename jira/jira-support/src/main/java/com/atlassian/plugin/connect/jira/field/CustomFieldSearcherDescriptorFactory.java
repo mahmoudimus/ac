@@ -8,7 +8,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Strings;
@@ -17,24 +17,24 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescriptorFactory<IssueFieldModuleBean, CustomFieldSearcherModuleDescriptor>
+public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, CustomFieldSearcherModuleDescriptor>
 {
     private final JiraAuthenticationContext authenticationContext;
     private final ModuleFactory moduleFactory;
     private final Encoder encoder;
-    private final IssueFieldMapper issueFieldMapper;
+    private final ConnectFieldMapper connectFieldMapper;
 
     @Autowired
-    public CustomFieldSearcherDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final IssueFieldMapper issueFieldMapper)
+    public CustomFieldSearcherDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final ConnectFieldMapper connectFieldMapper)
     {
         this.authenticationContext = authenticationContext;
         this.moduleFactory = moduleFactory;
         this.encoder = encoder;
-        this.issueFieldMapper = issueFieldMapper;
+        this.connectFieldMapper = connectFieldMapper;
     }
 
     @Override
-    public CustomFieldSearcherModuleDescriptor createModuleDescriptor(final IssueFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
+    public CustomFieldSearcherModuleDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
     {
         CustomFieldSearcherModuleDescriptor descriptor = new CustomFieldSearcherModuleDescriptorImpl(authenticationContext, moduleFactory, new CustomFieldDefaultVelocityParams(encoder));
 
@@ -45,7 +45,7 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
         element.addAttribute("key", searcherKeyFromCustomFieldTypeKey(bean.getKey(addon)));
         element.addAttribute("i18n-name-key", i18nKeyOrName);
 
-        IssueFieldMapper.IssueFieldSearcherDefinition type = issueFieldMapper.getMapping(bean.getType()).getSearcherBase();
+        ConnectFieldMapper.ConnectFieldSearcherDefinition type = connectFieldMapper.getMapping(bean.getType()).getSearcherBase();
 
         element.addAttribute("class", type.getSearcherClassFullyQualifiedName());
         element.add(velocityResourceElement("view", type.getViewTemplate()));
