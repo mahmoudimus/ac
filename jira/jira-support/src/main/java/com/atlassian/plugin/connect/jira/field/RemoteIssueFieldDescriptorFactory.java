@@ -10,7 +10,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldType.IssueFieldBaseTypeDefinition;
 import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -32,8 +31,10 @@ public class RemoteIssueFieldDescriptorFactory implements ConnectModuleDescripto
     private final ProjectManager projectManager;
     private final ManagedConfigurationItemService managedConfigurationItemService;
 
+    private final IssueFieldMapper issueFieldMapper;
+
     @Autowired
-    public RemoteIssueFieldDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService)
+    public RemoteIssueFieldDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final IssueFieldMapper issueFieldMapper)
     {
         this.authenticationContext = authenticationContext;
         this.rendererManager = rendererManager;
@@ -42,6 +43,7 @@ public class RemoteIssueFieldDescriptorFactory implements ConnectModuleDescripto
         this.customFieldManager = customFieldManager;
         this.projectManager = projectManager;
         this.managedConfigurationItemService = managedConfigurationItemService;
+        this.issueFieldMapper = issueFieldMapper;
     }
 
     @Override
@@ -62,7 +64,7 @@ public class RemoteIssueFieldDescriptorFactory implements ConnectModuleDescripto
 
         element.add(description);
 
-        IssueFieldBaseTypeDefinition type = bean.getType().getType();
+        IssueFieldMapper.IssueFieldBaseTypeDefinition type = issueFieldMapper.getMapping(bean.getType()).getType();
 
         element.addAttribute("class", type.getBaseCFTypeClassFullyQualifiedName());
         element.add(velocityResourceElement("view", type.getViewTemplate()));

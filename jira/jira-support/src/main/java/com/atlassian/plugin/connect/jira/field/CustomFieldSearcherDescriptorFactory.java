@@ -8,7 +8,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldType.IssueFieldSearcherDefinition;
 import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -23,13 +22,15 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
     private final JiraAuthenticationContext authenticationContext;
     private final ModuleFactory moduleFactory;
     private final Encoder encoder;
+    private final IssueFieldMapper issueFieldMapper;
 
     @Autowired
-    public CustomFieldSearcherDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder)
+    public CustomFieldSearcherDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final IssueFieldMapper issueFieldMapper)
     {
         this.authenticationContext = authenticationContext;
         this.moduleFactory = moduleFactory;
         this.encoder = encoder;
+        this.issueFieldMapper = issueFieldMapper;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
         element.addAttribute("key", searcherKeyFromCustomFieldTypeKey(bean.getKey(addon)));
         element.addAttribute("i18n-name-key", i18nKeyOrName);
 
-        IssueFieldSearcherDefinition type = bean.getType().getSearcherBase();
+        IssueFieldMapper.IssueFieldSearcherDefinition type = issueFieldMapper.getMapping(bean.getType()).getSearcherBase();
 
         element.addAttribute("class", type.getSearcherClassFullyQualifiedName());
         element.add(velocityResourceElement("view", type.getViewTemplate()));
