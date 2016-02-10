@@ -12,11 +12,10 @@ public class ControlBeanBuilder extends NamedBeanBuilder<ControlBeanBuilder, Con
 
     }
 
-    //TODO: Why are we calling this defaultBean?
-    public ControlBeanBuilder(ControlBean defaultBean)
+    public ControlBeanBuilder(ControlBean bean)
     {
-        this.key = defaultBean.getKey();
-        this.type = defaultBean.getType();
+        this.key = bean.getKey();
+        this.type = bean.getType();
     }
 
     public ControlBeanBuilder withKey(String key)

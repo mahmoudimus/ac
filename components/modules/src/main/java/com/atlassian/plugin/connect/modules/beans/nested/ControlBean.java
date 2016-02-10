@@ -3,12 +3,6 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.plugin.connect.modules.beans.NamedBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
 
-/**
- * TODO:
- * Documentation goes here
- *
- * Is there some sort of InternationalisedNameBean as we need i18nkey as well
- */
 public class ControlBean extends NamedBean
 {
     private String key;
@@ -52,10 +46,9 @@ public class ControlBean extends NamedBean
         return new ControlBeanBuilder();
     }
 
-    // Why is this called default bean?
-    public static ControlBeanBuilder newControlBean(ControlBean defaultBean)
+    public static ControlBeanBuilder newControlBean(ControlBean bean)
     {
-        return new ControlBeanBuilder(defaultBean);
+        return new ControlBeanBuilder(bean);
     }
 
 }
