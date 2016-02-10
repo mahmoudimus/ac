@@ -930,6 +930,7 @@
         <functestbasics.version>1.9.7</functestbasics.version>
         <jsonij.version>0.2.11</jsonij.version>
         <skipITs>true</skipITs>
+        <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
 
         <!-- BUILD STUFF -->
         <commons.lang.version>2.6</commons.lang.version>

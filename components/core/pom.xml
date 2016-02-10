@@ -322,6 +322,11 @@
             <version>${httpcomponents.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.html</groupId>
+            <artifactId>atlassian-html-encoder</artifactId>
+            <version>${atlassian.html.encoder.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
