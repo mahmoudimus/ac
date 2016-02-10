@@ -24,22 +24,22 @@ import static com.atlassian.jira.util.ErrorCollection.Reason.NOT_FOUND;
 public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
 {
 
-    private final RemoteFieldOptionDao remoteFieldOptionDao;
+    private final RemoteFieldOptionManager remoteFieldOptionManager;
     private final I18nResolver i18n;
     private final CustomFieldDao customFieldDao;
 
     @Autowired
-    public RemoteFieldOptionServiceImpl(final RemoteFieldOptionDao remoteFieldOptionDao, final I18nResolver i18n, final CustomFieldDao customFieldDao)
+    public RemoteFieldOptionServiceImpl(final RemoteFieldOptionManager remoteFieldOptionManager, final I18nResolver i18n, final CustomFieldDao customFieldDao)
     {
-        this.remoteFieldOptionDao = remoteFieldOptionDao;
+        this.remoteFieldOptionManager = remoteFieldOptionManager;
         this.i18n = i18n;
         this.customFieldDao = customFieldDao;
     }
 
     @Override
-    public ServiceOutcome<RemoteFieldOption> create(final FieldId fieldId, final JsonNode value)
+    public ServiceOutcome<RemoteFieldOption> addOption(final FieldId fieldId, final JsonNode value)
     {
-        Either<ErrorCollection, RemoteFieldOption> result = remoteFieldOptionDao.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
+        Either<ErrorCollection, RemoteFieldOption> result = remoteFieldOptionManager.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
         return result.fold(
                 ServiceOutcomeImpl::new,
                 created -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), created)
@@ -47,26 +47,26 @@ public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
     }
 
     @Override
-    public ServiceOutcome<List<RemoteFieldOption>> get(final FieldId fieldId)
+    public ServiceOutcome<List<RemoteFieldOption>> getAllOptions(final FieldId fieldId)
     {
-        return new ServiceOutcomeImpl<>(ErrorCollections.empty(), remoteFieldOptionDao.getAll(fieldId.getAddonKey(), fieldId.getFieldKey()));
+        return new ServiceOutcomeImpl<>(ErrorCollections.empty(), remoteFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey()));
     }
 
     @Override
-    public ServiceOutcome<RemoteFieldOption> get(final FieldId fieldId, final Integer optionId)
+    public ServiceOutcome<RemoteFieldOption> getOption(final FieldId fieldId, final Integer optionId)
     {
-        return remoteFieldOptionDao.get(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId)
+        return remoteFieldOptionManager.get(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId)
                 .map(val -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), val))
                 .orElseGet(this::notFound);
     }
 
     @Override
-    public ServiceResult delete(final FieldId fieldId, final Integer optionId)
+    public ServiceResult removeOption(final FieldId fieldId, final Integer optionId)
     {
         Collection<Long> issuesWithTheFieldSet = customFieldDao.findIssues(fieldId, optionId);
         if (issuesWithTheFieldSet.isEmpty())
         {
-            remoteFieldOptionDao.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
+            remoteFieldOptionManager.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
             return new ServiceResultImpl(ErrorCollections.empty());
         }
         else
@@ -76,15 +76,15 @@ public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
     }
 
     @Override
-    public ServiceOutcome<RemoteFieldOption> update(final FieldId fieldId, final RemoteFieldOption option)
+    public ServiceOutcome<RemoteFieldOption> updateOption(final FieldId fieldId, final RemoteFieldOption option)
     {
-        return remoteFieldOptionDao.update(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
+        return remoteFieldOptionManager.update(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
                 .map(result -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), result))
                 .orElseGet(this::notFound);
     }
 
     @Override
-    public ServiceResult replace(final FieldId fieldId, final Integer from, final Integer to)
+    public ServiceResult replaceInAllIssues(final FieldId fieldId, final Integer from, final Integer to)
     {
         customFieldDao.replace(fieldId, from, to);
         return new ServiceResultImpl(ErrorCollections.empty());

@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.jira.field;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.google.common.base.Preconditions;
 
 public final class FieldId
@@ -17,7 +18,7 @@ public final class FieldId
 
     public String getFullKey()
     {
-        return addonKey + "/" + fieldKey;
+        return ModuleKeyUtils.addonAndModuleKey(addonKey, fieldKey);
     }
 
     private FieldId(String addonKey, String fieldKey)

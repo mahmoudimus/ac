@@ -7,28 +7,32 @@ import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
-@Table ("AvailableOptionAO")
+@Table ("remote_field_option")
 public interface RemoteFieldOptionAO extends Entity
 {
     @Indexed
     @NotNull
     int getOptionId();
+
     void setOptionId(long setOptionId);
 
     @Indexed
     @NotNull
     @StringLength (ConnectAddonBean.MAX_KEY_LENGTH)
     String getAddonKey();
+
     void setAddonKey(String key);
 
     @Indexed
     @NotNull
-    @StringLength(ConnectAddonBean.MAX_KEY_LENGTH)
+    @StringLength (ConnectAddonBean.MAX_KEY_LENGTH)
     String getFieldKey();
+
     void setFieldKey(String key);
 
     @NotNull
-    @StringLength(StringLength.UNLIMITED)
+    @StringLength (StringLength.UNLIMITED)
     String getValue();
+
     void setValue(String value);
 }

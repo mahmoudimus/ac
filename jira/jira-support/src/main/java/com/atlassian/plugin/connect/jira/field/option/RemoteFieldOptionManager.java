@@ -17,12 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static java.util.stream.Collectors.toList;
 
 @JiraComponent
-public class RemoteFieldOptionDao
+public class RemoteFieldOptionManager
 {
     private final ActiveObjects ao;
 
     @Autowired
-    public RemoteFieldOptionDao(final ActiveObjects activeObjects)
+    public RemoteFieldOptionManager(final ActiveObjects activeObjects)
     {
         this.ao = activeObjects;
     }
