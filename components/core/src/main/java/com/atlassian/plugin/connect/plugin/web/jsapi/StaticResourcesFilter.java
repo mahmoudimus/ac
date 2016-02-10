@@ -100,7 +100,8 @@ public class StaticResourcesFilter implements Filter
             // note: any changes here must also be made in plugin/pom.xml!
             final String[] modules = {
                     "core/iframe.js",
-                    "core/plugin-compat.js"
+                    "core/iframe-compat.js",
+                    "iframe/plugin/p2compat.js"
 //                    "iframe/plugin/jira.js",
 //                    "iframe/plugin/confluence.js",
 //                    "iframe/plugin/user.js",
