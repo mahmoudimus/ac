@@ -532,6 +532,11 @@
                             org.osgi.framework,
                             <!-- End pa / pi imports -->
 
+                            <!-- exclude pocketknife bits we don't need -->
+                            !net.sf.cglib.proxy,
+                            !org.jvnet.hudson.annotation_indexer,
+                            <!-- end pocketknife excludes -->
+
                             com.atlassian.jwt*;version="[1.4.0,2.0.0)",
 
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
@@ -759,6 +764,14 @@
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
                 <version>${atlassian.spring.scanner.version}</version>
+                <configuration>
+                    <scannedDependencies>
+                        <dependency>
+                            <groupId>com.atlassian.pocketknife</groupId>
+                            <artifactId>atlassian-pocketknife-querydsl</artifactId>
+                        </dependency>
+                    </scannedDependencies>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

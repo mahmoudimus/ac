@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.field.option;
+package com.atlassian.plugin.connect.jira.field.option.db;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import net.java.ao.Entity;

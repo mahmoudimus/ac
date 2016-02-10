@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.field.option;
+package com.atlassian.plugin.connect.jira.field.option.db;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.ofbiz.core.entity.GenericValue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class CustomFieldDao
+public class CustomFieldManager
 {
     public static final String CF_VALUE_TABLE_NAME = "CustomFieldValue";
     public static final String VALUE_COLUMN = "numbervalue";
@@ -22,7 +22,7 @@ public class CustomFieldDao
     private final OfBizDelegator ofBizDelegator;
 
     @Autowired
-    public CustomFieldDao(final OfBizDelegator ofBizDelegator)
+    public CustomFieldManager(final OfBizDelegator ofBizDelegator)
     {
         this.ofBizDelegator = ofBizDelegator;
     }
