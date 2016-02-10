@@ -2,7 +2,7 @@
     <parent>
         <groupId>com.atlassian.pom</groupId>
         <artifactId>public-pom</artifactId>
-        <version>3.0.93</version>
+        <version>4.0.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
@@ -115,9 +115,6 @@
                         </goals>
                         <configuration>
                             <rules>
-                                <requireJavaVersion>
-                                    <version>[1.8.0, )</version>
-                                </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[3.3.9, 3.4)</version>
                                 </requireMavenVersion>
