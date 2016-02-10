@@ -1,10 +1,11 @@
 /**
-* confluence.web.resources:almond deliberately breaks AMD modules so they are exposed globally.
-* Turn it back into a defined module so others can use it as AMD if they wish.
+* confluence and jira both break amd (by removing define.amd)
 */
-//    define('connect-host', function(){
-//    return _AP;
-//});
+
+connectHost.defineModule("cookie", connectHostCookie);
+// connectHost.defineModule("history", connectHostCookie);
+// connectHost.defineModule("request", connectHostCookie);
+
 connectHost.onIframeEstablished(function(data){
   data.$el.closest(".ap-content").addClass('iframe-init');
 });
