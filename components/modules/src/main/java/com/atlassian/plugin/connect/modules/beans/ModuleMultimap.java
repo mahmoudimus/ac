@@ -6,10 +6,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * The modules of an add-on. Modules are loaded lazily and any validation errors are deferred to the first usage.
@@ -64,6 +66,15 @@ public class ModuleMultimap
             return Optional.ofNullable(loadExistingModuleList(type, Optional.of(exceptionHandler)));
         }
         return optionalModuleList;
+    }
+
+    public <T extends ModuleBean> Optional<List<T>>  getValidModuleListOfType(Class<T> moduleClazz, Consumer<Exception> exceptionHandler)
+    {
+        List<ModuleBean> moduleBeanStream = getValidModuleLists(exceptionHandler).values().stream()
+                                                    .flatMap(Collection::stream)
+                                                    .filter(moduleBean -> moduleBean.getClass().isAssignableFrom(moduleClazz))
+                                                    .collect(Collectors.toList());
+        return Optional.of((List<T>) moduleBeanStream);
     }
 
     private List<ModuleBean> loadExistingModuleList(String moduleType, Optional<Consumer<Exception>> optionalExceptionHandler)

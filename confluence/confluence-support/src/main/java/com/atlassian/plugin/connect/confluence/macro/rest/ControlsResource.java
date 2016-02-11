@@ -1,13 +1,10 @@
 package com.atlassian.plugin.connect.confluence.macro.rest;
 
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ControlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
-import com.atlassian.plugin.connect.plugin.descriptor.event.EventPublishingModuleValidationExceptionHandler;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,20 +16,16 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @Path("/controls")
 public class ControlsResource {
 
     private final ConnectAddonAccessor addonAccessor;
-    private Consumer<Exception> moduleValidationExceptionHandler;
     private ObjectMapper objectMapper;
 
-    public ControlsResource(ConnectAddonAccessor addonAccessor,
-                            EventPublishingModuleValidationExceptionHandler moduleValidationExceptionHandler)
+    public ControlsResource(ConnectAddonAccessor addonAccessor)
     {
         this.addonAccessor = addonAccessor;
-        this.moduleValidationExceptionHandler = moduleValidationExceptionHandler;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -46,10 +39,12 @@ public class ControlsResource {
         {
              return Response.status(Response.Status.NOT_FOUND).build();
         }
-        Optional<List<ModuleBean>> dynamicMacros = addonBean.get().getModules().getValidModuleListOfType(
-                "dynamicContentMacros", moduleValidationExceptionHandler);
 
-        Optional<List<ControlBean>> controlBeans = retrieveControls(dynamicMacros, macroKey, containerType);
+        Optional<List<DynamicContentMacroModuleBean>> dynamicMacros = addonBean.get().getModules()
+                .getValidModuleListOfType(DynamicContentMacroModuleBean.class, (ex) -> {});
+
+        Optional<List<ControlBean>> controlBeans = retrievePropertyPanelControls(dynamicMacros, macroKey);
+
         if (controlBeans.isPresent())
         {
             try
@@ -69,32 +64,23 @@ public class ControlsResource {
     }
 
 
-    private Optional<List<ControlBean>> retrieveControls(Optional<List<ModuleBean>> beans, String macroKey, String containerType)
+    private Optional<List<ControlBean>> retrievePropertyPanelControls(Optional<List<DynamicContentMacroModuleBean>> beans, String macroKey)
     {
-        if (beans.isPresent())
-        {
-            for (ModuleBean bean : beans.get())
-            {
-                DynamicContentMacroModuleBean macroBean = (DynamicContentMacroModuleBean) bean;
-                if (macroKey.equals(macroBean.getRawKey()))
-                {
-                    if (containerType.equals("property-panel"))
-                    {
-                        return getControls(getPropertyPanel(macroBean));
-                    }
-                }
-            }
-        }
-        return Optional.empty();
+        return getControls(getPropertyPanel(retrieveChosenMacro(beans, macroKey)));
     }
 
-    private Optional<MacroPropertyPanelBean> getPropertyPanel(BaseContentMacroModuleBean macroBean)
+    private Optional<DynamicContentMacroModuleBean> retrieveChosenMacro(Optional<List<DynamicContentMacroModuleBean>> beans, String macroKey)
     {
-        return Optional.of(macroBean.getPropertyPanel());
+        return beans.flatMap(macroBeans -> macroBeans.stream().filter(macro -> macro.getRawKey().equals(macroKey)).findFirst());
+    }
+
+    private Optional<MacroPropertyPanelBean> getPropertyPanel(Optional<DynamicContentMacroModuleBean> macroBean)
+    {
+        return macroBean.map(DynamicContentMacroModuleBean::getPropertyPanel);
     }
 
     private Optional<List<ControlBean>> getControls(Optional<MacroPropertyPanelBean> propertyPanelBean)
     {
-        return propertyPanelBean.map(propertyPanel -> propertyPanel.getControls());
+        return propertyPanelBean.map(MacroPropertyPanelBean::getControls);
     }
 }
