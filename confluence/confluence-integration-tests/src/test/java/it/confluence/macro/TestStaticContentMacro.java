@@ -206,7 +206,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         Content page = createPage(title, "The macro is in the comment!");
         addCommentWithMacro(String.valueOf(page.getId().asLong()));
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
-        final WebElement commentBody = confluencePageOperations.findElementByClass("comment-content");
+        final WebElement commentBody = connectPageOperations.findElementByClass("comment-content");
         String commentText = commentBody.getText();
         String[] lines = StringUtils.split(commentText, "\n");
 

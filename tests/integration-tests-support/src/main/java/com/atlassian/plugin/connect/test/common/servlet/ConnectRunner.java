@@ -84,6 +84,7 @@ public class ConnectRunner
     private Server server;
     private final Map<String, HttpServlet> routes = newHashMap();
     private boolean checkInstallationStatus = true;
+    private String urlPath = "";
 
     /**
      * Create a ConnectRunner for an add-on with randomly generated key
@@ -261,7 +262,7 @@ public class ConnectRunner
             throw new IllegalArgumentException(String.format("The path '%s' already exists!", path));
         }
 
-        routes.put(path, servlet);
+        routes.put(urlPath + path, servlet);
         return this;
     }
 
@@ -329,6 +330,12 @@ public class ConnectRunner
         return this;
     }
 
+    public ConnectRunner setBaseUrlPath(String urlPath)
+    {
+        this.urlPath = urlPath;
+        return this;
+    }
+
     public SignedRequestHandler getSignedRequestHandler()
     {
         return signedRequestHandler;
@@ -338,7 +345,7 @@ public class ConnectRunner
     {
         URI host = URI.create(this.productBaseUrl);
         port = Utils.pickFreePort();
-        final String displayUrl ="http://" + host.getHost() + ':' + port;
+        final String displayUrl ="http://" + host.getHost() + ':' + port + urlPath;
 
         addonBuilder.withBaseurl(displayUrl);
         addonBuilder.withScopes(scopes);

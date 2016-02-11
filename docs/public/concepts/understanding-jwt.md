@@ -27,13 +27,13 @@ A JWT token looks like this:
 
 Once you understand the format, it's actually pretty simple:
 
-    <base64-encoded header>.<base64-encoded claims>.<base64-encoded signature>
+    <base64url-encoded header>.<base64url-encoded claims>.<base64url-encoded signature>
 
 In other words:
 
-* You create a header object, with the JSON format. Then you encode it as a base64
-* You create a claims object, with the JSON format. Then you encode it in base64
-* You create a signature for the URI (we'll get into that later). Then you encode it in base64
+* You create a header object, with the JSON format. Then you encode it in base64url
+* You create a claims object, with the JSON format. Then you encode it in base64url
+* You create a signature for the URI (we'll get into that later). Then you encode it in base64url
 * You concatenate the three items, with the "." separator
 
 You shouldn't actually have to do this manually, as there are libraries available in most languages, as we describe in the [JWT libraries](#jwtlib) section.
@@ -296,12 +296,12 @@ to extract the header, claims and signature. Here is an example in Java:
 
 <pre><code data-lang="java">
 String jwtToken = ...;//e.g. extracted from the request
-String[] base64EncodedSegments = jwtToken.split('.');
-String base64EncodedHeader = base64EncodedSegments[0];
-String base64EncodedClaims = base64EncodedSegments[1];
-String signature = base64EncodedSegments[2];
-String header = base64decode(base64EncodedHeader);
-String claims = base64decode(base64EncodedClaims);
+String[] base64UrlEncodedSegments = jwtToken.split('.');
+String base64UrlEncodedHeader = base64UrlEncodedSegments[0];
+String base64UrlEncodedClaims = base64UrlEncodedSegments[1];
+String signature = base64UrlEncodedSegments[2];
+String header = base64Urldecode(base64UrlEncodedHeader);
+String claims = base64Urldecode(base64UrlEncodedClaims);
 </code></pre>
 
 This gives us the following:
@@ -419,10 +419,11 @@ To create a query string hash, follow the detailed instructions below:
 
 ### <a name="more-details"></a>More details on JWT tokens
 
-The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded claims>.<signature>```.
+The format of a JWT token is simple: ```<base64url-encoded header>.<base64url-encoded claims>.<signature>```.
 
 * Each section is separated from the others by a period character (```.```).
-* Each section is base-64 encoded, so you will need to decode each one to make them human-readable.
+* Each section is base64url encoded, so you will need to decode each one to make them human-readable. Note that encoding
+  with base64 and not base64url will result in an incorrect JWT token for payloads with non UTF-8 characters.
 * The header specifies a very small amount of information that the receiver needs in order to parse and verify the JWT token.
  * All JWT token headers state that the type is "JWT".
  * The algorithm used to sign the JWT token is needed so that the receiver can verify the signature.
@@ -440,11 +441,11 @@ The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded 
 ### Steps to Follow
 
  1. Create a header JSON object
- * Convert the header JSON object to a UTF-8 encoded string and base-64 encode it. That gives you encodedHeader.
+ * Convert the header JSON object to a UTF-8 encoded string and base64url encode it. That gives you encodedHeader.
  * Create a claims JSON object, including a [query string hash](#qsh)
- * Convert the claims JSON object to a UTF-8 encoded string and base-64 encode it. That gives you encodedClaims.
+ * Convert the claims JSON object to a UTF-8 encoded string and base64url encode it. That gives you encodedClaims.
  * Concatenate the encoded header, a period character (```.```) and the encoded claims set. That gives you signingInput = encodedHeader+ "." + encodedClaims.
- * Compute the signature of signingInput using the JWT or cryptographic library of your choice. Then base64 encode it. That gives you encodedSignature.
+ * Compute the signature of signingInput using the JWT or cryptographic library of your choice. Then base64url encode it. That gives you encodedSignature.
  * concatenate the signing input, another period character and the signature, which gives you the JWT token. jwtToken = signingInput + "." + encodedSignature
 
 

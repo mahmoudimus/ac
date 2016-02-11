@@ -98,7 +98,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             }
             else // if (addonUrlContext == product)
             {
-                return req.getContextPath() + urlVariableSubstitutor.replace(url, moduleContext);
+                return req.getContextPath() + urlVariableSubstitutor.replace(url, WebFragmentContext.from(moduleContext));
             }
         }
     }
