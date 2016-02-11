@@ -32,6 +32,11 @@ public class ConnectAppServlets
         return mustacheServlet("iframe-ap-request.mu");
     }
 
+    public static HttpServlet apRequestExperimentalServlet()
+    {
+        return mustacheServlet("iframe-ap-request-experimental.mu");
+    }
+
     /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#containsHelloWorld()}.
      *
