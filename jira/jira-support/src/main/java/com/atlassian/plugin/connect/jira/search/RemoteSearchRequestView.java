@@ -1,5 +1,10 @@
 package com.atlassian.plugin.connect.jira.search;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+
 import com.atlassian.jira.exception.DataAccessException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.search.SearchException;
@@ -21,10 +26,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
+import static java.util.Collections.emptyMap;
 
 /**
  * A remote search request review that will do an html redirect to the remote plugin
@@ -90,7 +92,7 @@ public class RemoteSearchRequestView implements SearchRequestView
                 .addon(pluginKey)
                 .namespace(moduleKey)
                 .urlTemplate(createUri.toString())
-                .context(new HashMapModuleContextParameters())
+                .context(new HashMapModuleContextParameters(emptyMap()))
                 .param("link", link)
                 .param("startIssue", String.valueOf(startIssue))
                 .param("endIssue", endIssues)
@@ -114,7 +116,7 @@ public class RemoteSearchRequestView implements SearchRequestView
     }
 
     private String getIssueKeysList(SearchRequest searchRequest,
-                                    SearchRequestParams searchRequestParams)
+            SearchRequestParams searchRequestParams)
     {
         StringWriter issueKeys = new StringWriter();
         final SingleIssueWriter singleIssueWriter = new SingleIssueWriter()

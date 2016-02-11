@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.util.fixture;
 
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
-
-import java.net.URI;
-import java.util.Map;
 
 public class RemotablePluginAccessorForTests implements RemotablePluginAccessor
 {
@@ -76,7 +77,7 @@ public class RemotablePluginAccessorForTests implements RemotablePluginAccessor
     }
 
     @Override
-    public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers)
+    public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers, InputStream body)
     {
         return null;
     }

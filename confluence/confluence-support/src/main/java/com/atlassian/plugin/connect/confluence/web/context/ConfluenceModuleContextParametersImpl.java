@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
+import java.util.Map;
+
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
@@ -12,6 +14,12 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ConfluenceModuleContextParametersImpl extends HashMapModuleContextParameters implements ConfluenceModuleContextParameters
 {
+
+    public ConfluenceModuleContextParametersImpl(final Map<String, Object> originalContext)
+    {
+        super(originalContext);
+    }
+
     @Override
     public void addPage(final AbstractPage page)
     {

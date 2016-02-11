@@ -1,27 +1,37 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
+import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.request.BaseSigningRemotablePluginAccessorTest;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
+
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
-import net.oauth.OAuth;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.net.URI;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
+import net.oauth.OAuth;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -50,7 +60,8 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
     @Test
     public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException
     {
-        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
+        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS, HttpContentRetriever.EMPTY_STREAM).get(),
+                   is(EXPECTED_GET_RESPONSE));
     }
 
     @Test

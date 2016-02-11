@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.common.servlet;
 
 import javax.servlet.http.HttpServlet;
 
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 
@@ -38,7 +39,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet helloWorldServlet()
     {
-        return mustacheServlet("iframe-hello-world.mu");
+        return mustacheServlet("iframe-hello-world.mu", HttpMethod.GET, HttpMethod.POST);
     }
 
     /**
@@ -140,12 +141,17 @@ public class ConnectAppServlets
 
     public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
     {
-        return wrapContextAwareServlet(servlet, Lists.<TestServletContextExtractor>newArrayList());
+        return wrapContextAwareServlet(servlet, Lists.<FormParameterExtractor>newArrayList());
     }
 
-    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<TestServletContextExtractor> extractors)
+    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<FormParameterExtractor> extractors)
     {
         return new HttpContextServlet(servlet, extractors);
+    }
+
+    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<FormParameterExtractor> extractors, Iterable<BodyExtractor> bodyExtractors)
+    {
+        return new HttpContextServlet(servlet, extractors, bodyExtractors);
     }
 
     public static HttpServlet echoQueryParametersServlet()
@@ -158,9 +164,9 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new ResourceServlet(resourcePath, contentType));
     }
 
-    public static HttpServlet mustacheServlet(String templatePath)
+    public static HttpServlet mustacheServlet(String templatePath, HttpMethod ... methods)
     {
-        return wrapContextAwareServlet(new MustacheServlet(templatePath));
+        return wrapContextAwareServlet(new MustacheServlet(templatePath, methods));
     }
 
     public static InstallHandlerServlet installHandlerServlet()

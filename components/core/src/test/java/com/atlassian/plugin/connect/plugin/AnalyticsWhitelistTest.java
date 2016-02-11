@@ -1,24 +1,16 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.analytics.api.annotations.EventName;
-import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
-import com.google.gson.Gson;
-import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.reflections.Reflections;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -31,45 +23,7 @@ import static org.hamcrest.collection.IsMapContaining.hasKey;
 @RunWith(Parameterized.class)
 public class AnalyticsWhitelistTest
 {
-    private static boolean isBrowserEvent(String eventName) throws IOException
-    {
-        return eventName.startsWith("connect.addon.iframe")
-         || eventName.startsWith("connect.addon.bridge")
-         || eventName.startsWith("connect.addon.dialog");
-    }
-
-    @Parameterized.Parameters(name = "Event {0}")
-    public static Collection<Object[]> testData() throws IOException
-    {
-        String json = IOUtils.toString(ClassLoader.class.getResourceAsStream("/analytics/connect-analytics-whitelist.json"));
-        Map<String, List<String>> whiteList = new Gson().fromJson(json, Map.class);
-
-        Collection<Object[]> toTest = new ArrayList<Object[]>();
-        for (Map.Entry<String, List<String>> entry : whiteList.entrySet())
-        {
-            if (!isBrowserEvent(entry.getKey()))
-            {
-                toTest.add(new Object[]{entry.getKey(), entry.getValue()});
-            }
-        }
-        return toTest;
-    }
-
-    @BeforeClass
-    public static void collectEventClasses() throws ClassNotFoundException
-    {
-        Reflections reflections = new Reflections("com.atlassian.plugin.connect.plugin");
-        Set<Class<?>> eventClasses = reflections.getTypesAnnotatedWith(EventName.class);
-        for (Class<?> eventClass : eventClasses)
-        {
-            List<Field> fields = ConnectReflectionHelper.getAllFieldsInObjectChain(eventClass);
-            List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
-            String eventName = eventClass.getAnnotation(EventName.class).value();
-            eventClassFields.put(eventName, fieldNames);
-        }
-    }
-
-    private static Map<String, List<String>> eventClassFields = new HashMap<String, List<String>>();
+    private static Map<String, List<String>> eventClassFields = new HashMap<>();
 
     private final String eventName;
     private final List<String> whiteListedFields;
@@ -78,6 +32,24 @@ public class AnalyticsWhitelistTest
     {
         this.eventName = eventName;
         this.whiteListedFields = whiteListedFields;
+    }
+
+    @Parameterized.Parameters(name = "Event {0}")
+    public static Collection<Object[]> testData() throws IOException
+    {
+        Map<String, List<String>> whiteList = AnalyticsWhitelistTestHelper.getAnalyticsWhitelistFrom("/analytics/connect-analytics-whitelist.json");
+        Collection<Object[]> toTest = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : whiteList.entrySet())
+        {
+            toTest.add(new Object[]{entry.getKey(), entry.getValue()});
+        }
+        return toTest;
+    }
+
+    @BeforeClass
+    public static void collectEventClasses()
+    {
+        eventClassFields.putAll(AnalyticsWhitelistTestHelper.reflectAllEventClassesFrom("com.atlassian.plugin.connect.plugin"));
     }
 
     @Test
@@ -93,5 +65,4 @@ public class AnalyticsWhitelistTest
         String[] jsonWhitelistFields = whiteListedFields.toArray(new String[whiteListedFields.size()]);
         assertThat(eventClassFields.get(eventName), hasItems(jsonWhitelistFields));
     }
-
 }

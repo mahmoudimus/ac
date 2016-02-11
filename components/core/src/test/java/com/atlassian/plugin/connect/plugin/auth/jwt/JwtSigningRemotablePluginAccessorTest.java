@@ -1,5 +1,13 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.JwtService;
@@ -8,13 +16,14 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.request.BaseSigningRemotablePluginAccessorTest;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.auth.applinks.DefaultConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.request.BaseSigningRemotablePluginAccessorTest;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -27,14 +36,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimLongMatcher.hasJwtClaimWithLongValue;
@@ -43,10 +44,16 @@ import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimStringMat
 import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimsetMatcher.hasJwtClaimset;
 import static com.atlassian.plugin.connect.plugin.util.matcher.JwtContextClaimMatcher.hasJwtContextKey;
 import static com.atlassian.plugin.connect.plugin.util.matcher.JwtContextClaimMatcher.hasJwtContextKeyWithValue;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith (MockitoJUnitRunner.class)
@@ -89,7 +96,9 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever()
             throws ExecutionException, InterruptedException
     {
-        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
+        assertThat(createRemotePluginAccessor()
+                           .executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS, HttpContentRetriever.EMPTY_STREAM).get(),
+                   is(EXPECTED_GET_RESPONSE));
     }
 
     @Test
