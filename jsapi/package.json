@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "simple-xdm": "^0.2.6",
-    "atlassian-connect-js-cookie": "^0.1.0"
+    "atlassian-connect-js-cookie": "^0.1.0",
+    "atlassian-connect-js-history": "^0.1.1"
   }
 }

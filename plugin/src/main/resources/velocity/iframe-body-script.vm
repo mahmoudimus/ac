@@ -9,6 +9,9 @@
         fullName: data.fullName,
         uid: data.uid,
         ukey: data.ukey
+      },
+      history: {
+        state: (window.location.hash ? window.location.hash.substr(2) : "")
       }
     };
     var container = connectHost.create(data);

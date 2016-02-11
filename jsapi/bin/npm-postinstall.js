@@ -3,6 +3,7 @@ var helper = require('./bin-helper');
 var atlassianConnectJsPath = 'node_modules/atlassian-connect-js';
 var simpleXdmJsPath = 'node_modules/simple-xdm';
 var atlassianConnectJsCookiePath = "node_modules/atlassian-connect-js-cookie";
+var atlassianConnectJsHistoryPath = "node_modules/atlassian-connect-js-history";
 
 helper.chain([
     [
@@ -12,6 +13,10 @@ helper.chain([
     [
         'cp',
         ['-af', helper.npmNormalize(atlassianConnectJsCookiePath + '/dist') + '/connect-host-cookie.js', 'src/main/resources/js/core']
+    ],
+    [
+        'cp',
+        ['-af', helper.npmNormalize(atlassianConnectJsHistoryPath + '/dist') + '/.', 'src/main/resources/js/core']
     ],
     [
         'cp',

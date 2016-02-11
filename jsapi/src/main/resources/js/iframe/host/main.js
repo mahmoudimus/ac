@@ -3,7 +3,7 @@
 */
 
 connectHost.defineModule("cookie", connectHostCookie);
-// connectHost.defineModule("history", connectHostCookie);
+connectHost.defineModule("history", connectHostHistory);
 // connectHost.defineModule("request", connectHostCookie);
 
 connectHost.onIframeEstablished(function(data){
