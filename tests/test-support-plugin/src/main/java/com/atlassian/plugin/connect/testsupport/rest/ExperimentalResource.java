@@ -18,13 +18,13 @@ import static javax.ws.rs.core.MediaType.*;
 import static javax.ws.rs.core.Response.ok;
 
 @Path("/experimental")
-public class ExperimentalApi
+public class ExperimentalResource
 {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserManager userManager;
 
-    public ExperimentalApi(UserManager userManager)
+    public ExperimentalResource(UserManager userManager)
     {
         this.userManager = userManager;
     }

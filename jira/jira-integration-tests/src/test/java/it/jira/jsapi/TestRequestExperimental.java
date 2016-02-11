@@ -59,17 +59,6 @@ public class TestRequestExperimental extends JiraWebDriverTestBase
         JiraRequestExperimentalTestPage page = loginAndVisit(user,
                 JiraRequestExperimentalTestPage.class, remotePlugin.getAddon().getKey(), PAGE_MODULE_KEY);
 
-        assertTrue(page.getTitle().contains(PAGE_NAME));
-        assertEquals("Success", page.getMessage());
-        assertTrue(page.getIframeQueryParams().containsKey("cp"));
-        assertNotNull(page.getFullName());
-        assertThat(page.getFullName().toLowerCase(), Matchers.containsString(user.getUsername()));
-        assertEquals(user.getUsername(), page.getUserId());
-        assertTrue(page.getLocale().startsWith("en-"));
-
-        // timezone should be the same as the default one
-        assertEquals(TimeZone.getDefault().getRawOffset(), TimeZone.getTimeZone(page.getTimeZone()).getRawOffset());
-
         assertEquals("500", page.getIndexedClientHttpStatus(1));
         String statusText1 = page.getIndexedClientHttpStatusText(1);
         assertTrue("Internal Server Error".equals(statusText1));
