@@ -2,9 +2,8 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ControlBean;
 
-public class ControlBeanBuilder extends NamedBeanBuilder<ControlBeanBuilder, ControlBean>
+public class ControlBeanBuilder extends RequiredKeyBeanBuilder<ControlBeanBuilder, ControlBean>
 {
-    private String key;
     private String type;
 
     public ControlBeanBuilder()
@@ -14,14 +13,8 @@ public class ControlBeanBuilder extends NamedBeanBuilder<ControlBeanBuilder, Con
 
     public ControlBeanBuilder(ControlBean bean)
     {
-        this.key = bean.getKey();
+        super(bean);
         this.type = bean.getType();
-    }
-
-    public ControlBeanBuilder withKey(String key)
-    {
-        this.key = key;
-        return this;
     }
 
     public ControlBeanBuilder withType(String type)

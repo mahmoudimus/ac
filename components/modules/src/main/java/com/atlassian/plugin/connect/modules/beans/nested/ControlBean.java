@@ -1,11 +1,14 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import com.atlassian.plugin.connect.modules.beans.NamedBean;
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
+import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
 
-public class ControlBean extends NamedBean
+public class ControlBean extends RequiredKeyBean
 {
-    private String key;
+    @Required
+    @StringSchemaAttributes(pattern = "^[a-zA-Z0-9-]+$")
     private String type;
 
     public ControlBean()
@@ -21,19 +24,10 @@ public class ControlBean extends NamedBean
 
     private void init()
     {
-        if (null == key)
-        {
-            key = "";
-        }
         if (null == type)
         {
             type = "";
         }
-    }
-
-    public String getKey()
-    {
-        return key;
     }
 
     public String getType()
