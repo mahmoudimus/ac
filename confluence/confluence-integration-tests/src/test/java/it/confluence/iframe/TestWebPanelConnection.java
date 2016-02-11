@@ -103,7 +103,7 @@ public final class TestWebPanelConnection extends ConfluenceWebDriverTestBase
         createAndVisitPage(ConfluenceViewPage.class);
 
         // Check if iframe connected with connect JS. The "channel-connected-message" element is displayed after connection is established.
-        connectPageOperations.findWebPanel(webPanel.getKey(remotePlugin.getAddon())).waitUntilContentElementNotEmpty("channel-connected-message");
+        confluencePageOperations.findWebPanel(webPanel.getKey(remotePlugin.getAddon())).waitUntilContentElementNotEmpty("channel-connected-message");
     }
 
     private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
