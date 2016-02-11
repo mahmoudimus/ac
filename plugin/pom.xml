@@ -537,6 +537,7 @@
                             <!-- exclude pocketknife bits we don't need -->
                             !net.sf.cglib.proxy,
                             !org.jvnet.hudson.annotation_indexer,
+                            !org.slf4j*,
                             <!-- end pocketknife excludes -->
 
                             com.atlassian.jwt*;version="[1.4.0,2.0.0)",
