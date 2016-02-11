@@ -23,7 +23,7 @@ public class CommonConditionClassResolver implements ConnectConditionClassResolv
                 newEntry("user_is_sysadmin", UserIsSysAdminCondition.class).contextFree().build(),
                 newEntry("user_is_logged_in", UserIsLoggedInCondition.class).contextFree().build(),
                 newEntry("user_is_admin", UserIsAdminCondition.class).contextFree().build(),
-                newEntry("user_in_group", UserInGroupCondition.class).contextFree().build(),
+                newEntry(UserIsInGroupCondition.CONDITION_NAME, UserIsInGroupCondition.class).contextFree().build(),
                 newEntry("addon_is_licensed", IsLicensedCondition.class).contextFree().build()
         );
     }
