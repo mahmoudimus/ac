@@ -46,7 +46,13 @@ public class CreateContentDialog extends CreateDialog
         return getEditContentPage();
     }
 
-    private PageElement getCreateButton()
+    public PageElement getErrorMessage()
+    {
+        By locator = By.cssSelector(".aui-flag .aui-message");
+        return this.pageElementFinder.find(locator);
+    }
+
+    public PageElement getCreateButton()
     {
         /**
          * For blueprint with wizard. The page will have multiple create button presents
@@ -56,9 +62,11 @@ public class CreateContentDialog extends CreateDialog
         return getDialog().find(locator);
     }
 
-    private void clickBlueprintItem(String completeKey)
+    public CreateContentDialog clickBlueprintItem(String completeKey)
     {
         waitForBlueprint(completeKey).click();
         getCreateButton().click();
+
+        return this;
     }
 }

@@ -31,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.annotation.Nullable;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -301,7 +302,7 @@ public class AddonConditionTest
     private void invokeWhenSuccessfulResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(Promises.promise("{\"shouldDisplay\": true}"));
+                any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(Promises.promise("{\"shouldDisplay\": true}"));
 
         invokeCondition();
     }
@@ -310,7 +311,7 @@ public class AddonConditionTest
     private void invokeWhenMalformedJson()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(Promises.promise("not json"));
+                any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(Promises.promise("not json"));
 
         invokeCondition();
     }
@@ -319,7 +320,7 @@ public class AddonConditionTest
     private void invokeWhenErrorResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(
+                any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(
                 Promises.rejected(new RuntimeException("oops"), String.class));
 
         invokeCondition();
