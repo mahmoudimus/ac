@@ -177,7 +177,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         final Content page = makePageFromContentBody(makeNestedContentBody(macroKeys, "<h1>Hello world</h1>"));
         ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, valueOf(page.getId().asLong()));
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(macroKeys[macroKeys.length - 1], 0);
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKeys[macroKeys.length - 1], 0);
         String content1 = renderedMacro.getIFrameElement("body");
         assertThat(content1, CoreMatchers.containsString("Hello world"));
     }
@@ -211,7 +211,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        WebElement element = confluencePageOperations.findElementByClass("hello-world-content");
+        WebElement element = connectPageOperations.findElementByClass("hello-world-content");
         assertThat(element.getText(), CoreMatchers.is("Hello world"));
     }
 
