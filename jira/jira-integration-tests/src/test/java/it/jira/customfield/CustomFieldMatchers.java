@@ -12,7 +12,11 @@ public class CustomFieldMatchers
     {
     }
 
-    public static Matcher<CustomFieldResponse> customFieldResponse(final String name, final String description, final String type, final String searcher)
+    public static Matcher<CustomFieldResponse> customFieldResponse(
+            final String name,
+            final String description,
+            final String type,
+            final String searcher)
     {
         return new TypeSafeMatcher<CustomFieldResponse>()
         {

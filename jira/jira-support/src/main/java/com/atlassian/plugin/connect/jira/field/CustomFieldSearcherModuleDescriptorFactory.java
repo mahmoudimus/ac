@@ -17,7 +17,7 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, CustomFieldSearcherModuleDescriptor>
+public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, CustomFieldSearcherModuleDescriptor>
 {
     private final JiraAuthenticationContext authenticationContext;
     private final ModuleFactory moduleFactory;
@@ -25,7 +25,7 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
     private final ConnectFieldMapper connectFieldMapper;
 
     @Autowired
-    public CustomFieldSearcherDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final ConnectFieldMapper connectFieldMapper)
+    public CustomFieldSearcherModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final ConnectFieldMapper connectFieldMapper)
     {
         this.authenticationContext = authenticationContext;
         this.moduleFactory = moduleFactory;
@@ -45,7 +45,7 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
         element.addAttribute("key", searcherKeyFromCustomFieldTypeKey(bean.getKey(addon)));
         element.addAttribute("i18n-name-key", i18nKeyOrName);
 
-        ConnectFieldMapper.ConnectFieldSearcherDefinition type = connectFieldMapper.getMapping(bean.getType()).getSearcherBase();
+        ConnectFieldMapper.SearcherDefinition type = connectFieldMapper.getMapping(bean.getType()).getSearcherBase();
 
         element.addAttribute("class", type.getSearcherClassFullyQualifiedName());
         element.add(velocityResourceElement("view", type.getViewTemplate()));

@@ -1,23 +1,31 @@
 package it.jira.customfield;
 
-import com.atlassian.jira.functest.framework.RestoreBlankInstance;
+import com.atlassian.jira.functest.framework.FunctTestConstants;
+import com.atlassian.jira.functest.framework.Navigation;
+import com.atlassian.jira.functest.framework.NavigationImpl;
+import com.atlassian.jira.functest.framework.email.OutgoingMailHelper;
+import com.atlassian.jira.functest.framework.navigation.BulkChangeWizard;
+import com.atlassian.jira.functest.framework.navigation.IssueNavigatorNavigation;
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
 import com.atlassian.jira.pageobjects.pages.admin.customfields.CreateCustomFieldPage;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
+import com.atlassian.jira.rest.api.customfield.CustomFieldDefinitionJsonBean;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.rest.api.issue.IssueFields;
 import com.atlassian.jira.rest.api.issue.IssueUpdateRequest;
-import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.atlassian.jira.testkit.beans.Screen;
 import com.atlassian.jira.testkit.client.CustomFieldsControl;
 import com.atlassian.jira.testkit.client.ScreensControl;
+import com.atlassian.jira.testkit.client.restclient.FieldClient;
 import com.atlassian.jira.testkit.client.restclient.Issue;
 import com.atlassian.jira.testkit.client.restclient.IssueClient;
+import com.atlassian.jira.testkit.client.restclient.Response;
 import com.atlassian.jira.testkit.client.restclient.SearchRequest;
 import com.atlassian.jira.testkit.client.restclient.SearchResult;
+import com.atlassian.jira.webtests.WebTesterFactory;
 import com.atlassian.pageobjects.elements.query.Poller;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldType;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.IssueFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -25,28 +33,34 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.google.common.base.Objects;
 import it.jira.JiraTestBase;
 import it.jira.JiraWebDriverTestBase;
+import net.sourceforge.jwebunit.WebTester;
 import org.apache.commons.lang.RandomStringUtils;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import javax.mail.internet.MimeMessage;
+import javax.ws.rs.core.Response.Status;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static it.jira.customfield.CustomFieldMatchers.customFieldResponse;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-@RestoreBlankInstance
 public class TestConnectField extends JiraWebDriverTestBase
 {
 
@@ -101,14 +115,6 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
-    public void issueFieldIsAvailable() {
-        List<CustomFieldResponse> customFields = customFieldsControl.getCustomFields();
-
-        assertThat(customFields, hasItem(
-                customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey())));
-    }
-
-    @Test
     public void issueFieldIsVisibleOnCreateScreen()
     {
         String fieldId = getFieldId();
@@ -156,6 +162,24 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
+    public void tryingToCreateANewCustomFieldWithTheTypeOfTheIssueFieldFails()
+    {
+        FieldClient fieldClient = new FieldClient(product.environmentData());
+
+        CustomFieldDefinitionJsonBean customFieldDefinitionJson = new CustomFieldDefinitionJsonBean(
+                "name"
+                ,"desc",
+                getCustomFieldTypeKey(),
+                getCustomFieldSearcherKey(),
+                null
+        );
+
+        Response response = fieldClient.createCustomFieldResponse(customFieldDefinitionJson);
+
+        assertThat(response.statusCode, equalTo(Status.BAD_REQUEST.getStatusCode()));
+    }
+
+    @Test
     public void testEditableByREST() throws Exception
     {
         String fieldId = getFieldId();
@@ -163,7 +187,52 @@ public class TestConnectField extends JiraWebDriverTestBase
 
         IssueCreateResponse issue = createIssueWithCustomFieldViaREST(fieldId, "edited via rest");
 
-        assertThat(issueClient.get(issue.key).fields.get(fieldId), CoreMatchers.equalTo("edited via rest"));
+        assertThat(issueClient.get(issue.key).fields.get(fieldId), equalTo("edited via rest"));
+    }
+
+
+    @Ignore
+    @Test
+    public void testCommentCreateWebHookTriggeredDuringBulkUpdate() throws Exception {
+
+        WebTester tester = new WebTester();
+        WebTesterFactory.setupWebTester(tester, product.environmentData());
+        tester.beginAt("/");
+
+        Navigation navigation = new NavigationImpl(tester, product.environmentData());
+
+        Supplier<IntStream> testCount = () -> IntStream.range(0, 10);
+        List<IssueCreateResponse> createdIssues =
+                testCount.get().mapToObj(i -> createTestIssue()).collect(Collectors.toList());
+
+        String commentBody = "Bulk comment";
+
+        navigation.issueNavigator().displayAllIssues();
+
+        BulkChangeWizard wizard = navigation.issueNavigator().bulkChange(IssueNavigatorNavigation.BulkChangeOption.ALL_PAGES)
+                .selectAllIssues()
+                .chooseOperation(BulkChangeWizard.BulkOperationsImpl.EDIT)
+                .checkActionForField(FunctTestConstants.FIELD_COMMENT)
+                .setFieldValue(FunctTestConstants.FIELD_COMMENT, commentBody)
+                .finaliseFields()
+                .complete()
+                .waitForBulkChangeCompletion();
+
+        assertEquals(wizard.getState(), BulkChangeWizard.WizardState.COMPLETE);
+    }
+
+    @Ignore
+    @Test
+    public void testMail() throws Exception
+    {
+        OutgoingMailHelper mailHelper = new OutgoingMailHelper(product.backdoor());
+
+        final Collection<MimeMessage> mails = mailHelper.flushMailQueueAndWait(6);
+    }
+
+    private IssueCreateResponse createTestIssue()
+    {
+        return product.backdoor().issues().createIssue(project.getKey(), "Issue with comments");
     }
 
     private IssueCreateResponse createIssueWithCustomFieldViaREST(final String fieldId, final String value)

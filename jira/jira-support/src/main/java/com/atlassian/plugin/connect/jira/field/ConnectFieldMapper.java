@@ -16,8 +16,8 @@ public class ConnectFieldMapper
     public ConnectFieldMapper()
     {
         map = ImmutableMap.<IssueFieldType,ConnectFieldTypeDefinition>builder()
-                .put(STRING, mapping(ConnectFieldBaseTypeDefinition.TEXT, ConnectFieldSearcherDefinition.EXACT_TEXT))
-                .put(TEXT, mapping(ConnectFieldBaseTypeDefinition.TEXT, ConnectFieldSearcherDefinition.LIKE_TEXT))
+                .put(STRING, mapping(BaseTypeDefinition.TEXT, SearcherDefinition.EXACT_TEXT))
+                .put(TEXT, mapping(BaseTypeDefinition.TEXT, SearcherDefinition.LIKE_TEXT))
                 .build();
     }
 
@@ -28,32 +28,32 @@ public class ConnectFieldMapper
 
     public static class ConnectFieldTypeDefinition
     {
-        ConnectFieldBaseTypeDefinition typeDefinition;
-        ConnectFieldSearcherDefinition searcherDefinition;
+        private final BaseTypeDefinition typeDefinition;
+        private final SearcherDefinition searcherDefinition;
 
-        public ConnectFieldTypeDefinition(final ConnectFieldBaseTypeDefinition typeDefinition, final ConnectFieldSearcherDefinition searcherDefinition)
+        public ConnectFieldTypeDefinition(final BaseTypeDefinition typeDefinition, final SearcherDefinition searcherDefinition)
         {
             this.typeDefinition = typeDefinition;
             this.searcherDefinition = searcherDefinition;
         }
 
-        public static ConnectFieldTypeDefinition mapping(final ConnectFieldBaseTypeDefinition typeDefinition, final ConnectFieldSearcherDefinition searcherDefinition)
+        public static ConnectFieldTypeDefinition mapping(final BaseTypeDefinition typeDefinition, final SearcherDefinition searcherDefinition)
         {
             return new ConnectFieldTypeDefinition(typeDefinition, searcherDefinition);
         }
 
-        public ConnectFieldBaseTypeDefinition getType()
+        public BaseTypeDefinition getType()
         {
             return typeDefinition;
         }
 
-        public ConnectFieldSearcherDefinition getSearcherBase()
+        public SearcherDefinition getSearcherBase()
         {
             return searcherDefinition;
         }
     }
 
-    public enum ConnectFieldBaseTypeDefinition
+    public enum BaseTypeDefinition
     {
         TEXT(com.atlassian.jira.issue.customfields.impl.GenericTextCFType.class,
                 "templates/field/text/view-basictext.vm",
@@ -65,7 +65,7 @@ public class ConnectFieldMapper
         private final String editTemplate;
         private final String xmlTemplate;
 
-        ConnectFieldBaseTypeDefinition(final Class baseCFTypeClass, final String viewTemplate, final String editTemplate, final String xmlTemplate)
+        BaseTypeDefinition(final Class baseCFTypeClass, final String viewTemplate, final String editTemplate, final String xmlTemplate)
         {
             this.baseCFTypeClass = baseCFTypeClass;
             this.viewTemplate = viewTemplate;
@@ -95,7 +95,7 @@ public class ConnectFieldMapper
     }
 
 
-    public enum ConnectFieldSearcherDefinition
+    public enum SearcherDefinition
     {
         EXACT_TEXT(com.atlassian.jira.issue.customfields.searchers.ExactTextSearcher.class,
                 "templates/field/searcher/view-searcher-basictext.vm",
@@ -108,7 +108,7 @@ public class ConnectFieldMapper
         private final String viewTemplate;
         private final String searchTemplate;
 
-        ConnectFieldSearcherDefinition(final Class searcherClassFullyQualifiedName, final String viewTemplate, final String searchTemplate)
+        SearcherDefinition(final Class searcherClassFullyQualifiedName, final String viewTemplate, final String searchTemplate)
         {
             this.searcherClassFullyQualifiedName = searcherClassFullyQualifiedName;
             this.viewTemplate = viewTemplate;

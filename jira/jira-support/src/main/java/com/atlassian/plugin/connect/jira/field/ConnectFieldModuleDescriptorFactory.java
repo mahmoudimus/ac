@@ -19,7 +19,7 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class ConnectFieldDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, ConnectFieldDescriptor>
+public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, ConnectFieldModuleDescriptor>
 {
 
     private final JiraAuthenticationContext authenticationContext;
@@ -34,7 +34,7 @@ public class ConnectFieldDescriptorFactory implements ConnectModuleDescriptorFac
     private final ConnectFieldMapper connectFieldMapper;
 
     @Autowired
-    public ConnectFieldDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final ConnectFieldMapper connectFieldMapper)
+    public ConnectFieldModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final ConnectFieldMapper connectFieldMapper)
     {
         this.authenticationContext = authenticationContext;
         this.rendererManager = rendererManager;
@@ -47,9 +47,9 @@ public class ConnectFieldDescriptorFactory implements ConnectModuleDescriptorFac
     }
 
     @Override
-    public ConnectFieldDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
+    public ConnectFieldModuleDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
     {
-        ConnectFieldDescriptor descriptor = new ConnectFieldDescriptor(authenticationContext, rendererManager, moduleFactory, new CustomFieldDefaultVelocityParams(encoder), customFieldManager, projectManager, managedConfigurationItemService);
+        ConnectFieldModuleDescriptor descriptor = new ConnectFieldModuleDescriptor(authenticationContext, rendererManager, moduleFactory, new CustomFieldDefaultVelocityParams(encoder), customFieldManager, projectManager, managedConfigurationItemService);
 
         Element element = new DOMElement("customfield-type");
 
@@ -64,7 +64,7 @@ public class ConnectFieldDescriptorFactory implements ConnectModuleDescriptorFac
 
         element.add(description);
 
-        ConnectFieldMapper.ConnectFieldBaseTypeDefinition type = connectFieldMapper.getMapping(bean.getType()).getType();
+        ConnectFieldMapper.BaseTypeDefinition type = connectFieldMapper.getMapping(bean.getType()).getType();
 
         element.addAttribute("class", type.getBaseCFTypeClassFullyQualifiedName());
         element.add(velocityResourceElement("view", type.getViewTemplate()));

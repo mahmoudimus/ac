@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 @RestoreBlankInstance
-public class TestConnectFieldPluginLifecycle extends JiraWebDriverTestBase
+public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
 {
     private String addonKey;
     private ConnectRunner addon;
@@ -49,12 +49,10 @@ public class TestConnectFieldPluginLifecycle extends JiraWebDriverTestBase
                         buildIssueFieldModule(FIELD_KEY, FIELD_NAME, FIELD_DESCRIPTION))
                 .addScopes(ScopeName.READ)
                 .start();
-
-        verifyFieldAvailable();
     }
 
-    private void verifyFieldAvailable()
-    {
+    @Test
+    public void issueFieldIsAvailableAsACustomField() {
         List<CustomFieldResponse> customFields = customFieldsControl.getCustomFields();
 
         assertThat(customFields, hasItem(
@@ -62,7 +60,7 @@ public class TestConnectFieldPluginLifecycle extends JiraWebDriverTestBase
     }
 
     @Test
-    public void fieldIsNotAccessibleAfterPluginUninstall() throws Exception
+    public void issueFieldIsNotAccessibleAfterPluginUninstall() throws Exception
     {
         addon.uninstall();
 
@@ -71,6 +69,18 @@ public class TestConnectFieldPluginLifecycle extends JiraWebDriverTestBase
         assertThat(customFields, not(hasItem(
                 customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey()))));
     }
+
+    @Test
+    public void issueFieldIsNotAccessibleAfterPluginDisabled() throws Exception
+    {
+        addon.setAddonEnabled(false);
+
+        List<CustomFieldResponse> customFields = customFieldsControl.getCustomFields();
+
+        assertThat(customFields, not(hasItem(
+                customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey()))));
+    }
+
 
     private static ConnectFieldModuleBean buildIssueFieldModule(String key, String title, String description)
     {

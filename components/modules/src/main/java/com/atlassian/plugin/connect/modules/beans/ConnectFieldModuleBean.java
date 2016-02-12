@@ -5,10 +5,14 @@ import com.atlassian.plugin.connect.modules.beans.builder.IssueFieldModuleBeanBu
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
- * Custom field type module allows the add-on to add new custom field types to JIRA.
+ * Connect field module allows the add-on to add a new custom field, which is locked and tied to your plugin.
+ * Locked meaning that it cannot be removed by the user, and there is only 1 field instance possible.
+ * The field will not appear on screens, you need to add it manually using the screens REST API.
+ * When your plugin is disabled/uninstalled the field will disappear from the screens.
+ *
  *
  * #### Example
- * @schemaTitle Custom Field Type
+ * @schemaTitle Issue Field
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ISSUE_FIELD_EXAMPLE}
  * @since 1.0
  */

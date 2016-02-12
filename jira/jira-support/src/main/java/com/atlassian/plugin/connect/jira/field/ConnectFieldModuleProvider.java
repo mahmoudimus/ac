@@ -21,16 +21,16 @@ public class ConnectFieldModuleProvider extends AbstractJiraConnectModuleProvide
 {
     private static final ConnectFieldModuleMeta META = new ConnectFieldModuleMeta();
 
-    private final ConnectFieldDescriptorFactory connectFieldDescriptorFactory;
-    private final CustomFieldSearcherDescriptorFactory customFieldSearcherDescriptorFactory;
+    private final ConnectFieldModuleDescriptorFactory connectFieldModuleDescriptorFactory;
+    private final CustomFieldSearcherModuleDescriptorFactory customFieldSearcherModuleDescriptorFactory;
 
     @Autowired
     public ConnectFieldModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator, ConnectFieldDescriptorFactory connectFieldDescriptorFactory, final CustomFieldSearcherDescriptorFactory customFieldSearcherDescriptorFactory)
+            ConnectJsonSchemaValidator schemaValidator, ConnectFieldModuleDescriptorFactory connectFieldModuleDescriptorFactory, final CustomFieldSearcherModuleDescriptorFactory customFieldSearcherModuleDescriptorFactory)
     {
         super(pluginRetrievalService, schemaValidator);
-        this.connectFieldDescriptorFactory = connectFieldDescriptorFactory;
-        this.customFieldSearcherDescriptorFactory = customFieldSearcherDescriptorFactory;
+        this.connectFieldModuleDescriptorFactory = connectFieldModuleDescriptorFactory;
+        this.customFieldSearcherModuleDescriptorFactory = customFieldSearcherModuleDescriptorFactory;
     }
 
     @Override
@@ -52,11 +52,11 @@ public class ConnectFieldModuleProvider extends AbstractJiraConnectModuleProvide
 
     private ModuleDescriptor createConnectFieldDescriptor(ConnectFieldModuleBean bean, ConnectAddonBean addon)
     {
-        return connectFieldDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
+        return connectFieldModuleDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
     }
 
     private ModuleDescriptor createSearcherDescriptor(ConnectFieldModuleBean bean, ConnectAddonBean addon)
     {
-        return customFieldSearcherDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
+        return customFieldSearcherModuleDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
     }
 }
