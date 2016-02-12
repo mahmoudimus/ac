@@ -40,7 +40,7 @@ public class PluggableParametersExtractorImpl implements PluggableParametersExtr
 
     public ModuleContextParameters extractParameters(Map<String, Object> context)
     {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters(context);
         moduleContextParameters.putAll(connectModuleContextExtractor.extractParameters(context));
         moduleContextParameters.putAll(extractByPlugins(context));
         return moduleContextParameters;

@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServlet;
 
 import com.atlassian.connect.test.jira.pageobjects.RemoteRefreshIssuePageWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.MustacheServlet;
-import com.atlassian.plugin.connect.test.common.servlet.TestServletContextExtractor;
+import com.atlassian.plugin.connect.test.common.servlet.FormParameterExtractor;
 
 import com.google.common.collect.Lists;
 
@@ -49,8 +49,8 @@ public class JiraAppServlets
     public static HttpServlet dashboardItemServlet()
     {
         return wrapContextAwareServlet(new MustacheServlet("jira/dashboardItem/dashboard-item.mu"), Lists.newArrayList(
-                new TestServletContextExtractor(DASHBOARD_ITEM_ID_QUERY_PARAM),
-                new TestServletContextExtractor(DASHBOARD_ID_QUERY_PARAM)));
+                new FormParameterExtractor(DASHBOARD_ITEM_ID_QUERY_PARAM),
+                new FormParameterExtractor(DASHBOARD_ID_QUERY_PARAM)));
     }
 
     /**

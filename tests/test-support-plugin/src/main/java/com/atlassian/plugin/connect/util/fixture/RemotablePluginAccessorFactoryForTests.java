@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.util.fixture;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 
@@ -23,12 +22,6 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
     }
 
     @Override
-    public RemotablePluginAccessor getOrThrow(final String pluginKey)
-    {
-        return get(pluginKey); // it's never null
-    }
-
-    @Override
     public void remove(String pluginKey)
     {
         //do nothing
@@ -38,11 +31,5 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
     public RemotablePluginAccessor get(final String pluginKey)
     {
         return new RemotablePluginAccessorForTests(pluginKey, pluginKey, baseUrl);
-    }
-
-    @Override
-    public RemotablePluginAccessor get(ConnectAddonBean addon)
-    {
-        return get(addon.getKey());
     }
 }

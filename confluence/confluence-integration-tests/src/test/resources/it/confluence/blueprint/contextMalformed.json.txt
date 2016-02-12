@@ -1,0 +1,11 @@
+// INTENDED
+
+[
+  {
+    "identifier": "ContentPageTitle",
+    "value": "test page title for {{{spaceKey}}}"
+  },
+  {
+    "identifier": "custom1",
+    "value": "{{{blueprintKey}}}"
+

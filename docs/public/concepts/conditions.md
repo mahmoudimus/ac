@@ -7,6 +7,8 @@ Various types of modules accept conditions, including
 [Pages](../modules/common/page.html), [Web Panels](../modules/common/web-panel.html) and [Web Items](../modules/common/web-item.html).
 To see whether a certain module accepts conditions, see its specific module documentation page.
 
+Conditions may also be used in [context parameters](../concepts/context-parameters.html#inline-conditions).
+
 There are different classes of conditions. Most commonly used are [the predefined conditions provided by each host product](#static).
 When further customization is needed, conditions can be specified [in terms of properties stored by the add-on in the host product](#entity-property).
 

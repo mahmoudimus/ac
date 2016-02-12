@@ -3,15 +3,15 @@ package com.atlassian.plugin.connect.confluence.macro;
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.macro.MacroExecutionException;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
 {
     private static final Logger log = LoggerFactory.getLogger(RemoteMacroRendererImpl.class);
 
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
     private final MacroModuleContextExtractor macroModuleContextExtractor;
     private final MacroContentManager macroContentManager;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
@@ -37,11 +37,11 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
 
     @Autowired
     public RemoteMacroRendererImpl(
-            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            ConnectUriFactory connectUriFactory,
             MacroModuleContextExtractor macroModuleContextExtractor, MacroContentManager macroContentManager,
             RemotablePluginAccessorFactory remotablePluginAccessorFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
-        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.connectUriFactory = connectUriFactory;
         this.macroModuleContextExtractor = macroModuleContextExtractor;
         this.macroContentManager = macroContentManager;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -83,7 +83,7 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
                 parameters
         );
 
-        String uri = iFrameUriBuilderFactory.builder()
+        String uri = connectUriFactory.createConnectAddonUriBuilder()
                 .addon(addonKey)
                 .namespace(moduleKey)
                 .urlTemplate(uriTemplate)
@@ -94,8 +94,8 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
         try
         {
             return macroContentManager.getStaticContent(HttpMethod.GET, URI.create(uri),
-                    Collections.<String, String[]>emptyMap(), conversionContext,
-                    remotablePluginAccessorFactory.getOrThrow(addonKey));
+                    Collections.emptyMap(), conversionContext,
+                    remotablePluginAccessorFactory.get(addonKey));
         }
         catch (Exception e)
         {

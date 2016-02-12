@@ -1,9 +1,19 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateContextBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
@@ -32,6 +42,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -39,11 +50,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -109,6 +115,9 @@ public class ConnectJsonExamples
 
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
+    public static final String BLUEPRINT_TEMPLATE_CONTEXT_EXAMPLE = createBlueprintTemplateExample();
+    public static final String BLUEPRINT_POST_BODY_EXAMPLE = createBlueprintPostBodyExample();
+    public static final String BLUEPRINT_CONTEXT_RESPONSE_EXAMPLE = createBlueprintContextResponseExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
     public static final String CONTENT_PROPERTY_UI_SUPPORT = createAttachmentTypeUISupportExample();
     public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createContentPropertyIndexExtractionConfigurationExample();
@@ -241,7 +250,7 @@ public class ConnectJsonExamples
                 .withUrl("/my-confluence-user-profile-page")
                 .build());
 
-        
+
         JsonObject object = createModuleArray(ImmutableMap.of(
                 "generalPages", generalPageModuleBean,
                 "adminPages", adminPageModuleBean,
@@ -408,16 +417,69 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("blueprints", blueprintModuleBean));
     }
 
+    private static String createBlueprintContextResponseExample()
+    {
+        List<BlueprintContextValue> contextValues =  new LinkedList<>();
+        contextValues.add(makeBlueprintContextValueExample1());
+        contextValues.add(makeBlueprintContextValueExample2());
+        contextValues.add(makeBlueprintContextValueExample3());
+        return gson.toJson(contextValues);
+    }
+
+    private static BlueprintContextValue makeBlueprintContextValue(String identifier, String value, String representation)
+    {
+        BlueprintContextValue v1 = new BlueprintContextValue();
+        v1.setIdentifier(identifier);
+        v1.setValue(value);
+        v1.setRepresentation(representation);
+        return v1;
+    }
+
+    private static BlueprintContextValue makeBlueprintContextValueExample1()
+    {
+        return makeBlueprintContextValue("ContentPageTitle", "Unique Page Title 1", "plain");
+    }
+
+    private static BlueprintContextValue makeBlueprintContextValueExample2()
+    {
+        return makeBlueprintContextValue("custom-key1", "custom value 1", "plain");
+    }
+
+    private static BlueprintContextValue makeBlueprintContextValueExample3()
+    {
+        return makeBlueprintContextValue("custom-key2", "<ac:structured-macro ac:name=\"cheese\" ac:schema-version=\"1\"/> ", "storage");
+    }
+
+    private static String createBlueprintPostBodyExample()
+    {
+        BlueprintContextPostBody body = new BlueprintContextPostBody("addon-key", "blueprint-key", "SPACEKEY", "edd16ba6-0d41-4313-8bb9-84dc82cf6e7c", Locale.FRANCE);
+        return gson.toJson(body);
+    }
+
     private static String createBlueprintTemplateExample()
     {
         BlueprintTemplateBean blueprintTemplateBean = createBlueprintTemplateBean();
         return gson.toJson(createJsonObject("template", blueprintTemplateBean));
     }
 
+    private static String createBlueprintTemplateContextExample()
+    {
+        BlueprintTemplateContextBean blueprintTemplateContextBean = createBlueprintTemplateContextBean();
+        return gson.toJson(createJsonObject("blueprintContext", blueprintTemplateContextBean));
+    }
+
+    private static BlueprintTemplateContextBean createBlueprintTemplateContextBean()
+    {
+        return BlueprintTemplateContextBean.newBlueprintTemplateContextBeanBuilder()
+                                           .withUrl("/blueprints/context")
+                                           .build();
+    }
+
     private static BlueprintTemplateBean createBlueprintTemplateBean()
     {
         return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
                 .withUrl("/blueprints/blueprint.xml")
+                .withBlueprintContext(createBlueprintTemplateContextBean())
                 .build();
     }
 
@@ -564,8 +626,7 @@ public class ConnectJsonExamples
                 .withName(i18nProperty("Map View"))
                 .withDescription(i18nProperty("Allows switching between view types"))
                 .withType("enum")
-                .withDefaultValue("Map")
-                .withMultiple(false)
+                .withDefaultValue("Map").withMultiple(false)
                 .withRequired(true)
                 .withValues("Map", "Satellite")
                 .build();
@@ -918,7 +979,7 @@ public class ConnectJsonExamples
         obj.add(name, arr);
         return obj;
     }
-    
+
     private static JsonArray createJsonArrayWithSingleObject(Object bean)
     {
         JsonArray arr = new JsonArray();

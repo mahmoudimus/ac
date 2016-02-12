@@ -11,5 +11,6 @@
     "h":"$!height",
     "src":"$iframeSrcHtml",
     "productCtx":"$productContextHtml",
-    "timeZone":"$timeZone"
+    "timeZone":"$timeZone",
+    "origin":"$origin"
 }

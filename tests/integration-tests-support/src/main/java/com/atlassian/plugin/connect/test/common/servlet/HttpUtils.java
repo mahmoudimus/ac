@@ -18,7 +18,12 @@ public class HttpUtils
 {
     public static void renderHtml(HttpServletResponse resp, String template, Map<String, Object> context) throws IOException
     {
-        resp.setContentType("text/html");
+        renderWithContentType(resp, "text/html",  template, context);
+    }
+
+    public static void renderWithContentType(HttpServletResponse resp, String contentType, String template, Map<String, Object> context) throws IOException
+    {
+        resp.setContentType(contentType);
         byte[] bytes = render(template, context).getBytes(Charset.forName("UTF-8"));
         resp.setContentLength(bytes.length);
         resp.getOutputStream().write(bytes);
