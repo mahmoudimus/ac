@@ -39,7 +39,7 @@ public class ConnectFieldOptionManager
                     .columns(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.ADDON_KEY, CONNECT_FIELD_OPTION.FIELD_KEY, CONNECT_FIELD_OPTION.VALUE)
                     .select(select(CONNECT_FIELD_OPTION.OPTION_ID.max().add(constant(1)).coalesce(1), constant(addonKey), constant(fieldKey), constant(value))
                             .from(CONNECT_FIELD_OPTION)
-                            .where(predicate(addonKey, fieldKey)))
+                            .where(isField(addonKey, fieldKey)))
                     .executeWithKey(CONNECT_FIELD_OPTION.ID);
 
             databaseConnection.commit();
@@ -58,7 +58,7 @@ public class ConnectFieldOptionManager
             List<Tuple> tuples = connection
                     .select(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.VALUE)
                     .from(CONNECT_FIELD_OPTION)
-                    .where(predicate(addonKey, fieldKey))
+                    .where(isField(addonKey, fieldKey))
                     .orderBy(CONNECT_FIELD_OPTION.OPTION_ID.asc())
                     .fetch();
 
@@ -71,14 +71,14 @@ public class ConnectFieldOptionManager
         return databaseAccessor.run(databaseConnection -> toConnectFieldOption(databaseConnection
                 .select(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.VALUE)
                 .from(CONNECT_FIELD_OPTION)
-                .where(predicate(addonKey, fieldKey, optionId))
+                .where(isOption(addonKey, fieldKey, optionId))
                 .fetchOne()));
     }
 
     public long delete(final String addonKey, final String fieldKey, final Integer optionId)
     {
         return databaseAccessor.run(connection -> {
-            long deleted = connection.delete(CONNECT_FIELD_OPTION).where(predicate(addonKey, fieldKey, optionId)).execute();
+            long deleted = connection.delete(CONNECT_FIELD_OPTION).where(isOption(addonKey, fieldKey, optionId)).execute();
             connection.commit();
             return deleted;
         });
@@ -88,7 +88,7 @@ public class ConnectFieldOptionManager
     {
         return databaseAccessor.run(connection -> {
             connection.update(CONNECT_FIELD_OPTION)
-                    .where(predicate(addonKey, fieldKey, optionId))
+                    .where(isOption(addonKey, fieldKey, optionId))
                     .set(CONNECT_FIELD_OPTION.VALUE, value.toString())
                     .execute();
 
@@ -112,12 +112,12 @@ public class ConnectFieldOptionManager
         }
     }
 
-    private Predicate predicate(final String addonKey, final String fieldKey, final Integer optionId)
+    private Predicate isOption(final String addonKey, final String fieldKey, final Integer optionId)
     {
-        return predicate(addonKey, fieldKey).and(CONNECT_FIELD_OPTION.OPTION_ID.eq(optionId));
+        return isField(addonKey, fieldKey).and(CONNECT_FIELD_OPTION.OPTION_ID.eq(optionId));
     }
 
-    private BooleanExpression predicate(final String addonKey, final String fieldKey)
+    private BooleanExpression isField(final String addonKey, final String fieldKey)
     {
         return CONNECT_FIELD_OPTION.FIELD_KEY.eq(fieldKey).and(CONNECT_FIELD_OPTION.ADDON_KEY.eq(addonKey));
     }

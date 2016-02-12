@@ -31,7 +31,7 @@ public class CustomFieldValueManager
     {
         QCustomFieldValue CUSTOM_FIELD_VALUE = connectFieldTables.customFieldValue("CFV");
         return databaseAccessor.run(databaseConnection ->
-                databaseConnection.delete(CUSTOM_FIELD_VALUE).where(predicate(fieldId, optionId)).execute());
+                databaseConnection.delete(CUSTOM_FIELD_VALUE).where(isValue(fieldId, optionId)).execute());
     }
 
     public long replace(final FieldId fieldId, final Integer from, final Integer to)
@@ -40,7 +40,7 @@ public class CustomFieldValueManager
         return databaseAccessor.run(databaseConnection ->
                 databaseConnection
                         .update(CUSTOM_FIELD_VALUE)
-                        .where(predicate(fieldId, from))
+                        .where(isValue(fieldId, from))
                         .set(CUSTOM_FIELD_VALUE.stringvalue, to.toString())
                         .execute());
     }
@@ -52,14 +52,14 @@ public class CustomFieldValueManager
                         databaseConnection
                                 .select(CUSTOM_FIELD_VALUE.issue)
                                 .from(CUSTOM_FIELD_VALUE)
-                                .where(predicate(fieldId, optionId))
+                                .where(isValue(fieldId, optionId))
                                 .distinct()
                                 .orderBy(CUSTOM_FIELD_VALUE.issue.asc())
                                 .fetch()
         );
     }
 
-    private Predicate predicate(final FieldId fieldId, final Integer optionId)
+    private Predicate isValue(final FieldId fieldId, final Integer optionId)
     {
         QCustomFieldValue CUSTOM_FIELD_VALUE = connectFieldTables.customFieldValue("CFV");
         return getCustomFieldId(fieldId)
