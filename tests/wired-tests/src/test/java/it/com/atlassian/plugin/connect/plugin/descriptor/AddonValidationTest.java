@@ -274,7 +274,7 @@ public class AddonValidationTest
     public void shouldFailInstallationWithDetailedMessageForInvalidShallowDescriptorInDevMode() throws Exception
     {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("invalidGenericDescriptor.json"),
-                "connect.install.error.remote.descriptor.validation.dev", "<ul><li>: object has missing required properties ([&quot;authentication&quot;])</ul>");
+                "connect.install.error.remote.descriptor.validation.dev", "<ul><li>: object has missing required properties ([&quot;authentication&quot;])</li></ul>");
     }
 
     @Test
@@ -282,7 +282,7 @@ public class AddonValidationTest
     public void shouldFailInstallationWithGeneralMessageForDescriptorWithNonObjectModuleList() throws Exception
     {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("descriptorWithNonObjectModuleList.json"),
-                "connect.install.error.remote.descriptor.validation.dev", "<ul><li>/modules: instance type (boolean) does not match any allowed primitive type (allowed: [&quot;object&quot;])</ul>");
+                "connect.install.error.remote.descriptor.validation.dev", "<ul><li>/modules: instance type (boolean) does not match any allowed primitive type (allowed: [&quot;object&quot;])</li></ul>");
     }
 
     @Test
@@ -308,7 +308,7 @@ public class AddonValidationTest
                 "<ul><li>/webItems/0/styleClasses/0: ECMA 262 regex &quot;^[_a-zA-Z]+[_a-zA-Z0-9-]*$&quot;" +
                         " does not match input string &quot;webit%22&quot; &gt;&lt;script&gt;alert(1);&lt;/script&gt;&quot;" +
                         "<li>/webItems/0/styleClasses/1: ECMA 262 regex &quot;^[_a-zA-Z]+[_a-zA-Z0-9-]*$&quot;" +
-                        " does not match input string &quot;webit%22%20onerror%22javascript:alert(1);%20&quot;</ul>");
+                        " does not match input string &quot;webit%22%20onerror%22javascript:alert(1);%20&quot;</li></ul>");
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()

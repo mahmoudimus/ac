@@ -156,6 +156,7 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
         {
             messageBuilder.append("<li>");
             messageBuilder.append(TextUtils.htmlEncode(message));
+            messageBuilder.append("</li>");
         }
         messageBuilder.append("</ul>");
         return messageBuilder.toString();

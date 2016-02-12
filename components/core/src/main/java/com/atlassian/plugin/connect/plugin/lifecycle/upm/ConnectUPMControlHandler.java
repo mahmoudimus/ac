@@ -90,7 +90,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
         Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
         if (optionalAddon.isPresent())
         {
-            PluginState state = (isPluginEnabled(pluginKey)) ? PluginState.ENABLED : PluginState.DISABLED;
+            PluginState state = isPluginEnabled(pluginKey) ? PluginState.ENABLED : PluginState.DISABLED;
             plugin = addonToPluginFactory.create(optionalAddon.get(), state);
         }
 

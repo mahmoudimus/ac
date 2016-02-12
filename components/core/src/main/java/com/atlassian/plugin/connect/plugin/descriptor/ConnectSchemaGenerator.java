@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
 
 public class ConnectSchemaGenerator extends DefaultJsonSchemaGenerator
 {
-
     public ConnectSchemaGenerator(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
         super(enumCase, interfaceList, schemaDocs, ignoreFilter);

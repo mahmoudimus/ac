@@ -27,7 +27,7 @@ public class AddonPropertyIterable implements Iterable<AddonProperty>
 
     public Iterable<String> getPropertyKeys()
     {
-        return Iterables.transform(properties, property -> property.getKey());
+        return Iterables.transform(properties, AddonProperty::getKey);
     }
 
     @Override

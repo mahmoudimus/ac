@@ -24,13 +24,7 @@ public final class Dom4jUtils
 
     private static InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
-    private static final EntityResolver EMPTY_ENTITY_RESOLVER = new EntityResolver()
-    {
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
-        {
-            return EMPTY_INPUT_SOURCE;
-        }
-    };
+    private static final EntityResolver EMPTY_ENTITY_RESOLVER = (publicId, systemId) -> EMPTY_INPUT_SOURCE;
 
     public static String printNode(Node document)
     {

@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
-
 /**
  * This class contains common JSON methods.
  */

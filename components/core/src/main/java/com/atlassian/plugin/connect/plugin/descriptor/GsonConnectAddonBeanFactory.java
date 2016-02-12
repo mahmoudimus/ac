@@ -48,15 +48,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     @Override
     public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException
     {
-        return descriptorCache.computeIfAbsent(jsonDescriptor, new Function<String, ConnectAddonBean>()
-        {
-
-            @Override
-            public ConnectAddonBean apply(String descriptor)
-            {
-                return fromJsonImpl(descriptor);
-            }
-        });
+        return descriptorCache.computeIfAbsent(jsonDescriptor, GsonConnectAddonBeanFactory.this::fromJsonImpl);
     }
 
     @Override

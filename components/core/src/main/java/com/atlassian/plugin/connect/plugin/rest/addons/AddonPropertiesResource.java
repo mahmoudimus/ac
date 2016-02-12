@@ -47,8 +47,6 @@ public class AddonPropertiesResource
     public static final String VALUE_TOO_LONG_ERROR_MSG = String.format("The value cannot be bigger than %s.", FileUtils.byteCountToDisplaySize(AddonPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH));
     public static final String REST_PATH = "addons/{addonKey}/properties";
 
-    private static final Logger log = LoggerFactory.getLogger(AddonPropertiesResource.class);
-
     private final ApplicationProperties applicationProperties;
     private final AddonPropertyService addonPropertyService;
     private final AddonKeyExtractor addonKeyExtractor;
@@ -86,25 +84,14 @@ public class AddonPropertiesResource
         String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
 
         return addonPropertyService.getAddonProperties(user, sourcePluginKey, addonKey).fold(
-                new Function<AddonPropertyService.OperationStatus, Response>()
-                {
-                    @Override
-                    public Response apply(final AddonPropertyService.OperationStatus status)
-                    {
-                        return getResponseBuilderFromOperationStatus(status).build();
-                    }
-                }, new Function<AddonPropertyIterable, Response>()
-                {
-                    @Override
-                    public Response apply(final AddonPropertyIterable propertyIterable)
-                    {
-                        String baseURL = getRestPathForAddonKey(addonKey) + "/properties";
-                        return Response.ok()
-                                .entity(RestAddonPropertiesBean.valueOf(propertyIterable.getPropertyKeys(), baseURL))
-                                .cacheControl(never())
-                                .build();
-                    }
-                });
+            status -> getResponseBuilderFromOperationStatus(status).build(),
+            propertyIterable -> {
+                String baseURL = getRestPathForAddonKey(addonKey) + "/properties";
+                return Response.ok()
+                        .entity(RestAddonPropertiesBean.valueOf(propertyIterable.getPropertyKeys(), baseURL))
+                        .cacheControl(never())
+                        .build();
+            });
     }
 
     /**
@@ -135,25 +122,15 @@ public class AddonPropertiesResource
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
 
-        return addonPropertyService.getPropertyValue(user, sourcePluginKey, addonKey, propertyKey).fold(new Function<AddonPropertyService.OperationStatus, Response>()
-        {
-            @Override
-            public Response apply(final AddonPropertyService.OperationStatus status)
-            {
-                return getResponseBuilderFromOperationStatus(status).build();
-            }
-        }, new Function<AddonProperty, Response>()
-        {
-            @Override
-            public Response apply(final AddonProperty property)
-            {
+        return addonPropertyService.getPropertyValue(user, sourcePluginKey, addonKey, propertyKey).fold(
+            status -> getResponseBuilderFromOperationStatus(status).build(),
+            property -> {
                 String baseURL = getRestPathForAddonKey(addonKey) + "/properties";
                 return Response.ok()
                         .entity(RestAddonProperty.valueOf(property, baseURL, returnJsonFormat))
                         .cacheControl(never())
                         .build();
-            }
-        });
+            });
     }
 
     /**
@@ -186,26 +163,16 @@ public class AddonPropertiesResource
     {
         Either<RestParamError, String> errorStringEither = propertyValue(servletRequest);
 
-        return errorStringEither.fold(new Function<RestParamError, Response>()
-        {
-            @Override
-            public Response apply(final RestParamError error)
-            {
-                return getResponseForMessageAndStatus(VALUE_TOO_LONG_ERROR_MSG, Response.Status.FORBIDDEN);
-            }
-        }, new Function<String, Response>()
-        {
-            @Override
-            public Response apply(final String propertyValue)
-            {
+        return errorStringEither.fold(
+            error -> getResponseForMessageAndStatus(VALUE_TOO_LONG_ERROR_MSG, Response.Status.FORBIDDEN),
+            propertyValue -> {
                 final UserProfile user = userManager.getRemoteUser(servletRequest);
                 // can be null, it is checked in the service.
                 final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
 
                 return addonPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, propertyKey, propertyValue, eTagValidationFunction(request))
                         .fold(onPreconditionFailed(), onFailure(), onSuccess());
-            }
-        });
+            });
     }
 
     /**
@@ -247,64 +214,27 @@ public class AddonPropertiesResource
 
     private Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request)
     {
-        return new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
-        {
-            @Override
-            public AddonPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Optional<AddonProperty> propertyOption)
-            {
-                return AddonPropertyService.ServiceConditionResult.SUCCESS();
-            }
-        };
+        return propertyOption -> AddonPropertyService.ServiceConditionResult.SUCCESS();
     }
 
     private Function<AddonPropertyService.OperationStatus, Response> onFailure()
     {
-        return new Function<AddonPropertyService.OperationStatus, Response>()
-        {
-            @Override
-            public Response apply(final AddonPropertyService.OperationStatus operationStatus)
-            {
-                return getResponseBuilderFromOperationStatus(operationStatus)
-                        .build();
-            }
-        };
+        return operationStatus -> getResponseBuilderFromOperationStatus(operationStatus).build();
     }
 
     private Function<AddonPropertyService.PutOperationStatus, Response> onSuccess()
     {
-        return new Function<AddonPropertyService.PutOperationStatus, Response>()
-        {
-            @Override
-            public Response apply(final AddonPropertyService.PutOperationStatus operationStatus)
-            {
-                return getResponseBuilderFromOperationStatus(operationStatus)
-                        .build();
-            }
-        };
+        return operationStatus -> getResponseBuilderFromOperationStatus(operationStatus).build();
     }
 
     private Function<Response.ResponseBuilder, Response> onPreconditionFailed()
     {
-        return new Function<Response.ResponseBuilder, Response>()
-        {
-            @Override
-            public Response apply(final Response.ResponseBuilder responseBuilder)
-            {
-                return responseBuilder.entity("").cacheControl(never()).build();
-            }
-        };
+        return responseBuilder -> responseBuilder.entity("").cacheControl(never()).build();
     }
 
     private Function<AddonPropertyService.OperationStatus, Response> onDeleteSuccess()
     {
-        return new Function<AddonPropertyService.OperationStatus, Response>()
-        {
-            @Override
-            public Response apply(final AddonPropertyService.OperationStatus operationStatus)
-            {
-                return getResponseBuilderFromOperationStatus(operationStatus).build();
-            }
-        };
+        return operationStatus -> getResponseBuilderFromOperationStatus(operationStatus).build();
     }
 
     private Response.ResponseBuilder getResponseBuilderFromOperationStatus(final AddonPropertyService.OperationStatus operationStatus)
