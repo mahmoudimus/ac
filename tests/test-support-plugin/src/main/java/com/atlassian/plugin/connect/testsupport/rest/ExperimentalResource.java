@@ -35,7 +35,7 @@ public class ExperimentalResource
     @AnonymousAllowed
     public Response getUserJson(@HeaderParam("X-ExperimentalApi") String experimentalHeader)
     {
-        if (experimentalHeader.equals("opt-in")) {
+        if (experimentalHeader != null && experimentalHeader.equals("opt-in")) {
             return getUser("{\"name\": \"%s\"}", APPLICATION_JSON_TYPE);
         } else {
             return buildErrorResponse();
@@ -57,6 +57,6 @@ public class ExperimentalResource
 
     private Response buildErrorResponse()
     {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Experimental header missing.").build();
+        return Response.status(Response.Status.PRECONDITION_FAILED).entity("Experimental header missing.").build();
     }
 }

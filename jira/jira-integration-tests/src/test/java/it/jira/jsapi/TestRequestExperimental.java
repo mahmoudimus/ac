@@ -59,30 +59,36 @@ public class TestRequestExperimental extends JiraWebDriverTestBase
         JiraRequestExperimentalTestPage page = loginAndVisit(user,
                 JiraRequestExperimentalTestPage.class, remotePlugin.getAddon().getKey(), PAGE_MODULE_KEY);
 
-        assertEquals("500", page.getIndexedClientHttpStatus(1));
+        assertEquals("412", page.getIndexedClientHttpStatus(1));
         String statusText1 = page.getIndexedClientHttpStatusText(1);
-        assertTrue("Internal Server Error".equals(statusText1));
+        assertTrue("Precondition Failed".equals(statusText1));
+        assertEquals("Experimental header missing.", page.getIndexedClientHttpResponseText(1));
 
         // this one has the experimental flag set to true
         assertEquals("200", page.getIndexedClientHttpStatus(2));
         String statusText2 = page.getIndexedClientHttpStatusText(2);
         assertTrue("OK".equals(statusText2) || "success".equals(statusText2));
+        assertEquals("{\"name\": \"" + user.getUsername() + "\"}", page.getIndexedClientHttpResponseText(2));
 
-        assertEquals("500", page.getIndexedClientHttpStatus(3));
+        assertEquals("412", page.getIndexedClientHttpStatus(3));
         String statusText3 = page.getIndexedClientHttpStatusText(3);
-        assertTrue("Internal Server Error".equals(statusText3));
+        assertTrue("Precondition Failed".equals(statusText3));
+        assertEquals("Experimental header missing.", page.getIndexedClientHttpResponseText(3));
 
-        assertEquals("500", page.getIndexedClientHttpStatus(4));
+        assertEquals("412", page.getIndexedClientHttpStatus(4));
         String statusText4 = page.getIndexedClientHttpStatusText(4);
-        assertTrue("Internal Server Error".equals(statusText4));
+        assertTrue("Precondition Failed".equals(statusText4));
+        assertEquals("Experimental header missing.", page.getIndexedClientHttpResponseText(4));
 
-        assertEquals("500", page.getIndexedClientHttpStatus(5));
+        assertEquals("412", page.getIndexedClientHttpStatus(5));
         String statusText5 = page.getIndexedClientHttpStatusText(5);
-        assertTrue("Internal Server Error".equals(statusText5));
+        assertTrue("Precondition Failed".equals(statusText5));
+        assertEquals("Experimental header missing.", page.getIndexedClientHttpResponseText(5));
 
-        assertEquals("500", page.getIndexedClientHttpStatus(6));
+        assertEquals("412", page.getIndexedClientHttpStatus(6));
         String statusText6 = page.getIndexedClientHttpStatusText(6);
-        assertTrue("Internal Server Error".equals(statusText6));
+        assertTrue("Precondition Failed".equals(statusText6));
+        assertEquals("Experimental header missing.", page.getIndexedClientHttpResponseText(6));
     }
 
 }

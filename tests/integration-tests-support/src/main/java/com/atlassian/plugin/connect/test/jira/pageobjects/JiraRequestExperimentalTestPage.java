@@ -24,5 +24,10 @@ public class JiraRequestExperimentalTestPage extends ConnectAddonEmbeddedTestPag
     public String getIndexedClientHttpStatusText(int index) {
         return waitForValue("client-http-status-text-" + Integer.toString(index));
     }
+
+    public String getIndexedClientHttpResponseText(int index) {
+        return waitForValue("client-http-response-text-" + Integer.toString(index));
+    }
+
 }
 
