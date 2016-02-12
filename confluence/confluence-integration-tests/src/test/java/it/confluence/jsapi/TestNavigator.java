@@ -142,4 +142,5 @@ public class TestNavigator extends ConfluenceWebDriverTestBase
 
         return page.clickToNavigate(id, aPageClass, args);
     }
+
 }
