@@ -9,4 +9,16 @@
 
     <atlassian-scanner:scan-indexes/>
 
+    <bean id="ConnectionPrimerImpl" class="com.atlassian.pocketknife.internal.querydsl.ConnectionPrimerImpl" />
+    <bean id="DatabaseAccessorImpl" class="com.atlassian.pocketknife.internal.querydsl.DatabaseAccessorImpl" />
+    <bean id="jiraConnectionProvider" class="com.atlassian.pocketknife.internal.querydsl.JiraConnectionProviderImpl" />
+    <bean id="DatabaseCompatibilityKitImpl" class="com.atlassian.pocketknife.internal.querydsl.DatabaseCompatibilityKitImpl" />
+    <bean id="DatabaseConnectionConverterImpl" class="com.atlassian.pocketknife.internal.querydsl.DatabaseConnectionConverterImpl" />
+    <bean id="SchemaProviderAccessor" class="com.atlassian.pocketknife.internal.querydsl.SchemaProviderAccessor" />
+    <bean id="DatabaseSchemaCreationImpl" class="com.atlassian.pocketknife.internal.querydsl.schema.DatabaseSchemaCreationImpl" />
+    <bean id="DefaultSchemaProvider" class="com.atlassian.pocketknife.internal.querydsl.schema.DefaultSchemaProvider" />
+    <bean id="StreamingQueryFactoryImpl" class="com.atlassian.pocketknife.internal.querydsl.stream.StreamingQueryFactoryImpl" />
+    <bean id="DatabaseAccessUtil" class="com.atlassian.pocketknife.internal.querydsl.util.DatabaseAccessUtil" />
+    <bean id="DefaultDialectConfiguration" class="com.atlassian.pocketknife.spi.querydsl.DefaultDialectConfiguration" />
+
 </beans>

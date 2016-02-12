@@ -773,12 +773,7 @@
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
                 <version>${atlassian.spring.scanner.version}</version>
                 <configuration>
-                    <scannedDependencies>
-                        <dependency>
-                            <groupId>com.atlassian.pocketknife</groupId>
-                            <artifactId>atlassian-pocketknife-querydsl</artifactId>
-                        </dependency>
-                    </scannedDependencies>
+                    <includeExclude>-com.atlassian.pocketknife.*</includeExclude>
                 </configuration>
                 <executions>
                     <execution>
