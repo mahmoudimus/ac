@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConnectFieldTables
 {
-    public static final QRemoteFieldOption REMOTE_FIELD_OPTION = remoteFieldOption("RFO");
+    public static final QConnectFieldOption CONNECT_FIELD_OPTION = connectFieldOption("CFO");
 
     private final SchemaProvider schemaProvider;
 
@@ -17,8 +17,8 @@ public class ConnectFieldTables
         this.schemaProvider = schemaProvider;
     }
 
-    public static QRemoteFieldOption remoteFieldOption(String alias) {
-        return new QRemoteFieldOption(alias, "", QRemoteFieldOption.AO_TABLE_NAME);
+    public static QConnectFieldOption connectFieldOption(String alias) {
+        return new QConnectFieldOption(alias, "", QConnectFieldOption.AO_TABLE_NAME);
     }
 
     public QCustomFieldValue customFieldValue(String alias) {

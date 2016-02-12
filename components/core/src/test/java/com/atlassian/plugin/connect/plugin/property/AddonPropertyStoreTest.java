@@ -10,7 +10,6 @@ import com.atlassian.fugue.Iterables;
 
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
-import com.atlassian.plugin.connect.api.util.JsonCommon;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 

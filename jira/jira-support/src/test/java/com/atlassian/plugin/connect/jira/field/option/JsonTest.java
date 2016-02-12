@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.api.util;
+package com.atlassian.plugin.connect.jira.field.option;
 
 import java.util.Optional;
 
@@ -7,24 +7,23 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class JsonCommonTest
+public class JsonTest
 {
     @Test
     public void stringInQuotesIsReturnedInQuotesWhenUsingToString()
     {
-        assertThat(JsonCommon.parseStringToJson("\"aa\\\"a\"").get().toString(), equalTo("\"aa\\\"a\""));
+        assertThat(Json.parse("\"aa\\\"a\"").get().toString(), equalTo("\"aa\\\"a\""));
     }
 
     @Test
     public void stringMustBeInQuotes()
     {
-        assertThat(JsonCommon.parseStringToJson("string"), equalTo(Optional.empty()));
+        assertThat(Json.parse("string"), equalTo(Optional.empty()));
     }
 
     @Test
     public void parsingInvalidJsonReturnsEmpty()
     {
-        assertThat(JsonCommon.parseStringToJson("{d: asdsda"), equalTo(Optional.empty()));
+        assertThat(Json.parse("{d: asdsda"), equalTo(Optional.empty()));
     }
 }
-

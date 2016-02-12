@@ -11,7 +11,7 @@ public final class FieldId
     private final String addonKey;
     private final String fieldKey;
 
-    public static FieldId fieldId(@Nonnull String addonKey, @Nonnull String fieldKey)
+    public static FieldId of(@Nonnull String addonKey, @Nonnull String fieldKey)
     {
         return new FieldId(addonKey, fieldKey);
     }

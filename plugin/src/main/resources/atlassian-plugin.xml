@@ -122,7 +122,7 @@
     <ao key="atlassian-connect-active-objects" name="Active Objects Module">
         <description>Collective module for all AO tables</description>
         <entity>com.atlassian.plugin.connect.plugin.property.AddonPropertyAO</entity>
-        <entity>com.atlassian.plugin.connect.jira.field.option.db.RemoteFieldOptionAO</entity>
+        <entity>com.atlassian.plugin.connect.jira.field.option.db.ConnectFieldOptionAO</entity>
     </ao>
 
 </atlassian-plugin>

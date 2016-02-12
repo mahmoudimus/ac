@@ -6,7 +6,6 @@ import java.util.Optional;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
-import com.atlassian.plugin.connect.api.util.JsonCommon;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService.DeleteServiceResult;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService.PutServiceResult;

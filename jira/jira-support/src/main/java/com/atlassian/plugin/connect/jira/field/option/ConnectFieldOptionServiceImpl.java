@@ -12,7 +12,7 @@ import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.ErrorCollections;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.db.CustomFieldValueManager;
-import com.atlassian.plugin.connect.jira.field.option.db.RemoteFieldOptionManager;
+import com.atlassian.plugin.connect.jira.field.option.db.ConnectFieldOptionManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.message.I18nResolver;
@@ -23,25 +23,25 @@ import static com.atlassian.jira.util.ErrorCollection.Reason.NOT_FOUND;
 
 @JiraComponent
 @ExportAsDevService
-public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
+public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
 {
 
-    private final RemoteFieldOptionManager remoteFieldOptionManager;
+    private final ConnectFieldOptionManager connectFieldOptionManager;
     private final I18nResolver i18n;
     private final CustomFieldValueManager customFieldValueManager;
 
     @Autowired
-    public RemoteFieldOptionServiceImpl(final RemoteFieldOptionManager remoteFieldOptionManager, final I18nResolver i18n, final CustomFieldValueManager customFieldValueManager)
+    public ConnectFieldOptionServiceImpl(final ConnectFieldOptionManager connectFieldOptionManager, final I18nResolver i18n, final CustomFieldValueManager customFieldValueManager)
     {
-        this.remoteFieldOptionManager = remoteFieldOptionManager;
+        this.connectFieldOptionManager = connectFieldOptionManager;
         this.i18n = i18n;
         this.customFieldValueManager = customFieldValueManager;
     }
 
     @Override
-    public ServiceOutcome<RemoteFieldOption> addOption(final FieldId fieldId, final JsonNode value)
+    public ServiceOutcome<ConnectFieldOption> addOption(final FieldId fieldId, final JsonNode value)
     {
-        Either<ErrorCollection, RemoteFieldOption> result = remoteFieldOptionManager.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
+        Either<ErrorCollection, ConnectFieldOption> result = connectFieldOptionManager.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
         return result.fold(
                 ServiceOutcomeImpl::new,
                 created -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), created)
@@ -49,15 +49,15 @@ public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
     }
 
     @Override
-    public ServiceOutcome<List<RemoteFieldOption>> getAllOptions(final FieldId fieldId)
+    public ServiceOutcome<List<ConnectFieldOption>> getAllOptions(final FieldId fieldId)
     {
-        return new ServiceOutcomeImpl<>(ErrorCollections.empty(), remoteFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey()));
+        return new ServiceOutcomeImpl<>(ErrorCollections.empty(), connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey()));
     }
 
     @Override
-    public ServiceOutcome<RemoteFieldOption> getOption(final FieldId fieldId, final Integer optionId)
+    public ServiceOutcome<ConnectFieldOption> getOption(final FieldId fieldId, final Integer optionId)
     {
-        return remoteFieldOptionManager.get(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId)
+        return connectFieldOptionManager.get(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId)
                 .map(val -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), val))
                 .orElseGet(this::notFound);
     }
@@ -68,7 +68,7 @@ public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
         Collection<Long> issuesWithTheFieldSet = customFieldValueManager.findIssues(fieldId, optionId);
         if (issuesWithTheFieldSet.isEmpty())
         {
-            remoteFieldOptionManager.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
+            connectFieldOptionManager.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
             return new ServiceResultImpl(ErrorCollections.empty());
         }
         else
@@ -78,9 +78,9 @@ public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
     }
 
     @Override
-    public ServiceOutcome<RemoteFieldOption> updateOption(final FieldId fieldId, final RemoteFieldOption option)
+    public ServiceOutcome<ConnectFieldOption> updateOption(final FieldId fieldId, final ConnectFieldOption option)
     {
-        return remoteFieldOptionManager.update(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
+        return connectFieldOptionManager.update(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
                 .map(result -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), result))
                 .orElseGet(this::notFound);
     }

@@ -7,8 +7,8 @@ import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
-@Table ("remote_field_option")
-public interface RemoteFieldOptionAO extends Entity
+@Table ("connect_field_option")
+public interface ConnectFieldOptionAO extends Entity
 {
     @Indexed
     @NotNull

@@ -11,7 +11,7 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Strings;
 import org.codehaus.jackson.JsonNode;
 
-import static com.atlassian.plugin.connect.api.util.JsonCommon.parseStringToJson;
+import static com.atlassian.plugin.connect.plugin.property.JsonCommon.parseStringToJson;
 
 public class AddonEntityPropertyEqualToCondition extends AbstractConnectCondition
 {

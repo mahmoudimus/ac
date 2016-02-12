@@ -10,7 +10,7 @@ import org.codehaus.jackson.JsonNode;
 /**
  * Service for accessing and manipulating available options storage for select custom fields.
  */
-public interface RemoteFieldOptionService
+public interface ConnectFieldOptionService
 {
     /**
      * Create a new option.
@@ -19,7 +19,7 @@ public interface RemoteFieldOptionService
      * @param value value of the new option
      * @return the created option if successful, errors otherwise
      */
-    ServiceOutcome<RemoteFieldOption> addOption(FieldId fieldId, JsonNode value);
+    ServiceOutcome<ConnectFieldOption> addOption(FieldId fieldId, JsonNode value);
 
     /**
      * Updates an option with the new value. The id of the option to update is taken from the {@code option} parameter.
@@ -28,7 +28,7 @@ public interface RemoteFieldOptionService
      * @param option the new option
      * @return the updated option if successful, errors if the option to update does not exist
      */
-    ServiceOutcome<RemoteFieldOption> updateOption(FieldId fieldId, RemoteFieldOption option);
+    ServiceOutcome<ConnectFieldOption> updateOption(FieldId fieldId, ConnectFieldOption option);
 
     /**
      * Get all options for a specific field.
@@ -36,7 +36,7 @@ public interface RemoteFieldOptionService
      * @param fieldId the field to get the options for
      * @return a list of all options
      */
-    ServiceOutcome<List<RemoteFieldOption>> getAllOptions(FieldId fieldId);
+    ServiceOutcome<List<ConnectFieldOption>> getAllOptions(FieldId fieldId);
 
     /**
      * Get an option with a particular id for a specified field
@@ -45,7 +45,7 @@ public interface RemoteFieldOptionService
      * @param optionId the option id
      * @return the option or errors if not found
      */
-    ServiceOutcome<RemoteFieldOption> getOption(FieldId fieldId, Integer optionId);
+    ServiceOutcome<ConnectFieldOption> getOption(FieldId fieldId, Integer optionId);
 
     /**
      * Delete a specified option
@@ -61,7 +61,7 @@ public interface RemoteFieldOptionService
      * specified by the {@code fieldId} parameter set to {@code from}.
      *
      * <p>
-     *     Useful when you wish to {@link RemoteFieldOptionService#removeOption(FieldId, Integer)} an option but there are
+     *     Useful when you wish to {@link ConnectFieldOptionService#removeOption(FieldId, Integer)} an option but there are
      *     still some issues that have the option assigned.
      * </p>
      *
