@@ -16,14 +16,14 @@
         <div id="ac-contentId"></div>
         <div id="ac-contentType"></div>
         <script type="text/javascript">
-            var showContext = function(context) {
-                $('#ac-target').text(context.target);
-                $('#ac-contentId').text(context.context.contentId);
-                $('#ac-contentType').text(context.context.contentType);
+            var showLocation = function(location) {
+                $('#ac-target').text(location.target);
+                $('#ac-contentId').text(location.context.contentId);
+                $('#ac-contentType').text(location.context.contentType);
             };
 
             AP.require('navigator', function(navigator) {
-                navigator.getCurrent(showContext);
+                navigator.getLocation(showLocation);
             });
         </script>
     </body>
