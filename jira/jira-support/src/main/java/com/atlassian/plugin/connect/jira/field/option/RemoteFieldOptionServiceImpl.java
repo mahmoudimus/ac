@@ -11,7 +11,7 @@ import com.atlassian.jira.bc.ServiceResultImpl;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.ErrorCollections;
 import com.atlassian.plugin.connect.jira.field.FieldId;
-import com.atlassian.plugin.connect.jira.field.option.db.CustomFieldManager;
+import com.atlassian.plugin.connect.jira.field.option.db.CustomFieldValueManager;
 import com.atlassian.plugin.connect.jira.field.option.db.RemoteFieldOptionManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -28,14 +28,14 @@ public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
 
     private final RemoteFieldOptionManager remoteFieldOptionManager;
     private final I18nResolver i18n;
-    private final CustomFieldManager customFieldManager;
+    private final CustomFieldValueManager customFieldValueManager;
 
     @Autowired
-    public RemoteFieldOptionServiceImpl(final RemoteFieldOptionManager remoteFieldOptionManager, final I18nResolver i18n, final CustomFieldManager customFieldManager)
+    public RemoteFieldOptionServiceImpl(final RemoteFieldOptionManager remoteFieldOptionManager, final I18nResolver i18n, final CustomFieldValueManager customFieldValueManager)
     {
         this.remoteFieldOptionManager = remoteFieldOptionManager;
         this.i18n = i18n;
-        this.customFieldManager = customFieldManager;
+        this.customFieldValueManager = customFieldValueManager;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
     @Override
     public ServiceResult removeOption(final FieldId fieldId, final Integer optionId)
     {
-        Collection<Long> issuesWithTheFieldSet = customFieldManager.findIssues(fieldId, optionId);
+        Collection<Long> issuesWithTheFieldSet = customFieldValueManager.findIssues(fieldId, optionId);
         if (issuesWithTheFieldSet.isEmpty())
         {
             remoteFieldOptionManager.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
@@ -88,7 +88,7 @@ public class RemoteFieldOptionServiceImpl implements RemoteFieldOptionService
     @Override
     public ServiceResult replaceInAllIssues(final FieldId fieldId, final Integer from, final Integer to)
     {
-        customFieldManager.replace(fieldId, from, to);
+        customFieldValueManager.replace(fieldId, from, to);
         return new ServiceResultImpl(ErrorCollections.empty());
     }
 

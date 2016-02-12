@@ -26,6 +26,7 @@ import com.atlassian.jira.config.FeatureManager;
 import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.config.properties.ApplicationProperties;
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
@@ -38,7 +39,6 @@ import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.issue.vote.VoteManager;
 import com.atlassian.jira.issue.watchers.WatcherManager;
 import com.atlassian.jira.jql.operand.JqlOperandResolver;
-import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
@@ -157,14 +157,14 @@ public class JiraImports
             @JiraImport ProjectPropertyService projectPropertyService,
             @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
             @JiraImport IssueTypeService issueTypeService,
-            @JiraImport OfBizDelegator ofBizDelegator,
             @JiraImport RendererManager rendererManager,
             @JiraImport Encoder encoder,
             @JiraImport CustomFieldValuePersister customFieldValuePersister,
             @JiraImport GenericConfigManager genericConfigManager,
             @JiraImport JqlOperandResolver jqlOperandResolver,
             @JiraImport CustomFieldInputHelper customFieldInputHelper,
-            @JiraImport TransactionalExecutorFactory transactionalExecutorFactory)
+            @JiraImport TransactionalExecutorFactory transactionalExecutorFactory,
+            @JiraImport CustomFieldManager customFieldManager)
     {
     }
 }

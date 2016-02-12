@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.atlassian.plugin.connect.jira.field.option.db.Tables.REMOTE_FIELD_OPTION;
+import static com.atlassian.plugin.connect.jira.field.option.db.ConnectFieldTables.REMOTE_FIELD_OPTION;
 import static com.querydsl.core.types.dsl.Expressions.constant;
 import static com.querydsl.sql.SQLExpressions.select;
 import static java.util.stream.Collectors.toList;
