@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>com.atlassian.pom</groupId>
         <artifactId>public-pom</artifactId>
@@ -836,7 +837,7 @@
                             </configuration>
                         </plugin>
                     </plugins>
-	        </pluginManagement>
+                </pluginManagement>
             </build>
             <dependencies>
                 <dependency>
@@ -846,7 +847,7 @@
                     <scope>compile</scope>
                 </dependency>
             </dependencies>
-         </profile>
+        </profile>
     </profiles>
     <properties>
         <!-- VERSIONS -->
