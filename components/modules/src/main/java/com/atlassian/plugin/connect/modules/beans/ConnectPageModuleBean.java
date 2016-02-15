@@ -59,12 +59,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
                         "Conditions can be added to display only when all the given conditions are true.\n\n" +
                         "The only supported conditions for pages are:\n" +
                         "<ul>\n" +
-                        "<li><code>entity_property_equal_to</code>\n" +
-                        "<li><code>feature_flag</code>\n" +
-                        "<li><code>user_is_admin</code>\n" +
-                        "<li><code>user_is_logged_in</code>\n" +
-                        "<li><code>user_is_sysadmin</code>\n" +
-                        "<li><code>addon_is_licensed</code>\n" +
+                        "<li><code>entity_property_equal_to</code></li>\n" +
+                        "<li><code>feature_flag</code></li>\n" +
+                        "<li><code>user_is_admin</code></li>\n" +
+                        "<li><code>user_is_logged_in</code></li>\n" +
+                        "<li><code>user_is_sysadmin</code></li>\n" +
+                        "<li><code>user_is_member_of_group</code></li>\n" +
+                        "<li><code>addon_is_licensed</code></li>\n" +
                         "</ul>"
             )
     }

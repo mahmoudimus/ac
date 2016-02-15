@@ -289,6 +289,7 @@ Each product defines a set of conditions relevant to its domain.
 * `user_is_admin`
 * `user_is_logged_in`
 * `user_is_sysadmin`
+* `user_is_member_of_group`
 * `addon_is_licensed`
 
 ### <a name="confluence-conditions"></a>Confluence
