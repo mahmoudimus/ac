@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.confluence.theme;
 
-import java.net.URI;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.atlassian.confluence.plugin.descriptor.ThemeModuleDescriptor;
 import com.atlassian.confluence.themes.ExperimentalUnsupportedTheme;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
@@ -14,10 +9,13 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameParams;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.common.collect.Maps;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.net.URI;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -70,6 +68,11 @@ public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
         String url = layoutMap.get(LayoutType.valueOf(layoutName));
         String wrangledUrl = remotablePluginAccessor.signGetUrl(URI.create(url), wrangle(addExtraContexts(extraParams)));
         return wrangledUrl;//iFrameRenderer.render(makeContext(extraParams, url), userManager.getRemoteUser().getUsername());
+    }
+
+    public String getAddonKey()
+    {
+        return addonKey;
     }
 
     private Map<String, String> addExtraContexts(Map<String, String> extraParams)

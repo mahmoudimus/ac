@@ -1,12 +1,12 @@
 #* @vtlvariable name="confluenceRemoteTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" *#
 #* @vtlvariable name="addonTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
 #set($addonTheme = $confluenceRemoteTheme.themeManager.getSpaceTheme($action.spaceKey))
-<html class="page.vm">
+<html class="blogpost.vm">
 <body style="margin: 0">
 <content tag="spacekey">$action.spaceKey</content>
 <content tag="connectAddonThemed">true</content>
 
-<iframe src="$addonTheme.getRemoteUrl('page', {'pageId': "$action.page.id", 'spaceKey':$action.spaceKey})" style="width: 100%;height: 100%;margin: 0;padding: 0;border: 0;"/>
+<iframe src="$addonTheme.getRemoteUrl('blog', {'pageId': "$action.page.id", 'spaceKey':$action.spaceKey})" style="width: 100%;height: 100%;margin: 0;padding: 0;border: 0;"/>
 <script>
 
 </script>

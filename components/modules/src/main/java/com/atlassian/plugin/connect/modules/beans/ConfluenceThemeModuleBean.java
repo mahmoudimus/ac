@@ -1,10 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.List;
-
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.ConfluenceThemeModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UiOverrideBean;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
@@ -20,6 +21,8 @@ public class ConfluenceThemeModuleBean extends RequiredKeyBean
     @Required
     private List<UiOverrideBean> overrides;
 
+    private IconBean icon;
+
     public ConfluenceThemeModuleBean(ConfluenceThemeModuleBeanBuilder builder)
     {
         super(builder);
@@ -34,6 +37,11 @@ public class ConfluenceThemeModuleBean extends RequiredKeyBean
     public List<UiOverrideBean> getOverrides()
     {
         return overrides;
+    }
+
+    public IconBean getIcon()
+    {
+        return icon;
     }
 
 //    public I18nProperty getDescription()

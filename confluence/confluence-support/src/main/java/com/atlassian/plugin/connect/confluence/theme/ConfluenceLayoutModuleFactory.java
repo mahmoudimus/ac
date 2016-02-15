@@ -66,7 +66,7 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
            .addAttribute("name", "decorator")
            .addAttribute("location", type.getDecoratorLocation());
 
-        LayoutModuleDescriptor layoutModuleDescriptor = new MyLayoutModuleDescriptor(moduleFactory);
+        LayoutModuleDescriptor layoutModuleDescriptor = new ConnectLayoutModuleDescriptor(moduleFactory);
         layoutModuleDescriptor.init(plugin, dom);
 
         if (log.isDebugEnabled())
@@ -77,11 +77,12 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
         return layoutModuleDescriptor;
     }
 
-    private static class MyLayoutModuleDescriptor extends LayoutModuleDescriptor
+    //this class hacks around bug : https://ecosystem.atlassian.net/browse/PLUG-1177
+    private static class ConnectLayoutModuleDescriptor extends LayoutModuleDescriptor
     {
         private Class<? extends ThemedDecorator> hackedModuleClazz;
 
-        MyLayoutModuleDescriptor(ModuleFactory moduleFactory)
+        ConnectLayoutModuleDescriptor(ModuleFactory moduleFactory)
         {
             super(moduleFactory);
         }

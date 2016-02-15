@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.confluence.theme;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.atlassian.confluence.plugin.descriptor.LayoutModuleDescriptor;
 import com.atlassian.confluence.plugin.descriptor.ThemeModuleDescriptor;
 import com.atlassian.confluence.themes.Theme;
@@ -17,12 +14,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.UiOverrideBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -31,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConfluenceThemeModuleBean, ThemeModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceThemeModuleDescriptorFactory.class);
+    private static final String THEME_ICON_NAME = "themeicon.gif";
     static final String ADDON_KEY_PROPERTY_KEY = "addon-key";
 
     private final ModuleFactory moduleFactory;
@@ -67,6 +67,9 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
         dom.addAttribute("name", i18nBeanFactory.getI18NBean().getText(bean.getName().getKeyOrValue()));
         dom.addAttribute("class", ConfluenceRemoteAddonTheme.class.getName());
         dom.addAttribute("disable-sitemesh", "false");
+        dom.addElement("resource").addAttribute("name", THEME_ICON_NAME)
+                        .addAttribute("type", "download")
+                        .addAttribute("location", addon.getBaseUrl() + bean.getIcon().getUrl());
 
         /*TODO: create an override registry*/
         for (UiOverrideBean uiOverrideBean : bean.getOverrides())
@@ -92,7 +95,7 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
            .addAttribute("name",  ADDON_KEY_PROPERTY_KEY)
            .addAttribute("value", addon.getKey());
 
-        ThemeModuleDescriptor themeModuleDescriptor = new MyThemeModuleDescriptor(moduleFactory, pluginAccessor);
+        ThemeModuleDescriptor themeModuleDescriptor = new ConnectThemeModuleDescriptor(moduleFactory, pluginAccessor);
         themeModuleDescriptor.init(plugin, dom);
 
         if (log.isDebugEnabled())
@@ -103,11 +106,12 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
         return themeModuleDescriptor;
     }
 
-    private static class MyThemeModuleDescriptor extends ThemeModuleDescriptor
+    //this class hacks around bug : https://ecosystem.atlassian.net/browse/PLUG-1177
+    private static class ConnectThemeModuleDescriptor extends ThemeModuleDescriptor
     {
         private Class<? extends Theme> hackedModuleClazz;
 
-        public MyThemeModuleDescriptor(final ModuleFactory moduleFactory, final PluginAccessor pluginAccessor)
+        public ConnectThemeModuleDescriptor(final ModuleFactory moduleFactory, final PluginAccessor pluginAccessor)
         {
             super(moduleFactory, pluginAccessor);
         }

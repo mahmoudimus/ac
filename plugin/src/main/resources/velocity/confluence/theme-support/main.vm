@@ -3,6 +3,7 @@
 #set($addonTheme = $confluenceRemoteTheme.themeManager.globalTheme)
 <html class="main.vm">
 <body style="margin: 0">
+<content tag="connectAddonThemed">true</content>
 <iframe src="$addonTheme.getRemoteUrl('main', {})" style="width: 100%;height: 100%;margin: 0;padding: 0;border: 0;"/>
 
 </body>

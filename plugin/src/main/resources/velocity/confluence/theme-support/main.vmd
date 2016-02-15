@@ -1,15 +1,12 @@
 #* @vtlvariable name="confluenceRemoteTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" *#
-#* @vtlvariable name="addonTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
 
-#if($sitemeshPage.getProperty("page.bodyClass") == "contenteditor edit" || $sitemeshPage.getProperty("page.bodyClass") == "contenteditor create")
-    #parse("/decorators/main.vmd")
-#else
-    #set($addonTheme = $confluenceRemoteTheme.themeManager.globalTheme)
+#if($sitemeshPage.getProperty("page.connectAddonThemed") == "true"
+        && !($sitemeshPage.getProperty("page.bodyClass") == "contenteditor edit" || $sitemeshPage.getProperty("page.bodyClass") == "contenteditor create"))
     <html class="main.vmd">
     <body style="margin: 0">
-    $body
+        $body
     </body>
     </html>
-
+#else
+    #parse("/decorators/main.vmd")
 #end
-
