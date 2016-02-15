@@ -122,8 +122,6 @@ public class LicensedConditionTest
         String addonKey = timebombedLicenseManager.generateUnlicensedAddonKey();
         final Plugin plugin = installJsonAddon(addonKey);
 
-        userManager.
-
         final Iterable<WebItemModuleDescriptor> displayableWebItems = webInterfaceManager.getDisplayableItems(LOCATION, Collections.emptyMap());
         assertThat(displayableWebItems, not(contains(webItemWithKey(plugin, ADDON_MODULE_KEY))));
     }
