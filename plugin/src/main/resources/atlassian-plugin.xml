@@ -119,10 +119,4 @@
         <description>Handles synchronising of user attributes (which Crowd doesn't do for us yet)</description>
     </listener>
 
-    <ao key="atlassian-connect-active-objects" name="Active Objects Module">
-        <description>Collective module for all AO tables</description>
-        <entity>com.atlassian.plugin.connect.plugin.property.AddonPropertyAO</entity>
-        <entity>com.atlassian.plugin.connect.jira.field.option.db.ConnectFieldOptionAO</entity>
-    </ao>
-
 </atlassian-plugin>
