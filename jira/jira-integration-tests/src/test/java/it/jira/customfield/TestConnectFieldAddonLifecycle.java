@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import it.jira.JiraTestBase;
 import it.jira.JiraWebDriverTestBase;
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,11 +39,11 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
     @Before
     public void setUp() throws Exception
     {
-        product.backdoor().restoreBlankInstance();
-
         project = JiraTestBase.addProject();
         addonKey = AddonTestUtils.randomAddonKey();
         customFieldsControl = product.backdoor().customFields();
+
+        removeAllCustomFields();
 
         addon = new ConnectRunner(product, addonKey)
                 .setAuthenticationToNone()
@@ -51,6 +52,12 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
                         buildIssueFieldModule(FIELD_KEY, FIELD_NAME, FIELD_DESCRIPTION))
                 .addScopes(ScopeName.READ)
                 .start();
+    }
+
+    @After
+    public void removeAllCustomFields() throws Exception
+    {
+        customFieldsControl.getCustomFields().forEach(field -> customFieldsControl.deleteCustomField(field.id));
     }
 
     @Test
