@@ -30,14 +30,14 @@ public class CustomFieldValueManager
     public long remove(final FieldId fieldId, final Integer optionId)
     {
         QCustomFieldValue CUSTOM_FIELD_VALUE = connectFieldTables.customFieldValue("CFV");
-        return databaseAccessor.run(databaseConnection ->
+        return databaseAccessor.runInTransaction(databaseConnection ->
                 databaseConnection.delete(CUSTOM_FIELD_VALUE).where(isValue(fieldId, optionId)).execute());
     }
 
     public long replace(final FieldId fieldId, final Integer from, final Integer to)
     {
         QCustomFieldValue CUSTOM_FIELD_VALUE = connectFieldTables.customFieldValue("CFV");
-        return databaseAccessor.run(databaseConnection ->
+        return databaseAccessor.runInTransaction(databaseConnection ->
                 databaseConnection
                         .update(CUSTOM_FIELD_VALUE)
                         .where(isValue(fieldId, from))
@@ -48,7 +48,7 @@ public class CustomFieldValueManager
     public Collection<Long> findIssues(final FieldId fieldId, final Integer optionId)
     {
         QCustomFieldValue CUSTOM_FIELD_VALUE = connectFieldTables.customFieldValue("CFV");
-        return databaseAccessor.run(databaseConnection ->
+        return databaseAccessor.runInTransaction(databaseConnection ->
                         databaseConnection
                                 .select(CUSTOM_FIELD_VALUE.issue)
                                 .from(CUSTOM_FIELD_VALUE)

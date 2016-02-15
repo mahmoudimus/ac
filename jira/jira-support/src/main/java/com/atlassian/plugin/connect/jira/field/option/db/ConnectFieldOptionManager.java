@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.jira.field.option.Json;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.pocketknife.api.querydsl.DatabaseAccessor;
+import com.atlassian.pocketknife.api.querydsl.DatabaseConnection;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -34,15 +35,14 @@ public class ConnectFieldOptionManager
 
     public Either<ErrorCollection, ConnectFieldOption> create(final String addonKey, final String fieldKey, final String value)
     {
-        return databaseAccessor.run(databaseConnection -> {
+        return databaseAccessor.runInTransaction(databaseConnection -> {
+
             Integer createdOptionId = databaseConnection.insert(CONNECT_FIELD_OPTION)
                     .columns(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.ADDON_KEY, CONNECT_FIELD_OPTION.FIELD_KEY, CONNECT_FIELD_OPTION.VALUE)
                     .select(select(CONNECT_FIELD_OPTION.OPTION_ID.max().add(constant(1)).coalesce(1), constant(addonKey), constant(fieldKey), constant(value))
                             .from(CONNECT_FIELD_OPTION)
                             .where(isField(addonKey, fieldKey)))
                     .executeWithKey(CONNECT_FIELD_OPTION.ID);
-
-            databaseConnection.commit();
 
             return Either.right(toConnectFieldOption(
                     databaseConnection.select(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.VALUE)
@@ -54,7 +54,7 @@ public class ConnectFieldOptionManager
 
     public List<ConnectFieldOption> getAll(final String addonKey, final String fieldKey)
     {
-        return databaseAccessor.run(connection -> {
+        return databaseAccessor.runInTransaction(connection -> {
             List<Tuple> tuples = connection
                     .select(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.VALUE)
                     .from(CONNECT_FIELD_OPTION)
@@ -68,34 +68,35 @@ public class ConnectFieldOptionManager
 
     public Optional<ConnectFieldOption> get(final String addonKey, final String fieldKey, final Integer optionId)
     {
-        return databaseAccessor.run(databaseConnection -> toConnectFieldOption(databaseConnection
-                .select(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.VALUE)
-                .from(CONNECT_FIELD_OPTION)
-                .where(isOption(addonKey, fieldKey, optionId))
-                .fetchOne()));
+        return databaseAccessor.runInTransaction(databaseConnection -> get(databaseConnection, addonKey, fieldKey, optionId));
     }
+
 
     public long delete(final String addonKey, final String fieldKey, final Integer optionId)
     {
-        return databaseAccessor.run(connection -> {
-            long deleted = connection.delete(CONNECT_FIELD_OPTION).where(isOption(addonKey, fieldKey, optionId)).execute();
-            connection.commit();
-            return deleted;
-        });
+        return databaseAccessor.runInTransaction(connection ->
+                connection.delete(CONNECT_FIELD_OPTION).where(isOption(addonKey, fieldKey, optionId)).execute());
     }
 
     public Optional<ConnectFieldOption> update(final String addonKey, final String fieldKey, final Integer optionId, final JsonNode value)
     {
-        return databaseAccessor.run(connection -> {
+        return databaseAccessor.runInTransaction(connection -> {
             connection.update(CONNECT_FIELD_OPTION)
                     .where(isOption(addonKey, fieldKey, optionId))
                     .set(CONNECT_FIELD_OPTION.VALUE, value.toString())
                     .execute();
 
-            connection.commit();
-
-            return get(addonKey, fieldKey, optionId);
+            return get(connection, addonKey, fieldKey, optionId);
         });
+    }
+
+    private Optional<ConnectFieldOption> get(final DatabaseConnection databaseConnection, final String addonKey, final String fieldKey, final Integer optionId)
+    {
+        return toConnectFieldOption(databaseConnection
+                .select(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.VALUE)
+                .from(CONNECT_FIELD_OPTION)
+                .where(isOption(addonKey, fieldKey, optionId))
+                .fetchOne());
     }
 
     private Optional<ConnectFieldOption> toConnectFieldOption(@Nullable Tuple tuple)
