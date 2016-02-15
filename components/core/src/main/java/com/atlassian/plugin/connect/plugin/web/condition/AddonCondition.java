@@ -112,7 +112,7 @@ public class AddonCondition implements Condition
         catch (Exception e)
         {
             final long elapsedMillisecs = stopWatch.getTime();
-            final String message = String.format(String.format("Request to addon condition URL failed: %s", cfg));
+            final String message = String.format("Request to addon condition URL failed: %s", cfg);
             log.warn(message, e);
             eventPublisher.publish(new AddonConditionFailedEvent(cfg.getAddonKey(), uriPath, elapsedMillisecs, getErrorMessage(e, message)));
             return false;

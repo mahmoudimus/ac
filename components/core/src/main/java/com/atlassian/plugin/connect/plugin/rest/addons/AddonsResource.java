@@ -188,7 +188,7 @@ public class AddonsResource
     private RestAddons getAddonResources()
     {
         Collection<ConnectAddonBean> addons = addonAccessor.getAllAddons();
-        Iterable<RestLimitedAddon> restAddons = Iterables.transform(addons, addon -> createJsonAddonRest(addon));
+        Iterable<RestLimitedAddon> restAddons = Iterables.transform(addons, this::createJsonAddonRest);
         return new RestAddons<>(Lists.newArrayList(restAddons));
     }
 
@@ -240,14 +240,7 @@ public class AddonsResource
         if(potentialProductLicense.isPresent())
         {
             Collection<Contact> licenseContacts = potentialProductLicense.get().getContacts();
-            Iterable<RestContact> contactRepresentations = Iterables.transform(licenseContacts, new Function<Contact, RestContact>()
-            {
-                @Override
-                public RestContact apply(Contact contact)
-                {
-                    return new RestContact(contact.getName(), contact.getEmail());
-                }
-            });
+            Iterable<RestContact> contactRepresentations = Iterables.transform(licenseContacts, contact -> new RestContact(contact.getName(), contact.getEmail()));
 
             contactList = Lists.newArrayList(contactRepresentations);
         }

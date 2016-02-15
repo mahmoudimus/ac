@@ -1,18 +1,20 @@
 package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.plugin.auth.scope.ApiResourceInfo;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * Download scope for GET requests on paths that start with a certain prefix
@@ -26,7 +28,7 @@ public final class PathScopeHelper
 
     public PathScopeHelper(final boolean isRegex, final String path)
     {
-        this(isRegex, asList(checkNotNull(path)), "GET");
+        this(isRegex, singletonList(checkNotNull(path)), "GET");
     }
 
     public PathScopeHelper(final boolean isRegex, final Collection<String> paths, String httpMethod)

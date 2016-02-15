@@ -17,8 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This component extracts context parameters based on local Connect project extractors as well as extractors loaded from plug-ins.
@@ -66,15 +68,10 @@ public class PluggableParametersExtractorImpl implements PluggableParametersExtr
 
     private Iterable<ContextParametersExtractor> getExtractors()
     {
-        return Iterables.concat(Iterables.transform(pluginAccessor.getModules(
-                new ModuleDescriptorOfClassPredicate<ConnectContextParametersResolver>(ConnectContextParameterResolverModuleDescriptor.class))
-                , new Function<ConnectContextParametersResolver, List<ContextParametersExtractor>>()
-        {
-            @Override
-            public List<ContextParametersExtractor> apply(final ConnectContextParametersResolver input)
-            {
-                return input.getExtractors();
-            }
-        }));
+        return pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class))
+            .stream()
+            .map(ConnectContextParametersResolver::getExtractors)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 }

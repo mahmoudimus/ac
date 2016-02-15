@@ -176,13 +176,11 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
         if (!Strings.isNullOrEmpty(storedBaseUrl))
         {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
-                    () -> storedBaseUrl
-            );
+            return Suppliers.compose(URI::create, () -> storedBaseUrl);
         }
         else
         {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
+            return Suppliers.compose(URI::create,
                     () -> applicationProperties.getBaseUrl(UrlMode.CANONICAL)
             );
         }
@@ -194,7 +192,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
     @Deprecated
     private Supplier<URI> getDisplayUrl(final String pluginKey)
     {
-        String addonBaseUrl = "";
+        String addonBaseUrl;
 
         if(connectAddonRegistry.hasBaseUrl(pluginKey))
         {
@@ -209,13 +207,11 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
         if (!Strings.isNullOrEmpty(storedBaseUrl))
         {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
-                    () -> storedBaseUrl
-            );
+            return Suppliers.compose(URI::create, () -> storedBaseUrl);
         }
         else
         {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
+            return Suppliers.compose(URI::create,
                     () -> applicationProperties.getBaseUrl(UrlMode.CANONICAL)
             );
         }
@@ -319,16 +315,5 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
     public void destroy() throws Exception
     {
         eventPublisher.unregister(this);
-    }
-
-    private enum ToUriFunction implements Function<String, URI>
-    {
-        INSTANCE;
-
-        @Override
-        public URI apply(String uri)
-        {
-            return URI.create(uri);
-        }
     }
 }
