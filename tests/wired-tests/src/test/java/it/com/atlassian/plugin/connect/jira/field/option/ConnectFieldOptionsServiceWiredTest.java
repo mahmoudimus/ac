@@ -63,8 +63,15 @@ public class ConnectFieldOptionsServiceWiredTest
     {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"", "\"d\"", "\"e\"");
 
-        List<Integer> ids = connectFieldOptionService.getAllOptions(fieldId).get().stream().map(ConnectFieldOption::getId).collect(toList());
-        assertEquals(ImmutableList.of(1, 2, 3, 4, 5), ids);
+        List<ConnectFieldOption> options = connectFieldOptionService.getAllOptions(fieldId).get().stream().collect(toList());
+        assertEquals(ImmutableList.of(
+                        ConnectFieldOption.of(1, Json.parse("\"a\"").get()),
+                        ConnectFieldOption.of(2, Json.parse("\"b\"").get()),
+                        ConnectFieldOption.of(3, Json.parse("\"c\"").get()),
+                        ConnectFieldOption.of(4, Json.parse("\"d\"").get()),
+                        ConnectFieldOption.of(5, Json.parse("\"e\"").get())
+                ),
+                options);
     }
 
     @Test
@@ -82,7 +89,7 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
-    public void gettingByIdWorks()
+    public void optionCanBeRetrievedById()
     {
         FieldId field1 = randomFieldId();
         FieldId field2 = randomFieldId();
@@ -94,7 +101,7 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
-    public void updatingWorks()
+    public void optionCanBeUpdated()
     {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"");
         ConnectFieldOption expectedValue = ConnectFieldOption.of(2, parse("\"B\"").get());
