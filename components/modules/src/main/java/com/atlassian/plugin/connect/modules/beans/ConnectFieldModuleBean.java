@@ -21,7 +21,6 @@ public class ConnectFieldModuleBean extends RequiredKeyBean
     /**
      * Description of the custom field type. This will be displayed for a user on the create custom field page.
      */
-    @Required
     private I18nProperty description;
 
     @Required

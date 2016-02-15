@@ -66,7 +66,7 @@ public class TestConnectField extends JiraWebDriverTestBase
 
     private static final String FIELD_KEY = "customfieldtype-key";
     private static final String FIELD_DESCRIPTION = "my description";
-    private static String FIELD_NAME = "custom field title" + RandomStringUtils.randomAlphabetic(4);
+    private static String FIELD_NAME = "custom field title";
 
     private static ConnectRunner addon;
     private static String addonKey;
@@ -191,9 +191,9 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
 
-    @Ignore
+    @Ignore("we can't use Navigator here. Writing this test after moving Connect to JIRA will be trivial, no point in trying to do it now")
     @Test
-    public void testCommentCreateWebHookTriggeredDuringBulkUpdate() throws Exception {
+    public void issueFieldCanBeEditedInBulkMode() throws Exception {
 
         WebTester tester = new WebTester();
         WebTesterFactory.setupWebTester(tester, product.environmentData());
@@ -221,12 +221,11 @@ public class TestConnectField extends JiraWebDriverTestBase
         assertEquals(wizard.getState(), BulkChangeWizard.WizardState.COMPLETE);
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void testMail() throws Exception
     {
         OutgoingMailHelper mailHelper = new OutgoingMailHelper(product.backdoor());
-
         final Collection<MimeMessage> mails = mailHelper.flushMailQueueAndWait(6);
     }
 

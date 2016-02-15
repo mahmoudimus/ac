@@ -59,10 +59,12 @@ public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescrip
         element.addAttribute("i18n-name-key", i18nKeyOrName);
         element.addAttribute("managed-access-level", "locked");
 
-        DOMElement description = new DOMElement("description");
-        description.setText(bean.getDescription().getValue());
-
-        element.add(description);
+        if (bean.getDescription() != null)
+        {
+            DOMElement description = new DOMElement("description");
+            description.setText(bean.getDescription().getValue());
+            element.add(description);
+        }
 
         ConnectFieldMapper.BaseTypeDefinition type = connectFieldMapper.getMapping(bean.getType()).getType();
 

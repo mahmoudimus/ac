@@ -110,23 +110,52 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
                 customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey())));
     }
 
+    @Test
+    public void issueFieldDoesNotRequireDescription() throws Exception
+    {
+        ConnectRunner addon = new ConnectRunner(product, "addonKey")
+                .setAuthenticationToNone()
+                .setVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
+                .addModules("jiraIssueFields",
+                        buildIssueFieldModule("fieldKey", "fieldName", null))
+                .addScopes(ScopeName.READ)
+                .start();
+
+        List<CustomFieldResponse> customFields = customFieldsControl.getCustomFields();
+
+        assertThat(customFields, hasItem(
+                customFieldResponse("fieldName", null, getCustomFieldTypeKey("addonKey", "fieldKey"), getCustomFieldSearcherKey("addonKey", "fieldKey"))));
+
+        addon.stopAndUninstall();
+    }
+
     private static ConnectFieldModuleBean buildIssueFieldModule(String key, String title, String description)
     {
         return ConnectFieldModuleBean.newBuilder()
                 .withKey(key)
                 .withName(new I18nProperty(title, null))
-                .withDescription(new I18nProperty(description, null))
+                .withDescription(description != null ? new I18nProperty(description, null) : null)
                 .withBaseType(IssueFieldType.TEXT)
                 .build();
     }
 
     private String getCustomFieldTypeKey()
     {
-        return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + FIELD_KEY;
+        return getCustomFieldTypeKey(addonKey, FIELD_KEY);
+    }
+
+    private String getCustomFieldTypeKey(String addonKey, String fieldKey)
+    {
+        return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + fieldKey;
     }
 
     private String getCustomFieldSearcherKey()
     {
-        return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + FIELD_KEY + "_searcher";
+        return getCustomFieldSearcherKey(addonKey, FIELD_KEY);
+    }
+
+    private String getCustomFieldSearcherKey(String addonKey, String fieldKey)
+    {
+        return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + fieldKey + "_searcher";
     }
 }
