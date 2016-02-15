@@ -19,6 +19,7 @@ import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.user.UserManager;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
@@ -33,6 +34,7 @@ import org.junit.runner.RunWith;
 
 import it.com.atlassian.plugin.connect.util.TimebombedLicenseManager;
 
+import static it.com.atlassian.plugin.connect.plugin.web.condition.WebTestMatchers.webItemWithKey;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.not;
@@ -47,15 +49,18 @@ public class LicensedConditionTest
     private final TimebombedLicenseManager timebombedLicenseManager;
     private final TestAuthenticator testAuthenticator;
     private final WebInterfaceManager webInterfaceManager;
+    private final UserManager userManager;
 
     public LicensedConditionTest(TimebombedLicenseManager timebombedLicenseManager,
                                  TestPluginInstaller testPluginInstaller,
-                                 TestAuthenticator testAuthenticator, WebInterfaceManager webInterfaceManager)
+                                 TestAuthenticator testAuthenticator, WebInterfaceManager webInterfaceManager,
+                                 UserManager userManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.timebombedLicenseManager = timebombedLicenseManager;
         this.webInterfaceManager = webInterfaceManager;
+        this.userManager = userManager;
     }
 
     private Plugin installJsonAddon(String addonKey) throws IOException
@@ -117,44 +122,9 @@ public class LicensedConditionTest
         String addonKey = timebombedLicenseManager.generateUnlicensedAddonKey();
         final Plugin plugin = installJsonAddon(addonKey);
 
+        userManager.
+
         final Iterable<WebItemModuleDescriptor> displayableWebItems = webInterfaceManager.getDisplayableItems(LOCATION, Collections.emptyMap());
         assertThat(displayableWebItems, not(contains(webItemWithKey(plugin, ADDON_MODULE_KEY))));
-    }
-
-    private Matcher<WebItemModuleDescriptor> webItemWithKey(Plugin plugin, String key)
-    {
-        return new TypeSafeMatcher<WebItemModuleDescriptor>()
-        {
-
-            @Override
-            protected boolean matchesSafely(WebItemModuleDescriptor item)
-            {
-                return getWebItemKey(item).equals(getWebItemModuleKey());
-            }
-
-            @Override
-            public void describeTo(Description description)
-            {
-                description.appendText("web item with key ");
-                description.appendValue(getWebItemModuleKey());
-            }
-
-            @Override
-            protected void describeMismatchSafely(WebItemModuleDescriptor item, Description mismatchDescription)
-            {
-                mismatchDescription.appendText("web item with key ");
-                mismatchDescription.appendValue(getWebItemKey(item));
-            }
-
-            private String getWebItemKey(WebItemModuleDescriptor item)
-            {
-                return item.getKey();
-            }
-
-            private String getWebItemModuleKey()
-            {
-                return ModuleKeyUtils.addonAndModuleKey(plugin.getKey(), key);
-            }
-        };
     }
 }
