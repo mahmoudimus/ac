@@ -1,6 +1,7 @@
 package it.jira.customfield;
 
-import com.atlassian.jira.functest.framework.RestoreBlankInstance;
+import java.util.List;
+
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.atlassian.jira.testkit.client.CustomFieldsControl;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
@@ -15,15 +16,14 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static it.jira.customfield.CustomFieldMatchers.customFieldResponse;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
-@RestoreBlankInstance
 public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
 {
     private String addonKey;
@@ -38,6 +38,8 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
     @Before
     public void setUp() throws Exception
     {
+        product.backdoor().restoreBlankInstance();
+
         project = JiraTestBase.addProject();
         addonKey = AddonTestUtils.randomAddonKey();
         customFieldsControl = product.backdoor().customFields();
@@ -52,7 +54,8 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
     }
 
     @Test
-    public void issueFieldIsAvailableAsACustomField() {
+    public void issueFieldIsAvailableAsACustomField()
+    {
         List<CustomFieldResponse> customFields = customFieldsControl.getCustomFields();
 
         assertThat(customFields, hasItem(
@@ -81,6 +84,31 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
                 customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey()))));
     }
 
+    @Test
+    public void issueFieldIsAccessibleAgainAfterAddonIsReEnabled() throws Exception
+    {
+        addon.setAddonEnabled(false);
+
+        addon.setAddonEnabled(true);
+        List<CustomFieldResponse> customFields = customFieldsControl.getCustomFields();
+
+        assertThat(customFields, hasSize(1));
+        assertThat(customFields, contains(
+                customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey())));
+    }
+
+    @Test
+    public void issueFieldIsAccessibleAgainAfterAddonIsReinstalled() throws Exception
+    {
+        addon.stopAndUninstall();
+
+        addon.start();
+        List<CustomFieldResponse> customFields = customFieldsControl.getCustomFields();
+
+        assertThat(customFields, hasSize(1));
+        assertThat(customFields, contains(
+                customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey())));
+    }
 
     private static ConnectFieldModuleBean buildIssueFieldModule(String key, String title, String description)
     {
@@ -101,5 +129,4 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
     {
         return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + FIELD_KEY + "_searcher";
     }
-
 }

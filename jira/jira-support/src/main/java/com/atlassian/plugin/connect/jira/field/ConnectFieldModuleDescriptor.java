@@ -69,7 +69,7 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
 
     private void verifyExistOrCreateCustomField()
     {
-        CustomField customField = getCustomField().orElse(createCustomField());
+        CustomField customField = getCustomField().orElseGet(this::createCustomField);
         if (!isFieldLocked(customField))
         {
             try {
