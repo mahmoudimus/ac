@@ -18,6 +18,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ControlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
@@ -39,6 +40,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -77,6 +79,7 @@ public class ConnectJsonExamples
     public static final String AUTOCONVERT_EXAMPLE = createAutoconvertExample();
     public static final String AUTOCONVERT_MATCHER_EXAMPLE = createMatcherExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
+    public static final String CONTROL_EXAMPLE = createControl();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
     public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
     public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
@@ -712,6 +715,12 @@ public class ConnectJsonExamples
         );
 
         return gson.toJson(createJsonObject("conditions", conditions));
+    }
+
+    private static String createControl()
+    {
+        ControlBean bean = new ControlBeanBuilder().withType("button").build();
+        return gson.toJson(createJsonObject("control", bean));
     }
 
     private static String createUrlExample()
