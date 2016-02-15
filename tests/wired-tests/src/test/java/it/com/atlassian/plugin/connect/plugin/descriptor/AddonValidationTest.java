@@ -307,7 +307,7 @@ public class AddonValidationTest
                 "connect.install.error.remote.descriptor.validation.dev",
                 "<ul><li>/webItems/0/styleClasses/0: ECMA 262 regex &quot;^[_a-zA-Z]+[_a-zA-Z0-9-]*$&quot;" +
                         " does not match input string &quot;webit%22&quot; &gt;&lt;script&gt;alert(1);&lt;/script&gt;&quot;" +
-                        "<li>/webItems/0/styleClasses/1: ECMA 262 regex &quot;^[_a-zA-Z]+[_a-zA-Z0-9-]*$&quot;" +
+                        "</li><li>/webItems/0/styleClasses/1: ECMA 262 regex &quot;^[_a-zA-Z]+[_a-zA-Z0-9-]*$&quot;" +
                         " does not match input string &quot;webit%22%20onerror%22javascript:alert(1);%20&quot;</li></ul>");
     }
 
