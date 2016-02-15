@@ -12,6 +12,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.atlassian.pocketknife</groupId>
+            <artifactId>atlassian-pocketknife-querydsl</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-modules</artifactId>
             <version>${project.version}</version>
@@ -52,6 +57,11 @@
             <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
             <version>${schema.generator.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
 

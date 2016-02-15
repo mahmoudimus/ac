@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.jira;
 
+import javax.inject.Inject;
+
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.gadgets.dashboard.spi.DashboardPermissionService;
@@ -24,6 +26,7 @@ import com.atlassian.jira.config.FeatureManager;
 import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.config.properties.ApplicationProperties;
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
@@ -54,11 +57,22 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.velocity.VelocityRequestContextFactory;
 import com.atlassian.jira.web.FieldVisibilityManager;
 import com.atlassian.jira.web.session.SessionSearchObjectManagerFactory;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
-
-import javax.inject.Inject;
+import com.atlassian.pocketknife.internal.querydsl.ConnectionPrimerImpl;
+import com.atlassian.pocketknife.internal.querydsl.DatabaseAccessorImpl;
+import com.atlassian.pocketknife.internal.querydsl.DatabaseCompatibilityKitImpl;
+import com.atlassian.pocketknife.internal.querydsl.DatabaseConnectionConverterImpl;
+import com.atlassian.pocketknife.internal.querydsl.JiraConnectionProviderImpl;
+import com.atlassian.pocketknife.internal.querydsl.SchemaProviderAccessor;
+import com.atlassian.pocketknife.internal.querydsl.schema.DatabaseSchemaCreationImpl;
+import com.atlassian.pocketknife.internal.querydsl.schema.DefaultSchemaProvider;
+import com.atlassian.pocketknife.internal.querydsl.stream.StreamingQueryFactoryImpl;
+import com.atlassian.pocketknife.internal.querydsl.util.DatabaseAccessUtil;
+import com.atlassian.pocketknife.spi.querydsl.DefaultDialectConfiguration;
+import com.atlassian.sal.api.rdbms.TransactionalExecutorFactory;
 
 /**
  * This class does nothing but is here to centralize the JIRA component imports.
@@ -68,6 +82,30 @@ import javax.inject.Inject;
 @Scanned
 public class JiraImports
 {
+    /* QueryDSL components. Can't scan them with spring-scanner automatically because we want them in JIRA ony */
+    @JiraComponent
+    ConnectionPrimerImpl connectionPrimer;
+    @JiraComponent
+    DatabaseAccessorImpl databaseAccessor;
+    @JiraComponent
+    JiraConnectionProviderImpl jiraConnectionProvider;
+    @JiraComponent
+    DatabaseCompatibilityKitImpl databaseCompatibilityKit;
+    @JiraComponent
+    DatabaseConnectionConverterImpl databaseConnectionConverter;
+    @JiraComponent
+    SchemaProviderAccessor schemaProviderAccessor;
+    @JiraComponent
+    DatabaseSchemaCreationImpl databaseSchemaCreation;
+    @JiraComponent
+    DefaultSchemaProvider schemaProvider;
+    @JiraComponent
+    StreamingQueryFactoryImpl streamingQueryFactory;
+    @JiraComponent
+    DatabaseAccessUtil databaseAccessUtil;
+    @JiraComponent
+    DefaultDialectConfiguration defaultDialectConfiguration;
+
     @Inject
     public JiraImports(
             @JiraImport ("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
@@ -124,7 +162,9 @@ public class JiraImports
             @JiraImport CustomFieldValuePersister customFieldValuePersister,
             @JiraImport GenericConfigManager genericConfigManager,
             @JiraImport JqlOperandResolver jqlOperandResolver,
-            @JiraImport CustomFieldInputHelper customFieldInputHelper)
+            @JiraImport CustomFieldInputHelper customFieldInputHelper,
+            @JiraImport TransactionalExecutorFactory transactionalExecutorFactory,
+            @JiraImport CustomFieldManager customFieldManager)
     {
     }
 }

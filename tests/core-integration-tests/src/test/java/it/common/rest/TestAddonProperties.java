@@ -16,12 +16,10 @@ import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.SignedRequestHandler;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +32,6 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.eclipse.jetty.server.Response;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.After;
@@ -42,7 +39,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -435,12 +431,12 @@ public class TestAddonProperties
         };
     }
 
-    private Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean > isEqualToIgnoringBaseUrl(final RestAddonPropertiesBean.RestAddonPropertyBean expected)
+    private Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean> isEqualToIgnoringBaseUrl(final RestAddonPropertiesBean.RestAddonPropertyBean expected)
     {
-        return new TypeSafeMatcher<RestAddonPropertiesBean.RestAddonPropertyBean >()
+        return new TypeSafeMatcher<RestAddonPropertiesBean.RestAddonPropertyBean>()
         {
             @Override
-            protected boolean matchesSafely(final RestAddonPropertiesBean.RestAddonPropertyBean  property)
+            protected boolean matchesSafely(final RestAddonPropertiesBean.RestAddonPropertyBean property)
             {
                 String urlWithoutBaseUrl = expected.self.substring(baseUrl.length());
                 return new EqualsBuilder()
@@ -462,7 +458,8 @@ public class TestAddonProperties
         private final int httpStatusCode;
         private final Option<String> eTag;
 
-        private RequestResponse(final int httpStatusCode, final Option<String> eTag) {
+        private RequestResponse(final int httpStatusCode, final Option<String> eTag)
+        {
             this.httpStatusCode = httpStatusCode;
             this.eTag = eTag;
         }

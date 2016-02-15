@@ -119,9 +119,4 @@
         <description>Handles synchronising of user attributes (which Crowd doesn't do for us yet)</description>
     </listener>
 
-    <ao key="add-on-properties-ao-module" name="Active Objects Module">
-        <description>Datastore for add-on properties.</description>
-        <entity>com.atlassian.plugin.connect.plugin.property.AddonPropertyAO</entity>
-    </ao>
-
 </atlassian-plugin>

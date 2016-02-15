@@ -8,6 +8,7 @@ import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.entity.property.EntityPropertyService;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.comments.Comment;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.project.Project;
@@ -69,7 +70,7 @@ public class JiraTestUtil
 
     public ApplicationUser getAdmin() {return userManager.getUserByKey(ADMIN_USERNAME);}
 
-    public Issue createIssue() throws IOException
+    public MutableIssue createIssue() throws IOException
     {
         final ApplicationUser admin = getAdmin();
 
