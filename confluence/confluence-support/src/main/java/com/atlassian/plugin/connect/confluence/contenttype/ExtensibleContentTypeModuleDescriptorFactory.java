@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
+import com.atlassian.confluence.api.impl.service.content.factory.ContentFactory;
 import com.atlassian.confluence.content.ContentTypeModuleDescriptor;
+import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.plugin.Plugin;
@@ -22,22 +24,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ExtensibleContentTypeModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentTypeModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(ExtensibleContentTypeModuleDescriptorFactory.class);
-    private final ApiSupportProvider apiSupportProvider;
+    private final ContentFactory contentFactory;
     private final ModuleFactory moduleFactory;
     private final ContentTypeMapper contentTypeMapper;
+    private final ApiSupportProvider apiSupportProvider;
+    private final CustomContentManager customContentManager;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
     @Autowired
     public ExtensibleContentTypeModuleDescriptorFactory(
+            ContentFactory contentFactory,
             ModuleFactory moduleFactory,
             ContentTypeMapper contentTypeMapper,
             ApiSupportProvider apiSupportProvider,
+            CustomContentManager customContentManager,
             CustomContentApiSupportParams customContentApiSupportParams)
     {
-        this.apiSupportProvider = apiSupportProvider;
+        this.contentFactory = contentFactory;
         this.moduleFactory = moduleFactory;
         this.contentTypeMapper = contentTypeMapper;
+        this.customContentManager = customContentManager;
         this.customContentApiSupportParams = customContentApiSupportParams;
+        this.apiSupportProvider = apiSupportProvider;
     }
 
     @Override
@@ -68,8 +76,10 @@ public class ExtensibleContentTypeModuleDescriptorFactory implements ConnectModu
                         completeModuleKey,
                         bean,
                         moduleFactory,
+                        contentFactory,
                         contentTypeMapper,
                         apiSupportProvider,
+                        customContentManager,
                         customContentApiSupportParams);
         descriptor.init(plugin, contentTypeElement);
         return descriptor;

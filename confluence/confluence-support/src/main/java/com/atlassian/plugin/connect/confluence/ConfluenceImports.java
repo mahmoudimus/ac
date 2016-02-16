@@ -3,7 +3,10 @@ package com.atlassian.plugin.connect.confluence;
 import javax.inject.Inject;
 
 import com.atlassian.bandana.BandanaManager;
+import com.atlassian.confluence.api.impl.service.content.factory.ContentFactory;
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
+import com.atlassian.confluence.api.service.pagination.PaginationService;
+import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
@@ -60,8 +63,10 @@ public class ConfluenceImports
             @ConfluenceImport WebSudoManager webSudoManager,
             @ConfluenceImport XhtmlContent xhtmlContent,
             @ConfluenceImport CoreFeaturesManager coreFeaturesManager,
-            @ConfluenceImport ApiSupportProvider apiSupportProvider,
+            @ConfluenceImport ContentFactory contentFactory,
+            @ConfluenceImport CustomContentManager customContentManager,
             @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams,
+            @ConfluenceImport ApiSupportProvider apiSupportProvider,
             @ConfluenceImport ModuleFactory moduleFactory,
             @ConfluenceImport ThemeManager themeManager,
             @ConfluenceImport PersonalInformationManager personalInformationManager,

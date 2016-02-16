@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
+import com.atlassian.confluence.api.impl.service.content.factory.ContentFactory;
 import com.atlassian.confluence.content.ContentType;
 import com.atlassian.confluence.content.ContentTypeModuleDescriptor;
+import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.security.PermissionDelegate;
@@ -16,8 +18,10 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
     private final String contentTypeKey;
     private final String completeModuleKey;
     private final ExtensibleContentTypeModuleBean bean;
+    private final ContentFactory contentFactory;
     private final ContentTypeMapper contentTypeMapper;
     private final ApiSupportProvider apiSupportProvider;
+    private final CustomContentManager customContentManager;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
     public ExtensibleContentTypeModuleDescriptor(
@@ -25,16 +29,21 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
             String completeModuleKey,
             ExtensibleContentTypeModuleBean bean,
             ModuleFactory moduleFactory,
+            ContentFactory contentFactory,
             ContentTypeMapper contentTypeMapper,
             ApiSupportProvider apiSupportProvider,
+            CustomContentManager customContentManager,
             CustomContentApiSupportParams customContentApiSupportParams)
     {
         super(moduleFactory, apiSupportProvider);
+        this.bean = bean;
+
         this.contentTypeKey = contentTypeKey;
         this.completeModuleKey = completeModuleKey;
-        this.bean = bean;
+        this.contentFactory = contentFactory;
         this.contentTypeMapper = contentTypeMapper;
         this.apiSupportProvider = apiSupportProvider;
+        this.customContentManager = customContentManager;
         this.customContentApiSupportParams = customContentApiSupportParams;
     }
 
@@ -57,8 +66,10 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
         return new ExtensibleContentType(
                 contentTypeKey,
                 bean,
+                contentFactory,
                 contentTypeMapper,
                 apiSupportProvider,
+                customContentManager,
                 customContentApiSupportParams);
     }
 

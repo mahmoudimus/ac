@@ -7,16 +7,14 @@ import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeA
 
 import com.google.common.collect.Sets;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class ExtensibleContentTypeAPISupportModuleBean extends BaseModuleBean
 {
     private String createUrl;
-    private Boolean isDirectlyUnderSpaceSupported;
     private Set<String> supportedContainerTypes;
-    private Set<String> supportedChildrenTypes;
+    private Set<String> supportedContainedTypes;
 
     public ExtensibleContentTypeAPISupportModuleBean()
     {
@@ -33,9 +31,8 @@ public class ExtensibleContentTypeAPISupportModuleBean extends BaseModuleBean
     private void initialise()
     {
         createUrl = StringUtils.defaultString(createUrl);
-        isDirectlyUnderSpaceSupported = BooleanUtils.toBooleanDefaultIfNull(isDirectlyUnderSpaceSupported, false);
         supportedContainerTypes = ObjectUtils.defaultIfNull(supportedContainerTypes, Sets.newHashSet());
-        supportedChildrenTypes = ObjectUtils.defaultIfNull(supportedChildrenTypes, Sets.newHashSet());
+        supportedContainedTypes = ObjectUtils.defaultIfNull(supportedContainedTypes, Sets.newHashSet());
     }
 
     public String getCreateUrl()
@@ -43,18 +40,13 @@ public class ExtensibleContentTypeAPISupportModuleBean extends BaseModuleBean
         return createUrl;
     }
 
-    public boolean getIsDirectlyUnderSpaceSupported()
-    {
-        return isDirectlyUnderSpaceSupported;
-    }
-
     public Set<String> getSupportedContainerTypes()
     {
         return supportedContainerTypes;
     }
 
-    public Set<String> getSupportedChildrenTypes()
+    public Set<String> getSupportedContainedTypes()
     {
-        return supportedChildrenTypes;
+        return supportedContainedTypes;
     }
 }

@@ -8,9 +8,8 @@ public class ExtensibleContentTypeAPISupportModuleBeanBuilder
         extends BaseModuleBeanBuilder<ExtensibleContentTypeAPISupportModuleBeanBuilder, ExtensibleContentTypeAPISupportModuleBean>
 {
     private String createUrl;
-    private Boolean isDirectlyUnderSpaceSupported;
     private Set<String> supportedContainerTypes;
-    private Set<String> supportedChildrenTypes;
+    private Set<String> supportedContainedTypes;
 
     public ExtensibleContentTypeAPISupportModuleBeanBuilder()
     {
@@ -22,21 +21,15 @@ public class ExtensibleContentTypeAPISupportModuleBeanBuilder
         return this;
     }
 
-    public ExtensibleContentTypeAPISupportModuleBeanBuilder withIsDirectlyUnderSpaceSupported(boolean isDirectlyUnderSpaceSupported)
-    {
-        this.isDirectlyUnderSpaceSupported = isDirectlyUnderSpaceSupported;
-        return this;
-    }
-
     public ExtensibleContentTypeAPISupportModuleBeanBuilder withSupportedContainerTypes(Set<String> supportedContainerTypes)
     {
         this.supportedContainerTypes = supportedContainerTypes;
         return this;
     }
 
-    public ExtensibleContentTypeAPISupportModuleBeanBuilder withSupportedChildrenTypes(Set<String> supportedChildrenTypes)
+    public ExtensibleContentTypeAPISupportModuleBeanBuilder withSupportedContainedTypes(Set<String> supportedChildrenTypes)
     {
-        this.supportedChildrenTypes = supportedChildrenTypes;
+        this.supportedContainedTypes = supportedChildrenTypes;
         return this;
     }
 

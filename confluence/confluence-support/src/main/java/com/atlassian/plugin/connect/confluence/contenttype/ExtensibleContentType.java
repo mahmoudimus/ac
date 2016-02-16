@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
+import com.atlassian.confluence.api.impl.service.content.factory.ContentFactory;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.content.ContentEntityAdapter;
 import com.atlassian.confluence.content.CustomContentEntityObject;
+import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
@@ -16,26 +18,34 @@ public class ExtensibleContentType extends BaseCustomContentType
 {
     private final String contentTypeKey;
     private final ExtensibleContentTypeModuleBean bean;
+    private final ContentFactory contentFactory;
+    private final ApiSupportProvider apiSupportProvider;
     private final ContentEntityAdapter contentEntityAdapter;
     private final PermissionDelegate permissionDelegate;
     private final ContentUiSupport contentUiSupport;
-    private final ApiSupportProvider apiSupportProvider;
+    private final CustomContentManager customContentManager;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
     public ExtensibleContentType(
             String contentTypeKey,
             ExtensibleContentTypeModuleBean bean,
+            ContentFactory contentFactory,
             ContentTypeMapper contentTypeMapper,
             ApiSupportProvider apiSupportProvider,
+            CustomContentManager customContentManager,
             CustomContentApiSupportParams customContentApiSupportParams)
     {
         super(ContentType.valueOf(contentTypeKey), apiSupportProvider);
+
         this.contentTypeKey = contentTypeKey;
         this.bean = bean;
+
+        this.contentFactory = contentFactory;
+        this.apiSupportProvider = apiSupportProvider;
+        this.customContentManager = customContentManager;
         this.permissionDelegate = new ExtensiblePermissionDelegate();
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
         this.contentUiSupport = new ExtensibleUISupport(contentTypeKey, bean);
-        this.apiSupportProvider = apiSupportProvider;
         this.customContentApiSupportParams = customContentApiSupportParams;
     }
 
@@ -58,7 +68,14 @@ public class ExtensibleContentType extends BaseCustomContentType
     }
 
     @Override
-    public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport() {
-        return new ExtensibleContentTypeSupport(contentTypeKey, bean, customContentApiSupportParams, apiSupportProvider);
+    public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport()
+    {
+        return new ExtensibleContentTypeSupport(
+                contentTypeKey,
+                bean,
+                contentFactory,
+                customContentManager,
+                customContentApiSupportParams,
+                apiSupportProvider);
     }
 }
