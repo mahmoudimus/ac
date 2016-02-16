@@ -10,8 +10,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import it.jira.JiraTestBase;
 import it.jira.JiraWebDriverTestBase;
+import it.jira.util.JiraTestHelper;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -39,7 +39,7 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
     @Before
     public void setUp() throws Exception
     {
-        project = JiraTestBase.addProject();
+        project = JiraTestHelper.addProject();
         addonKey = AddonTestUtils.randomAddonKey();
         customFieldsControl = product.backdoor().customFields();
 

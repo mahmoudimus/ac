@@ -16,7 +16,6 @@ import org.apache.commons.io.IOUtils;
 
 public class MailTestHelper
 {
-
     private final Backdoor backdoor;
     private final MailService mailService;
     private final OutgoingMailHelper mailHelper;
@@ -28,7 +27,7 @@ public class MailTestHelper
         mailHelper = new OutgoingMailHelper(backdoor);
     }
 
-    public MailTestHelper configure() {
+    MailTestHelper configure() {
         try {
             if (!backdoor.getTestkit().getFeatureManagerControl().isOnDemand()) {
                 mailService.configureAndStartGreenMail(JIRAServerSetup.SMTP);
