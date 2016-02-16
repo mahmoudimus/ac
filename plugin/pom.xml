@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.74-SNAPSHOT</version>
+        <version>1.1.76-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -534,6 +534,12 @@
                             org.osgi.framework,
                             <!-- End pa / pi imports -->
 
+                            <!-- exclude pocketknife bits we don't need -->
+                            !net.sf.cglib.proxy,
+                            !org.jvnet.hudson.annotation_indexer,
+                            !org.slf4j*,
+                            <!-- end pocketknife excludes -->
+
                             com.atlassian.jwt*;version="[1.4.0,2.0.0)",
 
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
@@ -768,6 +774,9 @@
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
                 <version>${atlassian.spring.scanner.version}</version>
+                <configuration>
+                    <includeExclude>-com.atlassian.pocketknife.*</includeExclude>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

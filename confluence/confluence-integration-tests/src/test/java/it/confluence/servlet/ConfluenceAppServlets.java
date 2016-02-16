@@ -57,6 +57,12 @@ public class ConfluenceAppServlets
         return contextServlet;
     }
 
+    public static HttpServlet navigatorContextServlet()
+    {
+        HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("it/confluence/navigator/iframe-navigator-context.mu"));
+        return contextServlet;
+    }
+
     public static HttpServlet blueprintContextServlet()
     {
         return wrapContextAwareServlet(

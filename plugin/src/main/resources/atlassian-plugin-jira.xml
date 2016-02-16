@@ -44,6 +44,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-create-issue-dialog</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-request</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -132,6 +133,13 @@
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
+    <web-resource key="request">
+        <resource type="download" name="request-experimental.js" location="/js/jira/request/request-experimental.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
     <url-reading-web-resource-transformer key="connect-report-transformer" name="Connect report transformer"
                                           class="com.atlassian.plugin.connect.jira.report.ReportModuleCssTransformer"/>
 
@@ -155,6 +163,12 @@
             <location>atl.header.after.scripts</location>
         </web-panel-locations>
     </connect-web-fragment-location-blacklist>
+
+    <ao key="atlassian-connect-active-objects" name="Active Objects Module">
+        <description>Collective module for all AO tables</description>
+        <entity>com.atlassian.plugin.connect.plugin.property.AddonPropertyAO</entity>
+        <entity>com.atlassian.plugin.connect.jira.field.option.db.ConnectFieldOptionAO</entity>
+    </ao>
 
 </application>
 
