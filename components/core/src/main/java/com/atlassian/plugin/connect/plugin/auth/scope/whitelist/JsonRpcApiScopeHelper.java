@@ -35,14 +35,7 @@ public final class JsonRpcApiScopeHelper
         this.path = path;
         this.methods = methods;
         this.httpMethod = checkNotNull(httpMethod).toUpperCase();
-        this.apiResourceInfo = transform(methods, new Function<String, ApiResourceInfo>()
-        {
-            @Override
-            public ApiResourceInfo apply(String from)
-            {
-                return new ApiResourceInfo(path, JsonRpcApiScopeHelper.this.httpMethod, from);
-            }
-        });
+        this.apiResourceInfo = transform(methods, from -> new ApiResourceInfo(path, JsonRpcApiScopeHelper.this.httpMethod, from));
     }
 
     public boolean allow(HttpServletRequest request)

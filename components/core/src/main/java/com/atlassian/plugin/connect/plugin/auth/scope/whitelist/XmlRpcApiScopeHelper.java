@@ -35,14 +35,7 @@ public class XmlRpcApiScopeHelper
         // inspection or 'toString' show exactly the same contents for both sides of the comparison...
         // So copying the collection to make EqualsBuilder happy.
         this.methods = Lists.newArrayList(methods);
-        this.apiResourceInfo = transform(methods, new Function<String, ApiResourceInfo>()
-        {
-            @Override
-            public ApiResourceInfo apply(String from)
-            {
-                return new ApiResourceInfo(path, "POST", from);
-            }
-        });
+        this.apiResourceInfo = transform(methods, from -> new ApiResourceInfo(path, "POST", from));
     }
     
     @Nullable

@@ -55,18 +55,9 @@ public class StaticAddonScopes
             throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s.", badKeys, scopeKeyToScope.keySet()));
         }
 
-        return transform(addImpliedScopesTo(scopeKeys), new Function<ScopeName, AddonScope>()
-        {
-            @Override
-            public AddonScope apply(@Nullable ScopeName scopeKey)
-            {
-                if (null == scopeKey)
-                {
-                    return null;
-                }
-
-                return scopeKeyToScope.get(scopeKey);
-            }
+        return transform(addImpliedScopesTo(scopeKeys), scopeKey -> {
+            if (null == scopeKey) return null;
+            return scopeKeyToScope.get(scopeKey);
         });
     }
 

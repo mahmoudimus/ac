@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContextBuilderFactory
 {
-
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
     private final HostApplicationInfo hostApplicationInfo;
@@ -29,7 +28,6 @@ public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContex
         this.hostApplicationInfo = hostApplicationInfo;
         this.userPreferencesRetriever = userPreferencesRetriever;
     }
-
 
     @Override
     public IFrameRenderContextBuilder builder()

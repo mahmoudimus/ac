@@ -166,22 +166,8 @@ public class BeanToModuleRegistrar
             throws ConnectModuleRegistrationException
     {
         return moduleProviders.stream()
-                .filter(new Predicate<ConnectModuleProvider>()
-                {
-                    @Override
-                    public boolean test(ConnectModuleProvider provider)
-                    {
-                        return provider.getMeta().getDescriptorKey().equals(descriptorKey);
-                    }
-                })
+                .filter(provider -> provider.getMeta().getDescriptorKey().equals(descriptorKey))
                 .findFirst()
-                .orElseThrow(new Supplier<ConnectModuleRegistrationException>()
-                {
-                    @Override
-                    public ConnectModuleRegistrationException get()
-                    {
-                        return new ConnectModuleRegistrationException(String.format("Could not find module provider %s for descriptor registration", descriptorKey));
-                    }
-                });
+                .orElseThrow(() -> new ConnectModuleRegistrationException(String.format("Could not find module provider %s for descriptor registration", descriptorKey)));
     }
 }

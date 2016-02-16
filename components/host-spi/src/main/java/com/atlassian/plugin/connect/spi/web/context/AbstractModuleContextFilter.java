@@ -16,6 +16,7 @@ import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
@@ -39,14 +40,7 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
     public static final String PROFILE_NAME = "profileUser.name";
     public static final String PROFILE_KEY = "profileUser.key";
 
-    private static final Predicate<String> IS_NOT_EMPTY = new Predicate<String>()
-    {
-        @Override
-        public boolean apply(@Nullable final String s)
-        {
-            return !Strings.isNullOrEmpty(s);
-        }
-    };
+    private static final Predicate<String> IS_NOT_EMPTY = Predicates.not(Strings::isNullOrEmpty);
 
     private final PluginAccessor pluginAccessor;
     private final Class<T> userType;
@@ -70,15 +64,7 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
             final String parameterValue = unfiltered.get(parameterName);
             Collection<PermissionCheck<T>> permissionChecks = permissionChecksMultimap.get(parameterName);
 
-            boolean allValidatorsGrantedPermission = Iterables.all(permissionChecks, new Predicate<PermissionCheck<T>>()
-            {
-                @Override
-                public boolean apply(final PermissionCheck<T> userPermissionCheck)
-                {
-
-                    return userPermissionCheck.hasPermission(parameterValue, currentUser);
-                }
-            });
+            boolean allValidatorsGrantedPermission = Iterables.all(permissionChecks, userPermissionCheck -> userPermissionCheck.hasPermission(parameterValue, currentUser));
 
             if (!permissionChecks.isEmpty() && allValidatorsGrantedPermission)
             {
@@ -129,14 +115,7 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
                         return input.getValidators();
                     }
                 }));
-        return Options.flatten(Iterables.transform(validators, new Function<ContextParametersValidator, Option<ContextParametersValidator<T>>>()
-        {
-            @Override
-            public Option<ContextParametersValidator<T>> apply(final ContextParametersValidator contextParametersValidator)
-            {
-                return tryCast(contextParametersValidator);
-            }
-        }));
+        return Options.flatten(Iterables.transform(validators, AbstractModuleContextFilter.this::tryCast));
     }
 
     private Option<ContextParametersValidator<T>> tryCast(ContextParametersValidator<?> unidentifiedValidator)
