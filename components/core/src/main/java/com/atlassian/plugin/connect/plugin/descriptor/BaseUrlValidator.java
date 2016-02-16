@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 
 import javax.inject.Inject;
@@ -14,7 +14,7 @@ import java.net.URI;
  * @since 1.0
  */
 @Named("base-url-validator")
-public class BaseUrlValidator implements AddonBeanValidator
+public class BaseUrlValidator implements ShallowConnectAddonBeanValidator
 {
     private final IsDevModeService isDevModeService;
 
@@ -25,7 +25,7 @@ public class BaseUrlValidator implements AddonBeanValidator
     }
 
     @Override
-    public void validate(ConnectAddonBean addonBean) throws InvalidDescriptorException
+    public void validate(ShallowConnectAddonBean addonBean) throws InvalidDescriptorException
     {
         // if the baseUrl does not exist or is not a valid URI then schema validation fails and the code never gets here,
         // so there's no need to check for null, empty-string or not-a-URI
