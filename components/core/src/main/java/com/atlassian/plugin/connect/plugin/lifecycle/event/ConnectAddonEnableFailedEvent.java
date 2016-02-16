@@ -7,6 +7,6 @@ public class ConnectAddonEnableFailedEvent extends ConnectAddonLifecycleFailedEv
 {
     public ConnectAddonEnableFailedEvent(String pluginKey, String message)
     {
-        super(pluginKey, message);
+        super(pluginKey, message, Category.CONNECT); // we never fail to enable because of the add-on
     }
 }

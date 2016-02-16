@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.confluence.web.spacetools;
 
+import java.io.IOException;
+import java.util.Collections;
+
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
@@ -8,11 +11,9 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.confluence.web.context.ConfluenceModuleContextParameters;
 import com.atlassian.plugin.connect.confluence.web.context.ConfluenceModuleContextParametersImpl;
 
-import java.io.IOException;
-import java.util.Collections;
-
 import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil.renderAccessDeniedToString;
 import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil.renderToString;
+import static java.util.Collections.emptyMap;
 
 public class SpaceToolsIFrameAction extends SpaceAdminAction
 {
@@ -26,7 +27,7 @@ public class SpaceToolsIFrameAction extends SpaceAdminAction
 
         if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
         {
-            ConfluenceModuleContextParameters unfilteredContext = new ConfluenceModuleContextParametersImpl();
+            ConfluenceModuleContextParameters unfilteredContext = new ConfluenceModuleContextParametersImpl(emptyMap());
             unfilteredContext.addSpace(this.space);
             ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
             return renderToString(filteredContext, renderStrategy);

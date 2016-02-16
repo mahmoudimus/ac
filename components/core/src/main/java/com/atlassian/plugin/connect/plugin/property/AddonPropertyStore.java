@@ -2,21 +2,17 @@ package com.atlassian.plugin.connect.plugin.property;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Function;
-
 import javax.annotation.Nonnull;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.sal.api.transaction.TransactionCallback;
-
+import com.atlassian.plugin.connect.api.property.AddonProperty;
+import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import net.java.ao.DBParam;
 import net.java.ao.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,7 +28,7 @@ public class AddonPropertyStore
     private static final String MAX_PROPERTIES_SYSTEM_PROPERTY = "com.atlassian.plugin.connect.add_on_properties.max_properties";
     private static final int MAX_PROPERTIES_DEFAULT = 100;
     public static final int MAX_PROPERTIES_PER_ADD_ON = Integer.getInteger(MAX_PROPERTIES_SYSTEM_PROPERTY,
-        MAX_PROPERTIES_DEFAULT);
+            MAX_PROPERTIES_DEFAULT);
 
     @Autowired
     public AddonPropertyStore(final ActiveObjects ao) {this.ao = checkNotNull(ao);}
@@ -43,14 +39,7 @@ public class AddonPropertyStore
 
         Optional<AddonPropertyAO> option = Optional.ofNullable(Iterables.getFirst(Arrays.asList(properties), null));
 
-        return option.flatMap(new Function<AddonPropertyAO, Optional<AddonProperty>>()
-        {
-            @Override
-            public Optional<AddonProperty> apply(AddonPropertyAO addonPropertyAO)
-            {
-                return Optional.of(AddonProperty.fromAO(addonPropertyAO));
-            }
-        });
+        return option.flatMap(addonPropertyAO -> Optional.of(AddonPropertyFactory.fromAO(addonPropertyAO)));
     }
 
     public PutResultWithOptionalProperty setPropertyValue(@Nonnull final String addonKey, @Nonnull final String propertyKey, @Nonnull final String value)
@@ -69,15 +58,13 @@ public class AddonPropertyStore
 
             AddonPropertyAO newPropertyAO = createAddonProperty(addonKey, propertyKey, value);
             newPropertyAO.save();
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Optional.of(AddonProperty.fromAO(
-                newPropertyAO)));
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Optional.of(AddonPropertyFactory.fromAO(newPropertyAO)));
         }
         else
         {
             AddonPropertyAO property = createAddonProperty(addonKey, propertyKey, value);
             property.save();
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_CREATED, Optional.of(AddonProperty.fromAO(
-                property)));
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_CREATED, Optional.of(AddonPropertyFactory.fromAO(property)));
         }
     }
 
@@ -104,27 +91,15 @@ public class AddonPropertyStore
 
     public AddonPropertyIterable getAllPropertiesForAddonKey(@Nonnull final String addonKey)
     {
-        return ao.executeInTransaction(new TransactionCallback<AddonPropertyIterable>()
-        {
-            @Override
-            public AddonPropertyIterable doInTransaction()
-            {
-                ImmutableList<AddonPropertyAO> addonPropertyAOList = ImmutableList.<AddonPropertyAO>builder().add(getAddonPropertyAOArrayForAddonKey(addonKey)).build();
-                return AddonPropertyIterable.fromAddonPropertyAOList(addonPropertyAOList);
-            }
+        return ao.executeInTransaction(() -> {
+            ImmutableList<AddonPropertyAO> addonPropertyAOList = ImmutableList.<AddonPropertyAO>builder().add(getAddonPropertyAOArrayForAddonKey(addonKey)).build();
+            return AddonPropertyFactory.fromAddonPropertyAOList(addonPropertyAOList);
         });
     }
 
     public <T> T executeInTransaction(@Nonnull final TransactionAction<T> function)
     {
-        return ao.executeInTransaction(new TransactionCallback<T>()
-        {
-            @Override
-            public T doInTransaction()
-            {
-                return function.call();
-            }
-        });
+        return ao.executeInTransaction(function::call);
     }
 
     private boolean existsProperty(@Nonnull final String addonKey, @Nonnull final String propertyKey)

@@ -31,58 +31,30 @@ public class PluggableConditionClassAccessor implements ConditionClassAccessor
     @Override
     public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean)
     {
-        return getConditionClass(new Function<ConnectConditionClassResolver.Entry, Optional<Class<? extends Condition>>>()
-        {
+        return getConditionClass(resolverEntry -> resolverEntry.getConditionClassForHostContext(conditionBean));
+    }
 
-            @Override
-            public Optional<Class<? extends Condition>> apply(ConnectConditionClassResolver.Entry resolverEntry)
-            {
-                return resolverEntry.getConditionClassForHostContext(conditionBean);
-            }
-        });
+    @Override
+    public Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean)
+    {
+        return getConditionClass(resolverEntry -> resolverEntry.getConditionClassForInline(conditionBean));
     }
 
     @Override
     public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean)
     {
-        return getConditionClass(new Function<ConnectConditionClassResolver.Entry, Optional<Class<? extends Condition>>>()
-        {
-
-            @Override
-            public Optional<Class<? extends Condition>> apply(ConnectConditionClassResolver.Entry resolverEntry)
-            {
-                return resolverEntry.getConditionClassForNoContext(conditionBean);
-            }
-        });
+        return getConditionClass(resolverEntry -> resolverEntry.getConditionClassForNoContext(conditionBean));
     }
 
     private Optional<Class<? extends Condition>> getConditionClass(
             Function<ConnectConditionClassResolver.Entry, Optional<Class<? extends Condition>>> mapper)
     {
-        List<ConnectConditionClassResolver> resolvers = pluginAccessor.getEnabledModulesByClass(
-                ConnectConditionClassResolver.class);
-        return resolvers.stream()
-                .flatMap(new Function<ConnectConditionClassResolver, Stream<ConnectConditionClassResolver.Entry>>()
-                {
-                    @Override
-                    public Stream<ConnectConditionClassResolver.Entry> apply(ConnectConditionClassResolver resolver)
-                    {
-                        return resolver.getEntries().stream();
-                    }
-                }).map(mapper).filter(new Predicate<Optional<Class<? extends Condition>>>()
-                {
-                    @Override
-                    public boolean test(Optional<Class<? extends Condition>> optionalConditionClass)
-                    {
-                        return optionalConditionClass.isPresent();
-                    }
-                }).map(new Function<Optional<Class<? extends Condition>>, Class<? extends Condition>>()
-                {
-                    @Override
-                    public Class<? extends Condition> apply(Optional<Class<? extends Condition>> optionalConditionClass)
-                    {
-                        return optionalConditionClass.get();
-                    }
-                }).findFirst();
+        List<ConnectConditionClassResolver> resolvers = pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class);
+        return resolvers
+            .stream()
+            .flatMap(resolver -> resolver.getEntries().stream())
+            .map(mapper)
+            .filter(Optional::isPresent).map(Optional::get)
+            .findFirst();
     }
 }

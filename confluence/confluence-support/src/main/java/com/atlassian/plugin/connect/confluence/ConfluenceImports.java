@@ -1,12 +1,18 @@
 package com.atlassian.plugin.connect.confluence;
 
+import javax.inject.Inject;
+
 import com.atlassian.bandana.BandanaManager;
+import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.core.ContentEntityManager;
+import com.atlassian.confluence.core.ContentPermissionManager;
 import com.atlassian.confluence.license.LicenseService;
+import com.atlassian.confluence.mail.notification.NotificationManager;
 import com.atlassian.confluence.pages.PageManager;
+import com.atlassian.confluence.pages.templates.PageTemplateManager;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.security.websudo.WebSudoManager;
@@ -14,16 +20,19 @@ import com.atlassian.confluence.setup.settings.CoreFeaturesManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.status.service.SystemInformationService;
+import com.atlassian.confluence.themes.ThemeManager;
+import com.atlassian.confluence.user.PersonalInformationManager;
 import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.confluence.userstatus.FavouriteManager;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
+import com.atlassian.confluence.web.context.HttpContext;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.core.task.MultiQueueTaskManager;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ConfluenceImport;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * This class does nothing but is here to centralize the Confluence component imports.
@@ -53,7 +62,16 @@ public class ConfluenceImports
             @ConfluenceImport CoreFeaturesManager coreFeaturesManager,
             @ConfluenceImport ApiSupportProvider apiSupportProvider,
             @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams,
-            @ConfluenceImport ModuleFactory moduleFactory)
+            @ConfluenceImport ModuleFactory moduleFactory,
+            @ConfluenceImport ThemeManager themeManager,
+            @ConfluenceImport PersonalInformationManager personalInformationManager,
+            @ConfluenceImport HttpContext httpContext,
+            @ConfluenceImport ContentPermissionManager contentPermissionManager,
+            @ConfluenceImport PageTemplateManager pageTemplateManager,
+            @ConfluenceImport FavouriteManager favouriteManager,
+            @ConfluenceImport NotificationManager notificationManager,
+            @ConfluenceImport ContentBodyConversionService converter)
+
     {
     }
 }

@@ -9,7 +9,7 @@ import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFact
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
@@ -62,7 +62,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     @Mock
     private WebFragmentHelper webFragmentHelper;
     @Mock
-    private IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private ConnectUriFactory connectUriFactory;
     @Mock
     private ConnectConditionDescriptorFactory connectConditionDescriptorFactory;
     @Mock
@@ -100,7 +100,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                 applicationProperties,
                 searchRequestViewBodyWriterUtil,
                 templateRenderer,
-                iFrameUriBuilderFactory,
+                connectUriFactory,
                 componentAccessor);
 
         SearchRequestViewModuleBean bean = SearchRequestViewModuleBean.newSearchRequestViewModuleBean()

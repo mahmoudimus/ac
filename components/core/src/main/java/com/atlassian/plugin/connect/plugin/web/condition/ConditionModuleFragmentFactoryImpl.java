@@ -80,16 +80,10 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
         else
         {
             Optional<Class<? extends Condition>> optionalConditionClass = getConditionClass(conditionBean);
-            optionalConditionClass.ifPresent(new Consumer<Class<? extends Condition>>()
-            {
-
-                @Override
-                public void accept(Class<? extends Condition> conditionClass)
+            optionalConditionClass.ifPresent(conditionClass -> {
+                if (conditionClass.isAnnotationPresent(ConnectCondition.class))
                 {
-                    if (conditionClass.isAnnotationPresent(ConnectCondition.class))
-                    {
-                        contextBuilder.putAddonKey(addonKey);
-                    }
+                    contextBuilder.putAddonKey(addonKey);
                 }
             });
         }
@@ -119,12 +113,7 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
 
                 composite.addAttribute(TYPE_KEY, ccb.getType().toString().toUpperCase());
 
-                List<DOMElement> subConditions = processConditionBeans(pluginKey, ccb.getConditions());
-
-                for (DOMElement subcondition : subConditions)
-                {
-                    composite.add(subcondition);
-                }
+                processConditionBeans(pluginKey, ccb.getConditions()).forEach(composite::add);
 
                 elements.add(composite);
             }

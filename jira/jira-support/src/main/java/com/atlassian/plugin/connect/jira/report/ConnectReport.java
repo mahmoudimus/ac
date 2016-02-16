@@ -44,7 +44,7 @@ public class ConnectReport implements Report
     {
         StringWriter sw = new StringWriter();
         IFrameRenderStrategy frameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKey);
-        JiraModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl();
+        JiraModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl(map);
         frameRenderStrategy.render(moduleContextParameters, sw, Optional.empty());
         return sw.toString();
     }

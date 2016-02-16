@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class WebHookModuleProvider extends AbstractConnectCoreModuleProvider<WebHookModuleBean>
@@ -54,12 +55,8 @@ public class WebHookModuleProvider extends AbstractConnectCoreModuleProvider<Web
     @Override
     public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebHookModuleBean> modules, ConnectAddonBean addon)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
-        for (WebHookModuleBean webhook : modules)
-        {
-            descriptors.add(moduleDescriptorFactory.createModuleDescriptor(webhook, addon, pluginRetrievalService.getPlugin()
-            ));
-        }
-        return descriptors;
+        return modules.stream()
+            .map(webhook -> moduleDescriptorFactory.createModuleDescriptor(webhook, addon, pluginRetrievalService.getPlugin()))
+            .collect(Collectors.toList());
     }
 }

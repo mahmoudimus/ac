@@ -2,11 +2,11 @@ package com.atlassian.plugin.connect.test.common.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
-public final class TestServletContextExtractor
+public class FormParameterExtractor
 {
     private final String parameterId;
 
-    public TestServletContextExtractor(final String parameterId)
+    public FormParameterExtractor(final String parameterId)
     {
         this.parameterId = parameterId;
     }
@@ -16,7 +16,7 @@ public final class TestServletContextExtractor
         return parameterId;
     }
 
-    public Object extract(HttpServletRequest request)
+    public String extract(HttpServletRequest request)
     {
         return request.getParameter(parameterId);
     }

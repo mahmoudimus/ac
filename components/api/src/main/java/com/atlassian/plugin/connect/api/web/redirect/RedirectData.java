@@ -47,9 +47,9 @@ public final class RedirectData
         return accessDeniedTemplateTypeToPath.get(accessDeniedTemplateType);
     }
 
-    public boolean shouldRedirect(Map<String, ? extends Object> conditionContext)
+    public boolean shouldRedirect(Map<String, Object> conditionContext)
     {
-        return condition == null || condition.shouldDisplay((Map<String, Object>) conditionContext);
+        return condition == null || condition.shouldDisplay(conditionContext);
     }
 
     public enum AccessDeniedTemplateType

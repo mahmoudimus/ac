@@ -5,7 +5,6 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.modules.beans.BeanWithConditions;
-import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -17,7 +16,6 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -90,15 +88,7 @@ public class ConditionLoadingValidatorImplTest
 
     private void validate(SingleConditionBean conditionBean) throws ConnectModuleValidationException
     {
-        BeanWithConditions beanWithConditions = new BeanWithConditions()
-        {
-
-            @Override
-            public List<ConditionalBean> getConditions()
-            {
-                return singletonList(conditionBean);
-            }
-        };
+        BeanWithConditions beanWithConditions = () -> singletonList(conditionBean);
         conditionLoadingValidator.validate(getConnectPlugin(), addon, moduleMeta, singletonList(beanWithConditions));
     }
 

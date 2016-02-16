@@ -54,9 +54,9 @@ public final class LicenseDetailsRepresentation implements RemotablePluginLicens
                                         @JsonProperty("contactEmail") String contactEmail,
                                         @JsonProperty("enterprise") Boolean enterprise)
     {
-        this.valid = (valid == null) ? false : valid.booleanValue();
-        this.evaluation = (evaluation == null) ? false : evaluation.booleanValue();
-        this.nearlyExpired = (nearlyExpired == null) ? false : nearlyExpired.booleanValue();
+        this.valid = (valid != null) && valid;
+        this.evaluation = (evaluation != null) && evaluation;
+        this.nearlyExpired = (nearlyExpired != null) && nearlyExpired;
         this.maximumNumberOfUsers = maximumNumberOfUsers;
         this.licenseType = licenseType;
         this.maintenanceExpiryDate = maintenanceExpiryDate;
@@ -66,7 +66,7 @@ public final class LicenseDetailsRepresentation implements RemotablePluginLicens
         this.supportEntitlementNumber = supportEntitlementNumber;
         this.organizationName = organizationName;
         this.contactEmail = contactEmail;
-        this.enterprise = (enterprise == null) ? false : enterprise.booleanValue();
+        this.enterprise = (enterprise != null) && enterprise;
     }
 
     @Override

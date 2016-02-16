@@ -33,10 +33,7 @@ public class RequestContextParameters
             String value = entry.getValue();
             if (shouldIncludeInHeader(name))
             {
-                StringBuilder sb = new StringBuilder("AP-CTX-");
-                sb.append(name.replace('_', '-'));
-
-                headers.put(sb.toString(), value);
+                headers.put("AP-CTX-" + name.replace('_', '-'), value);
             }
         }
         return headers;
