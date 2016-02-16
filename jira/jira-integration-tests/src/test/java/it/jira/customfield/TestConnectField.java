@@ -1,9 +1,14 @@
 package it.jira.customfield;
 
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import javax.ws.rs.core.Response.Status;
+
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.functest.framework.Navigation;
 import com.atlassian.jira.functest.framework.NavigationImpl;
-import com.atlassian.jira.functest.framework.email.OutgoingMailHelper;
 import com.atlassian.jira.functest.framework.navigation.BulkChangeWizard;
 import com.atlassian.jira.functest.framework.navigation.IssueNavigatorNavigation;
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
@@ -22,6 +27,7 @@ import com.atlassian.jira.testkit.client.restclient.IssueClient;
 import com.atlassian.jira.testkit.client.restclient.Response;
 import com.atlassian.jira.testkit.client.restclient.SearchRequest;
 import com.atlassian.jira.testkit.client.restclient.SearchResult;
+import com.atlassian.jira.testkit.client.restclient.WatchersClient;
 import com.atlassian.jira.webtests.WebTesterFactory;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
@@ -33,6 +39,7 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.google.common.base.Objects;
 import it.jira.JiraTestBase;
 import it.jira.JiraWebDriverTestBase;
+import it.jira.util.MailTestHelper;
 import net.sourceforge.jwebunit.WebTester;
 import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.Description;
@@ -45,16 +52,9 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import javax.mail.internet.MimeMessage;
-import javax.ws.rs.core.Response.Status;
-
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static it.jira.customfield.CustomFieldMatchers.customFieldResponse;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -79,6 +79,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     public static void setUpClass() throws Exception
     {
         project = JiraTestBase.addProject();
+        product.backdoor().project().setNotificationScheme(Long.valueOf(project.getId()), 10000L);
         addonKey = AddonTestUtils.randomAddonKey();
 
         customFieldsControl = product.backdoor().customFields();
@@ -90,10 +91,17 @@ public class TestConnectField extends JiraWebDriverTestBase
                 .setVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .addModules("jiraIssueFields",
                         buildIssueFieldModule(FIELD_KEY, FIELD_NAME, FIELD_DESCRIPTION))
-                                .addScopes(ScopeName.READ)
-                                .start();
+                .addScopes(ScopeName.READ)
+                .start();
 
         product.quickLoginAsAdmin();
+
+        boolean fredExists = product.backdoor().usersAndGroups().getAllUsers().stream().filter(user -> user.getUsername().equals("fred")).findFirst().isPresent();
+        if (!fredExists)
+        {
+            product.backdoor().usersAndGroups().addUser("fred");
+            product.backdoor().usersAndGroups().addUserToGroup("fred", "jira-software-users");
+        }
     }
 
     @AfterClass
@@ -168,7 +176,7 @@ public class TestConnectField extends JiraWebDriverTestBase
 
         CustomFieldDefinitionJsonBean customFieldDefinitionJson = new CustomFieldDefinitionJsonBean(
                 "name"
-                ,"desc",
+                , "desc",
                 getCustomFieldTypeKey(),
                 getCustomFieldSearcherKey(),
                 null
@@ -190,10 +198,10 @@ public class TestConnectField extends JiraWebDriverTestBase
         assertThat(issueClient.get(issue.key).fields.get(fieldId), equalTo("edited via rest"));
     }
 
-
-    @Ignore("we can't use Navigator here. Writing this test after moving Connect to JIRA will be trivial, no point in trying to do it now")
+    @Ignore ("we can't use Navigator here. Writing this test after moving Connect to JIRA will be trivial, no point in trying to do it now")
     @Test
-    public void issueFieldCanBeEditedInBulkMode() throws Exception {
+    public void issueFieldCanBeEditedInBulkMode() throws Exception
+    {
 
         WebTester tester = new WebTester();
         WebTesterFactory.setupWebTester(tester, product.environmentData());
@@ -222,11 +230,23 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
-    @Ignore
-    public void testMail() throws Exception
+    public void testUpdatingTheCustomFieldTriggersNotificationAndFieldValueIsPresentInEmails() throws Exception
     {
-        OutgoingMailHelper mailHelper = new OutgoingMailHelper(product.backdoor());
-        final Collection<MimeMessage> mails = mailHelper.flushMailQueueAndWait(6);
+        MailTestHelper mailTestHelper = new MailTestHelper(product.backdoor());
+        mailTestHelper.configure();
+
+        addIssueFieldToScreens(project.getKey());
+
+        IssueCreateResponse issue = createIssue();
+
+        new WatchersClient(product.environmentData()).postResponse(issue.key, "fred");
+
+        IssueUpdateRequest updateFieldRequest = new IssueUpdateRequest().fields(new IssueFields()
+                .customField(numericFieldId(getFieldId()), "custom_field_new_value"));
+
+        issueClient.update(issue.id, updateFieldRequest);
+
+        assertThat(mailTestHelper.getSentMail(), containsString("custom_field_new_value"));
     }
 
     private IssueCreateResponse createTestIssue()
@@ -238,10 +258,8 @@ public class TestConnectField extends JiraWebDriverTestBase
     {
         IssueCreateResponse issue = createIssue();
 
-        Long realCfId = Long.parseLong(fieldId.split("_")[1]);
         IssueUpdateRequest updateFieldRequest = new IssueUpdateRequest().fields(new IssueFields()
-                        .customField(realCfId, value)
-        );
+                .customField(numericFieldId(fieldId), value));
 
         issueClient.update(issue.id, updateFieldRequest);
 
@@ -274,6 +292,11 @@ public class TestConnectField extends JiraWebDriverTestBase
                         customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey()).matches(cf))
                 .map(cf -> cf.id)
                 .findFirst().get();
+    }
+
+    private Long numericFieldId(String fullId)
+    {
+        return Long.parseLong(fullId.split("_")[1]);
     }
 
     private WebElement findCustomFieldWithIdOnPage(final String customFieldId)
