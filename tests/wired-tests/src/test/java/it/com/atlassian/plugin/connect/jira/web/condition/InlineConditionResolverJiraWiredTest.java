@@ -14,6 +14,8 @@ import com.atlassian.jira.bc.issue.vote.VoteService;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.entity.property.EntityPropertyService.PropertyInput;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.permission.GlobalPermissionKey;
+import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.plugin.webfragment.conditions.UserIsTheLoggedInUserCondition;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.Permissions;
@@ -56,7 +58,10 @@ public class InlineConditionResolverJiraWiredTest
                     "propertyKey", "test",
                     "value", "testValue")))
             .add(pair(pair("has_issue_permission", Optional.of(true)), ImmutableMap.of("permission", Permissions.getShortName(Permissions.EDIT_ISSUE))))
+            .add(pair(pair("has_issue_permission", Optional.of(true)), ImmutableMap.of("permission", ProjectPermissions.EDIT_ISSUES.permissionKey())))
             .add(pair(pair("has_project_permission", Optional.of(true)), ImmutableMap.of("permission", Permissions.getShortName(Permissions.PROJECT_ADMIN))))
+            .add(pair(pair("has_project_permission", Optional.of(true)), ImmutableMap.of("permission", ProjectPermissions.EDIT_ISSUES.permissionKey())))
+            .add(pair(pair("has_global_permission", Optional.of(true)), ImmutableMap.of("permission", GlobalPermissionKey.ADMINISTER.getKey())))
             .add(pair(pair("has_selected_project", Optional.of(true)), emptyMap()))
             .add(pair(pair("has_sub_tasks_available", Optional.of(true)), emptyMap()))
             .add(pair(pair("has_voted_for_issue", Optional.of(true)), emptyMap()))

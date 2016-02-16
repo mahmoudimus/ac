@@ -1,48 +1,49 @@
 package it.jira.condition;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.atlassian.fugue.Pair;
+import com.atlassian.jira.permission.GlobalPermissionKey;
+import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.testkit.client.IssuesControl;
 import com.atlassian.jira.testkit.client.restclient.VotesClient;
 import com.atlassian.jira.testkit.client.restclient.WatchersClient;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import it.jira.JiraWebDriverTestBase;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static com.atlassian.fugue.Pair.pair;
 
 public abstract class AbstractJiraConditionsTest extends JiraWebDriverTestBase
 {
-    protected static final List<String> CONDITION_NAMES = newArrayList(
-            "has_selected_project",
-            "linking_enabled",
-            "sub_tasks_enabled",
-            "time_tracking_enabled",
-            "user_is_project_admin",
-            "voting_enabled",
-            "watching_enabled",
-            "can_attach_file_to_issue",
-            "can_manage_attachments",
-            "has_issue_permission",
-            "has_project_permission",
-            "has_global_permission",
-            "has_sub_tasks_available",
-            "has_voted_for_issue",
-            "is_issue_assigned_to_current_user",
-            "is_issue_editable",
-            "is_issue_unresolved",
-            "is_sub_task",
-            "is_watching_issue"
-    );
-
-    protected static final Map<String, Map<String, String>> CONDITION_PARAMETERS = ImmutableMap.of(
-            "has_issue_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.EDIT_ISSUE)),
-            "has_project_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.PROJECT_ADMIN)),
-            "has_global_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.USER_PICKER))
-    );
+    protected static final List<Pair<String, Map<String, String>>> CONDITION_NAMES = ImmutableList.<Pair<String, Map<String, String>>>builder()
+            .add(pair("has_selected_project", Collections.emptyMap()))
+            .add(pair("linking_enabled", Collections.emptyMap()))
+            .add(pair("sub_tasks_enabled", Collections.emptyMap()))
+            .add(pair("time_tracking_enabled", Collections.emptyMap()))
+            .add(pair("user_is_project_admin", Collections.emptyMap()))
+            .add(pair("voting_enabled", Collections.emptyMap()))
+            .add(pair("watching_enabled", Collections.emptyMap()))
+            .add(pair("can_attach_file_to_issue", Collections.emptyMap()))
+            .add(pair("can_manage_attachments", Collections.emptyMap()))
+            .add(pair("has_issue_permission", ImmutableMap.of("permission", ProjectPermissions.EDIT_ISSUES.permissionKey())))
+            .add(pair("has_issue_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.EDIT_ISSUE)))) // legacy behaviour
+            .add(pair("has_project_permission", ImmutableMap.of("permission", ProjectPermissions.ADMINISTER_PROJECTS.permissionKey())))
+            .add(pair("has_project_permission", ImmutableMap.of("permission", Permissions.getShortName(Permissions.PROJECT_ADMIN)))) // legacy behaviour
+            .add(pair("has_global_permission", ImmutableMap.of("permission", GlobalPermissionKey.ADMINISTER.getKey())))
+            .add(pair("has_sub_tasks_available", Collections.emptyMap()))
+            .add(pair("has_voted_for_issue", Collections.emptyMap()))
+            .add(pair("is_issue_assigned_to_current_user", Collections.emptyMap()))
+            .add(pair("is_issue_editable", Collections.emptyMap()))
+            .add(pair("is_issue_unresolved", Collections.emptyMap()))
+            .add(pair("is_sub_task", Collections.emptyMap()))
+            .add(pair("is_watching_issue", Collections.emptyMap()))
+            .build();
 
     protected final String createIssueSatisfyingAllConditions(TestUser user)
     {

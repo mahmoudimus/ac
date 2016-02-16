@@ -1,8 +1,9 @@
 package it.jira.condition;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
+import com.atlassian.fugue.Pair;
 import com.atlassian.jira.pageobjects.pages.viewissue.IssueMenu;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.plugin.connect.jira.web.condition.JiraConditionClassResolver;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import it.jira.item.TestJiraWebItemWithProductCondition;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -20,6 +22,7 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -70,40 +73,41 @@ public class TestJiraConditions extends AbstractJiraConditionsTest
         issueMenu.openMoreActions();
 
         List<String> passedConditions = CONDITION_NAMES.stream()
-                .filter((conditionName) -> isItemPresentInMoreActionsMenu(issueMenu, getDisplayNameForCondition(conditionName)))
-                .collect(Collectors.toList());
+                .filter((nameParams) -> isItemPresentInMoreActionsMenu(issueMenu, getDisplayNameForCondition(nameParams)))
+                .map(Pair::left)
+                .collect(toList());
 
-        assertThat(passedConditions, equalTo(CONDITION_NAMES));
+        assertThat(passedConditions, equalTo(CONDITION_NAMES.stream().map(Pair::left).collect(toList())));
     }
 
     private static void addWebItemsWithConditions()
     {
-        for (String conditionName : CONDITION_NAMES)
+        for (Pair<String, Map<String, String>> condition : CONDITION_NAMES)
         {
-            addon.addModules("webItems", newWebItemBeanWithCondition(conditionName));
+            addon.addModules("webItems", newWebItemBeanWithCondition(condition));
         }
     }
 
-    private static WebItemModuleBean newWebItemBeanWithCondition(String conditionName)
+    private static WebItemModuleBean newWebItemBeanWithCondition(Pair<String, Map<String, String>> condition)
     {
-        SingleConditionBeanBuilder conditionBeanBuilder = newSingleConditionBean().withCondition(conditionName);
-        if (CONDITION_PARAMETERS.containsKey(conditionName))
+        SingleConditionBeanBuilder conditionBeanBuilder = newSingleConditionBean().withCondition(condition.left());
+        if (!condition.right().isEmpty())
         {
-            conditionBeanBuilder.withParams(CONDITION_PARAMETERS.get(conditionName));
+            conditionBeanBuilder.withParams(condition.right());
         }
         return newWebItemBean()
-                .withKey(conditionName.replace('_', '-'))
+                .withKey(condition.left().replace('_', '-') + "-" + RandomStringUtils.randomNumeric(10))
                 .withUrl("/path-without-route")
                 .withLocation("operations-work")
-                .withWeight(CONDITION_NAMES.indexOf(conditionName))
-                .withName(new I18nProperty(getDisplayNameForCondition(conditionName), null))
+                .withWeight(CONDITION_NAMES.indexOf(condition))
+                .withName(new I18nProperty(getDisplayNameForCondition(condition), null))
                 .withConditions(conditionBeanBuilder.build())
                 .build();
     }
 
-    private static String getDisplayNameForCondition(String conditionName)
+    private static String getDisplayNameForCondition(Pair<String, Map<String, String>> nameParams)
     {
-        return String.format("%d %s", CONDITION_NAMES.indexOf(conditionName), StringUtils.substring(conditionName, 0, 15));
+        return String.format("%d %s", CONDITION_NAMES.indexOf(nameParams), StringUtils.substring(nameParams.left(), 0, 15));
     }
 
     private boolean isItemPresentInMoreActionsMenu(IssueMenu issueMenu, String webItemTitle)
