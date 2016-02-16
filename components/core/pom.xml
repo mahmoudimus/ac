@@ -104,6 +104,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.extension</groupId>
+            <artifactId>atlassian-extension-connect-lib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.vcache</groupId>
+            <artifactId>atlassian-vcache-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
             <scope>compile</scope>

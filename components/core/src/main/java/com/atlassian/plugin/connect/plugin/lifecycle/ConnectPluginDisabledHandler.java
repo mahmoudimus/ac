@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 import org.slf4j.Logger;
@@ -23,14 +23,17 @@ public class ConnectPluginDisabledHandler implements InitializingBean, Disposabl
     private final EventPublisher eventPublisher;
     private final ConnectAddonRegistry addonRegistry;
     private final ConnectAddonManager addonManager;
+    private final ConnectExtensionManager extensionManager;
 
     @Inject
     public ConnectPluginDisabledHandler(final ConnectAddonRegistry addonRegistry,
-            final ConnectAddonManager addonManager, final EventPublisher eventPublisher)
+            final ConnectAddonManager addonManager, final EventPublisher eventPublisher,
+            final ConnectExtensionManager extensionManager)
     {
         this.eventPublisher = eventPublisher;
         this.addonRegistry = addonRegistry;
         this.addonManager = addonManager;
+        this.extensionManager = extensionManager;
     }
 
     @PluginEventListener
@@ -50,6 +53,10 @@ public class ConnectPluginDisabledHandler implements InitializingBean, Disposabl
                     log.error("Unable to disable addon user for addon: " + pluginKey, e);
                 }
             }
+        }
+        if (addonManager.isVertigo())
+        {
+            extensionManager.stop();
         }
     }
 

@@ -607,6 +607,16 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.extension</groupId>
+                <artifactId>atlassian-extension-connect-lib</artifactId>
+                <version>${atlassian.extension.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.vcache</groupId>
+                <artifactId>atlassian-vcache-api</artifactId>
+                <version>${atlassian.vcache.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.analytics</groupId>
                 <artifactId>analytics-api</artifactId>
                 <version>${atlassian.analytics.version}</version>
@@ -850,7 +860,7 @@
                             </configuration>
                         </plugin>
                     </plugins>
-	        </pluginManagement>
+                </pluginManagement>
             </build>
             <dependencies>
                 <dependency>
@@ -881,7 +891,9 @@
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
         <atlassian.jwt.version>1.5.3</atlassian.jwt.version>
         <atlassian.json.schema.validator.version>1.0.4</atlassian.json.schema.validator.version>
-        <atlassian.plugins.version>4.0.0-m020</atlassian.plugins.version>
+        <atlassian.plugins.version>4.0.10</atlassian.plugins.version>
+        <atlassian.extension.version>1.0.0-m004-bf42fb9</atlassian.extension.version>
+        <atlassian.vcache.version>1.3.0</atlassian.vcache.version>
         <applinks.api.version>5.0.0</applinks.api.version>
         <atlassian.rest.version>2.9.13</atlassian.rest.version>
         <atlassian.sal.version>3.0.5</atlassian.sal.version>

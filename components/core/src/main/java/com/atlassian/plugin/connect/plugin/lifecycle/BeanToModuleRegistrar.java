@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.plugin.descriptor.event.EventPublishingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
-import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
 
@@ -61,10 +61,23 @@ public class BeanToModuleRegistrar
             return;
         }
 
-        Collection<ConnectModuleProvider> moduleProviders = pluginAccessor.getModules(
-                new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
+        List<ModuleDescriptor<?>> descriptorsToRegister = getDescriptorsForBeans(eventPublisher, pluginAccessor, addon);
+        if (!descriptorsToRegister.isEmpty())
+        {
+            registrations.putIfAbsent(addon.getKey(), dynamicDescriptorRegistration.registerDescriptors(descriptorsToRegister));
+        }
+    }
 
-        Map<String, List<ModuleBean>> moduleLists = getModuleLists(addon);
+    public static List<ModuleDescriptor<?>> getDescriptorsForBeans(
+            final EventPublisher eventPublisher, final PluginAccessor pluginAccessor, final ConnectAddonBean addon)
+    {
+
+        Collection<ConnectModuleProvider> moduleProviders =
+                pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectModuleProviderModuleDescriptor.class).stream()
+                        .map(ModuleDescriptor::getModule)
+                        .collect(Collectors.toList());
+
+        Map<String, List<ModuleBean>> moduleLists = getModuleLists(eventPublisher, addon);
         List<ModuleBean> lifecycleWebhooks = getLifecycleWebhooks(addon.getLifecycle());
         Map<String, List<ModuleBean>> lifecycleWebhookModuleList
                 = Collections.singletonMap(new WebHookModuleMeta().getDescriptorKey(), lifecycleWebhooks);
@@ -72,10 +85,7 @@ public class BeanToModuleRegistrar
         List<ModuleDescriptor<?>> descriptorsToRegister = new ArrayList<>();
         getDescriptorsToRegisterForModules(moduleLists, addon, moduleProviders, descriptorsToRegister);
         getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, addon, moduleProviders, descriptorsToRegister);
-        if (!descriptorsToRegister.isEmpty())
-        {
-            registrations.putIfAbsent(addon.getKey(), dynamicDescriptorRegistration.registerDescriptors(descriptorsToRegister));
-        }
+        return descriptorsToRegister;
     }
 
     public synchronized void unregisterDescriptorsForAddon(String addonKey)
@@ -114,7 +124,7 @@ public class BeanToModuleRegistrar
         return registrations.containsKey(pluginKey);
     }
 
-    private List<ModuleBean> getLifecycleWebhooks(LifecycleBean lifecycle)
+    private static List<ModuleBean> getLifecycleWebhooks(LifecycleBean lifecycle)
     {
         List<ModuleBean> webhooks = new ArrayList<>();
         if (!Strings.isNullOrEmpty(lifecycle.getEnabled()))
@@ -132,7 +142,7 @@ public class BeanToModuleRegistrar
         return webhooks;
     }
 
-    private void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
+    private static void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
             ConnectAddonBean addon,
             Collection<ConnectModuleProvider> moduleProviders,
             List<ModuleDescriptor<?>> descriptorsToRegister) throws ConnectModuleRegistrationException
@@ -146,7 +156,7 @@ public class BeanToModuleRegistrar
         }
     }
 
-    private Map<String, List<ModuleBean>> getModuleLists(ConnectAddonBean addon) throws ConnectModuleRegistrationException
+    private static Map<String, List<ModuleBean>> getModuleLists(final EventPublisher eventPublisher, ConnectAddonBean addon) throws ConnectModuleRegistrationException
     {
         return addon.getModules().getValidModuleLists(new EventPublishingModuleValidationExceptionHandler(eventPublisher)
         {
@@ -162,7 +172,7 @@ public class BeanToModuleRegistrar
         });
     }
 
-    private ConnectModuleProvider findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider> moduleProviders)
+    private static ConnectModuleProvider findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider> moduleProviders)
             throws ConnectModuleRegistrationException
     {
         return moduleProviders.stream()

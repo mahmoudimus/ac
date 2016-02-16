@@ -1,18 +1,17 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectModuleProviderModuleDescriptor;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
-import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.gson.JsonElement;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PluggableModuleListDeserializer extends ModuleListDeserializer
 {
@@ -44,13 +43,11 @@ public class PluggableModuleListDeserializer extends ModuleListDeserializer
 
     private Map<String, ConnectModuleProvider> getModuleProviders()
     {
-        Collection<ConnectModuleProvider> moduleProviders = pluginAccessor.getModules(
-                new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
-        Map<String, ConnectModuleProvider> moduleProviderMap = new HashMap<>();
-        for (ConnectModuleProvider moduleProvider : moduleProviders)
-        {
-            moduleProviderMap.put(moduleProvider.getMeta().getDescriptorKey(), moduleProvider);
-        }
-        return moduleProviderMap;
+        return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectModuleProviderModuleDescriptor.class).stream()
+                .map(ModuleDescriptor::getModule)
+                .collect(Collectors.toMap(
+                        moduleProvider -> moduleProvider.getMeta().getDescriptorKey(),
+                        moduleProvider -> moduleProvider)
+                );
     }
 }

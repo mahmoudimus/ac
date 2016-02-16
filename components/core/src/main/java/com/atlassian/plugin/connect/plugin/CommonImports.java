@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
@@ -40,7 +37,10 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.soy.renderer.SoyTemplateRenderer;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
+import com.atlassian.vcache.VCacheFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
+
+import javax.inject.Inject;
 
 /**
  * This class does nothing but is here to centralize the cross-product component imports.
@@ -87,6 +87,7 @@ public class CommonImports
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
             @ComponentImport CrowdService crowdService,
             @ComponentImport DarkFeatureManager darkFeatureManager,
+            @ComponentImport VCacheFactory vcacheFactory,
             @ComponentImport ActiveObjects activeObjects)
     {
     }

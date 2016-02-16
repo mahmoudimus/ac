@@ -20,19 +20,26 @@ public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
 
     private final ConnectAddonRegistry addonRegistry;
     private final ConnectAddonManager addonManager;
+    private final ConnectExtensionManager extensionManager;
 
     @Inject
-    public ConnectPluginEnabledHandler(ConnectAddonRegistry addonRegistry,
-            ConnectAddonManager addonManager, EventPublisher eventPublisher)
+    public ConnectPluginEnabledHandler(final ConnectAddonRegistry addonRegistry,
+            final ConnectAddonManager addonManager, final EventPublisher eventPublisher,
+            final ConnectExtensionManager extensionManager)
     {
         super(eventPublisher);
         this.addonRegistry = addonRegistry;
         this.addonManager = addonManager;
+        this.extensionManager = extensionManager;
     }
 
     @Override
     protected void finalInit()
     {
+        if (addonManager.isVertigo())
+        {
+            extensionManager.start();
+        }
         enableAddons();
     }
 

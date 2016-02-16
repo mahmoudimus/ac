@@ -92,6 +92,7 @@ public class ConnectAddonManager
     private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
     private static final SigningAlgorithm JWT_ALGORITHM = SigningAlgorithm.HS256; // currently, this is the only algorithm that we support
     private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
+    private static final String DARK_FEATURE_ENABLE_VERTIGO_MODULE_MANAGEMENT = "connect.lifecycle.install.vertigo_module_management.enable";
 
     private static final String USER_KEY = "user_key";
 
@@ -271,14 +272,16 @@ public class ConnectAddonManager
 
             if (null != addon)
             {
-                try
+                if (!isVertigo())
                 {
-                    beanToModuleRegistrar.registerDescriptorsForBeans(addon);
-                }
-                catch (ConnectModuleRegistrationException e)
-                {
-                    eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, e.getMessage()));
-                    throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
+                    try
+                    {
+                        beanToModuleRegistrar.registerDescriptorsForBeans(addon);
+                    } catch (ConnectModuleRegistrationException e)
+                    {
+                        eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, e.getMessage()));
+                        throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
+                    }
                 }
 
                 if (addonRequiresAuth(addon))
@@ -313,6 +316,11 @@ public class ConnectAddonManager
             eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, message));
             throw new ConnectAddonEnableException(pluginKey, message);
         }
+    }
+
+    public boolean isVertigo()
+    {
+        return darkFeatureManager.isFeatureEnabledForAllUsers(DARK_FEATURE_ENABLE_VERTIGO_MODULE_MANAGEMENT);
     }
 
     public void disableConnectAddon(final String pluginKey) throws ConnectAddonDisableException
