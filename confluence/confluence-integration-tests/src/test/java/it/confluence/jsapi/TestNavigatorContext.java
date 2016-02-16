@@ -18,6 +18,7 @@ import it.confluence.servlet.ConfluenceAppServlets;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -82,6 +83,8 @@ public class TestNavigatorContext extends ConfluenceWebDriverTestBase
         }
     }
 
+    // Temporary ignore while waiting for CE-289 to be released to Confluence. Kate West-Walker will fix and unignore this soon :)
+    @Ignore
     @Test
     public void testGetCurrentContextOfCreatePage() throws Exception
     {
