@@ -1,9 +1,7 @@
 package it.jira.condition;
 
 import java.util.List;
-import java.util.Map;
 
-import com.atlassian.fugue.Pair;
 import com.atlassian.jira.pageobjects.pages.viewissue.IssueMenu;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.plugin.connect.jira.web.condition.JiraConditionClassResolver;
@@ -72,42 +70,42 @@ public class TestJiraConditions extends AbstractJiraConditionsTest
         IssueMenu issueMenu = viewIssuePage.getIssueMenu();
         issueMenu.openMoreActions();
 
-        List<String> passedConditions = CONDITION_NAMES.stream()
+        List<String> passedConditions = CONDITIONS.stream()
                 .filter((nameParams) -> isItemPresentInMoreActionsMenu(issueMenu, getDisplayNameForCondition(nameParams)))
-                .map(Pair::left)
+                .map(TestedCondition::getName)
                 .collect(toList());
 
-        assertThat(passedConditions, equalTo(CONDITION_NAMES.stream().map(Pair::left).collect(toList())));
+        assertThat(passedConditions, equalTo(CONDITIONS.stream().map(TestedCondition::getName).collect(toList())));
     }
 
     private static void addWebItemsWithConditions()
     {
-        for (Pair<String, Map<String, String>> condition : CONDITION_NAMES)
+        for (TestedCondition condition : CONDITIONS)
         {
             addon.addModules("webItems", newWebItemBeanWithCondition(condition));
         }
     }
 
-    private static WebItemModuleBean newWebItemBeanWithCondition(Pair<String, Map<String, String>> condition)
+    private static WebItemModuleBean newWebItemBeanWithCondition(TestedCondition condition)
     {
-        SingleConditionBeanBuilder conditionBeanBuilder = newSingleConditionBean().withCondition(condition.left());
-        if (!condition.right().isEmpty())
+        SingleConditionBeanBuilder conditionBeanBuilder = newSingleConditionBean().withCondition(condition.getName());
+        if (!condition.getParameters().isEmpty())
         {
-            conditionBeanBuilder.withParams(condition.right());
+            conditionBeanBuilder.withParams(condition.getParameters());
         }
         return newWebItemBean()
-                .withKey(condition.left().replace('_', '-') + "-" + RandomStringUtils.randomNumeric(10))
+                .withKey(condition.getName().replace('_', '-') + "-" + RandomStringUtils.randomNumeric(10))
                 .withUrl("/path-without-route")
                 .withLocation("operations-work")
-                .withWeight(CONDITION_NAMES.indexOf(condition))
+                .withWeight(CONDITIONS.indexOf(condition))
                 .withName(new I18nProperty(getDisplayNameForCondition(condition), null))
                 .withConditions(conditionBeanBuilder.build())
                 .build();
     }
 
-    private static String getDisplayNameForCondition(Pair<String, Map<String, String>> nameParams)
+    private static String getDisplayNameForCondition(TestedCondition condition)
     {
-        return String.format("%d %s", CONDITION_NAMES.indexOf(nameParams), StringUtils.substring(nameParams.left(), 0, 15));
+        return String.format("%d %s", CONDITIONS.indexOf(condition), StringUtils.substring(condition.getName(), 0, 15));
     }
 
     private boolean isItemPresentInMoreActionsMenu(IssueMenu issueMenu, String webItemTitle)
