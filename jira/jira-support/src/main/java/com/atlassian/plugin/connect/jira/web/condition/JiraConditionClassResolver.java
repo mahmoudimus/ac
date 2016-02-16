@@ -24,7 +24,7 @@ public class JiraConditionClassResolver implements ConnectConditionClassResolver
                 newEntry("time_tracking_enabled", com.atlassian.jira.plugin.webfragment.conditions.TimeTrackingEnabledCondition.class).build(),
                 newEntry("user_has_issue_history", com.atlassian.jira.plugin.webfragment.conditions.UserHasIssueHistoryCondition.class).build(),
                 newEntry("user_is_project_admin", com.atlassian.jira.plugin.webfragment.conditions.UserIsProjectAdminCondition.class).build(),
-                newEntry("user_is_the_logged_in_user", ViewingOwnProfileCondition.class).build(),
+                newEntry("user_is_the_logged_in_user", ViewingOwnProfileCondition.class).withoutInlineSupport().build(),
                 newEntry("voting_enabled", com.atlassian.jira.plugin.webfragment.conditions.VotingEnabledCondition.class).build(),
                 newEntry("watching_enabled", com.atlassian.jira.plugin.webfragment.conditions.WatchingEnabledCondition.class).build(),
                 newEntry("can_use_application", CanUseApplicationCondition.class).contextFree().build(),

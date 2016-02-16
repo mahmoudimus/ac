@@ -1,6 +1,7 @@
 
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
+import com.atlassian.jira.avatar.Avatar;
 import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.issue.comments.Comment;
 import com.atlassian.jira.project.Project;
@@ -70,9 +71,8 @@ public class ReadScopeJiraTest extends ScopeTestBase
     public void shouldAllowGetSecureAvatar() throws Exception
     {
         Project project = scopeTestUtil.createProject();
-        String avatarId = project.getIssueTypes().iterator().next().getId();
-
-        assertValidRequest(HttpMethod.GET, "/secure/viewavatar?size=xsmall&avatarType=issuetype&avatarId=" + avatarId);
+        Avatar avatar = project.getIssueTypes().iterator().next().getAvatar();
+        assertValidRequest(HttpMethod.GET, "/secure/viewavatar?size=xsmall&avatarType=issuetype&avatarId=" + avatar.getId());
     }
 
     @Test

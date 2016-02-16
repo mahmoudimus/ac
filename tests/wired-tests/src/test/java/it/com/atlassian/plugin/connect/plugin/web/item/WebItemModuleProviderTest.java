@@ -44,6 +44,8 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomPluginKey;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -68,7 +70,6 @@ public class WebItemModuleProviderTest
     private final PluginAccessor pluginAccessor;
     private HttpServletRequest servletRequest;
     private ConnectAddonBean addon;
-
     private String pluginKey;
 
     public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
@@ -479,24 +480,21 @@ public class WebItemModuleProviderTest
 
     private void assertAddonLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addonBean)
     {
-        final String prefix = getExpectedUrlPrefixForWebItem(webItemModuleBean, addonBean);
         final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>());
-        final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);
-        assertTrue(message, href.startsWith(prefix));
-    }
 
-    private String getExpectedUrlPrefixForWebItem(final WebItemModuleBean webItemModuleBean, final ConnectAddonBean addonBean)
-    {
         final WebItemTargetBean target = webItemModuleBean.getTarget();
         if (target.isDialogTarget() || target.isInlineDialogTarget())
         {
-            return ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean));
+            assertThat(href, startsWith(ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean))));
         }
-        if (target.isPageTarget() && !webItemModuleBean.isAbsolute())
+        else if (target.isPageTarget() && !webItemModuleBean.isAbsolute())
         {
-            return CONTEXT_PATH + RedirectServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean));
+            assertThat(href, containsString(RedirectServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean))));
         }
-        return BASE_URL + "/my/addon";
+        else
+        {
+            assertThat(href, startsWith(BASE_URL + "/my/addon"));
+        }
     }
 
     private Plugin getConnectPlugin()

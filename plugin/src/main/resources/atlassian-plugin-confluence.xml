@@ -1,5 +1,7 @@
 <application key="confluence">
 
+    <analytics-whitelist key="confluence-analytics-whitelist" resource="analytics/confluence-analytics-whitelist.json"/>
+
     <connect-module key="blueprint-module" class="com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProviderImpl"/>
     <connect-module key="content-property-module" class="com.atlassian.plugin.connect.confluence.property.ContentPropertyModuleProvider"/>
     <connect-module key="dynamic-content-macro-module" class="com.atlassian.plugin.connect.confluence.macro.DynamicContentMacroModuleProvider"/>
@@ -64,6 +66,7 @@
     <web-resource key="ap-core">
         <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
         <dependency>confluence.web.resources:almond</dependency>
+        <dependency>confluence.web.resources:navigator-context</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -113,6 +116,7 @@
 
     <web-resource key="navigator-routes">
         <resource type="download" name="navigator-routes.js" location="js/confluence/navigator/routes.js" />
+        <resource type="download" name="navigator-context.js" location="js/confluence/navigator/context.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>

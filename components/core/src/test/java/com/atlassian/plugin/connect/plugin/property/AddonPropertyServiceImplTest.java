@@ -3,9 +3,12 @@ package com.atlassian.plugin.connect.plugin.property;
 import java.util.Collections;
 import java.util.Optional;
 
+import com.atlassian.plugin.connect.api.property.AddonProperty;
+import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyService.DeleteServiceResult;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyService.PutServiceResult;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService.DeleteServiceResult;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService.PutServiceResult;
 import com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -24,7 +27,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import static com.atlassian.plugin.connect.plugin.property.AddonPropertyService.OperationStatus;
+import static com.atlassian.plugin.connect.api.property.AddonPropertyService.OperationStatus;
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl.OperationStatusImpl;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;

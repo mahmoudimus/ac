@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
+import java.util.Collections;
+import java.util.Map;
+
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
@@ -12,8 +15,8 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.junit.Before;
@@ -22,9 +25,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Collections;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFilter.COMPONENT_ID;
 import static com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFilter.ISSUE_ID;
@@ -151,7 +151,7 @@ public class JiraModuleContextFilterTest
 
     private void testFilter(Map<String, String> input, Map<String, String> expectedOutput)
     {
-        ModuleContextParameters unfiltered = new HashMapModuleContextParameters();
+        ModuleContextParameters unfiltered = new HashMapModuleContextParameters(Collections.emptyMap());
         unfiltered.putAll(input);
 
         ModuleContextParameters filtered = jiraModuleContextFilter.filter(unfiltered);
@@ -285,5 +285,4 @@ public class JiraModuleContextFilterTest
         when(authenticationContext.getUser()).thenReturn(null);
         testFilter(ImmutableMap.of(POSTFUNCTION_ID, "ego", POSTFUNCTION_CONFIG, "alter-ego"));
     }
-
 }

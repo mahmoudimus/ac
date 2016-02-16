@@ -13,5 +13,4 @@
             <validator class="com.atlassian.plugin.connect.TestJiraContextParametersValidator"/>
         </validators>
     </connect-context-parameters-resolver>
-
 </atlassian-plugin>

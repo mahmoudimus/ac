@@ -88,7 +88,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             // This is a workaround for https://ecosystem.atlassian.net/browse/UPM-4356
             // TODO: remove once UPM-4356 is resolved
 
-            valid = isJsonContentType(descriptorFile, contentType) ? isMalformedConnectJson(json) : false;
+            valid = isJsonContentType(descriptorFile, contentType) && isMalformedConnectJson(json);
         }
 
         return valid;

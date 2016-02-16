@@ -98,7 +98,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
 
         if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
         {
-            ModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
+            ModuleContextParameters moduleContext = new JiraModuleContextParametersImpl(startingParams);
             moduleContext.put(
                     JiraModuleContextFilter.POSTFUNCTION_ID,
                     (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_ID)

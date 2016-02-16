@@ -225,7 +225,7 @@ public final class AbstractContextFilterTest
 
     private ModuleContextParameters contextWithAllParameters(Iterable<String> names)
     {
-        ModuleContextParameters result = new HashMapModuleContextParameters();
+        ModuleContextParameters result = new HashMapModuleContextParameters(Collections.emptyMap());
         for (String name : names)
         {
             result.put(name, name);

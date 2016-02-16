@@ -10,7 +10,7 @@
         {
             "key": "remoteplugintest",
             "name": "remoteplugintest",
-            "basePaths": ["/user($|/.*)"],
+            "basePaths": ["/user($|/.*)", "/experimental($|/.*)"],
             "versions": ["1", "latest"]
         }
     ]

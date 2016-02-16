@@ -50,7 +50,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
     private static final String SPACE = "ds";
     private static final String WEB_ITEM_ON_URL = "/irwi";
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
 
     private final String baseUrl = product.getProductInstance().getBaseUrl();
     private final String addOnKey = AddonTestUtils.randomAddonKey();

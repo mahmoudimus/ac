@@ -37,32 +37,8 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Tests class resolution, autowiring and evaluation of some conditions in {@link ConfluenceConditionClassResolver}.
  */
-public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
+public class TestConfluenceConditions extends AbstractConfluenceConditionsTest
 {
-
-    private static final List<String> CONDITION_NAMES = newArrayList(
-            "can_edit_space_styles",
-            "create_content",
-            "email_address_public",
-            "has_page",
-            "has_space",
-            "latest_version",
-            "not_personal_space",
-            "showing_page_attachments",
-            "space_function_permission",
-            "space_sidebar",
-            "threaded_comments",
-            "tiny_url_supported",
-            "user_can_create_personal_space",
-            "user_logged_in_editable",
-            "viewing_content"
-    );
-
-    private static final Map<String, Map<String, String>> CONDITION_PARAMETERS = ImmutableMap.of(
-            "create_content", ImmutableMap.of("content", "Page"),
-            "space_function_permission", ImmutableMap.of("permission", SpacePermission.VIEWSPACE_PERMISSION)
-    );
-
     private static ConnectRunner addon;
 
     @BeforeClass

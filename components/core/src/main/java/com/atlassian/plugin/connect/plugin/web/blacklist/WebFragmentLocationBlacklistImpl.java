@@ -29,29 +29,9 @@ public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlac
     {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectWebFragmentLocationBlacklistModuleDescriptor.class)
                 .stream()
-                .map(new Function<ConnectWebFragmentLocationBlacklistModuleDescriptor, ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist>()
-                {
-                    @Override
-                    public ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist apply(ConnectWebFragmentLocationBlacklistModuleDescriptor connectWebFragmentLocationBlacklistModuleDescriptor)
-                    {
-                        return connectWebFragmentLocationBlacklistModuleDescriptor.getModule();
-                    }
-                })
-                .map(new Function<ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist, ImmutableSet<String>>() {
-                    @Override
-                    public ImmutableSet<String> apply(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist connectWebFragmentLocationBlacklist)
-                    {
-                        return connectWebFragmentLocationBlacklist.getWebPanelBlacklistedLocations();
-                    }
-                })
-                .flatMap(new Function<ImmutableSet<String>, Stream<String>>()
-                {
-                    @Override
-                    public Stream<String> apply(ImmutableSet<String> strings)
-                    {
-                        return strings.stream();
-                    }
-                })
+                .map(ConnectWebFragmentLocationBlacklistModuleDescriptor::getModule)
+                .map(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist::getWebPanelBlacklistedLocations)
+                .flatMap(ImmutableSet::stream)
                 .collect(Collectors.toSet());
     }
 
@@ -60,29 +40,9 @@ public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlac
     {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectWebFragmentLocationBlacklistModuleDescriptor.class)
                 .stream()
-                .map(new Function<ConnectWebFragmentLocationBlacklistModuleDescriptor, ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist>()
-                {
-                    @Override
-                    public ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist apply(ConnectWebFragmentLocationBlacklistModuleDescriptor connectWebFragmentLocationBlacklistModuleDescriptor)
-                    {
-                        return connectWebFragmentLocationBlacklistModuleDescriptor.getModule();
-                    }
-                })
-                .map(new Function<ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist, ImmutableSet<String>>() {
-                    @Override
-                    public ImmutableSet<String> apply(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist connectWebFragmentLocationBlacklist)
-                    {
-                        return connectWebFragmentLocationBlacklist.getWebItemBlacklistedLocations();
-                    }
-                })
-                .flatMap(new Function<ImmutableSet<String>, Stream<String>>()
-                {
-                    @Override
-                    public Stream<String> apply(ImmutableSet<String> strings)
-                    {
-                        return strings.stream();
-                    }
-                })
+                .map(ConnectWebFragmentLocationBlacklistModuleDescriptor::getModule)
+                .map(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist::getWebItemBlacklistedLocations)
+                .flatMap(ImmutableSet::stream)
                 .collect(Collectors.toSet());
     }
 

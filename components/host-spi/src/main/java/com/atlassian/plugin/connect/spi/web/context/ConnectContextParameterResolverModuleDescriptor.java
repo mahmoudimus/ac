@@ -15,6 +15,7 @@ import org.dom4j.Attribute;
 import org.dom4j.Element;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
@@ -92,45 +93,24 @@ public final class ConnectContextParameterResolverModuleDescriptor extends Abstr
 
     private static Iterable<String> loadClassNames(final Element root, final String containerName, final String elementName)
     {
-        Element container = subElement(root, containerName);
+        final Element container = subElement(root, containerName);
 
-        return transform(filter(subElements(container), new Predicate<Element>()
-        {
-            @Override
-            public boolean apply(final Element input)
-            {
+        return subElements(container).stream()
+            .filter(input -> {
                 Attribute classAttribute = input.attribute("class");
                 return input.getName().equals(elementName) && classAttribute != null && classAttribute.getValue() != null;
-            }
-        }), new Function<Element, String>()
-        {
-            @Override
-            public String apply(final Element input)
-            {
-                return input.attribute("class").getValue();
-            }
-        });
+            })
+            .map(input -> input.attribute("class").getValue())
+            .collect(Collectors.toList());
     }
 
     private static Element subElement(Element root, final String name)
     {
-        Optional<Element> result = Iterables.tryFind(subElements(root), new Predicate<Element>()
-        {
-            @Override
-            public boolean apply(final Element input)
-            {
-                return input.getName().equals(name);
-            }
-        });
+        Optional<Element> result = Iterables.tryFind(subElements(root), input -> input.getName().equals(name));
 
-        if (result.isPresent())
-        {
-            return result.get();
-        }
-        else
-        {
-            throw new IllegalArgumentException("expected required element '" + name + "' below " + root.getName());
-        }
+        if (result.isPresent()) return result.get();
+
+        throw new IllegalArgumentException("expected required element '" + name + "' below " + root.getName());
     }
 
     @SuppressWarnings ("unchecked")
@@ -151,14 +131,7 @@ public final class ConnectContextParameterResolverModuleDescriptor extends Abstr
 
     private <T> Iterable<T> loadClasses(final Iterable<String> classNames, final Class<T> type)
     {
-        return transform(classNames, new Function<String, T>()
-        {
-            @Override
-            public T apply(final String input)
-            {
-                return createBean(input, type);
-            }
-        });
+        return transform(classNames, input -> createBean(input, type));
     }
 
     private <T> T createBean(String className, Class<T> type)

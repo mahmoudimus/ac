@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.confluence.web;
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.RemoteWebLink;
@@ -23,20 +23,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @ConfluenceComponent
 public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
 {
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Autowired
     public ConfluenceWebItemModuleDescriptorFactory(
-            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            ConnectUriFactory connectUriFactory,
             PluggableParametersExtractor webFragmentModuleContextExtractor,
             ModuleContextFilter moduleContextFilter,
             UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
-        this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
+        this.connectUriFactory = checkNotNull(connectUriFactory);
         this.webFragmentModuleContextExtractor = checkNotNull(webFragmentModuleContextExtractor);
         this.moduleContextFilter = checkNotNull(moduleContextFilter);
     }
@@ -47,7 +47,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         WebFragmentHelper webFragmentHelper = ComponentLocator.getComponent(WebFragmentHelper.class);
         return new RemoteConfluenceWebItemModuleDescriptor(
                 webFragmentHelper
-                , iFrameUriBuilderFactory
+                , connectUriFactory
                 , webFragmentModuleContextExtractor
                 , moduleContextFilter
                 , urlVariableSubstitutor
@@ -62,7 +62,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     private static final class RemoteConfluenceWebItemModuleDescriptor extends ConfluenceWebItemModuleDescriptor
     {
         private final WebFragmentHelper webFragmentHelper;
-        private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+        private final ConnectUriFactory connectUriFactory;
         private final PluggableParametersExtractor webFragmentModuleContextExtractor;
         private final ModuleContextFilter moduleContextFilter;
         private final String url;
@@ -75,12 +75,12 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
 
         private RemoteConfluenceWebItemModuleDescriptor(
                 WebFragmentHelper webFragmentHelper,
-                IFrameUriBuilderFactory iFrameUriBuilderFactory,
+                ConnectUriFactory connectUriFactory,
                 PluggableParametersExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
                 UrlVariableSubstitutor urlVariableSubstitutor, String url, String pluginKey, String moduleKey, boolean absolute,
                 AddonUrlContext addonUrlContext, boolean isDialog)
         {
-            this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+            this.connectUriFactory = connectUriFactory;
             this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
             this.moduleContextFilter = moduleContextFilter;
             this.urlVariableSubstitutor = urlVariableSubstitutor;
@@ -96,7 +96,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         @Override
         public ConfluenceWebLink getLink()
         {
-            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor,
+            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, connectUriFactory, urlVariableSubstitutor,
                     webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addonUrlContext, isDialog));
         }
 
