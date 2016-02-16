@@ -12,7 +12,8 @@
       },
       history: {
         state: (window.location.hash ? window.location.hash.substr(2) : "")
-      }
+      },
+      contextPath: data.cp
     };
     var container = connectHost.create(data);
     $("#embedded-" + _AP.util.escapeSelector("$namespace")).append(container);

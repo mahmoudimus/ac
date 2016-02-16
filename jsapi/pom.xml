@@ -122,6 +122,7 @@
                                         <include>../../node_modules/simple-xdm/dist/iframe.js</include>
                                         <include>../../node_modules/atlassian-connect-js/dist/iframe-compat.js</include>
                                         <include>../../node_modules/atlassian-connect-js-history/dist/connect-plugin-history.js</include>
+                                        <include>../../node_modules/atlassian-connect-js-request/dist/connect-plugin-request.js</include>
                                         <!-- <include>js-min/iframe/plugin/user-min.js</include> -->
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
 <!--                                         <include>js-min/iframe/plugin/jira-min.js</include>

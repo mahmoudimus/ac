@@ -102,6 +102,7 @@ public class StaticResourcesFilter implements Filter
                     "core/iframe.js",
                     "core/iframe-compat.js",
                     "core/connect-plugin-history.js",
+                    "core/connect-plugin-request.js",
                     "iframe/plugin/p2compat.js"
 //                    "iframe/plugin/jira.js",
 //                    "iframe/plugin/confluence.js",

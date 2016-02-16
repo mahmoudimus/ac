@@ -4,7 +4,7 @@
 
 connectHost.defineModule("cookie", connectHostCookie);
 connectHost.defineModule("history", connectHostHistory);
-// connectHost.defineModule("request", connectHostCookie);
+connectHost.defineModule(connectHostRequest);
 
 connectHost.onIframeEstablished(function(data){
   data.$el.closest(".ap-content").addClass('iframe-init');

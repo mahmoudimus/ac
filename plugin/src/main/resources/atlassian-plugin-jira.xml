@@ -65,6 +65,7 @@
     <web-resource key="ap-extensions">
         <resource type="download" name="connect-cookie.js" location="js/core/connect-host-cookie.js" />
         <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
+        <resource type="download" name="connect-request.js" location="/js/core/connect-host-request.js" />
 <!--         <resource type="download" name="connect-request.js" location="/js/core/connect-host-request.js" />
         <resource type="download" name="connect-navigator.js" location="/js/core/connect-host-navigator.js" />
  -->        
