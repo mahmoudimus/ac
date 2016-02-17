@@ -5,10 +5,21 @@ import com.atlassian.plugin.connect.modules.beans.builder.IssueFieldModuleBeanBu
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
- * Connect field module allows the add-on to add a new custom field, which is locked and tied to your plugin.
- * Locked meaning that it cannot be removed by the user, and there is only 1 field instance possible.
- * The field will not appear on screens, you need to add it manually using the screens REST API.
- * When your plugin is disabled/uninstalled the field will disappear from the screens.
+ * This module allows Connect add-ons to add their own fields to JIRA issues.
+ * Such fields are treated as locked custom fields, meaning that they cannot be removed
+ * by JIRA admins. There is always one and only one instance of the field created and
+ * managed by JIRA.
+ *
+ * <p>
+ *     The field is automatically removed when your add-on is uninstalled and then
+ *     restored (together with all previously set values) if installed again.
+ * </p>
+ *
+ * <p>
+ *     The field will not appear on screens on its own.
+ *     It can be added by your add-on via the screens REST API
+ *     or manually by JIRA admins.
+ * </p>
  *
  *
  * #### Example

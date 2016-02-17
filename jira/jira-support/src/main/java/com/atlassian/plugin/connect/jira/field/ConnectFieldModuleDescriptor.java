@@ -74,22 +74,23 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
         {
             try {
                 lockField(customField);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 //rolling back custom field creation
-                tryToRemoveCustomField(customField);
+                removeCustomField(customField);
+                throw e;
             }
         }
     }
 
-    private void tryToRemoveCustomField(final CustomField customField)
+    private void removeCustomField(final CustomField customField)
     {
         try
         {
             customFieldManager.removeCustomField(customField);
         }
-        catch (RemoveException e1)
+        catch (RemoveException e)
         {
-            throw new PluginParseException("Exception while trying to lock an issue field. ", e1);
+            throw new PluginParseException("Exception while trying to lock an issue field. ", e);
         }
     }
 
