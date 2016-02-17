@@ -1,6 +1,9 @@
 (function($, define){
     "use strict";
     define("ac/jira/workflow-post-function", function() {
+        function getPostFunctionId(){
+            return $("input[name='postFunction.id']").val();
+        }
 
         function postFunctionConfigInput (postFunctionId, val) {
             var element = $("#postFunction-config-" + postFunctionId);
@@ -36,7 +39,8 @@
         return {
             postFunctionConfigInput: postFunctionConfigInput,
             isOnWorkflowPostFunctionPage: isOnWorkflowPostFunctionPage,
-            registerSubmissionButton: registerSubmissionButton
+            registerSubmissionButton: registerSubmissionButton,
+            getPostFunctionId: getPostFunctionId
         };
     });
 
