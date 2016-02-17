@@ -25,6 +25,7 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.plugin.connect.plugin.rest</package>
+        <package>com.atlassian.plugin.connect.jira.field.option.rest</package>
     </rest>
 
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />

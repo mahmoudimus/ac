@@ -2,6 +2,12 @@
   "scopes": [
     {
       "key": "READ",
+      "restPathKeys": ["fields"],
+      "methods": ["GET", "POST", "PUT", "DELETE"]
+
+    },
+    {
+      "key": "READ",
       "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "dashboardItemProperties", "worklog"],
       "pathKeys": ["download attachments", "project avatars", "user avatars", "avatars", "thumbnails"],
       "methods": ["GET"]
@@ -296,6 +302,13 @@
       "name" : "api",
       "basePaths": ["/worklog($|/.*)"],
       "versions": ["2", "latest"],
+      "public": true
+    },
+    {
+      "key": "fields",
+      "name": "atlassian-connect",
+      "basePaths": ["/jira/addon(/.*)"],
+      "versions": ["1", "latest"],
       "public": true
     }
   ],

@@ -78,13 +78,21 @@ public class ConnectFieldOptionManager
                 connection.delete(CONNECT_FIELD_OPTION).where(isOption(addonKey, fieldKey, optionId)).execute());
     }
 
-    public Optional<ConnectFieldOption> update(final String addonKey, final String fieldKey, final Integer optionId, final JsonNode value)
+    public Optional<ConnectFieldOption> save(final String addonKey, final String fieldKey, final Integer optionId, final JsonNode value)
     {
         return databaseAccessor.runInTransaction(connection -> {
-            connection.update(CONNECT_FIELD_OPTION)
+            long updated = connection.update(CONNECT_FIELD_OPTION)
                     .where(isOption(addonKey, fieldKey, optionId))
                     .set(CONNECT_FIELD_OPTION.VALUE, value.toString())
                     .execute();
+
+            if (updated == 0)
+            {
+                connection.insert(CONNECT_FIELD_OPTION)
+                        .columns(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.ADDON_KEY, CONNECT_FIELD_OPTION.FIELD_KEY, CONNECT_FIELD_OPTION.VALUE)
+                        .values(optionId, addonKey, fieldKey, value.toString())
+                        .execute();
+            }
 
             return get(connection, addonKey, fieldKey, optionId);
         });

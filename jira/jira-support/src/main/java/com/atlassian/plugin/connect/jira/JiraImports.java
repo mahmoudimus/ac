@@ -44,6 +44,7 @@ import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.render.Encoder;
+import com.atlassian.jira.rest.util.ResponseFactory;
 import com.atlassian.jira.rest.v2.issue.builder.BeanBuilderFactory;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -166,7 +167,8 @@ public class JiraImports
             @JiraImport CustomFieldInputHelper customFieldInputHelper,
             @JiraImport CustomFieldManager customFieldManager,
             @JiraImport ManagedConfigurationItemService managedConfigurationItemService,
-            @JiraImport TransactionalExecutorFactory transactionalExecutorFactory)
+            @JiraImport TransactionalExecutorFactory transactionalExecutorFactory,
+            @JiraImport ResponseFactory responseFactory)
     {
     }
 }

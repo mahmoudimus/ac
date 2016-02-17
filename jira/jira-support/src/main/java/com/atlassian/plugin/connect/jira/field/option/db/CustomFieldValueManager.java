@@ -70,7 +70,7 @@ public class CustomFieldValueManager
     private Optional<Long> getCustomFieldId(final FieldId fieldId)
     {
         return customFieldManager.getCustomFieldObjects().stream()
-                .filter(field -> field.getCustomFieldType().getKey().equals(fieldId.getFullKey()))
+                .filter(field -> field.getCustomFieldType().getKey().equals(fieldId.getCustomFieldTypeKey()))
                 .map(CustomField::getIdAsLong)
                 .findFirst();
     }
