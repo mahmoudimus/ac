@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>com.atlassian.pom</groupId>
         <artifactId>public-pom</artifactId>
@@ -8,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.76-SNAPSHOT</version>
+    <version>1.1.77-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -946,19 +945,4 @@
         <junit.version>4.11</junit.version>
         <jersey.version>1.19</jersey.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>maven-central</id>
-            <url>https://repo1.maven.org/maven2</url>
-            <releases>
-                <checksumPolicy>fail</checksumPolicy>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <checksumPolicy>fail</checksumPolicy>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>
