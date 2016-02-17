@@ -106,9 +106,23 @@ referenced.
 * `propertyKey` - the key of the property to check
 * `value` - the value to compare the property value against
 
-For example, an add-on could let administrators activate functionality per JIRA project, storing a boolean property
-`isEnabled` on each project using the product's REST API, and then use
-the `entity_property_equal_to` to test for it with the following module definition.
+There is also another optional field that you can specify called `objectName`; this field lets you select which part
+of the entity property JSON value you wish to compare against. For example, if an entity property had the following value:
+ 
+    {
+        "one": {
+            "ignored": "value",
+            "two": true
+        },
+        "also", "ignored"
+    }
+    
+Then you could set the `value` parameter to `true` and the `objectName` parameter to "one.two" and the 
+`entity_property_equal_to` condition would evaluate to true.
+
+For example, an add-on could let administrators activate functionality per JIRA project, storing an entity property
+with the key `mySettings` and the field `isEnabled` on each project using the product's REST API. Then use
+the `entity_property_equal_to` to test for it with the following module definition:
 
 ```
 {
@@ -121,7 +135,8 @@ the `entity_property_equal_to` to test for it with the following module definiti
                         "condition": "entity_property_equal_to",
                         "params": {
                             "entity": "project",
-                            "propertyKey": "isEnabled",
+                            "propertyKey": "mySettings",
+                            "objectName": "isEnabled",
                             "value": "true"
                         }
                     }
