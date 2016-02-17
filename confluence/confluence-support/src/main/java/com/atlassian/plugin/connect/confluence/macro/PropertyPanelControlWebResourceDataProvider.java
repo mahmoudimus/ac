@@ -70,7 +70,7 @@ public class PropertyPanelControlWebResourceDataProvider implements WebResourceD
 
     private Optional<MacroPropertyPanelBean> getPropertyPanel(DynamicContentMacroModuleBean macroBean)
     {
-        return Optional.of(macroBean.getPropertyPanel());
+        return Optional.ofNullable(macroBean.getPropertyPanel());
     }
 
     private Optional<List<ControlBean>> getControls(Optional<MacroPropertyPanelBean> propertyPanelBean)
