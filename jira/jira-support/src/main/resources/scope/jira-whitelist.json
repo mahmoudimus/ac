@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "dashboardItemProperties", "worklog"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "dashboardItemProperties", "worklog", "role", "group"],
       "pathKeys": ["download attachments", "project avatars", "user avatars", "avatars", "thumbnails"],
       "methods": ["GET"]
     },
@@ -48,7 +48,7 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["group", "screens", "workflow", "role"],
+      "restPathKeys": ["screens", "workflow"],
       "methods": ["GET"]
     }
   ],

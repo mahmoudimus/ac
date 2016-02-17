@@ -169,7 +169,19 @@ public class JiraRestScopesTest extends ScopeManagerTest
                 emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/worklog/deleted?since=123", true),
 
                 emptyBodyForJira(null, HttpMethod.POST, "/jira//rest/api/2/worklog/list", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "/jira//rest/api/2/worklog/list", true)
+                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "/jira//rest/api/2/worklog/list", true),
+
+                // reading roles require READ
+                emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/role", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/role/", true),
+
+                // reading role require READ
+                emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/role/0", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/role/10100", true),
+
+                // reading project role require READ
+                emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/project/10000/role/10100", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/project/10000/role/10100", true)
         ));
 
         // never allow an add-on to change a user's details or password
