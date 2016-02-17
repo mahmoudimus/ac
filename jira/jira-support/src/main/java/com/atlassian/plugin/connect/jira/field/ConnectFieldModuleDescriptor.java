@@ -3,7 +3,8 @@ package com.atlassian.plugin.connect.jira.field;
 import java.util.List;
 import java.util.Optional;
 
-import com.atlassian.jira.bc.ServiceOutcome;
+import com.atlassian.jira.bc.ServiceResult;
+import com.atlassian.jira.bc.ServiceResultImpl;
 import com.atlassian.jira.config.managedconfiguration.ConfigurationItemAccessLevel;
 import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItem;
 import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
@@ -20,11 +21,16 @@ import com.atlassian.jira.plugin.customfield.CustomFieldDefaultVelocityParams;
 import com.atlassian.jira.plugin.customfield.CustomFieldTypeModuleDescriptorImpl;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.jira.util.ErrorCollections;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.Lists;
 import org.dom4j.Element;
+import org.ofbiz.core.entity.GenericEntityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.jira.field.CustomFieldSearcherModuleDescriptorFactory.searcherKeyFromCustomFieldTypeKey;
 
@@ -33,6 +39,8 @@ import static com.atlassian.plugin.connect.jira.field.CustomFieldSearcherModuleD
  */
 public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescriptorImpl
 {
+    private static final Logger log = LoggerFactory.getLogger(ConnectFieldModuleDescriptor.class);
+
     private final CustomFieldManager customFieldManager;
     private final ProjectManager projectManager;
     private final ManagedConfigurationItemService managedConfigurationItemService;
@@ -64,26 +72,29 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
     public void enabled()
     {
         super.enabled();
-
-        verifyExistOrCreateCustomField();
+        ensureLockedCustomFieldInstanceExists();
     }
 
-    private void verifyExistOrCreateCustomField()
+    private void ensureLockedCustomFieldInstanceExists()
     {
-        CustomField customField = getCustomField().orElseGet(this::createCustomField);
-        if (!isFieldLocked(customField))
+        getOrCreateFieldInstance().filter(field -> !isFieldLocked(field)).ifPresent(unlockedField -> {
+            ServiceResult lockOutcome = lockField(unlockedField);
+            if (!lockOutcome.isValid())
+            {
+                removeCustomField(unlockedField);
+                instanceCreationFail(lockOutcome.getErrorCollection());
+            }
+        });
+    }
+
+    private Optional<CustomField> getOrCreateFieldInstance()
+    {
+        Optional<CustomField> customField = getCustomField();
+        if (!customField.isPresent())
         {
-            try
-            {
-                lockField(customField);
-            }
-            catch (RuntimeException e)
-            {
-                //rolling back custom field creation
-                removeCustomField(customField);
-                throw e;
-            }
+            customField = createCustomField();
         }
+        return customField;
     }
 
     private void removeCustomField(final CustomField customField)
@@ -94,7 +105,7 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
         }
         catch (RemoveException e)
         {
-            throw new PluginParseException("Exception while trying to lock an issue field. ", e);
+            instanceCreationFail(e);
         }
     }
 
@@ -106,7 +117,7 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
                 .findFirst();
     }
 
-    private CustomField createCustomField()
+    private Optional<CustomField> createCustomField()
     {
         final List<JiraContextNode> contexts = CustomFieldUtils.buildJiraIssueContexts(true, new Long[0], projectManager);
         final List<IssueType> returnIssueTypes = Lists.newArrayList((IssueType) null);
@@ -119,17 +130,18 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
 
         try
         {
-            return customFieldManager.createCustomField(
+            return Optional.of(customFieldManager.createCustomField(
                     name,
                     desc,
                     type,
                     searcher,
                     contexts,
-                    returnIssueTypes);
+                    returnIssueTypes));
         }
-        catch (Exception creationException)
+        catch (GenericEntityException e)
         {
-            throw new PluginParseException("Exception while trying to create an issue field. ", creationException);
+            instanceCreationFail(e);
+            return Optional.empty();
         }
     }
 
@@ -139,12 +151,12 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
         return managedConfigurationItem.getConfigurationItemAccessLevel() == ConfigurationItemAccessLevel.LOCKED;
     }
 
-    private void lockField(CustomField field)
+    private ServiceResult lockField(CustomField field)
     {
         ManagedConfigurationItem managedConfigurationItem = managedConfigurationItemService.getManagedCustomField(field);
         if (managedConfigurationItem.getConfigurationItemAccessLevel() == ConfigurationItemAccessLevel.LOCKED)
         {
-            return;
+            return new ServiceResultImpl(ErrorCollections.empty());
         }
 
         managedConfigurationItem = managedConfigurationItem.newBuilder()
@@ -153,10 +165,16 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
                 .setSource(plugin)
                 .build();
 
-        ServiceOutcome<ManagedConfigurationItem> resultOutcome = managedConfigurationItemService.updateManagedConfigurationItem(managedConfigurationItem);
-        if (!resultOutcome.isValid())
-        {
-            throw new PluginParseException("Error while trying to lock field" + resultOutcome.getErrorCollection());
-        }
+        return managedConfigurationItemService.updateManagedConfigurationItem(managedConfigurationItem);
+    }
+
+    private void instanceCreationFail(Exception ex)
+    {
+        log.error("Exception when trying to create and lock issue field instance", ex);
+    }
+
+    private void instanceCreationFail(ErrorCollection errors)
+    {
+        log.error("Exception when trying to create and lock issue field instance. " + errors.toString());
     }
 }
