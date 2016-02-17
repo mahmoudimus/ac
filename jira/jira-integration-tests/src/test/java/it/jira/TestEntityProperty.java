@@ -22,20 +22,18 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.query.operator.Operator;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
+import it.jira.project.TestProject;
+import it.jira.util.JiraTestHelper;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.jira.project.TestProject;
 
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -70,7 +68,6 @@ public class TestEntityProperty extends JiraTestBase
         EntityPropertyIndexKeyConfigurationBean keyConfigurationBean =
                 new EntityPropertyIndexKeyConfigurationBean(extractions, ATTACHMENT_PROPERTY_KEY);
 
-
         remotePlugin = new ConnectRunner(localEnvironmentData.getBaseUrl().toString(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
@@ -104,7 +101,7 @@ public class TestEntityProperty extends JiraTestBase
     @Before
     public void setup()
     {
-        testProject = addProject();
+        testProject = JiraTestHelper.addProject();
     }
 
     @After
@@ -140,7 +137,7 @@ public class TestEntityProperty extends JiraTestBase
     @Test
     public void attachmentNonIndexedValueIndexed() throws JSONException
     {
-        setPropertyAndSearchForValue("issue.property[attachment].author", Operator.EQUALS,  "\"luke skywalker\"");
+        setPropertyAndSearchForValue("issue.property[attachment].author", Operator.EQUALS, "\"luke skywalker\"");
     }
 
     @Test

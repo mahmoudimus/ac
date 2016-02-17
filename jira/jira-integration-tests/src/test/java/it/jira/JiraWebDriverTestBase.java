@@ -1,5 +1,7 @@
 package it.jira;
 
+import java.rmi.RemoteException;
+
 import com.atlassian.connect.test.jira.pageobjects.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
@@ -14,13 +16,12 @@ import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.jira.project.TestProject;
+import it.jira.util.JiraTestHelper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import java.rmi.RemoteException;
-
-@Retry(maxAttempts=JiraWebDriverTestBase.MAX_RETRY_ATTEMPTS)
+@Retry (maxAttempts = JiraWebDriverTestBase.MAX_RETRY_ATTEMPTS)
 public class JiraWebDriverTestBase
 {
 
@@ -48,7 +49,7 @@ public class JiraWebDriverTestBase
     {
         testUserFactory = new JiraTestUserFactory(product);
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
-        project = JiraTestBase.addProject();
+        project = JiraTestHelper.addProject();
     }
 
     @AfterClass

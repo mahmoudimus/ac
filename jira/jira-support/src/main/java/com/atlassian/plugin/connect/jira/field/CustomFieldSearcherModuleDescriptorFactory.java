@@ -7,9 +7,10 @@ import com.atlassian.jira.render.Encoder;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.jira.field.type.ConnectFieldTypeBlueprintResolver;
+import com.atlassian.plugin.connect.jira.field.type.SearcherDefinition;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldType.IssueFieldSearcherDefinition;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Strings;
@@ -18,22 +19,24 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescriptorFactory<IssueFieldModuleBean, CustomFieldSearcherModuleDescriptor>
+public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, CustomFieldSearcherModuleDescriptor>
 {
     private final JiraAuthenticationContext authenticationContext;
     private final ModuleFactory moduleFactory;
     private final Encoder encoder;
+    private final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver;
 
     @Autowired
-    public CustomFieldSearcherDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder)
+    public CustomFieldSearcherModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver)
     {
         this.authenticationContext = authenticationContext;
         this.moduleFactory = moduleFactory;
         this.encoder = encoder;
+        this.connectFieldTypeBlueprintResolver = connectFieldTypeBlueprintResolver;
     }
 
     @Override
-    public CustomFieldSearcherModuleDescriptor createModuleDescriptor(final IssueFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
+    public CustomFieldSearcherModuleDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
     {
         CustomFieldSearcherModuleDescriptor descriptor = new CustomFieldSearcherModuleDescriptorImpl(authenticationContext, moduleFactory, new CustomFieldDefaultVelocityParams(encoder));
 
@@ -41,14 +44,14 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
 
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
-        element.addAttribute("key", bean.getKey(addon)+"_searcher");
+        element.addAttribute("key", searcherKeyFromCustomFieldTypeKey(bean.getKey(addon)));
         element.addAttribute("i18n-name-key", i18nKeyOrName);
 
-        IssueFieldSearcherDefinition type = bean.getType().getSearcherBase();
+        SearcherDefinition searcher = connectFieldTypeBlueprintResolver.getBlueprint(bean.getType()).getSearcherDefinition();
 
-        element.addAttribute("class", type.getSearcherClassFullyQualifiedName());
-        element.add(velocityResourceElement("view", type.getViewTemplate()));
-        element.add(velocityResourceElement("search", type.getSearchTemplate()));
+        element.addAttribute("class", searcher.getSearcherClassFullyQualifiedName());
+        element.add(velocityResourceElement("view", searcher.getViewTemplate()));
+        element.add(velocityResourceElement("search", searcher.getSearchTemplate()));
 
         element.add(validCustomFieldType(plugin.getKey(), bean.getKey(addon)));
 
@@ -71,5 +74,10 @@ public class CustomFieldSearcherDescriptorFactory implements ConnectModuleDescri
         resource.addAttribute("package", addOnKey);
         resource.addAttribute("key", customFieldKey);
         return resource;
+    }
+
+    public static String searcherKeyFromCustomFieldTypeKey(String completeKey)
+    {
+        return completeKey + "_searcher";
     }
 }

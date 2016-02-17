@@ -1039,8 +1039,14 @@ public class ConnectJsonExamples
 
     private static String createIssueFieldExample()
     {
-        return gson.toJson(
-                IssueFieldModuleBean.newBuilder()
-                        .withBaseType(IssueFieldType.TEXT).build());
+
+        ConnectFieldModuleBean moduleBean = ConnectFieldModuleBean.newBuilder()
+                .withKey("connect-issue-field")
+                .withName(i18nProperty("My Custom Issue Field"))
+                .withDescription(i18nProperty("This field was added by my Connect add-on"))
+                .withBaseType(ConnectFieldType.TEXT)
+                .build();
+
+        return gson.toJson(createModuleArray("jiraIssueFields", moduleBean));
     }
 }
