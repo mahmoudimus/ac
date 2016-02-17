@@ -28,6 +28,6 @@
     "simple-xdm": "^0.2.6",
     "atlassian-connect-js-cookie": "^0.1.0",
     "atlassian-connect-js-history": "^0.1.1",
-    "atlassian-connect-js-request": "git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js-request.git#feature/ACJS-133-ACJSv5"
+    "atlassian-connect-js-request": "^0.1.0"
   }
 }
