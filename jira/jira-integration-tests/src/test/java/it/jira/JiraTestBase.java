@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 
 public class JiraTestBase
 {
-    protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
+    protected final static JiraTestedProduct product = JiraTestHelper.PRODUCT;
 
     protected static TestProject project;
 

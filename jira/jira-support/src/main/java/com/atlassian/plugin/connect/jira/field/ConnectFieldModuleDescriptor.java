@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.jira.field;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.config.managedconfiguration.ConfigurationItemAccessLevel;
 import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItem;
@@ -23,13 +26,10 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.Lists;
 import org.dom4j.Element;
 
-import java.util.List;
-import java.util.Optional;
-
 import static com.atlassian.plugin.connect.jira.field.CustomFieldSearcherModuleDescriptorFactory.searcherKeyFromCustomFieldTypeKey;
 
 /**
- * This module adds a new custom field type along with an locked custom field instance of this type.
+ * This module adds a new custom field type along with a locked custom field instance of this type.
  */
 public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescriptorImpl
 {
@@ -61,7 +61,8 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
     }
 
     @Override
-    public void enabled() {
+    public void enabled()
+    {
         super.enabled();
 
         verifyExistOrCreateCustomField();
@@ -72,9 +73,12 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
         CustomField customField = getCustomField().orElseGet(this::createCustomField);
         if (!isFieldLocked(customField))
         {
-            try {
+            try
+            {
                 lockField(customField);
-            } catch (RuntimeException e) {
+            }
+            catch (RuntimeException e)
+            {
                 //rolling back custom field creation
                 removeCustomField(customField);
                 throw e;
@@ -105,7 +109,7 @@ public class ConnectFieldModuleDescriptor extends CustomFieldTypeModuleDescripto
     private CustomField createCustomField()
     {
         final List<JiraContextNode> contexts = CustomFieldUtils.buildJiraIssueContexts(true, new Long[0], projectManager);
-        final List<IssueType> returnIssueTypes = Lists.newArrayList((IssueType)null);
+        final List<IssueType> returnIssueTypes = Lists.newArrayList((IssueType) null);
 
         String name = getName();
         String desc = getDescription();

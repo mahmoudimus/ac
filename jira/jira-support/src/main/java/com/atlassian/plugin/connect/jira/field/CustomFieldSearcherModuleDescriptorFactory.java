@@ -7,6 +7,8 @@ import com.atlassian.jira.render.Encoder;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.jira.field.type.ConnectFieldTypeBlueprintResolver;
+import com.atlassian.plugin.connect.jira.field.type.SearcherDefinition;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -22,15 +24,15 @@ public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModule
     private final JiraAuthenticationContext authenticationContext;
     private final ModuleFactory moduleFactory;
     private final Encoder encoder;
-    private final ConnectFieldMapper connectFieldMapper;
+    private final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver;
 
     @Autowired
-    public CustomFieldSearcherModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final ConnectFieldMapper connectFieldMapper)
+    public CustomFieldSearcherModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver)
     {
         this.authenticationContext = authenticationContext;
         this.moduleFactory = moduleFactory;
         this.encoder = encoder;
-        this.connectFieldMapper = connectFieldMapper;
+        this.connectFieldTypeBlueprintResolver = connectFieldTypeBlueprintResolver;
     }
 
     @Override
@@ -45,11 +47,11 @@ public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModule
         element.addAttribute("key", searcherKeyFromCustomFieldTypeKey(bean.getKey(addon)));
         element.addAttribute("i18n-name-key", i18nKeyOrName);
 
-        ConnectFieldMapper.SearcherDefinition type = connectFieldMapper.getMapping(bean.getType()).getSearcherBase();
+        SearcherDefinition searcher = connectFieldTypeBlueprintResolver.getBlueprint(bean.getType()).getSearcherDefinition();
 
-        element.addAttribute("class", type.getSearcherClassFullyQualifiedName());
-        element.add(velocityResourceElement("view", type.getViewTemplate()));
-        element.add(velocityResourceElement("search", type.getSearchTemplate()));
+        element.addAttribute("class", searcher.getSearcherClassFullyQualifiedName());
+        element.add(velocityResourceElement("view", searcher.getViewTemplate()));
+        element.add(velocityResourceElement("search", searcher.getSearchTemplate()));
 
         element.add(validCustomFieldType(plugin.getKey(), bean.getKey(addon)));
 

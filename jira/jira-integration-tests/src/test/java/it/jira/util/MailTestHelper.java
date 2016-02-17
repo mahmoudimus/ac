@@ -2,7 +2,6 @@ package it.jira.util;
 
 import java.io.IOException;
 import java.net.BindException;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -24,26 +23,35 @@ public class MailTestHelper
     {
         this.backdoor = backdoor;
         this.mailService = new MailService(new FuncTestLoggerImpl());
-        mailHelper = new OutgoingMailHelper(backdoor);
+        this.mailHelper = new OutgoingMailHelper(backdoor);
     }
 
-    MailTestHelper configure() {
-        try {
-            if (!backdoor.getTestkit().getFeatureManagerControl().isOnDemand()) {
+    MailTestHelper configure()
+    {
+        try
+        {
+            if (!backdoor.getTestkit().getFeatureManagerControl().isOnDemand())
+            {
                 mailService.configureAndStartGreenMail(JIRAServerSetup.SMTP);
                 int smtpPort = mailService.getSmtpPort();
-                try {
+                try
+                {
                     backdoor.mailServers().addSmtpServer("jiratest@atlassian.com", "[JIRATEST]", smtpPort);
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     throw new RuntimeException("Adding smtp server failed. Check that no -Datlassian.mail.senddisabled=true parameter is present.", e);
                 }
             }
-        } catch (BindException e) {
+        }
+        catch (BindException e)
+        {
             throw new RuntimeException(e);
         }
 
         //check if mail sending is enabled (is smtp server, no disable flag)
-        if (!backdoor.getTestkit().mailServers().isSmtpConfigured()) {
+        if (!backdoor.getTestkit().mailServers().isSmtpConfigured())
+        {
             throw new RuntimeException("Smtp is not configured properly. Check if smtp server was added, and no -Datlassian.mail.senddisabled=true parameter is present.");
         }
 
@@ -53,7 +61,7 @@ public class MailTestHelper
         return this;
     }
 
-    public String getSentMail() throws IOException, MessagingException
+    public String getSentMailContent() throws IOException, MessagingException
     {
         final MimeMessage mail = mailHelper.flushMailQueueAndWait(1, 1000).iterator().next();
         MimeMultipart mailContent = (MimeMultipart) mail.getContent();

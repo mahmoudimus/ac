@@ -27,7 +27,7 @@ import com.atlassian.jira.testkit.client.restclient.SearchResult;
 import com.atlassian.jira.testkit.client.restclient.WatchersClient;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldType;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -238,7 +238,7 @@ public class TestConnectField extends JiraWebDriverTestBase
         issueClient.update(issue.id, updateFieldRequest);
 
         // check if the e-mail was sent and that it contains our field
-        assertThat(mailTestHelper.getSentMail(), containsString("custom_field_new_value"));
+        assertThat(mailTestHelper.getSentMailContent(), containsString("custom_field_new_value"));
     }
 
     private IssueCreateResponse createTestIssue()
@@ -376,7 +376,7 @@ public class TestConnectField extends JiraWebDriverTestBase
                 .withKey(key)
                 .withName(new I18nProperty(title, null))
                 .withDescription(new I18nProperty(description, null))
-                .withBaseType(IssueFieldType.TEXT)
+                .withBaseType(ConnectFieldType.TEXT)
                 .build();
     }
 }

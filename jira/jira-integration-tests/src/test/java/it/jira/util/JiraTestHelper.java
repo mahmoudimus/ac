@@ -13,35 +13,36 @@ public class JiraTestHelper
 {
     private static final String PROJECT_TEMPLATE_KEY = "com.atlassian.jira-core-project-templates:jira-core-task-management";
 
-    protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
+    public final static JiraTestedProduct PRODUCT = new JiraTestedProductAccessor().getJiraProduct();
 
-    private static final NavigationFactory navigationFactory = new NavigationFactory(product.environmentData());
-
+    private static final NavigationFactory navigationFactory = new NavigationFactory(PRODUCT.environmentData());
 
     public static TestProject addProject()
     {
         String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-        String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
+        String projectId = String.valueOf(PRODUCT.backdoor().project().addProjectWithTemplate(
                 "Test project " + projectKey, projectKey, "admin", PROJECT_TEMPLATE_KEY));
         return new TestProject(projectKey, projectId);
     }
 
     public static void addUserIfDoesNotExist(String username, String... groups)
     {
-        boolean userExists = product.backdoor().usersAndGroups().getAllUsers().stream().filter(user -> user.getUsername().equals(username)).findFirst().isPresent();
+        boolean userExists = PRODUCT.backdoor().usersAndGroups().getAllUsers().stream().filter(user -> user.getUsername().equals(username)).findFirst().isPresent();
         if (!userExists)
         {
-            product.backdoor().usersAndGroups().addUser(username);
+            PRODUCT.backdoor().usersAndGroups().addUser(username);
             Stream.of(groups).forEach(group ->
-                    product.backdoor().usersAndGroups().addUserToGroup(username, group));
+                    PRODUCT.backdoor().usersAndGroups().addUserToGroup(username, group));
         }
     }
 
-    public static Navigation getNavigation() {
+    public static Navigation getNavigation()
+    {
         return navigationFactory.createNavigation();
     }
 
-    public static MailTestHelper setUpMailTest() {
-        return new MailTestHelper(product.backdoor()).configure();
+    public static MailTestHelper setUpMailTest()
+    {
+        return new MailTestHelper(PRODUCT.backdoor()).configure();
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import com.atlassian.jira.testkit.beans.CustomFieldResponse;
 import com.atlassian.jira.testkit.client.CustomFieldsControl;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
-import com.atlassian.plugin.connect.modules.beans.IssueFieldType;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
@@ -142,7 +142,7 @@ public class TestConnectFieldAddonLifecycle extends JiraWebDriverTestBase
                 .withKey(key)
                 .withName(new I18nProperty(title, null))
                 .withDescription(description != null ? new I18nProperty(description, null) : null)
-                .withBaseType(IssueFieldType.TEXT)
+                .withBaseType(ConnectFieldType.TEXT)
                 .build();
     }
 

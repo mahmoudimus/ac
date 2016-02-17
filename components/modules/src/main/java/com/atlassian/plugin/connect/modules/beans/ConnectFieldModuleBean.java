@@ -22,9 +22,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  * </p>
  *
  *
- * #### Example
- * @schemaTitle Issue Field
+ *#### Example
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ISSUE_FIELD_EXAMPLE}
+ * @schemaTitle Issue Field
  * @since 1.0
  */
 public class ConnectFieldModuleBean extends RequiredKeyBean
@@ -35,9 +35,9 @@ public class ConnectFieldModuleBean extends RequiredKeyBean
     private I18nProperty description;
 
     @Required
-    private IssueFieldType type;
+    private ConnectFieldType type;
 
-    public IssueFieldType getType()
+    public ConnectFieldType getType()
     {
         return type;
     }
@@ -49,7 +49,7 @@ public class ConnectFieldModuleBean extends RequiredKeyBean
 
     public ConnectFieldModuleBean()
     {
-        this.type = IssueFieldType.TEXT;
+        this.type = ConnectFieldType.TEXT;
         this.description = I18nProperty.empty();
     }
 

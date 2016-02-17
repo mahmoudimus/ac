@@ -16,7 +16,8 @@ final class NavigationFactory
         this.environmentData = environmentData;
     }
 
-    public Navigation createNavigation() {
+    public Navigation createNavigation()
+    {
         Navigation navigation = new NavigationImpl(getWebTester(environmentData), environmentData);
         navigation.login("admin", "admin");
         return navigation;

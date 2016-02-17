@@ -9,6 +9,8 @@ import com.atlassian.jira.render.Encoder;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.jira.field.type.CustomFieldTypeDefinition;
+import com.atlassian.plugin.connect.jira.field.type.ConnectFieldTypeBlueprintResolver;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -31,10 +33,10 @@ public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescrip
     private final ProjectManager projectManager;
     private final ManagedConfigurationItemService managedConfigurationItemService;
 
-    private final ConnectFieldMapper connectFieldMapper;
+    private final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver;
 
     @Autowired
-    public ConnectFieldModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final ConnectFieldMapper connectFieldMapper)
+    public ConnectFieldModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver)
     {
         this.authenticationContext = authenticationContext;
         this.rendererManager = rendererManager;
@@ -43,7 +45,7 @@ public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescrip
         this.customFieldManager = customFieldManager;
         this.projectManager = projectManager;
         this.managedConfigurationItemService = managedConfigurationItemService;
-        this.connectFieldMapper = connectFieldMapper;
+        this.connectFieldTypeBlueprintResolver = connectFieldTypeBlueprintResolver;
     }
 
     @Override
@@ -66,12 +68,12 @@ public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescrip
             element.add(description);
         }
 
-        ConnectFieldMapper.BaseTypeDefinition type = connectFieldMapper.getMapping(bean.getType()).getType();
+        CustomFieldTypeDefinition cfTypeDefinition = connectFieldTypeBlueprintResolver.getBlueprint(bean.getType()).getCustomFieldTypeDefinition();
 
-        element.addAttribute("class", type.getBaseCFTypeClassFullyQualifiedName());
-        element.add(velocityResourceElement("view", type.getViewTemplate()));
-        element.add(velocityResourceElement("edit", type.getEditTemplate()));
-        element.add(velocityResourceElement("xml", type.getXmlTemplate()));
+        element.addAttribute("class", cfTypeDefinition.getBaseCFTypeClassFullyQualifiedName());
+        element.add(velocityResourceElement("view", cfTypeDefinition.getViewTemplate()));
+        element.add(velocityResourceElement("edit", cfTypeDefinition.getEditTemplate()));
+        element.add(velocityResourceElement("xml", cfTypeDefinition.getXmlTemplate()));
 
         descriptor.init(plugin, element);
         return descriptor;
