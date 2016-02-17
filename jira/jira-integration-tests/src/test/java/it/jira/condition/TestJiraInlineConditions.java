@@ -78,8 +78,8 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
     {
         ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issueKey);
 
-        CONDITION_NAMES.forEach(name -> {
-            String moduleKey = addonAndModuleKey(runner.getAddon().getKey(), webItemKey(name));
+        CONDITIONS.forEach(condition -> {
+            String moduleKey = addonAndModuleKey(runner.getAddon().getKey(), webItemKey(condition));
             RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>empty());
             webItem.click();
             RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
@@ -95,8 +95,8 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
     {
         ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issueKey);
 
-        CONDITION_NAMES.forEach(name -> {
-            String panelId = addonAndModuleKey(runner.getAddon().getKey(), webPanelKey(name));
+        CONDITIONS.forEach(condition -> {
+            String panelId = addonAndModuleKey(runner.getAddon().getKey(), webPanelKey(condition.getName()));
             RemoteWebPanel webPanel = viewIssuePage.findWebPanel(panelId);
             assertTrue(Boolean.valueOf(webPanel.getFromQueryString("condition")));
         });
@@ -106,38 +106,38 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
     public void unrecognizedConditionsAreNotResolved()
     {
         ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issueKey);
-        String panelId = addonAndModuleKey(runner.getAddon().getKey(), webPanelKey(CONDITION_NAMES.get(0)));
+        String panelId = addonAndModuleKey(runner.getAddon().getKey(), webPanelKey(CONDITIONS.get(0).getName()));
         RemoteWebPanel webPanel = viewIssuePage.findWebPanel(panelId);
         assertThat(webPanel.getFromQueryString("invalidCondition"), equalTo(""));
     }
 
     private static WebItemModuleBean[] webItems()
     {
-        return CONDITION_NAMES.stream().map(name -> newWebItemBean()
-                .withName(new I18nProperty(webItemKey(name), webItemKey(name)))
-                .withKey(webItemKey(name))
+        return CONDITIONS.stream().map(condition -> newWebItemBean()
+                .withName(new I18nProperty(webItemKey(condition), webItemKey(condition)))
+                .withKey(webItemKey(condition))
                 .withContext(AddonUrlContext.addon)
                 .withLocation("operations-operations") // issue operations
                 .withWeight(1)
                 .withTarget(new WebItemTargetBeanBuilder().withType(WebItemTargetType.dialog).build())
-                .withUrl(PARAMETER_CAPTURE_URL + "?condition={" + conditionVariable(name) + "}&invalidCondition={condition.invalid}")
-                .build()).collect(toList()).toArray(new WebItemModuleBean[CONDITION_NAMES.size()]);
+                .withUrl(PARAMETER_CAPTURE_URL + "?condition={" + conditionVariable(condition) + "}&invalidCondition={condition.invalid}")
+                .build()).collect(toList()).toArray(new WebItemModuleBean[CONDITIONS.size()]);
     }
 
     private static WebPanelModuleBean[] webPanels()
     {
-        return CONDITION_NAMES.stream().map(name -> new WebPanelModuleBeanBuilder()
-                .withName(new I18nProperty(webPanelKey(name), webPanelKey(name)))
-                .withKey(webPanelKey(name))
+        return CONDITIONS.stream().map(condition -> new WebPanelModuleBeanBuilder()
+                .withName(new I18nProperty(webPanelKey(condition.getName()), webPanelKey(condition.getName())))
+                .withKey(webPanelKey(condition.getName()))
                 .withLocation("atl.jira.view.issue.right.context")
                 .withWeight(1)
-                .withUrl(PARAMETER_CAPTURE_URL + "?condition={" + conditionVariable(name) + "}&invalidCondition={condition.invalid}")
-                .build()).collect(toList()).toArray(new WebPanelModuleBean[CONDITION_NAMES.size()]);
+                .withUrl(PARAMETER_CAPTURE_URL + "?condition={" + conditionVariable(condition) + "}&invalidCondition={condition.invalid}")
+                .build()).collect(toList()).toArray(new WebPanelModuleBean[CONDITIONS.size()]);
     }
 
-    private static String webItemKey(final String name)
+    private static String webItemKey(final TestedCondition condition)
     {
-        return "test-web-item-" + name.replace("_", "-");
+        return "test-web-item-" + condition.getName().replace("_", "-") + "-" + condition.getParameters().hashCode();
     }
 
     private static String webPanelKey(final String name)
@@ -145,12 +145,12 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest
         return "test-web-panel-" + name.replace("_", "-");
     }
 
-    private static String conditionVariable(String conditionName)
+    private static String conditionVariable(TestedCondition condition)
     {
-        Map<String, String> parameters = CONDITION_PARAMETERS.get(conditionName);
-        String params = parameters == null ? "" :
+        Map<String, String> parameters = condition.getParameters();
+        String params = parameters.isEmpty() ? "" :
                 "(" + Joiner.on(",").withKeyValueSeparator("=").join(parameters.entrySet()) + ")";
 
-        return String.format("condition.%s%s", conditionName, params);
+        return String.format("condition.%s%s", condition.getName(), params);
     }
 }
