@@ -32,6 +32,7 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
     private static final Logger log = LoggerFactory.getLogger(ConfluenceThemeModuleDescriptorFactory.class);
     private static final String THEME_ICON_NAME = "themeicon.gif";
     static final String ADDON_KEY_PROPERTY_KEY = "addon-key";
+    static final String THEME_MODULE_KEY_PROPERTY_KEY = "theme-key";
 
     private final ModuleFactory moduleFactory;
     private final I18NBeanFactory i18nBeanFactory;
@@ -59,7 +60,10 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
         return createModuleDescriptor(bean, addon, plugin, Collections.emptyList());
     }
 
-    public ThemeModuleDescriptor createModuleDescriptor(ConfluenceThemeModuleBean bean, ConnectAddonBean addon, Plugin plugin, List<LayoutModuleDescriptor> layouts)
+    public ThemeModuleDescriptor createModuleDescriptor(ConfluenceThemeModuleBean bean,
+                                                        ConnectAddonBean addon,
+                                                        Plugin plugin,
+                                                        List<LayoutModuleDescriptor> layouts)
     {
         Element dom = new DOMElement("theme");
         dom.addAttribute("key", ConfluenceThemeUtils.getThemeKey(addon, bean));
@@ -94,6 +98,9 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
         dom.addElement("param")
            .addAttribute("name",  ADDON_KEY_PROPERTY_KEY)
            .addAttribute("value", addon.getKey());
+        dom.addElement("param")
+           .addAttribute("name", THEME_MODULE_KEY_PROPERTY_KEY)
+           .addAttribute("value", bean.getRawKey());
 
         ThemeModuleDescriptor themeModuleDescriptor = new ConnectThemeModuleDescriptor(moduleFactory, pluginAccessor);
         themeModuleDescriptor.init(plugin, dom);

@@ -4,17 +4,17 @@ import com.atlassian.confluence.plugin.descriptor.ThemeModuleDescriptor;
 import com.atlassian.confluence.themes.ExperimentalUnsupportedTheme;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameParams;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.collect.Maps;
+import com.atlassian.velocity.htmlsafe.HtmlSafe;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.net.URI;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,19 +25,23 @@ public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
     private final RemotablePluginAccessorFactory accessorFactory;
     private final UserManager userManager;
     private final ApplicationProperties applicationProperties;
+    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private final EnumMap<LayoutType, String> layoutMap = new EnumMap<>(LayoutType.class);
     private RemotablePluginAccessor remotablePluginAccessor;
     private String addonKey;
+    private String themeKey;
 
     @Autowired
     public ConfluenceRemoteAddonTheme(RemotablePluginAccessorFactory accessorFactory,
                                       UserManager userManager,
-                                      ApplicationProperties applicationProperties)
+                                      ApplicationProperties applicationProperties,
+                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
         this.accessorFactory = accessorFactory;
         this.userManager = userManager;
         this.applicationProperties = applicationProperties;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     @Override
@@ -60,14 +64,17 @@ public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
 
         }
         addonKey = params.get(ConfluenceThemeModuleDescriptorFactory.ADDON_KEY_PROPERTY_KEY);
+        themeKey = params.get(ConfluenceThemeModuleDescriptorFactory.THEME_MODULE_KEY_PROPERTY_KEY);
         remotablePluginAccessor = accessorFactory.get(addonKey);
     }
 
-    public String getRemoteUrl(String layoutName,final Map<String, String> extraParams)
+    @HtmlSafe
+    public String getRemoteUrl(LayoutType layoutType, final Map<String, String> extraParams)
     {
-        String url = layoutMap.get(LayoutType.valueOf(layoutName));
-        String wrangledUrl = remotablePluginAccessor.signGetUrl(URI.create(url), wrangle(addExtraContexts(extraParams)));
-        return wrangledUrl;//iFrameRenderer.render(makeContext(extraParams, url), userManager.getRemoteUser().getUsername());
+        IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, themeKey, layoutType.name());
+        ModuleContextParameters context = new HashMapModuleContextParameters(extraParams);
+        context.putAll(extraParams);
+        return IFrameRenderStrategyUtil.renderToString(context, iFrameRenderStrategy);
     }
 
     public String getAddonKey()
@@ -75,35 +82,31 @@ public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
         return addonKey;
     }
 
-    private Map<String, String> addExtraContexts(Map<String, String> extraParams)
+    public String getThemeKey()
     {
-        HashMap<String, String> combined = Maps.newHashMap(extraParams);
-        combined.put("userKey", userManager.getRemoteUserKey().getStringValue());
-        combined.put("user_id", userManager.getRemoteUser().getUsername());
-        combined.put("xdm_e", applicationProperties.getBaseUrl(UrlMode.ABSOLUTE));
-        return combined;
+        return themeKey;
     }
 
-    private IFrameContextImpl makeContext(final Map<String, String> extraParams, String url)
+    public LayoutConstants getLayoutTypes()
     {
-        return new IFrameContextImpl(addonKey, url, "namespace-test", new IFrameParams()
+        return new LayoutConstants();
+    }
+
+    public static final class LayoutConstants
+    {
+        public LayoutType getBlog()
         {
-            final HashMap<String, Object> m = Maps.newHashMap(extraParams);
+            return LayoutType.blog;
+        }
 
-            @Override
-            public Map<String, Object> getAsMap() {
-                return m;
-            }
+        public LayoutType getMain()
+        {
+            return LayoutType.main;
+        }
 
-            @Override
-            public void setParam(String key, String value) {
-                m.put(key, value);
-            }
-        });
-    }
-
-    private Map<String, String[]> wrangle(Map<String, String> extraParams)
-    {
-        return Maps.transformValues(extraParams, input -> new String[]{input});
+        public LayoutType getPage()
+        {
+            return LayoutType.page;
+        }
     }
 }

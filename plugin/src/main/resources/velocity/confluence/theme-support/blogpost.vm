@@ -1,14 +1,23 @@
+#* @vtlvariable name="webResourceHelper" type="com.atlassian.confluence.setup.velocity.VelocityFriendlyPageBuilderService" *#
 #* @vtlvariable name="confluenceRemoteTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" *#
 #* @vtlvariable name="addonTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
+#* @vtlvariable name="currentUser" type="com.atlassian.confluence.user.ConfluenceUserImpl" *#
+#* @vtlvariable name="action" type="com.atlassian.confluence.core.ConfluenceActionSupport" *#
 #set($addonTheme = $confluenceRemoteTheme.themeManager.getSpaceTheme($action.spaceKey))
 <html class="blogpost.vm">
+<head>
+$webResourceHelper.requireResource("com.atlassian.plugins.atlassian-connect-plugin:confluence-atlassian-connect-resources")
+$webResourceHelper.getRequiredResources()
+</head>
 <body style="margin: 0">
 <content tag="spacekey">$action.spaceKey</content>
 <content tag="connectAddonThemed">true</content>
-
-<iframe src="$addonTheme.getRemoteUrl('blog', {'pageId': "$action.page.id", 'spaceKey':$action.spaceKey})" style="width: 100%;height: 100%;margin: 0;padding: 0;border: 0;"/>
-<script>
-
-</script>
+    ${addonTheme.getRemoteUrl($addonTheme.layoutTypes.blog, {
+        'contentId': "$action.page.id",
+        'spaceKey':$action.spaceKey,
+        'username' : $currentUser.fullName,
+        'userKey' : $currentUser.key,
+        'contentType':'blogpost'
+    })}
 </body>
 </html>
