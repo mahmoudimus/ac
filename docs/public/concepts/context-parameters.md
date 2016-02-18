@@ -6,8 +6,8 @@ Context parameters are additional values pairs that are sent to your add-on in t
 
 * [Standard parameters](#standard-parameters)
 * [Additional parameters](#additional-parameters)
-  * [JIRA](#jira)
-  * [Confluence](#confluence)
+  * [JIRA](#additional-parameters-jira)
+  * [Confluence](#additional-parameters-confluence)
 
 ## <a name="standard-parameters"></a>Standard parameters
 
@@ -43,6 +43,13 @@ For example, the following URL includes variables that are bound to the JIRA pro
 }
 ```
 
+Note that conventional URL encoding means that context parameters passed as a query parameter will be encoded
+slightly differently from those included as a path component. The path component will use 
+[percent encoding](https://en.wikipedia.org/wiki/Percent-encoding), while the query component will use 
+[`application/x-www-form-urlencoded` encoding](http://www.w3.org/TR/html5/forms.html#application/x-www-form-urlencoded-encoding-algorithm). 
+The primary difference to be aware of is that a space in a query parameter will be encoded as a `+`, while in the path 
+component it will be encoded as `%20`.
+
 If the application isn't able to bind a value to the variable at runtime for any reason, it passes an empty value instead.
 
 ## <a name="additional-parameters-jira"></a>JIRA
@@ -55,10 +62,18 @@ JIRA supports these context variables.
  * `component.id`
  * `profileUser.name`, `profileUser.key` (available for user profile pages)
  * `dashboardItem.id`, `dashboardItem.key`, `dashboardItem.viewType`, `dashboard.id` (available for dashboard items)
- * `agileBoard.id`, `agileBoard.mode` (available on JIRA agile boards)
 
 JIRA issue pages only expose issue and project data. Similarly, version and component information is available only in
 project administration pages.
+
+#### <a name="additional-parameters-jira-software"></a>JIRA Software
+
+JIRA Software supports these context variables.
+
+ * `board.id`, `board.type`, 
+ `board.screen` (available for plugin points that are displayed in multiple board screens),
+ `board.mode` <span class="aui-lozenge">DEPRECATED</span> in favor of `board.screen` 
+ * `sprint.id`, `sprint.state` 
 
 ## <a name="additional-parameters-confluence"></a>Confluence
 

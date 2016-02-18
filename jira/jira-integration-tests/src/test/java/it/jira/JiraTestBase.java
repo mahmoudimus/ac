@@ -4,22 +4,19 @@ import java.rmi.RemoteException;
 import java.util.Locale;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
-
+import com.atlassian.plugin.connect.test.jira.product.JiraTestedProductAccessor;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import it.util.TestProject;
+import it.jira.project.TestProject;
 
 public class JiraTestBase
 {
 
-    private static final String PROJECT_TEMPLATE_KEY_RENAISSANCE = "com.atlassian.jira-core-project-templates:jira-core-task-management";
+    private static final String PROJECT_TEMPLATE_KEY = "com.atlassian.jira-core-project-templates:jira-core-task-management";
 
-    private static final String PROJECT_TEMPLATE_KEY_DARK_AGES = "com.atlassian.jira-core-project-templates:jira-issuetracking";
-
-    protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
+    protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
     protected static TestProject project;
 
@@ -39,13 +36,7 @@ public class JiraTestBase
     {
         String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
         String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
-                "Test project " + projectKey, projectKey, "admin", getProjectTemplateKey()));
+                "Test project " + projectKey, projectKey, "admin", PROJECT_TEMPLATE_KEY));
         return new TestProject(projectKey, projectId);
-    }
-
-    private static String getProjectTemplateKey()
-    {
-        return product.backdoor().applicationRoles().isEnabled()
-                ? PROJECT_TEMPLATE_KEY_RENAISSANCE : PROJECT_TEMPLATE_KEY_DARK_AGES;
     }
 }

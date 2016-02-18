@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
@@ -19,8 +19,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
-import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -45,7 +44,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
-    private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
+    private final AbsoluteAddonUrlConverter absoluteAddonUrlConverter;
     protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
@@ -53,7 +52,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             ConnectJsonSchemaValidator schemaValidator,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             HostContainer hostContainer,
-            AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
+            AbsoluteAddonUrlConverter absoluteAddonUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
 
@@ -61,38 +60,35 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
-        this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
+        this.absoluteAddonUrlConverter = absoluteAddonUrlConverter;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }
 
-    protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
+    protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,
             Plugin plugin, T macroBean);
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
         for (T macros : modules)
         {
-            moduleDescriptors.addAll(createModuleDescriptors(moduleProviderContext, pluginRetrievalService.getPlugin(), macros));
+            moduleDescriptors.addAll(createModuleDescriptors(addon, pluginRetrievalService.getPlugin(), macros));
         }
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(ConnectModuleProviderContext moduleProviderContext,
-            Plugin plugin, T macroBean)
+    protected List<ModuleDescriptor> createModuleDescriptors(ConnectAddonBean addon, Plugin plugin, T macroBean)
     {
         List<ModuleDescriptor> descriptors = newArrayList();
 
-        final ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
-
-        descriptors.add(createMacroModuleDescriptor(moduleProviderContext, plugin, macroBean));
+        descriptors.add(createMacroModuleDescriptor(addon, plugin, macroBean));
 
         if (macroBean.isFeatured())
         {
             WebItemModuleBean featuredWebItem = createFeaturedWebItem(macroBean);
-            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin, featuredWebItem));
+            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(featuredWebItem, addon, plugin));
 
             // Add a featured icon web resource
             if (macroBean.hasIcon())
@@ -174,7 +170,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "ICON_URL")
-                .addAttribute("value", absoluteAddOnUrlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
+                .addAttribute("value", absoluteAddonUrlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(plugin, webResource);
@@ -189,7 +185,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         String height = StringUtils.isBlank(editor.getHeight()) ? "100%" : editor.getHeight();
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                .addOn(addon.getKey())
+                .addon(addon.getKey())
                 .module(macroBean.getRawKey())
                 .dialogTemplate()
                 .urlTemplate(editor.getUrl())

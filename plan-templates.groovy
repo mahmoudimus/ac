@@ -7,8 +7,16 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
+    stashNotification()
     hipChatNotification()
-    runTestsStage()
+    notification(
+            type: 'Failed Builds and First Successful',
+            recipient: 'committers'
+    )
+    runTestsStage(
+            installMavenParameters: '',
+            testMavenParameters: ''
+    )
     stage(
             name: 'Start Release',
             manual: 'true'
@@ -37,6 +45,7 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (branch builds)')
     pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
+    stashNotification()
     notification(
             type: 'All Builds Completed',
             recipient: 'committers'
@@ -48,8 +57,19 @@ plan(
             notificationStrategy: 'INHERIT',
             remoteJiraBranchLinkingEnabled: 'true'
     )
+    variable(
+            key: 'maven.parameters',
+            value: ''
+    )
+    variable(
+            key: 'maven.test.parameters',
+            value: ''
+    )
 
-    runTestsStage()
+    runTestsStage(
+            installMavenParameters: '${bamboo.maven.parameters}',
+            testMavenParameters: '${bamboo.maven.parameters} ${bamboo.maven.test.parameters}'
+    )
 }
 
 plan(
@@ -59,13 +79,14 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '5.9.1-SNAPSHOT',
+            productVersion: '6.0.0-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
+                installMavenParameters: '',
+                testMavenParameters: '-Datlassian.confluence.version=${bamboo.product.version}'
         )
     }
 }
@@ -77,13 +98,14 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.1.0-SNAPSHOT',
+            productVersion: '7.1.0-SNAPSHOT'
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
+                installMavenParameters: '',
+                testMavenParameters: '-Datlassian.jira.version=${bamboo.product.version}'
         )
     }
 }

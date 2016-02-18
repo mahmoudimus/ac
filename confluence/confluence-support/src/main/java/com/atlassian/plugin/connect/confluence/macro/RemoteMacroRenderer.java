@@ -16,7 +16,7 @@ public interface RemoteMacroRenderer
      * modes that support it ({@link com.atlassian.confluence.content.render.xhtml.ConversionContext#getOutputType},
      * otherwise it will call the static rendering fallback if one is defined.
      *
-     * @param addOnKey the add on key
+     * @param addonKey the add on key
      * @param moduleKey the module key
      * @param renderModes the mappings between render mode and static content macro
      * @param parameters the parameters to the macro
@@ -25,13 +25,13 @@ public interface RemoteMacroRenderer
      * @return the html output
      * @throws MacroExecutionException if an error occurs during macro execution
      */
-    String executeDynamic(String addOnKey, String moduleKey, MacroRenderModesBean renderModes,
+    String executeDynamic(String addonKey, String moduleKey, MacroRenderModesBean renderModes,
                           Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
             throws MacroExecutionException;
 
     /**
      *
-     * @param addOnKey the add on key
+     * @param addonKey the add on key
      * @param moduleKey the module key
      * @param uriTemplate the uri template for the remote macro
      * @param parameters the parameters to the macro
@@ -40,7 +40,7 @@ public interface RemoteMacroRenderer
      * @return the static html rendering
      * @throws MacroExecutionException if an error occurs during macro execution
      */
-    String executeStatic(String addOnKey, String moduleKey, String uriTemplate,
+    String executeStatic(String addonKey, String moduleKey, String uriTemplate,
                          Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
                     throws MacroExecutionException;
 }

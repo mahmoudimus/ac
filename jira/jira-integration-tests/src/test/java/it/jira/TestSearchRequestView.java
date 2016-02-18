@@ -1,14 +1,15 @@
 package it.jira;
 
+import com.atlassian.connect.test.jira.pageobjects.IssueNavigatorViewsMenu;
+import com.atlassian.connect.test.jira.pageobjects.JiraAdvancedSearchPage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.plugin.connect.test.utils.NameValuePairs;
-import it.servlet.ConnectAppServlets;
-import it.servlet.EchoQueryParametersServlet;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.EchoQueryParametersServlet;
+import com.atlassian.plugin.connect.test.common.util.NameValuePairs;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -16,7 +17,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,7 +37,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         searchRequestViewServlet = new EchoQueryParametersServlet();
 
@@ -58,7 +59,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -85,7 +86,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @Test
-    public void verifyEntryIsNotPresentWhenAddOnConditionIsFalse() throws Exception
+    public void verifyEntryIsNotPresentWhenAddonConditionIsFalse() throws Exception
     {
         login(testUserFactory.basicUser());
 

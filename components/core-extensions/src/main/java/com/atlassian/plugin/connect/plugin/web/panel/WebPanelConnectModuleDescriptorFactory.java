@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
-import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.web.panel.ProductWebPanelElementEnhancer;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
@@ -18,39 +18,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean,WebPanelModuleDescriptor>
+public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean, WebPanelModuleDescriptor>
 {
     private final ConnectContainerUtil connectContainerUtil;
+    private final WebFragmentLocationQualifier webFragmentLocationQualifier;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     @Autowired
     public WebPanelConnectModuleDescriptorFactory(
             ConnectContainerUtil connectContainerUtil,
+            WebFragmentLocationQualifier webFragmentLocationQualifier,
             ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
         this.connectContainerUtil = connectContainerUtil;
+        this.webFragmentLocationQualifier = webFragmentLocationQualifier;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
     }
 
     @Override
-    public WebPanelModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, WebPanelModuleBean bean)
+    public WebPanelModuleDescriptor createModuleDescriptor(WebPanelModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        Element domElement = createDomElement(bean, bean.getKey(connectAddonBean), moduleProviderContext);
+        Element domElement = createDomElement(bean, addon);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
 
-        descriptor.init(theConnectPlugin, domElement);
+        descriptor.init(plugin, domElement);
         return descriptor;
     }
 
-    private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, ConnectModuleProviderContext moduleProviderContext)
+    private Element createDomElement(WebPanelModuleBean bean, ConnectAddonBean addon)
     {
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
         Element webPanelElement = new DOMElement("remote-web-panel");
-        webPanelElement.addAttribute("key", webPanelKey);
+        webPanelElement.addAttribute("key", bean.getKey(addon));
         webPanelElement.addAttribute("i18n-name-key", i18nKeyOrName);
-        webPanelElement.addAttribute("location", moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation()));
+
+        String location = webFragmentLocationQualifier.processLocation(bean.getLocation(), addon);
+        webPanelElement.addAttribute("location", location);
 
         if (null != bean.getWeight())
         {
@@ -59,7 +63,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
         if (!bean.getConditions().isEmpty())
         {
-            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(moduleProviderContext.getConnectAddonBean().getKey(), bean.getConditions());
+            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions());
             webPanelElement.add(conditionFragment);
         }
 

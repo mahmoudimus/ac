@@ -241,3 +241,56 @@ The `page.id`, `page.version`, `page.type` context variables available in Conflu
 </div>
 </div>
 
+## Add-on properties 'value' field is being unescaped
+
+Requests to the following resource:
+
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property
+    
+Return json objects in the following format:
+
+    {
+       "key": "my-property",
+       "value": "{\"object\": \"data\"}",
+       "self": "http://<self-url>..."
+    }
+
+Starting immediately the addition of the `?jsonValue=true` query parameter to the response will result in the following
+response:
+
+    GET /rest/atlassian-connect/1/addons/my-plugin-key/properties/my-property?jsonValue=true
+    {
+       "key": "my-property",
+       "value": {"object": "data"},
+       "self": "http://<self-url>..."
+    }
+    
+You will need to swap over to using the `jsonValue` query param over the next six months. After that time the `value`
+field will always populate as though the `?jsonValue=true` was set. 
+
+<div class="ac-deprecations">
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Deprecated in</h5>
+    </div>
+    <div class="aui-item">
+        <span class="aui-lozenge">1.1.65</span>
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Atlassian Cloud removal</h5>
+    </div>
+    <div class="aui-item">
+        __June 2016__
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Upgrade guide</h5>
+    </div>
+    <div class="aui-item">
+        <p>Please swap over to using jsonValue query param over the next six months and adjust your code to handle the updated format.</p>
+    </div>
+</div>
+</div>

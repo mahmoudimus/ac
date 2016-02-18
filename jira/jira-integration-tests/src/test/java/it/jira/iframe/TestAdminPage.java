@@ -1,28 +1,30 @@
 package it.jira.iframe;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraAdminPage;
 import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.IframeUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -34,7 +36,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestAdminPage extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String PAGE_NAME = "My Admin Page";
     private static final String PAGE_KEY = "my-admin-page";
@@ -45,7 +47,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
@@ -63,7 +65,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -81,7 +83,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
         URI url = new URI(adminPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira" + IframeUtils.iframeServletPath(PLUGIN_KEY, PAGE_KEY)));
 
-        ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage addonContentsPage = adminPage.clickAddonLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
     }
 
@@ -92,7 +94,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
-        ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
+        ConnectAddonEmbeddedTestPage addonContentsPage = adminPage.clickAddonLink();
         assertTrue("Addon is full size", addonContentsPage.isFullSize());
     }
 

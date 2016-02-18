@@ -7,9 +7,8 @@ import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
-import com.google.common.base.Optional;
-
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -52,9 +51,9 @@ public class PageContextMapParameterExtractor implements ContextMapParameterExtr
         else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction)
         {
             AbstractPageAwareAction action = (AbstractPageAwareAction) context.get(ACTION_PARAMETER);
-            return Optional.fromNullable(action.getPage());
+            return Optional.ofNullable(action.getPage());
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

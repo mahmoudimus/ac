@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.gadgets.dashboard.DashboardId;
 import com.atlassian.gadgets.dashboard.spi.DashboardPermissionService;
 import com.atlassian.jira.bc.EntityNotFoundException;
@@ -10,7 +9,6 @@ import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
-import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -18,11 +16,13 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.web.context.AbstractModuleContextFilter;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.connect.spi.module.PermissionChecks;
+import com.atlassian.plugin.connect.spi.web.context.AbstractModuleContextFilter;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+
 import com.google.common.collect.ImmutableList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
@@ -132,8 +132,7 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
                     @Override
                     public boolean hasPermission(final String value, final ApplicationUser user)
                     {
-                        final Option<IssueType> issueType = issueTypeService.getIssueType(user, value);
-                        return issueType.isDefined();
+                        return issueTypeService.getIssueType(user, value).isDefined();
                     }
                 },
                 new PermissionChecks.LongValue<ApplicationUser>()

@@ -2,12 +2,13 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.IssueTabPanelModuleMeta;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.annotations.VisibleForTesting;
@@ -30,10 +31,11 @@ public class IssueTabPanelModuleProvider extends ConnectTabPanelModuleProvider
             ConnectJsonSchemaValidator schemaValidator,
             ConnectTabPanelModuleDescriptorFactory descriptorFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            ConditionLoadingValidator conditionLoadingValidator)
     {
         super(pluginRetrievalService, schemaValidator, descriptorFactory, iFrameRenderStrategyRegistry,
-                iFrameRenderStrategyBuilderFactory);
+                iFrameRenderStrategyBuilderFactory, conditionLoadingValidator);
     }
 
     @Override
@@ -43,11 +45,11 @@ public class IssueTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon)
     {
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("issue-tab-page",
                 ConnectIssueTabPanelModuleDescriptor.class, ConnectIFrameIssueTabPanel.class);
 
-        return provideModules(moduleProviderContext, modules, hints);
+        return provideModules(addon, modules, hints);
     }
 }

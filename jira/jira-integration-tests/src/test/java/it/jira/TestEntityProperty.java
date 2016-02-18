@@ -1,26 +1,41 @@
 package it.jira;
 
+import java.util.List;
+
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.IssueTypeControl;
 import com.atlassian.jira.testkit.client.IssuesControl;
 import com.atlassian.jira.testkit.client.ProjectControl;
-import com.atlassian.jira.testkit.client.restclient.*;
+import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
+import com.atlassian.jira.testkit.client.restclient.Issue;
+import com.atlassian.jira.testkit.client.restclient.SearchClient;
+import com.atlassian.jira.testkit.client.restclient.SearchRequest;
+import com.atlassian.jira.testkit.client.restclient.SearchResult;
 import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-import com.atlassian.plugin.connect.modules.beans.nested.*;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.query.operator.Operator;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import it.util.TestProject;
-import org.hamcrest.Matchers;
-import org.junit.*;
 
-import java.util.List;
+import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import it.jira.project.TestProject;
 
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -31,7 +46,7 @@ public class TestEntityProperty extends JiraTestBase
 {
     private static final TestKitLocalEnvironmentData localEnvironmentData = new TestKitLocalEnvironmentData();
     private static final String ATTACHMENT_PROPERTY_KEY = "attachment";
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
     private static final String JQL_ALIAS_ATTACHMENT_SIZE = "attachmentSize";
     private static final String JQL_ALIAS_ATTACHMENT_EXTENSION = "attachmentExtension";
 
@@ -43,7 +58,7 @@ public class TestEntityProperty extends JiraTestBase
     private TestProject testProject;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
 
         List<EntityPropertyIndexExtractionConfigurationBean> extractions = newArrayList(
@@ -75,7 +90,7 @@ public class TestEntityProperty extends JiraTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -129,7 +144,7 @@ public class TestEntityProperty extends JiraTestBase
     }
 
     @Test
-    public void conflictingAliasFromTwoAddOns() throws Exception
+    public void conflictingAliasFromTwoAddons() throws Exception
     {
         final List<EntityPropertyIndexExtractionConfigurationBean> extractions = ImmutableList.of(
                 // the same alias

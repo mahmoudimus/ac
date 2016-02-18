@@ -25,19 +25,19 @@ public interface ConnectAddonAccessor
      * @param addonKey the key of the add-on
      * @return the add-on or empty
      */
-    public Optional<ConnectAddonBean> getAddon(String addonKey);
+    Optional<ConnectAddonBean> getAddon(String addonKey);
 
     /**
      * Returns the keys of all installed add-ons.
      *
      * @return the keys of all installed add-ons
      */
-    public Collection<String> getAllAddonKeys();
+    Collection<String> getAllAddonKeys();
 
     /**
      * Returns all installed add-ons.
      *
      * @return the installed add-ons
      */
-    public Collection<ConnectAddonBean> getAllAddons();
+    Collection<ConnectAddonBean> getAllAddons();
 }

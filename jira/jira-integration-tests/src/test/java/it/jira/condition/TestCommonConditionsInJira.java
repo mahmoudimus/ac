@@ -1,17 +1,20 @@
 package it.jira.condition;
 
+import java.util.Optional;
+
+import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.google.common.base.Optional;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.condition.CheckUsernameConditionServlet;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
@@ -36,7 +39,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
         betty = testUserFactory.admin();
         barney = testUserFactory.basicUser();
@@ -46,7 +49,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
         onlyBettyConditionUrl = "/only" + betty.getDisplayName() + "Condition";
         onlyBarneyConditionUrl = "/only" + barney.getDisplayName() + "Condition";
 
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
                     newWebItemBean()
@@ -92,7 +95,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -104,7 +107,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     public void bettyCanSeeBettyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(onlyBettyWebItem), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(onlyBettyWebItem), Optional.<String>empty()));
     }
 
     @Test
@@ -125,14 +128,14 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     public void bettyCanSeeBettyAndBarneyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>empty()));
     }
 
     @Test
     public void barneyCanSeeBettyAndBarneyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>empty()));
     }
 
     @Test
@@ -146,7 +149,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     public void bettyCanSeeAdminRightsWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>empty()));
     }
 
     @Test
@@ -160,11 +163,11 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     public void adminCanSeeAdminRightsWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(testUserFactory.admin(), JiraViewProjectPage.class, project.getKey());
-        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent()));
+        assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>empty()));
     }
 
     private String getModuleKey(String module)
     {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
-    }    
+    }
 }

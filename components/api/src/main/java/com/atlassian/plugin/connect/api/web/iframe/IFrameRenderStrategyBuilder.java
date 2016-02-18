@@ -6,9 +6,9 @@ import com.atlassian.plugin.web.Condition;
 
 public interface IFrameRenderStrategyBuilder
 {
-    AddOnUriBuilder addOn(String key);
+    AddonUriBuilder addon(String key);
 
-    interface AddOnUriBuilder
+    interface AddonUriBuilder
     {
         ModuleUriBuilder module(String key);
     }

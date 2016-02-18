@@ -1,0 +1,30 @@
+package it.common.upm;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
+import com.atlassian.plugin.connect.modules.beans.ConfigurePageModuleMeta;
+import com.atlassian.upm.pageobjects.PluginManager;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
+
+public class TestConfigurePage extends AbstractUpmPageTest
+{
+
+    private static final String MODULE_NAME = "configurePage";
+
+    @BeforeClass
+    public static void startConnectAddon() throws Exception
+    {
+        startConnectAddon(MODULE_NAME, new ConfigurePageModuleMeta());
+    }
+
+    @Test
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
+    {
+        runCanClickOnPageLinkAndSeeAddonContents(PluginManager.class, LINK_TEXT, "Configure", testUserFactory.admin());
+    }
+}

@@ -28,9 +28,7 @@ import com.atlassian.confluence.event.events.user.UserCreateEvent;
 import com.atlassian.confluence.event.events.user.UserDeactivateEvent;
 import com.atlassian.confluence.event.events.user.UserReactivateEvent;
 import com.atlassian.confluence.event.events.user.UserRemoveEvent;
-import com.atlassian.confluence.event.events.userstatus.StatusClearedEvent;
-import com.atlassian.confluence.event.events.userstatus.StatusCreateEvent;
-import com.atlassian.confluence.event.events.userstatus.StatusRemoveEvent;
+import com.atlassian.confluence.plugins.createcontent.api.events.BlueprintPageCreateEvent;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
@@ -61,9 +59,6 @@ public class ConfluenceWebHookProvider implements WebHookProvider
         publish.webhook("user_deactivated").whenFired(UserDeactivateEvent.class).serializedWith(serializer);
         publish.webhook("user_created").whenFired(UserCreateEvent.class).serializedWith(serializer);
         publish.webhook("user_followed").whenFired(FollowEvent.class).serializedWith(serializer);
-        publish.webhook("status_removed").whenFired(StatusRemoveEvent.class).serializedWith(serializer);
-        publish.webhook("status_cleared").whenFired(StatusClearedEvent.class).serializedWith(serializer);
-        publish.webhook("status_created").whenFired(StatusCreateEvent.class).serializedWith(serializer);
         publish.webhook("space_permissions_updated").whenFired(SpacePermissionsUpdateEvent.class).serializedWith(serializer);
         publish.webhook("space_removed").whenFired(SpaceRemoveEvent.class).serializedWith(serializer);
         publish.webhook("space_logo_updated").whenFired(SpaceLogoUpdateEvent.class).serializedWith(serializer);
@@ -98,8 +93,7 @@ public class ConfluenceWebHookProvider implements WebHookProvider
         publish.webhook("page_moved").whenFired(PageMoveEvent.class).serializedWith(serializer);
         publish.webhook("page_viewed").whenFired(PageViewEvent.class).serializedWith(serializer);
         publish.webhook("page_children_reordered").whenFired(PageChildrenReorderEvent.class).serializedWith(serializer);
+        publish.webhook("blueprint_page_created").whenFired(BlueprintPageCreateEvent.class).serializedWith(serializer);
         publish.webhook("content_permissions_updated").whenFired(ContentPermissionEvent.class).matchedBy(new NonEmptyContentPermissionEventMatcher()).serializedWith(serializer);
     }
-
-    
 }

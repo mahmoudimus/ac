@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface ScopeTestHelper
 {
-    Map<ScopeName, Plugin> installScopedAddOns() throws IOException;
+    Map<ScopeName, Plugin> installScopedAddons() throws IOException;
 
-    void uninstallScopedAddOns(Map<ScopeName, Plugin> installedPlugins);
+    void uninstallScopedAddons(Map<ScopeName, Plugin> installedPlugins);
 }

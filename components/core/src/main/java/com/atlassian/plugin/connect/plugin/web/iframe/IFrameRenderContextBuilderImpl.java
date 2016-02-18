@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
@@ -19,7 +19,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 /**
  *
  */
-public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilder, IFrameRenderContextBuilder.AddOnContextBuilder, IFrameRenderContextBuilder.NamespacedContextBuilder
+public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilder, IFrameRenderContextBuilder.AddonContextBuilder, IFrameRenderContextBuilder.NamespacedContextBuilder
 {
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
@@ -39,7 +39,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     }
 
     @Override
-    public AddOnContextBuilder addOn(final String key)
+    public AddonContextBuilder addon(final String key)
     {
         addonKey = key;
         return this;

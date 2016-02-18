@@ -73,27 +73,27 @@ public class WorkflowPostFunctionModuleBeanTest
     }
 
     @Test
-    public void verifyAddOnMarshalling() throws Exception
+    public void verifyAddonMarshalling() throws Exception
     {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        WorkflowPostFunctionModuleBean addOn = gson.fromJson(json, WorkflowPostFunctionModuleBean.class);
+        WorkflowPostFunctionModuleBean addon = gson.fromJson(json, WorkflowPostFunctionModuleBean.class);
 
-        assertEquals("my-function", addOn.getRawKey());
-        assertEquals("My function", addOn.getName().getValue());
-        assertEquals("my.function", addOn.getName().getI18n());
-        assertEquals("My function explanation", addOn.getDescription().getValue());
-        assertEquals("my.function.desc", addOn.getDescription().getI18n());
+        assertEquals("my-function", addon.getRawKey());
+        assertEquals("My function", addon.getName().getValue());
+        assertEquals("my.function", addon.getName().getI18n());
+        assertEquals("My function explanation", addon.getDescription().getValue());
+        assertEquals("my.function.desc", addon.getDescription().getI18n());
 
-        assertEquals("/view", addOn.getView().getUrl());
-        assertEquals("/edit", addOn.getEdit().getUrl());
-        assertEquals("/create", addOn.getCreate().getUrl());
-        assertEquals("/triggered", addOn.getTriggered().getUrl());
+        assertEquals("/view", addon.getView().getUrl());
+        assertEquals("/edit", addon.getEdit().getUrl());
+        assertEquals("/create", addon.getCreate().getUrl());
+        assertEquals("/triggered", addon.getTriggered().getUrl());
 
-        assertTrue(addOn.hasView());
-        assertTrue(addOn.hasEdit());
-        assertTrue(addOn.hasCreate());
-        assertTrue(addOn.hasTriggered());
+        assertTrue(addon.hasView());
+        assertTrue(addon.hasEdit());
+        assertTrue(addon.hasCreate());
+        assertTrue(addon.hasTriggered());
     }
 
     @Test(expected = IllegalArgumentException.class)

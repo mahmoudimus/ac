@@ -34,25 +34,25 @@ public class ScopeTestHelperImpl implements ScopeTestHelper
     }
 
     @Override
-    public Map<ScopeName, Plugin> installScopedAddOns() throws IOException
+    public Map<ScopeName, Plugin> installScopedAddons() throws IOException
     {
         final Map<ScopeName, Plugin> installedPlugins = new HashMap<>();
         for (ScopeName scopeName : ScopeName.values())
         {
-            ConnectAddonBean addOnBean = createAddOnBeanWithScope(scopeName);
-            final Plugin addOn = testPluginInstaller.installAddon(addOnBean);
-            installedPlugins.put(scopeName, addOn);
+            ConnectAddonBean addonBean = createAddonBeanWithScope(scopeName);
+            final Plugin addon = testPluginInstaller.installAddon(addonBean);
+            installedPlugins.put(scopeName, addon);
         }
 
-        ConnectAddonBean addOnBean = createAddOnBeanWithScope(null);
-        final Plugin addOn = testPluginInstaller.installAddon(addOnBean);
-        installedPlugins.put(null, addOn);
+        ConnectAddonBean addonBean = createAddonBeanWithScope(null);
+        final Plugin addon = testPluginInstaller.installAddon(addonBean);
+        installedPlugins.put(null, addon);
 
         return installedPlugins;
     }
 
     @Override
-    public void uninstallScopedAddOns(Map<ScopeName, Plugin> installedPlugins)
+    public void uninstallScopedAddons(Map<ScopeName, Plugin> installedPlugins)
     {
         for (Plugin plugin : installedPlugins.values())
         {
@@ -76,7 +76,7 @@ public class ScopeTestHelperImpl implements ScopeTestHelper
         return scopeName.toString() + '-' + AddonUtil.randomPluginKey();
     }
 
-    private ConnectAddonBean createAddOnBeanWithScope(ScopeName scopeName)
+    private ConnectAddonBean createAddonBeanWithScope(ScopeName scopeName)
     {
         final String key = getPluginKeyForScopeName(scopeName);
         ConnectAddonBeanBuilder connectAddonBeanBuilder = newConnectAddonBean()

@@ -1,18 +1,19 @@
 package it.jira;
 
+import java.util.Map;
+
 import com.atlassian.jira.projects.pageobjects.webdriver.page.ReportsPage;
 import com.atlassian.plugin.connect.modules.beans.ReportCategory;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestReport extends JiraWebDriverTestBase
 {
-    private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String ADDON_KEY = AddonTestUtils.randomAddonKey();
 
     private static final TestReportInfo firstTestReport = new TestReportInfo("Agile Test Report", "description", "agile-test-report", "projectKey", ReportCategory.AGILE)
     {
@@ -97,7 +98,7 @@ public class TestReport extends JiraWebDriverTestBase
     {
         for (TestReportInfo reportInfo : reportInfos)
         {
-            ConnectAddOnEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage(reportInfo);
+            ConnectAddonEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage(reportInfo);
             assertThat(embeddedReportPage.getMessage(), is("Success"));
         }
     }
@@ -107,7 +108,7 @@ public class TestReport extends JiraWebDriverTestBase
     {
         for (TestReportInfo reportInfo : reportInfos)
         {
-            final ConnectAddOnEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage(reportInfo);
+            final ConnectAddonEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage(reportInfo);
             final Map<String, String> queryParams = embeddedReportPage.getIframeQueryParams();
 
             assertThat(queryParams, hasEntry(equalTo(reportInfo.contextParam),
@@ -125,11 +126,11 @@ public class TestReport extends JiraWebDriverTestBase
         return reportsPage.getReportsSection(reportInfo.reportCategory.getKey()).getReport(reportInfo.title);
     }
 
-    private ConnectAddOnEmbeddedTestPage goToEmbeddedReportPage(TestReportInfo reportInfo)
+    private ConnectAddonEmbeddedTestPage goToEmbeddedReportPage(TestReportInfo reportInfo)
     {
         ReportsPage reportsPage = goToProjectReportPage();
         ReportsPage.Report report = getReportFromReportsPage(reportsPage, reportInfo);
-        return report.visit(ConnectAddOnEmbeddedTestPage.class, ADDON_KEY, reportInfo.key, true);
+        return report.visit(ConnectAddonEmbeddedTestPage.class, ADDON_KEY, reportInfo.key, true);
     }
 
     private static abstract class TestReportInfo

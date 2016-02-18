@@ -7,15 +7,14 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringEscapeUtils;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.uri.Uri;
 import com.google.common.base.Function;
@@ -29,18 +28,18 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 import static com.atlassian.plugin.connect.api.util.Dom4jUtils.printNode;
+import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 
 public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean>
         implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleDescriptorFactory.class);
 
-    private final AbsoluteAddOnUrlConverter urlConverter;
+    private final AbsoluteAddonUrlConverter urlConverter;
 
     public AbstractContentMacroModuleDescriptorFactory(
-            AbsoluteAddOnUrlConverter urlConverter)
+            AbsoluteAddonUrlConverter urlConverter)
     {
         this.urlConverter = urlConverter;
     }
@@ -48,15 +47,14 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     protected abstract ModuleFactory createModuleFactory(ConnectAddonBean addon, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, B bean)
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(B bean, ConnectAddonBean connectAddonBean, Plugin plugin)
     {
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         DOMElement element = createDOMElement(connectAddonBean, bean);
         ModuleFactory moduleFactory = createModuleFactory(connectAddonBean, element, bean);
         MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(connectAddonBean, bean);
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
-        descriptor.init(theConnectPlugin, element);
+        descriptor.init(plugin, element);
 
         // TODO: Remove once we have proper i18n support
         updateDefaultParameterLabels(descriptor.getMacroMetadata().getFormDetails().getParameters(), bean.getParameters());

@@ -31,13 +31,13 @@ import static java.util.Collections.emptyMap;
 public class XWorkPackageCreator
 {
     private final ConnectAddonBean addon;
-    private final Plugin theConnectPlugin;
+    private final Plugin plugin;
     private final XWorkActionModuleBean actionModuleBean;
 
-    public XWorkPackageCreator(final ConnectAddonBean addon, Plugin theConnectPlugin, final XWorkActionModuleBean actionModuleBean)
+    public XWorkPackageCreator(final ConnectAddonBean addon, Plugin plugin, final XWorkActionModuleBean actionModuleBean)
     {
         this.addon = addon;
-        this.theConnectPlugin = theConnectPlugin;
+        this.plugin = plugin;
         this.actionModuleBean = actionModuleBean;
     }
 
@@ -53,7 +53,7 @@ public class XWorkPackageCreator
         addResultTypes(packageConfig, actionModuleBean);
         addInterceptors(packageConfig, actionModuleBean);
 
-        ActionConfig actionConfig = buildActionConfig(theConnectPlugin, actionModuleBean);
+        ActionConfig actionConfig = buildActionConfig(plugin, actionModuleBean);
 
         actionConfig.addInterceptors(buildActionInterceptors(packageConfig, actionModuleBean));
         actionConfig.setResults(buildResults(packageConfig, actionModuleBean));

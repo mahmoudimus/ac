@@ -1,18 +1,20 @@
 package it.jira.jsapi;
 
+import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteXdmEventPanel;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import it.jira.JiraWebDriverTestBase;
+
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.test.server.ConnectRunner.newServlet;
+import static com.atlassian.plugin.connect.test.common.servlet.ConnectRunner.newServlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -22,9 +24,9 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     private static ConnectRunner remotePluginB;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        remotePluginA = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePluginA = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webPanels",
                         newWebPanelBean()
@@ -50,7 +52,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
                 .addRoute("/xdmEventsPanelA3", newServlet(new XdmEventsPanelServlet("A3")))
                 .start();
 
-        remotePluginB = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        remotePluginB = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webPanels",
                         newWebPanelBean()
@@ -125,7 +127,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         try
         {

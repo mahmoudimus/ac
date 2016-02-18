@@ -1,5 +1,10 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
+import java.io.IOException;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -9,12 +14,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.sal.api.user.UserManager;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -60,13 +62,13 @@ public abstract class AddonTestFilterBase implements Filter
             Matcher matcher = PATH_PATTERN.matcher(pathInfo);
             if (matcher.find())
             {
-                String addOnKey = matcher.group(2);
+                String addonKey = matcher.group(2);
                 String addonResource = matcher.group(3);
                 String parameter = matcher.group(4);
 
-                testFilterResults.put(addOnKey + "/" + addonResource, new ServletRequestSnapshot(req, userManager));
+                testFilterResults.put(addonKey + "/" + addonResource, new ServletRequestSnapshot(req, userManager));
 
-                Option<PrecannedResponse> precannedResponse = addonPrecannedResponseHelper.poll();
+                Optional<PrecannedResponse> precannedResponse = addonPrecannedResponseHelper.poll();
 
                 byte[] content = getContent(addonResource, parameter).getBytes("UTF-8");
                 int statusCode = getStatusCode(addonResource, parameter, precannedResponse, pathInfo);
@@ -88,14 +90,14 @@ public abstract class AddonTestFilterBase implements Filter
     protected abstract boolean shouldProcess(HttpServletRequest request);
     protected abstract void processNonMatch(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException;
 
-    private int getStatusCode(String addonResource, String parameter, Option<PrecannedResponse> precannedResponse,
+    private int getStatusCode(String addonResource, String parameter, Optional<PrecannedResponse> precannedResponse,
                               String path)
     {
         if (RESOURCE_STATUS.equals(addonResource))
         {
             if (parameter != null)
             {
-                if (precannedResponse.isDefined())
+                if (precannedResponse.isPresent())
                 {
                     throw new IllegalStateException("Cannot specify a status code when a precanned response is present");
                 }
@@ -103,7 +105,7 @@ public abstract class AddonTestFilterBase implements Filter
             }
         }
 
-        return precannedResponse.isDefined()  && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath())
+        return precannedResponse.isPresent()  && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath())
                 ? precannedResponse.get().getStatusCode() : HttpServletResponse.SC_OK;
     }
 

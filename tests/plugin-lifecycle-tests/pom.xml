@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.61-SNAPSHOT</version>
+        <version>1.1.72</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,14 +20,6 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
-            <version>${plugin.testrunner.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -60,7 +52,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>2.5.6.SEC02</version>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -97,6 +89,10 @@
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.testutils</groupId>
+            <artifactId>atlassian-test-annotations</artifactId>
+        </dependency>
 
     </dependencies>
     <build>
@@ -106,10 +102,18 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <containerId>tomcat7x</containerId>
-                    <enableFastdev>false</enableFastdev>
-                    <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
+
+                    <!-- taken from https://bitbucket.org/atlassianlabs/quickreload -->
+                    <enableFastdev>false</enableFastdev>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enablePde>false</enablePde>
+                    <skipRestDocGeneration>true</skipRestDocGeneration>
+                    <allowGoogleTracking>false</allowGoogleTracking>
+                    <skipManifestValidation>true</skipManifestValidation>
+                    <extractDependencies>false</extractDependencies>
+
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>
@@ -143,7 +147,7 @@
                         <product>
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../integration-tests-support/src/main/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -209,7 +213,7 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
+                            <log4jProperties>${basedir}/../integration-tests-support/src/main/resources/log4j-confluence.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -243,6 +247,11 @@
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

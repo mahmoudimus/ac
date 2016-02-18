@@ -58,9 +58,9 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
         Plugin plugin = null;
         try
         {
-            plugin = installPlugin(getProjectAdminAddOn());
+            plugin = installPlugin(getProjectAdminAddon());
             uninstallPlugin(plugin);
-            plugin = installPlugin(getReadAddOn());
+            plugin = installPlugin(getReadAddon());
 
             List<String> projectAdminErrors = permissionsForAllProjects(Permission.PROJECT_ADMIN, false, plugin);
             assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
@@ -72,15 +72,15 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
     }
 
     @Test
-    public void addOnEnablementChangesPreserveCustomConfiguration() throws Exception
+    public void addonEnablementChangesPreserveCustomConfiguration() throws Exception
     {
         Plugin plugin = null;
         try
         {
-            plugin = installPlugin(getProjectAdminAddOn());
+            plugin = installPlugin(getProjectAdminAddon());
 
             Project project = jiraTestUtil.createProject();
-            ApplicationUser addonUser = getAddOnUser();
+            ApplicationUser addonUser = getAddonUser();
 
             SimpleErrorCollection errorCollection = new SimpleErrorCollection();
             ProjectRole projectRole = getProjectRoleService().getProjectRoleByName("atlassian-addons-project-access", errorCollection);

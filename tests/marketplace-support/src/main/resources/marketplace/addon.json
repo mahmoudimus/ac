@@ -1,0 +1,88 @@
+{
+    "_embedded": {
+        "version": {
+            "_embedded": {
+                "highlights": [
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                        "title": "<%= highlight title 1 goes here =>",
+                        "body": "<%= highlight body 1 goes here =>"
+                    },
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                      "title": "<%= highlight title 2 goes here =>",
+                      "body": "<%= highlight body 2 goes here =>"
+                    },
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                      "title": "<%= highlight title 3 goes here =>",
+                      "body": "<%= highlight body 3 goes here =>"
+                    }
+
+                ],
+                "screenshots": []
+            },
+            "_links": {
+                "agreement": {
+                    "href": "http://www.atlassian.com/licensing/marketplace/publisheragreement"
+                },
+                "artifact": {
+                    "href": "<%=descriptor url goes here=>"
+                },
+                "license": {
+                    "href": "/rest/2.0-beta/licenseTypes/asl"
+                }
+            },
+            "compatibilities": [
+                {
+                    "application": "jira",
+                    "hosting": { "cloud": true }
+                },
+                {
+                    "application": "confluence",
+                    "hosting": { "cloud": true }
+                }
+            ],
+            "name": "1.0",
+            "paymentModel": "free",
+            "release": {
+                "beta": false,
+                "date": "2015-02-19",
+                "supported": false
+            },
+            "status": "public",
+            "text": {
+                "moreDetails": "",
+                "releaseSummary": "The first and only version"
+            },
+            "vendorLinks": {}
+        }
+    },
+    "_links": {
+        "categories": [],
+        "logo": {
+            "href": "<%=logo url goes here=>"
+        },
+        "vendor": {
+            "href": "/rest/2.0-beta/vendors/<%=vendor id goes here=>"
+        }
+    },
+    "enableAtlassianAnswers": false,
+    "key": "<%=key goes here=>",
+    "name": "<%=name goes here=>",
+    "status": "public",
+    "summary": "<%= summary goes here =>",
+    "tagLine": "<%= tagline goes here =>",
+    "vendorLinks": {
+        "privacy": "https://www.atlassian.com/legal/privacy-policy"
+    }
+}

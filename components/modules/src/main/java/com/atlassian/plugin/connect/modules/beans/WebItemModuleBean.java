@@ -77,7 +77,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * or `product`, which renders the URL relative to the product's base URL.
      */
     @CommonSchemaAttributes(defaultValue = "addon")
-    private AddOnUrlContext context;
+    private AddonUrlContext context;
 
     /**
      * Determines the order in which the web item appears in the menu or list.
@@ -126,7 +126,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         this.url = "";
         this.location = "";
-        this.context = AddOnUrlContext.addon;
+        this.context = AddonUrlContext.addon;
         this.weight = 100;
         this.target = WebItemTargetBean.newWebItemTargetBean().build();
         this.styleClasses = new ArrayList<String>();
@@ -145,7 +145,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
 
         if (null == context)
         {
-            this.context = AddOnUrlContext.addon;
+            this.context = AddonUrlContext.addon;
         }
 
         if (null == weight)
@@ -176,7 +176,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         return location;
     }
 
-    public AddOnUrlContext getContext()
+    public AddonUrlContext getContext()
     {
         return context;
     }

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.61-SNAPSHOT</version>
+        <version>1.1.72</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -36,8 +36,6 @@
         <dependency>
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
-            <version>${atlassian.analytics.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
@@ -93,18 +91,6 @@
             <version>${toolbox.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
-            <version>${plugin.testrunner.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -118,7 +104,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-spi</artifactId>
+            <artifactId>atlassian-connect-host-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-extension-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -216,7 +207,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.8-atlassian-8</version>
+            <version>${jersey.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -536,10 +527,12 @@
                         <Import-Package>
 
                             <!-- Required for pa / pi to work with the new version of atlassian-plugins -->
-                            com.atlassian.plugin.osgi.bridge.external;
-                            org.osgi.util.tracker;
-                            org.osgi.framework;
+                            com.atlassian.plugin.osgi.bridge.external,
+                            org.osgi.util.tracker,
+                            org.osgi.framework,
                             <!-- End pa / pi imports -->
+
+                            com.atlassian.jwt*;version="[1.4.0,2.0.0)",
 
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
                             com.github.fge.jsonschema.core*;version="1.2.4",
@@ -692,11 +685,6 @@
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.confluence.plugins</groupId>
-                                    <artifactId>confluence-create-content-plugin</artifactId>
-                                    <version>${blueprints.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
@@ -928,7 +916,7 @@
         <od.testing.configuration>
             use-java,8
             use-maven,3
-            include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
+            include-artifact,com.atlassian.plugins:atlassian-connect-confluence-integration-tests
             include-artifact,com.atlassian.plugins:atlassian-connect-jira-integration-tests
         </od.testing.configuration>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>

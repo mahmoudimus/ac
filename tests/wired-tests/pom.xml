@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.61-SNAPSHOT</version>
+        <version>1.1.72</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -54,18 +54,6 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
-            <version>${plugin.testrunner.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.gson</groupId>
-                    <artifactId>gson</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jwt</groupId>
@@ -211,6 +199,12 @@
             <artifactId>json-schema-validator</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.testutils</groupId>
+            <artifactId>atlassian-test-annotations</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -227,9 +221,17 @@
                 </executions>
                 <configuration>
                     <containerId>tomcat7x</containerId>
-                    <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+
+                    <!-- taken from https://bitbucket.org/atlassianlabs/quickreload -->
+                    <enableFastdev>false</enableFastdev>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enablePde>false</enablePde>
                     <skipRestDocGeneration>true</skipRestDocGeneration>
+                    <allowGoogleTracking>false</allowGoogleTracking>
+                    <skipManifestValidation>true</skipManifestValidation>
+                    <extractDependencies>false</extractDependencies>
+
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>${project.groupId}</groupId>

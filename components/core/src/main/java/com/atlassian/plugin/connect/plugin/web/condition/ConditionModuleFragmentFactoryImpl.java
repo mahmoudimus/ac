@@ -1,61 +1,57 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
-import com.atlassian.plugin.PluginAccessor;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.web.condition.ConnectCondition;
+import com.atlassian.plugin.connect.api.web.condition.ConnectConditionContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.base.Strings;
+
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 
 @Component
 public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragmentFactory
 {
-
     private static final Logger log = LoggerFactory.getLogger(ConditionModuleFragmentFactory.class);
     private static final String TYPE_KEY = "type";
 
-    private PluginAccessor pluginAccessor;
+    private ConditionClassAccessor conditionClassAccessor;
 
     @Autowired
-    public ConditionModuleFragmentFactoryImpl(PluginAccessor pluginAccessor, ProductAccessor productAccessor)
+    public ConditionModuleFragmentFactoryImpl(ConditionClassAccessor conditionClassAccessor)
     {
-        this.pluginAccessor = pluginAccessor;
+        this.conditionClassAccessor = conditionClassAccessor;
     }
 
     @Override
-    public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans)
+    public DOMElement createFragment(String addonKey, List<ConditionalBean> beans)
     {
-        return createFragment(pluginKey, beans, Collections.<Class<? extends Condition>>emptyList());
+        return createFragment(addonKey, beans, Collections.<Class<? extends Condition>>emptyList());
     }
 
     @Override
-    public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans,
+    public DOMElement createFragment(String addonKey, List<ConditionalBean> beans,
             Iterable<Class<? extends Condition>> additionalStaticConditions)
     {
         DOMElement element = new DOMElement("conditions");
         element.addAttribute(TYPE_KEY, "AND");
 
-        List<DOMElement> conditions = processConditionBeans(pluginKey, beans);
+        List<DOMElement> conditions = processConditionBeans(addonKey, beans);
 
         for (DOMElement condition : conditions)
         {
@@ -69,6 +65,36 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
 
         return element;
 
+    }
+
+    @Override
+    public Map<String, String> getFragmentParameters(String addonKey, SingleConditionBean conditionBean)
+    {
+        ConnectConditionContext.Builder contextBuilder = ConnectConditionContext.builder(conditionBean.getParams());
+
+        if (isRemoteCondition(conditionBean))
+        {
+            contextBuilder.put(AddonCondition.ADDON_KEY, addonKey);
+            contextBuilder.put(AddonCondition.URL, conditionBean.getCondition());
+        }
+        else
+        {
+            Optional<Class<? extends Condition>> optionalConditionClass = getConditionClass(conditionBean);
+            optionalConditionClass.ifPresent(new Consumer<Class<? extends Condition>>()
+            {
+
+                @Override
+                public void accept(Class<? extends Condition> conditionClass)
+                {
+                    if (conditionClass.isAnnotationPresent(ConnectCondition.class))
+                    {
+                        contextBuilder.putAddonKey(addonKey);
+                    }
+                }
+            });
+        }
+
+        return contextBuilder.build().toMap();
     }
 
     private List<DOMElement> processConditionBeans(String pluginKey, List<ConditionalBean> beans)
@@ -107,88 +133,47 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
         return elements;
     }
 
-
-    private DOMElement createSingleCondition(String addOnKey, SingleConditionBean bean)
+    private DOMElement createSingleCondition(String addonKey, SingleConditionBean conditionBean)
     {
-        String className = "";
         DOMElement element = null;
 
-        final ConnectConditionContext.Builder contextBuilder = ConnectConditionContext.builder(bean.getParams());
-
-        if (isRemoteCondition(bean))
+        Optional<Class<? extends Condition>> optionalConditionClass = getConditionClass(conditionBean);
+        if (optionalConditionClass.isPresent())
         {
-            className = AddOnCondition.class.getName();
-            contextBuilder.put(AddOnCondition.ADDON_KEY, addOnKey);
-            contextBuilder.put(AddOnCondition.URL, bean.getCondition());
-        }
-        else
-        {
-            Optional<Class<? extends Condition>> optionalConditionClass = resolveConditionClassForHostContext(bean);
+            Class<? extends Condition> conditionClass = optionalConditionClass.get();
+            Map<String, String> conditionElementParameters = getFragmentParameters(addonKey, conditionBean);
 
-            if (optionalConditionClass.isPresent())
-            {
-                className = optionalConditionClass.get().getName();
-                if (optionalConditionClass.get().isAnnotationPresent(ConnectCondition.class))
-                {
-                    contextBuilder.putAddOnKey(addOnKey);
-                }
-            }
-        }
-
-        if (!Strings.isNullOrEmpty(className))
-        {
             element = new DOMElement("condition");
-            element.addAttribute("class", className);
-            element.addAttribute("invert", Boolean.toString(bean.isInvert()));
+            element.addAttribute("class", conditionClass.getName());
+            element.addAttribute("invert", Boolean.toString(conditionBean.isInvert()));
 
-            for (Map.Entry<String,String> entry : contextBuilder.build().toMap().entrySet())
+            for (Map.Entry<String,String> entry : conditionElementParameters.entrySet())
             {
                 element.addElement("param")
-                        .addAttribute("name",entry.getKey())
-                        .addAttribute("value",entry.getValue());
+                        .addAttribute("name", entry.getKey())
+                        .addAttribute("value", entry.getValue());
             }
         }
         else
         {
-            log.warn("Condition with name " + bean.getCondition() + " could not be found");
+            log.warn("Condition with name " + conditionBean.getCondition() + " could not be found");
         }
 
         return element;
     }
 
-    private Optional<Class<? extends Condition>> resolveConditionClassForHostContext(final SingleConditionBean bean)
+    private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean)
     {
-        Collection<ConnectConditionClassResolver> conditionClassResolvers = pluginAccessor.getEnabledModulesByClass(ConnectConditionClassResolver.class);
-        return conditionClassResolvers.stream()
-                .flatMap(new Function<ConnectConditionClassResolver, Stream<ConnectConditionClassResolver.Entry>>()
-                {
-                    @Override
-                    public Stream<ConnectConditionClassResolver.Entry> apply(ConnectConditionClassResolver resolver)
-                    {
-                        return resolver.getEntries().stream();
-                    }
-                }).map(new Function<ConnectConditionClassResolver.Entry, Optional<Class<? extends Condition>>>()
-                {
-                    @Override
-                    public Optional<Class<? extends Condition>> apply(ConnectConditionClassResolver.Entry resolverEntry)
-                    {
-                        return resolverEntry.getConditionClassForHostContext(bean);
-                    }
-                }).filter(new Predicate<Optional<Class<? extends Condition>>>()
-                {
-                    @Override
-                    public boolean test(Optional<Class<? extends Condition>> optionalConditionClass)
-                    {
-                        return optionalConditionClass.isPresent();
-                    }
-                }).map(new Function<Optional<Class<? extends Condition>>, Class<? extends Condition>>()
-                {
-                    @Override
-                    public Class<? extends Condition> apply(Optional<Class<? extends Condition>> optionalConditionClass)
-                    {
-                        return optionalConditionClass.get();
-                    }
-                }).findFirst();
+        Optional<Class<? extends Condition>> optionalConditionClass;
+        if (isRemoteCondition(conditionBean))
+        {
+            optionalConditionClass = Optional.of(AddonCondition.class);
+        }
+        else
+        {
+            optionalConditionClass = conditionClassAccessor.getConditionClassForHostContext(conditionBean);
+        }
+        return optionalConditionClass;
     }
 
     private DOMElement createSingleCondition(Class<? extends Condition> conditionClass)

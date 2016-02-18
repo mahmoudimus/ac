@@ -2,13 +2,13 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "dashboardItemProperties"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "dashboardItemProperties", "worklog"],
       "pathKeys": ["download attachments", "project avatars", "user avatars", "avatars", "thumbnails"],
       "methods": ["GET"]
     },
     {
       "key": "READ",
-      "restPathKeys": ["search"],
+      "restPathKeys": ["search", "worklog-list"],
       "methods": ["POST"]
     },
     {
@@ -23,12 +23,12 @@
     },
     {
       "key": "WRITE",
-      "restPathKeys": ["projectProperties"],
+      "restPathKeys": ["projectProperties", "user-properties"],
       "methods": ["PUT"]
     },
     {
       "key": "DELETE",
-      "restPathKeys": ["issue", "issueLink", "attachment", "filter", "commentProperties", "dashboardItemProperties"],
+      "restPathKeys": ["issue", "issueLink", "attachment", "filter", "commentProperties", "dashboardItemProperties", "user-properties"],
       "methods": ["DELETE"]
     },
     {
@@ -64,6 +64,13 @@
       "key": "user",
       "name": "api",
       "basePaths": ["/user($|/.*)"],
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
+    },
+    {
+      "key": "user-properties",
+      "name": "api",
+      "basePaths": ["/user/properties($|/.*)"],
       "versions": ["2", "2.0.alpha1", "latest"],
       "public": true
     },
@@ -274,6 +281,20 @@
       "key" : "role",
       "name" : "api",
       "basePaths": ["/role($|/.*)"],
+      "versions": ["2", "latest"],
+      "public": true
+    },
+    {
+      "key" : "worklog-list",
+      "name" : "api",
+      "basePaths": ["/worklog/list"],
+      "versions": ["2", "latest"],
+      "public": true
+    },
+    {
+      "key" : "worklog",
+      "name" : "api",
+      "basePaths": ["/worklog($|/.*)"],
       "versions": ["2", "latest"],
       "public": true
     }

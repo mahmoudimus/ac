@@ -1,23 +1,23 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.fugue.Effect;
-import com.atlassian.fugue.Option;
+import java.net.URI;
+import java.util.Optional;
+
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.auth.user.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-
-import java.net.URI;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -25,7 +25,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  *
  */
 public class IFrameUriBuilderImpl
-        implements IFrameUriBuilder, IFrameUriBuilder.AddOnUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
+        implements IFrameUriBuilder, IFrameUriBuilder.AddonUriBuilder, IFrameUriBuilder.NamespacedUriBuilder, IFrameUriBuilder.TemplatedBuilder
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
@@ -60,7 +60,7 @@ public class IFrameUriBuilderImpl
     }
 
     @Override
-    public AddOnUriBuilder addOn(final String key)
+    public AddonUriBuilder addon(final String key)
     {
         addonKey = Preconditions.checkNotNull(key);
         return this;
@@ -96,7 +96,7 @@ public class IFrameUriBuilderImpl
 
         private boolean sign = true;
         private boolean includeStandardParams = true;
-        private Option<String> uiParameters = Option.none();
+        private Optional<String> uiParameters = Optional.empty();
 
         private InitializedBuilderImpl(final String addonKey, final String namespace, final UriBuilder uriBuilder)
         {
@@ -138,7 +138,7 @@ public class IFrameUriBuilderImpl
         }
 
         @Override
-        public InitializedBuilder uiParams(Option<String> uiParameters)
+        public InitializedBuilder uiParams(Optional<String> uiParameters)
         {
             this.uiParameters = uiParameters;
             return this;
@@ -152,14 +152,9 @@ public class IFrameUriBuilderImpl
                 addStandardIFrameUrlParameters();
             }
 
-            uiParameters.foreach(new Effect<String>()
-            {
-                @Override
-                public void apply(String uiParam)
-                {
-                    uriBuilder.addQueryParameter("ui-params", uiParam);
-                }
-            });
+            if(uiParameters.isPresent()) {
+                uriBuilder.addQueryParameter("ui-params", uiParameters.get());
+            }
 
             if (sign)
             {

@@ -3,22 +3,24 @@ package com.atlassian.plugin.connect.confluence.web.spacetools;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.confluence.web.ConfluenceConditionClassResolver;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.confluence.web.ConfluenceConditionClassResolver;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
-import com.atlassian.plugin.connect.spi.lifecycle.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.annotations.VisibleForTesting;
@@ -61,6 +63,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
     private final ProductAccessor productAccessor;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final ConditionLoadingValidator conditionLoadingValidator;
 
     @Autowired
     public SpaceToolsTabModuleProvider(PluginRetrievalService pluginRetrievalService,
@@ -68,7 +71,8 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            ConditionLoadingValidator conditionLoadingValidator)
     {
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
@@ -76,6 +80,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
         this.productAccessor = productAccessor;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.conditionLoadingValidator = conditionLoadingValidator;
     }
 
     @Override
@@ -85,9 +90,16 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SpaceToolsTabModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
+    public List<SpaceToolsTabModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+        List<SpaceToolsTabModuleBean> spaceToolsTabs = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+        conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), spaceToolsTabs);
+        return spaceToolsTabs;
+    }
+
+    @Override
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SpaceToolsTabModuleBean> modules, ConnectAddonBean connectAddonBean)
+    {
         Plugin plugin = pluginRetrievalService.getPlugin();
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
         for (SpaceToolsTabModuleBean bean : modules)
@@ -96,7 +108,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
             moduleDescriptors.add(xWorkActionDescriptorFactory.create(connectAddonBean, plugin, actionBean));
 
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(connectAddonBean.getKey())
+                    .addon(connectAddonBean.getKey())
                     .module(bean.getKey(connectAddonBean))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
@@ -107,8 +119,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
             {
-                moduleDescriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin,
-                        webItemModuleBean));
+                moduleDescriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(webItemModuleBean, connectAddonBean, plugin));
             }
         }
         return moduleDescriptors;
@@ -156,7 +167,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
         WebItemModuleBean spaceToolsWebItemBean = newWebItemBean(baseWebItemBean)
                 .withKey(bean.getRawKey())
                 .withName(bean.getName())
-                .withContext(AddOnUrlContext.product)
+                .withContext(AddonUrlContext.product)
                 .withLocation(SPACE_TOOLS_SECTION + "/" + location)
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditionClassResolver.SPACE_SIDEBAR)
@@ -167,7 +178,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
         WebItemModuleBean spaceAdminWebItemBean = newWebItemBean(baseWebItemBean)
                 .withKey(bean.getRawKey() + SPACE_ADMIN_KEY_SUFFIX)
                 .withName(bean.getName())
-                .withContext(AddOnUrlContext.product)
+                .withContext(AddonUrlContext.product)
                 .withLocation(SPACE_ADMIN_SECTION + "/" + LEGACY_LOCATION)
                 .withConditions(newSingleConditionBean()
                         .withCondition(ConfluenceConditionClassResolver.SPACE_SIDEBAR)

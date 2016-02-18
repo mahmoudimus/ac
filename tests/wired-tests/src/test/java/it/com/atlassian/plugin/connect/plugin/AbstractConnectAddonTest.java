@@ -2,12 +2,11 @@ package it.com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.lifecycle.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -91,7 +90,7 @@ public abstract class AbstractConnectAddonTest
                 .withKey(MODULE_KEY)
                 .withUrl(ADDON_PATH + "?" + queryString)
                 .withLocation(location)
-                .withContext(AddOnUrlContext.addon)
+                .withContext(AddonUrlContext.addon)
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -105,7 +104,7 @@ public abstract class AbstractConnectAddonTest
         plugin = testPluginInstaller.installAddon(addon);
 
         List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(
-                newArrayList(bean), new DefaultConnectModuleProviderContext(addon));
+                newArrayList(bean), addon);
 
         assertEquals(1, descriptors.size());
 

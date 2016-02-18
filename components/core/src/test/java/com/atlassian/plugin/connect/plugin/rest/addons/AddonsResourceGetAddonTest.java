@@ -1,14 +1,20 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
+
+import javax.ws.rs.core.Response;
+
 import com.atlassian.extras.api.Contact;
 import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
@@ -17,7 +23,6 @@ import com.atlassian.plugin.connect.plugin.rest.data.RestHost;
 import com.atlassian.plugin.connect.plugin.rest.data.RestInternalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
-import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -25,18 +30,15 @@ import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.api.license.entity.LicenseType;
 import com.atlassian.upm.api.license.entity.PluginLicense;
+
 import com.google.common.collect.Lists;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -64,7 +66,7 @@ public class AddonsResourceGetAddonTest
     private ConnectAddonManager connectAddonManager;
 
     @Mock
-    private ConnectAddOnInstaller connectAddOnInstaller;
+    private ConnectAddonInstaller connectAddonInstaller;
 
     @Mock
     private ApplicationProperties applicationProperties;
@@ -98,7 +100,7 @@ public class AddonsResourceGetAddonTest
     public void setup()
     {
         this.resource = new AddonsResource(this.addonRegistry, this.licenseRetriever, this.connectApplinkManager,
-                this.connectAddonManager, this.connectAddOnInstaller, this.applicationProperties, this.userManager,
+                this.connectAddonManager, this.connectAddonInstaller, this.applicationProperties, this.userManager,
                 this.productAccessor, addonAccessor);
     }
 
@@ -149,7 +151,7 @@ public class AddonsResourceGetAddonTest
 
         when(addonAccessor.getAddon(key)).thenReturn(Optional.of(beanMock));
         when(addonRegistry.getRestartState(key)).thenReturn(state);
-        when(productAccessor.getProductLicense()).thenReturn(Option.option(productLicenseMock));
+        when(productAccessor.getProductLicense()).thenReturn(Optional.ofNullable(productLicenseMock));
         when(applicationProperties.getDisplayName()).thenReturn(productName);
         when(licenseRetriever.getLicense(key)).thenReturn(com.atlassian.upm.api.util.Option.some(licenseMock));
         when(applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn("http://localhost:2990/jira");

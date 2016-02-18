@@ -1,31 +1,33 @@
 package it.jira.condition;
 
+import java.util.Map;
+import java.util.Optional;
+
+import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ViewIssuePageWithAddonFragments;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.google.common.base.Optional;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Map;
+import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.matcher.ParamMatchers.isLocale;
-import static it.matcher.ParamMatchers.isTimeZone;
-import static it.matcher.ParamMatchers.isVersionNumber;
-import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isLocale;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isTimeZone;
+import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isVersionNumber;
+import static com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -41,15 +43,15 @@ public class TestJiraConditionParameters extends JiraWebDriverTestBase
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void startConnectAddon() throws Exception
     {
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty("Context Parameterized", CONTEXT_PARAMETERIZED_WEBITEM))
                                 .withKey(CONTEXT_PARAMETERIZED_WEBITEM)
-                                .withContext(AddOnUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withLocation("operations-operations") // issue operations
                                 .withWeight(1)
                                 .withUrl("/somewhere")
@@ -63,7 +65,7 @@ public class TestJiraConditionParameters extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    public static void stopConnectAddon() throws Exception
     {
         if (runner != null)
         {
@@ -82,7 +84,7 @@ public class TestJiraConditionParameters extends JiraWebDriverTestBase
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Nought but a test.");
         ViewIssuePageWithAddonFragments viewIssuePage = loginAndVisit(user, ViewIssuePageWithAddonFragments.class, issue.key);
         String moduleKey = addonAndModuleKey(runner.getAddon().getKey(), CONTEXT_PARAMETERIZED_WEBITEM);
-        RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>absent());
+        RemoteWebItem webItem = viewIssuePage.findWebItem(moduleKey, Optional.<String>empty());
         assertNotNull("Web item should be found", webItem);
 
         return issue;

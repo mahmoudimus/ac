@@ -1,29 +1,31 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.fugue.Option;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import com.atlassian.plugin.connect.api.web.ModuleTemplate;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilder;
-import com.atlassian.plugin.connect.api.web.ModuleTemplate;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
+import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -31,7 +33,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  */
 public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuilder,
-        IFrameRenderStrategyBuilder.AddOnUriBuilder, IFrameRenderStrategyBuilder.ModuleUriBuilder,
+        IFrameRenderStrategyBuilder.AddonUriBuilder, IFrameRenderStrategyBuilder.ModuleUriBuilder,
         IFrameRenderStrategyBuilder.TemplatedBuilder, IFrameRenderStrategyBuilder.InitializedBuilder
 {
     private static final String TEMPLATE_PATH = "velocity/";
@@ -53,7 +55,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
     private final Map<String, Object> additionalRenderContext = Maps.newHashMap();
 
-    private String addOnKey;
+    private String addonKey;
     private String moduleKey;
     private String template;
     private String accessDeniedTemplate;
@@ -85,9 +87,9 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public AddOnUriBuilder addOn(final String key)
+    public AddonUriBuilder addon(final String key)
     {
-        addOnKey = checkNotNull(key);
+        addonKey = checkNotNull(key);
         return this;
     }
 
@@ -248,10 +250,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     @Override
     public IFrameRenderStrategy build()
     {
-        Condition condition = connectConditionFactory.createCondition(addOnKey, conditionalBeans, conditionClasses);
+        Condition condition = connectConditionFactory.createCondition(addonKey, conditionalBeans, conditionClasses);
 
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
+                templateRenderer, addonKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
                 decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
                 resizeToParent, sign, contentType);
     }
@@ -265,7 +267,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final TemplateRenderer templateRenderer;
 
         private final Map<String, Object> additionalRenderContext;
-        private final String addOnKey;
+        private final String addonKey;
         private final String moduleKey;
         private final String template;
         private final String accessDeniedTemplate;
@@ -284,7 +286,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-                final TemplateRenderer templateRenderer, final String addOnKey, final String moduleKey,
+                final TemplateRenderer templateRenderer, final String addonKey, final String moduleKey,
                 final String template, final String accessDeniedTemplate, final String urlTemplate,
                 final String title, final String decorator, final Condition condition,
                 final Map<String, Object> additionalRenderContext, String width, String height,
@@ -294,7 +296,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
             this.templateRenderer = templateRenderer;
-            this.addOnKey = addOnKey;
+            this.addonKey = addonKey;
             this.moduleKey = moduleKey;
             this.template = template;
             this.accessDeniedTemplate = accessDeniedTemplate;
@@ -314,7 +316,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
-        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer, Option<String> uiParameters)
+        public void render(final ModuleContextParameters moduleContextParameters, final Writer writer, Optional<String> uiParameters)
                 throws IOException
         {
             String namespace = generateNamespace();
@@ -322,7 +324,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             String signedUri = buildUrl(moduleContextParameters, uiParameters, namespace);
 
             Map<String, Object> renderContext = iFrameRenderContextBuilderFactory.builder()
-                    .addOn(addOnKey)
+                    .addon(addonKey)
                     .namespace(namespace)
                     .iframeUri(signedUri)
                     .decorator(decorator)
@@ -346,15 +348,15 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @VisibleForTesting
-        public String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters)
+        public String buildUrl(ModuleContextParameters moduleContextParameters, Optional<String> uiParameters)
         {
             return buildUrl(moduleContextParameters, uiParameters, generateNamespace());
         }
 
-        private String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters, String namespace)
+        private String buildUrl(ModuleContextParameters moduleContextParameters, Optional<String> uiParameters, String namespace)
         {
             return iFrameUriBuilderFactory.builder()
-                            .addOn(addOnKey)
+                            .addon(addonKey)
                             .namespace(namespace)
                             .urlTemplate(urlTemplate)
                             .context(moduleContextParameters)
@@ -386,7 +388,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         {
             if (!shouldShow(conditionContext))
             {
-                throw new PermissionDeniedException(addOnKey, "Cannot render iframe for this page.");
+                throw new PermissionDeniedException(addonKey, "Cannot render iframe for this page.");
             }
         }
 
@@ -400,7 +402,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         public IFrameRenderStrategy toJsonRenderStrategy()
         {
             return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                    templateRenderer, addOnKey, moduleKey, TEMPLATE_JSON, TEMPLATE_ACCESS_DENIED_JSON, urlTemplate, title,
+                    templateRenderer, addonKey, moduleKey, TEMPLATE_JSON, TEMPLATE_ACCESS_DENIED_JSON, urlTemplate, title,
                     decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
                     resizeToParent, sign, ContentType.APPLICATION_JSON.getMimeType());
         }

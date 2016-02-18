@@ -310,11 +310,11 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
     "keys" : [
           {
             "key" : "first_key",
-            "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/first_key"
+            "self" : "/rest/api/atlassian-connect/${addonKey}/properties/first_key"
           },
           {
             "key" : "another_key",
-            "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/another_key"
+            "self" : "/rest/api/atlassian-connect/${addonKey}/properties/another_key"
           }
     ]
 }</textarea>
@@ -378,6 +378,21 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
                             <p>The key of the property</p>
                         </td>
                     </tr>
+                    <tr>
+                        <td class="location">
+                            Query
+                        </td>
+                        <td class="name">
+                            <code>jsonValue</code>
+                        </td>
+                        <td class="type">
+                            <code>boolean</code>
+                        </td>
+                        <td class="description last">
+                            <p>Set to 'true' to have the 'value' field return as a json object. If false it will return the 'value' field
+                             as a string containing escaped json. This will be deprecated during June 2016 and the behaviour will default to true.</p>
+                        </td>
+                    </tr>
                 </tbody>
         </table>
         <h4>Response representations:</h4>
@@ -387,7 +402,7 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
 {
   "key" : "abcd",
   "value" : true,
-  "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/abcd"
+  "self" : "/rest/api/atlassian-connect/${addonKey}/properties/abcd"
 }</textarea>
 </div>
             <h5><code>400</code> - application/json</h5>
