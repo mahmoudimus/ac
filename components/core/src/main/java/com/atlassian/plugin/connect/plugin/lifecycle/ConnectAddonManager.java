@@ -335,7 +335,10 @@ public class ConnectAddonManager
 
         if (addonRegistry.hasDescriptor(pluginKey))
         {
-            if (sendEvent)
+            // don't double-count disablements;
+            // a developer looking at a dashboard would otherwise see 2 disablement events for an add-on that was first disabled and then uninstalled,
+            // and this would both distort the total number of disablements and look like a possible bug
+            if (sendEvent && !PluginState.DISABLED.equals(addonRegistry.getRestartState(pluginKey)))
             {
                 //need to publish the event before we actually disable anything
                 eventPublisher.publish(new ConnectAddonDisabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.DISABLED.name().toLowerCase())));

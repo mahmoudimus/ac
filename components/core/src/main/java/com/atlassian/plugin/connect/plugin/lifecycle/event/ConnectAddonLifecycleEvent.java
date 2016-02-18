@@ -11,15 +11,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class ConnectAddonLifecycleEvent
 {
-    private final String pluginKey;
+    private final String addonKey;
 
-    protected ConnectAddonLifecycleEvent(String pluginKey)
+    protected ConnectAddonLifecycleEvent(String addonKey)
     {
-        this.pluginKey = checkNotNull(pluginKey);
+        this.addonKey = checkNotNull(addonKey);
     }
 
+    /**
+     * Maintained for backwards compatibility. Will be removed in the future; please do not remove before May 2016.
+     * @deprecated use {@link #getAddonKey()}
+     * @return the add-on key as in the descriptor
+     */
     public final String getPluginKey()
     {
-        return pluginKey;
+        return addonKey;
+    }
+
+    /**
+     * @return the add-on key as in the descriptor
+     */
+    public final String getAddonKey()
+    {
+        return addonKey;
     }
 }
