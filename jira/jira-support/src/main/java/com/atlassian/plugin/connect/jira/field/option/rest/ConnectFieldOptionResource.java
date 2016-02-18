@@ -57,6 +57,16 @@ public class ConnectFieldOptionResource
         });
     }
 
+    @GET
+    @Path("/{optionId}")
+    public Response getOption(@PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @PathParam("optionId") Integer optionId, @Context HttpServletRequest servletRequest)
+    {
+        ServiceOutcome<ConnectFieldOption> option = connectFieldOptionService.getOption(AuthenticationData.byRequest(servletRequest), FieldId.of(addonKey, fieldKey), optionId);
+        return toEither(option)
+                .right().map(beansFactory::toBean)
+                .left().on(responseFactory::okNoCache);
+    }
+
     @POST
     public Response createOption(String value, @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @Context HttpServletRequest servletRequest)
     {

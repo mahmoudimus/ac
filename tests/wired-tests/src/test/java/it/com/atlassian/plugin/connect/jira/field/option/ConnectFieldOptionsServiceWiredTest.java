@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.atlassian.plugin.connect.jira.field.option.Json.parse;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.assertEquals;
@@ -66,7 +65,7 @@ public class ConnectFieldOptionsServiceWiredTest
     @Test
     public void optionCanBeCreated()
     {
-        JsonNode jsonValue = parse("42").get();
+        JsonNode jsonValue = Json.parse("42").get();
         ConnectFieldOption expectedResult = ConnectFieldOption.of(1, jsonValue);
 
         ServiceOutcome<ConnectFieldOption> result = connectFieldOptionService.addOption(auth, fieldId, jsonValue);
@@ -115,15 +114,15 @@ public class ConnectFieldOptionsServiceWiredTest
         createOptions(field1, "\"a\"", "\"b\"", "\"c\"");
         createOptions(field2, "1", "2", "3");
 
-        assertEquals(ConnectFieldOption.of(2, parse("\"b\"").get()), connectFieldOptionService.getOption(auth, field1, 2).get());
-        assertEquals(ConnectFieldOption.of(2, parse("2").get()), connectFieldOptionService.getOption(auth, field2, 2).get());
+        assertEquals(ConnectFieldOption.of(2, Json.parse("\"b\"").get()), connectFieldOptionService.getOption(auth, field1, 2).get());
+        assertEquals(ConnectFieldOption.of(2, Json.parse("2").get()), connectFieldOptionService.getOption(auth, field2, 2).get());
     }
 
     @Test
     public void optionCanBeUpdated()
     {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"");
-        ConnectFieldOption expectedValue = ConnectFieldOption.of(2, parse("\"B\"").get());
+        ConnectFieldOption expectedValue = ConnectFieldOption.of(2, Json.parse("\"B\"").get());
         ConnectFieldOption result = connectFieldOptionService.putOption(auth, fieldId, expectedValue).get();
         assertEquals(expectedValue, result);
         assertEquals(expectedValue, connectFieldOptionService.getOption(auth, fieldId, 2).get());
@@ -182,7 +181,7 @@ public class ConnectFieldOptionsServiceWiredTest
 
     private ConnectFieldOption createOption(FieldId fieldId, String value)
     {
-        return connectFieldOptionService.addOption(auth, fieldId, parse(value).get()).get();
+        return connectFieldOptionService.addOption(auth, fieldId, Json.parse(value).get()).get();
     }
 
     private static FieldId randomFieldId()

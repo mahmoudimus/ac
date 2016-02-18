@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.jira.field.option.rest;
 
-import java.util.Optional;
-
 import com.atlassian.fugue.Either;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.ErrorCollections;
@@ -35,7 +33,7 @@ public class ConnectFieldOptionBeansFactory
 
     public ConnectFieldOptionBean toBean(final ConnectFieldOption option)
     {
-        return new ConnectFieldOptionBean(option.getId(), option.getValue().toString());
+        return new ConnectFieldOptionBean(option.getId(), option.getValue());
     }
 
     public Either<ErrorCollection, ConnectFieldOption> fromBean(final Integer expectedOptionId, ConnectFieldOptionBean bean)
@@ -48,21 +46,13 @@ public class ConnectFieldOptionBeansFactory
 
     public Either<ErrorCollection, ConnectFieldOption> fromBean(ConnectFieldOptionBean bean)
     {
-        Optional<JsonNode> json = Json.parse(bean.getValue());
-        if (json.isPresent())
+        if (bean.getId() != null)
         {
-            if (bean.getId() != null)
-            {
-                return Either.right(ConnectFieldOption.of(bean.getId(), json.get()));
-            }
-            else
-            {
-                return Either.left(validationError("id", i18n.getText("connect.issue.field.option.rest.id.required")));
-            }
+            return Either.right(ConnectFieldOption.of(bean.getId(), Json.toJsonNode(bean.getValue())));
         }
         else
         {
-            return Either.left(validationError("value", invalidJsonMessage()));
+            return Either.left(validationError("id", i18n.getText("connect.issue.field.option.rest.id.required")));
         }
     }
 

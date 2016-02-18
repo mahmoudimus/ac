@@ -13,6 +13,7 @@ import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Pair;
 import com.atlassian.jira.rest.api.util.ErrorCollection;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.jira.field.option.Json;
 import com.atlassian.plugin.connect.jira.field.option.rest.ConnectFieldOptionBean;
 import com.atlassian.plugin.connect.jira.field.option.rest.ReplaceRequestBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
@@ -29,6 +30,8 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Triple;
+import org.codehaus.jackson.JsonNode;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,12 +74,18 @@ public class ConnectFieldOptionResourceTest
                 .start();
     }
 
+    @After
+    public void tearDown() throws Exception
+    {
+        runner.stopAndUninstall();
+    }
+
     @Test
     public void addedOptionsCanBeRetrieved() throws Exception
     {
         createOption("5");
         createOption("6");
-        assertThat(readOptions(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, "5"), new ConnectFieldOptionBean(2, "6"))));
+        assertThat(readOptions(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, 5.0d), new ConnectFieldOptionBean(2, 6.0d))));
     }
 
     @Test
@@ -94,7 +103,7 @@ public class ConnectFieldOptionResourceTest
         createOption("1");
         createOption("2");
 
-        HttpURLConnection connection = sendData(establishConnection("replace", HttpMethod.POST), new ReplaceRequestBean(1, 2));
+        HttpURLConnection connection = sendObject(establishConnection("replace", HttpMethod.POST), new ReplaceRequestBean(1, 2));
         assertEquals(200, connection.getResponseCode());
     }
 
@@ -146,11 +155,28 @@ public class ConnectFieldOptionResourceTest
             methods.forEach(method -> {
                 System.out.println("Testing " + method.getMiddle() + " " + restPath + method.getLeft() + " // " + method.getRight());
                 HttpURLConnection connection = establishConnection(method.getLeft(), method.getMiddle());
-                sendData(connection, method.getRight());
+                sendObject(connection, method.getRight());
 
                 Either<ErrorCollection, Object> response = readOutput(connection, Object.class);
                 assertThat(response.left().get().getErrorMessages(), hasItems(pathAndError.right()));
             });
+        });
+    }
+
+    @Test
+    public void differentJsonObjectsAreHandledProperly() throws Exception
+    {
+        List<String> differentTypes = ImmutableList.of(
+                "1",
+                "4.2",
+                "false",
+                "[1, 2, 3]",
+                "\"string\"",
+                "{ \"a\": \"42\"}");
+
+        differentTypes.forEach(json -> {
+            assertEquals(Json.parse(json).get().toString(), createOption(json).get("value").toString());
+            assertEquals(Json.parse(json).get().toString(), putOption(1, json).get("value").toString());
         });
     }
 
@@ -162,8 +188,16 @@ public class ConnectFieldOptionResourceTest
     private Either<ErrorCollection, ConnectFieldOptionBean> putOption(Integer id, final ConnectFieldOptionBean updatedOption)
     {
         HttpURLConnection connection = establishConnection(id.toString(), HttpMethod.PUT);
-        connection = sendData(connection, updatedOption);
+        connection = sendObject(connection, updatedOption);
         return readOutput(connection, ConnectFieldOptionBean.class);
+    }
+
+    private JsonNode putOption(Integer id, final String value)
+    {
+        String json = String.format("{ \"id\" : %d, \"value\" : %s }", id, value);
+        HttpURLConnection connection = establishConnection(id.toString(), HttpMethod.PUT);
+        connection = sendData(connection, json);
+        return readOutputAsGenericJson(connection);
     }
 
     private List<ConnectFieldOptionBean> readOptions() throws Exception
@@ -176,11 +210,15 @@ public class ConnectFieldOptionResourceTest
         return allOptions.right().get();
     }
 
-    private Either<ErrorCollection, ConnectFieldOptionBean> createOption(String json) throws Exception
+    private JsonNode createOption(String json)
     {
         HttpURLConnection connection = establishConnection("", HttpMethod.POST);
-        connection.getOutputStream().write(json.getBytes());
-        return readOutput(connection, ConnectFieldOptionBean.class);
+        sendData(connection, json);
+        return readOutputAsGenericJson(connection);
+    }
+    private JsonNode readOutputAsGenericJson(final HttpURLConnection connection)
+    {
+        return readOutput(connection, str -> Json.parse(str).get()).right().get();
     }
 
     private <T> Either<ErrorCollection, T> readOutput(final HttpURLConnection connection, Class<T> type)
@@ -239,13 +277,18 @@ public class ConnectFieldOptionResourceTest
         }
     }
 
-    private HttpURLConnection sendData(HttpURLConnection connection, @Nullable Object data)
+    private HttpURLConnection sendObject(HttpURLConnection connection, @Nullable Object data)
+    {
+        return sendData(connection, gson.toJson(data));
+    }
+
+    private HttpURLConnection sendData(HttpURLConnection connection, @Nullable String rawData)
     {
         try
         {
-            if (data != null)
+            if (rawData != null)
             {
-                connection.getOutputStream().write(gson.toJson(data).getBytes());
+                connection.getOutputStream().write(rawData.getBytes());
             }
             return connection;
         }

@@ -1,24 +1,19 @@
 package com.atlassian.plugin.connect.jira.field.option.rest;
 
 import java.util.Objects;
-import java.util.Optional;
 
-import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
-import com.atlassian.plugin.connect.jira.field.option.Json;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonRawValue;
 
+@JsonAutoDetect
 public final class ConnectFieldOptionBean
 {
-    @JsonProperty
     private final Integer id;
-    @JsonRawValue
-    @JsonProperty
-    private final String value;
+    private final Object value;
 
     @JsonCreator
-    public ConnectFieldOptionBean(@JsonProperty ("id") Integer id, @JsonProperty ("json") String value)
+    public ConnectFieldOptionBean(@JsonProperty ("id") Integer id, @JsonProperty ("value") Object value)
     {
         this.id = id;
         this.value = value;
@@ -29,7 +24,7 @@ public final class ConnectFieldOptionBean
         return id;
     }
 
-    public String getValue()
+    public Object getValue()
     {
         return value;
     }
@@ -57,7 +52,7 @@ public final class ConnectFieldOptionBean
     {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("id", getId())
-                .add("json", getValue())
+                .add("value", getValue())
                 .toString();
     }
 }
