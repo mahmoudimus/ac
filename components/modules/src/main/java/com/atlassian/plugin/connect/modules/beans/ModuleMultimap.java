@@ -68,15 +68,6 @@ public class ModuleMultimap
         return optionalModuleList;
     }
 
-    public <T extends ModuleBean> Optional<List<T>>  getValidModuleListOfType(Class<T> moduleClazz, Consumer<Exception> exceptionHandler)
-    {
-        List<ModuleBean> moduleBeanStream = getValidModuleLists(exceptionHandler).values().stream()
-                                                    .flatMap(Collection::stream)
-                                                    .filter(moduleBean -> moduleBean.getClass().isAssignableFrom(moduleClazz))
-                                                    .collect(Collectors.toList());
-        return Optional.of((List<T>) moduleBeanStream);
-    }
-
     private List<ModuleBean> loadExistingModuleList(String moduleType, Optional<Consumer<Exception>> optionalExceptionHandler)
     {
         try
