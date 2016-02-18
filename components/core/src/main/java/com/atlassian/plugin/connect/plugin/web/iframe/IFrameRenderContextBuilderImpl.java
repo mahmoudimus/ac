@@ -4,7 +4,7 @@ import com.atlassian.html.encode.JavascriptEncoder;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
+import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.Maps;
@@ -19,26 +19,25 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.plugin.web.iframe.EncodingUtils.escapeQuotes;
 import static com.google.common.base.Strings.nullToEmpty;
 
-/**
- *
- */
 public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilder, IFrameRenderContextBuilder.AddonContextBuilder, IFrameRenderContextBuilder.NamespacedContextBuilder
 {
+
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
     private final HostApplicationInfo hostApplicationInfo;
-    private final UserPreferencesRetriever userPreferencesRetriever;
+    private final TimeZoneManager timeZoneManager;
 
     private String addonKey;
     private String namespace;
 
     public IFrameRenderContextBuilderImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
-                                          final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
-                                          final UserPreferencesRetriever userPreferencesRetriever) {
+            final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
+            TimeZoneManager timeZoneManager)
+    {
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
         this.hostApplicationInfo = hostApplicationInfo;
-        this.userPreferencesRetriever = userPreferencesRetriever;
+        this.timeZoneManager = timeZoneManager;
     }
 
     @Override
@@ -69,7 +68,8 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
 
         private final Map<String, Object> additionalContext = Maps.newHashMap();
 
-        private InitializedBuilderImpl(final String addonKey, final String namespace, final String iframeUri) {
+        private InitializedBuilderImpl(final String addonKey, final String namespace, final String iframeUri)
+        {
             this.addonKey = addonKey;
             this.namespace = namespace;
             this.iframeUri = iframeUri;
@@ -77,7 +77,8 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
 
         private void putIfNotNull(String key, Object value)
         {
-            if (value != null) {
+            if (value != null)
+            {
                 additionalContext.put(key, value);
             }
         }
@@ -171,7 +172,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             UserProfile profile = userManager.getRemoteUser();
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());
             String userKey = nullToEmpty(profile == null ? "" : profile.getUserKey().getStringValue());
-            String timeZone = userPreferencesRetriever.getTimeZoneFor(username).getID();
+            String timeZone = timeZoneManager.getUserTimeZone().getID();
 
             defaultContext.put("iframeSrcHtml", escapeQuotes(iframeUri));
             defaultContext.put("plugin", plugin);

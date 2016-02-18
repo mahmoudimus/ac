@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectAddonUriBuilder;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
@@ -27,13 +27,14 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class ConnectAddonUriBuilderImpl
         implements ConnectAddonUriBuilder, ConnectAddonUriBuilder.AddonUriBuilder, ConnectAddonUriBuilder.NamespacedUriBuilder, ConnectAddonUriBuilder.TemplatedBuilder
 {
+
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
     private final HostApplicationInfo hostApplicationInfo;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
-    private final UserPreferencesRetriever userPreferencesRetriever;
+    private final TimeZoneManager timeZoneManager;
     private PluginRetrievalService pluginRetrievalService;
 
     private String addonKey;
@@ -46,7 +47,7 @@ public class ConnectAddonUriBuilderImpl
             HostApplicationInfo hostApplicationInfo,
             LicenseRetriever licenseRetriever,
             LocaleHelper localeHelper,
-            UserPreferencesRetriever userPreferencesRetriever,
+            TimeZoneManager timeZoneManager,
             PluginRetrievalService pluginRetrievalService)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
@@ -55,7 +56,7 @@ public class ConnectAddonUriBuilderImpl
         this.hostApplicationInfo = hostApplicationInfo;
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
-        this.userPreferencesRetriever = userPreferencesRetriever;
+        this.timeZoneManager = timeZoneManager;
         this.pluginRetrievalService = pluginRetrievalService;
     }
 
@@ -176,7 +177,7 @@ public class ConnectAddonUriBuilderImpl
 
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());
             String userKey = nullToEmpty(profile == null ? "" : profile.getUserKey().getStringValue());
-            String timeZone = userPreferencesRetriever.getTimeZoneFor(username).getID();
+            String timeZone = timeZoneManager.getUserTimeZone().getID();
 
             // l10n parameters
             uriBuilder.addQueryParameter("tz", timeZone);

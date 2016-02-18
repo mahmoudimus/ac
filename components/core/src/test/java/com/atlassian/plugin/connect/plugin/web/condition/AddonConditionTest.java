@@ -16,9 +16,9 @@ import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImp
 import com.atlassian.plugin.connect.plugin.web.iframe.ConnectUriFactoryImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;
@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
@@ -124,6 +123,9 @@ public class AddonConditionTest
     private LocaleHelper localeHelper;
 
     @Mock
+    private TimeZoneManager timeZoneManager;
+
+    @Mock
     private EventPublisher eventPublisher;
 
     @Mock
@@ -141,14 +143,7 @@ public class AddonConditionTest
                 new TestHostApplicationInfo(URL, "/"),
                 licenseRetriever,
                 localeHelper,
-                new UserPreferencesRetriever()
-                {
-                    @Override
-                    public TimeZone getTimeZoneFor(@Nullable String userName)
-                    {
-                        return TimeZone.getDefault();
-                    }
-                },
+                timeZoneManager,
                 pluginRetrievalService);
 
         when(webFragmentModuleContextExtractor.extractParameters(anyMap())).thenReturn(new HashMapModuleContextParameters(Collections.emptyMap()));
@@ -162,6 +157,7 @@ public class AddonConditionTest
         when(remotablePluginAccessorFactory.get(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
         when(localeHelper.getLocaleTag()).thenReturn("foo");
+        when(timeZoneManager.getUserTimeZone()).thenReturn(TimeZone.getDefault());
 
         PluginInformation pluginInformation = mock(PluginInformation.class);
         when(pluginInformation.getVersion()).thenReturn("1.2.3");

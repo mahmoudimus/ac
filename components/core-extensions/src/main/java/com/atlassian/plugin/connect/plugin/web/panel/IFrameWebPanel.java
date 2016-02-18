@@ -1,13 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.Map;
-
-import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
@@ -17,6 +11,11 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Collections.emptyMap;
@@ -71,12 +70,9 @@ public class IFrameWebPanel implements WebPanel
     {
         if (condition.shouldDisplay(context))
         {
-            UserProfile remoteUser = userManager.getRemoteUser();
-            String remoteUsername = remoteUser == null ? "" : remoteUser.getUsername();
-
             final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context);
 
-            writer.write(iFrameRenderer.render(substituteContext(new WebFragmentContext(context, whiteListedContext)), "", emptyMap(), remoteUsername, whiteListedContext));
+            writer.write(iFrameRenderer.render(substituteContext(new WebFragmentContext(context, whiteListedContext)), "", emptyMap(), whiteListedContext));
         }
         else
         {

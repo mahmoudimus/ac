@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
-import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
+import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
+import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -27,7 +27,6 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.web.iframe.EncodingUtils.escapeQuotes;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 
 @Named
@@ -36,22 +35,23 @@ public final class IFrameRendererImpl implements IFrameRenderer
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final HostApplicationInfo hostApplicationInfo;
     private final TemplateRenderer templateRenderer;
+    private final TimeZoneManager timeZoneManager;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
-    private final UserPreferencesRetriever userPreferencesRetriever;
     private final UserManager userManager;
 
     @Inject
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
-                              HostApplicationInfo hostApplicationInfo,
-                              RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                              UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever,
-                              LocaleHelper localeHelper, UserManager userManager)
+            HostApplicationInfo hostApplicationInfo,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            TimeZoneManager timeZoneManager,
+            final LicenseRetriever licenseRetriever,
+            LocaleHelper localeHelper, UserManager userManager)
     {
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
-        this.userPreferencesRetriever = checkNotNull(userPreferencesRetriever);
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
+        this.timeZoneManager = timeZoneManager;
         this.templateRenderer = checkNotNull(templateRenderer);
         this.hostApplicationInfo = checkNotNull(hostApplicationInfo);
         this.userManager = userManager;
@@ -60,19 +60,19 @@ public final class IFrameRendererImpl implements IFrameRenderer
     @Override
     public String render(IFrameContext iframeContext, String remoteUser) throws IOException
     {
-        return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser, Collections.<String, Object>emptyMap());
+        return render(iframeContext, "", Collections.<String, String[]>emptyMap(), Collections.<String, Object>emptyMap());
     }
 
     @Override
-    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername, Map<String, Object> productContext) throws IOException
+    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, Map<String, Object> productContext) throws IOException
     {
-        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUsername, productContext), "velocity/deprecated/iframe-body.vm");
+        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, productContext), "velocity/deprecated/iframe-body.vm");
     }
 
     @Override
-    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername, Map<String, Object> productContext) throws IOException
+    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, Map<String, Object> productContext) throws IOException
     {
-        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUsername, productContext), "velocity/deprecated/iframe-body-inline.vm");
+        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, productContext), "velocity/deprecated/iframe-body-inline.vm");
     }
 
     private String renderWithTemplate(Map<String, Object> ctx, String templatePath) throws IOException
@@ -82,7 +82,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return output.toString();
     }
 
-    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername, Map<String, Object> productContext)
+    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, Map<String, Object> productContext)
             throws IOException
     {
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
@@ -94,20 +94,25 @@ public final class IFrameRendererImpl implements IFrameRenderer
         final URI iframeUrl = uriBuilder.toUri().toJavaUri();
 
         String[] dialog = queryParams.get("dialog");
-        final String timeZone = userPreferencesRetriever.getTimeZoneFor(remoteUsername).getID();
-        UserProfile user = userManager.getUserProfile(remoteUsername);
+        final String timeZone = timeZoneManager.getUserTimeZone().getID();
+        UserProfile user = userManager.getRemoteUser();
+        String userName = user == null ? "" : user.getUsername();
+        String userKey = user == null ? "" : user.getUserKey().getStringValue();
 
         Map<String, String[]> allParams = newHashMap(queryParams);
-        allParams.put("user_id", new String[]{nullToEmpty(remoteUsername)});
-        allParams.put("user_key", new String[]{user == null ? "" : user.getUserKey().getStringValue()});
+        allParams.put("user_id", new String[]{userName});
+        allParams.put("user_key", new String[]{userKey});
         allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
-        allParams.put("cp", new String[]{ hostApplicationInfo.getContextPath()});
+        allParams.put("cp", new String[]{hostApplicationInfo.getContextPath()});
         allParams.put("tz", new String[]{timeZone});
         allParams.put("loc", new String[]{localeHelper.getLocaleTag()});
         allParams.put("lic", new String[]{licenseRetriever.getLicenseStatus(iframeContext.getPluginKey()).value()});
 
-        if (dialog != null && dialog.length == 1) { allParams.put("dialog", dialog); }
+        if (dialog != null && dialog.length == 1)
+        {
+            allParams.put("dialog", dialog);
+        }
         String signedUrl = remotablePluginAccessor.signGetUrl(iframeUrl, allParams);
 
         // clear xdm params as they are added by easyxdm later
@@ -120,15 +125,21 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("namespace", iframeContext.getNamespace());
         ctx.put("contextPath", hostApplicationInfo.getContextPath());
 
-        ctx.put("userId", remoteUsername == null ? "" : remoteUsername);
-        ctx.put("userKey", user == null ? "" : user.getUserKey().getStringValue());
+        ctx.put("userId", userName);
+        ctx.put("userKey", userKey);
 
         ctx.put("timeZone", timeZone);
 
-        if (dialog != null && dialog.length == 1) { ctx.put("dialog", dialog[0]); }
+        if (dialog != null && dialog.length == 1)
+        {
+            ctx.put("dialog", dialog[0]);
+        }
 
         String[] simpleDialog = queryParams.get("simpleDialog");
-        if (simpleDialog != null && simpleDialog.length == 1) { ctx.put("simpleDialog", simpleDialog[0]); }
+        if (simpleDialog != null && simpleDialog.length == 1)
+        {
+            ctx.put("simpleDialog", simpleDialog[0]);
+        }
 
         ctx.put("productContextHtml", encodeProductContext(productContext));
         return ctx;
