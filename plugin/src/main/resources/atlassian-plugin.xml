@@ -27,6 +27,11 @@
                     location="after-encoding">
         <url-pattern>/atlassian-connect/*</url-pattern>
     </servlet-filter>
+    
+    <servlet-filter key="3lofilter" class="com.atlassian.plugin.connect.plugin.auth.oauth.ThreeLeggedOAuthFilter"
+            location="after-encoding" weight="10001">
+        <url-pattern>/*</url-pattern>
+    </servlet-filter>
 
     <!-- the 3LA filter needs to run after the JWT filter (to read attributes on the request) and before the ApiScopingFilter (to set the principal) -->
     <servlet-filter key="three-legged-auth-filter" class="com.atlassian.plugin.connect.plugin.auth.user.ThreeLeggedAuthFilter"
