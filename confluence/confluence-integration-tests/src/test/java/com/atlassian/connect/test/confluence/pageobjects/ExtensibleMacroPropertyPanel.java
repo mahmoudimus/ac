@@ -5,8 +5,21 @@ import com.atlassian.pageobjects.elements.PageElement;
 
 import org.openqa.selenium.By;
 
-public class MacroPropertyPanelWithIframe extends MacroPropertyPanel
+import java.util.List;
+
+public class ExtensibleMacroPropertyPanel extends MacroPropertyPanel
 {
+    public boolean hasButton(String displayName)
+    {
+        final List<PageElement> buttons = propertyPanelElement.findAll(By.className("panel-button-text"));
+        return buttons.stream()
+                .map(PageElement::getText)
+                .filter(buttonText -> buttonText != null)
+                .findFirst()
+                .map(foundText -> true)
+                .orElse(false);
+    }
+
     public boolean hasIframe()
     {
         final PageElement iframe = propertyPanelElement.find(By.tagName("iframe"));

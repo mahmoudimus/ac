@@ -4,17 +4,14 @@ import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.connect.test.confluence.pageobjects.EditorWithPropertyPanel;
-import com.atlassian.connect.test.confluence.pageobjects.MacroPropertyPanelWithIframe;
+import com.atlassian.connect.test.confluence.pageobjects.ExtensibleMacroPropertyPanel;
+import com.atlassian.elasticsearch.shaded.google.common.collect.Lists;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
@@ -31,6 +28,8 @@ import org.junit.rules.ExpectedException;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.MacroStorageFormatBuilder;
 
+import java.util.List;
+
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
@@ -41,7 +40,7 @@ import static it.confluence.servlet.ConfluenceAppServlets.macroPropertyPanelWith
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
+public class TestMacroPropertyPanel extends ConfluenceWebDriverTestBase
 {
 
     public static final String PROPERTY_PANEL_URL = "/render-property-panel";
@@ -52,6 +51,10 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
 
     protected static final String PROPERTY_PANEL_MACRO_KEY = "property-panel-macro";
     protected static final String PROPERTY_PANEL_MACRO_NAME = "Property Panel Macro";
+
+    protected static final String PROPERTY_PANEL_MACRO_WITH_CONTROLS_NAME = "Property Panel with controls";
+    protected static final String PROPERTY_PANEL_MACRO_WITH_CONTROLS_KEY = "property-panel-macro-with-controls";
+    private static List<ControlBean> controls;
 
     protected static final String DIALOG_KEY = "dialog-key";
     protected static final String DIALOG_NAME = "Dialog";
@@ -76,6 +79,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
 
         DynamicContentMacroModuleBean propertyPanelMacro = createPropertyPanelMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean propertyPanelWithDialogMacro = createPropertyPanelMacroWithDialog(newDynamicContentMacroModuleBean());
+        DynamicContentMacroModuleBean propertyPanelWithCustomControls = createPropertyPanelMacroWithControls(newDynamicContentMacroModuleBean());
         ConnectPageModuleBean propertyPanelDialogPage = createPropertyPanelDialogPage(newPageBean());
         DynamicContentMacroModuleBean editorMacro = createEditorMacro(newDynamicContentMacroModuleBean());
 
@@ -87,6 +91,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
                 .addModules("dynamicContentMacros",
                         propertyPanelMacro,
                         propertyPanelWithDialogMacro,
+                        propertyPanelWithCustomControls,
                         editorMacro
                 )
                 .addModules("generalPages",
@@ -117,7 +122,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         final EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
-        MacroPropertyPanelWithIframe propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_KEY);
+        ExtensibleMacroPropertyPanel propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_KEY);
         assertThat("Property panel has iframe", propertyPanel.hasIframe());
         editorPage.save();
     }
@@ -166,7 +171,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         final EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
-        final MacroPropertyPanelWithIframe propertyPanel = editor.openPropertyPanel(EDITOR_MACRO_KEY);
+        final ExtensibleMacroPropertyPanel propertyPanel = editor.openPropertyPanel(EDITOR_MACRO_KEY);
         assertThat("Property panel does not have iframe", !propertyPanel.hasIframe());
         editorPage.save();
     }
@@ -182,7 +187,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(pageContent.getId().asLong()));
 
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
-        final MacroPropertyPanelWithIframe propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
+        final ExtensibleMacroPropertyPanel propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
 
         RemotePluginDialog dialog = confluencePageOperations.findDialog(ModuleKeyUtils.addonAndModuleKey(addonKey, DIALOG_KEY));
 
@@ -197,6 +202,60 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
 
         RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY);
         assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValue"));
+    }
+
+    @Test
+    public void testMacroPropertyPanelContainsNewControl() throws Exception
+    {
+        String macroBody = "My property panel iframe test";
+        String body = new MacroStorageFormatBuilder(PROPERTY_PANEL_MACRO_WITH_CONTROLS_KEY).richTextBody(macroBody).build();
+        Content page = createPage(randomName(PROPERTY_PANEL_MACRO_WITH_CONTROLS_KEY), body);
+
+        final EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
+
+        EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
+        ExtensibleMacroPropertyPanel propertyPanel = editor.openPropertyPanel(PROPERTY_PANEL_MACRO_WITH_CONTROLS_KEY);
+        for (ControlBean control : controls)
+        {
+            assertThat("Property panel has control", propertyPanel.hasButton(control.getDisplayName()));
+        }
+        editorPage.save();
+    }
+
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createPropertyPanelMacroWithControls(T builder)
+    {
+        return builder
+                .withKey(PROPERTY_PANEL_MACRO_WITH_CONTROLS_KEY)
+                .withUrl("/echo/params?" + SINGLE_PARAM_ID + "={" + SINGLE_PARAM_ID + "}")
+                .withName(new I18nProperty(PROPERTY_PANEL_MACRO_NAME, null))
+                .withPropertyPanel(MacroPropertyPanelBean.newMacroPropertyPanelBean()
+                        .withUrl(PROPERTY_PANEL_URL)
+                        .withControls(createControlBeans())
+                        .build()
+                )
+                .withParameters(MacroParameterBean.newMacroParameterBean()
+                        .withIdentifier(SINGLE_PARAM_ID)
+                        .withName(new I18nProperty(SINGLE_PARAM_NAME, null))
+                        .withType("string")
+                        .build()
+                )
+                .withEditor(MacroEditorBean.newMacroEditorBean()
+                        .withUrl(PROPERTY_PANEL_URL)
+                        .withHeight("200px")
+                        .withWidth("200px")
+                        .build()
+                )
+                .build();
+    }
+
+    private static List<ControlBean> createControlBeans()
+    {
+        controls =  Lists.newArrayList(ControlBean.newControlBean()
+                .withType("button")
+                .withKey("charlie-button")
+                .withName(new I18nProperty("Let's Charlie", "charlie.button.name"))
+                .build());
+        return controls;
     }
 
     public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createPropertyPanelMacro(T builder)
