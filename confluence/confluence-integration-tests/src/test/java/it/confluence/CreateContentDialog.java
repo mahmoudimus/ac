@@ -1,15 +1,18 @@
 package it.confluence;
 
+import java.util.concurrent.TimeUnit;
+
+import com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.CreateDialog;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
+import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;
+
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * A working replacement for the CreateDialog page object in Confluence.
