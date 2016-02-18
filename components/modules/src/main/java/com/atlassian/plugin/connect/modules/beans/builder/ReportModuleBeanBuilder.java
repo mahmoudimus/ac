@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  *
  * @since 1.2
  */
-public class ReportModuleBeanBuilder extends RequiredKeyBeanBuilder<ReportModuleBeanBuilder, ReportModuleBean>
+public class ReportModuleBeanBuilder extends NamedBeanBuilder<ReportModuleBeanBuilder, ReportModuleBean>
 {
     private String url;
     private Integer weight;

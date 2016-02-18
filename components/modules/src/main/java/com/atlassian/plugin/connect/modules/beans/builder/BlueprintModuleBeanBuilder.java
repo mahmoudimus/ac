@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CreateResultType;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
-public class BlueprintModuleBeanBuilder extends RequiredKeyBeanBuilder<BlueprintModuleBeanBuilder,BlueprintModuleBean>
+public class BlueprintModuleBeanBuilder extends NamedBeanBuilder<BlueprintModuleBeanBuilder,BlueprintModuleBean>
 {
 
     private IconBean icon;

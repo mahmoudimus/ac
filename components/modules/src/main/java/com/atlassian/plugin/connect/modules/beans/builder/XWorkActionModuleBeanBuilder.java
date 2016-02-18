@@ -12,7 +12,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 public class XWorkActionModuleBeanBuilder
-        extends RequiredKeyBeanBuilder<XWorkActionModuleBeanBuilder, XWorkActionModuleBean>
+        extends NamedBeanBuilder<XWorkActionModuleBeanBuilder, XWorkActionModuleBean>
 {
     private static final String DEFAULT_VALIDATING_STACK = "validatingStack";
     private static final String VELOCITY_RESULT_TYPE = "velocity";

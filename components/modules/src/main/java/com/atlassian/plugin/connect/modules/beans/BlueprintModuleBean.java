@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
  * @schemaTitle Blueprint
  * @since 1.1.9
  */
-public class BlueprintModuleBean extends RequiredKeyBean
+public class BlueprintModuleBean extends NamedBean
 {
 
     private IconBean icon;

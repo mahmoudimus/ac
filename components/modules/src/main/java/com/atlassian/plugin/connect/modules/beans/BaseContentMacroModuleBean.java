@@ -24,7 +24,7 @@ import static com.google.common.collect.Lists.newArrayList;
             "be globally unique. Prefixing it with the name of your add-on is the best way to ensure this."
     )
 })
-public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
+public abstract class BaseContentMacroModuleBean extends NamedBean
 {
     /**
      * The link to the add-on resource that provides the macro content.

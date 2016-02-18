@@ -8,7 +8,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class BeanWithKeyAndParams extends RequiredKeyBean
+public class BeanWithKeyAndParams extends NamedBean
 {
     /**
      * This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.

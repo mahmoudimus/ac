@@ -12,7 +12,7 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class ProjectPermissionModuleBeanBuilder
-        extends RequiredKeyBeanBuilder<ProjectPermissionModuleBeanBuilder, ProjectPermissionModuleBean>
+        extends NamedBeanBuilder<ProjectPermissionModuleBeanBuilder, ProjectPermissionModuleBean>
 {
     private I18nProperty description;
     private ProjectPermissionCategory category;

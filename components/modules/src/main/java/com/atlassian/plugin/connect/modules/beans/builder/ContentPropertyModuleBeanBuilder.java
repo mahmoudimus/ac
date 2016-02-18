@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
 import com.google.common.collect.Lists;
 
 public class ContentPropertyModuleBeanBuilder
-        extends RequiredKeyBeanBuilder<ContentPropertyModuleBeanBuilder, ContentPropertyModuleBean>
+        extends NamedBeanBuilder<ContentPropertyModuleBeanBuilder, ContentPropertyModuleBean>
 {
     private final List<ContentPropertyIndexKeyConfigurationBean> keyConfigurations = Lists.newArrayList();
 

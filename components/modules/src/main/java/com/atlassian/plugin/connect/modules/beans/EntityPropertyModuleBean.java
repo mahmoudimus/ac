@@ -57,7 +57,7 @@ import java.util.List;
  * @schemaTitle Entity Property
  * @since 1.0
  */
-public class EntityPropertyModuleBean extends RequiredKeyBean
+public class EntityPropertyModuleBean extends NamedBean
 {
     /**
      * List of properties from which selected values are indexed.

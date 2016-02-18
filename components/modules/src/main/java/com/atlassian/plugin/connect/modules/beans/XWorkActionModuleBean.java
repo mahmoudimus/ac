@@ -15,7 +15,7 @@ import java.util.Map;
  * Note that this bean is not publicly exposed, and thus does not contain user-facing javadocs.
  */
 @SchemaIgnore
-public class XWorkActionModuleBean extends RequiredKeyBean
+public class XWorkActionModuleBean extends NamedBean
 {
     private String namespace;
     private Class<?> clazz;

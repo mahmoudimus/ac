@@ -30,7 +30,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
  * @schemaTitle Content Property
  * @since 1.0
  */
-public class ContentPropertyModuleBean extends RequiredKeyBean
+public class ContentPropertyModuleBean extends NamedBean
 {
     /**
      * A Content Property Index Key Configuration defines which values from your JSON content property

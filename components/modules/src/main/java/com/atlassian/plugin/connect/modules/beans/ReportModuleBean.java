@@ -19,7 +19,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 1.2
  */
 @SchemaDefinition("report")
-public class ReportModuleBean extends RequiredKeyBean
+public class ReportModuleBean extends NamedBean
 {
     @Required
     @StringSchemaAttributes (format = "uri-template")

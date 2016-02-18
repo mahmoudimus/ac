@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * @since 1.0
  */
-public class RequiredKeyBean extends NamedBean
+public class RequiredKeyBean extends BaseModuleBean
 {
     /**
      * A key to identify this module.

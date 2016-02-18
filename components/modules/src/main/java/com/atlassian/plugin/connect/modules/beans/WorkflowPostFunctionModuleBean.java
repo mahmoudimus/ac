@@ -61,7 +61,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 1.0
  */
 @SchemaDefinition("workflowPostFunction")
-public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
+public class WorkflowPostFunctionModuleBean extends NamedBean
 {
     /**
      * The description of the workflow post function. This will be presented to the user when they add a new post

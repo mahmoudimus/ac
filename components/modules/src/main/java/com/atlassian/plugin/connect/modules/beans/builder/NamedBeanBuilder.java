@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 /**
  * @since 1.0
  */
-public class NamedBeanBuilder<T extends NamedBeanBuilder, B extends NamedBean> extends BaseModuleBeanBuilder<T, B>
+public class NamedBeanBuilder<T extends NamedBeanBuilder, B extends NamedBean> extends RequiredKeyBeanBuilder<T, B>
 {
     private I18nProperty name;
 

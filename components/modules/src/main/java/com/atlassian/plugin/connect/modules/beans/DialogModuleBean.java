@@ -77,7 +77,6 @@ public class DialogModuleBean extends RequiredKeyBean
         return Objects.toStringHelper(this)
                 .add("key", getRawKey())
                 .add("url", getUrl())
-                .add("name", getName())
                 .add("options", getOptions())
                 .toString();
     }

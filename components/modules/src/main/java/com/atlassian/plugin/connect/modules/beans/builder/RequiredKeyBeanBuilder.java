@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 /**
  * @since 1.0
  */
-public class RequiredKeyBeanBuilder<T extends RequiredKeyBeanBuilder, B extends RequiredKeyBean> extends NamedBeanBuilder<T, B>
+public class RequiredKeyBeanBuilder<T extends RequiredKeyBeanBuilder, B extends RequiredKeyBean> extends BaseModuleBeanBuilder<T, B>
 {
     private String key;
     private boolean useKeyAsIs = false;

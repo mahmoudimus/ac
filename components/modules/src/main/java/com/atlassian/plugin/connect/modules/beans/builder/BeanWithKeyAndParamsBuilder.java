@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class BeanWithKeyAndParamsBuilder<T extends BeanWithKeyAndParamsBuilder, B extends BeanWithKeyAndParams> extends RequiredKeyBeanBuilder<T, B>
+public class BeanWithKeyAndParamsBuilder<T extends BeanWithKeyAndParamsBuilder, B extends BeanWithKeyAndParams> extends NamedBeanBuilder<T, B>
 {
     private Map<String, String> params;
 

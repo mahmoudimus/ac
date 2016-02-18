@@ -509,7 +509,6 @@ public class ConnectJsonExamples
 
     private static String createDialogExample() {
         DialogModuleBean bean = DialogModuleBean.newDialogBean()
-                .withName(i18nProperty("Fullscreen Dialog"))
                 .withKey("dialog-example")
                 .withUrl("/my-dialog-content")
                 .withOptions(newDialogOptions().withSize(fullscreen).build())

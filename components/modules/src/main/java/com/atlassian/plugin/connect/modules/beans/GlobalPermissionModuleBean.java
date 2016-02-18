@@ -22,7 +22,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @schemaTitle Global Permission
  * @since 1.1
  */
-public class GlobalPermissionModuleBean extends RequiredKeyBean
+public class GlobalPermissionModuleBean extends NamedBean
 {
     /**
      * Description of the global permission. It will be displayed under the permission's name.

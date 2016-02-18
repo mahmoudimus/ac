@@ -28,7 +28,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * @schemaTitle Project Permission
  * @since 1.1
  */
-public class ProjectPermissionModuleBean extends RequiredKeyBean implements BeanWithConditions
+public class ProjectPermissionModuleBean extends NamedBean implements BeanWithConditions
 {
     /**
      * Description of the project permission. It will be displayed under the permission's name.

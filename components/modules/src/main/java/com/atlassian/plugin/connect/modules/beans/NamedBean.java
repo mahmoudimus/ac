@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * @since 1.0
  */
-public class NamedBean extends BaseModuleBean
+public class NamedBean extends RequiredKeyBean
 {
     /**
      * A human readable name.

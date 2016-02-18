@@ -38,7 +38,6 @@ public class TestWebItemLinkedDialogTarget extends MultiProductWebDriverTestBase
         // This dialog and webItem pair are used in tests that a webItem target can be a common dialog module.
         DialogModuleBean linkedDialogDialog = newDialogBean()
                 .withKey(LINKED_DIALOG_KEY)
-                .withName(new I18nProperty("The Linked dialog", null))
                 .withUrl("/ld")
                 .withOptions(newDialogOptions().withWidth("456px").withHeight("567px").build())
                 .build();

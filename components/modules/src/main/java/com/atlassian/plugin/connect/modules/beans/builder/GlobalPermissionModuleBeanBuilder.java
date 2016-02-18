@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 public class GlobalPermissionModuleBeanBuilder
-        extends RequiredKeyBeanBuilder<GlobalPermissionModuleBeanBuilder, GlobalPermissionModuleBean>
+        extends NamedBeanBuilder<GlobalPermissionModuleBeanBuilder, GlobalPermissionModuleBean>
 {
     private I18nProperty description;
     private Boolean anonymousAllowed;
