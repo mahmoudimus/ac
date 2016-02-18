@@ -5,16 +5,32 @@ import java.util.Set;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.BodyType;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.APISupportBean;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.IndexingBean;
 
+/**
+ * Defines API support for Extensible Content Type
+ *
+ * @since 1.1.77
+ */
 public class APISupportBeanBuilder
         extends BaseModuleBeanBuilder<APISupportBeanBuilder, APISupportBean>
 {
     private BodyType bodyType;
+
     private Set<String> supportedContainerTypes;
+
     private Set<String> supportedContainedTypes;
+
     private String onCreateUrl;
+
     private String onUpdateUrl;
+
     private String onDeleteUrl;
+
+    /**
+     * Defines how would the content type be indexed
+     */
+    private IndexingBean indexing;
 
     public APISupportBeanBuilder()
     {
