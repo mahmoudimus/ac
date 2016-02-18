@@ -9,22 +9,22 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect
 public final class ReplaceRequestBean
 {
-    private final int from;
-    private final int to;
+    private final Integer from;
+    private final Integer to;
 
     @JsonCreator
-    public ReplaceRequestBean(@JsonProperty ("from") int from, @JsonProperty ("to") int to)
+    public ReplaceRequestBean(@JsonProperty ("from") Integer from, @JsonProperty ("to") Integer to)
     {
         this.from = from;
         this.to = to;
     }
 
-    public int getFrom()
+    public Integer getFrom()
     {
         return from;
     }
 
-    public int getTo()
+    public Integer getTo()
     {
         return to;
     }

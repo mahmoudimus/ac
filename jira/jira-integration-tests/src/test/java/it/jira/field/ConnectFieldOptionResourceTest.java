@@ -107,6 +107,20 @@ public class ConnectFieldOptionResourceTest
         assertEquals(200, connection.getResponseCode());
     }
 
+
+    @Test
+    public void bothValuesAreRequiredInReplace() throws IOException
+    {
+        createOption("1");
+        createOption("2");
+
+        HttpURLConnection connection = sendObject(establishConnection("replace", HttpMethod.POST), new ReplaceRequestBean(null, 2));
+        assertEquals(400, connection.getResponseCode());
+
+        connection = sendObject(establishConnection("replace", HttpMethod.POST), new ReplaceRequestBean(1, null));
+        assertEquals(400, connection.getResponseCode());
+    }
+
     @Test
     public void newOptionCanBePutWithSpecifiedId() throws Exception
     {

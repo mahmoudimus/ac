@@ -36,12 +36,14 @@ public class ConnectFieldOptionResource
     private final ConnectFieldOptionService connectFieldOptionService;
     private final ResponseFactory responseFactory;
     private final ConnectFieldOptionBeansFactory beansFactory;
+    private final I18nResolver i18;
 
-    public ConnectFieldOptionResource(final ConnectFieldOptionService connectFieldOptionService, final ResponseFactory responseFactory, final ConnectFieldOptionBeansFactory connectFieldOptionBeansFactory)
+    public ConnectFieldOptionResource(final ConnectFieldOptionService connectFieldOptionService, final ResponseFactory responseFactory, final ConnectFieldOptionBeansFactory connectFieldOptionBeansFactory, final I18nResolver i18)
     {
         this.connectFieldOptionService = connectFieldOptionService;
         this.responseFactory = responseFactory;
         this.beansFactory = connectFieldOptionBeansFactory;
+        this.i18 = i18;
     }
 
     @GET
@@ -105,6 +107,11 @@ public class ConnectFieldOptionResource
     @Path("/replace")
     public Response replace(ReplaceRequestBean replaceRequestBean, @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @Context HttpServletRequest servletRequest)
     {
+        if (replaceRequestBean.getFrom() == null || replaceRequestBean.getTo() == null)
+        {
+            return responseFactory.badRequest(i18.getText("connect.issue.field.option.rest.replace.fields.required"));
+        }
+
         ServiceResult replaceResult = connectFieldOptionService.replaceInAllIssues(
                 AuthenticationData.byRequest(servletRequest), FieldId.of(addonKey, fieldKey), replaceRequestBean.getFrom(), replaceRequestBean.getTo());
         return map(replaceResult, () -> Response.ok().cacheControl(CacheControl.never()).build());
