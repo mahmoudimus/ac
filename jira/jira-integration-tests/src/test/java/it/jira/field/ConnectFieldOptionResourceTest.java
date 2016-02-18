@@ -137,11 +137,25 @@ public class ConnectFieldOptionResourceTest
     }
 
     @Test
+    public void valueIsRequired()
+    {
+        ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(1, null)).left().get();
+        assertThat(errorCollection.getErrors(), hasEntry("value", "value is required"));
+    }
+
+    @Test
+    public void idIsRequiredForPut()
+    {
+        ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(null, "4")).left().get();
+        assertThat(errorCollection.getErrors(), hasEntry("id", "id is required"));
+    }
+
+    @Test
     public void addOnHasAccessOnlyToItsOwnFields()
     {
         List<Triple<String, HttpMethod, Object>> methods = ImmutableList.of(
                 Triple.of("", HttpMethod.GET, null),
-                Triple.of("", HttpMethod.POST, "42"),
+                Triple.of("", HttpMethod.POST, new ConnectFieldOptionBean(null, "42")),
                 Triple.of("3", HttpMethod.PUT, new ConnectFieldOptionBean(3, "42")),
                 Triple.of("3", HttpMethod.DELETE, null),
                 Triple.of("replace", HttpMethod.POST, new ReplaceRequestBean(2, 3)));
@@ -200,6 +214,13 @@ public class ConnectFieldOptionResourceTest
         return readOutputAsGenericJson(connection);
     }
 
+    private JsonNode createOption(String json)
+    {
+        HttpURLConnection connection = establishConnection("", HttpMethod.POST);
+        sendData(connection, String.format("{\"value\" : %s }", json));
+        return readOutputAsGenericJson(connection);
+    }
+
     private List<ConnectFieldOptionBean> readOptions() throws Exception
     {
         HttpURLConnection httpURLConnection = establishConnection("", HttpMethod.GET);
@@ -210,12 +231,6 @@ public class ConnectFieldOptionResourceTest
         return allOptions.right().get();
     }
 
-    private JsonNode createOption(String json)
-    {
-        HttpURLConnection connection = establishConnection("", HttpMethod.POST);
-        sendData(connection, json);
-        return readOutputAsGenericJson(connection);
-    }
     private JsonNode readOutputAsGenericJson(final HttpURLConnection connection)
     {
         return readOutput(connection, str -> Json.parse(str).get()).right().get();
@@ -279,7 +294,7 @@ public class ConnectFieldOptionResourceTest
 
     private HttpURLConnection sendObject(HttpURLConnection connection, @Nullable Object data)
     {
-        return sendData(connection, gson.toJson(data));
+        return data != null ? sendData(connection, gson.toJson(data)) : connection;
     }
 
     private HttpURLConnection sendData(HttpURLConnection connection, @Nullable String rawData)

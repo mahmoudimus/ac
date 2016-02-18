@@ -68,9 +68,9 @@ public class ConnectFieldOptionResource
     }
 
     @POST
-    public Response createOption(String value, @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @Context HttpServletRequest servletRequest)
+    public Response createOption(ConnectFieldOptionBean connectFieldOptionBean, @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @Context HttpServletRequest servletRequest)
     {
-        return beansFactory.parseJson(value)
+        return beansFactory.jsonFromBean(connectFieldOptionBean)
                 .left().map(responseFactory::errorResponse)
                 .left().on(json -> {
                     ServiceOutcome<ConnectFieldOption> createResult = connectFieldOptionService.addOption(AuthenticationData.byRequest(servletRequest), FieldId.of(addonKey, fieldKey), json);
