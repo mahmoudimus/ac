@@ -116,7 +116,7 @@ public class TestNavigatorContext extends ConfluenceWebDriverTestBase
     }
 
     private RemoteDialog openDialog() {
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.<String>empty());
+        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.<String>empty());
         webItem.click();
         return product.getPageBinder().bind(RemoteDialog.class);
     }
