@@ -46,14 +46,14 @@ public abstract class ConnectAddonLifecycleFailedEvent extends ConnectAddonLifec
         }
     }
 
-    public ConnectAddonLifecycleFailedEvent(String pluginKey, String message, Category category)
+    public ConnectAddonLifecycleFailedEvent(String addonKey, String message, Category category)
     {
-        this(pluginKey, null, message, category);
+        this(addonKey, null, message, category);
     }
 
-    public ConnectAddonLifecycleFailedEvent(String pluginKey, Integer statusCode, String message, Category category)
+    public ConnectAddonLifecycleFailedEvent(String addonKey, Integer statusCode, String message, Category category)
     {
-        super(pluginKey);
+        super(addonKey);
         this.statusCode = statusCode;
         this.message = StringUtils.substring(message, 0, MAX_MESSAGE_LENGTH);
         this.category = checkNotNull(category);

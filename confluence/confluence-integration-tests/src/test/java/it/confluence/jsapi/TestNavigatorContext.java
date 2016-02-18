@@ -1,9 +1,6 @@
 package it.confluence.jsapi;
 
 import com.atlassian.confluence.api.model.content.Content;
-import com.atlassian.confluence.api.model.content.ContentRepresentation;
-import com.atlassian.confluence.api.model.content.ContentType;
-import com.atlassian.confluence.api.model.content.Space;
 import com.atlassian.confluence.it.Page;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -12,7 +9,6 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import com.atlassian.util.concurrent.Promise;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.servlet.ConfluenceAppServlets;
 import org.junit.AfterClass;
@@ -116,7 +112,7 @@ public class TestNavigatorContext extends ConfluenceWebDriverTestBase
     }
 
     private RemoteDialog openDialog() {
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.<String>empty());
+        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.<String>empty());
         webItem.click();
         return product.getPageBinder().bind(RemoteDialog.class);
     }

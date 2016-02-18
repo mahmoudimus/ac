@@ -1,19 +1,17 @@
 package com.atlassian.plugin.connect.modules.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 public class ConnectReflectionHelper
 {
-    public static boolean isParameterizedListWithType(Type type, Class typeParam)
-    {
-        return (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType().equals(List.class) && typeParam.isAssignableFrom((Class) ((ParameterizedType) type).getActualTypeArguments()[0]));
-    }
-
     public static boolean isParameterizedList(Type type)
     {
         return (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType().equals(List.class));
@@ -43,7 +41,6 @@ public class ConnectReflectionHelper
                     {
                         if (sourceField.getType().equals(destField.getType()) && sourceField.get(source) != null)
                         {
-                            Object something = sourceField.get(source);
                             destField.set(dest, sourceField.get(source));
                             alreadySet.add(sourceField.getName());
                         }
@@ -68,6 +65,18 @@ public class ConnectReflectionHelper
         }
 
         return fieldList;
+    }
+
+    public static List<Method> getAllGettersInObjectChain(Class someClass)
+    {
+        List<Method> methodList = new ArrayList<>();
+
+        for (Class myClass = someClass; myClass != Object.class; myClass = myClass.getSuperclass())
+        {
+            methodList.addAll(Arrays.asList(myClass.getDeclaredMethods()).stream().filter(method -> method.getName().startsWith("get")).collect(toList()));
+        }
+
+        return methodList;
     }
 
     private static Field getFieldInObjectChain(Class someClass, String fieldName)

@@ -10,9 +10,9 @@ public abstract class ConnectAddonLifecycleWithDataEvent extends ConnectAddonLif
      */
     private final String data;
 
-    protected ConnectAddonLifecycleWithDataEvent(String pluginKey, String data)
+    protected ConnectAddonLifecycleWithDataEvent(String addonKey, String data)
     {
-        super(pluginKey);
+        super(addonKey);
         this.data = checkNotNull(data);
     }
 

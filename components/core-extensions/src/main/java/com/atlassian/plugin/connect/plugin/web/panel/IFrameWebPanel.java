@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

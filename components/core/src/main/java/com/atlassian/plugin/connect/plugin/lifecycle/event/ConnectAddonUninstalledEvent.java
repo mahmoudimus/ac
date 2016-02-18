@@ -8,8 +8,8 @@ import com.atlassian.analytics.api.annotations.EventName;
 @EventName ("connect.addon.uninstalled")
 public class ConnectAddonUninstalledEvent extends ConnectAddonLifecycleEvent
 {
-    public ConnectAddonUninstalledEvent(String pluginKey)
+    public ConnectAddonUninstalledEvent(String addonKey)
     {
-        super(pluginKey);
+        super(addonKey);
     }
 }

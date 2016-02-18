@@ -1,17 +1,21 @@
 {
   "connect.addon.installed": [
+    "addonKey",
     "pluginKey"
   ],
   "connect.addon.installFailed": [
+    "addonKey",
     "pluginKey",
     "statusCode",
     "message",
     "category"
   ],
   "connect.addon.uninstalled": [
+    "addonKey",
     "pluginKey"
   ],
   "connect.addon.uninstallFailed": [
+    "addonKey",
     "pluginKey",
     "statusCode",
     "message"
@@ -25,14 +29,17 @@
     "newVersion"
   ],
   "connect.addon.enabled": [
+    "addonKey",
     "pluginKey"
   ],
   "connect.addon.enableFailed": [
+    "addonKey",
     "pluginKey",
     "statusCode",
     "message"
   ],
   "connect.addon.disabled": [
+    "addonKey",
     "pluginKey"
   ],
   "connect.addon.moduleValidation.failedAfterInstall": [
