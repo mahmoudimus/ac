@@ -50,7 +50,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
     private static final String SPACE = "ds";
     private static final String WEB_ITEM_ON_URL = "/irwi";
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
 
     private final String baseUrl = product.getProductInstance().getBaseUrl();
     private final String addOnKey = AddonTestUtils.randomAddonKey();
@@ -150,7 +150,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     {
         ConfluenceOps.ConfluencePageData page = confluenceOps.setPage(some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
         product.visit(ConfluenceViewPage.class, page.getId());
-        return connectPageOperations.findWebItem(moduleKey, Optional.<String>empty());
+        return confluencePageOperations.findWebItem(moduleKey, Optional.<String>empty());
     }
 
     private String getModuleKey(String module)

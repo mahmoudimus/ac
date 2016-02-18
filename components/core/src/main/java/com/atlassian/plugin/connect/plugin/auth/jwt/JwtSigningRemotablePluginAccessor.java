@@ -78,14 +78,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
 
     private static Supplier<String> sharedSecretSupplier(final ApplicationLink applicationLink)
     {
-        return new Supplier<String>()
-        {
-            @Override
-            public String get()
-            {
-                return requireSharedSecret(applicationLink);
-            }
-        };
+        return () -> requireSharedSecret(applicationLink);
     }
 
     private static String requireSharedSecret(ApplicationLink applicationLink)

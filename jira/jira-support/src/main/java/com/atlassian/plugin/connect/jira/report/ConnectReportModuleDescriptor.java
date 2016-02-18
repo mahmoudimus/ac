@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.report;
 
+import java.util.Collections;
 import java.util.Map;
 
 import com.atlassian.fugue.Option;
@@ -26,6 +27,7 @@ import com.google.common.base.CharMatcher;
 import org.dom4j.Element;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Collections.emptyMap;
 
 /**
  * Connect version of JIRA report module.
@@ -141,7 +143,7 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
         public String getUrl(final Project project)
         {
             final String url = descriptor.attribute("url") != null ? descriptor.attribute("url").getValue() : "";
-            final JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+            final JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl(emptyMap());
             unfilteredContext.addProject(project);
 
             return urlVariableSubstitutor.append(url, moduleContextFilter.filter(unfilteredContext));

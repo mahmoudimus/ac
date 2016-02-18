@@ -14,7 +14,6 @@ import org.joda.time.Interval;
  * Remove this once UPM supports this rest resource
  */
 class PluginLicenses
-
 {
     /**
      * Number of days before expiration when a license is considered to be "nearly expired".

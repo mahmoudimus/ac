@@ -21,9 +21,9 @@ public class StaticAddonScopes
     /**
      * Turn lightweight references to scopes into the scopes themselves.
      *
-     * @param scopes    {@link AddonScope}s previously read from static configuration
+     * @param scopes {@link AddonScope addon scopes} previously read from static configuration
      * @param scopeKeys lightweight references to scopes
-     * @return the {@link AddonScope}s referenced by the {@link String}s
+     * @return the {@link AddonScope addon scopes} referenced by the {@link String strings}
      * @throws IllegalArgumentException if any of the scopeKeys do not appear amongst the static scopes
      */
     public static Collection<AddonScope> dereference(Collection<AddonScope> scopes, @Nonnull final Collection<ScopeName> scopeKeys)
@@ -55,18 +55,9 @@ public class StaticAddonScopes
             throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s.", badKeys, scopeKeyToScope.keySet()));
         }
 
-        return transform(addImpliedScopesTo(scopeKeys), new Function<ScopeName, AddonScope>()
-        {
-            @Override
-            public AddonScope apply(@Nullable ScopeName scopeKey)
-            {
-                if (null == scopeKey)
-                {
-                    return null;
-                }
-
-                return scopeKeyToScope.get(scopeKey);
-            }
+        return transform(addImpliedScopesTo(scopeKeys), scopeKey -> {
+            if (null == scopeKey) return null;
+            return scopeKeyToScope.get(scopeKey);
         });
     }
 

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-jira-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.69-SNAPSHOT</version>
+        <version>1.1.77-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -596,7 +596,7 @@
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
-            use-maven,3
+            use-maven,3.3.9
         </od.testing.configuration>
     </properties>
 </project>

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +13,7 @@ import java.io.IOException;
 @RunWith(MockitoJUnitRunner.class)
 public class IFrameRenderStrategyBuilderImplTest
 {
-    private @Mock IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private @Mock ConnectUriFactory connectUriFactory;
     private @Mock IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private @Mock TemplateRenderer templateRenderer;
     private @Mock ConnectConditionFactory connectConditionFactory;
@@ -21,7 +21,7 @@ public class IFrameRenderStrategyBuilderImplTest
     @Test
     public void nullTitleDoesNotProduceNpe() throws IOException
     {
-        new IFrameRenderStrategyBuilderImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory, templateRenderer, connectConditionFactory)
+        new IFrameRenderStrategyBuilderImpl(connectUriFactory, iFrameRenderContextBuilderFactory, templateRenderer, connectConditionFactory)
                 .title(null)
                 .build()
                 .renderAccessDenied(null);

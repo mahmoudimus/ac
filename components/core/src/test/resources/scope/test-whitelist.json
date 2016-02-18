@@ -2,11 +2,13 @@
     "scopes" : [{
         "key" : "READ",
         "methods": ["get"],
-        "restPathKeys" : ["mywork", "mywork status", "prototype", "prototype content", "ui"]
+        "restPathKeys" : ["mywork", "mywork status", "prototype", "prototype content", "ui"],
+        "pathKeys" : ["projects", "users", "status"]
     }, {
         "key": "WRITE",
         "methods": ["post"],
-        "restPathKeys": ["mywork", "mywork action"]
+        "restPathKeys": ["mywork", "mywork action"],
+        "pathKeys" : ["scm"]
     }, {
         "key": "WRITE",
         "methods": ["post", "put"],
@@ -42,5 +44,25 @@
         "name" : "ui",
         "basePaths" : ["/content.*"],
         "versions" : ["1", "1.0", "latest"]
+    }],
+    "paths": [{
+        "key": "projects",
+        "paths": ["/projects.*"],
+        "public": true
+    },
+    {
+        "key": "users",
+        "paths": ["/users.*"],
+        "public": true
+    },
+    {
+        "key": "status",
+        "paths": ["/status"],
+        "public": true
+    },
+    {
+        "key": "scm",
+        "paths": ["/scm.*"],
+        "public": true
     }]
 }

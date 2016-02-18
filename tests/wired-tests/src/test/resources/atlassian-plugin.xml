@@ -26,7 +26,6 @@
 
     <!-- CONNECT COMPONENTS -->
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager" />
-    <component-import key="connectAddonBeanFactory" interface="com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory" />
     <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.ConnectAddonRegistry"/>
     <component-import key="connectAddonService" interface="com.atlassian.plugin.connect.spi.auth.user.ConnectUserService"/>
     <component-import key="connectCrowdService" interface="com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService"/>
@@ -40,6 +39,8 @@
     <component-import key="upmControlHandler" interface="com.atlassian.upm.spi.PluginControlHandler" />
     <component-import key="webFragmentLocationBlacklist" interface="com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist" />
     <component-import key="conditionLoadingValidator" interface="com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator" />
+    <component-import key="inlineConditionResolver" interface="com.atlassian.plugin.connect.plugin.web.context.condition.InlineConditionResolver" />
+    <component-import key="webFragmentModuleContextExtractor" interface="com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor" />
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider" />
@@ -62,16 +63,19 @@
                interface="com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator"
                application="jira" />
     <component key="confluenceTestAuthenticator"
-               class="it.com.atlassian.plugin.connect.confluence.ConfluenceTestAuthenticator"
+               class="it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestAuthenticator"
                interface="com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator"
                application="confluence" />
     <component key="jiraWorkflowImporter"
                class="it.com.atlassian.plugin.connect.jira.workflow.DefaultWorkflowImporter"
                interface="it.com.atlassian.plugin.connect.jira.workflow.WorkflowImporter"
                application="jira" />
-    <component key="jiraScopeTestUtil"
+    <component key="jiraTestUtil"
                class="it.com.atlassian.plugin.connect.jira.util.JiraTestUtil"
                application="jira" />
+    <component key="confluenceTestUtil"
+               class="it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestUtil"
+               application="confluence" />
     <component key="timebombedLicenseManager"
                class="it.com.atlassian.plugin.connect.util.TimebombedLicenseManager"
                />

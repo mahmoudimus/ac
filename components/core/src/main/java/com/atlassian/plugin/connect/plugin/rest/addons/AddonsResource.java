@@ -1,18 +1,5 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
-import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
 import com.atlassian.annotations.PublicApi;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.extras.api.Contact;
@@ -46,14 +33,23 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
-
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.ResourceFilters;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDON_KEY_PATH_PARAMETER;
 
@@ -62,7 +58,7 @@ import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDO
  *
  * NOTE: This resource class exposes some functionality for add-on developers and some for system administrators.
  */
-@Path (AddonsResource.REST_PATH)
+@Path(AddonsResource.REST_PATH)
 public class AddonsResource
 {
     public final static String REST_PATH = "addons";
@@ -97,7 +93,7 @@ public class AddonsResource
 
     @GET
     @ResourceFilters(SysadminOnlyResourceFilter.class)
-    @Produces ("application/json")
+    @Produces("application/json")
     public Response getAddons()
     {
         RestAddons restAddons = getAddonResources();
@@ -111,12 +107,12 @@ public class AddonsResource
      * @return a JSON representation of the add-on
      */
     @GET
-    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}")
+    @Path("/{" + ADDON_KEY_PATH_PARAMETER + "}")
     @ResourceFilters(AddonOrSysadminOnlyResourceFilter.class)
     @AnonymousAllowed
-    @Produces ("application/json")
+    @Produces("application/json")
     @PublicApi
-    public Response getAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
+    public Response getAddon(@PathParam(ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         RestMinimalAddon restAddon = getRestAddonByKey(addonKey);
         if (restAddon == null)
@@ -128,10 +124,10 @@ public class AddonsResource
     }
 
     @DELETE
-    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}")
+    @Path("/{" + ADDON_KEY_PATH_PARAMETER + "}")
     @ResourceFilters(SysadminOnlyResourceFilter.class)
-    @Produces ("application/json")
-    public Response uninstallAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
+    @Produces("application/json")
+    public Response uninstallAddon(@PathParam(ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         try
         {
@@ -155,10 +151,10 @@ public class AddonsResource
     }
 
     @PUT
-    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}/reinstall")
+    @Path("/{" + ADDON_KEY_PATH_PARAMETER + "}/reinstall")
     @ResourceFilters(SysadminOnlyResourceFilter.class)
-    @Produces ("application/json")
-    public Response reinstallAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
+    @Produces("application/json")
+    public Response reinstallAddon(@PathParam(ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         try
         {
@@ -188,7 +184,7 @@ public class AddonsResource
     private RestAddons getAddonResources()
     {
         Collection<ConnectAddonBean> addons = addonAccessor.getAllAddons();
-        Iterable<RestLimitedAddon> restAddons = Iterables.transform(addons, addon -> createJsonAddonRest(addon));
+        Iterable<RestLimitedAddon> restAddons = Iterables.transform(addons, this::createJsonAddonRest);
         return new RestAddons<>(Lists.newArrayList(restAddons));
     }
 
@@ -237,17 +233,10 @@ public class AddonsResource
     {
         List<RestContact> contactList = null;
         final Optional<ProductLicense> potentialProductLicense = productAccessor.getProductLicense();
-        if(potentialProductLicense.isPresent())
+        if (potentialProductLicense.isPresent())
         {
             Collection<Contact> licenseContacts = potentialProductLicense.get().getContacts();
-            Iterable<RestContact> contactRepresentations = Iterables.transform(licenseContacts, new Function<Contact, RestContact>()
-            {
-                @Override
-                public RestContact apply(Contact contact)
-                {
-                    return new RestContact(contact.getName(), contact.getEmail());
-                }
-            });
+            Iterable<RestContact> contactRepresentations = Iterables.transform(licenseContacts, contact -> new RestContact(contact.getName(), contact.getEmail()));
 
             contactList = Lists.newArrayList(contactRepresentations);
         }

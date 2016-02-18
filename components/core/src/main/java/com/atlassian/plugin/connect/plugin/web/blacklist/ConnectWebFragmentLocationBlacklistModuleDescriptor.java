@@ -78,23 +78,12 @@ public final class ConnectWebFragmentLocationBlacklistModuleDescriptor extends A
     private ImmutableSet<String> getLocations(Element element, String elementName)
     {
         Element subElementWithLocations = element.element(elementName);
-        if (subElementWithLocations != null)
-        {
-            // noinspection unchecked
-            List<Element> locations = subElementWithLocations.elements();
-            return ImmutableSet.copyOf(locations.stream()
-                    .map(new Function<Element, String>() {
-                        @Override
-                        public String apply(Element element) {
-                            return element.getText();
-                        }
-                    })
-                    .collect(Collectors.toSet()));
-        }
-        else
-        {
-            return ImmutableSet.of();
-        }
+        if (subElementWithLocations == null) return ImmutableSet.of();
+
+        List<Element> locations = subElementWithLocations.elements();
+        return ImmutableSet.copyOf(
+            locations.stream().map(Element::getText).collect(Collectors.toSet())
+        );
     }
 
     @Override

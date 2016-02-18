@@ -32,13 +32,6 @@ public class UriBuilderUtils
 
     public static Map<String, List<String>> toListFormat(Map<String, String[]> allParameters)
     {
-        return Maps.transformValues(allParameters, new Function<String[], List<String>>()
-        {
-            @Override
-            public List<String> apply(@Nullable String[] input)
-            {
-                return null == input ? Lists.<String>newArrayList() : Lists.newArrayList(input);
-            }
-        });
+        return Maps.transformValues(allParameters, input -> null == input ? Lists.<String>newArrayList() : Lists.newArrayList(input));
     }
 }

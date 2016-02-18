@@ -11,12 +11,14 @@ import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
+import com.atlassian.plugin.connect.plugin.web.context.InlineConditionVariableSubstitutorFake;
 import com.atlassian.plugin.connect.plugin.web.context.UrlVariableSubstitutorImpl;
-import com.atlassian.plugin.connect.plugin.web.iframe.IFrameUriBuilderFactoryImpl;
+import com.atlassian.plugin.connect.plugin.web.iframe.ConnectUriFactoryImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.LocaleHelper;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;
@@ -28,13 +30,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.annotation.Nullable;
+import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -119,6 +123,9 @@ public class AddonConditionTest
     private LocaleHelper localeHelper;
 
     @Mock
+    private TimeZoneManager timeZoneManager;
+
+    @Mock
     private EventPublisher eventPublisher;
 
     @Mock
@@ -129,22 +136,17 @@ public class AddonConditionTest
     @Before
     public void init()
     {
-        final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(
-                new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl()),
+        final ConnectUriFactoryImpl iFrameUriBuilderFactory = new ConnectUriFactoryImpl(
+                new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), new InlineConditionVariableSubstitutorFake()),
                 remotablePluginAccessorFactory,
                 userManager,
                 new TestHostApplicationInfo(URL, "/"),
                 licenseRetriever,
                 localeHelper,
-                new UserPreferencesRetriever()
-                {
-                    @Override
-                    public TimeZone getTimeZoneFor(@Nullable String userName)
-                    {
-                        return TimeZone.getDefault();
-                    }
-                },
+                timeZoneManager,
                 pluginRetrievalService);
+
+        when(webFragmentModuleContextExtractor.extractParameters(anyMap())).thenReturn(new HashMapModuleContextParameters(Collections.emptyMap()));
 
         addonCondition = new AddonCondition(remotablePluginAccessorFactory,
                 iFrameUriBuilderFactory,
@@ -152,9 +154,10 @@ public class AddonConditionTest
                 eventPublisher,
                 pluginRetrievalService);
 
-        when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
+        when(remotablePluginAccessorFactory.get(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
         when(localeHelper.getLocaleTag()).thenReturn("foo");
+        when(timeZoneManager.getUserTimeZone()).thenReturn(TimeZone.getDefault());
 
         PluginInformation pluginInformation = mock(PluginInformation.class);
         when(pluginInformation.getVersion()).thenReturn("1.2.3");
@@ -295,7 +298,7 @@ public class AddonConditionTest
     private void invokeWhenSuccessfulResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(Promises.promise("{\"shouldDisplay\": true}"));
+                any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(Promises.promise("{\"shouldDisplay\": true}"));
 
         invokeCondition();
     }
@@ -304,7 +307,7 @@ public class AddonConditionTest
     private void invokeWhenMalformedJson()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(Promises.promise("not json"));
+                any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(Promises.promise("not json"));
 
         invokeCondition();
     }
@@ -313,7 +316,7 @@ public class AddonConditionTest
     private void invokeWhenErrorResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(
+                any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(
                 Promises.rejected(new RuntimeException("oops"), String.class));
 
         invokeCondition();

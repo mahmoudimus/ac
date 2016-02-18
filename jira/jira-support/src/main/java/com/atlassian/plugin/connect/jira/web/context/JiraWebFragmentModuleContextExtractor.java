@@ -1,29 +1,46 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableList;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 @JiraComponent
+@ExportAsDevService
 public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
 {
-    private final Iterable<ParameterExtractor<?>> parameterExtractors;
+    private final List<ParameterExtractor<?>> parameterExtractors;
     private final UserManager userManager;
+    private final IssueManager issueManager;
+    private final ProjectManager projectManager;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
 
     @Inject
-    public JiraWebFragmentModuleContextExtractor(UserManager userManager)
+    public JiraWebFragmentModuleContextExtractor(UserManager userManager, IssueManager issueManager, ProjectManager projectManager, JiraAuthenticationContext jiraAuthenticationContext)
     {
         this.userManager = userManager;
-        parameterExtractors = constructParameterExtractors();
+        this.issueManager = issueManager;
+        this.projectManager = projectManager;
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.parameterExtractors = constructParameterExtractors();
     }
 
     @Override
@@ -34,7 +51,7 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
             return (ModuleContextParameters) webFragmentContext;
         }
 
-        JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
+        JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl(webFragmentContext);
 
         for (ParameterExtractor extractor : parameterExtractors)
         {
@@ -60,7 +77,32 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
         return moduleContext;
     }
 
-    private static interface ParameterExtractor<T>
+    @Override
+    public Map<String, Object> reverseExtraction(HttpServletRequest request, final Map<String, String> queryParams)
+    {
+        Optional<Issue> issue = mapParam(queryParams, "issue.id", id -> issueManager.getIssueObject(Long.valueOf(id)));
+        Optional<Project> project = mapParam(queryParams, "project.id", id -> projectManager.getProjectObj(Long.valueOf(id)));
+
+        Map<String, Object> context = new HashMap<>();
+
+        context.put("user", jiraAuthenticationContext.getLoggedInUser());
+        issue.ifPresent(value -> context.put("issue", value));
+        project.ifPresent(value -> context.put("project", value));
+
+        JiraHelper jiraHelper = new JiraHelper(request, project.orElse(null), context);
+
+        context.put("helper", jiraHelper);
+
+        return context;
+    }
+
+    private <T> Optional<T> mapParam(Map<String, String> queryParams, String paramName, Function<String, T> valueMapping)
+    {
+        return Optional.ofNullable(queryParams.get(paramName))
+                .flatMap(valueMapping.andThen(Optional::ofNullable));
+    }
+
+    private interface ParameterExtractor<T>
     {
         String getContextKey();
 
@@ -69,7 +111,7 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
         void addToContext(JiraModuleContextParameters moduleContext, T value);
     }
 
-    private Iterable<ParameterExtractor<?>> constructParameterExtractors()
+    private List<ParameterExtractor<?>> constructParameterExtractors()
     {
         return ImmutableList.of(
                 new ParameterExtractor<Issue>()

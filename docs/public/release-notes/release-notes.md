@@ -33,6 +33,21 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.76](./1-1-0.html#1.1.76)
+ * Navigator context API for unsaved edit page [CE-289](https://ecosystem.atlassian.net/browse/CE-289)
+ * Navigator context API for contentedit [CE-278](https://ecosystem.atlassian.net/browse/CE-278)
+ * Fixed Confluence storage format of macro content not found when using nested block macro [CE-220](https://ecosystem.atlassian.net/browse/CE-220)
+ * Make requests to experimental APIs [ACJS-75](https://ecosystem.atlassian.net/browse/ACJS-75)
+
+## [1.1.75](./1-1-0.html#1.1.75)
+ * Added context parameters for conditions [ACJIRA-778](https://ecosystem.atlassian.net/browse/ACJIRA-778)
+ * Confluence: Added ability to pass in dynamic variables to Connect Blueprints [CE-252](https://ecosystem.atlassian.net/browse/CE-252)
+ * URLs for web panels in drop-downs can no longer become stale [ACJIRA-724](https://ecosystem.atlassian.net/browse/ACJIRA-724)
+ * Fixed incorrect handling of query parameters in lifecycle handlers [AC-1825](https://ecosystem.atlassian.net/browse/AC-1825)
+
+## [1.1.71](./1-1-0.html#1.1.71)
+ * Confluence: Enable chromeless dialogs for custom macro editors [CE-283](https://ecosystem.atlassian.net/browse/CE-283)
+
 ## [1.1.69](./1-1-0.html#1.1.69)
  * JIRA: Whitelist worklog resource (see the [JIRA REST Scopes page](../scopes/jira-rest-scopes.html)) [AC-1826](https://ecosystem.atlassian.net/browse/AC-1826)
 

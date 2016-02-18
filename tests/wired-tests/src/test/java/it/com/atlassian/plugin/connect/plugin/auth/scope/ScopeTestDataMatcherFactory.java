@@ -3,14 +3,11 @@ package it.com.atlassian.plugin.connect.plugin.auth.scope;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -32,14 +29,7 @@ public class ScopeTestDataMatcherFactory
 
     public Iterable<Matcher<? super AddonScopeManager>> toScopeTestDataMatchers(Iterable<ScopeTestData> scopeTestData)
     {
-        return Iterables.transform(scopeTestData, new Function<ScopeTestData, Matcher<? super AddonScopeManager>>()
-        {
-            @Override
-            public Matcher<? super AddonScopeManager> apply(final ScopeTestData data)
-            {
-                return performsCorrectActionForScope(data);
-            }
-        });
+        return Iterables.transform(scopeTestData, this::performsCorrectActionForScope);
     }
 
     public Matcher<? super AddonScopeManager> performsCorrectActionForScope(final ScopeTestData data)
@@ -71,14 +61,7 @@ public class ScopeTestDataMatcherFactory
                 when(request.getContextPath()).thenReturn(data.contextPath);
                 when(request.getRequestURI()).thenReturn(data.path);
                 when(request.getMethod()).thenReturn(data.method.name());
-                when(request.getInputStream()).thenAnswer(new Answer<ServletInputStream>()
-                {
-                    @Override
-                    public ServletInputStream answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        return new ServletStringInputStream(data.requestBody);
-                    }
-                });
+                when(request.getInputStream()).thenAnswer(invocationOnMock -> new ServletStringInputStream(data.requestBody));
                 return request;
             }
 

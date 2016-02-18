@@ -32,26 +32,12 @@ public class LicenseRetriever
 
     public LicenseStatus getLicenseStatus(String pluginKey)
     {
-        return getLicense(pluginKey).map(new Function<PluginLicense, LicenseStatus>()
-        {
-            @Override
-            public LicenseStatus apply(final PluginLicense input)
-            {
-                return LicenseStatus.fromBoolean(input.isActive());
-            }
-        }).getOrElse(LicenseStatus.NONE);
+        return getLicense(pluginKey).map(input -> LicenseStatus.fromBoolean(input.isActive())).getOrElse(LicenseStatus.NONE);
     }
 
     public String getServiceEntitlementNumber(String pluginKey)
     {
-        return getLicense(pluginKey).flatMap(new Function<PluginLicense, Option<String>>()
-        {
-            @Override
-            public Option<String> apply(final PluginLicense input)
-            {
-                return input.getSupportEntitlementNumber();
-            }
-        }).getOrElse((String) null);
+        return getLicense(pluginKey).flatMap(PluginLicense::getSupportEntitlementNumber).getOrElse((String) null);
     }
 
 }

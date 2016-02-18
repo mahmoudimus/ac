@@ -76,17 +76,11 @@ public class ConnectAddonToPluginFactory
     {
         Optional<List<ModuleBean>> optionalPages = addon.getModules().getValidModuleListOfType(
                 moduleType, moduleValidationExceptionHandler);
-        optionalPages.ifPresent(new Consumer<List<ModuleBean>>()
-        {
-
-            @Override
-            public void accept(List<ModuleBean> moduleBeans)
+        optionalPages.ifPresent(moduleBeans -> {
+            ConnectPageModuleBean page = (ConnectPageModuleBean) moduleBeans.get(0);
+            if (null != page && !Strings.isNullOrEmpty(page.getUrl()))
             {
-                ConnectPageModuleBean page = (ConnectPageModuleBean) moduleBeans.get(0);
-                if (null != page && !Strings.isNullOrEmpty(page.getUrl()))
-                {
-                    pluginInfo.addParameter(parameterKey, ConnectIFrameServletPath.forModule(addon.getKey(), page.getRawKey()));
-                }
+                pluginInfo.addParameter(parameterKey, ConnectIFrameServletPath.forModule(addon.getKey(), page.getRawKey()));
             }
         });
     }

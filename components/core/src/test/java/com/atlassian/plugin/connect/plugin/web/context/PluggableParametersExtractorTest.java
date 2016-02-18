@@ -112,7 +112,7 @@ public final class PluggableParametersExtractorTest
 
     private static ModuleContextParameters moduleParamsFromMap(Map<String, String> map)
     {
-        HashMapModuleContextParameters result = new HashMapModuleContextParameters();
+        HashMapModuleContextParameters result = new HashMapModuleContextParameters(map);
         result.putAll(map);
         return result;
     }

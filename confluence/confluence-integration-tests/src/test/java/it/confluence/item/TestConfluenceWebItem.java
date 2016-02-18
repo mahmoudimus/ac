@@ -58,7 +58,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private static final String ADDON_WEBITEM_INLINE_DIALOG = "wikipedia-link";
     private static final String SPACE = "ds";
 
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
 
     private static ConnectRunner remotePlugin;
 
@@ -185,7 +185,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         ConfluenceViewPage viewPage = createAndVisitViewPage();
 
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(PRODUCT_WEBITEM), Optional.of("action-menu-link"));
+        RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(PRODUCT_WEBITEM), Optional.of("action-menu-link"));
         assertNotNull("Web item should be found", webItem);
 
         webItem.click();
@@ -211,7 +211,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.admin());
         createAndVisitViewPage();
-        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
+        assertFalse("Web item should NOT be found", confluencePageOperations.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
     }
 
 
@@ -231,7 +231,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private Pair<ConfluenceViewPage, RemoteWebItem> findViewPageWebItem(String webItemId) throws Exception
     {
         ConfluenceViewPage viewPage = createAndVisitViewPage();
-        return Pair.pair(viewPage, connectPageOperations.findWebItem(webItemId, Optional.<String>empty()));
+        return Pair.pair(viewPage, confluencePageOperations.findWebItem(webItemId, Optional.<String>empty()));
     }
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception

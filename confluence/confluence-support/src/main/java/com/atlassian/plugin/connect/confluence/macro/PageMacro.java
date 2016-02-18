@@ -56,9 +56,9 @@ public final class PageMacro extends AbstractRemoteMacro
             Map<String, String[]> queryParams = convertParams(macroInstance.getUrlParameters(username, userKey));
 
             if (getOutputType().equals(OutputType.INLINE)){
-                return iFrameRenderer.renderInline(iframeContextImpl, "", queryParams, username, Collections.<String, Object>emptyMap());
+                return iFrameRenderer.renderInline(iframeContextImpl, "", queryParams, Collections.<String, Object>emptyMap());
             } else {
-                return iFrameRenderer.render(iframeContextImpl, "", queryParams, username, Collections.<String, Object>emptyMap());
+                return iFrameRenderer.render(iframeContextImpl, "", queryParams, Collections.<String, Object>emptyMap());
             }
 
         } catch (IOException e)

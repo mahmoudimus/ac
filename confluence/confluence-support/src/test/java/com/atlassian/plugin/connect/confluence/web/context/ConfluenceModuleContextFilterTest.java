@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
+import java.util.Collections;
+
 import com.atlassian.confluence.core.ContentEntityManager;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.BlogPost;
@@ -73,7 +75,7 @@ public class ConfluenceModuleContextFilterTest
         when(pageManager.getAbstractPage(anyLong())).thenReturn(page);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(page))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("page.id", "1234");
         params.put("page.version", "1");
         params.put("page.type", "page");
@@ -93,7 +95,7 @@ public class ConfluenceModuleContextFilterTest
         when(pageManager.getAbstractPage(anyLong())).thenReturn(page);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(page))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("page.id", "1234");
         params.put("page.version", "2");
         params.put("page.type", "blog");
@@ -111,7 +113,7 @@ public class ConfluenceModuleContextFilterTest
         when(pageManager.getAbstractPage(anyLong())).thenReturn(post);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(post))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("page.id", "1234");
         params.put("page.version", "2");
         params.put("page.type", "blog");
@@ -129,7 +131,7 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(anyString())).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("space.key", "TEST");
 
         ModuleContextParameters filtered = filter.filter(params);
@@ -145,7 +147,7 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(eq(1L))).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("space.key", "TEST");
         params.put("space.id", "1");
 
@@ -162,7 +164,7 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(anyString())).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("space.key", "TEST");
         params.put("space.id", "2");
 
@@ -186,7 +188,7 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(2L)).thenReturn(barSpace);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(barSpace))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("space.key", "FOO");
         params.put("space.id", "2"); // bar's id
 
@@ -204,7 +206,7 @@ public class ConfluenceModuleContextFilterTest
         when(userAccessor.getUserByName(eq("bob"))).thenReturn(bob);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(bob))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("profileUser.name", "bob");
         params.put("profileUser.key", "babecafe");
 
@@ -225,7 +227,7 @@ public class ConfluenceModuleContextFilterTest
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(bob))).thenReturn(true);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(eve))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("profileUser.name", "bob");
         params.put("profileUser.key", "defaced");
 
@@ -244,7 +246,7 @@ public class ConfluenceModuleContextFilterTest
         when(userAccessor.getExistingUserByKey(eq(userKey))).thenReturn(eve);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(eve))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("profileUser.name", "eve");
         params.put("profileUser.key", "defaced");
 
@@ -292,7 +294,7 @@ public class ConfluenceModuleContextFilterTest
 
     private ModuleContextParameters createCustomContentParams()
     {
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("content.id", "1234");
         params.put("content.version", "1");
         params.put("content.type", "custom");

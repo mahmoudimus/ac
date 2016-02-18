@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
@@ -10,6 +9,7 @@ import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameParams;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
+import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -46,7 +46,7 @@ public class TestIFrameRenderer
     @Mock private HostApplicationInfo hostApplicationInfo;
     @Mock private LicenseRetriever licenseRetriever;
     @Mock private LocaleHelper localeHelper;
-    @Mock private UserPreferencesRetriever userPreferencesRetriever;
+    @Mock private TimeZoneManager timeZoneManager;
     @Mock private UserManager userManager;
 
     private IFrameRenderer iframeRenderer;
@@ -56,14 +56,14 @@ public class TestIFrameRenderer
     {
         MockitoAnnotations.initMocks(this);
         this.iframeRenderer = new IFrameRendererImpl(templateRenderer, hostApplicationInfo, remotablePluginAccessorFactory,
-                userPreferencesRetriever, licenseRetriever, localeHelper, userManager);
+                timeZoneManager, licenseRetriever, localeHelper, userManager);
     }
 
     @Test
     public void testRenderTemplatePath() throws Exception
     {
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
-        iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), "jim", emptyContext());
+        iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), emptyContext());
 
         String path = getActualTemplateRendererPath();
         assertEquals("velocity/deprecated/iframe-body.vm", path);
@@ -73,7 +73,7 @@ public class TestIFrameRenderer
     public void testRenderInlineTemplatePath() throws Exception
     {
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
-        iframeRenderer.renderInline(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), "jim", emptyContext());
+        iframeRenderer.renderInline(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), emptyContext());
 
         String path = getActualTemplateRendererPath();
         assertEquals("velocity/deprecated/iframe-body-inline.vm", path);
@@ -83,7 +83,7 @@ public class TestIFrameRenderer
     public void testContext() throws IOException
     {
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
-        iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), "jim", emptyContext());
+        iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), emptyContext());
 
         Map<String, Object> ctx = getActualTemplateRendererContext();
         assertEquals("{}", ctx.get("productContextHtml"));
@@ -103,7 +103,7 @@ public class TestIFrameRenderer
                 "good", "bye"
         );
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
-        iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), "jim", productContext);
+        iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), productContext);
 
         Map<String, Object> ctx = getActualTemplateRendererContext();
         // Need to en-encode as this is wrapped for inclusion in js
@@ -121,7 +121,7 @@ public class TestIFrameRenderer
                 "hella", new String[]{ "good" }
         );
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
-        iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", params, "jim", emptyContext());
+        iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", params, emptyContext());
 
         Map<String, String[]> signParams = getActualSignedUrlParams();
         assertArrayEquals(params.get("hello"), signParams.get("hello"));
@@ -131,10 +131,11 @@ public class TestIFrameRenderer
     private void mockAllTheThings(String remoteUser, String timezone, String iframeContextPath, String iframeHostUrl,
         String pluginKey, String expectedSignedUrl)
     {
-        when(userPreferencesRetriever.getTimeZoneFor(remoteUser)).thenReturn(new SimpleTimeZone(10, timezone));
+        when(timeZoneManager.getUserTimeZone()).thenReturn(new SimpleTimeZone(10, timezone));
         UserProfile userProfile = mock(UserProfile.class);
         when(userProfile.getUserKey()).thenReturn(new UserKey(remoteUser + "-key"));
-        when(userManager.getUserProfile(remoteUser)).thenReturn(userProfile);
+        when(userProfile.getUsername()).thenReturn(remoteUser);
+        when(userManager.getRemoteUser()).thenReturn(userProfile);
         when(hostApplicationInfo.getContextPath()).thenReturn(iframeContextPath);
         when(hostApplicationInfo.getUrl()).thenReturn(URI.create(iframeHostUrl));
         when(licenseRetriever.getLicenseStatus(pluginKey)).thenReturn(LicenseStatus.ACTIVE);

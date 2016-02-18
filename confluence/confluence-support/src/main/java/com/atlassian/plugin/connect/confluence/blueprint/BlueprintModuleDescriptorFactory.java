@@ -56,7 +56,8 @@ public class BlueprintModuleDescriptorFactory
         blueprintElement.addAttribute("system", "true");
         blueprintElement.addAttribute("create-result", bean.getCreateResult().toString());
 
-        if(log.isDebugEnabled()) {
+        if(log.isDebugEnabled())
+        {
             log.debug(Dom4jUtils.printNode(blueprintElement));
         }
 
