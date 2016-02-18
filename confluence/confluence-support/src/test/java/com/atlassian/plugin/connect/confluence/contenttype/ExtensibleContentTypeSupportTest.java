@@ -10,7 +10,7 @@ import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Sets;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
-import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeAPISupportModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 
 import org.junit.Before;
@@ -25,7 +25,6 @@ import static com.atlassian.confluence.api.model.content.ContentType.COMMENT;
 import static com.atlassian.confluence.api.model.content.ContentType.PAGE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -108,7 +107,7 @@ public class ExtensibleContentTypeSupportTest
 
     private ExtensibleContentTypeModuleBean buildBean(Set<String> supportedContainer, Set<String> supportedContained) {
         return new ExtensibleContentTypeModuleBeanBuilder()
-                .withAPISupport(new ExtensibleContentTypeAPISupportModuleBeanBuilder()
+                .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(supportedContainer)
                         .withSupportedContainedTypes(supportedContained)
                         .build())

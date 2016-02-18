@@ -18,7 +18,8 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
-public class ExtensibleContentTypeModuleProvider extends AbstractConfluenceConnectModuleProvider<ExtensibleContentTypeModuleBean>
+public class ExtensibleContentTypeModuleProvider
+        extends AbstractConfluenceConnectModuleProvider<ExtensibleContentTypeModuleBean>
 {
     private static final ExtensibleContentTypeModuleMeta META = new ExtensibleContentTypeModuleMeta();
 

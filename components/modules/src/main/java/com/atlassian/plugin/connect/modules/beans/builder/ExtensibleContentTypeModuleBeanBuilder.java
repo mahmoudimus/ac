@@ -1,25 +1,33 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeAPISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.APISupportBean;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeUISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.OperationSupportBean;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
 
 public class ExtensibleContentTypeModuleBeanBuilder extends RequiredKeyBeanBuilder<ExtensibleContentTypeModuleBeanBuilder, ExtensibleContentTypeModuleBean>
 {
-    private ExtensibleContentTypeUISupportModuleBean uiSupport;
-    private ExtensibleContentTypeAPISupportModuleBean apiSupport;
+    private UISupportBean uiSupport;
+    private OperationSupportBean operationSupport;
+    private APISupportBean apiSupport;
 
     public ExtensibleContentTypeModuleBeanBuilder()
     {
     }
 
-    public ExtensibleContentTypeModuleBeanBuilder withUISupport(ExtensibleContentTypeUISupportModuleBean uiSupport)
+    public ExtensibleContentTypeModuleBeanBuilder withUISupport(UISupportBean uiSupport)
     {
         this.uiSupport = uiSupport;
         return this;
     }
 
-    public ExtensibleContentTypeModuleBeanBuilder withAPISupport(ExtensibleContentTypeAPISupportModuleBean apiSupport)
+    public ExtensibleContentTypeModuleBeanBuilder withOperationSupport(OperationSupportBean operationSupport)
+    {
+        this.operationSupport = operationSupport;
+        return this;
+    }
+
+    public ExtensibleContentTypeModuleBeanBuilder withAPISupport(APISupportBean apiSupport)
     {
         this.apiSupport = apiSupport;
         return this;

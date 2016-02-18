@@ -19,7 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 @ConfluenceComponent
-public class ExtensibleContentTypeModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentTypeModuleDescriptor>
+public class ExtensibleContentTypeModuleDescriptorFactory
+        implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentTypeModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(ExtensibleContentTypeModuleDescriptorFactory.class);
     private final ModuleFactory moduleFactory;
@@ -43,8 +44,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory implements ConnectModu
     @Override
     public ContentTypeModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
-        String contentTypeKey = ExtensibleUtils.getContentType(addon, bean);
-        String completeModuleKey = ExtensibleUtils.getCompleteModuleKey(addon, bean);
+        String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
+        String completeModuleKey = ExtensibleContentTypeUtils.getCompleteModuleKey(addon, bean);
 
         Element descriptionElement = new DOMElement("description");
         descriptionElement.addText("Support for Extensible Content Type for Atlassian Connect add-ons");
@@ -55,7 +56,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory implements ConnectModu
         contentTypeElement.addAttribute("class", ExtensibleContentType.class.getName());
         contentTypeElement.add(descriptionElement);
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled())
+        {
             log.debug(Dom4jUtils.printNode(contentTypeElement));
         }
 

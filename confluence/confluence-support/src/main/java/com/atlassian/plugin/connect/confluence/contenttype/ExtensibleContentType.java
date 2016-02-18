@@ -1,16 +1,13 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
-import com.atlassian.confluence.api.impl.service.content.factory.ContentFactory;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.content.ContentEntityAdapter;
 import com.atlassian.confluence.content.CustomContentEntityObject;
-import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.custom.BaseCustomContentType;
 import com.atlassian.confluence.content.ui.ContentUiSupport;
-import com.atlassian.confluence.security.PermissionDelegate;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 
 
@@ -20,7 +17,7 @@ public class ExtensibleContentType extends BaseCustomContentType
     private final ExtensibleContentTypeModuleBean bean;
     private final ApiSupportProvider apiSupportProvider;
     private final ContentEntityAdapter contentEntityAdapter;
-    private final PermissionDelegate permissionDelegate;
+    private final com.atlassian.confluence.security.PermissionDelegate permissionDelegate;
     private final ContentUiSupport contentUiSupport;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
@@ -37,9 +34,9 @@ public class ExtensibleContentType extends BaseCustomContentType
         this.bean = bean;
 
         this.apiSupportProvider = apiSupportProvider;
-        this.permissionDelegate = new ExtensiblePermissionDelegate();
+        this.permissionDelegate = new PermissionDelegate();
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
-        this.contentUiSupport = new ExtensibleUISupport(contentTypeKey, bean);
+        this.contentUiSupport = new ExtensibleContentTypeUISupport(contentTypeKey, bean);
         this.customContentApiSupportParams = customContentApiSupportParams;
     }
 
@@ -50,7 +47,7 @@ public class ExtensibleContentType extends BaseCustomContentType
     }
 
     @Override
-    public PermissionDelegate getPermissionDelegate()
+    public com.atlassian.confluence.security.PermissionDelegate getPermissionDelegate()
     {
         return permissionDelegate;
     }

@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 
-public class ExtensibleUtils
+public class ExtensibleContentTypeUtils
 {
     public static String getContentType(ConnectAddonBean addon, RequiredKeyBean bean)
     {

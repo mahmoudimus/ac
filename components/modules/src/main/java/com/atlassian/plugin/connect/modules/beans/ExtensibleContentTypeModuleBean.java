@@ -1,17 +1,25 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeAPISupportModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ExtensibleContentTypeUISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.APISupportBean;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.OperationSupportBean;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
 
 import org.apache.commons.lang3.ObjectUtils;
 
 public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
 {
-    private ExtensibleContentTypeUISupportModuleBean uiSupport;
-    private ExtensibleContentTypeAPISupportModuleBean apiSupport;
+    @Required
+    private UISupportBean uiSupport;
 
-    public ExtensibleContentTypeModuleBean() {
+    private OperationSupportBean operationSupportBean;
+
+    @Required
+    private APISupportBean apiSupport;
+
+    public ExtensibleContentTypeModuleBean()
+    {
         initialise();
     }
 
@@ -23,16 +31,20 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
 
     private void initialise()
     {
-        uiSupport = ObjectUtils.defaultIfNull(uiSupport, new ExtensibleContentTypeUISupportModuleBean());
-        apiSupport = ObjectUtils.defaultIfNull(apiSupport, new ExtensibleContentTypeAPISupportModuleBean());
+        operationSupportBean = ObjectUtils.defaultIfNull(operationSupportBean, new OperationSupportBean());
     }
 
-    public ExtensibleContentTypeUISupportModuleBean getUiSupport()
+    public UISupportBean getUiSupport()
     {
         return uiSupport;
     }
 
-    public ExtensibleContentTypeAPISupportModuleBean getApiSupport()
+    public OperationSupportBean getOperationSupportBean()
+    {
+        return operationSupportBean;
+    }
+
+    public APISupportBean getApiSupport()
     {
         return apiSupport;
     }
