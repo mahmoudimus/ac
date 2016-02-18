@@ -13,6 +13,6 @@ AJS.bind("init.rte", function () {
 
     require(["ac/confluence/macro/property-panel-controls", "ac/confluence/macro/property-panel-iframe", "confluence/macro-js-overrides"], function(getControls, propertyPanelIframeInjector, macroOverrides) {
         macroOverrides.assignFunction(macroName, propertyPanelIframeInjector(macroUrl));
-        macroOverrides.assignFunction(macroName, getControls("test-addon", macroName));
+        macroOverrides.assignFunction(macroName, getControls(macroName));
     });
 });

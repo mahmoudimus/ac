@@ -1,11 +1,18 @@
 (function($, define){
 
-    define("ac/confluence/macro/property-panel-controls", [], function() {
-        return function(addonName, macroName) {
+    define("ac/confluence/macro/property-panel-controls", [
+        'underscore'
+    ], function(_) {
+        return function(macroName) {
             var controls;
+
+            function getMacroControls(allControls) {
+                return _.first(_.filter(_.pluck(allControls, macroName), _.isObject));
+            }
             return {
                 getControls: function(callback) {
-                    controls = controls || WRM.data.claim("com.atlassian.plugins.atlassian-connect-plugin:confluence-macro.property-panel-controls");
+                    controls = controls ||
+                        getMacroControls(WRM.data.claim("com.atlassian.plugins.atlassian-connect-plugin:confluence-macro.property-panel-controls"));
                     callback(controls);
                 }
             };
