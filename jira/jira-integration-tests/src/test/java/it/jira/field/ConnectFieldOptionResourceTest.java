@@ -175,8 +175,8 @@ public class ConnectFieldOptionResourceTest
                 Triple.of("replace", HttpMethod.POST, new ReplaceRequestBean(2, 3)));
 
         List<Pair<String, String>> invalidPaths = ImmutableList.of(
-                pair(baseUrl + "/rest/atlassian-connect/1/jira/addon/not_my_addon_key/field/" + fieldKey + "/option/", "Access denied (expected authenticated addon with key \"not_my_addon_key\" or a sysadmin)"),
-                pair(baseUrl + "/rest/atlassian-connect/1/jira/addon/" + addonKey + "/field/not_my_field/option/", "Field with key \"not_my_field\" does not exists for the add on \"" + addonKey + "\""));
+                pair(baseUrl + "/rest/atlassian-connect/1/jira/addon/not_my_addon_key/field/" + fieldKey + "/option/", "Access denied (expected an authenticated add-on with key \"not_my_addon_key\" or a sysadmin)"),
+                pair(baseUrl + "/rest/atlassian-connect/1/jira/addon/" + addonKey + "/field/not_my_field/option/", "Field with key \"not_my_field\" does not exists for the add-on \"" + addonKey + "\""));
 
         invalidPaths.forEach(pathAndError -> {
             restPath = pathAndError.left();

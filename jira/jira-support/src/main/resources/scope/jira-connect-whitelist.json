@@ -1,0 +1,19 @@
+{
+  "scopes": [
+    {
+      "key": "READ",
+      "restPathKeys": ["fields"],
+      "methods": ["GET", "POST", "PUT", "DELETE"]
+
+    }
+  ],
+  "restPaths": [
+    {
+      "key": "fields",
+      "name": "atlassian-connect",
+      "basePaths": ["/jira/addon(/.*)"],
+      "versions": ["1", "latest"],
+      "public": true
+    }
+  ]
+}

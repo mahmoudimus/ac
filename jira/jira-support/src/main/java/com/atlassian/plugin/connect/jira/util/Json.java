@@ -40,9 +40,8 @@ public final class Json
     /**
      * Convert JSON represented as a Java object into a {@link JsonNode}
      *
-     * @param object may be String, Number, Map, Boolean
+     * @param object may be String, Number, Map, Boolean or any other
      * @return a JsonNode
-     *
      */
     public static JsonNode toJsonNode(Object object)
     {
