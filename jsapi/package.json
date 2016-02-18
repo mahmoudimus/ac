@@ -14,7 +14,8 @@
     "karma-html2js-preprocessor": "~0.1",
     "karma-requirejs": "~0.2.2",
     "npm-watch": "0.0.0",
-    "qunitjs": "~1.17.0"
+    "qunitjs": "~1.17.0",
+    "squirejs": "0.2.1"
   },
   "watch": {
     "postinstall": "node_modules/atlassian-connect-js/src/**/*.js"

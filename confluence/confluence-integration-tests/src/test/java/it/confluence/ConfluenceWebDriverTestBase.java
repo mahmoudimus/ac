@@ -24,11 +24,11 @@ import com.atlassian.confluence.test.rpc.api.ConfluenceRpcClient;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditorContent;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceInsertMenu;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
+import com.atlassian.connect.test.confluence.pageobjects.ConfluencePageOperations;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
@@ -70,7 +70,7 @@ public class ConfluenceWebDriverTestBase
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
     protected static ConfluenceRestClient restClient;
     protected static ConnectTestUserFactory testUserFactory;
-    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
+    protected static ConfluencePageOperations confluencePageOperations = new ConfluencePageOperations(
             product.getPageBinder(), product.getTester().getDriver());
     private final Logger logger = LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class);
 
@@ -237,7 +237,7 @@ public class ConfluenceWebDriverTestBase
             @Override
             public void run()
             {
-                RemotePluginDialog dialog = connectPageOperations.findDialog(moduleKey);
+                RemotePluginDialog dialog = confluencePageOperations.findDialog(moduleKey);
                 dialog.submitAndWaitUntilHidden();
             }
         };
@@ -250,7 +250,7 @@ public class ConfluenceWebDriverTestBase
             @Override
             public void run()
             {
-                RemotePluginDialog dialog = connectPageOperations.findDialog(moduleKey);
+                RemotePluginDialog dialog = confluencePageOperations.findDialog(moduleKey);
                 dialog.cancelAndWaitUntilHidden();
             }
         };
