@@ -39,11 +39,6 @@
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.plugin.connect.plugin.auth.oauth.OAuth2LOFilter"
-            location="after-encoding" weight="2000">
-        <url-pattern>/*</url-pattern>
-    </servlet-filter>
-
     <servlet-filter key="servlet-context-thread-local-filter" name="Servlet Context Thread Local Filter"
                     class="com.atlassian.core.filters.ServletContextThreadLocalFilter"
                     location="before-login" weight="100">

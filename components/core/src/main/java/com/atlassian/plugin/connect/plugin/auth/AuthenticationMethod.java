@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 
 public enum AuthenticationMethod
 {
-    OAUTH1, JWT, NONE;
+    JWT, NONE;
 
     public static final String PROPERTY_NAME = JwtConstants.AppLinks.AUTH_METHOD_PROPERTY_NAME;
 

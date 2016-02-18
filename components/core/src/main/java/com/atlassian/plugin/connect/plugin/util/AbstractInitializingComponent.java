@@ -1,23 +1,21 @@
 package com.atlassian.plugin.connect.plugin.util;
 
-import java.util.EnumSet;
-import java.util.Set;
-
-import javax.annotation.concurrent.GuardedBy;
-
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import static com.atlassian.oauth.util.Check.notNull;
+import javax.annotation.concurrent.GuardedBy;
+import java.util.EnumSet;
+import java.util.Set;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * An abstract component that waits for certain tenancy events before interacting with the database.
