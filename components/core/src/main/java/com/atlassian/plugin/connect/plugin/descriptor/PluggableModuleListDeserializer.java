@@ -9,10 +9,11 @@ import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.gson.JsonElement;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
 
 public class PluggableModuleListDeserializer extends ModuleListDeserializer
 {
@@ -44,13 +45,7 @@ public class PluggableModuleListDeserializer extends ModuleListDeserializer
 
     private Map<String, ConnectModuleProvider> getModuleProviders()
     {
-        Collection<ConnectModuleProvider> moduleProviders = pluginAccessor.getModules(
-                new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
-        Map<String, ConnectModuleProvider> moduleProviderMap = new HashMap<>();
-        for (ConnectModuleProvider moduleProvider : moduleProviders)
-        {
-            moduleProviderMap.put(moduleProvider.getMeta().getDescriptorKey(), moduleProvider);
-        }
-        return moduleProviderMap;
+        return pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class))
+                .stream().collect(Collectors.toMap(provider -> provider.getMeta().getDescriptorKey(), identity()));
     }
 }

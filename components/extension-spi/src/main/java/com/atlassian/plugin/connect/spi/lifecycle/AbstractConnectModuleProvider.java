@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationEx
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.descriptor.ConnectModuleSchemaValidationException;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -56,6 +57,16 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
         }
         return beans;
     }
+
+    /**
+     * Does nothing.
+     *
+     * @param descriptor the add-on descriptor (with the module list)
+     * @throws ConnectModuleValidationException if the semantics of the dependencies of this module list entry are invalid
+     */
+    @Override
+    public void validateModuleDependencies(ConnectAddonBean descriptor) throws ConnectModuleValidationException
+    {}
 
     /**
      * Validates the given JSON module list entry against the given JSON schema and asserts that the result is valid.

@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
-import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
+import com.atlassian.plugin.connect.plugin.descriptor.ModuleValidationExceptionHandler;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
@@ -12,14 +12,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
@@ -57,7 +54,7 @@ public class WebFragmentLocationQualifierImpl implements WebFragmentLocationQual
     private static ImmutableMap<String, String> buildKeyMap(ConnectAddonBean addon)
     {
         ImmutableMap.Builder<String, String> keyMapBuilder = ImmutableMap.<String, String>builder();
-        Consumer<Exception> moduleValidationExceptionHandler = new LoggingModuleValidationExceptionHandler();
+        Consumer<Exception> moduleValidationExceptionHandler = new ModuleValidationExceptionHandler();
 
         {
             Optional<List<ModuleBean>> optionalWebItems = addon.getModules().getValidModuleListOfType("webItems", moduleValidationExceptionHandler);
