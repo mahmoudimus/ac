@@ -68,7 +68,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                 .withUrl("/my-webitem-dialog?myuserid={user.id}")
                                 .withKey(ADDON_WEBITEM_DIALOG)
                                 .withLocation("none")
-//                                .withContext(AddonUrlContext.addon)
+                                .withContext(AddonUrlContext.addon)
                                 .withTarget(newWebItemTargetBean()
                                         .withType(WebItemTargetType.dialog)
                                         .build())

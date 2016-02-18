@@ -175,7 +175,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         // We have to wait one second to be sure that token from next request is new.
         Thread.sleep(1000);
 
-        webItemUrl.openConnection().getInputStream();
+        doRequest(webItemUrl);
         verifyIssuedAtTime(lastIssuedAtTime, PARAMETER_CAPTURING_PAGE_SERVLET);
     }
 
