@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.jira.util.ErrorCollection;
-import com.atlassian.plugin.connect.jira.field.option.Json;
+import com.atlassian.plugin.connect.jira.util.Json;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.pocketknife.api.querydsl.DatabaseAccessor;

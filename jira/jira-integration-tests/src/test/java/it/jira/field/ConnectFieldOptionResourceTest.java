@@ -13,7 +13,7 @@ import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Pair;
 import com.atlassian.jira.rest.api.util.ErrorCollection;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.jira.field.option.Json;
+import com.atlassian.plugin.connect.jira.util.Json;
 import com.atlassian.plugin.connect.jira.field.option.rest.ConnectFieldOptionBean;
 import com.atlassian.plugin.connect.jira.field.option.rest.ReplaceRequestBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;

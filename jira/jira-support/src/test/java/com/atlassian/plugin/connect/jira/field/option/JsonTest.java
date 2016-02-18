@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.jira.field.option;
 import java.util.Map;
 import java.util.Optional;
 
+import com.atlassian.plugin.connect.jira.util.Json;
 import com.google.common.collect.ImmutableMap;
 import org.codehaus.jackson.JsonNode;
 import org.junit.Test;

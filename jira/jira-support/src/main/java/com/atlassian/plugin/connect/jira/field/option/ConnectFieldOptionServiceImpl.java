@@ -3,13 +3,14 @@ package com.atlassian.plugin.connect.jira.field.option;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceOutcomeImpl;
 import com.atlassian.jira.bc.ServiceResult;
-import com.atlassian.jira.bc.ServiceResultImpl;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.ErrorCollections;
@@ -17,6 +18,7 @@ import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.db.ConnectFieldOptionManager;
 import com.atlassian.plugin.connect.jira.field.option.db.CustomFieldValueManager;
+import com.atlassian.plugin.connect.jira.util.ServiceOutcomes;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.message.I18nResolver;
@@ -27,9 +29,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.jira.util.ErrorCollection.Reason.FORBIDDEN;
 import static com.atlassian.jira.util.ErrorCollection.Reason.NOT_FOUND;
+import static com.atlassian.jira.util.ErrorCollection.Reason.VALIDATION_FAILED;
+import static com.atlassian.plugin.connect.jira.util.ServiceOutcomes.errorOutcome;
+import static com.atlassian.plugin.connect.jira.util.ServiceOutcomes.errorResult;
+import static com.atlassian.plugin.connect.jira.util.ServiceOutcomes.successOutcome;
+import static com.atlassian.plugin.connect.jira.util.ServiceOutcomes.successResult;
 
 @JiraComponent
 @ExportAsDevService
+@ParametersAreNonnullByDefault
 public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
 {
 
@@ -56,10 +64,9 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
     {
         return authenticated(auth, fieldId, () -> {
             Either<ErrorCollection, ConnectFieldOption> result = connectFieldOptionManager.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
-            return result.fold(
-                    ServiceOutcomeImpl::new,
-                    created -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), created)
-            );
+            return result.<ServiceOutcome<ConnectFieldOption>>fold(
+                    ServiceOutcomes::errorOutcome,
+                    ServiceOutcomes::successOutcome);
         });
     }
 
@@ -67,16 +74,20 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
     public ServiceOutcome<List<ConnectFieldOption>> getAllOptions(AuthenticationData auth, final FieldId fieldId)
     {
         return authenticated(auth, fieldId, () ->
-                new ServiceOutcomeImpl<>(ErrorCollections.empty(), connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey())));
+                successOutcome(connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey())));
     }
 
     @Override
     public ServiceOutcome<ConnectFieldOption> getOption(AuthenticationData auth, final FieldId fieldId, final Integer optionId)
     {
-        return authenticated(auth, fieldId, () ->
-                connectFieldOptionManager.get(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId)
-                        .map(val -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), val))
-                        .orElseGet(this::notFound));
+        return authenticated(auth, fieldId, () -> getOption(fieldId, optionId));
+    }
+
+    private ServiceOutcome<ConnectFieldOption> getOption(final FieldId fieldId, final Integer optionId)
+    {
+        return connectFieldOptionManager.get(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId)
+                .map(ServiceOutcomes::successOutcome)
+                .orElseGet(() -> notFound(optionId));
     }
 
     @Override
@@ -87,11 +98,11 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
             if (issuesWithTheFieldSet.isEmpty())
             {
                 connectFieldOptionManager.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
-                return new ServiceResultImpl(ErrorCollections.empty());
+                return successResult();
             }
             else
             {
-                return new ServiceResultImpl(ErrorCollections.create(i18n.getText("connect.issue.field.option.delete.used", issuesWithTheFieldSet.toString()), ErrorCollection.Reason.CONFLICT));
+                return ServiceOutcomes.errorResult(ErrorCollections.create(i18n.getText("connect.issue.field.option.delete.used", issuesWithTheFieldSet.toString()), ErrorCollection.Reason.CONFLICT));
             }
         });
     }
@@ -101,16 +112,26 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
     {
         return authenticated(auth, fieldId, () ->
                 connectFieldOptionManager.save(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
-                        .map(result -> new ServiceOutcomeImpl<>(ErrorCollections.empty(), result))
-                        .orElseGet(this::notFound));
+                        .map(ServiceOutcomes::successOutcome)
+                        .orElseGet(() -> notFound(option.getId())));
     }
 
     @Override
     public ServiceResult replaceInAllIssues(AuthenticationData auth, final FieldId fieldId, final Integer from, final Integer to)
     {
         return authenticated(auth, fieldId, () -> {
-            customFieldValueManager.replace(fieldId, from, to);
-            return new ServiceResultImpl(ErrorCollections.empty());
+
+            if (from.equals(to))
+            {
+                return errorResult(ErrorCollections.create(i18n.getText("connect.issue.field.option.replace.equal"), VALIDATION_FAILED));
+            }
+
+            return ServiceOutcomes.toEither(getOption(fieldId, to))
+                    .left().map(ServiceOutcomes::errorResult)
+                    .left().on(toOption -> {
+                        customFieldValueManager.replace(fieldId, from, to);
+                        return successResult();
+                    });
         });
     }
 
@@ -140,28 +161,31 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
         return hasAccess.isValid() ? action.get() : (T) new ServiceOutcomeImpl<>(hasAccess.getErrorCollection());
     }
 
-    private ServiceResult hasAccess(final UserProfile user, final String currentAddOnKey, final FieldId fieldId)
+    private ServiceResult hasAccess(@Nullable final UserProfile user, @Nullable final String currentAddOnKey, final FieldId fieldId)
     {
         boolean hasAccess = currentAddOnKey != null && currentAddOnKey.equals(fieldId.getAddonKey()) ||
                 user != null && userManager.isSystemAdmin(user.getUserKey());
 
         if (!hasAccess)
         {
-            return new ServiceResultImpl(ErrorCollections.create(i18n.getText("connect.issue.field.option.forbidden.addon", fieldId.getAddonKey()), FORBIDDEN));
+            return errorResult(ErrorCollections.create(i18n.getText("connect.issue.field.option.forbidden.addon", fieldId.getAddonKey()), FORBIDDEN));
         }
 
-        boolean fieldExists = customFieldManager.getCustomFieldType(fieldId.getCustomFieldTypeKey()) != null;
-
-        if (!fieldExists)
+        if (!fieldExists(fieldId))
         {
-            return new ServiceResultImpl(ErrorCollections.create(i18n.getText("connect.issue.field.option.forbidden.field", fieldId.getAddonKey(), fieldId.getFieldKey()), FORBIDDEN));
+            return errorResult(ErrorCollections.create(i18n.getText("connect.issue.field.option.forbidden.field", fieldId.getAddonKey(), fieldId.getFieldKey()), FORBIDDEN));
         }
 
-        return new ServiceResultImpl(ErrorCollections.empty());
+        return successResult();
     }
 
-    private <T> ServiceOutcomeImpl<T> notFound()
+    private boolean fieldExists(final FieldId fieldId)
     {
-        return new ServiceOutcomeImpl<>(ErrorCollections.create(i18n.getText("connect.issue.field.option.not.found"), NOT_FOUND));
+        return customFieldManager.getCustomFieldType(fieldId.getCustomFieldTypeKey()) != null;
+    }
+
+    private <T> ServiceOutcome<T> notFound(int optionId)
+    {
+        return errorOutcome(ErrorCollections.create(i18n.getText("connect.issue.field.option.not.found", optionId), NOT_FOUND));
     }
 }

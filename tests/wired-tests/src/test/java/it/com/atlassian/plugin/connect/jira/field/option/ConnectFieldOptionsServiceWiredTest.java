@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.jira.field.option;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -11,19 +12,30 @@ import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionService;
-import com.atlassian.plugin.connect.jira.field.option.Json;
+import com.atlassian.plugin.connect.jira.util.Json;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectFieldType;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,16 +54,19 @@ public class ConnectFieldOptionsServiceWiredTest
     private final ConnectFieldOptionService connectFieldOptionService;
     private final UserManager userManager;
     private final JiraTestUtil jiraTestUtil;
+    private final TestPluginInstaller testPluginInstaller;
 
     private FieldId fieldId;
     private UserProfile admin;
     private AuthenticationData.User auth;
+    private List<Plugin> addons = Lists.newArrayList();
 
-    public ConnectFieldOptionsServiceWiredTest(final ConnectFieldOptionService connectFieldOptionService, final UserManager userManager, final JiraTestUtil jiraTestUtil)
+    public ConnectFieldOptionsServiceWiredTest(final ConnectFieldOptionService connectFieldOptionService, final UserManager userManager, final JiraTestUtil jiraTestUtil, final TestPluginInstaller testPluginInstaller)
     {
         this.connectFieldOptionService = connectFieldOptionService;
         this.userManager = userManager;
         this.jiraTestUtil = jiraTestUtil;
+        this.testPluginInstaller = testPluginInstaller;
     }
 
     @Before
@@ -60,6 +75,13 @@ public class ConnectFieldOptionsServiceWiredTest
         fieldId = randomFieldId();
         admin = userManager.getUserProfile(jiraTestUtil.getAdmin().getKey());
         auth = AuthenticationData.byUser(admin);
+    }
+
+    @After
+    public void tearDown() throws Exception
+    {
+        addons.forEach(Plugin::uninstall);
+        addons.clear();
     }
 
     @Test
@@ -138,6 +160,20 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
+    public void replacementOptionMustExist()
+    {
+        ServiceResult serviceResult = connectFieldOptionService.replaceInAllIssues(auth, fieldId, 1, 2);
+        assertEquals(ImmutableList.of("Option with id 2 not found"), serviceResult.getErrorCollection().getErrorMessages());
+    }
+
+    @Test
+    public void replacingToTheSameValueIsNotAllowed()
+    {
+        ServiceResult serviceResult = connectFieldOptionService.replaceInAllIssues(auth, fieldId, 1, 1);
+        assertEquals(ImmutableList.of("Replacement must be different than the current value"), serviceResult.getErrorCollection().getErrorMessages());
+    }
+
+    @Test
     public void testAuthorization() throws PermissionException, CreateException
     {
         ImmutableList<AuthenticationData> notAuthorized = ImmutableList.of(
@@ -152,6 +188,7 @@ public class ConnectFieldOptionsServiceWiredTest
         List<Function<AuthenticationData, ServiceResult>> methods = ImmutableList.of(
                 data -> connectFieldOptionService.addOption(data, fieldId, Json.parse("23").get()),
                 data -> connectFieldOptionService.putOption(data, fieldId, ConnectFieldOption.of(1, Json.parse("42").get())),
+                data -> connectFieldOptionService.putOption(data, fieldId, ConnectFieldOption.of(2, Json.parse("42").get())),
                 data -> connectFieldOptionService.replaceInAllIssues(data, fieldId, 1, 2),
                 data -> connectFieldOptionService.getOption(data, fieldId, 1),
                 data -> connectFieldOptionService.removeOption(data, fieldId, 1),
@@ -184,8 +221,28 @@ public class ConnectFieldOptionsServiceWiredTest
         return connectFieldOptionService.addOption(auth, fieldId, Json.parse(value).get()).get();
     }
 
-    private static FieldId randomFieldId()
+    private FieldId randomFieldId()
     {
-        return FieldId.of(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5));
+        FieldId fieldId = FieldId.of(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5));
+        try
+        {
+            // the field needs to be installed properly, actually
+            addons.add(testPluginInstaller.installAddon(ConnectAddonBean.newConnectAddonBean()
+                    .withKey(fieldId.getAddonKey())
+                    .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(fieldId.getAddonKey()))
+                    .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
+                    .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                    .withModules("jiraIssueFields", ConnectFieldModuleBean.newBuilder()
+                            .withKey(fieldId.getFieldKey())
+                            .withName(new I18nProperty(fieldId.toString(), null))
+                            .withBaseType(ConnectFieldType.TEXT)
+                            .build())
+                    .build()));
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return fieldId;
     }
 }

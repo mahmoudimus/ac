@@ -23,6 +23,7 @@ import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionService;
+import com.atlassian.plugin.connect.jira.util.ServiceOutcomes;
 import com.atlassian.sal.api.message.I18nResolver;
 
 import static java.util.stream.Collectors.toList;
@@ -111,7 +112,7 @@ public class ConnectFieldOptionResource
 
     private <T> Either<Response, T> toEither(ServiceOutcome<T> outcome)
     {
-        return outcome.isValid() ? Either.right(outcome.get()) : Either.left(responseFactory.errorResponse(outcome.getErrorCollection()));
+        return ServiceOutcomes.toEither(outcome).left().map(responseFactory::errorResponse);
     }
 
     private Response map(ServiceResult outcome, Supplier<Response> actionIfValid)
