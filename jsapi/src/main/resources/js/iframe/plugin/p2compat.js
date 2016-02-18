@@ -1,7 +1,16 @@
-//map AP.env.getUser to AP.user.getUser for compatibility.
+//map AP.env.getUser to AP.user.getUser for compatibility - same for getTimeZone
 if(AP._hostModules.user && AP.env) {
   AP._hostModules.env.getUser = AP._hostModules.user.getUser;  
-  AP.env.getUser = AP._hostModules.user.getUser;
+  AP.getUser = AP.env.getUser = AP._hostModules.user.getUser;
+
+  AP._hostModules.env.getTimeZone = AP._hostModules.user.getTimeZone;  
+
+  AP.getTimeZone = AP.env.getTimeZone = AP.user.getTimeZone;
+}
+// AP.getLocation
+if(AP.env){
+  AP.getLocation = AP.env.getLocation;
+  AP._hostModules._globals.getLocation = AP._hostModules.env.getLocation;
 }
 
 // support for deprecated sync history.getState() syntax.
