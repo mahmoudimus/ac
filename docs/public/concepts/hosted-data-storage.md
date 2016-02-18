@@ -118,21 +118,29 @@ Apart from using [`AP.request`](../javascript/module-request.html), the same end
 ### <a id="conditions-on-add-on-properties"></a>Conditions based on add-on properties
 
 Add-on properties can be referenced in the `entity_property_equal_to` condition to decide whether or not to show a web fragment. 
-For example, the following is a valid condition on the add-on property `activatedForUsers`:
+For example, the following is a valid condition on the add-on property `activated`:
 
     {
-        condition: "entity_property_equal_to",
-        params: {
-            entity: "addon",
-            propertyKey: "activatedForUsers",
-            value: "true"
+        "condition": "entity_property_equal_to",
+        "params": {
+            "entity": "addon",
+            "propertyKey": "activated",
+            "objectName": "for-users"  
+            "value": "true"
         }
     }
     
-Only if that property is set to true against the add-on will the condition allow the web fragment to show. Thus you can use this to 
+The structure of the JSON value of the `activated` add-on property might look like this:
+
+    {
+        "for-anonymous": false,
+        "for-users": true,
+        "for-admins": true,
+    }
+    
+Only if the `for-users` sub-property is set to true against the add-on will the condition allow the web fragment to show. Thus you can use this to 
 decide whether or not to show web fragments based on data that you have stored in add-on properties. This is very useful 
 when you have host application wide configuration that you wish to rely upon.
-
 
 ## <a id="jira-entity-properties"></a>JIRA entity properties
 
@@ -208,28 +216,30 @@ Conditions on entity properties provide a major performance advantage over remot
 local to the host application the condition evaluates rapidly instead of requiring an entire HTTP call to take place.
 
 You can use the `entity_property_equal_to` condition to decide whether or not to show a web fragment based on the data
-in an entity property. For example, if we had an issue entity property with the key `isSpecialUser` and a value of `true` 
-(JSON boolean) then we could write the following conditon:
+in an entity property. For example, if we had an issue entity property with the key `myExtraProperties` and a JSON value that has 
+ the field `isSpecial` set to `true` (JSON boolean) then we could write the following condition:
 
     {
-        condition: "entity_property_equal_to",
-        params: {
-            entity: "issue",
-            propertyKey: "isSpecialUser",
-            value: "true"
+        "condition": "entity_property_equal_to",
+        "params": {
+            "entity": "issue",
+            "propertyKey": "myExtraProperties",
+            "objectName": "isSpecial",
+            "value": "true"
         }
     }
 
 It is important to note that the `params.value` field currently expects a string. Therefore you will need to convert your
 JSON into a string before you can compare it for equality. For example, to check that the JSON string "special" was stored 
-in `isSpecialUser` then the condition must be written like so:
+in `myExtraProperties` then the condition must be written like so:
 
     {
-        condition: "entity_property_equal_to",
-        params: {
-            entity: "issue",
-            propertyKey: "isSpecialUser",
-            value: "\"special\""
+        "condition": "entity_property_equal_to",
+        "params": {
+            "entity": "issue",
+            "propertyKey": "myExtraProperties",
+            "objectName": "isSpecial",
+            "value": "\"special\""
         }
     }
     

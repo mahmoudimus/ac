@@ -1,9 +1,10 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.connect.spi.UserPreferencesRetriever;
-import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
+import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.Maps;
@@ -11,31 +12,32 @@ import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.web.iframe.EncodingUtils.escapeQuotes;
 import static com.google.common.base.Strings.nullToEmpty;
 
-/**
- *
- */
 public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilder, IFrameRenderContextBuilder.AddonContextBuilder, IFrameRenderContextBuilder.NamespacedContextBuilder
 {
+
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
     private final HostApplicationInfo hostApplicationInfo;
-    private final UserPreferencesRetriever userPreferencesRetriever;
+    private final TimeZoneManager timeZoneManager;
 
     private String addonKey;
     private String namespace;
 
     public IFrameRenderContextBuilderImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
-                                          final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
-                                          final UserPreferencesRetriever userPreferencesRetriever) {
+            final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
+            TimeZoneManager timeZoneManager)
+    {
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
         this.hostApplicationInfo = hostApplicationInfo;
-        this.userPreferencesRetriever = userPreferencesRetriever;
+        this.timeZoneManager = timeZoneManager;
     }
 
     @Override
@@ -66,7 +68,8 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
 
         private final Map<String, Object> additionalContext = Maps.newHashMap();
 
-        private InitializedBuilderImpl(final String addonKey, final String namespace, final String iframeUri) {
+        private InitializedBuilderImpl(final String addonKey, final String namespace, final String iframeUri)
+        {
             this.addonKey = addonKey;
             this.namespace = namespace;
             this.iframeUri = iframeUri;
@@ -74,7 +77,8 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
 
         private void putIfNotNull(String key, Object value)
         {
-            if (value != null) {
+            if (value != null)
+            {
                 additionalContext.put(key, value);
             }
         }
@@ -164,21 +168,40 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         {
             Map<String, Object> defaultContext = Maps.newHashMap();
 
+            RemotablePluginAccessor plugin = pluginAccessorFactory.get(addonKey);
             UserProfile profile = userManager.getRemoteUser();
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());
             String userKey = nullToEmpty(profile == null ? "" : profile.getUserKey().getStringValue());
-            String timeZone = userPreferencesRetriever.getTimeZoneFor(username).getID();
+            String timeZone = timeZoneManager.getUserTimeZone().getID();
 
             defaultContext.put("iframeSrcHtml", escapeQuotes(iframeUri));
-            defaultContext.put("plugin", pluginAccessorFactory.getOrThrow(addonKey));
+            defaultContext.put("plugin", plugin);
             defaultContext.put("namespace", namespace);
             defaultContext.put("contextPath", hostApplicationInfo.getContextPath());
             defaultContext.put("userId", username);
             defaultContext.put("userKey", userKey);
             defaultContext.put("timeZone", timeZone);
 
+            // origin is required by XDM to establish connection with iframe.
+            // Since for some places iframe requires to be redirected,
+            // in that case the origin can not obtain from the url because it points to the redirect servlet.
+            // addOn baseUrl may contains a path but we are interested only in url with protocol and domain.
+            defaultContext.put("origin", getAddOnOrigin(plugin));
+
             return defaultContext;
         }
 
+        private String getAddOnOrigin(RemotablePluginAccessor plugin)
+        {
+            URI baseUrl = plugin.getBaseUrl();
+            try
+            {
+                return new URI(baseUrl.getScheme(), baseUrl.getUserInfo(), baseUrl.getHost(), baseUrl.getPort(), null, null, null).toString().toLowerCase();
+            }
+            catch (URISyntaxException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

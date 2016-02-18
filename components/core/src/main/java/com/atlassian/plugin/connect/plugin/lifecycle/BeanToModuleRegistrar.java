@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationExcepti
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
+import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanModuleValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.event.EventPublishingModuleValidationExceptionHandler;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
@@ -26,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
 
@@ -39,6 +38,7 @@ public class BeanToModuleRegistrar
 
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final PluginAccessor pluginAccessor;
+    private final ConnectAddonBeanModuleValidatorService connectAddonBeanModuleValidatorService;
     private final EventPublisher eventPublisher;
 
     private final ConcurrentMap<String, DynamicDescriptorRegistration.Registration> registrations = new ConcurrentHashMap<>();
@@ -46,10 +46,12 @@ public class BeanToModuleRegistrar
     @Autowired
     public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
             PluginAccessor pluginAccessor,
+            ConnectAddonBeanModuleValidatorService connectAddonBeanModuleValidatorService,
             EventPublisher eventPublisher)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.pluginAccessor = pluginAccessor;
+        this.connectAddonBeanModuleValidatorService = connectAddonBeanModuleValidatorService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -114,6 +116,11 @@ public class BeanToModuleRegistrar
         return registrations.containsKey(pluginKey);
     }
 
+    private Map<String, List<ModuleBean>> getModuleLists(ConnectAddonBean addon) throws ConnectModuleRegistrationException
+    {
+        return connectAddonBeanModuleValidatorService.validateModules(addon, new EnablementModuleValidationExceptionHandler(eventPublisher, addon));
+    }
+
     private List<ModuleBean> getLifecycleWebhooks(LifecycleBean lifecycle)
     {
         List<ModuleBean> webhooks = new ArrayList<>();
@@ -146,42 +153,33 @@ public class BeanToModuleRegistrar
         }
     }
 
-    private Map<String, List<ModuleBean>> getModuleLists(ConnectAddonBean addon) throws ConnectModuleRegistrationException
-    {
-        return addon.getModules().getValidModuleLists(new EventPublishingModuleValidationExceptionHandler(eventPublisher)
-        {
-
-            @Override
-            protected void handleModuleValidationCause(ConnectModuleValidationException cause)
-            {
-                super.handleModuleValidationCause(cause);
-
-                String message = String.format("Descriptor validation failed while enabling add-on %s, skipping", addon.getKey());
-                throw new ConnectModuleRegistrationException(message, cause);
-            }
-        });
-    }
-
     private ConnectModuleProvider findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider> moduleProviders)
             throws ConnectModuleRegistrationException
     {
         return moduleProviders.stream()
-                .filter(new Predicate<ConnectModuleProvider>()
-                {
-                    @Override
-                    public boolean test(ConnectModuleProvider provider)
-                    {
-                        return provider.getMeta().getDescriptorKey().equals(descriptorKey);
-                    }
-                })
+                .filter(provider -> provider.getMeta().getDescriptorKey().equals(descriptorKey))
                 .findFirst()
-                .orElseThrow(new Supplier<ConnectModuleRegistrationException>()
-                {
-                    @Override
-                    public ConnectModuleRegistrationException get()
-                    {
-                        return new ConnectModuleRegistrationException(String.format("Could not find module provider %s for descriptor registration", descriptorKey));
-                    }
-                });
+                .orElseThrow(() -> new ConnectModuleRegistrationException(String.format("Could not find module provider %s for descriptor registration", descriptorKey)));
+    }
+
+    private static class EnablementModuleValidationExceptionHandler extends EventPublishingModuleValidationExceptionHandler
+    {
+
+        private final ConnectAddonBean addon;
+
+        public EnablementModuleValidationExceptionHandler(EventPublisher eventPublisher, ConnectAddonBean addon)
+        {
+            super(eventPublisher);
+            this.addon = addon;
+        }
+
+        @Override
+        public void acceptModuleValidationCause(ConnectModuleValidationException cause)
+        {
+            super.acceptModuleValidationCause(cause);
+
+            String message = String.format("Descriptor validation failed while enabling add-on %s, skipping", addon.getKey());
+            throw new ConnectModuleRegistrationException(message, cause);
+        }
     }
 }

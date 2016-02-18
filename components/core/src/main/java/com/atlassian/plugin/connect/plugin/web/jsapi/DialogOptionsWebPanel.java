@@ -68,22 +68,18 @@ public class DialogOptionsWebPanel extends AbstractWebPanel implements WebPanel
         }
     }
 
-    private void addDialogOptions(WebItemModuleDescriptor descriptor, Map<String, Map<String, String>> keyedOptions)
+    private static void addDialogOptions(WebItemModuleDescriptor descriptor, Map<String, Map<String, String>> keyedOptions)
     {
-        for (Map.Entry<String, String> param : descriptor.getParams().entrySet())
-        {
-            if (param.getKey().startsWith(WebItemModuleDescriptorFactory.DIALOG_OPTION_PREFIX))
-            {
-                addOption(keyedOptions, descriptor.getKey(), param.getKey(), param.getValue());
-            }
-        }
+        descriptor.getParams().entrySet().stream()
+            .filter(param -> param.getKey().startsWith(WebItemModuleDescriptorFactory.DIALOG_OPTION_PREFIX))
+            .forEach(param -> addOption(keyedOptions, descriptor.getKey(), param.getKey(), param.getValue()));
     }
 
-    private void addOption(Map<String, Map<String, String>> keyedOptions, String moduleKey, String key, String value)
+    private static void addOption(Map<String, Map<String, String>> keyedOptions, String moduleKey, String key, String value)
     {
         if (!keyedOptions.containsKey(moduleKey))
         {
-            keyedOptions.put(moduleKey, new HashMap<String, String>());
+            keyedOptions.put(moduleKey, new HashMap<>());
         }
 
         keyedOptions.get(moduleKey).put(StringUtils.substringAfter(key, WebItemModuleDescriptorFactory.DIALOG_OPTION_PREFIX), value);

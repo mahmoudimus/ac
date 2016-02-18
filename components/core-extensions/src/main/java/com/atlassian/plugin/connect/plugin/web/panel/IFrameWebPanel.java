@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
@@ -14,10 +15,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Collections;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Collections.emptyMap;
 
 /**
  * Web panel that displays in an iframe.
@@ -69,12 +70,9 @@ public class IFrameWebPanel implements WebPanel
     {
         if (condition.shouldDisplay(context))
         {
-            UserProfile remoteUser = userManager.getRemoteUser();
-            String remoteUsername = remoteUser == null ? "" : remoteUser.getUsername();
-
             final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context);
 
-            writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUsername, whiteListedContext));
+            writer.write(iFrameRenderer.render(substituteContext(new WebFragmentContext(context, whiteListedContext)), "", emptyMap(), whiteListedContext));
         }
         else
         {
@@ -83,10 +81,10 @@ public class IFrameWebPanel implements WebPanel
         }
     }
 
-    private IFrameContext substituteContext(Map<String, Object> whiteListedContext)
+    private IFrameContext substituteContext(WebFragmentContext context)
     {
         return new IFrameContextImpl(iFrameContext.getPluginKey(),
-                urlVariableSubstitutor.replace(iFrameContext.getIframePath(), whiteListedContext),
+                urlVariableSubstitutor.replace(iFrameContext.getIframePath(), context),
                 iFrameContext.getNamespace(),
                 iFrameContext.getIFrameParams());
     }

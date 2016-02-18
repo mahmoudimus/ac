@@ -29,27 +29,15 @@ public class AddonScope implements ApiScope, Comparable<AddonScope>
     {
         this.key = checkNotNull(key);
         this.paths = checkNotNull(paths);
-        this.apiResourceInfos = concat(transform(paths, new Function<AddonScopeApiPath, Iterable<ApiResourceInfo>>()
-        {
-            @Override
-            public Iterable<ApiResourceInfo> apply(@Nullable AddonScopeApiPath path)
-            {
-                return null == path ? Collections.<ApiResourceInfo>emptySet() : path.getApiResourceInfos();
-            }
-        }));
+        this.apiResourceInfos = concat(transform(paths,
+            path -> null == path ? Collections.<ApiResourceInfo>emptySet() : path.getApiResourceInfos())
+        );
     }
 
     @Override
     public boolean allow(final HttpServletRequest request)
     {
-        return any(paths, new Predicate<AddonScopeApiPath>()
-        {
-            @Override
-            public boolean apply(@Nullable AddonScopeApiPath path)
-            {
-                return null != path && path.allow(request);
-            }
-        });
+        return any(paths, path -> null != path && path.allow(request));
     }
 
     @Override

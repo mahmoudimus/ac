@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.70-SNAPSHOT</version>
+        <version>1.1.77-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,6 +21,7 @@
 
     <modules>
         <module>test-support-plugin</module>
+        <module>unit-test-support</module>
         <module>marketplace-support</module>
         <module>integration-tests-support</module>
     </modules>

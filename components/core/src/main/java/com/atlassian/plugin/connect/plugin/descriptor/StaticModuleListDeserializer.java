@@ -83,13 +83,6 @@ public class StaticModuleListDeserializer extends ModuleListDeserializer
     public boolean multipleModulesAllowed(String moduleType)
     {
         ConnectModuleMeta meta = getModuleMeta(moduleType);
-        if (meta != null)
-        {
-            return meta.multipleModulesAllowed();
-        }
-        else
-        {
-            return true;
-        }
+        return meta == null || meta.multipleModulesAllowed();
     }
 }

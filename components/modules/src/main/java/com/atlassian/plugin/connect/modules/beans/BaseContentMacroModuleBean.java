@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.json.schema.annotation.FieldDocOverride;
+import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaIgnore;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
@@ -13,6 +15,15 @@ import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+@ObjectSchemaAttributes(additionalProperties = true,
+    docOverrides = {@FieldDocOverride
+    (
+        fieldName = "key",
+        description =
+            "A key to identify the macro. Keys must only contain alphanumeric characters and dashes, and must " +
+            "be globally unique. Prefixing it with the name of your add-on is the best way to ensure this."
+    )
+})
 public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
 {
     /**

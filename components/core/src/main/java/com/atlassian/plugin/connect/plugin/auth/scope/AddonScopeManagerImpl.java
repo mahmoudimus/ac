@@ -37,14 +37,7 @@ public final class AddonScopeManagerImpl implements AddonScopeManager
     @Autowired
     public AddonScopeManagerImpl(ScopeService scopeService, ConnectAddonAccessor addonAccessor) throws IOException
     {
-        this.allScopesSupplier = Suppliers.memoize(new Supplier<Collection<AddonScope>>()
-        {
-            @Override
-            public Collection<AddonScope> get()
-            {
-                return scopeService.build();
-            }
-        });
+        this.allScopesSupplier = Suppliers.memoize(scopeService::build);
         this.addonAccessor = addonAccessor;
         this.addonPropertyScope = createAddonPropertyScope();
     }

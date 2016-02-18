@@ -1,11 +1,12 @@
 package it.com.atlassian.plugin.connect.plugin.web.condition;
 
+import java.util.Map;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.modules.beans.BeanWithConditions;
-import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
@@ -13,12 +14,12 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
 import com.google.common.collect.ImmutableMap;
+
+import org.codehaus.jackson.node.JsonNodeFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.List;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static java.util.Collections.singletonList;
@@ -83,22 +84,14 @@ public class ConditionLoadingValidatorImplTest
         Map<String, String> params = ImmutableMap.of(
                 "entity", "addon",
                 "propertyKey", "some-property-key",
-                "value", "some-value"
+                "value", JsonNodeFactory.instance.textNode("some-value").toString()
         );
         validate(newSingleConditionBean().withCondition("entity_property_equal_to").withParams(params).build());
     }
 
     private void validate(SingleConditionBean conditionBean) throws ConnectModuleValidationException
     {
-        BeanWithConditions beanWithConditions = new BeanWithConditions()
-        {
-
-            @Override
-            public List<ConditionalBean> getConditions()
-            {
-                return singletonList(conditionBean);
-            }
-        };
+        BeanWithConditions beanWithConditions = () -> singletonList(conditionBean);
         conditionLoadingValidator.validate(getConnectPlugin(), addon, moduleMeta, singletonList(beanWithConditions));
     }
 

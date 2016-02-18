@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.common.servlet;
 
 import javax.servlet.http.HttpServlet;
 
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 
@@ -31,6 +32,11 @@ public class ConnectAppServlets
         return mustacheServlet("iframe-ap-request.mu");
     }
 
+    public static HttpServlet apRequestExperimentalServlet()
+    {
+        return mustacheServlet("iframe-ap-request-experimental.mu");
+    }
+
     /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#containsHelloWorld()}.
      *
@@ -38,7 +44,7 @@ public class ConnectAppServlets
      */
     public static HttpServlet helloWorldServlet()
     {
-        return mustacheServlet("iframe-hello-world.mu");
+        return mustacheServlet("iframe-hello-world.mu", HttpMethod.GET, HttpMethod.POST);
     }
 
     /**
@@ -92,20 +98,11 @@ public class ConnectAppServlets
 
     /**
      * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
+     * @param delegate
      */
-    public static ParameterCapturingServlet parameterCapturingDialogServlet()
+    public static ParameterCapturingServlet parameterCapturingServlet(ContextServlet delegate)
     {
-        return new ParameterCapturingServlet(simpleDialogServlet());
-    }
-
-    public static ParameterCapturingServlet parameterCapturingInlineDialogServlet()
-    {
-        return new ParameterCapturingServlet(simpleInlineDialogServlet());
-    }
-
-    public static ParameterCapturingServlet parameterCapturingPageServlet()
-    {
-        return new ParameterCapturingServlet(simplePageServlet());
+        return new ParameterCapturingServlet(delegate);
     }
 
     /**
@@ -149,12 +146,17 @@ public class ConnectAppServlets
 
     public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
     {
-        return wrapContextAwareServlet(servlet, Lists.<TestServletContextExtractor>newArrayList());
+        return wrapContextAwareServlet(servlet, Lists.<FormParameterExtractor>newArrayList());
     }
 
-    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<TestServletContextExtractor> extractors)
+    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<FormParameterExtractor> extractors)
     {
         return new HttpContextServlet(servlet, extractors);
+    }
+
+    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<FormParameterExtractor> extractors, Iterable<BodyExtractor> bodyExtractors)
+    {
+        return new HttpContextServlet(servlet, extractors, bodyExtractors);
     }
 
     public static HttpServlet echoQueryParametersServlet()
@@ -167,9 +169,9 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new ResourceServlet(resourcePath, contentType));
     }
 
-    public static HttpServlet mustacheServlet(String templatePath)
+    public static HttpServlet mustacheServlet(String templatePath, HttpMethod ... methods)
     {
-        return wrapContextAwareServlet(new MustacheServlet(templatePath));
+        return wrapContextAwareServlet(new MustacheServlet(templatePath, methods));
     }
 
     public static InstallHandlerServlet installHandlerServlet()
@@ -177,12 +179,12 @@ public class ConnectAppServlets
         return new InstallHandlerServlet();
     }
 
-    private static ContextServlet simpleDialogServlet()
+    public static ContextServlet simpleDialogServlet()
     {
         return new MustacheServlet("dialog.mu");
     }
 
-    private static ContextServlet simpleInlineDialogServlet()
+    public static ContextServlet simpleInlineDialogServlet()
     {
         return new MustacheServlet("iframe-inline-dialog.mu");
     }
@@ -190,5 +192,10 @@ public class ConnectAppServlets
     public static ContextServlet simplePageServlet()
     {
         return new MustacheServlet("iframe-hello-world.mu");
+    }
+
+    public static ContextServlet channelConnectionVerifyServlet()
+    {
+        return new MustacheServlet("iframe-channel-connection-verify.mu");
     }
 }

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-confluence-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.70-SNAPSHOT</version>
+        <version>1.1.77-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -280,6 +280,8 @@
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>
                                     ${addonconfig.maxpropertiesperplugin}
                                 </com.atlassian.plugin.connect.add_on_properties.max_properties>
+                                <atlassian.darkfeature.confluence.onboarding.bypass>true</atlassian.darkfeature.confluence.onboarding.bypass>
+                                <atlassian.darkfeature.dashboard.onboarding.disabled>true</atlassian.darkfeature.dashboard.onboarding.disabled>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -320,6 +322,11 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
+                                    <version>${atlassian.confluence.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-functestrpc-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
@@ -417,7 +424,7 @@
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
-            use-maven,3
+            use-maven,3.3.9
         </od.testing.configuration>
     </properties>
 

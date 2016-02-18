@@ -1,0 +1,25 @@
+[
+  {
+    "identifier": "ContentPageTitle",
+    "value": "test page title for {{{spaceKey}}}"
+  },
+  {
+    "identifier": "custom1",
+    "value": "{{{blueprintKey}}}"
+  },
+  {
+    "identifier": "custom2",
+    "value": "*{{{addonKey}}}*",
+    "representation": "wiki"
+  },
+  {
+    "identifier": "custom3",
+    "value": "{{{userKey}}}",
+    "representation": "storage"
+  },
+  {
+    "identifier": "custom4",
+    "value": "<ac:structured-macro ac:name=\"cheese\" ac:schema-version=\"1\"/>",
+    "representation": "storage"
+  }
+]

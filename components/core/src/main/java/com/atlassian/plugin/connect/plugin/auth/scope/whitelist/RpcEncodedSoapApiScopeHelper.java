@@ -38,14 +38,7 @@ public final class RpcEncodedSoapApiScopeHelper
         this.path = path;
         this.soapActions = soapActions;
         this.httpMethod = checkNotNull(httpMethod).toUpperCase();
-        this.apiResourceInfo = transform(soapActions, new Function<SoapScope, ApiResourceInfo>()
-        {
-            @Override
-            public ApiResourceInfo apply(SoapScope from)
-            {
-                return new ApiResourceInfo(path, RpcEncodedSoapApiScopeHelper.this.httpMethod, from.name);
-            }
-        });
+        this.apiResourceInfo = transform(soapActions, from -> new ApiResourceInfo(path, RpcEncodedSoapApiScopeHelper.this.httpMethod, from.name));
     }
 
     public RpcEncodedSoapApiScopeHelper(String path, final String namespace,
@@ -53,14 +46,7 @@ public final class RpcEncodedSoapApiScopeHelper
                                         String httpMethod)
     {
         // convert to ArrayList because the Collection subclass returned from Collections2.transform() has a broken equals()
-        this(path, new ArrayList<>(transform(methods, new Function<String, SoapScope>()
-        {
-            @Override
-            public SoapScope apply(String from)
-            {
-                return new SoapScope(namespace, from);
-            }
-        })), httpMethod);
+        this(path, new ArrayList<>(transform(methods, from -> new SoapScope(namespace, from))), httpMethod);
     }
     
     public static Optional<Pair<String,String>> getMethod(HttpServletRequest rq)

@@ -60,7 +60,7 @@ public class ConfluenceTestedProductAccessor implements TestedProductAccessor
         return "system.header/left";
     }
 
-    public FixedConfluenceTestedProduct getConfluenceProduct()
+    public final FixedConfluenceTestedProduct getConfluenceProduct()
     {
         FixedConfluenceTestedProduct product;
         product = TestedProductFactory.create(FixedConfluenceTestedProduct.class);

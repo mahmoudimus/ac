@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -10,9 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.util.KeysFromPathMatcher;
 import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameRenderStrategyBuilderImpl;
@@ -24,6 +26,7 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
@@ -40,21 +43,21 @@ public class RedirectServlet extends HttpServlet
     private final RedirectRegistry redirectRegistry;
     private final ModuleContextParser moduleContextParser;
     private final ModuleUiParamParser moduleUiParamParser;
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
     private final TemplateRenderer templateRenderer;
     private final KeysFromPathMatcher keysFromPathMatcher;
 
     public RedirectServlet(RedirectRegistry redirectRegistry,
             ModuleContextParser moduleContextParser,
             ModuleUiParamParser moduleUiParamParser,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            ConnectUriFactory connectUriFactory,
             TemplateRenderer templateRenderer,
             KeysFromPathMatcher keysFromPathMatcher)
     {
         this.redirectRegistry = redirectRegistry;
         this.moduleContextParser = moduleContextParser;
         this.moduleUiParamParser = moduleUiParamParser;
-        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.connectUriFactory = connectUriFactory;
         this.templateRenderer = templateRenderer;
         this.keysFromPathMatcher = keysFromPathMatcher;
     }
@@ -79,12 +82,12 @@ public class RedirectServlet extends HttpServlet
         RedirectData redirectData = redirectDataOpt.get();
 
         ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
-        if (redirectData.shouldRedirect(moduleContextParameters))
+        if (redirectData.shouldRedirect(Collections.<String, Object>unmodifiableMap(moduleContextParameters)))
         {
             Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
-            String signedUrl = iFrameUriBuilderFactory.builder()
+            String signedUrl = connectUriFactory.createConnectAddonUriBuilder()
                     .addon(keys.get().getAddOnKey())
-                    .namespace(keys.get().getModuleKey())
+                    .namespace(ModuleKeyUtils.addonAndModuleKey(keys.get().getAddOnKey(), keys.get().getModuleKey()))
                     .urlTemplate(redirectData.getUrlTemplate())
                     .context(moduleContextParameters)
                     .uiParams(moduleUiParameters)

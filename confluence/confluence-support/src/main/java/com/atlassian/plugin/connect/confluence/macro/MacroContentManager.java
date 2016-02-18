@@ -7,13 +7,13 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilder;
 import com.atlassian.plugin.connect.api.request.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.api.request.ContentRetrievalException;
 import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectAddonUriBuilder;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 
 /**
  * TODO once we drop XML, refactor this to take into account that we no longer support specifying a method type and to
- * make better use of {@link IFrameUriBuilder} and friends.
+ * make better use of {@link ConnectAddonUriBuilder} and friends.
  */
 @ConfluenceComponent
 public class MacroContentManager implements DisposableBean
@@ -90,7 +90,7 @@ public class MacroContentManager implements DisposableBean
                                     Map<String, String> headers, final ConversionContext conversionContext,
                                     final RemotablePluginAccessor accessor)
     {
-        Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers);
+        Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers, HttpContentRetriever.EMPTY_STREAM);
 
         try
         {

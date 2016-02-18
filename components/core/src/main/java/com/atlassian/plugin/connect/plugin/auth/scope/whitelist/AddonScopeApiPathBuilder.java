@@ -16,10 +16,12 @@ public class AddonScopeApiPathBuilder
 
     public AddonScopeApiPathBuilder withRestPaths(AddonScopeBean.RestPathBean restPathBean, Collection<String> methods)
     {
-        for (String basePath : restPathBean.getBasePaths())
-        {
-            restResources.add(new RestApiScopeHelper.RestScope(restPathBean.getName(), restPathBean.getVersions(), basePath, methods, true));
-        }
+        restResources.addAll(restPathBean.getBasePaths()
+            .stream()
+            .map(basePath -> new RestApiScopeHelper.RestScope(restPathBean.getName(), restPathBean.getVersions(),
+                basePath, methods, true))
+            .collect(Collectors.toList())
+        );
 
         return this;
     }
@@ -28,10 +30,11 @@ public class AddonScopeApiPathBuilder
     {
         for (String path : soapRpcPathBean.getPaths())
         {
-            for (String httpMethod : httpMethods)
-            {
-                soapResources.add(new RpcEncodedSoapApiScopeHelper("/rpc/soap" + prefixWithSlash(path), "http://soap.rpc.jira.atlassian.com", soapRpcPathBean.getRpcMethods(), httpMethod));
-            }
+            soapResources.addAll(httpMethods.stream()
+                .map(httpMethod -> new RpcEncodedSoapApiScopeHelper("/rpc/soap" + prefixWithSlash(path),
+                    "http://soap.rpc.jira.atlassian.com", soapRpcPathBean.getRpcMethods(), httpMethod))
+                .collect(Collectors.toList())
+            );
         }
         return this;
     }
@@ -40,20 +43,21 @@ public class AddonScopeApiPathBuilder
     {
         for (String path : jsonRpcPathBean.getPaths())
         {
-            for (String httpMethod : httpMethods)
-            {
-                jsonResources.add(new JsonRpcApiScopeHelper("/rpc/json-rpc" + prefixWithSlash(path), jsonRpcPathBean.getRpcMethods(), httpMethod));
-            }
+            jsonResources.addAll(httpMethods.stream()
+                .map(httpMethod -> new JsonRpcApiScopeHelper("/rpc/json-rpc" + prefixWithSlash(path),
+                    jsonRpcPathBean.getRpcMethods(), httpMethod))
+                .collect(Collectors.toList())
+            );
         }
         return this;
     }
 
     public AddonScopeApiPathBuilder withXmlRpcResources(AddonScopeBean.XmlRpcBean xmlRpcBean)
     {
-        for (String prefix : xmlRpcBean.getPrefixes())
-        {
-            xmlResources.add(new XmlRpcApiScopeHelper("/rpc/xmlrpc", prefixXmlRpcMethods(xmlRpcBean.getRpcMethods(), prefix)));
-        }
+        xmlResources.addAll(xmlRpcBean.getPrefixes().stream()
+            .map(prefix -> new XmlRpcApiScopeHelper("/rpc/xmlrpc", prefixXmlRpcMethods(xmlRpcBean.getRpcMethods(), prefix)))
+            .collect(Collectors.toList())
+        );
         return this;
     }
 

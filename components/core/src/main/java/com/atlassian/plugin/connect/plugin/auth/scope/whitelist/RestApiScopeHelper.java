@@ -30,26 +30,12 @@ public final class RestApiScopeHelper
     private final Iterable<RestScope> scopes;
     private final Iterable<ApiResourceInfo> apiResourceInfo;
 
-    private static final Function<String, String> LOWERCASE_TRANSFORM = new Function<String, String>()
-    {
-        @Override
-        public String apply(String from)
-        {
-            return from.toLowerCase(Locale.US);
-        }
-    };
+    private static final Function<String, String> LOWERCASE_TRANSFORM = from -> from.toLowerCase(Locale.US);
 
     public RestApiScopeHelper(Iterable<RestScope> scopes)
     {
         this.scopes = scopes;
-        this.apiResourceInfo = concat(transform(scopes, new Function<RestScope, Iterable<ApiResourceInfo>>()
-        {
-            @Override
-            public Iterable<ApiResourceInfo> apply(RestScope from)
-            {
-                return from.getApiResourceInfo();
-            }
-        }));
+        this.apiResourceInfo = concat(transform(scopes, RestScope::getApiResourceInfo));
     }
 
     public boolean allow(HttpServletRequest request)
