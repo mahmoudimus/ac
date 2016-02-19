@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import javax.servlet.ServletException;

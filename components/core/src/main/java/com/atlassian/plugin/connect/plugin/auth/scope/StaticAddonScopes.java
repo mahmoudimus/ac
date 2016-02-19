@@ -2,10 +2,8 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
-import com.google.common.base.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

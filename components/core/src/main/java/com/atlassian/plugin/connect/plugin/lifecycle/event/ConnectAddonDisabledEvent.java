@@ -8,8 +8,8 @@ import com.atlassian.analytics.api.annotations.EventName;
 @EventName ("connect.addon.disabled")
 public class ConnectAddonDisabledEvent extends ConnectAddonLifecycleWithDataEvent
 {
-    public ConnectAddonDisabledEvent(String pluginKey, String data)
+    public ConnectAddonDisabledEvent(String addonKey, String data)
     {
-        super(pluginKey, data);
+        super(addonKey, data);
     }
 }

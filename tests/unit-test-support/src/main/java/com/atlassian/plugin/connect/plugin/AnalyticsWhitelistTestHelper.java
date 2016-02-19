@@ -9,8 +9,9 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 
+import java.beans.Introspector;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,8 +55,12 @@ public final class AnalyticsWhitelistTestHelper
         Set<Class<?>> union = reflectAllEvents(packageName);
         for (Class<?> eventClass : union)
         {
-            List<Field> fields = ConnectReflectionHelper.getAllFieldsInObjectChain(eventClass);
-            List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
+            List<String> fieldNames = ConnectReflectionHelper.getAllGettersInObjectChain(eventClass)
+                    .stream()
+                    .map(Member::getName)
+                    .map(getter -> getter.replaceFirst("^get", "")) // "getSomeName" -> "SomeName"
+                    .map(Introspector::decapitalize) // "SomeName" -> "someName"
+                    .collect(Collectors.toList());
             String eventName = eventClass.getAnnotation(EventName.class).value();
 
             result.put(eventName, fieldNames);

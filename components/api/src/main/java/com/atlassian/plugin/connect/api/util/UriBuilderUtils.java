@@ -1,11 +1,9 @@
 package com.atlassian.plugin.connect.api.util;
 
 import com.atlassian.uri.UriBuilder;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 

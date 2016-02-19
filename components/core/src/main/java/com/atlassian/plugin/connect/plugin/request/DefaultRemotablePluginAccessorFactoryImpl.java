@@ -23,7 +23,6 @@ import com.atlassian.plugin.connect.plugin.auth.jwt.JwtSigningRemotablePluginAcc
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;

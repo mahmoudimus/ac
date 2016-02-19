@@ -8,8 +8,8 @@ import com.atlassian.analytics.api.annotations.EventName;
 @EventName ("connect.addon.installed")
 public class ConnectAddonInstalledEvent extends ConnectAddonLifecycleEvent
 {
-    public  ConnectAddonInstalledEvent(String pluginKey)
+    public  ConnectAddonInstalledEvent(String addonKey)
     {
-        super(pluginKey);
+        super(addonKey);
     }
 }

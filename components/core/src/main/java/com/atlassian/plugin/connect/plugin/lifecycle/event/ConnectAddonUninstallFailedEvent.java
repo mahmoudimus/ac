@@ -5,8 +5,8 @@ import com.atlassian.analytics.api.annotations.EventName;
 @EventName ("connect.addon.uninstallFailed")
 public class ConnectAddonUninstallFailedEvent extends ConnectAddonLifecycleFailedEvent
 {
-    public ConnectAddonUninstallFailedEvent(String pluginKey, String message)
+    public ConnectAddonUninstallFailedEvent(String addonKey, String message)
     {
-        super(pluginKey, message, Category.CONNECT); // we never fail to uninstall because of the add-on
+        super(addonKey, message, Category.CONNECT); // we never fail to uninstall because of the add-on
     }
 }
