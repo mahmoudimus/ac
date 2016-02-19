@@ -32,20 +32,21 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
         // This list is deliberately ordered. More-specific mappers such as PageMoveEventMapper must appear in the
         // list _before_ less-specific mappers such as PageEventMapper, or else they will never get invoked.
         mappers = ImmutableList.of(
-                new LabelEventMapper(userManager, confluenceSettingsManager),
-                new UserEventMapper(userManager, confluenceSettingsManager),
-                new SearchPerformedEventMapper(userManager, confluenceSettingsManager),
-                new AttachmentEventMapper(userManager, confluenceSettingsManager),
-                new PageChildrenReorderEventMapper(userManager, confluenceSettingsManager),
-                new PageMoveEventMapper(userManager, confluenceSettingsManager),
-                new BlueprintPageCreateEventMapper(userManager, confluenceSettingsManager),
-                new PageEventMapper(userManager, confluenceSettingsManager),
-                new BlogPostEventMapper(userManager, confluenceSettingsManager),
-                new SpaceEventMapper(userManager, confluenceSettingsManager),
-                new CommentEventMapper(userManager, confluenceSettingsManager),
-                new SecurityEventMapper(userManager, confluenceSettingsManager),
-                new ContentEventMapper(userManager, confluenceSettingsManager),
-                new ConfluenceEventMapper(userManager, confluenceSettingsManager)
+                new LabelEventMapper(userManager, confluenceSettingsManager)
+                , new UserEventMapper(userManager, confluenceSettingsManager)
+                , new ConfluenceMentionEventMapper(userManager, confluenceSettingsManager)
+                , new SearchPerformedEventMapper(userManager, confluenceSettingsManager)
+                , new AttachmentEventMapper(userManager, confluenceSettingsManager)
+                , new PageChildrenReorderEventMapper(userManager, confluenceSettingsManager)
+                , new PageMoveEventMapper(userManager, confluenceSettingsManager)
+                , new BlueprintPageCreateEventMapper(userManager, confluenceSettingsManager)
+                , new PageEventMapper(userManager, confluenceSettingsManager)
+                , new BlogPostEventMapper(userManager, confluenceSettingsManager)
+                , new SpaceEventMapper(userManager, confluenceSettingsManager)
+                , new CommentEventMapper(userManager, confluenceSettingsManager)
+                , new SecurityEventMapper(userManager, confluenceSettingsManager)
+                , new ContentEventMapper(userManager, confluenceSettingsManager)
+                , new ConfluenceEventMapper(userManager, confluenceSettingsManager)
         );
     }
 
