@@ -2,13 +2,12 @@ package com.atlassian.plugin.connect.api.property;
 
 import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.atlassian.annotations.PublicApi;
 import com.atlassian.fugue.Either;
+import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.sal.api.message.I18nResolver;
-import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 
 /**
@@ -22,8 +21,7 @@ public interface AddonPropertyService
      * Gets a property from the add-on store. <p> This method checks parameter validity and tries to get a property for
      * an add-on. </p>
      *
-     * @param user the user performing the request
-     * @param sourcePluginKey the key of the add-on performing the request
+     * @param auth information about a user or an add-on making the request
      * @param addonKey the key of the add-on that owns the property
      * @param propertyKey the key of the property
      * @return GetServiceResult which calls one of two callbacks: OnFailed or OnSuccess,
@@ -31,8 +29,7 @@ public interface AddonPropertyService
      * OnSuccess is called with AddonProperty that was retrieved.
      */
     GetServiceResult getPropertyValue(
-            @Nullable UserProfile user,
-            @Nullable String sourcePluginKey,
+            @Nonnull AuthenticationData auth,
             @Nonnull String addonKey,
             @Nonnull String propertyKey);
 
@@ -40,8 +37,7 @@ public interface AddonPropertyService
      * Sets a property from the add-on store. <p> This method checks parameter validity and tries to set a property for
      * an add-on. </p>
      *
-     * @param user the user performing the request
-     * @param sourcePluginKey the key of the add-on performing the request
+     * @param auth information about a user or an add-on making the request
      * @param addonKey the key of the add-on that owns the property
      * @param propertyKey the key of the property
      * @param value the value of the property
@@ -53,8 +49,7 @@ public interface AddonPropertyService
      * OnSuccess is called with OperationPutResult explaining the reason of success and the resulting AddonProperty
      */
     <T> PutServiceResult<T> setPropertyValueIfConditionSatisfied(
-            @Nullable UserProfile user,
-            @Nullable String sourcePluginKey,
+            @Nonnull AuthenticationData auth,
             @Nonnull String addonKey,
             @Nonnull String propertyKey,
             @Nonnull String value,
@@ -64,8 +59,7 @@ public interface AddonPropertyService
      * Deletes a property from the add-on store. <p> This method checks parameter validity and tries to delete a
      * property for an add-on. </p>
      *
-     * @param user the user performing the request
-     * @param sourcePluginKey the key of the add-on performing the request
+     * @param auth information about a user or an add-on making the request
      * @param addonKey the key of the add-on that owns the property
      * @param propertyKey the key of the property
      * @param testFunction a condition that must pass for the property to be deleted
@@ -76,8 +70,7 @@ public interface AddonPropertyService
      * OnSuccess is called with OperationResult explaining the reason of success
      */
     <T> DeleteServiceResult<T> deletePropertyValueIfConditionSatisfied(
-            @Nullable UserProfile user,
-            @Nullable String sourcePluginKey,
+            @Nonnull AuthenticationData auth,
             @Nonnull String addonKey,
             @Nonnull String propertyKey,
             @Nonnull final Function<Optional<AddonProperty>, ServiceConditionResult<T>> testFunction);
@@ -86,14 +79,13 @@ public interface AddonPropertyService
      * Returns a list of all properties for a given add-on. <p> This method checks parameter validity and lists all
      * properties belonging to an add-on. </p>
      *
-     * @param user the user performing the request
-     * @param sourcePluginKey the key of the add-on performing the request
+     * @param auth information about a user or an add-on making the request
      * @param addonKey the key of the add-on that owns the property
      * @return GetAllServiceResult which calls one of two callbacks: OnFailed or OnSuccess,
      * OnFailed is called with OperationResult explaining the reason
      * OnSuccess is called with AddonPropertyIterable that was retrieved.
      */
-    GetAllServiceResult getAddonProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addonKey);
+    GetAllServiceResult getAddonProperties(@Nonnull AuthenticationData auth, @Nonnull String addonKey);
 
     /**
      * Returns a list of all properties for a given add-on. This method does not check any permissions, but checks whether the add-on exists.

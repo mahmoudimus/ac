@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import com.atlassian.plugin.connect.api.auth.AddonDataAccessChecker;
+import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
@@ -30,7 +31,6 @@ import static com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceI
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,13 +41,16 @@ public class AddonPropertyServiceImplTest
     public static final UserKey userKey = new UserKey("userkey");
 
     private final String addonKey = "testAddon";
+    private final AuthenticationData auth = AuthenticationData.byAddonKey(addonKey);
     private static final JsonNode EMPTY_OBJECT = JsonCommon.parseStringToJson("{}").get();
     private final AddonProperty property = new AddonProperty("testProperty", EMPTY_OBJECT, 0);
 
     @Mock
     private AddonPropertyStore store;
     @Mock
-    private UserProfile user;
+    private UserProfile user; // admin user
+    @Mock
+    private UserProfile nonAdmin; // non-admin user
     @Mock
     private AddonDataAccessChecker addonDataAccessChecker;
     @Mock
@@ -65,98 +68,114 @@ public class AddonPropertyServiceImplTest
         when(connectAddonRegistry.hasAddonWithKey(addonKey)).thenReturn(true);
         mockFunction = getMockForFunction();
         mockPutFunction = getMockForPutFunction();
-        when(addonDataAccessChecker.hasAccessToAddon(any(UserProfile.class), eq(addonKey), eq(addonKey))).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(any(AuthenticationData.class), anyString())).then(invocation -> {
+            AuthenticationData auth1 = (AuthenticationData) invocation.getArguments()[0];
+            String addonKey1 = (String) invocation.getArguments()[1];
+            return auth1.accept(new AuthenticationData.AuthenticationDetailsVisitor<Boolean>()
+            {
+                @Override
+                public Boolean visit(final AuthenticationData.Request authenticationBy)
+                {
+                    return false;
+                }
+
+                @Override
+                public Boolean visit(final AuthenticationData.AddonKey authenticationBy)
+                {
+                    return authenticationBy.getAddonKey().equals(addonKey1);
+                }
+
+                @Override
+                public Boolean visit(final AuthenticationData.User authenticationBy)
+                {
+                    return authenticationBy.getUser().equals(user);
+                }
+            });
+        });
     }
 
     @Test
     public void testGetExistingPropertyWhenPlugin() throws Exception
     {
-        testGetExistingProperty(addonKey);
+        testGetExistingProperty(auth);
     }
 
     @Test
     public void testGetExistingPropertyWhenSysAdmin() throws Exception
     {
-        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
-        testGetExistingProperty(null);
+        testGetExistingProperty(AuthenticationData.byUser(user));
     }
 
     @Test
     public void testGetNonExistingPropertyWhenPlugin() throws Exception
     {
-        testGetNonExistingProperty(addonKey);
+        testGetNonExistingProperty(auth);
     }
 
     @Test
     public void testGetNonExistingPropertyWhenSysAdmin() throws Exception
     {
-        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
-        testGetNonExistingProperty(null);
+        testGetNonExistingProperty(AuthenticationData.byUser(user));
     }
 
     @Test
     public void testPutNonExistingValidPropertyWhenPlugin() throws Exception
     {
-        testPutNonExistingValidProperty(addonKey);
+        testPutNonExistingValidProperty(auth);
     }
 
     @Test
     public void testPutNonExistingValidPropertyWhenSysAdmin() throws Exception
     {
-        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
-        testPutNonExistingValidProperty(null);
+        testPutNonExistingValidProperty(AuthenticationData.byUser(user));
     }
 
     @Test
     public void testPutExistingValidPropertyWhenPlugin() throws Exception
     {
-        testPutExistingValidProperty(addonKey);
+        testPutExistingValidProperty(auth);
     }
 
     @Test
     public void testPutExistingValidPropertyWhenSysAdmin() throws Exception
     {
-        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
-        testPutExistingValidProperty(null);
+        testPutExistingValidProperty(AuthenticationData.byUser(user));
     }
 
     @Test
     public void testDeleteExistingPropertyWhenPlugin() throws Exception
     {
-        testDeleteExistingProperty(addonKey);
+        testDeleteExistingProperty(auth);
     }
 
     @Test
     public void testDeleteExistingPropertyWhenSysAdmin() throws Exception
     {
-        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
-        testDeleteExistingProperty(null);
+        testDeleteExistingProperty(AuthenticationData.byUser(user));
     }
 
     @Test
     public void testDeleteNonExistingPropertyWhenPlugin() throws Exception
     {
-        testDeleteNonExistingProperty(addonKey);
+        testDeleteNonExistingProperty(auth);
     }
 
     @Test
     public void testDeleteNonExistingPropertyWhenSysAdmin() throws Exception
     {
-        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
-        testDeleteNonExistingProperty(null);
+        testDeleteNonExistingProperty(AuthenticationData.byUser(user));
     }
 
     @Test
     public void testListPropertiesWhenPlugin() throws Exception
     {
-        testListProperties(addonKey);
+        testListProperties(auth);
     }
 
     @Test
     public void testListPropertiesWhenSysAdmin() throws Exception
     {
-        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
-        testListProperties(null);
+        testListProperties(AuthenticationData.byUser(user));
     }
 
     @Test
@@ -164,7 +183,7 @@ public class AddonPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddonPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        AddonPropertyService.GetServiceResult result = service.getPropertyValue(user, addonKey, addonKey, tooLongKey);
+        AddonPropertyService.GetServiceResult result = service.getPropertyValue(auth, addonKey, tooLongKey);
         result.fold(mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.KEY_TOO_LONG);
     }
@@ -174,7 +193,7 @@ public class AddonPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddonPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, tooLongKey, property.getValue().toString(), alwaysTrue());
+        PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(auth, addonKey, tooLongKey, property.getValue().toString(), alwaysTrue());
         result.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.KEY_TOO_LONG);
     }
@@ -184,7 +203,7 @@ public class AddonPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddonPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        DeleteServiceResult<Void> result = service.deletePropertyValueIfConditionSatisfied(user, addonKey, addonKey, tooLongKey, alwaysTrue());
+        DeleteServiceResult<Void> result = service.deletePropertyValueIfConditionSatisfied(auth, addonKey, tooLongKey, alwaysTrue());
         result.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.KEY_TOO_LONG);
     }
@@ -197,7 +216,7 @@ public class AddonPropertyServiceImplTest
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddonPropertyStore.PutResult.PROPERTY_LIMIT_EXCEEDED, Optional.empty());
         when(store.setPropertyValue(addonKey, property.getKey(), property.getValue().toString())).thenReturn(mockedResult);
 
-        PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
+        PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
         result.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.MAXIMUM_PROPERTIES_EXCEEDED);
     }
@@ -205,63 +224,31 @@ public class AddonPropertyServiceImplTest
     @Test
     public void testNoAccessToGetDifferentPluginData() throws Exception
     {
-        AddonPropertyService.GetServiceResult result = service.getPropertyValue(user, "DIFF_PLUGIN_KEY", addonKey, property.getKey());
+        AddonPropertyService.GetServiceResult result = service.getPropertyValue(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey());
         result.fold(mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
+        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
     }
 
     @Test
     public void testNoAccessToPutDifferentPluginData() throws Exception
     {
-        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, "DIFF_PLUGIN_KEY", addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
+        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
         foldableServiceResult.fold(null, mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
+        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
     }
 
     @Test
     public void testNoAccessToDeleteDifferentPluginData() throws Exception
     {
-        DeleteServiceResult<Void> foldableServiceResult = service.deletePropertyValueIfConditionSatisfied(user, "DIFF_PLUGIN_KEY", addonKey, property.getKey(), alwaysTrue());
+        DeleteServiceResult<Void> foldableServiceResult = service.deletePropertyValueIfConditionSatisfied(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey(), alwaysTrue());
         foldableServiceResult.fold(null, mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
+        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
     }
 
     @Test
     public void testNoAccessToListDifferentPluginData() throws Exception
     {
-        AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(user, "DIFF_PLUGIN_KEY", addonKey);
-        result.fold(mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
-    }
-
-    @Test
-    public void testGetNoAccessWhenNotLoggedIn() throws Exception
-    {
-        AddonPropertyService.GetServiceResult result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addonKey, property.getKey());
-        result.fold(mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
-    }
-
-    @Test
-    public void testSetNoAccessWhenNotLoggedIn() throws Exception
-    {
-        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(null, "DIFF_PLUGIN_KEY", addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
-        foldableServiceResult.fold(null, mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
-    }
-
-    @Test
-    public void testDeleteNoAccessWhenLoggedIn() throws Exception
-    {
-        DeleteServiceResult<Void> foldableServiceResult = service.deletePropertyValueIfConditionSatisfied(null, "DIFF_PLUGIN_KEY", addonKey, property.getKey(), alwaysTrue());
-        foldableServiceResult.fold(null, mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
-    }
-
-    @Test
-    public void testListNoAccessWhenLoggedIn() throws Exception
-    {
-        AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(null, "DIFF_PLUGIN_KEY", addonKey);
+        AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey);
         result.fold(mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
     }
@@ -270,9 +257,8 @@ public class AddonPropertyServiceImplTest
     public void testAddonNotFoundWhenPluginNotInstalledAndSysAdmin() throws Exception
     {
         when(connectAddonRegistry.hasAddonWithKey(addonKey)).thenReturn(false);
-        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
 
-        AddonPropertyService.GetServiceResult result = service.getPropertyValue(user, null, addonKey, "");
+        AddonPropertyService.GetServiceResult result = service.getPropertyValue(AuthenticationData.byUser(user), addonKey, "");
         result.fold(mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
     }
@@ -348,7 +334,7 @@ public class AddonPropertyServiceImplTest
     {
         mockExecuteInTransaction();
         final Object obj = new Object();
-        PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, property.getKey(), "0", new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Object>>()
+        PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), "0", new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Object>>()
         {
             @Override
             public AddonPropertyService.ServiceConditionResult<Object> apply(final Optional<AddonProperty> input)
@@ -361,24 +347,24 @@ public class AddonPropertyServiceImplTest
         verify(mockFunction).apply(obj);
     }
 
-    private void testGetExistingProperty(String sourcePlugin)
+    private void testGetExistingProperty(AuthenticationData auth)
     {
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(property));
-        AddonPropertyService.GetServiceResult result = service.getPropertyValue(user, sourcePlugin, addonKey, property.getKey());
+        AddonPropertyService.GetServiceResult result = service.getPropertyValue(auth, addonKey, property.getKey());
         Function<AddonProperty, Void> mockFunction = mock(Function.class);
         result.fold(null, mockFunction);
         verify(mockFunction).apply(property);
     }
 
-    private void testGetNonExistingProperty(String sourcePlugin)
+    private void testGetNonExistingProperty(AuthenticationData auth)
     {
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.empty());
-        AddonPropertyService.GetServiceResult result = service.getPropertyValue(user, sourcePlugin, addonKey, property.getKey());
+        AddonPropertyService.GetServiceResult result = service.getPropertyValue(auth, addonKey, property.getKey());
         result.fold(mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.PROPERTY_NOT_FOUND);
     }
 
-    private void testPutNonExistingValidProperty(final String sourcePluginKey)
+    private void testPutNonExistingValidProperty(AuthenticationData auth)
     {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.empty());
@@ -386,53 +372,53 @@ public class AddonPropertyServiceImplTest
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddonPropertyStore.PutResult.PROPERTY_CREATED, Optional.of(property));
         when(store.setPropertyValue(addonKey, property.getKey(), property.getValue().toString())).thenReturn(mockedResult);
 
-        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
+        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
 
         foldableServiceResult.fold(null, null, mockPutFunction);
 
         verify(mockPutFunction).apply(argThat(hasServiceResult(OperationStatusImpl.PROPERTY_CREATED)));
     }
 
-    private void testPutExistingValidProperty(final String sourcePluginKey)
+    private void testPutExistingValidProperty(AuthenticationData auth)
     {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(property));
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddonPropertyStore.PutResult.PROPERTY_UPDATED, Optional.of(property));
         when(store.setPropertyValue(addonKey, property.getKey(), property.getValue().toString())).thenReturn(mockedResult);
 
-        final PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
+        final PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
 
         foldableServiceResult.fold(null, null, mockPutFunction);
         verify(mockPutFunction).apply(argThat(hasServiceResult(OperationStatusImpl.PROPERTY_UPDATED)));
     }
 
-    private void testDeleteExistingProperty(final String sourcePluginKey)
+    private void testDeleteExistingProperty(AuthenticationData auth)
     {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(new AddonProperty("", EMPTY_OBJECT, 0)));
 
-        DeleteServiceResult<Void> foldableServiceResult = service.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, property.getKey(), alwaysTrue());
+        DeleteServiceResult<Void> foldableServiceResult = service.deletePropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), alwaysTrue());
         foldableServiceResult.fold(null, null, mockFunction);
         verify(mockFunction).apply(OperationStatusImpl.PROPERTY_DELETED);
     }
 
-    private void testDeleteNonExistingProperty(final String sourcePluginKey)
+    private void testDeleteNonExistingProperty(AuthenticationData auth)
     {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.empty());
 
-        DeleteServiceResult<Void> deleteServiceResult = service.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, property.getKey(), alwaysTrue());
+        DeleteServiceResult<Void> deleteServiceResult = service.deletePropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), alwaysTrue());
         deleteServiceResult.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.PROPERTY_NOT_FOUND);
     }
 
-    private void testListProperties(final String sourcePluginKey)
+    private void testListProperties(AuthenticationData auth)
     {
         AddonPropertyIterable emptyIterable = new AddonPropertyIterable(Collections.<AddonProperty>emptyList());
         when(store.getAllPropertiesForAddonKey(addonKey)).thenReturn(emptyIterable);
 
         Function<AddonPropertyIterable, Void> mockFunction = mock(Function.class);
-        AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(user, sourcePluginKey, addonKey);
+        AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(auth, addonKey);
         result.fold(null, mockFunction);
         verify(mockFunction).apply(emptyIterable);
     }
@@ -444,7 +430,7 @@ public class AddonPropertyServiceImplTest
         when(store.setPropertyValue(addonKey, property.getKey(), value)).thenReturn(mockedResult);
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(new AddonProperty(
                 property.getKey(), property.getValue(), 0)));
-        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, property.getKey(), value, alwaysTrue());
+        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), value, alwaysTrue());
 
         Function<AddonPropertyService.PutOperationStatus, Void> mockPutFunction = getMockForPutFunction();
         foldableServiceResult.fold(null, null, mockPutFunction);
@@ -453,7 +439,7 @@ public class AddonPropertyServiceImplTest
 
     private void assertInvalidJson(final String value)
     {
-        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, property.getKey(), value, alwaysTrue());
+        PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), value, alwaysTrue());
         Function<OperationStatus, Void> mockFunction = getMockForFunction();
         foldableServiceResult.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.INVALID_PROPERTY_VALUE);
