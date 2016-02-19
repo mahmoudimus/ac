@@ -4,6 +4,7 @@ import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.util.Page;
 import com.atlassian.jira.util.PageRequest;
+import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import org.codehaus.jackson.JsonNode;
 
