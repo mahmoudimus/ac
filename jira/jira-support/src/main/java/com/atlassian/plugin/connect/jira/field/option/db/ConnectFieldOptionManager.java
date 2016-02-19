@@ -5,7 +5,9 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.atlassian.fugue.Either;
+import com.atlassian.fugue.Pair;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.jira.util.PageRequest;
 import com.atlassian.plugin.connect.jira.util.Json;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -52,17 +54,21 @@ public class ConnectFieldOptionManager
         });
     }
 
-    public List<ConnectFieldOption> getAll(final String addonKey, final String fieldKey)
+    public Pair<List<ConnectFieldOption>, Long> getAll(final String addonKey, final String fieldKey, final PageRequest pageRequest)
     {
         return databaseAccessor.runInTransaction(connection -> {
             List<Tuple> tuples = connection
                     .select(CONNECT_FIELD_OPTION.OPTION_ID, CONNECT_FIELD_OPTION.VALUE)
                     .from(CONNECT_FIELD_OPTION)
                     .where(isField(addonKey, fieldKey))
+                    .offset(pageRequest.getStart())
+                    .limit(pageRequest.getLimit())
                     .orderBy(CONNECT_FIELD_OPTION.OPTION_ID.asc())
                     .fetch();
 
-            return tuples.stream().map(this::toConnectFieldOption).filter(Optional::isPresent).map(Optional::get).collect(toList());
+            List<ConnectFieldOption> result = tuples.stream().map(this::toConnectFieldOption).filter(Optional::isPresent).map(Optional::get).collect(toList());
+            long total = connection.select(CONNECT_FIELD_OPTION.ID).from(CONNECT_FIELD_OPTION).where(isField(addonKey, fieldKey)).fetchCount();
+            return Pair.pair(result, total);
         });
     }
 

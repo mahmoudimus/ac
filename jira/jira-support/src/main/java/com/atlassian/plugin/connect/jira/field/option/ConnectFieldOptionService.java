@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.jira.field.option;
 
-import java.util.List;
-
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceResult;
+import com.atlassian.jira.util.Page;
+import com.atlassian.jira.util.PageRequest;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import org.codehaus.jackson.JsonNode;
 
@@ -37,13 +37,14 @@ public interface ConnectFieldOptionService
     ServiceOutcome<ConnectFieldOption> putOption(AuthenticationData auth, FieldId fieldId, ConnectFieldOption option);
 
     /**
-     * Get all options for a specific field.
+     * Get a page of options for a specific field.
      *
      * @param fieldId the field to get the options for
      * @param auth authentication details of the current call
-     * @return a list of all options
+     * @param pageRequest requested page
+     * @return a page of all options
      */
-    ServiceOutcome<List<ConnectFieldOption>> getAllOptions(AuthenticationData auth, FieldId fieldId);
+    ServiceOutcome<Page<ConnectFieldOption>> getAllOptions(AuthenticationData auth, FieldId fieldId, PageRequest pageRequest);
 
     /**
      * Get an option with a particular id for a specified field

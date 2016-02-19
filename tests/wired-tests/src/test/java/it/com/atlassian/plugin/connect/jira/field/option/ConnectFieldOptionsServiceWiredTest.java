@@ -12,6 +12,9 @@ import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
+import com.atlassian.jira.util.Page;
+import com.atlassian.jira.util.PageRequest;
+import com.atlassian.jira.util.PageRequests;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.AuthenticationData;
@@ -51,6 +54,7 @@ import static org.mockito.Mockito.mock;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class ConnectFieldOptionsServiceWiredTest
 {
+    public static final PageRequest UNLIMITED_PAGE = PageRequests.request(null, null);
     private final ConnectFieldOptionService connectFieldOptionService;
     private final UserManager userManager;
     private final JiraTestUtil jiraTestUtil;
@@ -94,8 +98,8 @@ public class ConnectFieldOptionsServiceWiredTest
         assertTrue(result.isValid());
         assertEquals(expectedResult, result.get());
 
-        List<ConnectFieldOption> allOptions = connectFieldOptionService.getAllOptions(auth, fieldId).get();
-        assertEquals(ImmutableList.of(expectedResult), allOptions);
+        Page<ConnectFieldOption> allOptions = connectFieldOptionService.getAllOptions(auth, fieldId, UNLIMITED_PAGE).get();
+        assertEquals(ImmutableList.of(expectedResult), allOptions.getValues());
     }
 
     @Test
@@ -103,7 +107,7 @@ public class ConnectFieldOptionsServiceWiredTest
     {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"", "\"d\"", "\"e\"");
 
-        List<ConnectFieldOption> options = connectFieldOptionService.getAllOptions(auth, fieldId).get().stream().collect(toList());
+        List<ConnectFieldOption> options = connectFieldOptionService.getAllOptions(auth, fieldId, UNLIMITED_PAGE).get().getValues();
         assertEquals(ImmutableList.of(
                         ConnectFieldOption.of(1, Json.parse("\"a\"").get()),
                         ConnectFieldOption.of(2, Json.parse("\"b\"").get()),
@@ -123,7 +127,7 @@ public class ConnectFieldOptionsServiceWiredTest
         createOption(fieldId, "\"a\"").getId();
         createOption(fieldId, "\"b\"").getId();
 
-        Set<Integer> ids = connectFieldOptionService.getAllOptions(auth, fieldId).get().stream().map(ConnectFieldOption::getId).collect(toSet());
+        Set<Integer> ids = connectFieldOptionService.getAllOptions(auth, fieldId, UNLIMITED_PAGE).get().getValues().stream().map(ConnectFieldOption::getId).collect(toSet());
 
         assertEquals(4, ids.size());
     }
@@ -192,7 +196,7 @@ public class ConnectFieldOptionsServiceWiredTest
                 data -> connectFieldOptionService.replaceInAllIssues(data, fieldId, 1, 2),
                 data -> connectFieldOptionService.getOption(data, fieldId, 1),
                 data -> connectFieldOptionService.removeOption(data, fieldId, 1),
-                data -> connectFieldOptionService.getAllOptions(data, fieldId));
+                data -> connectFieldOptionService.getAllOptions(data, fieldId, UNLIMITED_PAGE));
 
         notAuthorized.forEach(data -> methods.forEach(method -> {
             ServiceResult result = method.apply(data);

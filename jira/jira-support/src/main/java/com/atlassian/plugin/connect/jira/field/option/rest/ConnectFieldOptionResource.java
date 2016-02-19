@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.field.option.rest;
 
-import java.util.List;
 import java.util.function.Supplier;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -11,22 +10,27 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceResult;
+import com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls;
 import com.atlassian.jira.rest.api.http.CacheControl;
+import com.atlassian.jira.rest.api.pagination.PageBean;
 import com.atlassian.jira.rest.util.ResponseFactory;
+import com.atlassian.jira.util.Page;
+import com.atlassian.jira.util.PageRequest;
+import com.atlassian.jira.util.PageRequests;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionService;
 import com.atlassian.plugin.connect.jira.util.ServiceOutcomes;
 import com.atlassian.sal.api.message.I18nResolver;
-
-import static java.util.stream.Collectors.toList;
 
 @Path ("jira/addon/{addonKey}/field/{fieldKey}/option")
 @Produces ("application/json")
@@ -36,33 +40,41 @@ public class ConnectFieldOptionResource
     private final ConnectFieldOptionService connectFieldOptionService;
     private final ResponseFactory responseFactory;
     private final ConnectFieldOptionBeansFactory beansFactory;
+    private final JiraBaseUrls jiraBaseUrls;
     private final I18nResolver i18;
 
-    public ConnectFieldOptionResource(final ConnectFieldOptionService connectFieldOptionService, final ResponseFactory responseFactory, final ConnectFieldOptionBeansFactory connectFieldOptionBeansFactory, final I18nResolver i18)
+    public ConnectFieldOptionResource(final ConnectFieldOptionService connectFieldOptionService, final ResponseFactory responseFactory, final ConnectFieldOptionBeansFactory connectFieldOptionBeansFactory, final JiraBaseUrls jiraBaseUrls, final I18nResolver i18)
     {
         this.connectFieldOptionService = connectFieldOptionService;
         this.responseFactory = responseFactory;
         this.beansFactory = connectFieldOptionBeansFactory;
+        this.jiraBaseUrls = jiraBaseUrls;
         this.i18 = i18;
     }
 
     @GET
-    public Response getAllOptions(@PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @Context HttpServletRequest servletRequest)
+    public Response getAllOptions(
+            @QueryParam ("startAt") final Long startAt, @QueryParam ("maxResults") final Integer maxResults,
+            @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @Context HttpServletRequest servletRequest)
     {
-        ServiceOutcome<List<ConnectFieldOption>> allOptions = connectFieldOptionService.getAllOptions(AuthenticationData.byRequest(servletRequest), FieldId.of(addonKey, fieldKey));
+        PageRequest pageRequest = PageRequests.request(startAt, maxResults);
 
-        return toEither(allOptions).left().on(options -> {
-            List<ConnectFieldOptionBean> result = options.stream()
-                    .map(beansFactory::toBean)
-                    .collect(toList());
+        ServiceOutcome<Page<ConnectFieldOption>> allOptions = connectFieldOptionService.getAllOptions(
+                AuthenticationData.byRequest(servletRequest),
+                FieldId.of(addonKey, fieldKey),
+                pageRequest);
 
-            return responseFactory.okNoCache(result);
-        });
+        return toEither(allOptions)
+                .right().map(options -> PageBean
+                        .from(pageRequest, options)
+                        .setLinks(UriBuilder.fromPath(jiraBaseUrls.baseUrl() + servletRequest.getServletPath()).build().toString(), pageRequest.getLimit())
+                        .build(beansFactory::toBean))
+                .left().on(responseFactory::okNoCache);
     }
 
     @GET
-    @Path("/{optionId}")
-    public Response getOption(@PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @PathParam("optionId") Integer optionId, @Context HttpServletRequest servletRequest)
+    @Path ("/{optionId}")
+    public Response getOption(@PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @PathParam ("optionId") Integer optionId, @Context HttpServletRequest servletRequest)
     {
         ServiceOutcome<ConnectFieldOption> option = connectFieldOptionService.getOption(AuthenticationData.byRequest(servletRequest), FieldId.of(addonKey, fieldKey), optionId);
         return toEither(option)
@@ -82,8 +94,8 @@ public class ConnectFieldOptionResource
     }
 
     @PUT
-    @Path("/{optionId}")
-    public Response putOption(ConnectFieldOptionBean connectFieldOptionBean, @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @PathParam("optionId") Integer optionId, @Context HttpServletRequest servletRequest)
+    @Path ("/{optionId}")
+    public Response putOption(ConnectFieldOptionBean connectFieldOptionBean, @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @PathParam ("optionId") Integer optionId, @Context HttpServletRequest servletRequest)
     {
         return beansFactory.fromBean(optionId, connectFieldOptionBean)
                 .left().map(responseFactory::errorResponse)
@@ -94,8 +106,8 @@ public class ConnectFieldOptionResource
     }
 
     @DELETE
-    @Path("/{optionId}")
-    public Response delete(@PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @PathParam("optionId") Integer optionId, @Context HttpServletRequest servletRequest)
+    @Path ("/{optionId}")
+    public Response delete(@PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @PathParam ("optionId") Integer optionId, @Context HttpServletRequest servletRequest)
     {
         ServiceResult deleteResult = connectFieldOptionService.removeOption(
                 AuthenticationData.byRequest(servletRequest), FieldId.of(addonKey, fieldKey), optionId);
@@ -104,7 +116,7 @@ public class ConnectFieldOptionResource
     }
 
     @POST
-    @Path("/replace")
+    @Path ("/replace")
     public Response replace(ReplaceRequestBean replaceRequestBean, @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @Context HttpServletRequest servletRequest)
     {
         if (replaceRequestBean.getFrom() == null || replaceRequestBean.getTo() == null)

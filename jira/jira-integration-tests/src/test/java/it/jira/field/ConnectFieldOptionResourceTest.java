@@ -7,10 +7,12 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Pair;
+import com.atlassian.jira.rest.api.pagination.PageBean;
 import com.atlassian.jira.rest.api.util.ErrorCollection;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.jira.util.Json;
@@ -42,7 +44,9 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class ConnectFieldOptionResourceTest
 {
@@ -86,6 +90,20 @@ public class ConnectFieldOptionResourceTest
         createOption("5");
         createOption("6");
         assertThat(readOptions(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, 5.0d), new ConnectFieldOptionBean(2, 6.0d))));
+    }
+
+    @Test
+    public void testPagination() throws Exception
+    {
+        Stream.of("1","2","3","4","5").forEach(this::createOption);
+        PageBean<ConnectFieldOptionBean> page1 = readOptions(0, 3);
+        PageBean<ConnectFieldOptionBean> page2 = readOptions(3, 7);
+
+        assertFalse(page1.getIsLast());
+        assertTrue(page2.getIsLast());
+
+        assertThat(page1.getValues(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, 1.0d), new ConnectFieldOptionBean(2, 2.0d), new ConnectFieldOptionBean(3, 3.0d))));
+        assertThat(page2.getValues(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(4, 4.0d), new ConnectFieldOptionBean(5, 5.0d))));
     }
 
     @Test
@@ -237,8 +255,13 @@ public class ConnectFieldOptionResourceTest
 
     private List<ConnectFieldOptionBean> readOptions() throws Exception
     {
-        HttpURLConnection httpURLConnection = establishConnection("", HttpMethod.GET);
-        Either<ErrorCollection, List<ConnectFieldOptionBean>> allOptions = readOutput(httpURLConnection, new TypeToken<List<ConnectFieldOptionBean>>()
+        return readOptions(0, 1000).getValues();
+    }
+
+    private PageBean<ConnectFieldOptionBean> readOptions(Integer startAt, Integer maxResults) throws Exception
+    {
+        HttpURLConnection httpURLConnection = establishConnection(String.format("?startAt=%d&maxResults=%d", startAt, maxResults), HttpMethod.GET);
+        Either<ErrorCollection, PageBean<ConnectFieldOptionBean>> allOptions = readOutput(httpURLConnection, new TypeToken<PageBean<ConnectFieldOptionBean>>()
         {
         }.getType());
 
@@ -292,7 +315,7 @@ public class ConnectFieldOptionResourceTest
             String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
             String jwt = AddonTestUtils.generateJwtSignature(method, url, addonKey, sharedSecret, baseUrl, null);
 
-            URL urlWithJwt = new URL(url + "?jwt=" + jwt);
+            URL urlWithJwt = new URL(url + (path.contains("?") ? "&" : "?") + "jwt=" + jwt);
 
             HttpURLConnection connection = (HttpURLConnection) urlWithJwt.openConnection();
             connection.setRequestMethod(method.name());

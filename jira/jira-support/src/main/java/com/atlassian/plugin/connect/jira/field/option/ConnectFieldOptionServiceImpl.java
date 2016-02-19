@@ -8,16 +8,20 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.fugue.Either;
+import com.atlassian.fugue.Pair;
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceOutcomeImpl;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.ErrorCollections;
+import com.atlassian.jira.util.Page;
+import com.atlassian.jira.util.PageRequest;
 import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.db.ConnectFieldOptionManager;
 import com.atlassian.plugin.connect.jira.field.option.db.CustomFieldValueManager;
+import com.atlassian.plugin.connect.jira.util.Pages;
 import com.atlassian.plugin.connect.jira.util.ServiceOutcomes;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -71,10 +75,12 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
     }
 
     @Override
-    public ServiceOutcome<List<ConnectFieldOption>> getAllOptions(AuthenticationData auth, final FieldId fieldId)
+    public ServiceOutcome<Page<ConnectFieldOption>> getAllOptions(AuthenticationData auth, final FieldId fieldId, PageRequest pageRequest)
     {
-        return authenticated(auth, fieldId, () ->
-                successOutcome(connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey())));
+        return authenticated(auth, fieldId, () -> {
+            Pair<List<ConnectFieldOption>, Long> options = connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey(), pageRequest);
+            return successOutcome(Pages.page(options.left(), options.right(), pageRequest));
+        });
     }
 
     @Override
