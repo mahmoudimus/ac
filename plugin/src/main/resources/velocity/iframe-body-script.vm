@@ -1,22 +1,6 @@
 <script class="ap-iframe-body-script">
   (function(){
     var data = #parse("velocity/iframe-json.vm");
-    data.options = { 
-      isFullPage: (data.general === "1"),
-      autoresize: (data.general === "1"),
-      user: {
-        timeZone: data.timeZone,
-        fullName: data.fullName,
-        uid: data.uid,
-        ukey: data.ukey
-      },
-      history: {
-        state: (window.location.hash ? window.location.hash.substr(2) : "")
-      },
-      productContext: JSON.parse(data.productCtx),
-      contextPath: data.cp
-    };
-    var container = connectHost.create(data);
-    $("#embedded-" + _AP.util.escapeSelector("$namespace")).append(container);
+    _AP.appendConnectAddon(data);
   }());
 </script>

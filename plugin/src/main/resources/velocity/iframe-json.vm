@@ -1,6 +1,6 @@
 {
     "addon_key":"$plugin.key",
-    "key": "$namespace".replace("$plugin.key" + "__",''),
+    "key": "$namespace",
     "cp":"$contextPath",
     "uid":"$userId",
     "ukey":"$userKey",
