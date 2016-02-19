@@ -40,9 +40,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-iframe-host-js</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-extensions</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-user</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-create-issue-dialog</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-product-extensions</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -96,11 +94,20 @@
 
     <!-- JIRA specific javascript modules -->
 
-    <web-resource key="workflow-post-function">
-        <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function/workflow-post-function.js" />
-        <resource type="download" name="workflow-post-function-rpc.js" location="js/jira/workflow-post-function/workflow-post-function-rpc.js" />
+    <web-resource key="product-extensions">
+        <resource type="download" name="jira-product-extensions.js" location="js/jira/main.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-create-issue-dialog</dependency>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="workflow-post-function">
+        <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function/workflow-post-function.js" />
+        <resource type="download" name="workflow-post-function-utils.js" location="js/jira/workflow-post-function/workflow-post-function-utils.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -122,8 +129,8 @@
 
     <web-resource key="events">
         <resource type="download" name="jira-events.js" location="/js/jira/events/events.js" />
-        <resource type="download" name="jira-events-rpc.js" location="/js/jira/events/events-rpc.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
+<!--         <resource type="download" name="jira-events-rpc.js" location="/js/jira/events/events-rpc.js" />
+ -->        <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>

@@ -1,47 +1,32 @@
-(function($, define){
-    "use strict";
-    define("ac/jira/workflow-post-function", function() {
-        function getPostFunctionId(){
-            return $("input[name='postFunction.id']").val();
-        }
+define("ac/jira/workflow-post-function", ["ac/jira/workflow-post-function-utils"], function(workflowUtils){
+  "use strict";
+  var workflowSubmissionCallback = function(){}; //noop
 
-        function postFunctionConfigInput (postFunctionId, val) {
-            var element = $("#postFunction-config-" + postFunctionId);
-            if (val) {
-                element.val(val);
-            }
-            return element.val();
-        }
+  connectHost.onIframeEstablished(function(){
+    if(workflowUtils.isOnWorkflowPostFunctionPage()){
+      var postFunctionId = workflowUtils.getPostFunctionId();
+      if(typeof postFunctionId === "string"){
+        workflowUtils.registerSubmissionButton(postFunctionId, function(callback){
+          workflowSubmissionCallback = callback;
+          connectHost.broadcastEvent("jira_workflow_post_function_submit", {});
+        });
+      }
+    }
+  });
 
-        function isOnWorkflowPostFunctionPage () {
-            return ($("input[name='postFunction.id']").length > 0);
-        }
-
-        function registerSubmissionButton (postFunctionId, callback, repeat) {
-            if(!isOnWorkflowPostFunctionPage()){
-                throw "Not on a workflow configuration page";
-            }
-            var done = false;
-            $(document).delegate("#add_submit, #update_submit", "click", function (e) {
-                if(!done || repeat){
-                    e.preventDefault();
-                    callback(function (either) {
-                        if (either.valid) {
-                            postFunctionConfigInput(postFunctionId, either.value);
-                            done = true;
-                            $(e.target).click();
-                        }
-                    });
-                }
-            });
-        }
-
-        return {
-            postFunctionConfigInput: postFunctionConfigInput,
-            isOnWorkflowPostFunctionPage: isOnWorkflowPostFunctionPage,
-            registerSubmissionButton: registerSubmissionButton,
-            getPostFunctionId: getPostFunctionId
-        };
-    });
-
-})(AJS.$, define);
+  return {
+    getWorkflowConfiguration: function(callback){
+      if(!workflowUtils.isOnWorkflowPostFunctionPage()){
+        return;
+      }
+      var val = workflowUtils.postFunctionConfigInput(callback._context.extension.options.productContext["postFunction.id"]);
+      if (callback) {
+       callback(val);
+      }
+      return val;
+    },
+    _submitWorkflowConfigurationResponse: function(data, callback){
+      workflowSubmissionCallback(data);
+    }
+  };
+});
