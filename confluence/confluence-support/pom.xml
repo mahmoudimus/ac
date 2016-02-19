@@ -66,6 +66,12 @@
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.confluence.plugins</groupId>
+            <artifactId>confluence-mentions-plugin</artifactId>
+            <version>${confluence-mentions.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>external.atlassian.json</groupId>
