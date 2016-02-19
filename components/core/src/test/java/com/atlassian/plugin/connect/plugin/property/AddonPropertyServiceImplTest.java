@@ -3,19 +3,17 @@ package com.atlassian.plugin.connect.plugin.property;
 import java.util.Collections;
 import java.util.Optional;
 
+import com.atlassian.plugin.connect.api.auth.AddonDataAccessChecker;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService.DeleteServiceResult;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService.PutServiceResult;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.sal.api.user.UserKey;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Function;
-
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.junit.Before;
@@ -30,12 +28,14 @@ import org.mockito.stubbing.Answer;
 import static com.atlassian.plugin.connect.api.property.AddonPropertyService.OperationStatus;
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl.OperationStatusImpl;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class AddonPropertyServiceImplTest
 {
     public static final UserKey userKey = new UserKey("userkey");
@@ -49,7 +49,7 @@ public class AddonPropertyServiceImplTest
     @Mock
     private UserProfile user;
     @Mock
-    private UserManager userManager;
+    private AddonDataAccessChecker addonDataAccessChecker;
     @Mock
     private ConnectAddonRegistry connectAddonRegistry;
 
@@ -60,11 +60,12 @@ public class AddonPropertyServiceImplTest
     @Before
     public void init()
     {
-        service = new AddonPropertyServiceImpl(store, userManager, connectAddonRegistry);
+        service = new AddonPropertyServiceImpl(store, connectAddonRegistry, addonDataAccessChecker);
         when(user.getUserKey()).thenReturn(userKey);
         when(connectAddonRegistry.hasAddonWithKey(addonKey)).thenReturn(true);
         mockFunction = getMockForFunction();
         mockPutFunction = getMockForPutFunction();
+        when(addonDataAccessChecker.hasAccessToAddon(any(UserProfile.class), eq(addonKey), eq(addonKey))).thenReturn(true);
     }
 
     @Test
@@ -76,7 +77,7 @@ public class AddonPropertyServiceImplTest
     @Test
     public void testGetExistingPropertyWhenSysAdmin() throws Exception
     {
-        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
         testGetExistingProperty(null);
     }
 
@@ -89,7 +90,7 @@ public class AddonPropertyServiceImplTest
     @Test
     public void testGetNonExistingPropertyWhenSysAdmin() throws Exception
     {
-        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
         testGetNonExistingProperty(null);
     }
 
@@ -102,7 +103,7 @@ public class AddonPropertyServiceImplTest
     @Test
     public void testPutNonExistingValidPropertyWhenSysAdmin() throws Exception
     {
-        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
         testPutNonExistingValidProperty(null);
     }
 
@@ -115,7 +116,7 @@ public class AddonPropertyServiceImplTest
     @Test
     public void testPutExistingValidPropertyWhenSysAdmin() throws Exception
     {
-        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
         testPutExistingValidProperty(null);
     }
 
@@ -128,7 +129,7 @@ public class AddonPropertyServiceImplTest
     @Test
     public void testDeleteExistingPropertyWhenSysAdmin() throws Exception
     {
-        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
         testDeleteExistingProperty(null);
     }
 
@@ -141,7 +142,7 @@ public class AddonPropertyServiceImplTest
     @Test
     public void testDeleteNonExistingPropertyWhenSysAdmin() throws Exception
     {
-        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
         testDeleteNonExistingProperty(null);
     }
 
@@ -154,7 +155,7 @@ public class AddonPropertyServiceImplTest
     @Test
     public void testListPropertiesWhenSysAdmin() throws Exception
     {
-        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
         testListProperties(null);
     }
 
@@ -269,7 +270,7 @@ public class AddonPropertyServiceImplTest
     public void testAddonNotFoundWhenPluginNotInstalledAndSysAdmin() throws Exception
     {
         when(connectAddonRegistry.hasAddonWithKey(addonKey)).thenReturn(false);
-        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(addonDataAccessChecker.hasAccessToAddon(eq(user), anyString(), anyString())).thenReturn(true);
 
         AddonPropertyService.GetServiceResult result = service.getPropertyValue(user, null, addonKey, "");
         result.fold(mockFunction, null);
@@ -439,10 +440,10 @@ public class AddonPropertyServiceImplTest
     private void assertValidJson(String value)
     {
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddonPropertyStore.PutResult.PROPERTY_UPDATED, Optional.of(
-            property));
+                property));
         when(store.setPropertyValue(addonKey, property.getKey(), value)).thenReturn(mockedResult);
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(new AddonProperty(
-            property.getKey(), property.getValue(), 0)));
+                property.getKey(), property.getValue(), 0)));
         PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, property.getKey(), value, alwaysTrue());
 
         Function<AddonPropertyService.PutOperationStatus, Void> mockPutFunction = getMockForPutFunction();
@@ -484,13 +485,13 @@ public class AddonPropertyServiceImplTest
         });
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ("unchecked")
     private Function<OperationStatus, Void> getMockForFunction()
     {
         return (Function<OperationStatus, Void>) mock(Function.class);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ("unchecked")
     private Function<AddonPropertyService.PutOperationStatus, Void> getMockForPutFunction()
     {
         return (Function<AddonPropertyService.PutOperationStatus, Void>) mock(Function.class);

@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.atlassian.plugin.connect.api.auth.AddonDataAccessChecker;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
@@ -85,14 +86,14 @@ public class AddonPropertyServiceImpl implements AddonPropertyService
     public static final int MAXIMUM_PROPERTY_VALUE_LENGTH = 32 * 1024; //32KB
 
     private final AddonPropertyStore store;
-    private final UserManager userManager;
     private final ConnectAddonRegistry connectAddonRegistry;
+    private final AddonDataAccessChecker addonDataAccessChecker;
 
     @Autowired
-    public AddonPropertyServiceImpl(AddonPropertyStore store, UserManager userManager, ConnectAddonRegistry connectAddonRegistry)
+    public AddonPropertyServiceImpl(AddonPropertyStore store, ConnectAddonRegistry connectAddonRegistry, final AddonDataAccessChecker addonDataAccessChecker)
     {
+        this.addonDataAccessChecker = addonDataAccessChecker;
         this.store = checkNotNull(store);
-        this.userManager = checkNotNull(userManager);
         this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
     }
 
@@ -310,22 +311,12 @@ public class AddonPropertyServiceImpl implements AddonPropertyService
 
     private boolean hasAccessToData(final UserProfile user, final String sourcePluginKey, final String addonKey)
     {
-        return pluginHasPermissions(sourcePluginKey, addonKey) || (sourcePluginKey == null && isSysAdmin(user));
-    }
-
-    private boolean isSysAdmin(final UserProfile user)
-    {
-        return userManager.isSystemAdmin(user.getUserKey());
+        return addonDataAccessChecker.hasAccessToAddon(user, sourcePluginKey, addonKey);
     }
 
     private boolean loggedIn(final UserProfile user)
     {
         return user != null;
-    }
-
-    private boolean pluginHasPermissions(String requestKey, String addonKey)
-    {
-        return requestKey != null && requestKey.equals(addonKey);
     }
 
     private class GetOrDeletePropertyInput

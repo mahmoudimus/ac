@@ -17,6 +17,7 @@ import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.ErrorCollections;
 import com.atlassian.jira.util.Page;
 import com.atlassian.jira.util.PageRequest;
+import com.atlassian.plugin.connect.api.auth.AddonDataAccessChecker;
 import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.db.ConnectFieldOptionManager;
@@ -51,9 +52,10 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
     private final UserManager userManager;
     private final CustomFieldValueManager customFieldValueManager;
     private final CustomFieldManager customFieldManager;
+    private final AddonDataAccessChecker addonDataAccessChecker;
 
     @Autowired
-    public ConnectFieldOptionServiceImpl(final ConnectFieldOptionManager connectFieldOptionManager, final I18nResolver i18n, final AddonKeyExtractor addonKeyExtractor, final UserManager userManager, final CustomFieldValueManager customFieldValueManager, final CustomFieldManager customFieldManager)
+    public ConnectFieldOptionServiceImpl(final ConnectFieldOptionManager connectFieldOptionManager, final I18nResolver i18n, final AddonKeyExtractor addonKeyExtractor, final UserManager userManager, final CustomFieldValueManager customFieldValueManager, final CustomFieldManager customFieldManager, final AddonDataAccessChecker addonDataAccessChecker)
     {
         this.connectFieldOptionManager = connectFieldOptionManager;
         this.i18n = i18n;
@@ -61,6 +63,7 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
         this.userManager = userManager;
         this.customFieldValueManager = customFieldValueManager;
         this.customFieldManager = customFieldManager;
+        this.addonDataAccessChecker = addonDataAccessChecker;
     }
 
     @Override
@@ -169,10 +172,7 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
 
     private ServiceResult hasAccess(@Nullable final UserProfile user, @Nullable final String currentAddOnKey, final FieldId fieldId)
     {
-        boolean hasAccess = currentAddOnKey != null && currentAddOnKey.equals(fieldId.getAddonKey()) ||
-                user != null && userManager.isSystemAdmin(user.getUserKey());
-
-        if (!hasAccess)
+        if (!addonDataAccessChecker.hasAccessToAddon(user, currentAddOnKey, fieldId.getAddonKey()))
         {
             return errorResult(ErrorCollections.create(i18n.getText("connect.issue.field.option.forbidden.addon", fieldId.getAddonKey()), FORBIDDEN));
         }
