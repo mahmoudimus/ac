@@ -107,17 +107,18 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
             resultBuilder.addError("You must specify a space for new extensible content.");
         }
 
-        if (container instanceof Space)
+        if (container == null)
         {
             // Check if current extensible content type can be a first class content type
-            Space containerSpace = ((Space) container);
-            if (!supportedContainerTypes.contains(containerSpace.getType().getType()))
+            Space space = newContent.getSpaceRef().get();
+            if (!supportedContainerTypes.contains(space.getType().getType()))
             {
                 resultBuilder.addError(String.format(
                         "Extensible Content Type %s can not be a child of %s space.",
-                        contentTypeKey, containerSpace.getType().getType()));
+                        contentTypeKey, space.getType().getType()));
             }
         }
+
         else if (container instanceof Content)
         {
             Content containerContent = ((Content) container);

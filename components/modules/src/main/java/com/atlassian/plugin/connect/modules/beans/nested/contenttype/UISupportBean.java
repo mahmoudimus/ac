@@ -4,7 +4,7 @@ import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 
-@SchemaDefinition("uiSupport")
+@SchemaDefinition("extensiveContentTypeUISupport")
 public class UISupportBean extends BaseModuleBean
 {
     private String contentViewComponent;

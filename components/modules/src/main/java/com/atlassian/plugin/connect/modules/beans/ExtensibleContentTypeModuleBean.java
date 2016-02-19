@@ -13,7 +13,7 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
     @Required
     private UISupportBean uiSupport;
 
-    private OperationSupportBean operationSupportBean;
+    private OperationSupportBean operationSupport;
 
     @Required
     private APISupportBean apiSupport;
@@ -31,7 +31,7 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
 
     private void initialise()
     {
-        operationSupportBean = ObjectUtils.defaultIfNull(operationSupportBean, new OperationSupportBean());
+        operationSupport = ObjectUtils.defaultIfNull(operationSupport, new OperationSupportBean());
     }
 
     public UISupportBean getUiSupport()
@@ -39,9 +39,9 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
         return uiSupport;
     }
 
-    public OperationSupportBean getOperationSupportBean()
+    public OperationSupportBean getOperationSupport()
     {
-        return operationSupportBean;
+        return operationSupport;
     }
 
     public APISupportBean getApiSupport()
