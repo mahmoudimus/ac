@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.confluence.contenttype;
 import com.atlassian.confluence.content.ContentEntityAdapterParent;
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.BodyType;
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.fugue.Option;
 
@@ -55,6 +56,16 @@ public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent
     public Option<String> getExcerpt(final CustomContentEntityObject pluginContentEntityObject)
     {
         return Option.none();
+    }
+
+    @Override
+    public boolean isAllowedParent(CustomContentEntityObject child, CustomContentEntityObject parent) {
+        return true;
+    }
+
+    @Override
+    public boolean isAllowedContainer(ContentEntityObject child, ContentEntityObject container) {
+        return true;
     }
 
     @Override
