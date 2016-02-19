@@ -12,7 +12,6 @@ import com.atlassian.plugin.module.ModuleFactory;
 public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDescriptor
 {
     private final String contentTypeKey;
-    private final String completeModuleKey;
     private final ExtensibleContentTypeModuleBean bean;
     private final ContentTypeMapper contentTypeMapper;
     private final ApiSupportProvider apiSupportProvider;
@@ -20,7 +19,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
 
     public ExtensibleContentTypeModuleDescriptor(
             String contentTypeKey,
-            String completeModuleKey,
             ExtensibleContentTypeModuleBean bean,
             ModuleFactory moduleFactory,
             ContentTypeMapper contentTypeMapper,
@@ -31,7 +29,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
         this.bean = bean;
 
         this.contentTypeKey = contentTypeKey;
-        this.completeModuleKey = completeModuleKey;
         this.contentTypeMapper = contentTypeMapper;
         this.apiSupportProvider = apiSupportProvider;
         this.customContentApiSupportParams = customContentApiSupportParams;
@@ -64,6 +61,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
     @Override
     public String getCompleteKey()
     {
-        return completeModuleKey;
+        return contentTypeKey;
     }
 }

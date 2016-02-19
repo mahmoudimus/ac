@@ -46,10 +46,9 @@ public class ExtensibleContentTypeModuleDescriptorFactory
     public ContentTypeModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
         String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
-        String completeModuleKey = ExtensibleContentTypeUtils.getCompleteModuleKey(addon, bean);
 
         Element descriptionElement = new DOMElement("description");
-        descriptionElement.addText("Support for Extensible Content Type " + completeModuleKey);
+        descriptionElement.addText("Support for Extensible Content Type " + contentTypeKey);
 
         Element contentTypeElement = new DOMElement("content-type");
         contentTypeElement.addAttribute("key", contentTypeKey);
@@ -65,7 +64,6 @@ public class ExtensibleContentTypeModuleDescriptorFactory
         final ExtensibleContentTypeModuleDescriptor descriptor =
                 new ExtensibleContentTypeModuleDescriptor(
                         contentTypeKey,
-                        completeModuleKey,
                         bean,
                         moduleFactory,
                         contentTypeMapper,
