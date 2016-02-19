@@ -7,6 +7,7 @@ import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -85,16 +86,32 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     @Override
     public Plugin getPlugin(String pluginKey)
     {
-        Plugin plugin = null;
+        try
+        {
+            return getPluginImpl(pluginKey);
+        }
+        catch (InvalidDescriptorException e)
+        {
+            PluginState state = getPluginStateForAddon(pluginKey);
+            return addonToPluginFactory.create(pluginKey, state);
+        }
+    }
 
+    private Plugin getPluginImpl(String pluginKey)
+    {
+        Plugin plugin = null;
         Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
         if (optionalAddon.isPresent())
         {
-            PluginState state = isPluginEnabled(pluginKey) ? PluginState.ENABLED : PluginState.DISABLED;
+            PluginState state = getPluginStateForAddon(pluginKey);
             plugin = addonToPluginFactory.create(optionalAddon.get(), state);
         }
-
         return plugin;
+    }
+
+    private PluginState getPluginStateForAddon(String pluginKey)
+    {
+        return isPluginEnabled(pluginKey) ? PluginState.ENABLED : PluginState.DISABLED;
     }
 
     @Override

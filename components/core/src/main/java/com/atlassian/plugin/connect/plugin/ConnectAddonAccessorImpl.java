@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.lifecycle.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -40,7 +41,7 @@ public class ConnectAddonAccessorImpl implements ConnectAddonAccessor
     }
 
     @Override
-    public Optional<ConnectAddonBean> getAddon(String addonKey)
+    public Optional<ConnectAddonBean> getAddon(String addonKey) throws InvalidDescriptorException
     {
         return getAddonForDescriptor(addonRegistry.getDescriptor(addonKey));
     }
@@ -52,7 +53,7 @@ public class ConnectAddonAccessorImpl implements ConnectAddonAccessor
     }
 
     @Override
-    public Collection<ConnectAddonBean> getAllAddons()
+    public Collection<ConnectAddonBean> getAllAddons() throws InvalidDescriptorException
     {
         ImmutableList.Builder<ConnectAddonBean> addonsBuilder = ImmutableList.builder();
         for (AddonSettings addonSettings : addonRegistry.getAllAddonSettings())
@@ -66,7 +67,7 @@ public class ConnectAddonAccessorImpl implements ConnectAddonAccessor
         return addonsBuilder.build();
     }
 
-    private Optional<ConnectAddonBean> getAddonForDescriptor(@Nullable String descriptor)
+    private Optional<ConnectAddonBean> getAddonForDescriptor(@Nullable String descriptor) throws InvalidDescriptorException
     {
         Optional<ConnectAddonBean> optionalAddon = Optional.empty();
         if (!Strings.isNullOrEmpty(descriptor))

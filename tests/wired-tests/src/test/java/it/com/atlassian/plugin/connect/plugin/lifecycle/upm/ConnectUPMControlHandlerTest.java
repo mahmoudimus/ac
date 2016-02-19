@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ConnectUPMControlHandlerTest
@@ -31,13 +33,22 @@ public class ConnectUPMControlHandlerTest
     }
 
     @Test
-    public void shouldReturnAddonWithInvalidDescriptor() throws JsonProcessingException
+    public void shouldReturnAndUninstallAddonWithInvalidDescriptor() throws JsonProcessingException
     {
         storeInstallationWithInvalidDescriptor();
         Plugin plugin = pluginControlHandler.getPlugin(ADDON_KEY);
-        assertThat(plugin.getKey(), equals(ADDON_KEY));
+        assertThat(plugin.getKey(), equalTo(ADDON_KEY));
+
+        pluginControlHandler.uninstall(plugin);
+
+        assertThat(pluginControlHandler.getPlugin(ADDON_KEY), nullValue());
     }
 
+    /**
+     * Stores an add-on installation with an invalid descriptor (missing baseUrl field).
+     *
+     * @throws JsonProcessingException if descriptor serialization fails
+     */
     private void storeInstallationWithInvalidDescriptor() throws JsonProcessingException
     {
         AuthenticationType authenticationType = AuthenticationType.NONE;
