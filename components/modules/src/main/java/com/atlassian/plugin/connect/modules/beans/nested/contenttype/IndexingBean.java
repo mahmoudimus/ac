@@ -21,19 +21,29 @@ public class IndexingBean
     private boolean enabled;
 
     /**
-     * Defines the keys of content property that should be appended to the body text that is indexed by Extractors.
+     * Defines the key of content property that should be appended to the body text that is indexed by Extractors.
      * This allows add-on to add additional information to default text in Confluence search
      */
-    private List<String> contentPropertyBody;
+    private String contentPropertyBody;
 
     public IndexingBean()
     {
-        this(true, Lists.newArrayList());
+        this(true, "");
     }
 
-    public IndexingBean(boolean enabled, ArrayList<String> contentPropertyBody)
+    public IndexingBean(boolean enabled, String contentPropertyBody)
     {
         this.enabled = enabled;
         this.contentPropertyBody = contentPropertyBody;
+    }
+
+    public boolean isEnabled()
+    {
+        return enabled;
+    }
+
+    public String getContentPropertyBody()
+    {
+        return contentPropertyBody;
     }
 }

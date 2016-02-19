@@ -23,6 +23,7 @@ public class ExtensibleContentTypeModuleDescriptorFactory
         implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentTypeModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(ExtensibleContentTypeModuleDescriptorFactory.class);
+
     private final ModuleFactory moduleFactory;
     private final ContentTypeMapper contentTypeMapper;
     private final ApiSupportProvider apiSupportProvider;
@@ -48,7 +49,7 @@ public class ExtensibleContentTypeModuleDescriptorFactory
         String completeModuleKey = ExtensibleContentTypeUtils.getCompleteModuleKey(addon, bean);
 
         Element descriptionElement = new DOMElement("description");
-        descriptionElement.addText("Support for Extensible Content Type for Atlassian Connect add-ons");
+        descriptionElement.addText("Support for Extensible Content Type " + completeModuleKey);
 
         Element contentTypeElement = new DOMElement("content-type");
         contentTypeElement.addAttribute("key", contentTypeKey);

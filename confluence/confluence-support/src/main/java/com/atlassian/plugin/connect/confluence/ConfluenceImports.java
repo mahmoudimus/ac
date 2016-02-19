@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.confluence;
 
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
+import com.atlassian.confluence.api.service.content.ContentPropertyService;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
@@ -69,5 +70,6 @@ public class ConfluenceImports {
             @ConfluenceImport ApiSupportProvider apiSupportProvider,
             @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams,
             @ConfluenceImport ModuleFactory moduleFactory) {
+            @ConfluenceImport ContentPropertyService contentPropertyService) {
     }
 }

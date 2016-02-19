@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
+import java.util.Set;
+
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.content.ContentEntityAdapter;
 import com.atlassian.confluence.content.CustomContentEntityObject;
@@ -21,6 +23,8 @@ public class ExtensibleContentType extends BaseCustomContentType
     private final com.atlassian.confluence.security.PermissionDelegate permissionDelegate;
     private final ContentUiSupport contentUiSupport;
     private final CustomContentApiSupportParams customContentApiSupportParams;
+    private final Set<String> supportedContainerTypes;
+    private final Set<String> supportedContainedTypes;
 
     public ExtensibleContentType(
             String contentTypeKey,
@@ -40,6 +44,9 @@ public class ExtensibleContentType extends BaseCustomContentType
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
         this.contentUiSupport = new ExtensibleContentTypeUISupport(contentTypeName, bean);
         this.customContentApiSupportParams = customContentApiSupportParams;
+
+        this.supportedContainerTypes = bean.getApiSupport().getSupportedContainerTypes();
+        this.supportedContainedTypes = bean.getApiSupport().getSupportedContainedTypes();
     }
 
     @Override
@@ -65,7 +72,8 @@ public class ExtensibleContentType extends BaseCustomContentType
     {
         return new ExtensibleContentTypeSupport(
                 contentTypeKey,
-                bean,
+                supportedContainerTypes,
+                supportedContainedTypes,
                 customContentApiSupportParams,
                 apiSupportProvider);
     }

@@ -36,6 +36,8 @@ public class APISupportBean extends BaseModuleBean
     @CommonSchemaAttributes(defaultValue = "")
     private String onDeleteUrl;
 
+    private IndexingBean indexing;
+
     public APISupportBean()
     {
         this(new APISupportBeanBuilder());
@@ -51,6 +53,7 @@ public class APISupportBean extends BaseModuleBean
     {
         supportedContainerTypes = ObjectUtils.defaultIfNull(supportedContainerTypes, Sets.newHashSet());
         supportedContainedTypes = ObjectUtils.defaultIfNull(supportedContainedTypes, Sets.newHashSet());
+        indexing = ObjectUtils.defaultIfNull(indexing, new IndexingBean());
     }
 
     public BodyType getBodyType()
@@ -82,4 +85,10 @@ public class APISupportBean extends BaseModuleBean
     {
         return onDeleteUrl;
     }
+
+    public IndexingBean getIndexing()
+    {
+        return indexing;
+    }
+
 }

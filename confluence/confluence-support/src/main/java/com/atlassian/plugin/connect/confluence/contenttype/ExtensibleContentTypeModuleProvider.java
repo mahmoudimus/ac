@@ -24,16 +24,22 @@ public class ExtensibleContentTypeModuleProvider
     private static final ExtensibleContentTypeModuleMeta META = new ExtensibleContentTypeModuleMeta();
 
     private final ExtensibleContentTypeModuleDescriptorFactory extensibleContentTypeModuleDescriptorFactory;
+    private final ContentPropertyExtractorModuleDescriptorFactory contentPropertyExtractorModuleDescriptorFactory;
+    private final ContentPropertyChangeExtractorModuleDescriptorFactory contentPropertyChangeExtractorModuleDescriptorFactory;
 
     @Autowired
     public ExtensibleContentTypeModuleProvider(
             PluginRetrievalService pluginRetrievalService,
             ConnectJsonSchemaValidator schemaValidator,
-            ExtensibleContentTypeModuleDescriptorFactory extensibleContentTypeModuleDescriptorFactory)
+            ExtensibleContentTypeModuleDescriptorFactory extensibleContentTypeModuleDescriptorFactory,
+            ContentPropertyExtractorModuleDescriptorFactory contentPropertyExtractorModuleDescriptorFactory,
+            ContentPropertyChangeExtractorModuleDescriptorFactory contentPropertyChangeExtractorModuleDescriptorFactory)
     {
         super(pluginRetrievalService, schemaValidator);
 
         this.extensibleContentTypeModuleDescriptorFactory = extensibleContentTypeModuleDescriptorFactory;
+        this.contentPropertyExtractorModuleDescriptorFactory = contentPropertyExtractorModuleDescriptorFactory;
+        this.contentPropertyChangeExtractorModuleDescriptorFactory = contentPropertyChangeExtractorModuleDescriptorFactory;
     }
 
     @Override
@@ -48,9 +54,15 @@ public class ExtensibleContentTypeModuleProvider
         Plugin plugin = pluginRetrievalService.getPlugin();
         List<ModuleDescriptor> descriptors = Lists.newArrayList();
 
-        for (ExtensibleContentTypeModuleBean extensibleContentType : modules)
+        for (ExtensibleContentTypeModuleBean bean : modules)
         {
-            descriptors.add(extensibleContentTypeModuleDescriptorFactory.createModuleDescriptor(extensibleContentType, addon, plugin));
+            descriptors.add(extensibleContentTypeModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin));
+
+            if (bean.getApiSupport().getIndexing().isEnabled())
+            {
+                descriptors.add(contentPropertyExtractorModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin));
+                descriptors.add(contentPropertyChangeExtractorModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin));
+            }
         }
 
         return descriptors;

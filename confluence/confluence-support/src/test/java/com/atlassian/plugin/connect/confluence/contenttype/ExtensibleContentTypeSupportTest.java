@@ -100,7 +100,8 @@ public class ExtensibleContentTypeSupportTest
     private ExtensibleContentTypeSupport buildContentTypeSupport(String contentTypeKey, ExtensibleContentTypeModuleBean bean) {
         return new ExtensibleContentTypeSupport(
                 contentTypeKey,
-                bean,
+                bean.getApiSupport().getSupportedContainerTypes(),
+                bean.getApiSupport().getSupportedContainedTypes(),
                 customContentApiSupportParams,
                 apiSupportProvider);
     }

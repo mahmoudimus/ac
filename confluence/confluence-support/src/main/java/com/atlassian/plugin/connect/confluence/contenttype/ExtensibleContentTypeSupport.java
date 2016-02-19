@@ -19,7 +19,6 @@ import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.apisupport.CustomContentTypeApiSupport;
 import com.atlassian.confluence.pages.ContentConvertible;
-import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 
 public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
 {
@@ -30,7 +29,8 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
 
     public ExtensibleContentTypeSupport(
             String contentTypeKey,
-            ExtensibleContentTypeModuleBean bean,
+            Set<String> supportedContainerTypes,
+            Set<String> supportedContainedTypes,
             CustomContentApiSupportParams params,
             ApiSupportProvider apiSupportProvider)
     {
@@ -39,8 +39,8 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
         this.contentTypeKey = ContentType.valueOf(contentTypeKey);
 
         this.apiSupportProvider = apiSupportProvider;
-        this.supportedContainerTypes = bean.getApiSupport().getSupportedContainerTypes();
-        this.supportedContainedTypes = bean.getApiSupport().getSupportedContainedTypes();
+        this.supportedContainerTypes = supportedContainerTypes;
+        this.supportedContainedTypes = supportedContainedTypes;
     }
 
     @Override
