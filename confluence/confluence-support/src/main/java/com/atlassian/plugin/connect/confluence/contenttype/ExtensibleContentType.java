@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBea
 public class ExtensibleContentType extends BaseCustomContentType
 {
     private final String contentTypeKey;
+    private final String contentTypeName;
     private final ExtensibleContentTypeModuleBean bean;
     private final ApiSupportProvider apiSupportProvider;
     private final ContentEntityAdapter contentEntityAdapter;
@@ -30,13 +31,14 @@ public class ExtensibleContentType extends BaseCustomContentType
     {
         super(ContentType.valueOf(contentTypeKey), apiSupportProvider);
 
-        this.contentTypeKey = contentTypeKey;
         this.bean = bean;
+        this.contentTypeKey = contentTypeKey;
+        this.contentTypeName = bean.getName().getI18nOrValue();
 
         this.apiSupportProvider = apiSupportProvider;
         this.permissionDelegate = new PermissionDelegate();
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
-        this.contentUiSupport = new ExtensibleContentTypeUISupport(contentTypeKey, bean);
+        this.contentUiSupport = new ExtensibleContentTypeUISupport(contentTypeName, bean);
         this.customContentApiSupportParams = customContentApiSupportParams;
     }
 

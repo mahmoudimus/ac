@@ -1,18 +1,21 @@
 package com.atlassian.plugin.connect.modules.beans.nested.contenttype;
 
-import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 @SchemaDefinition("uiSupport")
 public class UISupportBean extends BaseModuleBean
 {
-    private String viewComponent;
+    private String contentViewComponent;
 
-    @Required
-    private I18nProperty typeName;
+    private String editViewComponent;
+
+    private String containerViewComponent;
+
+    private String titleDisplay;
+
+    private String titleSortValue;
 
     private IconsBean icons;
 
@@ -32,14 +35,29 @@ public class UISupportBean extends BaseModuleBean
 
     }
 
-    public String getViewComponent()
+    public String getContentViewComponent()
     {
-        return viewComponent;
+        return contentViewComponent;
     }
 
-    public I18nProperty getTypeName()
+    public String getEditViewComponent()
     {
-        return typeName;
+        return editViewComponent;
+    }
+
+    public String getContainerViewComponent()
+    {
+        return containerViewComponent;
+    }
+
+    public String getTitleDisplay()
+    {
+        return titleDisplay;
+    }
+
+    public String getTitleSortValue()
+    {
+        return titleSortValue;
     }
 
     public IconsBean getIcons()

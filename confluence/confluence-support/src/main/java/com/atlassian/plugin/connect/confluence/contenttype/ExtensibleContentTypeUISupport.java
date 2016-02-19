@@ -9,16 +9,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBe
 
 public class ExtensibleContentTypeUISupport implements ContentUiSupport
 {
-    private final String contentTypeKey;
     private final String contentTypeName;
     private final String iconPath;
 
-    ExtensibleContentTypeUISupport(String contentTypeKey, ExtensibleContentTypeModuleBean bean)
+    ExtensibleContentTypeUISupport(String contentTypeName, ExtensibleContentTypeModuleBean bean)
     {
         UISupportBean uiSupport = bean.getUiSupport();
 
-        this.contentTypeKey = contentTypeKey;
-        this.contentTypeName = uiSupport.getTypeName().getI18nOrValue();
+        this.contentTypeName = contentTypeName;
         this.iconPath = uiSupport.getIcons() == null ? "" : StringUtils.defaultString(uiSupport.getIcons().getItem());
     }
 

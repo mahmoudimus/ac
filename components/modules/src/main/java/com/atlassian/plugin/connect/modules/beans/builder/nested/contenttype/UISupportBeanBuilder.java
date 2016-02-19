@@ -3,13 +3,20 @@ package com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.IconsBean;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 public class UISupportBeanBuilder
         extends BaseModuleBeanBuilder<UISupportBeanBuilder, UISupportBean>
 {
-    private String viewComponent;
-    private I18nProperty typeName;
+    private String contentViewComponent;
+
+    private String editViewComponent;
+
+    private String containerViewComponent;
+
+    private String titleDisplay;
+
+    private String titleSortValue;
+
     private IconsBean icons;
 
     public UISupportBeanBuilder()
@@ -18,13 +25,31 @@ public class UISupportBeanBuilder
 
     public UISupportBeanBuilder withViewComponent(String viewComponent)
     {
-        this.viewComponent = viewComponent;
+        this.contentViewComponent = viewComponent;
         return this;
     }
 
-    public UISupportBeanBuilder withTypeName(I18nProperty typeName)
+    public UISupportBeanBuilder withEditViewComponent(String editViewComponent)
     {
-        this.typeName = typeName;
+        this.editViewComponent = editViewComponent;
+        return this;
+    }
+
+    public UISupportBeanBuilder withContainerViewComponent(String containerViewComponent)
+    {
+        this.containerViewComponent = containerViewComponent;
+        return this;
+    }
+
+    public UISupportBeanBuilder withTitleDisplay(String titleDisplay)
+    {
+        this.titleDisplay = titleDisplay;
+        return this;
+    }
+
+    public UISupportBeanBuilder withTitleSortValue(String titleSortValue)
+    {
+        this.titleSortValue = titleSortValue;
         return this;
     }
 
