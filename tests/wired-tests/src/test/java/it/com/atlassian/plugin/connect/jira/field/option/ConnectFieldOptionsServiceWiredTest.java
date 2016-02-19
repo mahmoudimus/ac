@@ -197,7 +197,7 @@ public class ConnectFieldOptionsServiceWiredTest
         notAuthorized.forEach(data -> methods.forEach(method -> {
             ServiceResult result = method.apply(data);
             assertFalse(result.isValid());
-            assertEquals("Access denied (expected authenticated addon with key \"" + fieldId.getAddonKey() + "\" or a sysadmin)", result.getErrorCollection().getErrorMessages().iterator().next());
+            assertEquals("Access denied (expected an authenticated add-on with key \"" + fieldId.getAddonKey() + "\" or a sysadmin)", result.getErrorCollection().getErrorMessages().iterator().next());
         }));
 
         authorized.forEach(data -> methods.forEach(method -> {
