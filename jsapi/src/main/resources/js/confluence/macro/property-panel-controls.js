@@ -7,7 +7,11 @@
             var controls;
 
             function getMacroControls(allControls) {
-                return _.first(_.filter(_.pluck(allControls, macroName), _.isObject));
+                try {
+                    return _.first(_.filter(_.pluck(allControls, macroName), _.isObject));
+                } catch(e) {
+                    return null;
+                }
             }
             return {
                 getControls: function(callback) {
