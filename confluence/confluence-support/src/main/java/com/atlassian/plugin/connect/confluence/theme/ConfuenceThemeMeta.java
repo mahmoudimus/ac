@@ -10,6 +10,6 @@ public class ConfuenceThemeMeta extends ConnectModuleMeta<ConfluenceThemeModuleB
 {
     public ConfuenceThemeMeta()
     {
-        super("themes", ConfluenceThemeModuleBean.class);
+        super("confluenceThemes", ConfluenceThemeModuleBean.class);
     }
 }

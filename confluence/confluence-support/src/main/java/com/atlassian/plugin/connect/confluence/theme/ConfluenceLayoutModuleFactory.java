@@ -47,24 +47,24 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
                                                          ConnectAddonBean addon,
                                                          Plugin plugin)
     {
-        return createModuleDescriptor(addon, plugin, bean, LayoutType.main);
+        return createModuleDescriptor(addon, plugin, bean, NavigationTargetOverrideInfo.dashboard);
     }
 
 
     public LayoutModuleDescriptor createModuleDescriptor(ConnectAddonBean addon,
                                                          Plugin plugin,
                                                          ConfluenceThemeModuleBean bean,
-                                                         LayoutType type)
+                                                         NavigationTargetOverrideInfo overrideInfo)
     {
         Element dom = new DOMElement("layout");
-        dom.addAttribute("key", ConfluenceThemeUtils.getLayoutKey(addon, bean, type));
-        dom.addAttribute("name", ConfluenceThemeUtils.getLayoutName(addon, bean, type));
+        dom.addAttribute("key", ConfluenceThemeUtils.getLayoutKey(addon, bean, overrideInfo));
+        dom.addAttribute("name", ConfluenceThemeUtils.getLayoutName(addon, bean, overrideInfo));
         dom.addAttribute("class", ConnectThemeDecorator.class.getName());
-        dom.addAttribute("overrides", type.getDecoratorToOverride());
+        dom.addAttribute("overrides", overrideInfo.getDecoratorToOverride());
         dom.addElement("resource")
            .addAttribute("type", "velocity")
            .addAttribute("name", "decorator")
-           .addAttribute("location", type.getDecoratorLocation());
+           .addAttribute("location", overrideInfo.getDecoratorLocation());
 
         LayoutModuleDescriptor layoutModuleDescriptor = new ConnectLayoutModuleDescriptor(moduleFactory);
         layoutModuleDescriptor.init(plugin, dom);

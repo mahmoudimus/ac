@@ -3,17 +3,22 @@
 #* @vtlvariable name="addonTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
 #* @vtlvariable name="currentUser" type="com.atlassian.confluence.user.ConfluenceUserImpl" *#
 #* @vtlvariable name="action" type="com.atlassian.confluence.core.ConfluenceActionSupport" *#
-#set($addonTheme = $confluenceRemoteTheme.themeManager.globalTheme)
-<html class="main.vm">
+#set($addonTheme = $confluenceRemoteTheme.themeManager.getSpaceTheme($action.spaceKey))
+#set($currentUser = $action.authenticatedUser)
+<html class="page.vm">
+<body style="margin: 0">
 <head>
 $webResourceHelper.requireResource("com.atlassian.plugins.atlassian-connect-plugin:confluence-atlassian-connect-resources")
 $webResourceHelper.getRequiredResources()
 </head>
-<body style="margin: 0">
+<content tag="spacekey">$action.spaceKey</content>
 <content tag="connectAddonThemed">true</content>
-    ${addonTheme.getRemoteThemeIframe($addonTheme.layoutTypes.main, {
+    ${addonTheme.getRemoteThemeIframe($addonTheme.layoutTypes.space, {
+        'contentId': "$action.page.id",
+        'spaceKey': $action.spaceKey,
         'username' : $currentUser.fullName,
-        'userKey' : $currentUser.key.stringValue
+        'userKey' : $currentUser.key.stringValue,
+        'contentType':'page'
     })}
 </body>
 </html>

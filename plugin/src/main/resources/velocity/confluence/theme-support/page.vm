@@ -13,11 +13,11 @@ $webResourceHelper.getRequiredResources()
 </head>
 <content tag="spacekey">$action.spaceKey</content>
 <content tag="connectAddonThemed">true</content>
-    ${addonTheme.getRemoteUrl($addonTheme.layoutTypes.page, {
+    ${addonTheme.getRemoteThemeIframe($addonTheme.layoutTypes.page, {
         'contentId': "$action.page.id",
-        'spaceKey':$action.spaceKey,
+        'spaceKey': $action.spaceKey,
         'username' : $currentUser.fullName,
-        'userKey' : $currentUser.key,
+        'userKey' : $currentUser.key.stringValue,
         'contentType':'page'
     })}
 </body>

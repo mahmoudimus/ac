@@ -10,7 +10,8 @@ import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.nested.UiOverrideBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteInterceptionsBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.beans.PropertyDescriptor;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,17 +78,24 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
                         .addAttribute("location", addon.getBaseUrl() + bean.getIcon().getUrl());
 
         /*TODO: create an override registry*/
-        for (UiOverrideBean uiOverrideBean : bean.getOverrides())
+        final ConfluenceThemeRouteInterceptionsBean routes = bean.getRoutes();
+        List<PropertyDescriptor> routeNames = ConfluenceThemeUtils.filterProperties(routes);
+        for (PropertyDescriptor prop : routeNames)
         {
-            LayoutType layoutType = LayoutType.valueOf(uiOverrideBean.getType());
-            dom.addElement("xwork-velocity-result-override")
-               .addAttribute("package", layoutType.getPackageToOverride())
-               .addAttribute("action", layoutType.getActionToOverride())
-               .addAttribute("result", layoutType.getResultToOverride())
-               .addAttribute("override", layoutType.getTemplateLocation());
-            dom.addElement("param")
-               .addAttribute("name", ConfluenceThemeUtils.getOverrideTypeName(uiOverrideBean))
-               .addAttribute("value", uiOverrideBean.getUrl());
+            ConfluenceThemeRouteBean confluenceThemeRouteBean = ConfluenceThemeUtils.getRouteBeanFromProperty(routes, prop);
+            String navigationTargetName = prop.getName();
+            List<NavigationTargetOverrideInfo> navigationTargetOverrideInfo = NavigationTargetName.forNavigationTargetName(navigationTargetName);
+            for (NavigationTargetOverrideInfo targetOverrideInfo : navigationTargetOverrideInfo)
+            {
+                dom.addElement("xwork-velocity-result-override")
+                   .addAttribute("package", targetOverrideInfo.getPackageToOverride())
+                   .addAttribute("action", targetOverrideInfo.getActionToOverride())
+                   .addAttribute("result", targetOverrideInfo.getResultToOverride())
+                   .addAttribute("override", targetOverrideInfo.getTemplateLocation());
+                dom.addElement("param")
+                   .addAttribute("name", ConfluenceThemeUtils.getOverrideTypeName(targetOverrideInfo))
+                   .addAttribute("value", confluenceThemeRouteBean.getUrl());
+            }
         }
         for (LayoutModuleDescriptor layout : layouts)
         {

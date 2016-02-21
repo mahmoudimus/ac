@@ -3,9 +3,7 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.ConfluenceThemeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-import com.atlassian.plugin.connect.modules.beans.nested.UiOverrideBean;
-
-import java.util.List;
+import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteInterceptionsBean;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
@@ -15,11 +13,8 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  */
 public class ConfluenceThemeModuleBean extends RequiredKeyBean
 {
-//    @Required
-//    private I18nProperty description;
-
     @Required
-    private List<UiOverrideBean> overrides;
+    private ConfluenceThemeRouteInterceptionsBean routes;
 
     private IconBean icon;
 
@@ -29,23 +24,18 @@ public class ConfluenceThemeModuleBean extends RequiredKeyBean
         copyFieldsByNameAndType(builder, this);
     }
 
-    public static ConfluenceThemeModuleBeanBuilder newBlueprintModuleBean()
+    public static ConfluenceThemeModuleBeanBuilder newConfluenceThemeModuleBean()
     {
         return new ConfluenceThemeModuleBeanBuilder();
     }
 
-    public List<UiOverrideBean> getOverrides()
+    public ConfluenceThemeRouteInterceptionsBean getRoutes()
     {
-        return overrides;
+        return routes;
     }
 
     public IconBean getIcon()
     {
         return icon;
     }
-
-//    public I18nProperty getDescription()
-//    {
-//        return description;
-//    }
 }

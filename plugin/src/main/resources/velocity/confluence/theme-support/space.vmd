@@ -1,0 +1,15 @@
+#* @vtlvariable name="confluenceRemoteTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" *#
+
+#if($sitemeshPage.getProperty("page.connectAddonThemed") == "true")
+    <html class="page.vmd">
+    <title>$title</title>
+    <head>
+        $head
+    </head>
+    <body style="margin: 0">
+        $body
+    </body>
+    </html>
+#else
+    #parse("/decorators/space.vmd")
+#end

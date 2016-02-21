@@ -2,45 +2,30 @@ package com.atlassian.plugin.connect.confluence.theme;
 
 import com.atlassian.confluence.plugin.descriptor.ThemeModuleDescriptor;
 import com.atlassian.confluence.themes.ExperimentalUnsupportedTheme;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.velocity.htmlsafe.HtmlSafe;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.EnumMap;
+import java.util.Collections;
 import java.util.Map;
 
 /**
- *
+ * A theme implementation which delegates the actual theming to an iframe from a connect addon.
  */
 public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
 {
-    private final RemotablePluginAccessorFactory accessorFactory;
-    private final UserManager userManager;
-    private final ApplicationProperties applicationProperties;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
-    private final EnumMap<LayoutType, String> layoutMap = new EnumMap<>(LayoutType.class);
-    private RemotablePluginAccessor remotablePluginAccessor;
     private String addonKey;
     private String themeKey;
 
     @Autowired
-    public ConfluenceRemoteAddonTheme(RemotablePluginAccessorFactory accessorFactory,
-                                      UserManager userManager,
-                                      ApplicationProperties applicationProperties,
-                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+    public ConfluenceRemoteAddonTheme(IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
-        this.accessorFactory = accessorFactory;
-        this.userManager = userManager;
-        this.applicationProperties = applicationProperties;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
@@ -49,42 +34,28 @@ public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
     {
         super.init(moduleDescriptor);
         Map<String, String> params = moduleDescriptor.getParams();
-        for (LayoutType layoutType : LayoutType.values())
-        {
-            String overrideTypeName = ConfluenceThemeUtils.getOverrideTypeName(layoutType.name());
-            if (params.containsKey(overrideTypeName))
-            {
-                layoutMap.put(layoutType, params.get(overrideTypeName));
-            }
-            else
-            {
-                //TODO: log an error here? something has gone wrong
-                throw new IllegalStateException("no " + overrideTypeName + " in the params map");
-            }
-
-        }
         addonKey = params.get(ConfluenceThemeModuleDescriptorFactory.ADDON_KEY_PROPERTY_KEY);
         themeKey = params.get(ConfluenceThemeModuleDescriptorFactory.THEME_MODULE_KEY_PROPERTY_KEY);
-        remotablePluginAccessor = accessorFactory.get(addonKey);
     }
 
     @HtmlSafe
-    public String getRemoteUrl(LayoutType layoutType, final Map<String, String> extraParams)
+    public String getRemoteThemeIframe(NavigationTargetOverrideInfo navigationTargetOverrideInfo, final Map<String, String> extraParams)
     {
-        IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, themeKey, layoutType.name());
-        ModuleContextParameters context = new HashMapModuleContextParameters(extraParams);
-        context.putAll(extraParams);
+        IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, themeKey, navigationTargetOverrideInfo.name());
+        ModuleContextParameters context = makeThemeModuleParametersMap(extraParams);
         return IFrameRenderStrategyUtil.renderToString(context, iFrameRenderStrategy);
+    }
+
+    private ModuleContextParameters makeThemeModuleParametersMap(Map<String, String> extraParams)
+    {
+        ModuleContextParameters context = new HashMapModuleContextParameters(Collections.emptyMap());
+        context.putAll(extraParams);
+        return context;
     }
 
     public String getAddonKey()
     {
         return addonKey;
-    }
-
-    public String getThemeKey()
-    {
-        return themeKey;
     }
 
     public LayoutConstants getLayoutTypes()
@@ -94,19 +65,24 @@ public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
 
     public static final class LayoutConstants
     {
-        public LayoutType getBlog()
+        public NavigationTargetOverrideInfo getBlog()
         {
-            return LayoutType.blog;
+            return NavigationTargetOverrideInfo.blogpost;
         }
 
-        public LayoutType getMain()
+        public NavigationTargetOverrideInfo getMain()
         {
-            return LayoutType.main;
+            return NavigationTargetOverrideInfo.dashboard;
         }
 
-        public LayoutType getPage()
+        public NavigationTargetOverrideInfo getPage()
         {
-            return LayoutType.page;
+            return NavigationTargetOverrideInfo.page;
+        }
+
+        public NavigationTargetOverrideInfo getSpace()
+        {
+            return NavigationTargetOverrideInfo.space;
         }
     }
 }

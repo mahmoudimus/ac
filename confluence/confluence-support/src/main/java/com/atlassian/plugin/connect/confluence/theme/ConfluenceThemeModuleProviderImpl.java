@@ -11,13 +11,15 @@ import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModulePr
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.nested.UiOverrideBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteInterceptionsBean;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.beans.PropertyDescriptor;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,39 +63,57 @@ public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnect
     {
         Plugin plugin = pluginRetrievalService.getPlugin();
         List<ModuleDescriptor> descriptors = Lists.newArrayList();
-        for (ConfluenceThemeModuleBean moduleBean : modules)
+        for (ConfluenceThemeModuleBean theme : modules)
         {
-            List<LayoutModuleDescriptor> layouts = makeLayouts(addon, plugin, moduleBean);
+            List<LayoutModuleDescriptor> layouts = makeLayouts(addon, plugin, theme);
             descriptors.addAll(layouts);
-//            layouts must come before the theme that uses them
-            descriptors.add(themeDescriptorFactory.createModuleDescriptor(moduleBean, addon, plugin, layouts));
-            for (UiOverrideBean overrides : moduleBean.getOverrides())
+            //layouts must come before the theme that uses them
+            descriptors.add(themeDescriptorFactory.createModuleDescriptor(theme, addon, plugin, layouts));
+            registerIframeRendererStrategy(addon, theme);
+        }
+
+        return descriptors;
+    }
+
+    private void registerIframeRendererStrategy(ConnectAddonBean addon, ConfluenceThemeModuleBean theme)
+    {
+        ConfluenceThemeRouteInterceptionsBean routes = theme.getRoutes();
+        List<PropertyDescriptor> routeNames = ConfluenceThemeUtils.filterProperties(routes);
+        for (PropertyDescriptor routeName : routeNames)
+        {
+            ConfluenceThemeRouteBean overrides = ConfluenceThemeUtils.getRouteBeanFromProperty(routes, routeName);
+            for (NavigationTargetOverrideInfo overrideInfo : NavigationTargetName.forNavigationTargetName(routeName.getName()))
             {
                 IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                                                                                         .addon(addon.getKey())
-                                                                                        .module(moduleBean.getRawKey())
+                                                                                        .module(theme.getRawKey())
                                                                                         .genericBodyTemplate()
                                                                                         .urlTemplate(overrides.getUrl())
                                                                                         .ensureUniqueNamespace(false)
                                                                                         .dimensions("100%", "100%")
                                                                                         .sign(true)
                                                                                         .build();
-                iFrameRenderStrategyRegistry.register(addon.getKey(), moduleBean.getRawKey(), overrides.getType(), renderStrategy);
+                iFrameRenderStrategyRegistry.register(addon.getKey(), theme.getRawKey(), overrideInfo.name(), renderStrategy);
             }
         }
-
-        return descriptors;
     }
 
     private List<LayoutModuleDescriptor> makeLayouts(ConnectAddonBean addon, Plugin plugin, ConfluenceThemeModuleBean moduleBean)
     {
-        return moduleBean.getOverrides()
-                         .stream()
-                         .map(uiOverrideBean ->
+        ConfluenceThemeRouteInterceptionsBean routes = moduleBean.getRoutes();
+        return ConfluenceThemeUtils.filterProperties(routes)
+                     .stream()
+                     .flatMap(routeProperty ->
                               {
-                                  LayoutType type = LayoutType.valueOf(uiOverrideBean.getType());
-                                  return layoutModuleFactory.createModuleDescriptor(addon, plugin, moduleBean, type);
+                                  List<NavigationTargetOverrideInfo> type = NavigationTargetName.forNavigationTargetName(routeProperty.getName());
+                                  return Lists.transform(
+                                          type,
+                                          overrideInfo -> layoutModuleFactory.createModuleDescriptor(
+                                                  addon,
+                                                  plugin,
+                                                  moduleBean,
+                                                  overrideInfo)).stream();
                               })
-                         .collect(Collectors.toList());
+                     .collect(Collectors.toList());
     }
 }
