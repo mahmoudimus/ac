@@ -5,6 +5,7 @@ import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBeanBuilder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -81,7 +82,7 @@ public class MacroPropertyPanelBean extends BaseModuleBean
 
         if (null == controls)
         {
-            controls = newArrayList();
+            controls = ImmutableList.of();
         }
     }
 
