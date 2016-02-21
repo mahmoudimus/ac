@@ -10,7 +10,9 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
 import org.apache.http.HttpStatus;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -57,6 +59,12 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
         {
             remotePlugin.stopAndUninstall();
         }
+    }
+
+    @AfterClass
+    public static void tearDownUrlHandlers()
+    {
+        HttpURLConnection.setFollowRedirects(true);
     }
 
 

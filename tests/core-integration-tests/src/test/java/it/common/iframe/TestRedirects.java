@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -30,6 +31,12 @@ public class TestRedirects
     public static void setupUrlHandlers()
     {
         HttpURLConnection.setFollowRedirects(false);
+    }
+
+    @AfterClass
+    public static void tearDownUrlHandlers()
+    {
+        HttpURLConnection.setFollowRedirects(true);
     }
 
     @Test

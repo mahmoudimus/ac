@@ -1,6 +1,9 @@
 package it.common.iframe;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -157,7 +160,6 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     }
 
     @Test
-    @Ignore
     public void pageClicksGetsNewJwt() throws Exception
     {
         login(testUserFactory.basicUser());
@@ -165,7 +167,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         URL webItemUrl = new URL(page.findLinkElement().getAttribute("href"));
 
         long timeBeforeClick = getSystemTimeBeforeJwtIssue();
-        webItemUrl.openConnection().getInputStream();
+        doRequest(webItemUrl);
 
         verifyIssuedAtTime(timeBeforeClick, PARAMETER_CAPTURING_PAGE_SERVLET);
 
@@ -173,7 +175,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         // We have to wait one second to be sure that token from next request is new.
         Thread.sleep(1000);
 
-        webItemUrl.openConnection().getInputStream();
+        doRequest(webItemUrl);
         verifyIssuedAtTime(lastIssuedAtTime, PARAMETER_CAPTURING_PAGE_SERVLET);
     }
 
@@ -201,6 +203,13 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         page.clickAddonLink();
         RemoteInlineDialog inlineDialog = product.getPageBinder().bind(RemoteInlineDialog.class);
         verifyIframeURLHasVersionNumber(inlineDialog);
+    }
+
+    private void doRequest(final URL url) throws IOException
+    {
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        connection.connect();
+        connection.getResponseCode(); // it waits for response
     }
 
     private String getJwtFromParameterCapturingServlet(ParameterCapturingServlet parameterCapturingServlet)
