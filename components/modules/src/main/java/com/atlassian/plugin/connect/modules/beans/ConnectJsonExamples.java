@@ -2,7 +2,11 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.OperationSupportBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
@@ -34,6 +38,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.IndexingBean;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -124,6 +129,8 @@ public class ConnectJsonExamples {
     public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createContentPropertyIndexExtractionConfigurationExample();
     public static final String CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createContentPropertyIndexKeyConfigurationExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
+    public static final String EXTENSIBLE_CONTENT_TYPE_EXAMPLE = createExtensibleContentTypeExample();
+    public static final String EXTENSIBLE_CONTENT_TYPE_INDEXING_EXAMPLE = createExtensibleContentTypeIndexingExample();
 
     public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
 
@@ -535,6 +542,45 @@ public class ConnectJsonExamples {
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
+    }
+
+    private static String createExtensibleContentTypeIndexingExample()
+    {
+        return gson.toJson(createIndexingBean());
+    }
+
+    private static String createExtensibleContentTypeExample()
+    {
+        ExtensibleContentTypeModuleBean bean = new ExtensibleContentTypeModuleBeanBuilder()
+                .withKey("extensible-content-type-identifier")
+                .withName(new I18nProperty("Extensible Content Type Name", null))
+                .withAPISupport(new APISupportBeanBuilder()
+                        .withBodyType("storage")
+                        .withSupportedContainedTypes(Sets.newHashSet("global", "personal", "page"))
+                        .withSupportedContainerTypes(Sets.newHashSet("comment", "attachment"))
+                        .withOnCreateUrl("/create")
+                        .withOnDeleteUrl("/delete")
+                        .withOnUpdateUrl("/update")
+                        .withIndexing(createIndexingBean())
+                        .build())
+                .withOperationSupport(new OperationSupportBeanBuilder()
+                        .build())
+                .withUISupport(new UISupportBeanBuilder()
+                        .withContentViewComponent("")
+                        .withContentEditComponent("")
+                        .withContainerViewComponent("")
+                        .withTitleDisplay("")
+                        .withTitleSortValue("")
+                        .withIcons("/item.png", "/container.png", "/create.png")
+                        .build())
+                .build();
+
+        return gson.toJson(createModuleArray("contentTypes", bean));
+    }
+
+    private static IndexingBean createIndexingBean()
+    {
+        return new IndexingBean(true, "content.property.key");
     }
 
     private static String createStaticMacroExample() {

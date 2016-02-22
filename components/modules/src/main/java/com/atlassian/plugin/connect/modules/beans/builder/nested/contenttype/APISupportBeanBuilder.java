@@ -38,7 +38,7 @@ public class APISupportBeanBuilder
 
     public APISupportBeanBuilder withBodyType(String bodyType)
     {
-        this.bodyType = BodyType.valueOf(bodyType);
+        this.bodyType = BodyType.valueOf(bodyType.toUpperCase());
         return this;
     }
 
@@ -69,6 +69,12 @@ public class APISupportBeanBuilder
     public APISupportBeanBuilder withOnDeleteUrl(String onDeleteUrl)
     {
         this.onDeleteUrl = onDeleteUrl;
+        return this;
+    }
+
+    public APISupportBeanBuilder withIndexing(IndexingBean indexing)
+    {
+        this.indexing = indexing;
         return this;
     }
 

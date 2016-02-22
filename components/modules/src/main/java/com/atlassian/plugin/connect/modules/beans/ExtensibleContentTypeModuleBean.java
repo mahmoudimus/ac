@@ -8,13 +8,40 @@ import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBe
 
 import org.apache.commons.lang3.ObjectUtils;
 
+/**
+ * Extensible Content Type allow your Connect add-on to provide customized content type that can integrates with Confluence.
+ *
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#EXTENSIBLE_CONTENT_TYPE_EXAMPLE}
+ * @schemaTitle Extensible Content Type
+ *
+ * Extensible Content Type allows Connect add-on developer to declare customized content type which behavior like
+ * existing built in content types: Page, Blog, Comment, etc.
+ *
+ * An Extensible Content Type can:
+ * <ul>
+ *     <li>Created, deleted or removed by using <a href="https://docs.atlassian.com/confluence/REST/latest/">Confluence REST API</a></li>
+ *     <li>Get indexed as normal content type and rendered in search result. </li>
+ *     <li>Can have full screen viewer or dialog as the view component.</li>
+ * </ul>
+ *
+ * @since 1.1.77
+ */
 public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
 {
+    /**
+     * Declares information related for rendering the content in the UI.
+     */
     @Required
     private UISupportBean uiSupport;
 
+    /**
+     * Declares permission for operating this Extensible Content Type.
+     */
     private OperationSupportBean operationSupport;
 
+    /**
+     * Captures business logic for this Extensible Content Type.
+     */
     @Required
     private APISupportBean apiSupport;
 

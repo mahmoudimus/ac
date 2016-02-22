@@ -31,18 +31,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ExtensibleContentTypeSupportTest
 {
-    @Rule
-    public ExpectedException exceptions = ExpectedException.none();
-
-    @Mock
-    private CustomContentApiSupportParams customContentApiSupportParams;
-
-    @Mock
-    private ApiSupportProvider apiSupportProvider;
-
-    @Before
-    public void setUp() {
-    }
+    @Rule private ExpectedException exceptions = ExpectedException.none();
+    @Mock private CustomContentApiSupportParams customContentApiSupportParams;
+    @Mock private ApiSupportProvider apiSupportProvider;
 
     @Test
     public void shouldRestrictSpaceAsContainer() {

@@ -9,7 +9,7 @@ public class UISupportBeanBuilder
 {
     private String contentViewComponent;
 
-    private String editViewComponent;
+    private String contentEditComponent;
 
     private String containerViewComponent;
 
@@ -23,15 +23,15 @@ public class UISupportBeanBuilder
     {
     }
 
-    public UISupportBeanBuilder withViewComponent(String viewComponent)
+    public UISupportBeanBuilder withContentViewComponent(String viewComponent)
     {
         this.contentViewComponent = viewComponent;
         return this;
     }
 
-    public UISupportBeanBuilder withEditViewComponent(String editViewComponent)
+    public UISupportBeanBuilder withContentEditComponent(String editViewComponent)
     {
-        this.editViewComponent = editViewComponent;
+        this.contentEditComponent = editViewComponent;
         return this;
     }
 
@@ -53,9 +53,9 @@ public class UISupportBeanBuilder
         return this;
     }
 
-    public UISupportBeanBuilder withIcons(String createDialog, String singleItem, String collectionItem)
+    public UISupportBeanBuilder withIcons(String item, String container, String create)
     {
-        this.icons = new IconsBean(createDialog, singleItem, collectionItem);
+        this.icons = new IconsBean(item, container, create);
         return this;
     }
 

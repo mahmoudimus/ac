@@ -13,15 +13,35 @@ import com.google.common.collect.Sets;
 
 import org.apache.commons.lang3.ObjectUtils;
 
+/**
+ * Captures business logic for this Extensible Content Type.
+ *
+ * @since 1.1.77
+ */
 @SchemaDefinition("apiSupport")
 public class APISupportBean extends BaseModuleBean
 {
+    /**
+     * The body type of the Extensible Content Type. Defaults to {@code storage}
+     */
     @CommonSchemaAttributes(defaultValue = "storage")
     private BodyType bodyType;
 
+    /**
+     * Defines types that this Extensible Content Type can be contained in.
+     * {@code global} or/and {@code personal} should be set for a first class space content.
+     *
+     * For example: ["global", "page"] indicates a global Space or a Page can be set as the container of
+     * this Extensible Content Type.
+     */
     @Required
     private Set<String> supportedContainerTypes;
 
+    /**
+     * Defines types that can be contained in this Extensible Content Type
+     *
+     * For example: ["comment", "attachment"] indicates Comment and Attachment can be contained in this type.
+     */
     private Set<String> supportedContainedTypes;
 
     @StringSchemaAttributes(format = "uri")
@@ -36,6 +56,9 @@ public class APISupportBean extends BaseModuleBean
     @CommonSchemaAttributes(defaultValue = "")
     private String onDeleteUrl;
 
+    /**
+     * Defines how would this Extensive Content Type be indexed
+     */
     private IndexingBean indexing;
 
     public APISupportBean()

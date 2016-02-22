@@ -4,12 +4,16 @@ import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 
+/**
+ * Declares information related for rendering the content in the UI.
+ * @since 1.1.77
+ */
 @SchemaDefinition("extensiveContentTypeUISupport")
 public class UISupportBean extends BaseModuleBean
 {
     private String contentViewComponent;
 
-    private String editViewComponent;
+    private String contentEditComponent;
 
     private String containerViewComponent;
 
@@ -40,9 +44,9 @@ public class UISupportBean extends BaseModuleBean
         return contentViewComponent;
     }
 
-    public String getEditViewComponent()
+    public String getContentEditComponent()
     {
-        return editViewComponent;
+        return contentEditComponent;
     }
 
     public String getContainerViewComponent()
