@@ -26,8 +26,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * A {@link com.atlassian.webresource.api.data.WebResourceDataProvider} that defines all property panel controls.
  *
- * This data provider is used by the autoconvert javascript to link the autoconvert configuration in all connect add-ons
- * and the autoconvert logic in the tiny mce editor.
+ * This data provider is used by property-panel-controls.js to provide controls added via connect to the front end
  */
 public class PropertyPanelControlWebResourceDataProvider implements WebResourceDataProvider
 {
