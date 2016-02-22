@@ -33,6 +33,7 @@ import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.SharedSecretService;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonEnableFailedEvent;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonEnabledEvent;
@@ -268,45 +269,36 @@ public class ConnectAddonManager
 
         if (addonRegistry.hasDescriptor(pluginKey))
         {
-            ConnectAddonBean addon = connectAddonAccessor.getAddon(pluginKey).get();
-
-            if (null != addon)
+            ConnectAddonBean addon;
+            try
             {
-                try
-                {
-                    beanToModuleRegistrar.registerDescriptorsForBeans(addon);
-                }
-                catch (ConnectModuleRegistrationException e)
-                {
-                    eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, e.getMessage()));
-                    throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
-                }
-
-                if (addonRequiresAuth(addon))
-                {
-                    enableAddonUser(addon);
-                }
-
-                addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
-
-                final ConnectAddonEnabledEvent enabledEvent = new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase()));
-                try
-                {
-                    eventPublisher.publish(enabledEvent);
-                }
-                catch (Exception e) {
-                    log.warn(String.format("Could not fire enabled webhook event for add-on %s, continuing anyway", pluginKey), e);
-                }
-
-                long endTime = System.currentTimeMillis();
-                log.info("Connect addon '" + addon.getKey() + "' enabled in " + (endTime - startTime) + "ms");
+                addon = connectAddonAccessor.getAddon(pluginKey).get();
+                beanToModuleRegistrar.registerDescriptorsForBeans(addon);
             }
-            else
+            catch (InvalidDescriptorException | ConnectModuleRegistrationException e)
             {
-                String message = "Tried to publish plugin enabled event for addon, but got a null ConnectAddonBean when trying to deserialize its stored descriptor. Ignoring...";
-                eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, message));
-                throw new ConnectAddonEnableException(pluginKey, message);
+                eventPublisher.publish(new ConnectAddonEnableFailedEvent(pluginKey, e.getMessage()));
+                throw new ConnectAddonEnableException(pluginKey, "Module registration failed while enabling add-on, skipping.", e);
             }
+
+            if (addonRequiresAuth(addon))
+            {
+                enableAddonUser(addon);
+            }
+
+            addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
+
+            final ConnectAddonEnabledEvent enabledEvent = new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase()));
+            try
+            {
+                eventPublisher.publish(enabledEvent);
+            }
+            catch (Exception e) {
+                log.warn(String.format("Could not fire enabled webhook event for add-on %s, continuing anyway", pluginKey), e);
+            }
+
+            long endTime = System.currentTimeMillis();
+            log.info("Connect addon '" + addon.getKey() + "' enabled in " + (endTime - startTime) + "ms");
         }
         else
         {
@@ -385,7 +377,20 @@ public class ConnectAddonManager
 
             try
             {
-                ConnectAddonBean addon = connectAddonAccessor.getAddon(pluginKey).get();
+                ConnectAddonBean addon = null;
+                try
+                {
+                    addon = connectAddonAccessor.getAddon(pluginKey).get();
+                }
+                catch (InvalidDescriptorException e)
+                {
+                    String message = "Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...";
+                    if (sendEvent)
+                    {
+                        eventPublisher.publish(new ConnectAddonUninstallFailedEvent(pluginKey, message));
+                    }
+                    log.warn(message);
+                }
 
                 disableConnectAddon(pluginKey, false, sendEvent);
 
@@ -424,15 +429,6 @@ public class ConnectAddonManager
                     }
 
                     connectApplinkManager.deleteAppLink(addon);
-                }
-                else
-                {
-                    String message = "Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...";
-                    if (sendEvent)
-                    {
-                        eventPublisher.publish(new ConnectAddonUninstallFailedEvent(pluginKey, message));
-                    }
-                    log.warn(message);
                 }
             }
             finally

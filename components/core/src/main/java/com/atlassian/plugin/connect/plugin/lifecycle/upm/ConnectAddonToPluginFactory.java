@@ -39,6 +39,13 @@ public class ConnectAddonToPluginFactory
         this.moduleValidationExceptionHandler = moduleValidationExceptionHandler;
     }
 
+    /**
+     * Creates a {@link Plugin} for the given add-on descriptor.
+     *
+     * @param addon the descriptor of the add-on
+     * @param state the enablement state of the add-on
+     * @return the plugin
+     */
     public Plugin create(ConnectAddonBean addon, PluginState state)
     {
         ConnectAddonPlugin plugin = new ConnectAddonPlugin(beanToModuleRegistrar.getRegisteredDescriptorsForAddon(addon.getKey()));
@@ -48,6 +55,20 @@ public class ConnectAddonToPluginFactory
         plugin.setPluginState(state);
         plugin.setPluginInformation(createPluginInfo(addon));
 
+        return plugin;
+    }
+    /**
+     * Creates a {@link Plugin} for the key of the given non-retrievable add-on.
+     *
+     * @param addonKey the key of the add-on
+     * @param state the enablement state of the add-on
+     * @return the plugin
+     */
+    public Plugin create(String addonKey, PluginState state)
+    {
+        ConnectAddonPlugin plugin = new ConnectAddonPlugin();
+        plugin.setKey(addonKey);
+        plugin.setPluginState(state);
         return plugin;
     }
 
