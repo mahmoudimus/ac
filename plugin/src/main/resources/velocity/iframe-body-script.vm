@@ -1,6 +1,8 @@
 <script class="ap-iframe-body-script">
   (function(){
-    var data = #parse("velocity/iframe-json.vm");
-    _AP.appendConnectAddon(data);
+    require(['ac/create'], function(create){
+      var data = #parse("velocity/iframe-json.vm");
+      create.appendConnectAddon(data);
+    });
   }());
 </script>
