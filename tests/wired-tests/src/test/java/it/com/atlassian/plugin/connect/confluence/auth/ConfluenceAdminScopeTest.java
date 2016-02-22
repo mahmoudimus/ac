@@ -11,31 +11,26 @@ import org.junit.runner.RunWith;
 
 @Application("confluence")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ConfluenceAdminScopeTest extends ConfluenceAdminScopeTestBase
-{
+public class ConfluenceAdminScopeTest extends ConfluenceAdminScopeTestBase {
     public ConfluenceAdminScopeTest(TestPluginInstaller testPluginInstaller,
                                     JwtApplinkFinder jwtApplinkFinder,
                                     PermissionManager confluencePermissionManager,
-                                    TestAuthenticator testAuthenticator)
-    {
+                                    TestAuthenticator testAuthenticator) {
         super(testPluginInstaller, jwtApplinkFinder, confluencePermissionManager, testAuthenticator);
     }
 
     @Override
-    protected ScopeName getScope()
-    {
+    protected ScopeName getScope() {
         return ScopeName.ADMIN;
     }
 
     @Override
-    protected ScopeName getScopeOneDown()
-    {
+    protected ScopeName getScopeOneDown() {
         return ScopeName.SPACE_ADMIN;
     }
 
     @Override
-    protected boolean shouldBeTopLevelAdmin()
-    {
+    protected boolean shouldBeTopLevelAdmin() {
         return true;
     }
 }

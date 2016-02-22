@@ -29,8 +29,7 @@ import java.util.regex.Pattern;
 /**
  * Provides static host resources for plugin iframes
  */
-public class StaticResourcesFilter implements Filter
-{
+public class StaticResourcesFilter implements Filter {
     public static final String HOST_RESOURCE_PATH = "/atlassian-connect";
     public static final int PLUGIN_TTL_NEAR_FUTURE = 60 * 30;               // 30 min
     public static final int AUI_TTL_FAR_FUTURE = 60 * 60 * 24 * 365;    // 1 year
@@ -43,30 +42,25 @@ public class StaticResourcesFilter implements Filter
     private FilterConfig config;
     private LoadingCache<String, CacheEntry> loadingCache;
 
-    public StaticResourcesFilter(PluginRetrievalService pluginRetrievalService, IsDevModeService isDevModeService)
-    {
+    public StaticResourcesFilter(PluginRetrievalService pluginRetrievalService, IsDevModeService isDevModeService) {
         plugin = pluginRetrievalService.getPlugin();
         this.isDevModeService = isDevModeService;
     }
 
     @Override
-    public void init(FilterConfig config) throws ServletException
-    {
+    public void init(FilterConfig config) throws ServletException {
         this.config = config;
         loadingCache = CacheBuilder.newBuilder()
-                .build(new CacheLoader<String, CacheEntry>()
-                {
+                .build(new CacheLoader<String, CacheEntry>() {
                     @Override
-                    public CacheEntry load(String s) throws Exception
-                    {
+                    public CacheEntry load(String s) throws Exception {
                         return new CacheEntry(s);
                     }
                 });
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
-    {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
@@ -75,8 +69,7 @@ public class StaticResourcesFilter implements Filter
 
         // only serve resources in the host resource path, though this is precautionary only since no other
         // paths should be mapped to this filter in the first place
-        if (!fullPath.startsWith(HOST_RESOURCE_PATH))
-        {
+        if (!fullPath.startsWith(HOST_RESOURCE_PATH)) {
             send404(fullPath, res);
             return;
         }
@@ -85,8 +78,7 @@ public class StaticResourcesFilter implements Filter
         String localPath = fullPath.substring(HOST_RESOURCE_PATH.length() + 1);
 
         // only make selected resources available
-        if (!RESOURCE_PATTERN.matcher(localPath).matches())
-        {
+        if (!RESOURCE_PATTERN.matcher(localPath).matches()) {
             send404(fullPath, res);
             return;
         }
@@ -94,8 +86,7 @@ public class StaticResourcesFilter implements Filter
         // special dev mode case to make developing on all-debug.js not suck
         CacheEntry entry;
         final String allDebugJsPath = "all-debug.js";
-        if (allDebugJsPath.equals(localPath))
-        {
+        if (allDebugJsPath.equals(localPath)) {
             final String moduleDir = "js/";
             // note: any changes here must also be made in plugin/pom.xml!
             final String[] modules = {
@@ -106,8 +97,7 @@ public class StaticResourcesFilter implements Filter
                     "iframe/plugin/_init.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            for (String module : modules)
-            {
+            for (String module : modules) {
                 bout.write(("/* " + module + " */\n").getBytes());
                 InputStream in = plugin.getResourceAsStream(moduleDir + module);
                 IOUtils.copy(in, bout);
@@ -115,16 +105,11 @@ public class StaticResourcesFilter implements Filter
             }
 
             entry = new CacheEntry(allDebugJsPath, bout.toByteArray());
-        }
-        else
-        {
+        } else {
             // ask the cache for an entry for the named resource
-            try
-            {
+            try {
                 entry = loadingCache.get(localPath);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.error("Error loading cache entry [" + localPath + "]", e);
                 // if not found, 404
                 send404(fullPath, res);
@@ -132,8 +117,7 @@ public class StaticResourcesFilter implements Filter
             }
 
             // the entry's data will be empty if the resource was not found
-            if (entry.getData().length == 0)
-            {
+            if (entry.getData().length == 0) {
                 // if not found, 404
                 send404(fullPath, res);
                 return;
@@ -147,12 +131,9 @@ public class StaticResourcesFilter implements Filter
         res.setHeader("Connection", "keep-alive");
 
         String previousToken = req.getHeader("If-None-Match");
-        if (previousToken != null && previousToken.equals(entry.getEtag()))
-        {
+        if (previousToken != null && previousToken.equals(entry.getEtag())) {
             res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-        }
-        else
-        {
+        } else {
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentLength(entry.getData().length);
             ServletOutputStream sos = res.getOutputStream();
@@ -161,14 +142,12 @@ public class StaticResourcesFilter implements Filter
             sos.close();
         }
 
-        if (isDevModeService.isDevMode())
-        {
+        if (isDevModeService.isDevMode()) {
             loadingCache.invalidate(localPath);
         }
     }
 
-    private void setCacheControl(HttpServletResponse res, int ttl)
-    {
+    private void setCacheControl(HttpServletResponse res, int ttl) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
         res.setDateHeader("Date", cal.getTimeInMillis());
@@ -177,49 +156,38 @@ public class StaticResourcesFilter implements Filter
         res.setDateHeader("Expires", cal.getTime().getTime());
     }
 
-    private void send404(String path, HttpServletResponse res) throws IOException
-    {
+    private void send404(String path, HttpServletResponse res) throws IOException {
         res.sendError(HttpServletResponse.SC_NOT_FOUND, "Cannot find resource: " + path);
     }
 
     @Override
-    public void destroy()
-    {
+    public void destroy() {
         loadingCache.invalidateAll();
     }
 
-    private class CacheEntry
-    {
+    private class CacheEntry {
         private String contentType;
         private byte[] data;
         private String etag;
         private int ttl;
 
-        public CacheEntry(String path, byte[] data)
-        {
+        public CacheEntry(String path, byte[] data) {
             setContentType(path);
             setData(data);
         }
 
-        public CacheEntry(String path)
-        {
+        public CacheEntry(String path) {
             setContentType(path);
 
             InputStream in;
-            try
-            {
+            try {
                 in = plugin.getResourceAsStream(path);
-                if (in == null)
-                {
+                if (in == null) {
                     clear();
-                }
-                else
-                {
+                } else {
                     setData(IOUtils.toByteArray(in));
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 log.error("Unable to retrieve content: " + path, e);
                 clear();
             }
@@ -227,44 +195,36 @@ public class StaticResourcesFilter implements Filter
             ttl = path.startsWith("aui/") ? AUI_TTL_FAR_FUTURE : PLUGIN_TTL_NEAR_FUTURE;
         }
 
-        private void setContentType(String path)
-        {
+        private void setContentType(String path) {
             contentType = config.getServletContext().getMimeType(path);
             // covers anything not mapped in default servlet context config, such as web fonts
-            if (contentType == null)
-            {
+            if (contentType == null) {
                 contentType = "application/octet-stream";
             }
         }
 
-        private void setData(byte[] data)
-        {
+        private void setData(byte[] data) {
             this.data = data;
             this.etag = DigestUtils.md5Hex(data);
         }
 
-        public String getEtag()
-        {
+        public String getEtag() {
             return etag;
         }
 
-        public byte[] getData()
-        {
+        public byte[] getData() {
             return data;
         }
 
-        public String getContentType()
-        {
+        public String getContentType() {
             return contentType;
         }
 
-        public int getTTLSeconds()
-        {
+        public int getTTLSeconds() {
             return ttl;
         }
 
-        private void clear()
-        {
+        private void clear() {
             data = new byte[0];
             etag = "";
         }

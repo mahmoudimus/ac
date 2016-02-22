@@ -20,10 +20,9 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteDialogOpeningPage extends ConnectAddonPage implements Page
-{
+public class RemoteDialogOpeningPage extends ConnectAddonPage implements Page {
 
-    private  static final int REMOTE_DIALOG_WAIT_MS = 50000;
+    private static final int REMOTE_DIALOG_WAIT_MS = 50000;
 
     @Inject
     protected PageBinder pageBinder;
@@ -36,24 +35,20 @@ public class RemoteDialogOpeningPage extends ConnectAddonPage implements Page
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
-    public RemoteCloseDialogPage openKey(String expectedNamespace)
-    {
+    public RemoteCloseDialogPage openKey(String expectedNamespace) {
         open("dialog-open-button-key");
         String dialogId = "ap-" + expectedNamespace;
-        if (!elementFinder.find(By.id(dialogId)).timed().isVisible().by(REMOTE_DIALOG_WAIT_MS))
-        {
+        if (!elementFinder.find(By.id(dialogId)).timed().isVisible().by(REMOTE_DIALOG_WAIT_MS)) {
             throw new NoSuchElementException("Couldn't find dialog with id " + dialogId + " in " + REMOTE_DIALOG_WAIT_MS + "ms");
         }
         return pageBinder.bind(RemoteCloseDialogPage.class, dialogId);
     }
 
-    private void open(final String id)
-    {
+    private void open(final String id) {
         runInFrame(() -> {
             PageElement element = elementFinder.find(By.id(id));
             waitUntilTrue(element.timed().isVisible());

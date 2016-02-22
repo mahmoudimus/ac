@@ -45,8 +45,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Send a bunch of requests from an addon with certain scopes and assert that the requests are accepted or rejected as expected.
  */
-public abstract class ScopeTestBase
-{
+public abstract class ScopeTestBase {
     private final ScopeName addonScope;
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
@@ -65,8 +64,7 @@ public abstract class ScopeTestBase
                          TestAuthenticator testAuthenticator,
                          JwtWriterFactory jwtWriterFactory,
                          ConnectAddonRegistry connectAddonRegistry,
-                         ApplicationProperties applicationProperties)
-    {
+                         ApplicationProperties applicationProperties) {
         this.addonScope = addonScope;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -77,8 +75,7 @@ public abstract class ScopeTestBase
     }
 
     @BeforeClass
-    public void setup() throws IOException
-    {
+    public void setup() throws IOException {
         final String key = getClass().getSimpleName() + '-' + AddonUtil.randomPluginKey();
         ConnectAddonBeanBuilder connectAddonBeanBuilder = newConnectAddonBean()
                 .withKey(key)
@@ -98,8 +95,7 @@ public abstract class ScopeTestBase
                         .build());
 
         // scopes are optional so that we can have "no scopes" test classes
-        if (null != addonScope)
-        {
+        if (null != addonScope) {
             connectAddonBeanBuilder = connectAddonBeanBuilder.withScopes(new HashSet<ScopeName>(asList(addonScope)));
         }
 
@@ -110,16 +106,11 @@ public abstract class ScopeTestBase
     }
 
     @AfterClass
-    public void tearDown()
-    {
-        if (null != addon)
-        {
-            try
-            {
+    public void tearDown() {
+        if (null != addon) {
+            try {
                 testPluginInstaller.uninstallAddon(addon);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 log.error(String.format("Unable to uninstall add-on '%s'", addon.getKey()), e);
             }
         }
@@ -127,19 +118,16 @@ public abstract class ScopeTestBase
         testAuthenticator.unauthenticate();
     }
 
-    protected void assertValidRequest(HttpMethod method, String path) throws IOException, NoSuchAlgorithmException
-    {
+    protected void assertValidRequest(HttpMethod method, String path) throws IOException, NoSuchAlgorithmException {
         assertResponseCodeForRequest(method, path, HttpStatus.OK);
     }
 
-    protected void assertForbiddenRequest(HttpMethod method, String path) throws IOException, NoSuchAlgorithmException
-    {
+    protected void assertForbiddenRequest(HttpMethod method, String path) throws IOException, NoSuchAlgorithmException {
         assertResponseCodeForRequest(method, path, HttpStatus.FORBIDDEN);
     }
 
     protected void assertResponseCodeForRequest(HttpMethod httpMethod, String uriSuffix, HttpStatus status)
-            throws IOException, NoSuchAlgorithmException
-    {
+            throws IOException, NoSuchAlgorithmException {
         URI uri = constructUri(httpMethod, uriSuffix);
         RequestUtil.Response response = issueRequest(httpMethod, uri);
         String message = String.format("Expecting HTTP response code %d from %s %s but was %d.",
@@ -147,8 +135,7 @@ public abstract class ScopeTestBase
         assertEquals(message, status.code, response.getStatusCode());
     }
 
-    private URI constructUri(HttpMethod httpMethod, String uriSuffix) throws UnsupportedEncodingException, NoSuchAlgorithmException
-    {
+    private URI constructUri(HttpMethod httpMethod, String uriSuffix) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         final URI hostProductBaseUrl = URI.create(applicationProperties.getBaseUrl(UrlMode.CANONICAL));
         URI uri = URI.create(hostProductBaseUrl + uriSuffix);
 
@@ -166,8 +153,7 @@ public abstract class ScopeTestBase
         return uri;
     }
 
-    private RequestUtil.Response issueRequest(HttpMethod httpMethod, URI uri) throws IOException
-    {
+    private RequestUtil.Response issueRequest(HttpMethod httpMethod, URI uri) throws IOException {
         RequestUtil.Request request = requestUtil.requestBuilder()
                 .setMethod(httpMethod)
                 .setUri(uri)

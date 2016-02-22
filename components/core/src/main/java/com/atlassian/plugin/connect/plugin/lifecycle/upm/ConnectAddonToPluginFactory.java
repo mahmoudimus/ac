@@ -20,27 +20,24 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 @Named
-public class ConnectAddonToPluginFactory
-{
+public class ConnectAddonToPluginFactory {
 
     private static final String PARAM_ATLASSIAN_CONNECT_INFO = "atlassian-connect-addon";
     private static final String PARAM_ATLASSIAN_LICENSING_ENABLED = "atlassian-licensing-enabled";
     private static final String PARAM_CONFIGURE_URL = "configure.url";
     private static final String PARAM_POST_INSTALL_URL = "post.install.url";
-    
+
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private Consumer<Exception> moduleValidationExceptionHandler;
 
     @Inject
     public ConnectAddonToPluginFactory(BeanToModuleRegistrar beanToModuleRegistrar,
-            EventPublishingModuleValidationExceptionHandler moduleValidationExceptionHandler)
-    {
+                                       EventPublishingModuleValidationExceptionHandler moduleValidationExceptionHandler) {
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.moduleValidationExceptionHandler = moduleValidationExceptionHandler;
     }
 
-    public Plugin create(ConnectAddonBean addon, PluginState state)
-    {
+    public Plugin create(ConnectAddonBean addon, PluginState state) {
         ConnectAddonPlugin plugin = new ConnectAddonPlugin(beanToModuleRegistrar.getRegisteredDescriptorsForAddon(addon.getKey()));
         plugin.setKey(addon.getKey());
         plugin.setName(addon.getName());
@@ -51,8 +48,7 @@ public class ConnectAddonToPluginFactory
         return plugin;
     }
 
-    private PluginInformation createPluginInfo(ConnectAddonBean addon)
-    {
+    private PluginInformation createPluginInfo(ConnectAddonBean addon) {
         PluginInformation pluginInfo = new PluginInformation();
         pluginInfo.setDescription(addon.getDescription());
         pluginInfo.setVendorName(addon.getVendor().getName());
@@ -61,8 +57,7 @@ public class ConnectAddonToPluginFactory
 
         pluginInfo.addParameter(PARAM_ATLASSIAN_CONNECT_INFO, "true");
 
-        if (addon.getEnableLicensing())
-        {
+        if (addon.getEnableLicensing()) {
             pluginInfo.addParameter(PARAM_ATLASSIAN_LICENSING_ENABLED, "true");
         }
 
@@ -72,14 +67,12 @@ public class ConnectAddonToPluginFactory
         return pluginInfo;
     }
 
-    private void addPluginInfoParameterForPageIfDeclared(PluginInformation pluginInfo, String parameterKey, ConnectAddonBean addon, String moduleType)
-    {
+    private void addPluginInfoParameterForPageIfDeclared(PluginInformation pluginInfo, String parameterKey, ConnectAddonBean addon, String moduleType) {
         Optional<List<ModuleBean>> optionalPages = addon.getModules().getValidModuleListOfType(
                 moduleType, moduleValidationExceptionHandler);
         optionalPages.ifPresent(moduleBeans -> {
             ConnectPageModuleBean page = (ConnectPageModuleBean) moduleBeans.get(0);
-            if (null != page && !Strings.isNullOrEmpty(page.getUrl()))
-            {
+            if (null != page && !Strings.isNullOrEmpty(page.getUrl())) {
                 pluginInfo.addParameter(parameterKey, ConnectIFrameServletPath.forModule(addon.getKey(), page.getRawKey()));
             }
         });

@@ -16,25 +16,24 @@ import java.util.Set;
 import static com.google.common.collect.Lists.newArrayList;
 
 @ObjectSchemaAttributes(additionalProperties = true,
-    docOverrides = {@FieldDocOverride
-    (
-        fieldName = "key",
-        description =
-            "A key to identify the macro. Keys must only contain alphanumeric characters and dashes, and must " +
-            "be globally unique. Prefixing it with the name of your add-on is the best way to ensure this."
-    )
-})
-public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
-{
+        docOverrides = {@FieldDocOverride
+                (
+                        fieldName = "key",
+                        description =
+                                "A key to identify the macro. Keys must only contain alphanumeric characters and dashes, and must " +
+                                        "be globally unique. Prefixing it with the name of your add-on is the best way to ensure this."
+                )
+        })
+public abstract class BaseContentMacroModuleBean extends RequiredKeyBean {
     /**
      * The link to the add-on resource that provides the macro content.
      * This URL has to be relative to the add-on base URL.
      *
      * Additional context parameters can be passed as variables in the URL:
      *
-     *    {
-     *        "url": "/macro-renderer?body={macro.body}&space_id={space.id}&page_id={page.id}"
-     *    }
+     * {
+     * "url": "/macro-renderer?body={macro.body}&space_id={space.id}&page_id={page.id}"
+     * }
      *
      * Since macro bodies can be of arbitrary size and may contain sensitive data, care must be taken
      * as to how its passed to your connect addon.  You have three options to gain access to the body:
@@ -50,7 +49,7 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * contain sensitive data of an unpredictable size.
      *
      *
-     *__Note:__ If you include the `{macro.body}` in your URL you are potentially leaking sensitive data
+     * __Note:__ If you include the `{macro.body}` in your URL you are potentially leaking sensitive data
      * to any intermediate host on the internet.  This may result in the body being cached or indexed
      * by a third party.  If you are concerned about the security of your macro, you should always use
      * the `{macro.id}` and use the Confluence REST API to collect the body.
@@ -59,26 +58,26 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      *
      * Declare the variables that are later required to fetch the macro content in the URL:
      *
-     *    {
-     *        "url": "/render-macro?pageId={page.id}&pageVersion={page.version}&macroId={macro.id}"
-     *    }
+     * {
+     * "url": "/render-macro?pageId={page.id}&pageVersion={page.version}&macroId={macro.id}"
+     * }
      *
      * Then use the Confluence REST API to collect the body, for example directly from the iframe:
      *
-     *    AP.require("request", function(request) {
-     *        var pageId = getUrlParameter("pageId");
-     *        var pageVersion = getUrlParameter("pageVersion");
-     *        var macroId = getUrlParameter("macroId");
-     *        request({
-     *            url: "/rest/api/content/" + pageId +
-     *                 "/history/" + pageVersion +
-     *                 "/macro/id/" + macroId,
-     *            success: function(response) {
-     *                var macro = JSON.parse(response);
-     *                process(macro.body);
-     *            }
-     *        });
-     *    });
+     * AP.require("request", function(request) {
+     * var pageId = getUrlParameter("pageId");
+     * var pageVersion = getUrlParameter("pageVersion");
+     * var macroId = getUrlParameter("macroId");
+     * request({
+     * url: "/rest/api/content/" + pageId +
+     * "/history/" + pageVersion +
+     * "/macro/id/" + macroId,
+     * success: function(response) {
+     * var macro = JSON.parse(response);
+     * process(macro.body);
+     * }
+     * });
+     * });
      *
      * __Preview Mode:__ If you use the `{macro.id}` in your URL, the REST api will not return the macro body during
      * a preview request, because the page has not been saved yet. You can use the `{output.type}` parameter to detect
@@ -100,7 +99,7 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * - `user.key`: The user key, e.g. `ff80808143087d180143087d3a910004`
      * - `output.type`: The output type, e.g. `display` or `preview`
      *
-     *Context parameters for macros are also required in the URL. Please see the
+     * Context parameters for macros are also required in the URL. Please see the
      * [Macro Input Parameter](../fragment/macro-input-parameter.html) documentation for details.
      */
     @Required
@@ -177,8 +176,8 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private List<MacroParameterBean> parameters;
 
     /**
-     *  URL patterns associated with this macro. If a URL matching a defined pattern is pasted into the editor, this macro
-     *  will be created and will replace the URL string.
+     * URL patterns associated with this macro. If a URL matching a defined pattern is pasted into the editor, this macro
+     * will be created and will replace the URL string.
      */
     private AutoconvertBean autoconvert;
 
@@ -201,147 +200,117 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      */
     private ImagePlaceholderBean imagePlaceholder;
 
-    public BaseContentMacroModuleBean()
-    {
+    public BaseContentMacroModuleBean() {
         initialize();
     }
 
-    public BaseContentMacroModuleBean(BaseContentMacroModuleBeanBuilder builder)
-    {
+    public BaseContentMacroModuleBean(BaseContentMacroModuleBeanBuilder builder) {
         super(builder);
         initialize();
     }
 
-    private void initialize()
-    {
-        if (null == url)
-        {
+    private void initialize() {
+        if (null == url) {
             url = "";
         }
-        if (null == categories)
-        {
+        if (null == categories) {
             categories = ImmutableSet.of();
         }
-        if (null == outputType)
-        {
+        if (null == outputType) {
             outputType = MacroOutputType.BLOCK;
         }
-        if (null == bodyType)
-        {
+        if (null == bodyType) {
             bodyType = MacroBodyType.NONE;
         }
-        if (null == aliases)
-        {
+        if (null == aliases) {
             aliases = ImmutableSet.of();
         }
-        if (null == parameters)
-        {
+        if (null == parameters) {
             parameters = newArrayList();
         }
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public IconBean getIcon()
-    {
+    public IconBean getIcon() {
         return icon;
     }
 
-    public LinkBean getDocumentation()
-    {
+    public LinkBean getDocumentation() {
         return documentation;
     }
 
-    public Set<String> getCategories()
-    {
+    public Set<String> getCategories() {
         return categories;
     }
 
-    public MacroOutputType getOutputType()
-    {
+    public MacroOutputType getOutputType() {
         return outputType;
     }
 
-    public MacroBodyType getBodyType()
-    {
+    public MacroBodyType getBodyType() {
         return bodyType;
     }
 
-    public Set<String> getAliases()
-    {
+    public Set<String> getAliases() {
         return aliases;
     }
 
-    public AutoconvertBean getAutoconvert()
-    {
+    public AutoconvertBean getAutoconvert() {
         return autoconvert;
     }
 
-    public Boolean isFeatured()
-    {
+    public Boolean isFeatured() {
         return (null != featured) && featured;
     }
 
-    public Boolean isHidden()
-    {
+    public Boolean isHidden() {
         return (null != hidden) && hidden;
     }
 
-    public List<MacroParameterBean> getParameters()
-    {
+    public List<MacroParameterBean> getParameters() {
         return parameters;
     }
 
-    public MacroEditorBean getEditor()
-    {
+    public MacroEditorBean getEditor() {
         return editor;
     }
 
-    public MacroPropertyPanelBean getPropertyPanel()
-    {
+    public MacroPropertyPanelBean getPropertyPanel() {
         return propertyPanel;
     }
 
-    public ImagePlaceholderBean getImagePlaceholder()
-    {
+    public ImagePlaceholderBean getImagePlaceholder() {
         return imagePlaceholder;
     }
 
-    public boolean hasEditor()
-    {
+    public boolean hasEditor() {
         return editor != null;
     }
 
-    public boolean hasPropertyPanel()
-    {
+    public boolean hasPropertyPanel() {
         return propertyPanel != null;
     }
 
-    public boolean hasIcon()
-    {
+    public boolean hasIcon() {
         return icon != null;
     }
 
-    public boolean hasDocumentation()
-    {
+    public boolean hasDocumentation() {
         return documentation != null;
     }
 
-    public boolean hasImagePlaceholder()
-    {
+    public boolean hasImagePlaceholder() {
         return imagePlaceholder != null;
     }
 
-    public boolean hasAutoConvert()
-    {
+    public boolean hasAutoConvert() {
         return (null != autoconvert);
     }
 }

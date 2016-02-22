@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder
 import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBeanBuilder;
 
 /**
- *
  * Defining a Macro Property panel allows you to add a hidden iframe to your macro's
  * property panel. The iframe is loaded as soon as the property panel is opened.
  *
@@ -15,38 +14,37 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
  * [Confluence API](../../javascript/module-confluence.html).
  * For example:
  *
- *    AP.require(["confluence"], function (confluence) {
- *        var macroParams = {
- *            myParameter: value
- *        };
- *        confluence.saveMacro(macroParams);
- *    });
+ * AP.require(["confluence"], function (confluence) {
+ * var macroParams = {
+ * myParameter: value
+ * };
+ * confluence.saveMacro(macroParams);
+ * });
  *
  * In order to retrieve the custom data again when the property panel is opened, use `confluence.getMacroData` (see
  * [Confluence API](../../javascript/module-confluence.html)):
  *
- *    AP.require("confluence", function (confluence) {
- *        var macroData = confluence.getMacroData(function(macroParams) {
- *            doSomethingWith(macroParams.myParameter);
- *        });
- *    });
+ * AP.require("confluence", function (confluence) {
+ * var macroData = confluence.getMacroData(function(macroParams) {
+ * doSomethingWith(macroParams.myParameter);
+ * });
+ * });
  *
  * Dialogs may also be created. Use `dialog.create` (see
  * [Dialog API](../../javascript/module-Dialog.html)):
  *
- *    AP.require('dialog', function(dialog) {
- *        dialog.create({
- *            key: 'my-module-key',
- *            width: '500px',
- *            height: '200px',
- *            chrome: true
- *        }).on("close", callbackFunc);
- *    });
+ * AP.require('dialog', function(dialog) {
+ * dialog.create({
+ * key: 'my-module-key',
+ * width: '500px',
+ * height: '200px',
+ * chrome: true
+ * }).on("close", callbackFunc);
+ * });
  *
  * @schemaTitle Macro Property Panel
  */
-public class MacroPropertyPanelBean extends BaseModuleBean
-{
+public class MacroPropertyPanelBean extends BaseModuleBean {
     /**
      * The URL to the event handling page in the add-on.
      */
@@ -54,37 +52,30 @@ public class MacroPropertyPanelBean extends BaseModuleBean
     @StringSchemaAttributes(format = "uri-template")
     private String url;
 
-    public MacroPropertyPanelBean()
-    {
+    public MacroPropertyPanelBean() {
         init();
     }
 
-    public MacroPropertyPanelBean(MacroPropertyPanelBeanBuilder builder)
-    {
+    public MacroPropertyPanelBean(MacroPropertyPanelBeanBuilder builder) {
         super(builder);
         init();
     }
 
-    private void init()
-    {
-        if (null == url)
-        {
+    private void init() {
+        if (null == url) {
             url = "";
         }
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean()
-    {
+    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean() {
         return new MacroPropertyPanelBeanBuilder();
     }
 
-    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean(MacroPropertyPanelBean defaultBean)
-    {
+    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean(MacroPropertyPanelBean defaultBean) {
         return new MacroPropertyPanelBeanBuilder(defaultBean);
     }
 }

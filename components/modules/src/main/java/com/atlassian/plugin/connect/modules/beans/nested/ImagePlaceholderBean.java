@@ -14,15 +14,14 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 /**
  * Defines a macro image placeholder to display in the Confluence editor.
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#IMAGE_PLACEHOLDER_EXAMPLE}
  * @schemaTitle Image Placeholder
  * @since 1.0
  */
 @SchemaDefinition("imagePlaceholder")
-public class ImagePlaceholderBean
-{
+public class ImagePlaceholderBean {
     /**
      * The width in pixels of the image placeholder. Defaults to the natural image width if not specified.
      */
@@ -46,66 +45,53 @@ public class ImagePlaceholderBean
     @CommonSchemaAttributes(defaultValue = "false")
     private Boolean applyChrome;
 
-    public ImagePlaceholderBean()
-    {
+    public ImagePlaceholderBean() {
         this.url = "";
         this.applyChrome = false;
     }
 
-    public ImagePlaceholderBean(ImagePlaceholderBeanBuilder builder)
-    {
+    public ImagePlaceholderBean(ImagePlaceholderBeanBuilder builder) {
         copyFieldsByNameAndType(builder, this);
 
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
-        if (null == applyChrome)
-        {
+        if (null == applyChrome) {
             this.applyChrome = false;
         }
     }
 
-    public Integer getWidth()
-    {
+    public Integer getWidth() {
         return width;
     }
 
-    public Integer getHeight()
-    {
+    public Integer getHeight() {
         return height;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public boolean applyChrome()
-    {
+    public boolean applyChrome() {
         return null == applyChrome ? false : applyChrome;
     }
 
-    public static ImagePlaceholderBeanBuilder newImagePlaceholderBean()
-    {
+    public static ImagePlaceholderBeanBuilder newImagePlaceholderBean() {
         return new ImagePlaceholderBeanBuilder();
     }
 
-    public static ImagePlaceholderBeanBuilder newImagePlaceholderBean(ImagePlaceholderBean defaultBean)
-    {
+    public static ImagePlaceholderBeanBuilder newImagePlaceholderBean(ImagePlaceholderBean defaultBean) {
         return new ImagePlaceholderBeanBuilder(defaultBean);
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof ImagePlaceholderBean))
-        {
+        if (!(otherObj instanceof ImagePlaceholderBean)) {
             return false;
         }
 
@@ -120,8 +106,7 @@ public class ImagePlaceholderBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(53, 11)
                 .append(width)
                 .append(height)

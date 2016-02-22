@@ -25,8 +25,7 @@ import static com.atlassian.jwt.JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAM
  * Constructs and signs outgoing URLs using the JWT protocol.
  * See {@link JwtService} and {@link JwtAuthorizationGenerator} for more details.
  */
-public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
-{
+public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase {
     private final ConsumerService consumerService;
     private final ConnectApplinkManager connectApplinkManager;
     private final JwtAuthorizationGenerator authorizationGenerator;
@@ -37,9 +36,8 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
                                              JwtService jwtService,
                                              ConsumerService consumerService,
                                              ConnectApplinkManager connectApplinkManager,
-                                             HttpContentRetriever httpContentRetriever)
-    {
-        super(addon.getKey(),addon.getName(), baseUrlSupplier, httpContentRetriever);
+                                             HttpContentRetriever httpContentRetriever) {
+        super(addon.getKey(), addon.getName(), baseUrlSupplier, httpContentRetriever);
 
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
@@ -47,8 +45,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     }
 
     @Override
-    public String signGetUrl(URI targetPath, Map<String, String[]> params)
-    {
+    public String signGetUrl(URI targetPath, Map<String, String[]> params) {
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
 
         String encodedJwt = authorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, consumerService.getConsumer().getKey(), requireSharedSecret(getAppLink()));
@@ -59,34 +56,28 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     }
 
     @Override
-    public String createGetUrl(URI targetPath, Map<String, String[]> params)
-    {
+    public String createGetUrl(URI targetPath, Map<String, String[]> params) {
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
         return super.createGetUrl(targetPath, params);
     }
 
     @Override
-    public AuthorizationGenerator getAuthorizationGenerator()
-    {
+    public AuthorizationGenerator getAuthorizationGenerator() {
         return authorizationGenerator;
     }
 
-    private ApplicationLink getAppLink()
-    {
+    private ApplicationLink getAppLink() {
         return this.connectApplinkManager.getAppLink(getKey());
     }
 
-    private static Supplier<String> sharedSecretSupplier(final ApplicationLink applicationLink)
-    {
+    private static Supplier<String> sharedSecretSupplier(final ApplicationLink applicationLink) {
         return () -> requireSharedSecret(applicationLink);
     }
 
-    private static String requireSharedSecret(ApplicationLink applicationLink)
-    {
+    private static String requireSharedSecret(ApplicationLink applicationLink) {
         String sharedSecret = (String) applicationLink.getProperty(SHARED_SECRET_PROPERTY_NAME);
 
-        if (sharedSecret == null)
-        {
+        if (sharedSecret == null) {
             throw new NotAJwtPeerException(applicationLink);
         }
 

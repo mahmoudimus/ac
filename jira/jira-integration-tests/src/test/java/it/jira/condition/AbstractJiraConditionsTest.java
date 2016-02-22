@@ -15,8 +15,7 @@ import it.jira.JiraWebDriverTestBase;
 
 import static it.jira.condition.TestedCondition.condition;
 
-public abstract class AbstractJiraConditionsTest extends JiraWebDriverTestBase
-{
+public abstract class AbstractJiraConditionsTest extends JiraWebDriverTestBase {
     protected static final List<TestedCondition> CONDITIONS = ImmutableList.<TestedCondition>builder()
             .add(condition("has_selected_project"))
             .add(condition("linking_enabled"))
@@ -41,8 +40,7 @@ public abstract class AbstractJiraConditionsTest extends JiraWebDriverTestBase
             .add(condition("is_watching_issue"))
             .build();
 
-    protected final String createIssueSatisfyingAllConditions(TestUser user)
-    {
+    protected final String createIssueSatisfyingAllConditions(TestUser user) {
         IssuesControl issuesControl = product.backdoor().issues();
         IssueCreateResponse issue = issuesControl.createIssue(project.getKey(), "Test Issue");
         IssueCreateResponse subTask = issuesControl.createSubtask(project.getId(), issue.key, "Test Sub-Task");
@@ -53,14 +51,12 @@ public abstract class AbstractJiraConditionsTest extends JiraWebDriverTestBase
         return issueKey;
     }
 
-    protected final void watchIssue(TestUser user, String issueKey)
-    {
+    protected final void watchIssue(TestUser user, String issueKey) {
         WatchersClient watchersClient = new WatchersClient(product.environmentData());
         watchersClient.postResponse(issueKey, user.getUsername());
     }
 
-    protected final void voteIssue(TestUser user, String issueKey)
-    {
+    protected final void voteIssue(TestUser user, String issueKey) {
         VotesClient votesClient = new VotesClient(product.environmentData());
         votesClient.loginAs(user.getUsername(), user.getPassword());
         votesClient.postResponse(issueKey);

@@ -32,15 +32,14 @@ import java.util.List;
  * <p>Your add-on can receive [additional context](../../concepts/context-parameters.html) from the application by
  * using variable tokens in the `url` attribute.</p>
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
  * @schemaTitle Web Item
  * @since 1.0
  */
 @SchemaDefinition("webItem")
-public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
-{
+public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions {
     /**
      * Specifies the URL targeted by the web item. The URL can be absolute or relative to either the
      * product URL or the add-on's base URL, depending on the _context_ attribute.
@@ -122,8 +121,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     // but this behavior can be overridden to avoid double-escaping
     private transient boolean needsEscaping = true;
 
-    public WebItemModuleBean()
-    {
+    public WebItemModuleBean() {
         this.url = "";
         this.location = "";
         this.context = AddonUrlContext.addon;
@@ -134,126 +132,104 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
         this.icon = null;
     }
 
-    public WebItemModuleBean(WebItemModuleBeanBuilder builder)
-    {
+    public WebItemModuleBean(WebItemModuleBeanBuilder builder) {
         super(builder);
 
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
 
-        if (null == context)
-        {
+        if (null == context) {
             this.context = AddonUrlContext.addon;
         }
 
-        if (null == weight)
-        {
+        if (null == weight) {
             this.weight = 100;
         }
 
-        if (null == target)
-        {
+        if (null == target) {
             this.target = WebItemTargetBean.newWebItemTargetBean().build();
         }
 
-        if (null == styleClasses)
-        {
+        if (null == styleClasses) {
             this.styleClasses = new ArrayList<String>();
         }
 
         this.needsEscaping = builder.needsEscaping();
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public String getLocation()
-    {
+    public String getLocation() {
         return location;
     }
 
-    public AddonUrlContext getContext()
-    {
+    public AddonUrlContext getContext() {
         return context;
     }
 
-    public int getWeight()
-    {
+    public int getWeight() {
         return weight;
     }
 
-    public WebItemTargetBean getTarget()
-    {
+    public WebItemTargetBean getTarget() {
         return target;
     }
 
-    public List<String> getStyleClasses()
-    {
+    public List<String> getStyleClasses() {
         return styleClasses;
     }
 
-    public I18nProperty getTooltip()
-    {
+    public I18nProperty getTooltip() {
         return tooltip;
     }
 
-    public IconBean getIcon()
-    {
+    public IconBean getIcon() {
         return icon;
     }
 
-    public boolean isAbsolute()
-    {
+    public boolean isAbsolute() {
         return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
     }
 
-    public boolean needsEscaping()
-    {
+    public boolean needsEscaping() {
         return needsEscaping;
     }
 
-    public static WebItemModuleBeanBuilder newWebItemBean()
-    {
+    public static WebItemModuleBeanBuilder newWebItemBean() {
         return new WebItemModuleBeanBuilder();
     }
 
-    public static WebItemModuleBeanBuilder newWebItemBean(WebItemModuleBean defaultBean)
-    {
+    public static WebItemModuleBeanBuilder newWebItemBean(WebItemModuleBean defaultBean) {
         return new WebItemModuleBeanBuilder(defaultBean);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Objects.toStringHelper(this)
-                      .add("key", getRawKey())
-                      .add("name", getName())
-                      .add("url", getUrl())
-                      .add("location", getLocation())
-                      .add("weight", getWeight())
-                      .add("styleClasses", getStyleClasses())
-                      .add("tooltip", getTooltip())
-                      .add("target", getTarget())
-                      .add("icon", getIcon())
-                      .add("conditions", getConditions())
-                      .add("params", getParams())
-                      .toString();
+                .add("key", getRawKey())
+                .add("name", getName())
+                .add("url", getUrl())
+                .add("location", getLocation())
+                .add("weight", getWeight())
+                .add("styleClasses", getStyleClasses())
+                .add("tooltip", getTooltip())
+                .add("target", getTarget())
+                .add("icon", getIcon())
+                .add("conditions", getConditions())
+                .add("params", getParams())
+                .toString();
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof WebItemModuleBean && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof WebItemModuleBean && super.equals(otherObj))) {
             return false;
         }
 
@@ -272,8 +248,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(13, 61)
                 .appendSuper(super.hashCode())
                 .append(url)

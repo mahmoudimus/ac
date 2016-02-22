@@ -11,51 +11,46 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
  * Builds URIs that target connect add-on.
  */
 @NotThreadSafe
-public interface ConnectAddonUriBuilder
-{
+public interface ConnectAddonUriBuilder {
     /**
      * @param key the addon key
      * @return the builder
      */
     AddonUriBuilder addon(String key);
 
-    interface AddonUriBuilder
-    {
+    interface AddonUriBuilder {
         /**
          * @param namespace the namespace, used for the context iframe (if there is a context iframe). The usual pattern
-         * is to pass the module key in here.
+         *                  is to pass the module key in here.
          * @return the builder
          */
         NamespacedUriBuilder namespace(String namespace);
     }
 
-    interface NamespacedUriBuilder
-    {
+    interface NamespacedUriBuilder {
         /**
          * @param uri a <a href="http://en.wikipedia.org/wiki/URL_Template">templated url</a>, containing template
-         * variables that will be substituted for context parameters.
+         *            variables that will be substituted for context parameters.
          * @return the builder
          */
         TemplatedBuilder urlTemplate(String uri);
     }
 
-    interface TemplatedBuilder
-    {
+    interface TemplatedBuilder {
         /**
          * @param context the {@link ModuleContextParameters} containing the context issue, project, space, etc. This
-         * builder does not do any permission checking, so it is up to the caller to apply the {@link ModuleContextFilter}
-         * if necessary.
+         *                builder does not do any permission checking, so it is up to the caller to apply the {@link ModuleContextFilter}
+         *                if necessary.
          * @return the builder
          */
         InitializedBuilder context(ModuleContextParameters context);
     }
 
-    interface InitializedBuilder
-    {
+    interface InitializedBuilder {
         /**
          * Adds an additional query parameter to the url.
          *
-         * @param key the key of the parameter
+         * @param key   the key of the parameter
          * @param value the value of the parameter
          * @return the builder
          */

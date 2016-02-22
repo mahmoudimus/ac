@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.api.web.iframe;
 /**
  * Responsible for handling registration of iframe {@link IFrameRenderStrategy render strategies}.
  */
-public interface IFrameRenderStrategyRegistry
-{
+public interface IFrameRenderStrategyRegistry {
 
     String RAW_CLASSIFIER = "raw";
 
@@ -22,7 +21,7 @@ public interface IFrameRenderStrategyRegistry
     void unregisterAll(String addonKey);
 
     /**
-     * @param addonKey the key of an addon
+     * @param addonKey  the key of an addon
      * @param moduleKey the key of a module that supplies an render strategy
      * @return the endpoint if there is one registered for the specified keys, otherwise null
      */
@@ -31,7 +30,7 @@ public interface IFrameRenderStrategyRegistry
     IFrameRenderStrategy get(String addonKey, String moduleKey, String classifier);
 
     /**
-     * @param addonKey the key of an addon
+     * @param addonKey  the key of an addon
      * @param moduleKey the key of a module that supplies an render strategy
      * @return the endpoint if there is one registered for the specified keys
      * @throws java.lang.IllegalStateException if no render strategy exists for the specified key

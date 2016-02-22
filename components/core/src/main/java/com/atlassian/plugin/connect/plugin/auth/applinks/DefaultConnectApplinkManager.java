@@ -38,8 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
 @Component
-public class DefaultConnectApplinkManager implements ConnectApplinkManager
-{
+public class DefaultConnectApplinkManager implements ConnectApplinkManager {
     public static final String PLUGIN_KEY_PROPERTY = JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME;
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectApplinkManager.class);
     protected final MutatingApplicationLinkService applicationLinkService;
@@ -48,8 +47,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     protected final TransactionTemplate transactionTemplate;
 
     @Inject
-    public DefaultConnectApplinkManager(MutatingApplicationLinkServiceProvider applicationLinkServiceProvider, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate)
-    {
+    public DefaultConnectApplinkManager(MutatingApplicationLinkServiceProvider applicationLinkServiceProvider, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
         this.applicationLinkService = applicationLinkServiceProvider.getMutatingApplicationLinkService();
         this.typeAccessor = typeAccessor;
         this.pluginSettingsFactory = pluginSettingsFactory;
@@ -61,14 +59,11 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
      */
     @Deprecated
     @Override
-    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey)
-    {
+    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey) {
         checkNotNull(addonUserKey);
-        transactionTemplate.execute(new TransactionCallback<Void>()
-        {
+        transactionTemplate.execute(new TransactionCallback<Void>() {
             @Override
-            public Void doInTransaction()
-            {
+            public Void doInTransaction() {
                 String pluginKey = plugin.getKey();
                 URI baseUri = URI.create(baseUrl);
 
@@ -95,8 +90,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 link.putProperty("system", Boolean.TRUE.toString());
 
                 ServiceProvider serviceProvider = createServiceProvider();
-                switch (authType)
-                {
+                switch (authType) {
                     case JWT:
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
                         link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
@@ -116,13 +110,10 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
     @Override
     public void createAppLink(final ConnectAddonBean addon, final String baseUrl,
-                              final AuthenticationType authType, final String publicKey, final String addonUserKey)
-    {
-        transactionTemplate.execute(new TransactionCallback<Void>()
-        {
+                              final AuthenticationType authType, final String publicKey, final String addonUserKey) {
+        transactionTemplate.execute(new TransactionCallback<Void>() {
             @Override
-            public Void doInTransaction()
-            {
+            public Void doInTransaction() {
                 String pluginKey = addon.getKey();
                 URI baseUri = URI.create(baseUrl);
 
@@ -149,8 +140,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 link.putProperty("system", Boolean.TRUE.toString());
 
                 ServiceProvider serviceProvider = createServiceProvider();
-                switch (authType)
-                {
+                switch (authType) {
                     case JWT:
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
                         link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
@@ -170,49 +160,36 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     }
 
     @Override
-    public void deleteAppLink(final ConnectAddonBean addon) throws NotConnectAddonException
-    {
+    public void deleteAppLink(final ConnectAddonBean addon) throws NotConnectAddonException {
         final String key = addon.getKey();
         deleteAppLink(key);
     }
 
     @Override
-    public void deleteAppLink(final String key) throws NotConnectAddonException
-    {
+    public void deleteAppLink(final String key) throws NotConnectAddonException {
         final ApplicationLink link = getAppLink(key);
 
-        if (link != null)
-        {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
+        if (link != null) {
+            transactionTemplate.execute(new TransactionCallback<Void>() {
                 @Override
-                public Void doInTransaction()
-                {
+                public Void doInTransaction() {
                     log.info("Removing application link for {}", key);
                     applicationLinkService.deleteApplicationLink(link);
                     return null;
                 }
             });
-        }
-        else
-        {
+        } else {
             log.debug("Could not remove application link for {}", key);
         }
     }
 
     @Override
-    public ApplicationLink getAppLink(String key) throws NotConnectAddonException
-    {
-        for (ApplicationLink link : applicationLinkService.getApplicationLinks())
-        {
-            if (key.equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
-            {
-                if (link.getType() instanceof RemotePluginContainerApplicationType)
-                {
+    public ApplicationLink getAppLink(String key) throws NotConnectAddonException {
+        for (ApplicationLink link : applicationLinkService.getApplicationLinks()) {
+            if (key.equals(link.getProperty(PLUGIN_KEY_PROPERTY))) {
+                if (link.getType() instanceof RemotePluginContainerApplicationType) {
                     return link;
-                }
-                else
-                {
+                } else {
                     throw new NotConnectAddonException("Plugin " + key + " does not seem to be a Connect add-on. It's type is: " + link.getType().getClass().getSimpleName());
                 }
             }
@@ -221,22 +198,17 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     }
 
     @Override
-    public URI getApplinkLinkSelfLink(final ApplicationLink applink)
-    {
+    public URI getApplinkLinkSelfLink(final ApplicationLink applink) {
         return applicationLinkService.createSelfLinkFor(applink.getId());
     }
 
     @Override
-    public Optional<String> getSharedSecretOrPublicKey(ApplicationLink applink)
-    {
+    public Optional<String> getSharedSecretOrPublicKey(ApplicationLink applink) {
         Optional<AuthenticationType> maybeAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
-        if (maybeAuthType.isPresent())
-        {
-            if (maybeAuthType.get().equals(AuthenticationType.JWT))
-            {
+        if (maybeAuthType.isPresent()) {
+            if (maybeAuthType.get().equals(AuthenticationType.JWT)) {
                 Object prop = applink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME);
-                if (prop instanceof String)
-                {
+                if (prop instanceof String) {
                     return Optional.of((String) prop);
                 }
             }
@@ -244,46 +216,34 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         return Optional.empty();
     }
 
-    private void deleteOldAppLinks(String pluginKey, ApplicationId appId)
-    {
+    private void deleteOldAppLinks(String pluginKey, ApplicationId appId) {
         ApplicationLink link;
 
-        try
-        {
+        try {
             link = applicationLinkService.getApplicationLink(appId);
-        }
-        catch (TypeNotInstalledException ex)
-        {
+        } catch (TypeNotInstalledException ex) {
             log.warn("Link found for '{}' but the type cannot be found, deleting...", pluginKey);
             manuallyDeleteApplicationId(appId);
 
             return;
         }
 
-        if (null != link)
-        {
-            if (pluginKey.equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
-            {
+        if (null != link) {
+            if (pluginKey.equals(link.getProperty(PLUGIN_KEY_PROPERTY))) {
                 // This shouldn't happen in normal operation as we delete the applink when we uninstall an addon
                 // and we uninstall the old addon when we install a new version
                 log.warn("Application link for remote plugin container '{}' already exists. Deleting", pluginKey);
 
                 applicationLinkService.deleteApplicationLink(link);
 
-            }
-            else
-            {
+            } else {
                 throw new IllegalStateException("Application link already exists for id '" + appId + "' but it isn't the target " +
                         " plugin '" + pluginKey + "': unexpected plugin key is: " + link.getProperty(PLUGIN_KEY_PROPERTY));
             }
-        }
-        else
-        {
+        } else {
             // try to find link with old display url
-            for (final ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
-            {
-                if (pluginKey.equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
-                {
+            for (final ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)) {
+                if (pluginKey.equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY))) {
                     log.debug("Old application link for this plugin '{}' found with different display url '{}', removing", pluginKey, otherLink.getDisplayUrl());
 
                     applicationLinkService.deleteApplicationLink(otherLink);
@@ -294,50 +254,35 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
     }
 
-    @SuppressWarnings ("unchecked")
-    private void manuallyDeleteApplicationId(ApplicationId expectedApplicationId)
-    {
+    @SuppressWarnings("unchecked")
+    private void manuallyDeleteApplicationId(ApplicationId expectedApplicationId) {
         PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
         List<String> applicationIds = (List<String>) pluginSettings.get("applinks.global.application.ids");
-        if (applicationIds != null)
-        {
-            if (applicationIds.remove(expectedApplicationId.get()))
-            {
+        if (applicationIds != null) {
+            if (applicationIds.remove(expectedApplicationId.get())) {
                 pluginSettings.put("applinks.global.application.ids", applicationIds);
-            }
-            else
-            {
+            } else {
                 throw new IllegalStateException("Cannot find application id " + expectedApplicationId.get() + " to delete");
             }
-        }
-        else
-        {
+        } else {
             throw new IllegalStateException("Cannot find application ids to manually delete " + expectedApplicationId.get());
         }
     }
 
-    private ServiceProvider createServiceProvider()
-    {
+    private ServiceProvider createServiceProvider() {
         URI dummyUri = URI.create("http://localhost");
         return new ServiceProvider(dummyUri, dummyUri, dummyUri);
     }
 
-    protected final PublicKey getPublicKey(String publicKeyText)
-    {
+    protected final PublicKey getPublicKey(String publicKeyText) {
         PublicKey publicKey;
-        try
-        {
-            if (publicKeyText.startsWith("-----BEGIN CERTIFICATE-----"))
-            {
+        try {
+            if (publicKeyText.startsWith("-----BEGIN CERTIFICATE-----")) {
                 publicKey = RSAKeys.fromEncodedCertificateToPublicKey(publicKeyText);
-            }
-            else
-            {
+            } else {
                 publicKey = RSAKeys.fromPemEncodingToPublicKey(publicKeyText);
             }
-        }
-        catch (GeneralSecurityException e)
-        {
+        } catch (GeneralSecurityException e) {
             throw new PluginParseException("Invalid public key", e);
         }
         return publicKey;

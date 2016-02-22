@@ -11,8 +11,7 @@ import it.com.atlassian.plugin.connect.plugin.auth.scope.AdminScopeTestBase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class JiraAdminScopeTestBase extends AdminScopeTestBase
-{
+public abstract class JiraAdminScopeTestBase extends AdminScopeTestBase {
     protected final PermissionManager jiraPermissionManager;
     protected final UserManager userManager;
 
@@ -20,21 +19,18 @@ public abstract class JiraAdminScopeTestBase extends AdminScopeTestBase
                                   JwtApplinkFinder jwtApplinkFinder,
                                   PermissionManager jiraPermissionManager,
                                   UserManager userManager,
-                                  TestAuthenticator testAuthenticator)
-    {
+                                  TestAuthenticator testAuthenticator) {
         super(testPluginInstaller, jwtApplinkFinder, testAuthenticator);
         this.userManager = checkNotNull(userManager);
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
     }
 
     @Override
-    protected boolean isUserTopLevelAdmin(String username)
-    {
+    protected boolean isUserTopLevelAdmin(String username) {
         return jiraPermissionManager.hasPermission(Permissions.Permission.ADMINISTER.getId(), getUser(username));
     }
 
-    private ApplicationUser getUser(String username)
-    {
+    private ApplicationUser getUser(String username) {
         return userManager.getUserByName(username);
     }
 }

@@ -9,13 +9,12 @@ import java.io.IOException;
 /**
  * Allows to import XML workflow definitions
  */
-public interface WorkflowImporter
-{
+public interface WorkflowImporter {
     /**
      * Imports a workflow based on its previously exported XML definition. If the workflow exists already, the existing
      * workflow will be returned.
      *
-     * @param name The name of the workflow
+     * @param name         The name of the workflow
      * @param resourcePath The path of the workflow XML file in the /resources directory
      * @return The newly created workflow (or the existing one if a workflow with the same name exists already)
      * @throws org.xml.sax.SAXException

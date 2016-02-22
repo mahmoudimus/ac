@@ -8,36 +8,31 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#URL_EXAMPLE}
  * @schemaTitle URL
  * @since 1.0
  */
 @SchemaDefinition("url")
-public class UrlBean
-{
+public class UrlBean {
     @StringSchemaAttributes(format = "uri-template")
     @Required
     private String url;
 
-    public UrlBean(String url)
-    {
+    public UrlBean(String url) {
         this.url = url;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public boolean hasUrl()
-    {
+    public boolean hasUrl() {
         return null != url;
     }
 
-    public URI createUri() throws URISyntaxException
-    {
+    public URI createUri() throws URISyntaxException {
         return null == url ? null : new URI(url);
     }
 

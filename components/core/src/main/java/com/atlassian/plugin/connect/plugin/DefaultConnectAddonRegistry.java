@@ -27,8 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Named
 @ExportAsDevService
-public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
-{
+public class DefaultConnectAddonRegistry implements ConnectAddonRegistry {
     protected static final String ADDON_LIST_KEY = "ac.addon.list";
     protected static final String ADDON_KEY_PREFIX = "acnct.";
 
@@ -42,23 +41,18 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private final TransactionTemplate transactionTemplate;
 
     @Inject
-    public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate)
-    {
+    public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
         this.settings = pluginSettingsFactory.createGlobalSettings();
         this.transactionTemplate = transactionTemplate;
     }
 
     @Override
-    public void removeAll(String pluginKey)
-    {
+    public void removeAll(String pluginKey) {
         write.lock();
-        try
-        {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
+        try {
+            transactionTemplate.execute(new TransactionCallback<Void>() {
                 @Override
-                public Void doInTransaction()
-                {
+                public Void doInTransaction() {
                     settings.remove(addonStorageKey(pluginKey));
 
                     Set<String> addonKeys = getAddonKeySet();
@@ -68,29 +62,22 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
                     return null;
                 }
             });
-        }
-        finally
-        {
+        } finally {
             write.unlock();
         }
     }
 
-    private Set<String> getAddonKeySet()
-    {
+    private Set<String> getAddonKeySet() {
         List<String> keyList;
 
         read.lock();
-        try
-        {
+        try {
             keyList = (List<String>) settings.get(ADDON_LIST_KEY);
-        }
-        finally
-        {
+        } finally {
             read.unlock();
         }
 
-        if (null == keyList)
-        {
+        if (null == keyList) {
             return new HashSet<>();
         }
 
@@ -98,79 +85,64 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
-    public String getDescriptor(String pluginKey)
-    {
+    public String getDescriptor(String pluginKey) {
         return getAddonSettings(pluginKey).getDescriptor();
     }
 
     @Override
-    public boolean hasDescriptor(String pluginKey)
-    {
+    public boolean hasDescriptor(String pluginKey) {
         return has(getDescriptor(pluginKey));
     }
 
     @Override
-    public String getBaseUrl(String pluginKey)
-    {
+    public String getBaseUrl(String pluginKey) {
         return getAddonSettings(pluginKey).getBaseUrl();
     }
 
     @Override
-    public boolean hasBaseUrl(String pluginKey)
-    {
+    public boolean hasBaseUrl(String pluginKey) {
         return has(getBaseUrl(pluginKey));
     }
 
     @Override
-    public String getSecret(String pluginKey)
-    {
+    public String getSecret(String pluginKey) {
         return getAddonSettings(pluginKey).getSecret();
     }
 
     @Override
-    public String getUserKey(String pluginKey)
-    {
+    public String getUserKey(String pluginKey) {
         return getAddonSettings(pluginKey).getUserKey();
     }
 
     @Override
-    public Collection<String> getAllAddonKeys()
-    {
+    public Collection<String> getAllAddonKeys() {
         return getAddonKeySet();
     }
 
     @Override
-    public boolean hasAddons()
-    {
+    public boolean hasAddons() {
         return !getAddonKeySet().isEmpty();
     }
 
     @Override
-    public Collection<AddonSettings> getAllAddonSettings()
-    {
+    public Collection<AddonSettings> getAllAddonSettings() {
         Gson gson = new Gson();
 
         ImmutableList.Builder<AddonSettings> allAddonSettings = ImmutableList.builder();
 
         read.lock();
-        try
-        {
-            for (String addonKey : getAddonKeySet())
-            {
+        try {
+            for (String addonKey : getAddonKeySet()) {
                 final String json = getRawAddonSettings(addonKey);
                 if (json != null) // paranoid; check settings actually exist
                 {
                     final AddonSettings addonSettings = deserializeAddonSettings(gson, json);
                     allAddonSettings.add(addonSettings);
-                }
-                else
-                {
+                } else {
                     log.warn("No settings found for listed connect add-on '{}'", addonKey);
                 }
             }
-        }
-        finally
-        {
+        } finally {
             read.unlock();
         }
 
@@ -178,153 +150,118 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
-    public void storeRestartState(String pluginKey, PluginState state)
-    {
+    public void storeRestartState(String pluginKey, PluginState state) {
         write.lock();
-        try
-        {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
+        try {
+            transactionTemplate.execute(new TransactionCallback<Void>() {
                 @Override
-                public Void doInTransaction()
-                {
+                public Void doInTransaction() {
                     final AddonSettings addonSettings = getAddonSettings(pluginKey);
-                    if (addonSettings.getBaseUrl().isEmpty())
-                    {
+                    if (addonSettings.getBaseUrl().isEmpty()) {
                         log.warn("Cannot update restart state for add-on '{}'. Add-on settings not found", pluginKey);
-                    }
-                    else if (!state.toString().equalsIgnoreCase(addonSettings.getRestartState()))
-                    {
+                    } else if (!state.toString().equalsIgnoreCase(addonSettings.getRestartState())) {
                         addonSettings.setRestartState(state);
                         storeAddonSettings(pluginKey, addonSettings);
                     }
                     return null;
                 }
             });
-        }
-        finally
-        {
+        } finally {
             write.unlock();
         }
     }
 
     @Override
-    public PluginState getRestartState(String pluginKey)
-    {
+    public PluginState getRestartState(String pluginKey) {
         return PluginState.valueOf(getAddonSettings(pluginKey).getRestartState());
     }
 
     @Override
-    public Iterable<String> getAddonKeysToEnableOnRestart()
-    {
+    public Iterable<String> getAddonKeysToEnableOnRestart() {
         Gson gson = new Gson();
 
         ImmutableList.Builder<String> addonsToEnable = ImmutableList.builder();
 
         read.lock();
-        try
-        {
-            for (String addonKey : getAddonKeySet())
-            {
+        try {
+            for (String addonKey : getAddonKeySet()) {
                 final String json = getRawAddonSettings(addonKey);
 
-                if (!Strings.isNullOrEmpty(json))
-                {
+                if (!Strings.isNullOrEmpty(json)) {
                     AddonSettings addonSettings = deserializeAddonSettings(gson, json);
-                    if (PluginState.ENABLED.name().equals(addonSettings.getRestartState()))
-                    {
+                    if (PluginState.ENABLED.name().equals(addonSettings.getRestartState())) {
                         addonsToEnable.add(addonKey);
                     }
                 }
             }
-        }
-        finally
-        {
+        } finally {
             read.unlock();
         }
 
         return addonsToEnable.build();
     }
 
-    private boolean has(String value)
-    {
+    private boolean has(String value) {
         return !Strings.isNullOrEmpty(value);
     }
 
-    private String addonStorageKey(String addonKey)
-    {
+    private String addonStorageKey(String addonKey) {
         return ADDON_KEY_PREFIX + addonKey;
     }
 
     @Override
-    public void storeAddonSettings(String pluginKey, AddonSettings addonSettings)
-    {
+    public void storeAddonSettings(String pluginKey, AddonSettings addonSettings) {
         String settingsToStore = new Gson().toJson(addonSettings);
 
         write.lock();
-        try
-        {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
+        try {
+            transactionTemplate.execute(new TransactionCallback<Void>() {
                 @Override
-                public Void doInTransaction()
-                {
+                public Void doInTransaction() {
                     settings.put(addonStorageKey(pluginKey), settingsToStore);
 
                     Set<String> addonSet = getAddonKeySet();
-                    if (addonSet.add(pluginKey))
-                    {
+                    if (addonSet.add(pluginKey)) {
                         settings.put(ADDON_LIST_KEY, new ArrayList<>(addonSet));
                     }
                     return null;
                 }
             });
-        }
-        finally
-        {
+        } finally {
             write.unlock();
         }
     }
 
     @Override
-    public AddonSettings getAddonSettings(String pluginKey)
-    {
+    public AddonSettings getAddonSettings(String pluginKey) {
         return getAddonSettings(pluginKey, new Gson());
     }
 
-    private AddonSettings getAddonSettings(String pluginKey, Gson gson)
-    {
+    private AddonSettings getAddonSettings(String pluginKey, Gson gson) {
         String json;
         read.lock();
-        try
-        {
+        try {
             json = getRawAddonSettings(pluginKey);
-        }
-        finally
-        {
+        } finally {
             read.unlock();
         }
-        if (!Strings.isNullOrEmpty(json))
-        {
+        if (!Strings.isNullOrEmpty(json)) {
             return deserializeAddonSettings(gson, json);
         }
         // not found - return an empty AddonSetting object
         return new AddonSettings();
     }
 
-    private AddonSettings deserializeAddonSettings(Gson gson, String json)
-    {
+    private AddonSettings deserializeAddonSettings(Gson gson, String json) {
         return gson.fromJson(json, AddonSettings.class);
     }
 
-    private String getRawAddonSettings(String pluginKey)
-    {
-        return (String)settings.get(addonStorageKey(pluginKey));
+    private String getRawAddonSettings(String pluginKey) {
+        return (String) settings.get(addonStorageKey(pluginKey));
     }
 
     @Override
-    public boolean hasAddonWithKey(final String pluginKey)
-    {
+    public boolean hasAddonWithKey(final String pluginKey) {
         return getAddonKeySet().contains(pluginKey);
     }
 

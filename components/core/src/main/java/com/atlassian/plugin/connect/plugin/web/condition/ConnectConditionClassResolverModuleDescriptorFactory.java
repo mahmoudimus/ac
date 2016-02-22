@@ -10,14 +10,12 @@ import org.springframework.stereotype.Component;
 
 @ModuleType(ListableModuleDescriptorFactory.class)
 @Component
-public class ConnectConditionClassResolverModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectConditionClassResolverModuleDescriptor>
-{
+public class ConnectConditionClassResolverModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectConditionClassResolverModuleDescriptor> {
 
     private static final String TYPE = "connect-condition-class-resolver";
 
     @Autowired
-    public ConnectConditionClassResolverModuleDescriptorFactory(HostContainer hostContainer)
-    {
+    public ConnectConditionClassResolverModuleDescriptorFactory(HostContainer hostContainer) {
         super(hostContainer, TYPE, ConnectConditionClassResolverModuleDescriptor.class);
     }
 }

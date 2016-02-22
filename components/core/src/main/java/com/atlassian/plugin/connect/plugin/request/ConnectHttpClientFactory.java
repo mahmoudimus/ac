@@ -17,8 +17,7 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Named
-public class ConnectHttpClientFactory implements DisposableBean
-{
+public class ConnectHttpClientFactory implements DisposableBean {
     private final HttpClient httpClient;
     private final HttpClientFactory httpClientFactory;
     private final PluginRetrievalService pluginRetrievalService;
@@ -27,8 +26,7 @@ public class ConnectHttpClientFactory implements DisposableBean
 
     @Autowired
     public ConnectHttpClientFactory(HttpClientFactory httpClientFactory,
-        PluginRetrievalService pluginRetrievalService)
-    {
+                                    PluginRetrievalService pluginRetrievalService) {
         this.pluginRetrievalService = checkNotNull(pluginRetrievalService);
         this.httpClientFactory = checkNotNull(httpClientFactory);
         this.httpClient = httpClientFactory.create(getHttpClientOptions());
@@ -36,34 +34,27 @@ public class ConnectHttpClientFactory implements DisposableBean
     }
 
     @Override
-    public void destroy()
-    {
-        for (HttpClient instance : instances)
-        {
-            try
-            {
+    public void destroy() {
+        for (HttpClient instance : instances) {
+            try {
                 httpClientFactory.dispose(instance);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.warn("Could not dispose of HttpClient", e);
             }
         }
     }
 
-    public HttpClient getInstance()
-    {
+    public HttpClient getInstance() {
         return this.httpClient;
     }
 
-    private HttpClientOptions getHttpClientOptions()
-    {
+    private HttpClientOptions getHttpClientOptions() {
         HttpClientOptions options = new HttpClientOptions();
 
         options.setThreadPrefix("atlassian-connect");
         options.setMaxConnectionsPerHost(100);
         options.setUserAgent("Atlassian-Connect/"
-                             + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
+                + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
 
         options.setConnectionTimeout(3, TimeUnit.SECONDS);
         options.setSocketTimeout(5, TimeUnit.SECONDS);

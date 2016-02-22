@@ -46,10 +46,9 @@ import javax.inject.Inject;
  * This class does nothing but is here to centralize the cross-product component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
-@SuppressWarnings ("ALL")
+@SuppressWarnings("ALL")
 @Scanned
-public class CommonImports
-{
+public class CommonImports {
     @Inject
     public CommonImports(
             @ComponentImport PluginController pluginController,
@@ -88,7 +87,6 @@ public class CommonImports
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
             @ComponentImport CrowdService crowdService,
             @ComponentImport DarkFeatureManager darkFeatureManager,
-            @ComponentImport ActiveObjects activeObjects)
-    {
+            @ComponentImport ActiveObjects activeObjects) {
     }
 }

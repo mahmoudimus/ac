@@ -58,13 +58,12 @@ import javax.inject.Inject;
  * This class does nothing but is here to centralize the JIRA component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
-@SuppressWarnings ("ALL")
+@SuppressWarnings("ALL")
 @Scanned
-public class JiraImports
-{
+public class JiraImports {
     @Inject
     public JiraImports(
-            @JiraImport ("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
+            @JiraImport("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
             @JiraImport AttachmentService attachmentService,
             @JiraImport FieldManager fieldManager,
             @JiraImport FieldVisibilityManager fieldVisibilityManager,
@@ -75,7 +74,7 @@ public class JiraImports
             @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
             @JiraImport JiraBaseUrls jiraBaseUrls,
             @JiraImport JiraLicenseService licenseService,
-            @JiraImport ("jiraPermissionManager") PermissionManager jiraPermissionManager,
+            @JiraImport("jiraPermissionManager") PermissionManager jiraPermissionManager,
             @JiraImport ApplicationAuthorizationService applicationAuthorizationService,
             @JiraImport ApplicationRoleManager applicationRoleManager,
             @JiraImport ApplicationRoleAdminService applicationRoleAdminService,
@@ -93,10 +92,10 @@ public class JiraImports
             @JiraImport UserIssueHistoryManager userIssueHistoryManager,
             @JiraImport UserPreferencesManager userPreferencesManager,
             @JiraImport UserPropertyService userPropertyService,
-            @JiraImport ("jiraUserManager") UserManager userManager,
+            @JiraImport("jiraUserManager") UserManager userManager,
             @JiraImport UserUtil userUtil,
             @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,
-            @JiraImport ("jiraVersionManager") VersionManager versionManager,
+            @JiraImport("jiraVersionManager") VersionManager versionManager,
             @JiraImport VoteManager voteManager,
             @JiraImport WatcherManager watcherManager,
             @JiraImport WebFragmentHelper webFragmentHelper,
@@ -104,7 +103,7 @@ public class JiraImports
             @JiraImport ApplicationService applicationService,
             @JiraImport ApplicationManager applicationManager,
             @JiraImport GlobalPermissionManager globalPermissionManager,
-            @JiraImport ("beanBuilderFactory") BeanBuilderFactory beanBuilderFactory,
+            @JiraImport("beanBuilderFactory") BeanBuilderFactory beanBuilderFactory,
             @JiraImport FeatureManager featureManager,
             @JiraImport DashboardPermissionService dashboardPermissionService,
             @JiraImport CommentPropertyService commentPropertyService,
@@ -112,7 +111,6 @@ public class JiraImports
             @JiraImport IssueTypePropertyService issueTypePropertyService,
             @JiraImport ProjectPropertyService projectPropertyService,
             @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
-            @JiraImport IssueTypeService issueTypeService)
-    {
+            @JiraImport IssueTypeService issueTypeService) {
     }
 }

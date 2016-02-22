@@ -11,15 +11,14 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 /**
  * Represents a link, its optional title and alternative text.
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LINK_EXAMPLE}
  * @schemaTitle Link
  * @since 1.0
  */
 @SchemaDefinition("link")
-public class LinkBean
-{
+public class LinkBean {
     /**
      * The URL of the link. It can be absolute, or relative to the Add-On base URL.
      */
@@ -37,46 +36,37 @@ public class LinkBean
      */
     private String altText;
 
-    public LinkBean(LinkBeanBuilder builder)
-    {
+    public LinkBean(LinkBeanBuilder builder) {
         copyFieldsByNameAndType(builder, this);
 
-        if (null == url)
-        {
+        if (null == url) {
             url = "";
         }
-        if (null == title)
-        {
+        if (null == title) {
             title = "";
         }
-        if (null == altText)
-        {
+        if (null == altText) {
             altText = "";
         }
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    public String getAltText()
-    {
+    public String getAltText() {
         return altText;
     }
 
-    public static LinkBeanBuilder newLinkBean()
-    {
+    public static LinkBeanBuilder newLinkBean() {
         return new LinkBeanBuilder();
     }
 
-    public static LinkBeanBuilder newLinkBean(LinkBean defaultBean)
-    {
+    public static LinkBeanBuilder newLinkBean(LinkBean defaultBean) {
         return new LinkBeanBuilder(defaultBean);
     }
 }

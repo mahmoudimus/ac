@@ -25,25 +25,21 @@ import static com.google.common.collect.Lists.newArrayList;
 /**
  * An api scope implementation for REST resources
  */
-public final class RestApiScopeHelper
-{
+public final class RestApiScopeHelper {
     private final Iterable<RestScope> scopes;
     private final Iterable<ApiResourceInfo> apiResourceInfo;
 
     private static final Function<String, String> LOWERCASE_TRANSFORM = from -> from.toLowerCase(Locale.US);
 
-    public RestApiScopeHelper(Iterable<RestScope> scopes)
-    {
+    public RestApiScopeHelper(Iterable<RestScope> scopes) {
         this.scopes = scopes;
         this.apiResourceInfo = concat(transform(scopes, RestScope::getApiResourceInfo));
     }
 
-    public boolean allow(HttpServletRequest request)
-    {
+    public boolean allow(HttpServletRequest request) {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         final String[] elements = StringUtils.split(pathInfo, '/');
-        if (elements.length > 2 && "rest".equals(elements[0]))
-        {
+        if (elements.length > 2 && "rest".equals(elements[0])) {
             String name = elements[1];
             String version = elements[2].toLowerCase(Locale.US);
             if (!isVersionString(version)) {
@@ -51,15 +47,12 @@ public final class RestApiScopeHelper
             }
             String method = request.getMethod().toLowerCase(Locale.US);
             String path = StringUtils.join(Arrays.copyOfRange(elements, version == null ? 2 : 3, elements.length), "/");
-            if (!path.startsWith("/"))
-            {
+            if (!path.startsWith("/")) {
                 path = "/" + path;
             }
 
-            for (RestScope scope : scopes)
-            {
-                if (scope.match(name, version, path, method))
-                {
+            for (RestScope scope : scopes) {
+                if (scope.match(name, version, path, method)) {
                     return true;
                 }
             }
@@ -68,26 +61,22 @@ public final class RestApiScopeHelper
     }
 
     @VisibleForTesting
-    public static boolean isVersionString(String version)
-    {
+    public static boolean isVersionString(String version) {
         return !StringUtils.isBlank(version) && ("latest".equalsIgnoreCase(version) || version.matches("\\d+([\\.-]\\w+)*"));
     }
 
-    public Iterable<ApiResourceInfo> getApiResourceInfos()
-    {
+    public Iterable<ApiResourceInfo> getApiResourceInfos() {
         return apiResourceInfo;
     }
 
-    public static class RestScope
-    {
+    public static class RestScope {
         private final String name;
         private final Collection<String> versions;
         private final String basePath;
         private final Collection<String> methods;
         private final boolean pathIsRegex;
 
-        public RestScope(String name, Collection<String> versions, String basePath, Collection<String> methods, boolean pathIsRegex)
-        {
+        public RestScope(String name, Collection<String> versions, String basePath, Collection<String> methods, boolean pathIsRegex) {
             this.name = name;
             this.versions = new ArrayList<>(Collections2.transform(versions, LOWERCASE_TRANSFORM)); // TransformedCollection.equals() is broken
             this.basePath = basePath;
@@ -95,13 +84,11 @@ public final class RestApiScopeHelper
             this.pathIsRegex = pathIsRegex;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public boolean match(String name, String version, String path, String method)
-        {
+        public boolean match(String name, String version, String path, String method) {
             boolean versionMatch = false;
 
             if ((this.versions.isEmpty() && version == null) || this.versions.contains(version)) {
@@ -114,20 +101,14 @@ public final class RestApiScopeHelper
                     this.methods.contains(method);
         }
 
-        public Iterable<ApiResourceInfo> getApiResourceInfo()
-        {
+        public Iterable<ApiResourceInfo> getApiResourceInfo() {
             List<ApiResourceInfo> infos = newArrayList();
 
-            for (String method : methods)
-            {
-                if (versions.isEmpty())
-                {
+            for (String method : methods) {
+                if (versions.isEmpty()) {
                     infos.add(new ApiResourceInfo("/rest/" + name + basePath, method.toUpperCase(Locale.US)));
-                }
-                else
-                {
-                    for (String version : versions)
-                    {
+                } else {
+                    for (String version : versions) {
                         infos.add(new ApiResourceInfo("/rest/" + name + "/" + version + basePath, method.toUpperCase(Locale.US)));
                     }
                 }
@@ -136,14 +117,11 @@ public final class RestApiScopeHelper
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
@@ -158,8 +136,7 @@ public final class RestApiScopeHelper
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return new HashCodeBuilder(29, 7)
                     .append(name)
                     .append(versions)
@@ -170,8 +147,7 @@ public final class RestApiScopeHelper
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                     .append(name)
                     .append(versions)

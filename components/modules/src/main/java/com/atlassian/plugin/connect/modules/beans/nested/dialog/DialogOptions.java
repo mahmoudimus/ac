@@ -9,15 +9,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Options for a normal dialog target
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_DIALOG_EXAMPLE}
  * @schemaTitle Dialog Options
  * @since 1.1
  */
 @SchemaDefinition("dialogOptions")
-public class DialogOptions extends BaseDialogOptions implements WebItemTargetOptions
-{
+public class DialogOptions extends BaseDialogOptions implements WebItemTargetOptions {
     /**
      * Sets how high the dialog is in pixels
      */
@@ -28,53 +27,43 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
      */
     private Boolean chrome;
 
-    public DialogOptions(String width, String height, Boolean chrome)
-    {
+    public DialogOptions(String width, String height, Boolean chrome) {
         super(width);
         this.height = height;
         this.chrome = chrome;
     }
 
-    public DialogOptions()
-    {
+    public DialogOptions() {
 
     }
 
-    public DialogOptions(DialogOptionsBuilder dialogOptionsBuilder)
-    {
+    public DialogOptions(DialogOptionsBuilder dialogOptionsBuilder) {
         super(dialogOptionsBuilder);
     }
 
-    public String getHeight()
-    {
+    public String getHeight() {
         return height;
     }
 
-    public Boolean getChrome()
-    {
+    public Boolean getChrome() {
         return chrome;
     }
 
-    public static DialogOptionsBuilder newDialogOptions()
-    {
+    public static DialogOptionsBuilder newDialogOptions() {
         return new DialogOptionsBuilder();
     }
 
-    public static DialogOptionsBuilder newDialogOptions(DialogOptions bean)
-    {
+    public static DialogOptionsBuilder newDialogOptions(DialogOptions bean) {
         return new DialogOptionsBuilder(bean);
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof DialogOptions))
-        {
+        if (!(otherObj instanceof DialogOptions)) {
             return false;
         }
 
@@ -88,8 +77,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(123, 99)
                 .appendSuper(super.hashCode())
                 .append(height)

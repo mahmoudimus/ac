@@ -9,34 +9,29 @@ import com.atlassian.webdriver.AtlassianWebDriver;
 
 import org.openqa.selenium.By;
 
-public class InsufficientPermissionsPage implements Page
-{
+public class InsufficientPermissionsPage implements Page {
     @Inject
     protected AtlassianWebDriver driver;
 
     private final String appKey;
     private final String pageKey;
 
-    public InsufficientPermissionsPage(String appKey, String pageKey)
-    {
+    public InsufficientPermissionsPage(String appKey, String pageKey) {
         this.appKey = appKey;
         this.pageKey = pageKey;
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(appKey, pageKey);
     }
 
     @WaitUntil
-    public void waitForInit()
-    {
+    public void waitForInit() {
         driver.waitUntilElementIsLocated(By.id("errorMessage"));
     }
 
-    public String getErrorMessage()
-    {
+    public String getErrorMessage() {
         return driver.findElement(By.id("errorMessage")).getText();
     }
 

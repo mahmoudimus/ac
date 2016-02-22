@@ -10,19 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class JiraWebSudoService implements WebSudoService
-{
+public class JiraWebSudoService implements WebSudoService {
     private final InternalWebSudoManager jiraWebSudoManager;
 
     @Autowired
-    public JiraWebSudoService(InternalWebSudoManager jiraWebSudoManager)
-    {
+    public JiraWebSudoService(InternalWebSudoManager jiraWebSudoManager) {
         this.jiraWebSudoManager = jiraWebSudoManager;
     }
-    
+
     @Override
-    public void startWebSudoSession(HttpServletRequest request, HttpServletResponse response)
-    {
+    public void startWebSudoSession(HttpServletRequest request, HttpServletResponse response) {
         jiraWebSudoManager.startSession(request, response);
     }
 }

@@ -37,9 +37,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
-@RunWith (AtlassianPluginsTestRunner.class)
-public class AddonValidationTest
-{
+@RunWith(AtlassianPluginsTestRunner.class)
+public class AddonValidationTest {
     private static final Logger log = LoggerFactory.getLogger(AddonValidationTest.class);
 
     private static final String WEBHOOK_REQUIRING_READ_SCOPE = "page_created";
@@ -54,54 +53,44 @@ public class AddonValidationTest
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
 
     public AddonValidationTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-            ApplicationProperties applicationProperties)
-    {
+                               ApplicationProperties applicationProperties) {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.applicationProperties = applicationProperties;
     }
 
     @BeforeClass
-    public void oneTimeSetup() throws Exception
-    {
+    public void oneTimeSetup() throws Exception {
         testAuthenticator.authenticateUser("admin");
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         Plugin installed = installedPlugin.getAndSet(null);
-        if (installed != null)
-        {
-            try
-            {
+        if (installed != null) {
+            try {
                 testPluginInstaller.uninstallAddon(installed);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.error("Failed to uninstall test plugin " + installed.getKey() + " during teardown.", e);
             }
         }
     }
 
     @Test
-    public void testJwtAuthenticationWithNoInstalledCallback() throws Exception
-    {
+    public void testJwtAuthenticationWithNoInstalledCallback() throws Exception {
         ConnectAddonBean bean = testBeanBuilderWithJwt().build();
 
         assertInstallationFailsWithMessage(bean, "connect.install.error.auth.with.no.installed.callback");
     }
 
     @Test
-    public void testNoAuthenticationWithNoInstalledCallback() throws Exception
-    {
+    public void testNoAuthenticationWithNoInstalledCallback() throws Exception {
         ConnectAddonBean bean = testBeanBuilderWithoutAuthentication().build();
         install(bean);
     }
 
     @Test
-    public void testJwtAuthenticationWithNoTls() throws Exception
-    {
+    public void testJwtAuthenticationWithNoTls() throws Exception {
         ConnectAddonBean bean = testBeanBuilderWithJwtAndInstalledCallback()
                 .withBaseurl("http://example.com/no-tls")
                 .build();
@@ -110,8 +99,7 @@ public class AddonValidationTest
     }
 
     @Test
-    public void testNoAuthenticationWithNoTls() throws Exception
-    {
+    public void testNoAuthenticationWithNoTls() throws Exception {
         ConnectAddonBean bean = testBeanBuilderWithoutAuthentication()
                 .withBaseurl("http://example.com/no-tls")
                 .build();
@@ -120,8 +108,7 @@ public class AddonValidationTest
     }
 
     @Test
-    public void testWebhookRequiringReadScopeWithNoReadScope() throws Exception
-    {
+    public void testWebhookRequiringReadScopeWithNoReadScope() throws Exception {
         ConnectAddonBean bean = testBeanBuilderWithoutAuthentication()
                 .withModule("webhooks", WebHookModuleBean.newWebHookBean()
                         .withEvent(WEBHOOK_REQUIRING_READ_SCOPE)
@@ -133,8 +120,7 @@ public class AddonValidationTest
     }
 
     @Test
-    public void testWebhookRequiringReadScopeWithReadScope() throws Exception
-    {
+    public void testWebhookRequiringReadScopeWithReadScope() throws Exception {
         ConnectAddonBean bean = testBeanBuilderWithoutAuthentication()
                 .withScopes(Sets.newHashSet(ScopeName.READ))
                 .withModule("webhooks", WebHookModuleBean.newWebHookBean()
@@ -147,8 +133,7 @@ public class AddonValidationTest
     }
 
     @Test
-    public void testWebhookRequiringReadScopeWithImpliedReadScope() throws Exception
-    {
+    public void testWebhookRequiringReadScopeWithImpliedReadScope() throws Exception {
         ConnectAddonBean bean = testBeanBuilderWithoutAuthentication()
                 .withScopes(Sets.newHashSet(ScopeName.ADMIN))
                 .withModule("webhooks", WebHookModuleBean.newWebHookBean()
@@ -161,8 +146,7 @@ public class AddonValidationTest
     }
 
     @Test
-    public void shouldFailInstallationWithGeneralMessageForInvalidConditionParameters() throws Exception
-    {
+    public void shouldFailInstallationWithGeneralMessageForInvalidConditionParameters() throws Exception {
         ConnectAddonBean addon = testBeanBuilderWithoutAuthentication()
                 .withModule("webItems", newWebItemBean()
                         .withKey("invalid-condition-item")
@@ -176,8 +160,7 @@ public class AddonValidationTest
     }
 
     @Test
-    public void testJwtAuthenticationWithSchemelessBaseUrl() throws Exception
-    {
+    public void testJwtAuthenticationWithSchemelessBaseUrl() throws Exception {
         ConnectAddonBean bean = testBeanBuilderWithJwtAndInstalledCallback()
                 .withBaseurl("example.com")
                 .build();
@@ -185,67 +168,59 @@ public class AddonValidationTest
     }
 
     @Test
-    public void testNoneAuthenticationWithSchemelessBaseUrl() throws Exception
-    {
+    public void testNoneAuthenticationWithSchemelessBaseUrl() throws Exception {
         assertInstallationFailsWithMessage(testBeanBuilderWithoutAuthentication().withBaseurl("example.com").build(), "connect.install.error.base_url.no_scheme");
     }
 
     @Test
-    public void testJwtAuthenticationWithMissingBaseUrl() throws Exception
-    {
+    public void testJwtAuthenticationWithMissingBaseUrl() throws Exception {
         assertInstallationFailsWithMessage(testBeanBuilderWithJwt().withBaseurl(null).build(),
                 "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     @Test
-    public void testJwtAuthenticationWithEmptyStringBaseUrl() throws Exception
-    {
+    public void testJwtAuthenticationWithEmptyStringBaseUrl() throws Exception {
         assertInstallationFailsWithMessage(testBeanBuilderWithJwt().withBaseurl("").build(),
                 "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     @Test
-    public void testJwtAuthenticationWithNonUriBaseUrl() throws Exception
-    {
+    public void testJwtAuthenticationWithNonUriBaseUrl() throws Exception {
         assertInstallationFailsWithMessage(testBeanBuilderWithJwt().withBaseurl("this is not a URI").build(),
                 "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     @Test
     @DevMode
-    public void a404ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
-    {
+    public void a404ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception {
         ConnectAddonBeanBuilder builder = testBeanBuilderWithJwt();
         ConnectAddonBean bean = builder
-            .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
-            .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/status/404").build())
-            .build();
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
+                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/status/404").build())
+                .build();
         assertInstallationFailsWithMessage(bean, "connect.install.error.remote.host.bad.response.404");
     }
 
     @Test
     @DevMode
-    public void a503ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
-    {
+    public void a503ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception {
         ConnectAddonBeanBuilder builder = testBeanBuilderWithJwt();
         ConnectAddonBean bean = builder
-            .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
-            .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/status/503").build())
-            .build();
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
+                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/status/503").build())
+                .build();
         assertInstallationFailsWithMessage(bean, "connect.install.error.remote.host.bad.response.503");
     }
 
     @Test
-    public void aNonExistentDomainNameInInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
-    {
+    public void aNonExistentDomainNameInInstalledCallbackResultsInCorrespondingErrorCode() throws Exception {
         assertInstallationFailsWithMessage(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(),
                 "connect.install.error.remote.host.bad.domain", "does.not.exist");
     }
 
     @Test
     @DevMode
-    public void installedCallbackTimingOutResultsInCorrespondingErrorCode() throws Exception
-    {
+    public void installedCallbackTimingOutResultsInCorrespondingErrorCode() throws Exception {
         ConnectAddonBeanBuilder builder = testBeanBuilderWithJwt();
         ConnectAddonBean bean = builder
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
@@ -255,54 +230,47 @@ public class AddonValidationTest
     }
 
     @Test
-    public void shouldFailInstallationWithDetailedMessageForMalformedDescriptor() throws Exception
-    {
+    public void shouldFailInstallationWithDetailedMessageForMalformedDescriptor() throws Exception {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("malformedDescriptor.json"),
                 "connect.invalid.descriptor.malformed.json",
                 "Unexpected character ('\"' (code 34)): was expecting comma to separate OBJECT entries\n at [Source: ; line: 6, column: 6]");
     }
 
     @Test
-    public void shouldFailInstallationWithGeneralMessageForInvalidShallowDescriptor() throws Exception
-    {
+    public void shouldFailInstallationWithGeneralMessageForInvalidShallowDescriptor() throws Exception {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("invalidGenericDescriptor.json"),
                 "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     @Test
     @DevMode
-    public void shouldFailInstallationWithDetailedMessageForInvalidShallowDescriptorInDevMode() throws Exception
-    {
+    public void shouldFailInstallationWithDetailedMessageForInvalidShallowDescriptorInDevMode() throws Exception {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("invalidGenericDescriptor.json"),
                 "connect.install.error.remote.descriptor.validation.dev", "<ul><li>: object has missing required properties ([&quot;authentication&quot;])</li></ul>");
     }
 
     @Test
     @DevMode
-    public void shouldFailInstallationWithGeneralMessageForDescriptorWithNonObjectModuleList() throws Exception
-    {
+    public void shouldFailInstallationWithGeneralMessageForDescriptorWithNonObjectModuleList() throws Exception {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("descriptorWithNonObjectModuleList.json"),
                 "connect.install.error.remote.descriptor.validation.dev", "<ul><li>/modules: instance type (boolean) does not match any allowed primitive type (allowed: [&quot;object&quot;])</li></ul>");
     }
 
     @Test
-    public void shouldFailInstallationWithGeneralMessageForDescriptorWithInvalidModuleType() throws Exception
-    {
+    public void shouldFailInstallationWithGeneralMessageForDescriptorWithInvalidModuleType() throws Exception {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("descriptorWithUnknownModuleType.json"),
                 "connect.install.error.unknown.module", "unknownModuleType");
     }
 
     @Test
-    public void shouldFailInstallationWithMessageForInvalidModuleDescriptor() throws Exception
-    {
+    public void shouldFailInstallationWithMessageForInvalidModuleDescriptor() throws Exception {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("webitem/invalidStylesWebItemTest.json"),
                 "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     @Test
     @DevMode
-    public void shouldFailInstallationWithDetailedMessageForInvalidModuleDescriptorInDevMode() throws Exception
-    {
+    public void shouldFailInstallationWithDetailedMessageForInvalidModuleDescriptorInDevMode() throws Exception {
         assertInstallationFailsWithMessage(TestFileReader.readAddonTestFile("webitem/invalidStylesWebItemTest.json"),
                 "connect.install.error.remote.descriptor.validation.dev",
                 "<ul><li>/webItems/0/styleClasses/0: ECMA 262 regex &quot;^[_a-zA-Z]+[_a-zA-Z0-9-]*$&quot;" +
@@ -311,73 +279,57 @@ public class AddonValidationTest
                         " does not match input string &quot;webit%22%20onerror%22javascript:alert(1);%20&quot;</li></ul>");
     }
 
-    private ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()
-    {
+    private ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified() {
         return new ConnectAddonBeanBuilder()
                 .withKey("ac-test-" + AddonUtil.randomPluginKey())
                 .withBaseurl("https://example.com/");
     }
 
-    private ConnectAddonBeanBuilder testBeanBuilderWithAuth(AuthenticationType authenticationType)
-    {
+    private ConnectAddonBeanBuilder testBeanBuilderWithAuth(AuthenticationType authenticationType) {
         return testBeanBuilderWithNoAuthSpecified().withAuthentication(AuthenticationBean.newAuthenticationBean()
                 .withType(authenticationType).build());
     }
 
-    private ConnectAddonBeanBuilder testBeanBuilderWithoutAuthentication()
-    {
+    private ConnectAddonBeanBuilder testBeanBuilderWithoutAuthentication() {
         return testBeanBuilderWithAuth(AuthenticationType.NONE);
     }
 
-    private ConnectAddonBeanBuilder testBeanBuilderWithJwt()
-    {
+    private ConnectAddonBeanBuilder testBeanBuilderWithJwt() {
         return testBeanBuilderWithAuth(AuthenticationType.JWT);
     }
 
-    private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()
-    {
+    private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback() {
         return testBeanBuilderWithJwt()
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build());
     }
 
-    private void install(ConnectAddonBean addonBean) throws Exception
-    {
+    private void install(ConnectAddonBean addonBean) throws Exception {
         installedPlugin.set(testPluginInstaller.installAddon(addonBean));
     }
 
-    private void install(String jsonDescriptor) throws Exception
-    {
+    private void install(String jsonDescriptor) throws Exception {
         installedPlugin.set(testPluginInstaller.installAddon(jsonDescriptor));
     }
 
-    private void assertInstallationFailsWithMessage(ConnectAddonBean addonBean, String i18nKey, Serializable... i18nParameters) throws Exception
-    {
-        try
-        {
+    private void assertInstallationFailsWithMessage(ConnectAddonBean addonBean, String i18nKey, Serializable... i18nParameters) throws Exception {
+        try {
             install(addonBean);
             fail("Expected " + PluginInstallException.class.getSimpleName() + " with code " + i18nKey);
-        }
-        catch (PluginInstallException e)
-        {
+        } catch (PluginInstallException e) {
             assertPluginInstallExceptionProperties(e, i18nKey, i18nParameters);
         }
     }
 
-    private void assertInstallationFailsWithMessage(String jsonDescriptor, String i18nKey, Serializable... i18nParameters) throws Exception
-    {
-        try
-        {
+    private void assertInstallationFailsWithMessage(String jsonDescriptor, String i18nKey, Serializable... i18nParameters) throws Exception {
+        try {
             install(jsonDescriptor);
             fail("Expected " + PluginInstallException.class.getSimpleName() + " with i18n key " + i18nKey);
-        }
-        catch (PluginInstallException e)
-        {
+        } catch (PluginInstallException e) {
             assertPluginInstallExceptionProperties(e, i18nKey, i18nParameters);
         }
     }
 
-    private void assertPluginInstallExceptionProperties(PluginInstallException e, String i18nKey, Serializable... i18nParameters)
-    {
+    private void assertPluginInstallExceptionProperties(PluginInstallException e, String i18nKey, Serializable... i18nParameters) {
         assertThat(String.format("No i18n properties defined for exception %s", e), e.getI18nMessageProperties().isDefined());
         Pair<String, Serializable[]> i18nMessageProperties = e.getI18nMessageProperties().get();
         assertThat(i18nMessageProperties.first(), equalTo(i18nKey));

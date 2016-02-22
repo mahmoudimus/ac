@@ -18,8 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean, WebPanelModuleDescriptor>
-{
+public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean, WebPanelModuleDescriptor> {
     private final ConnectContainerUtil connectContainerUtil;
     private final WebFragmentLocationQualifier webFragmentLocationQualifier;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
@@ -28,16 +27,14 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     public WebPanelConnectModuleDescriptorFactory(
             ConnectContainerUtil connectContainerUtil,
             WebFragmentLocationQualifier webFragmentLocationQualifier,
-            ConditionModuleFragmentFactory conditionModuleFragmentFactory)
-    {
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory) {
         this.connectContainerUtil = connectContainerUtil;
         this.webFragmentLocationQualifier = webFragmentLocationQualifier;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
     }
 
     @Override
-    public WebPanelModuleDescriptor createModuleDescriptor(WebPanelModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public WebPanelModuleDescriptor createModuleDescriptor(WebPanelModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         Element domElement = createDomElement(bean, addon);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
 
@@ -45,8 +42,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         return descriptor;
     }
 
-    private Element createDomElement(WebPanelModuleBean bean, ConnectAddonBean addon)
-    {
+    private Element createDomElement(WebPanelModuleBean bean, ConnectAddonBean addon) {
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
         Element webPanelElement = new DOMElement("remote-web-panel");
@@ -56,13 +52,11 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         String location = webFragmentLocationQualifier.processLocation(bean.getLocation(), addon);
         webPanelElement.addAttribute("location", location);
 
-        if (null != bean.getWeight())
-        {
+        if (null != bean.getWeight()) {
             webPanelElement.addAttribute("weight", Integer.toString(bean.getWeight()));
         }
 
-        if (!bean.getConditions().isEmpty())
-        {
+        if (!bean.getConditions().isEmpty()) {
             DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions());
             webPanelElement.add(conditionFragment);
         }
@@ -70,11 +64,9 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         webPanelElement.addElement("label").addAttribute("key", i18nKeyOrName);
         I18nProperty toolTip = bean.getTooltip();
 
-        if (null != toolTip)
-        {
+        if (null != toolTip) {
             Element tooltipElement = webPanelElement.addElement("tooltip");
-            if (StringUtils.isNotBlank(toolTip.getI18n()))
-            {
+            if (StringUtils.isNotBlank(toolTip.getI18n())) {
                 tooltipElement.addAttribute("key", toolTip.getI18n());
             }
             tooltipElement.setText(toolTip.getValue());
@@ -85,16 +77,14 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());
 
-        for (ProductWebPanelElementEnhancer webPanelElementEnhancer : getProductEnhancers())
-        {
+        for (ProductWebPanelElementEnhancer webPanelElementEnhancer : getProductEnhancers()) {
             webPanelElementEnhancer.enhance(bean, webPanelElement);
         }
 
         return webPanelElement;
     }
 
-    private Iterable<ProductWebPanelElementEnhancer> getProductEnhancers()
-    {
+    private Iterable<ProductWebPanelElementEnhancer> getProductEnhancers() {
         return connectContainerUtil.getBeansOfType(ProductWebPanelElementEnhancer.class);
     }
 }

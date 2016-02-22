@@ -46,8 +46,7 @@ import static org.junit.Assert.assertTrue;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class WorkflowPostFunctionTest
-{
+public class WorkflowPostFunctionTest {
     private static final String PLUGIN_KEY = "connect-workflow-example";
     private static final String PLUGIN_NAME = "Workflow Post Function Test";
     private static final String MODULE_NAME = "My Post Function";
@@ -77,8 +76,7 @@ public class WorkflowPostFunctionTest
                                     JiraAuthenticationContext authenticationContext,
                                     AddonTestFilterResults testFilterResults,
                                     WorkflowImporter workflowImporter,
-                                    JiraTestUtil jiraTestUtil)
-    {
+                                    JiraTestUtil jiraTestUtil) {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.workflowManager = workflowManager;
@@ -90,8 +88,7 @@ public class WorkflowPostFunctionTest
     }
 
     @BeforeClass
-    public void setup() throws Exception
-    {
+    public void setup() throws Exception {
         testAuthenticator.authenticateUser(ADMIN_USER);
 
         WorkflowPostFunctionModuleBean bean = newWorkflowPostFunctionBean()
@@ -115,30 +112,25 @@ public class WorkflowPostFunctionTest
     }
 
     @Before
-    public void beforeEach()
-    {
+    public void beforeEach() {
         testFilterResults.clearRequest(plugin.getKey(), TRIGGERED_URL);
     }
 
     @AfterClass
-    public void cleanup() throws IOException
-    {
-        if (null != plugin)
-        {
+    public void cleanup() throws IOException {
+        if (null != plugin) {
             testPluginInstaller.uninstallAddon(plugin);
         }
     }
 
     @Test
-    public void requestsAreSent() throws Exception
-    {
+    public void requestsAreSent() throws Exception {
         ServletRequestSnapshot request = triggerWorkflowTransition();
         assertNotNull(request);
     }
 
     @Test
-    public void requestsAreSigned() throws Exception
-    {
+    public void requestsAreSigned() throws Exception {
         ServletRequestSnapshot request = triggerWorkflowTransition();
         String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION.toLowerCase());
         assertNotNull(authorizationHeader);
@@ -146,39 +138,34 @@ public class WorkflowPostFunctionTest
     }
 
     @Test
-    public void requestsContainTransition() throws Exception
-    {
+    public void requestsContainTransition() throws Exception {
         ServletRequestSnapshot request = triggerWorkflowTransition();
         JSONObject payload = new JSONObject(request.getEntity());
         assertNotNull(payload.get("transition"));
     }
 
     @Test
-    public void requestsContainIssue() throws Exception
-    {
+    public void requestsContainIssue() throws Exception {
         ServletRequestSnapshot request = triggerWorkflowTransition();
         JSONObject payload = new JSONObject(request.getEntity());
         assertNotNull(payload.get("issue"));
     }
 
     @Test
-    public void requestContainsVersionNumber() throws Exception
-    {
+    public void requestContainsVersionNumber() throws Exception {
         ServletRequestSnapshot request = triggerWorkflowTransition();
         Option<String> maybeVersion = HeaderUtil.getVersionHeader(request);
         assertThat(maybeVersion.get(), isVersionNumber());
     }
 
     @Test
-    public void requestsContainAddonConfiguration() throws Exception
-    {
+    public void requestsContainAddonConfiguration() throws Exception {
         ServletRequestSnapshot request = triggerWorkflowTransition();
         JSONObject payload = new JSONObject(request.getEntity());
         assertNotNull(payload.get("configuration"));
     }
 
-    private ServletRequestSnapshot triggerWorkflowTransition() throws CreateException, IOException
-    {
+    private ServletRequestSnapshot triggerWorkflowTransition() throws CreateException, IOException {
         MutableIssue issue = issueManager.getIssueObject(jiraTestUtil.createIssue().getId());
         workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatus());
         WorkflowTransitionUtilImpl workflowTransition = new WorkflowTransitionUtilImpl(
@@ -197,22 +184,18 @@ public class WorkflowPostFunctionTest
         return waitForWebhook(plugin.getKey(), TRIGGERED_URL);
     }
 
-    private ServletRequestSnapshot waitForWebhook(final String addonKey, final String path)
-    {
+    private ServletRequestSnapshot waitForWebhook(final String addonKey, final String path) {
         final ServletRequestSnapshot[] request = {null};
 
-        WaitUntil.invoke(new WaitUntil.WaitCondition()
-        {
+        WaitUntil.invoke(new WaitUntil.WaitCondition() {
             @Override
-            public boolean isFinished()
-            {
+            public boolean isFinished() {
                 request[0] = testFilterResults.getRequest(addonKey, path);
                 return null != request[0];
             }
 
             @Override
-            public String getWaitMessage()
-            {
+            public String getWaitMessage() {
                 return "waiting for enable webhook post...";
             }
         }, 5);

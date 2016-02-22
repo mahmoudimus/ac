@@ -8,30 +8,25 @@ import com.atlassian.sal.api.transaction.TransactionCallback;
  *
  * @since 1.0.1
  */
-public class SubvertedPermissionsTransactionTemplate<T> implements TransactionCallback<T>
-{
+public class SubvertedPermissionsTransactionTemplate<T> implements TransactionCallback<T> {
     private final TransactionCallback<T> delegate;
 
-    public SubvertedPermissionsTransactionTemplate(final TransactionCallback<T> delegate)
-    {
+    public SubvertedPermissionsTransactionTemplate(final TransactionCallback<T> delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public T doInTransaction()
-    {
+    public T doInTransaction() {
         final boolean originalSubvertState = ImportUtils.isSubvertSecurityScheme();
         try {
             ImportUtils.setSubvertSecurityScheme(true);
             return delegate.doInTransaction();
-        } finally
-        {
+        } finally {
             ImportUtils.setSubvertSecurityScheme(originalSubvertState);
         }
     }
 
-    public static <T> SubvertedPermissionsTransactionTemplate<T> subvertPermissions(TransactionCallback<T> callback)
-    {
+    public static <T> SubvertedPermissionsTransactionTemplate<T> subvertPermissions(TransactionCallback<T> callback) {
         return new SubvertedPermissionsTransactionTemplate<T>(callback);
     }
 }

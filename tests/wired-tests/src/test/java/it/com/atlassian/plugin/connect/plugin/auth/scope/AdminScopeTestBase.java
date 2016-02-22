@@ -25,8 +25,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 
-public abstract class AdminScopeTestBase
-{
+public abstract class AdminScopeTestBase {
     private final static Logger LOG = LoggerFactory.getLogger(AdminScopeTestBase.class);
 
     private final TestPluginInstaller testPluginInstaller;
@@ -38,31 +37,27 @@ public abstract class AdminScopeTestBase
 
     public AdminScopeTestBase(TestPluginInstaller testPluginInstaller,
                               JwtApplinkFinder jwtApplinkFinder,
-                              TestAuthenticator testAuthenticator)
-    {
+                              TestAuthenticator testAuthenticator) {
         this.testPluginInstaller = checkNotNull(testPluginInstaller);
         this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder);
         this.testAuthenticator = checkNotNull(testAuthenticator);
     }
 
     @Test
-    public void hasCorrectTopLevelAdminStatus() throws IOException
-    {
+    public void hasCorrectTopLevelAdminStatus() throws IOException {
         plugin = installPlugin(getScope());
         assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
 
     @Test
-    public void isNotTopLevelAdminAfterDowngrade() throws Exception
-    {
+    public void isNotTopLevelAdminAfterDowngrade() throws Exception {
         plugin = installPlugin(getScope());
         plugin = installPlugin(getScopeOneDown());
         assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
     }
 
     @Test
-    public void hasCorrectTopLevelAdminStatusAfterUpgrade() throws IOException
-    {
+    public void hasCorrectTopLevelAdminStatusAfterUpgrade() throws IOException {
         plugin = installPlugin(getScopeOneDown());
         plugin = installPlugin(getScope());
         assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
@@ -72,8 +67,7 @@ public abstract class AdminScopeTestBase
      * The UPM executes upgrades on a task scheduler thread that has no principal in the authentication context.
      */
     @Test
-    public void canUpgradeAnonymously() throws Exception
-    {
+    public void canUpgradeAnonymously() throws Exception {
         testAuthenticator.unauthenticate();
         plugin = installPlugin(getScopeOneDown());
         plugin = installPlugin(getScope());
@@ -81,8 +75,7 @@ public abstract class AdminScopeTestBase
     }
 
     @Test
-    public void isNoLongerTopLevelAdminAfterReinstallWithDowngradedScope() throws IOException
-    {
+    public void isNoLongerTopLevelAdminAfterReinstallWithDowngradedScope() throws IOException {
         plugin = installPlugin(getScope());
         testPluginInstaller.uninstallAddon(plugin);
         plugin = installPlugin(getScopeOneDown());
@@ -90,19 +83,20 @@ public abstract class AdminScopeTestBase
     }
 
     protected abstract ScopeName getScope();
+
     protected abstract ScopeName getScopeOneDown();
+
     protected abstract boolean shouldBeTopLevelAdmin();
+
     protected abstract boolean isUserTopLevelAdmin(String username);
 
-    protected String getAddonUsername(Plugin plugin) throws IOException
-    {
+    protected String getAddonUsername(Plugin plugin) throws IOException {
         ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
     }
 
     @Before
-    public void setUp() throws IOException
-    {
+    public void setUp() throws IOException {
         testAuthenticator.authenticateUser("admin");
         String key = "ac-TEST-" + AddonUtil.randomPluginKey(); // Use uppercase character to detect username vs userkey issues
         addonBaseBean = ConnectAddonBean.newConnectAddonBean()
@@ -115,17 +109,14 @@ public abstract class AdminScopeTestBase
     }
 
     @After
-    public void tearDown() throws IOException
-    {
-        if (null != plugin)
-        {
+    public void tearDown() throws IOException {
+        if (null != plugin) {
             testPluginInstaller.uninstallAddon(plugin);
         }
         testAuthenticator.unauthenticate();
     }
 
-    private Plugin installPlugin(ScopeName scope) throws IOException
-    {
+    private Plugin installPlugin(ScopeName scope) throws IOException {
         ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean(addonBaseBean)
                 .withScopes(ImmutableSet.of(scope))
                 .build();

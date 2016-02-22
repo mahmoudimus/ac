@@ -26,8 +26,7 @@ import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class JiraModuleContextFilter extends AbstractModuleContextFilter<ApplicationUser>
-{
+public class JiraModuleContextFilter extends AbstractModuleContextFilter<ApplicationUser> {
     public static final String ISSUE_ID = "issue.id";
     public static final String ISSUE_KEY = "issue.key";
     public static final String PROJECT_ID = "project.id";
@@ -62,8 +61,7 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
             final ProjectComponentManager projectComponentManager,
             final JiraAuthenticationContext authenticationContext,
             final DashboardPermissionService dashboardPermissionService,
-            final IssueTypeService issueTypeService)
-    {
+            final IssueTypeService issueTypeService) {
         super(pluginAccessor, ApplicationUser.class);
         this.permissionManager = permissionManager;
         this.projectService = projectService;
@@ -77,143 +75,113 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
     }
 
     @Override
-    protected ApplicationUser getCurrentUser()
-    {
+    protected ApplicationUser getCurrentUser() {
         return authenticationContext.getUser();
     }
 
     @Override
-    protected Iterable<PermissionCheck<ApplicationUser>> getPermissionChecks()
-    {
+    protected Iterable<PermissionCheck<ApplicationUser>> getPermissionChecks() {
         return permissionChecks;
     }
 
-    private Iterable<PermissionCheck<ApplicationUser>> constructPermissionChecks()
-    {
+    private Iterable<PermissionCheck<ApplicationUser>> constructPermissionChecks() {
         return ImmutableList.of(
-                new PermissionChecks.LongValue<ApplicationUser>()
-                {
+                new PermissionChecks.LongValue<ApplicationUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return ISSUE_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final long id, final ApplicationUser user)
-                    {
+                    public boolean hasPermission(final long id, final ApplicationUser user) {
                         Issue issue = issueManager.getIssueObject(id);
                         return issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, user);
                     }
                 },
-                new PermissionCheck<ApplicationUser>()
-                {
+                new PermissionCheck<ApplicationUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return ISSUE_KEY;
                     }
 
                     @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
-                    {
+                    public boolean hasPermission(final String value, final ApplicationUser user) {
                         Issue issue = issueManager.getIssueObject(value);
                         return issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, user);
                     }
                 },
-                new PermissionCheck<ApplicationUser>()
-                {
+                new PermissionCheck<ApplicationUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return ISSUETYPE_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
-                    {
+                    public boolean hasPermission(final String value, final ApplicationUser user) {
                         return issueTypeService.getIssueType(user, value).isDefined();
                     }
                 },
-                new PermissionChecks.LongValue<ApplicationUser>()
-                {
+                new PermissionChecks.LongValue<ApplicationUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return PROJECT_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final long id, final ApplicationUser user)
-                    {
+                    public boolean hasPermission(final long id, final ApplicationUser user) {
                         return projectService.getProjectById(user, id).isValid();
                     }
                 },
-                new PermissionCheck<ApplicationUser>()
-                {
+                new PermissionCheck<ApplicationUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return PROJECT_KEY;
                     }
 
                     @Override
-                    public boolean hasPermission(final String value, final ApplicationUser user)
-                    {
+                    public boolean hasPermission(final String value, final ApplicationUser user) {
                         return projectService.getProjectByKey(user, value).isValid();
                     }
                 },
-                new PermissionChecks.LongValue<ApplicationUser>()
-                {
+                new PermissionChecks.LongValue<ApplicationUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return VERSION_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final long id, final ApplicationUser user)
-                    {
+                    public boolean hasPermission(final long id, final ApplicationUser user) {
                         Version version = versionManager.getVersion(id);
                         return version != null && permissionManager.hasPermission(Permissions.BROWSE,
                                 version.getProjectObject(), user);
                     }
                 },
-                new PermissionChecks.LongValue<ApplicationUser>()
-                {
+                new PermissionChecks.LongValue<ApplicationUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return COMPONENT_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final long id, final ApplicationUser user)
-                    {
+                    public boolean hasPermission(final long id, final ApplicationUser user) {
                         ProjectComponent component;
-                        try
-                        {
+                        try {
                             component = projectComponentManager.find(id);
-                        }
-                        catch (EntityNotFoundException e)
-                        {
+                        } catch (EntityNotFoundException e) {
                             return false;
                         }
                         return component != null && projectService.getProjectById(user, component.getProjectId()).isValid();
                     }
                 },
-                new PermissionCheck<ApplicationUser>()
-                {
+                new PermissionCheck<ApplicationUser>() {
 
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return DASHBOARD_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final String dashboardId, final ApplicationUser applicationUser)
-                    {
+                    public boolean hasPermission(final String dashboardId, final ApplicationUser applicationUser) {
                         return dashboardPermissionService.isReadableBy(DashboardId.valueOf(dashboardId), applicationUser.getUsername());
                     }
                 },

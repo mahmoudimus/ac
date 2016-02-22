@@ -15,11 +15,9 @@ import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 
-public class ConnectIssueTabPanelModuleBeanTest
-{
+public class ConnectIssueTabPanelModuleBeanTest {
     @Test
-    public void producesCorrectJSON() throws Exception
-    {
+    public void producesCorrectJSON() throws Exception {
         ConnectTabPanelModuleBean moduleBean = newTabPanelBean()
                 .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))
                 .withUrl("/my-general-page")
@@ -33,10 +31,8 @@ public class ConnectIssueTabPanelModuleBeanTest
         assertThat(json, is(sameJSONAs(expectedJson)));
     }
 
-    
 
-    private static String readTestFile() throws IOException
-    {
+    private static String readTestFile() throws IOException {
         return readAddonTestFile("issueTabAddon.json");
     }
 }

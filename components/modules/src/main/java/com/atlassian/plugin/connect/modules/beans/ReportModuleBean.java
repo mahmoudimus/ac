@@ -12,33 +12,31 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Allow add-ons to define a new report, which is linked from a project page.
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#REPORT_EXAMPLE}
  * @schemaTitle Report
  * @since 1.2
  */
 @SchemaDefinition("report")
-public class ReportModuleBean extends RequiredKeyBean
-{
+public class ReportModuleBean extends RequiredKeyBean {
     @Required
-    @StringSchemaAttributes (format = "uri-template")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
-    @CommonSchemaAttributes (defaultValue = "100")
+    @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
 
     @Required
     private I18nProperty description;
 
-    @CommonSchemaAttributes (defaultValue = "other")
+    @CommonSchemaAttributes(defaultValue = "other")
     private ReportCategory reportCategory;
 
-    @StringSchemaAttributes (format = "uri-template")
+    @StringSchemaAttributes(format = "uri-template")
     private String thumbnailUrl;
 
-    public ReportModuleBean(final ReportModuleBeanBuilder reportModuleBeanBuilder)
-    {
+    public ReportModuleBean(final ReportModuleBeanBuilder reportModuleBeanBuilder) {
         super(reportModuleBeanBuilder);
     }
 
@@ -47,8 +45,7 @@ public class ReportModuleBean extends RequiredKeyBean
      *
      * @return the URL of the report
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
@@ -60,8 +57,7 @@ public class ReportModuleBean extends RequiredKeyBean
      *
      * @return the weight of the report
      */
-    public Integer getWeight()
-    {
+    public Integer getWeight() {
         return weight;
     }
 
@@ -70,8 +66,7 @@ public class ReportModuleBean extends RequiredKeyBean
      *
      * @return the description of the report
      */
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
@@ -89,26 +84,21 @@ public class ReportModuleBean extends RequiredKeyBean
      *
      * @return the URL of the report thumbnail
      */
-    public String getThumbnailUrl()
-    {
+    public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 
-    public static ReportModuleBeanBuilder newBuilder()
-    {
+    public static ReportModuleBeanBuilder newBuilder() {
         return new ReportModuleBeanBuilder();
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof ReportModuleBean))
-        {
+        if (!(otherObj instanceof ReportModuleBean)) {
             return false;
         }
 
@@ -125,8 +115,7 @@ public class ReportModuleBean extends RequiredKeyBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(53, 11)
                 .append(url)
                 .append(weight)

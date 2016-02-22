@@ -17,36 +17,35 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder
  * For example:
  *
  *
- *    AP.require(["confluence", "dialog"], function (confluence, dialog) {
- *        function onSubmit() {
- *            var macroParams = {
- *                myParameter: value
- *            };
- *            confluence.saveMacro(macroParams);
- *            confluence.closeMacroEditor();
- *            return true;
- *        }
+ * AP.require(["confluence", "dialog"], function (confluence, dialog) {
+ * function onSubmit() {
+ * var macroParams = {
+ * myParameter: value
+ * };
+ * confluence.saveMacro(macroParams);
+ * confluence.closeMacroEditor();
+ * return true;
+ * }
  *
- *        dialog.getButton("submit").bind(onSubmit);
- *    });
+ * dialog.getButton("submit").bind(onSubmit);
+ * });
  *
  * In order to retrieve the custom data again when the editor is opened, use `confluence.getMacroData` (see
  * [Confluence API](../../javascript/module-confluence.html)):
  *
- *    AP.require("confluence", function (confluence) {
- *        var macroData = confluence.getMacroData(function(macroParams) {
- *            doSomethingWith(macroParams.myParameter);
- *        });
- *    });
+ * AP.require("confluence", function (confluence) {
+ * var macroData = confluence.getMacroData(function(macroParams) {
+ * doSomethingWith(macroParams.myParameter);
+ * });
+ * });
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
  * @schemaTitle Macro Editor
  * @since 1.0
  */
-public class MacroEditorBean extends BaseModuleBean
-{
+public class MacroEditorBean extends BaseModuleBean {
     /**
      * The URL to the macro configuration page in the add-on.
      */
@@ -74,75 +73,60 @@ public class MacroEditorBean extends BaseModuleBean
      */
     private String height;
 
-    public MacroEditorBean()
-    {
+    public MacroEditorBean() {
         init();
     }
 
-    public MacroEditorBean(MacroEditorBeanBuilder builder)
-    {
+    public MacroEditorBean(MacroEditorBeanBuilder builder) {
         super(builder);
         init();
     }
 
-    private void init()
-    {
-        if (null == url)
-        {
+    private void init() {
+        if (null == url) {
             url = "";
         }
-        if (null == width)
-        {
+        if (null == width) {
             width = "";
         }
-        if (null == height)
-        {
+        if (null == height) {
             height = "";
         }
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public I18nProperty getEditTitle()
-    {
+    public I18nProperty getEditTitle() {
         return editTitle;
     }
 
-    public boolean hasEditTitle()
-    {
+    public boolean hasEditTitle() {
         return null != editTitle;
     }
 
-    public I18nProperty getInsertTitle()
-    {
+    public I18nProperty getInsertTitle() {
         return insertTitle;
     }
 
-    public boolean hasInsertTitle()
-    {
+    public boolean hasInsertTitle() {
         return null != insertTitle;
     }
 
-    public String getWidth()
-    {
+    public String getWidth() {
         return width;
     }
 
-    public String getHeight()
-    {
+    public String getHeight() {
         return height;
     }
 
-    public static MacroEditorBeanBuilder newMacroEditorBean()
-    {
+    public static MacroEditorBeanBuilder newMacroEditorBean() {
         return new MacroEditorBeanBuilder();
     }
 
-    public static MacroEditorBeanBuilder newMacroEditorBean(MacroEditorBean defaultBean)
-    {
+    public static MacroEditorBeanBuilder newMacroEditorBean(MacroEditorBean defaultBean) {
         return new MacroEditorBeanBuilder(defaultBean);
     }
 }

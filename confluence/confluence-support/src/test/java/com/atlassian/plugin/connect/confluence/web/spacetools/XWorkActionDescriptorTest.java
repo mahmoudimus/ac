@@ -18,27 +18,28 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith (MockitoJUnitRunner.class)
-public class XWorkActionDescriptorTest
-{
-    @Mock private EventPublisher eventPublisher;
-    @Mock private Plugin plugin;
-    @Mock private SpaceToolsTabContext context;
-    @Mock private XWorkPackageCreator xWorkPackageCreator;
+@RunWith(MockitoJUnitRunner.class)
+public class XWorkActionDescriptorTest {
+    @Mock
+    private EventPublisher eventPublisher;
+    @Mock
+    private Plugin plugin;
+    @Mock
+    private SpaceToolsTabContext context;
+    @Mock
+    private XWorkPackageCreator xWorkPackageCreator;
 
     private XWorkActionDescriptor descriptor;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         ConfigurationManager.clearConfigurationProviders();
         assertEquals(1, ConfigurationManager.getConfigurationProviders().size());
         descriptor = new XWorkActionDescriptor(eventPublisher, plugin, "action-test-module", xWorkPackageCreator);
     }
 
     @Test
-    public void testEnable()
-    {
+    public void testEnable() {
         descriptor.enabled();
         // 2 because ConfigurationManager lazily inserts the default config provider when you call getConfigurationProviders
         assertEquals(2, ConfigurationManager.getConfigurationProviders().size());
@@ -48,8 +49,7 @@ public class XWorkActionDescriptorTest
     }
 
     @Test
-    public void testDisable()
-    {
+    public void testDisable() {
         ConfigurationManager.addConfigurationProvider(descriptor);
         descriptor.disabled();
         // 1 because ConfigurationManager lazily inserts the default config provider when you call getConfigurationProviders
@@ -59,8 +59,7 @@ public class XWorkActionDescriptorTest
     }
 
     @Test
-    public void testInit()
-    {
+    public void testInit() {
         Configuration configuration = mock(Configuration.class);
         descriptor.init(configuration);
 

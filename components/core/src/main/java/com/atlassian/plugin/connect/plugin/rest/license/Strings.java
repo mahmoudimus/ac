@@ -12,14 +12,10 @@ import static com.atlassian.upm.api.util.Option.some;
  *
  * Remove this once UPM supports this rest resource
  */
-public class Strings
-{
-    public static Option<String> getFirstNonEmpty(Iterable<String> vals)
-    {
-        for (String val : vals)
-        {
-            if (!StringUtils.isEmpty(val))
-            {
+public class Strings {
+    public static Option<String> getFirstNonEmpty(Iterable<String> vals) {
+        for (String val : vals) {
+            if (!StringUtils.isEmpty(val)) {
                 return some(val);
             }
         }

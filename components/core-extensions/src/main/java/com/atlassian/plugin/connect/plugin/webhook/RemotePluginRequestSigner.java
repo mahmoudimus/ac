@@ -23,10 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Signs outgoing webhooks with oauth credentials
  */
-@ExportAsService (RequestSigner.class)
+@ExportAsService(RequestSigner.class)
 @Named
-public class RemotePluginRequestSigner implements RequestSigner
-{
+public class RemotePluginRequestSigner implements RequestSigner {
 
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final ConnectAddonAccessor addonAccessor;
@@ -34,22 +33,18 @@ public class RemotePluginRequestSigner implements RequestSigner
 
     @Inject
     public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            ConnectAddonAccessor addonAccessor,
-            PluginRetrievalService pluginRetrievalService)
-    {
+                                     ConnectAddonAccessor addonAccessor,
+                                     PluginRetrievalService pluginRetrievalService) {
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.addonAccessor = addonAccessor;
         this.pluginRetrievalService = pluginRetrievalService;
     }
 
     @Override
-    public void sign(URI uri, String pluginKey, Request.Builder request)
-    {
-        if (canSign(pluginKey))
-        {
+    public void sign(URI uri, String pluginKey, Request.Builder request) {
+        if (canSign(pluginKey)) {
             final Optional<String> authValue = getAuthHeader(uri, pluginKey);
-            if (authValue.isPresent())
-            {
+            if (authValue.isPresent()) {
                 request.setHeader(AUTHORIZATION_HEADER, authValue.get());
             }
             //Webhooks SPI does not provide any other extension points for adding headers
@@ -59,19 +54,16 @@ public class RemotePluginRequestSigner implements RequestSigner
         }
     }
 
-    private Optional<String> getAuthHeader(URI uri, String pluginKey)
-    {
+    private Optional<String> getAuthHeader(URI uri, String pluginKey) {
         return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, String[]>emptyMap());
     }
 
-    private AuthorizationGenerator getAuthorizationGenerator(String pluginKey)
-    {
+    private AuthorizationGenerator getAuthorizationGenerator(String pluginKey) {
         return remotablePluginAccessorFactory.get(pluginKey).getAuthorizationGenerator();
     }
 
     // return true if this is a Connect add-on
-    private boolean canSign(final String pluginKey)
-    {
+    private boolean canSign(final String pluginKey) {
         return addonAccessor.getAddon(pluginKey).isPresent();
     }
 }

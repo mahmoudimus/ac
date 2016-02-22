@@ -25,10 +25,9 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class CanUseApplicationConditionWiredTest
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class CanUseApplicationConditionWiredTest {
 
     private final WebFragmentHelper webFragmentHelper;
     private final PluginAccessor pluginAccessor;
@@ -37,8 +36,7 @@ public class CanUseApplicationConditionWiredTest
 
     private Condition condition;
 
-    public CanUseApplicationConditionWiredTest(WebFragmentHelper webFragmentHelper, PluginAccessor pluginAccessor, final UserSearchService userSearchService, final JiraAuthenticationContext authenticationContext)
-    {
+    public CanUseApplicationConditionWiredTest(WebFragmentHelper webFragmentHelper, PluginAccessor pluginAccessor, final UserSearchService userSearchService, final JiraAuthenticationContext authenticationContext) {
         this.webFragmentHelper = webFragmentHelper;
         this.pluginAccessor = pluginAccessor;
         this.userSearchService = userSearchService;
@@ -46,14 +44,12 @@ public class CanUseApplicationConditionWiredTest
     }
 
     @Before
-    public void setUp() throws ConditionLoadingException
-    {
+    public void setUp() throws ConditionLoadingException {
         condition = webFragmentHelper.loadCondition(CanUseApplicationCondition.class.getName(), getConnectPlugin());
     }
 
     @Test
-    public void conditionEvaluatesToFalseForUninstalledApps()
-    {
+    public void conditionEvaluatesToFalseForUninstalledApps() {
         ApplicationUser aUser = userSearchService.findUsers("", UserSearchParams.ACTIVE_USERS_ALLOW_EMPTY_QUERY).iterator().next();
         authenticationContext.setLoggedInUser(aUser);
         condition.init(ImmutableMap.of("applicationKey", "jira-software"));
@@ -61,16 +57,14 @@ public class CanUseApplicationConditionWiredTest
     }
 
     @Test
-    public void conditionEvaluatesToTrueForAvailableApps()
-    {
+    public void conditionEvaluatesToTrueForAvailableApps() {
         ApplicationUser aUser = userSearchService.findUsers("", UserSearchParams.ACTIVE_USERS_ALLOW_EMPTY_QUERY).iterator().next();
         authenticationContext.setLoggedInUser(aUser);
         condition.init(ImmutableMap.of("applicationKey", "jira-core"));
         assertTrue(condition.shouldDisplay(Collections.emptyMap()));
     }
 
-    private Plugin getConnectPlugin()
-    {
+    private Plugin getConnectPlugin() {
         return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
     }
 }

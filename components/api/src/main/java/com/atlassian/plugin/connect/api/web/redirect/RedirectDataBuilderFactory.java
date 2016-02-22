@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.api.web.redirect;
 
-public interface RedirectDataBuilderFactory
-{
+public interface RedirectDataBuilderFactory {
     RedirectDataBuilder builder();
 }

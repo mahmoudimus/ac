@@ -16,8 +16,7 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteCookieGeneralPage extends ConnectGeneralTestPage
-{
+public class RemoteCookieGeneralPage extends ConnectGeneralTestPage {
 
     @Inject
     protected AtlassianWebDriver driver;
@@ -28,13 +27,11 @@ public class RemoteCookieGeneralPage extends ConnectGeneralTestPage
     @Inject
     protected PageElementFinder elementFinder;
 
-    public RemoteCookieGeneralPage(String addonKey, String moduleKey)
-    {
+    public RemoteCookieGeneralPage(String addonKey, String moduleKey) {
         super(addonKey, moduleKey);
     }
 
-    public void saveCookie()
-    {
+    public void saveCookie() {
         runInFrame(() -> {
             PageElement element = elementFinder.find(By.id("save-cookie"));
             waitUntilTrue(element.timed().isVisible());
@@ -43,8 +40,7 @@ public class RemoteCookieGeneralPage extends ConnectGeneralTestPage
         });
     }
 
-    public void readCookie()
-    {
+    public void readCookie() {
         runInFrame(() -> {
             PageElement element = elementFinder.find(By.id("read-cookie"));
             waitUntilTrue(element.timed().isVisible());
@@ -53,8 +49,7 @@ public class RemoteCookieGeneralPage extends ConnectGeneralTestPage
         });
     }
 
-    public void eraseCookie()
-    {
+    public void eraseCookie() {
         runInFrame(() -> {
             PageElement element = elementFinder.find(By.id("erase-cookie"));
             waitUntilTrue(element.timed().isVisible());
@@ -63,8 +58,7 @@ public class RemoteCookieGeneralPage extends ConnectGeneralTestPage
         });
     }
 
-    public String getCookieContents()
-    {
+    public String getCookieContents() {
         return getValueById("cookie-contents");
     }
 }

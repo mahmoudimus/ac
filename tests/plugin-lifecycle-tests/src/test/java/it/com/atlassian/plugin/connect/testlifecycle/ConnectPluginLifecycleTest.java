@@ -24,8 +24,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
-{
+public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest {
 
     public static final String SINGLE_MODULE_ADDON = "single-module.json";
     public static final String DOUBLE_MODULE_ADDON = "double-module.json";
@@ -39,67 +38,50 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     private Plugin doubleModuleAddon;
 
     public ConnectPluginLifecycleTest(PluginController pluginController,
-            LifecyclePluginHelper pluginHelper,
-            LifecycleUpmHelper upmHelper,
-            LifecycleTestAuthenticator testAuthenticator,
-            PluginAccessor pluginAccessor)
-    {
+                                      LifecyclePluginHelper pluginHelper,
+                                      LifecycleUpmHelper upmHelper,
+                                      LifecycleTestAuthenticator testAuthenticator,
+                                      PluginAccessor pluginAccessor) {
         super(pluginController, pluginHelper, upmHelper, testAuthenticator);
         this.pluginAccessor = pluginAccessor;
     }
 
     @BeforeClass
-    public void setupBeforeAllTests()
-    {
+    public void setupBeforeAllTests() {
         testAuthenticator.authenticateUser("admin");
     }
 
     @After
-    public void tearDown()
-    {
-        if (null != singleModuleAddon)
-        {
-            try
-            {
+    public void tearDown() {
+        if (null != singleModuleAddon) {
+            try {
                 pluginController.uninstall(singleModuleAddon);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.warn("Failed to uninstall add-on", e);
-            }
-            finally
-            {
+            } finally {
                 singleModuleAddon = null;
             }
         }
 
-        if (null != doubleModuleAddon)
-        {
-            try
-            {
+        if (null != doubleModuleAddon) {
+            try {
                 pluginController.uninstall(doubleModuleAddon);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.warn("Failed to uninstall add-on", e);
-            }
-            finally
-            {
+            } finally {
                 doubleModuleAddon = null;
             }
         }
     }
 
     @Test
-    public void installConnectSucceeds() throws Exception
-    {
+    public void installConnectSucceeds() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         assertEquals(PluginState.ENABLED, theConnectPlugin.getPluginState());
     }
 
     @Test
-    public void installConnectWithAddonSucceeds() throws Exception
-    {
+    public void installConnectWithAddonSucceeds() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         assertEquals("first enabled check failed", PluginState.ENABLED, theConnectPlugin.getPluginState());
 
@@ -108,8 +90,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
-    public void disablingAddonSucceeds() throws Exception
-    {
+    public void disablingAddonSucceeds() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
@@ -119,8 +100,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
-    public void disablingThenEnablingAddonSucceeds() throws Exception
-    {
+    public void disablingThenEnablingAddonSucceeds() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
@@ -132,21 +112,17 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
     }
 
-    private Collection<ModuleDescriptor<?>> getEnabledModules(Plugin theConnectPlugin)
-    {
-        return Collections2.filter(theConnectPlugin.getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>()
-        {
+    private Collection<ModuleDescriptor<?>> getEnabledModules(Plugin theConnectPlugin) {
+        return Collections2.filter(theConnectPlugin.getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>() {
             @Override
-            public boolean apply(@Nullable ModuleDescriptor<?> input)
-            {
+            public boolean apply(@Nullable ModuleDescriptor<?> input) {
                 return (null != input) ? pluginAccessor.isPluginModuleEnabled(input.getCompleteKey()) : false;
             }
         });
     }
 
     @Test
-    public void disablingThenEnablingConnectDisablesAndEnablesAddon() throws Exception
-    {
+    public void disablingThenEnablingConnectDisablesAndEnablesAddon() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
@@ -160,8 +136,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
-    public void uninstallingAndThenInstallingConnectDisablesAndEnablesAddon() throws Exception
-    {
+    public void uninstallingAndThenInstallingConnectDisablesAndEnablesAddon() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
@@ -173,8 +148,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
-    public void upgradingConnectEnablesAddon() throws Exception
-    {
+    public void upgradingConnectEnablesAddon() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
@@ -184,8 +158,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
-    public void disablingThenEnablingConnectDisablesAndEnablesMultipleAddons() throws Exception
-    {
+    public void disablingThenEnablingConnectDisablesAndEnablesMultipleAddons() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
         doubleModuleAddon = installAndEnableAddon(DOUBLE_MODULE_ADDON);
@@ -202,8 +175,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
-    public void uninstallingAndThenInstallingConnectDisablesAndEnablesMultipleAddons() throws Exception
-    {
+    public void uninstallingAndThenInstallingConnectDisablesAndEnablesMultipleAddons() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
         doubleModuleAddon = installAndEnableAddon(DOUBLE_MODULE_ADDON);
@@ -217,8 +189,7 @@ public class ConnectPluginLifecycleTest extends AbstractPluginLifecycleTest
     }
 
     @Test
-    public void upgradingConnectEnablesMultipleAddons() throws Exception
-    {
+    public void upgradingConnectEnablesMultipleAddons() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
         doubleModuleAddon = installAndEnableAddon(DOUBLE_MODULE_ADDON);

@@ -23,8 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class TestRequest extends MultiProductWebDriverTestBase
-{
+public class TestRequest extends MultiProductWebDriverTestBase {
 
     private static final String PAGE_MODULE_KEY = "remotePluginGeneral";
     private static final String PAGE_NAME = "Request";
@@ -32,8 +31,7 @@ public class TestRequest extends MultiProductWebDriverTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         String pageUrl = "/rpg";
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
@@ -50,17 +48,14 @@ public class TestRequest extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testRequestFromGeneralPage()
-    {
+    public void testRequestFromGeneralPage() {
         TestUser user = testUserFactory.basicUser();
         ConnectGeneralTestPage page = loginAndVisit(user,
                 ConnectGeneralTestPage.class, remotePlugin.getAddon().getKey(), PAGE_MODULE_KEY);

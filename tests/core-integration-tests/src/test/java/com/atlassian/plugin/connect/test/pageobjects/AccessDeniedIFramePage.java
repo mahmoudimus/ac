@@ -7,28 +7,24 @@ import com.atlassian.webdriver.AtlassianWebDriver;
 
 import org.openqa.selenium.By;
 
-public class AccessDeniedIFramePage implements Page
-{
+public class AccessDeniedIFramePage implements Page {
     private final String pageKey;
     private final String appKey;
     @Inject
     private AtlassianWebDriver driver;
 
-    public AccessDeniedIFramePage(String appKey, String pageKey)
-    {
+    public AccessDeniedIFramePage(String appKey, String pageKey) {
         this.pageKey = pageKey;
         this.appKey = appKey;
     }
 
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return "/plugins/servlet/atlassian-connect/" + appKey + "/" + pageKey;
     }
 
-    public boolean isIframeAvailable()
-    {
+    public boolean isIframeAvailable() {
         return driver.elementExists(By.id("embedded-" + pageKey));
     }
 }

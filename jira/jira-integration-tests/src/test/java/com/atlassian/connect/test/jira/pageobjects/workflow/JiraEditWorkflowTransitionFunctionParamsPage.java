@@ -10,17 +10,15 @@ import javax.inject.Inject;
 import static com.atlassian.webdriver.utils.element.ElementConditions.isPresent;
 import static com.atlassian.webdriver.utils.element.ElementConditions.isVisible;
 
-public class JiraEditWorkflowTransitionFunctionParamsPage extends ConnectAddonEmbeddedTestPage
-{
-    @Inject private WebDriverPoller poller;
+public class JiraEditWorkflowTransitionFunctionParamsPage extends ConnectAddonEmbeddedTestPage {
+    @Inject
+    private WebDriverPoller poller;
 
-    public JiraEditWorkflowTransitionFunctionParamsPage(String addonKey, String moduleKey)
-    {
+    public JiraEditWorkflowTransitionFunctionParamsPage(String addonKey, String moduleKey) {
         super(addonKey, moduleKey, true);
     }
 
-    public void submit()
-    {
+    public void submit() {
         By submitButtonLocator = By.id("add_submit");
         // waits for form to load to make sure that clicking on submit will work in chrome
         poller.waitUntil(isPresent(By.name("jiraform")), DefaultTimeouts.DEFAULT_PAGE_LOAD);

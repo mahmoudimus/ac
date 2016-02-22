@@ -2,8 +2,7 @@ package com.atlassian.plugin.connect.plugin.rest.data;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class RestMinimalAddon
-{
+public class RestMinimalAddon {
     @JsonProperty
     private final String key;
 
@@ -11,19 +10,16 @@ public class RestMinimalAddon
     private final String version;
 
     public RestMinimalAddon(@JsonProperty("key") final String key,
-                            @JsonProperty("version") final String version)
-    {
+                            @JsonProperty("version") final String version) {
         this.key = key;
         this.version = version;
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 }

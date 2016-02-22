@@ -32,39 +32,32 @@ import java.util.stream.Collectors;
  * </pre>
  */
 public final class RedirectedWebPanelLocationProviderModuleDescriptor
-        extends AbstractModuleDescriptor<RedirectedWebPanelLocationProviderModuleDescriptor.RedirectedWebPanelLocationProvider>
-{
+        extends AbstractModuleDescriptor<RedirectedWebPanelLocationProviderModuleDescriptor.RedirectedWebPanelLocationProvider> {
     private RedirectedWebPanelLocationProvider module;
 
-    public static final class RedirectedWebPanelLocationProvider
-    {
+    public static final class RedirectedWebPanelLocationProvider {
         private final Set<String> redirectedLocations;
 
-        public RedirectedWebPanelLocationProvider(final Set<String> redirectedLocations)
-        {
+        public RedirectedWebPanelLocationProvider(final Set<String> redirectedLocations) {
             this.redirectedLocations = redirectedLocations;
         }
 
-        public Set<String> getRedirectedLocations()
-        {
+        public Set<String> getRedirectedLocations() {
             return redirectedLocations;
         }
     }
 
-    public RedirectedWebPanelLocationProviderModuleDescriptor(final ModuleFactory moduleFactory)
-    {
+    public RedirectedWebPanelLocationProviderModuleDescriptor(final ModuleFactory moduleFactory) {
         super(moduleFactory);
     }
 
     @Override
-    public void init(Plugin plugin, Element element) throws PluginParseException
-    {
+    public void init(Plugin plugin, Element element) throws PluginParseException {
         super.init(plugin, element);
         this.module = createRedirectedWebPanelLocationProvider(element);
     }
 
-    private RedirectedWebPanelLocationProvider createRedirectedWebPanelLocationProvider(Element element)
-    {
+    private RedirectedWebPanelLocationProvider createRedirectedWebPanelLocationProvider(Element element) {
         // noinspection unchecked
         List<Element> locationElements = element.elements("location");
         final Set<String> locations = ImmutableSet.copyOf(locationElements.stream()
@@ -74,8 +67,7 @@ public final class RedirectedWebPanelLocationProviderModuleDescriptor
     }
 
     @Override
-    public RedirectedWebPanelLocationProvider getModule()
-    {
+    public RedirectedWebPanelLocationProvider getModule() {
         return module;
     }
 }

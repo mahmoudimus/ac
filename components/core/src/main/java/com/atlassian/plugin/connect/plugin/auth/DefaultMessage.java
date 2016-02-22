@@ -7,24 +7,20 @@ import java.io.Serializable;
 /**
  *
  */
-public class DefaultMessage implements Message
-{
+public class DefaultMessage implements Message {
     private final String key;
 
-    public DefaultMessage(String key)
-    {
+    public DefaultMessage(String key) {
         this.key = key;
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
     @Override
-    public Serializable[] getArguments()
-    {
+    public Serializable[] getArguments() {
         return new Serializable[0];
     }
 }

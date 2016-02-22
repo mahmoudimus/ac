@@ -18,11 +18,11 @@ import java.util.Map;
 
 /**
  * Given an addon key and a relative path, builds an absolute URL and redirects the client to it.
+ *
  * @deprecated do not use redirects - use the direct add-on url instead
  */
 @Deprecated
-public final class LegacyAddonRedirectServlet extends HttpServlet
-{
+public final class LegacyAddonRedirectServlet extends HttpServlet {
     private static final String APP_KEY_PARAM = "app_key";
     private static final String APP_URL_PARAM = "app_url";
 
@@ -30,22 +30,20 @@ public final class LegacyAddonRedirectServlet extends HttpServlet
 
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
-    public LegacyAddonRedirectServlet(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
-    {
+    public LegacyAddonRedirectServlet(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory) {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
     }
 
     /**
      * Expected URL query parameters:
      * <ul>
-     *     <li><strong>app_key:</strong> The Remotable Plugin key</li>
-     *     <li><strong>app_url:</strong> Relative URL within the Remotable Plugin to redirect to</li>
+     * <li><strong>app_key:</strong> The Remotable Plugin key</li>
+     * <li><strong>app_url:</strong> Relative URL within the Remotable Plugin to redirect to</li>
      * </ul>
      */
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-    {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.warn("/plugins/servlet/redirect/permanent resource is deprecated and will be removed soon. Please use a direct url to the add-on.");
         final String appkey = req.getParameter(APP_KEY_PARAM);
         Validate.notEmpty(appkey, String.format("%s parameter is required", APP_KEY_PARAM));
@@ -63,8 +61,7 @@ public final class LegacyAddonRedirectServlet extends HttpServlet
         resp.getOutputStream().close();
     }
 
-    private String getFullUrl(RemotablePluginAccessor remotablePluginAccessor, String appRelativeUrl, Map<String, String[]> params)
-    {
+    private String getFullUrl(RemotablePluginAccessor remotablePluginAccessor, String appRelativeUrl, Map<String, String[]> params) {
         Uri targetUrl = Uri.parse(appRelativeUrl);
         return remotablePluginAccessor.createGetUrl(targetUrl.toJavaUri(), params);
     }

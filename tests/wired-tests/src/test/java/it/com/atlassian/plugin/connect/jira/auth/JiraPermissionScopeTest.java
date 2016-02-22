@@ -30,8 +30,7 @@ import static org.junit.Assert.assertTrue;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
-{
+public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest {
 
     public JiraPermissionScopeTest(ConnectUserService connectUserService,
                                    PermissionManager permissionManager,
@@ -40,8 +39,7 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
                                    UserManager userManager,
                                    TestPluginInstaller testPluginInstaller,
                                    TestAuthenticator testAuthenticator,
-                                   JiraTestUtil jiraTestUtil)
-    {
+                                   JiraTestUtil jiraTestUtil) {
         super(connectUserService,
                 permissionManager,
                 projectService,
@@ -53,30 +51,24 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
     }
 
     @Test
-    public void projectPermissionConfigurationIsRemovedAfterReinstallWithDowngradedScope() throws Exception
-    {
+    public void projectPermissionConfigurationIsRemovedAfterReinstallWithDowngradedScope() throws Exception {
         Plugin plugin = null;
-        try
-        {
+        try {
             plugin = installPlugin(getProjectAdminAddon());
             uninstallPlugin(plugin);
             plugin = installPlugin(getReadAddon());
 
             List<String> projectAdminErrors = permissionsForAllProjects(Permission.PROJECT_ADMIN, false, plugin);
             assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
-        }
-        finally
-        {
+        } finally {
             uninstallPlugin(plugin);
         }
     }
 
     @Test
-    public void addonEnablementChangesPreserveCustomConfiguration() throws Exception
-    {
+    public void addonEnablementChangesPreserveCustomConfiguration() throws Exception {
         Plugin plugin = null;
-        try
-        {
+        try {
             plugin = installPlugin(getProjectAdminAddon());
 
             Project project = jiraTestUtil.createProject();
@@ -99,9 +91,7 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
 
             boolean addonStillCannotAdministerProject = getPermissionManager().hasPermission(Permissions.PROJECT_ADMIN, project, addonUser, false);
             assertFalse("Add-on user " + addonUser.getName() + " should not have administer permission for project " + project.getKey(), addonStillCannotAdministerProject);
-        }
-        finally
-        {
+        } finally {
             uninstallPlugin(plugin);
         }
     }

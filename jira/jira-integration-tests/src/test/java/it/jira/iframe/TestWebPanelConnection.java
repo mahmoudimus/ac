@@ -26,8 +26,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test web panels in web panel redirected locations works and points to the redirect servlet.
  */
-public final class TestWebPanelConnection extends JiraWebDriverTestBase
-{
+public final class TestWebPanelConnection extends JiraWebDriverTestBase {
     // this is not a true redirected location but it's defined as this in reference plugin for the test purpose.
     private static final String REDIRECTED_LOCATION = "atl.jira.proj.config.sidebar";
     private static final String LOCATION = "webpanels.admin.summary.right-panels";
@@ -42,24 +41,20 @@ public final class TestWebPanelConnection extends JiraWebDriverTestBase
     public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
-    {
+    public static void startConnectAddOn() throws Exception {
         product.quickLoginAsAdmin();
 
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddOn() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void webPanelInRedirectedLocationShouldConnectionWithConnectJsAndParamsShouldBeResolvedProperly() throws Exception
-    {
+    public void webPanelInRedirectedLocationShouldConnectionWithConnectJsAndParamsShouldBeResolvedProperly() throws Exception {
         webPanel = newWebPanelBean()
                 .withName(new I18nProperty("Panel in redirected location", null))
                 .withKey("test-web-panel")
@@ -88,8 +83,7 @@ public final class TestWebPanelConnection extends JiraWebDriverTestBase
     }
 
     @Test
-    public void webPanelWithAddOnBaseUrlWithPathShouldConnectionWithConnectJs() throws Exception
-    {
+    public void webPanelWithAddOnBaseUrlWithPathShouldConnectionWithConnectJs() throws Exception {
         webPanel = newWebPanelBean()
                 .withName(new I18nProperty("Panel in redirected location", null))
                 .withKey("test-web-panel")

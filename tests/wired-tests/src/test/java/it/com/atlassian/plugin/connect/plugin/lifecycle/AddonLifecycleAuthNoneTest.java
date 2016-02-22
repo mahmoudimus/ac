@@ -19,8 +19,7 @@ import org.junit.runner.RunWith;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class AddonLifecycleAuthNoneTest extends AbstractAddonLifecycleTest
-{
+public class AddonLifecycleAuthNoneTest extends AbstractAddonLifecycleTest {
     protected AddonLifecycleAuthNoneTest(TestPluginInstaller testPluginInstaller,
                                          TestAuthenticator testAuthenticator,
                                          AddonTestFilterResults testFilterResults,
@@ -30,20 +29,17 @@ public class AddonLifecycleAuthNoneTest extends AbstractAddonLifecycleTest
                                          ApplicationService applicationService,
                                          ApplicationManager applicationManager,
                                          DarkFeatureManager darkFeatureManager,
-                                         ConnectAddonRegistry connectAddonRegistry)
-    {
+                                         ConnectAddonRegistry connectAddonRegistry) {
         super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectCrowdService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
     }
 
     @Override
-    protected boolean signCallbacksWithJwt()
-    {
+    protected boolean signCallbacksWithJwt() {
         return false;
     }
 
     @Before
-    public void setup() throws Exception
-    {
+    public void setup() throws Exception {
         testAuthenticator.authenticateUser("admin");
         initBeans(newAuthenticationBean().withType(AuthenticationType.NONE).build());
     }

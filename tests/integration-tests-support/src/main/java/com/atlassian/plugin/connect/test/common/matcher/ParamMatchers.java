@@ -12,18 +12,15 @@ import static org.hamcrest.Matchers.isIn;
  */
 public class ParamMatchers {
 
-    public static Matcher<String> isTimeZone()
-    {
+    public static Matcher<String> isTimeZone() {
         return isIn(TimeZone.getAvailableIDs());
     }
 
-    public static Matcher<String> isLocale()
-    {
+    public static Matcher<String> isLocale() {
         return matchesPattern("[A-Za-z0-9]{2,}-[A-Za-z0-9]{2,}");
     }
 
-    public static Matcher<String> isVersionNumber()
-    {
+    public static Matcher<String> isVersionNumber() {
         return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*.*");
     }
 }

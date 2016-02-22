@@ -19,8 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @JiraComponent
-public class DashboardItemModuleProvider extends AbstractJiraConnectModuleProvider<DashboardItemModuleBean>
-{
+public class DashboardItemModuleProvider extends AbstractJiraConnectModuleProvider<DashboardItemModuleBean> {
 
     private static final DashboardItemModuleMeta META = new DashboardItemModuleMeta();
 
@@ -29,37 +28,31 @@ public class DashboardItemModuleProvider extends AbstractJiraConnectModuleProvid
 
     @Autowired
     public DashboardItemModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            DashboardItemModuleDescriptorFactory dashboardItemModuleDescriptorFactory,
-            ConditionLoadingValidator conditionLoadingValidator)
-    {
+                                       ConnectJsonSchemaValidator schemaValidator,
+                                       DashboardItemModuleDescriptorFactory dashboardItemModuleDescriptorFactory,
+                                       ConditionLoadingValidator conditionLoadingValidator) {
         super(pluginRetrievalService, schemaValidator);
         this.dashboardItemModuleDescriptorFactory = dashboardItemModuleDescriptorFactory;
         this.conditionLoadingValidator = conditionLoadingValidator;
     }
 
     @Override
-    public ConnectModuleMeta<DashboardItemModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<DashboardItemModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<DashboardItemModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<DashboardItemModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         List<DashboardItemModuleBean> dashboardItems = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), dashboardItems);
         return dashboardItems;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<DashboardItemModuleBean> modules, ConnectAddonBean addon)
-    {
-        return Lists.transform(modules, new Function<DashboardItemModuleBean, ModuleDescriptor>()
-        {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<DashboardItemModuleBean> modules, ConnectAddonBean addon) {
+        return Lists.transform(modules, new Function<DashboardItemModuleBean, ModuleDescriptor>() {
             @Override
-            public ModuleDescriptor apply(final DashboardItemModuleBean bean)
-            {
+            public ModuleDescriptor apply(final DashboardItemModuleBean bean) {
                 return dashboardItemModuleDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
             }
         });

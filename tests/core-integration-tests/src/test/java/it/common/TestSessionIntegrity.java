@@ -27,8 +27,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
-public class TestSessionIntegrity extends MultiProductWebDriverTestBase
-{
+public class TestSessionIntegrity extends MultiProductWebDriverTestBase {
     private static final String HTTP_GET = "GET";
 
     private static ConnectRunner runner;
@@ -37,8 +36,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     private final JwtAuthorizationGenerator jwtAuthorizationGenerator = new JwtAuthorizationGenerator(new NimbusJwtWriterFactory());
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         installHandler = ConnectAppServlets.installHandlerServlet();
         runner = new ConnectRunner(baseUrl(), AddonTestUtils.randomAddonKey())
                 .addModule("generalPages", newPageBean()
@@ -53,17 +51,14 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void addonUserDoesNotInheritTheSession() throws Exception
-    {
+    public void addonUserDoesNotInheritTheSession() throws Exception {
         WebDriver driver = product.getTester().getDriver().getDriver();
 
         login(testUserFactory.basicUser());
@@ -74,8 +69,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
         assertFalse(isUserLoggedIn());
     }
 
-    private String signedWithJwt(String url) throws JwtUnknownIssuerException, URISyntaxException, JwtIssuerLacksSharedSecretException
-    {
+    private String signedWithJwt(String url) throws JwtUnknownIssuerException, URISyntaxException, JwtIssuerLacksSharedSecretException {
         InstallHandlerServlet.InstallPayload installPayload = installHandler.getInstallPayload();
         String baseUrl = baseUrl();
         URI uri = URI.create(baseUrl + url);
@@ -85,18 +79,15 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
         return uri.toString() + "?jwt=" + jwtToken;
     }
 
-    private String user(String name)
-    {
+    private String user(String name) {
         return "<user><name>" + name + "</name></user>";
     }
 
-    private static String baseUrl()
-    {
+    private static String baseUrl() {
         return product.getProductInstance().getBaseUrl();
     }
 
-    private boolean isUserLoggedIn()
-    {
+    private boolean isUserLoggedIn() {
         HomePage homePage = product.visit(HomePage.class);
         return homePage.getHeader().isLoggedIn();
     }

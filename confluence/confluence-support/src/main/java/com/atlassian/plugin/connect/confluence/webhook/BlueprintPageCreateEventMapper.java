@@ -9,22 +9,18 @@ import com.atlassian.sal.api.user.UserManager;
 
 import com.google.common.collect.ImmutableMap;
 
-public class BlueprintPageCreateEventMapper extends ConfluenceEventMapper
-{
-    public BlueprintPageCreateEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+public class BlueprintPageCreateEventMapper extends ConfluenceEventMapper {
+    public BlueprintPageCreateEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         super(userManager, confluenceSettingsManager);
     }
 
     @Override
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return e instanceof BlueprintPageCreateEvent;
     }
 
     @Override
-    public Map<String, Object> toMap(ConfluenceEvent e)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent e) {
         BlueprintPageCreateEvent event = (BlueprintPageCreateEvent) e;
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();

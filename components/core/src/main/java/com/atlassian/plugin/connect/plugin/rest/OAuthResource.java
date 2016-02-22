@@ -18,26 +18,23 @@ import static com.google.common.base.Strings.nullToEmpty;
 /**
  */
 @Path("/oauth")
-public class OAuthResource
-{
+public class OAuthResource {
     private final ConsumerService consumerService;
 
-    public OAuthResource(ConsumerService consumerService)
-    {
+    public OAuthResource(ConsumerService consumerService) {
         this.consumerService = consumerService;
     }
 
     @GET
     @AnonymousAllowed
     @Produces("application/json")
-    public Response getOauthInfo() throws JSONException
-    {
+    public Response getOauthInfo() throws JSONException {
         Consumer consumer = consumerService.getConsumer();
         return Response.ok(new JSONObject()
                 .put("key", nullToEmpty(consumer.getKey()))
                 .put("name", nullToEmpty(consumer.getName()))
                 .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
                 .put("description", nullToEmpty(consumer.getDescription())).toString(2))
-            .build();
+                .build();
     }
 }

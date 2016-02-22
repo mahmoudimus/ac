@@ -18,7 +18,7 @@ import java.util.List;
  * as a parameter on the macro body. You must define the name of this parameter by providing a string value for 'urlParameter'.
  * This allows you to access the URL that triggered the autoconvert.
  *
- *#### Example
+ * #### Example
  *
  * This example inserts a macro into the editor when a user pastes in certain simple Facebook links.
  *
@@ -27,8 +27,7 @@ import java.util.List;
  * @since 1.1.27
  */
 @SchemaDefinition("autoconvert")
-public class AutoconvertBean extends BaseModuleBean
-{
+public class AutoconvertBean extends BaseModuleBean {
 
     /**
      * The name of the macro parameter the matched url will be inserted into.
@@ -42,44 +41,36 @@ public class AutoconvertBean extends BaseModuleBean
     @ArraySchemaAttributes(maxItems = 200)
     private List<MatcherBean> matchers;
 
-    public AutoconvertBean()
-    {
+    public AutoconvertBean() {
         this.matchers = Collections.emptyList();
         this.urlParameter = "";
     }
 
-    public AutoconvertBean(AutoconvertBeanBuilder builder)
-    {
+    public AutoconvertBean(AutoconvertBeanBuilder builder) {
         super(builder);
 
-        if (null == matchers)
-        {
+        if (null == matchers) {
             this.matchers = Collections.emptyList();
         }
 
-        if (null == urlParameter)
-        {
+        if (null == urlParameter) {
             this.urlParameter = "";
         }
     }
 
-    public static AutoconvertBeanBuilder newAutoconvertBean()
-    {
+    public static AutoconvertBeanBuilder newAutoconvertBean() {
         return new AutoconvertBeanBuilder();
     }
 
-    public static AutoconvertBeanBuilder newAutoconvertBean(AutoconvertBean defaultBean)
-    {
+    public static AutoconvertBeanBuilder newAutoconvertBean(AutoconvertBean defaultBean) {
         return new AutoconvertBeanBuilder(defaultBean);
     }
 
-    public List<MatcherBean> getMatchers()
-    {
+    public List<MatcherBean> getMatchers() {
         return matchers;
     }
 
-    public String getUrlParameter()
-    {
+    public String getUrlParameter() {
         return urlParameter;
     }
 }

@@ -20,8 +20,7 @@ import java.util.Set;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WebHookScopeValidatorTest
-{
+public class WebHookScopeValidatorTest {
 
     private WebHookScopeValidator webHookScopeValidator;
 
@@ -29,43 +28,36 @@ public class WebHookScopeValidatorTest
     private WebHookScopeService webHookScopeService;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         webHookScopeValidator = new WebHookScopeValidator(webHookScopeService);
     }
 
     @Test
-    public void shouldAcceptBeanWithoutWebhooks() throws ConnectModuleValidationException
-    {
+    public void shouldAcceptBeanWithoutWebhooks() throws ConnectModuleValidationException {
         webHookScopeValidator.validate(ConnectAddonBean.newConnectAddonBean().build(), new ArrayList<>());
     }
 
     @Test(expected = ConnectModuleValidationException.class)
-    public void shouldRejectBeanWithoutRequiredScopesForWebhook() throws ConnectModuleValidationException
-    {
+    public void shouldRejectBeanWithoutRequiredScopesForWebhook() throws ConnectModuleValidationException {
         validateAddonBean(ScopeName.READ, Collections.<ScopeName>emptySet());
     }
 
     @Test(expected = ConnectModuleValidationException.class)
-    public void shouldRejectBeanWithoutImpliedRequiredScopesForWebhook() throws ConnectModuleValidationException
-    {
+    public void shouldRejectBeanWithoutImpliedRequiredScopesForWebhook() throws ConnectModuleValidationException {
         validateAddonBean(ScopeName.WRITE, ImmutableSet.of(ScopeName.READ));
     }
 
     @Test
-    public void shouldAcceptBeanWithImpliedRequiredScopesForWebhook() throws ConnectModuleValidationException
-    {
+    public void shouldAcceptBeanWithImpliedRequiredScopesForWebhook() throws ConnectModuleValidationException {
         validateAddonBean(ScopeName.READ, ImmutableSet.of(ScopeName.WRITE));
     }
 
     @Test
-    public void shouldAcceptBeanWithRequiredScopesForWebhook() throws ConnectModuleValidationException
-    {
+    public void shouldAcceptBeanWithRequiredScopesForWebhook() throws ConnectModuleValidationException {
         validateAddonBean(ScopeName.ADMIN, ImmutableSet.of(ScopeName.ADMIN));
     }
 
-    private void validateAddonBean(ScopeName requiredScope, Set<ScopeName> definedScopes) throws ConnectModuleValidationException
-    {
+    private void validateAddonBean(ScopeName requiredScope, Set<ScopeName> definedScopes) throws ConnectModuleValidationException {
         String event = "fooCreated";
         WebHookModuleBean webHookModuleBean = new WebHookModuleBeanBuilder().withEvent(event).build();
         ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()

@@ -5,8 +5,7 @@ package com.atlassian.plugin.connect.modules.beans;
  *
  * @param <T> the type of the add-on descriptor module representation
  */
-public abstract class ConnectModuleMeta<T extends ModuleBean>
-{
+public abstract class ConnectModuleMeta<T extends ModuleBean> {
 
     private String descriptorKey;
 
@@ -16,10 +15,9 @@ public abstract class ConnectModuleMeta<T extends ModuleBean>
      * Creates a new module meta.
      *
      * @param descriptorKey the descriptor key, must be unique
-     * @param beanClass the module representation class
+     * @param beanClass     the module representation class
      */
-    public ConnectModuleMeta(String descriptorKey, Class<T> beanClass)
-    {
+    public ConnectModuleMeta(String descriptorKey, Class<T> beanClass) {
         this.descriptorKey = descriptorKey;
         this.beanClass = beanClass;
     }
@@ -29,8 +27,7 @@ public abstract class ConnectModuleMeta<T extends ModuleBean>
      *
      * @return the descriptor key, must be unique
      */
-    public String getDescriptorKey()
-    {
+    public String getDescriptorKey() {
         return descriptorKey;
     }
 
@@ -39,8 +36,7 @@ public abstract class ConnectModuleMeta<T extends ModuleBean>
      *
      * @return the module representation class
      */
-    public Class<T> getBeanClass()
-    {
+    public Class<T> getBeanClass() {
         return beanClass;
     }
 
@@ -50,8 +46,7 @@ public abstract class ConnectModuleMeta<T extends ModuleBean>
      *
      * @return whether multiple modules are allowed, by default true
      */
-    public boolean multipleModulesAllowed()
-    {
+    public boolean multipleModulesAllowed() {
         return true;
     }
 }

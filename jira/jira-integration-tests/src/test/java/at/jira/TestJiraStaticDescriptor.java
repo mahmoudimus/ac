@@ -20,11 +20,10 @@ import it.jira.JiraWebDriverTestBase;
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static com.atlassian.test.ondemand.data.JiraData.Projects.EntityLinkedProject.Issues.ISSUE_WITH_WIKI_LINK;
 
-@Category (OnDemandAcceptanceTest.class)
-@Retry (maxAttempts=1)
+@Category(OnDemandAcceptanceTest.class)
+@Retry(maxAttempts = 1)
 @Ignore
-public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
-{
+public class TestJiraStaticDescriptor extends JiraWebDriverTestBase {
     private static final String WEB_ITEM_TEXT = "AC Action";
 
     protected static final ExternalAddonInstaller externalAddonInstaller = new ExternalAddonInstaller(
@@ -33,15 +32,13 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     private static final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
 
     @Before
-    public void installAddon() throws Exception
-    {
+    public void installAddon() throws Exception {
         log.info("Installing add-on in preparation for running a test in " + getClass().getName());
         externalAddonInstaller.install();
     }
 
     @Test
-    public void testAcActionWebItemIsPresent() throws RemoteException
-    {
+    public void testAcActionWebItemIsPresent() throws RemoteException {
         login(testUserFactory.basicUser());
         product.goToViewIssue(ISSUE_WITH_WIKI_LINK.key);
 
@@ -49,8 +46,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     }
 
     @After
-    public void uninstallAddon() throws Exception
-    {
+    public void uninstallAddon() throws Exception {
         log.info("Cleaning up after running a test in " + getClass().getName());
         externalAddonInstaller.uninstall();
     }

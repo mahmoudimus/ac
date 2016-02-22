@@ -49,8 +49,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertThat;
 
-public class TestStaticContentMacro extends AbstractContentMacroTest
-{
+public class TestStaticContentMacro extends AbstractContentMacroTest {
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
     private static final String STORAGE_FORMAT_MACRO_KEY = "storage-format-macro";
     private static final String COUNTER_CSS_CLASS = "rp-counter";
@@ -66,8 +65,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     private static EchoContextServlet contextServlet;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         StaticContentMacroModuleBean simpleMacro = createSimpleMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean allParameterTypesMacro = createAllParametersMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean featuredMacro = createFeaturedMacro(newStaticContentMacroModuleBean());
@@ -129,30 +127,24 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testMacroIsRendered() throws Exception
-    {
+    public void testMacroIsRendered() throws Exception {
         ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, createPageWithStorageFormatMacro());
         String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         assertThat(content, endsWith("Storage Format Content"));
     }
 
     @Test
-    public void testMacroIsRenderedForAnonymous() throws Exception
-    {
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
+    public void testMacroIsRenderedForAnonymous() throws Exception {
+        runWithAnonymousUsePermission(new Callable<Void>() {
             @Override
-            public Void call() throws Exception
-            {
+            public Void call() throws Exception {
                 ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
                 String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
                 assertThat(content, endsWith("Storage Format Content"));
@@ -162,8 +154,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroHttpMethod() throws Exception
-    {
+    public void testMacroHttpMethod() throws Exception {
         login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(GET_MACRO_KEY).build();
         Content page = createPage(randomName(GET_MACRO_KEY), body);
@@ -173,8 +164,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testBodyInclusion() throws Exception
-    {
+    public void testBodyInclusion() throws Exception {
         login(testUserFactory.basicUser());
         String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
@@ -186,8 +176,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testParameterInclusion() throws Exception
-    {
+    public void testParameterInclusion() throws Exception {
         login(testUserFactory.basicUser());
         String parameterValue = "param value";
         String body = new MacroStorageFormatBuilder(PARAMETER_MACRO_KEY).parameter(SINGLE_PARAM_ID, parameterValue).build();
@@ -199,8 +188,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroInComment() throws Exception
-    {
+    public void testMacroInComment() throws Exception {
         login(testUserFactory.basicUser());
         String title = randomName("The macro is in the comment!");
         Content page = createPage(title, "The macro is in the comment!");
@@ -210,11 +198,9 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         String commentText = commentBody.getText();
         String[] lines = StringUtils.split(commentText, "\n");
 
-        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), new Predicate<String>()
-        {
+        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), new Predicate<String>() {
             @Override
-            public boolean apply(String line)
-            {
+            public boolean apply(String line) {
                 return line.startsWith("cv:");
             }
         });
@@ -225,8 +211,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroCacheFlushes() throws Exception
-    {
+    public void testMacroCacheFlushes() throws Exception {
         String body = new MacroStorageFormatBuilder(COUNTER_MACRO_KEY).build();
         String title = randomName(COUNTER_MACRO_KEY);
         Content page = createPage(title, body);
@@ -245,15 +230,13 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         assertThat(getCounter(pageWithRemoteMacro), is(1));
     }
 
-    private ConfluencePageWithRemoteMacro refreshConfluencePageWithMacro(String title, String counterMacroName)
-    {
+    private ConfluencePageWithRemoteMacro refreshConfluencePageWithMacro(String title, String counterMacroName) {
         product.getTester().getDriver().navigate().refresh();
         ConfluencePageWithRemoteMacro pageWithRemoteMacro = product.getPageBinder().bind(ConfluencePageWithRemoteMacro.class, title, counterMacroName);
         return pageWithRemoteMacro;
     }
 
-    private static void clearCaches() throws Exception
-    {
+    private static void clearCaches() throws Exception {
         final URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/latest/macro/app/" + remotePlugin.getAddon().getKey());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("DELETE");
@@ -262,39 +245,33 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         int code = conn.getResponseCode();
         conn.disconnect();
 
-        if (code < 200 || code >= 300)
-        {
+        if (code < 200 || code >= 300) {
             throw new RuntimeException(String.format("Macro cache flush request 'DELETE %s' returned %d", url, code));
         }
     }
 
     @Override
-    protected String getAddonBaseUrl()
-    {
+    protected String getAddonBaseUrl() {
         return remotePlugin.getAddon().getBaseUrl();
     }
 
-    private String createPageWithStorageFormatMacro()
-    {
+    private String createPageWithStorageFormatMacro() {
         String body = new MacroStorageFormatBuilder(STORAGE_FORMAT_MACRO_KEY).build();
         Content page = createPage(randomName(STORAGE_FORMAT_MACRO_KEY), body);
         return String.valueOf(page.getId().asLong());
     }
 
-    private int getCounter(ConfluencePageWithRemoteMacro page)
-    {
+    private int getCounter(ConfluencePageWithRemoteMacro page) {
         return Integer.valueOf(page.getText(COUNTER_CSS_CLASS));
     }
 
-    private static final class CounterMacroServlet extends HttpServlet
-    {
+    private static final class CounterMacroServlet extends HttpServlet {
         private static final long ONE_YEAR_SECONDS = 60L * 60L * 24L * 365L;
         private static final long ONE_YEAR_MILLISECONDS = 1000 * ONE_YEAR_SECONDS;
         private int counter = 0;
 
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             resp.setContentType("text/html");
             resp.setDateHeader("Expires", System.currentTimeMillis() + ONE_YEAR_MILLISECONDS);
             resp.setHeader("Cache-Control", "s-maxage=" + ONE_YEAR_SECONDS);

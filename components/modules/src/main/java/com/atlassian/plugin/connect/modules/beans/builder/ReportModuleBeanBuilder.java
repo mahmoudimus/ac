@@ -9,46 +9,39 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  *
  * @since 1.2
  */
-public class ReportModuleBeanBuilder extends RequiredKeyBeanBuilder<ReportModuleBeanBuilder, ReportModuleBean>
-{
+public class ReportModuleBeanBuilder extends RequiredKeyBeanBuilder<ReportModuleBeanBuilder, ReportModuleBean> {
     private String url;
     private Integer weight;
     private I18nProperty description;
     private ReportCategory reportCategory;
     private String thumbnailUrl;
 
-    public ReportModuleBeanBuilder withUrl(String url)
-    {
+    public ReportModuleBeanBuilder withUrl(String url) {
         this.url = url;
         return this;
     }
 
-    public ReportModuleBeanBuilder withWeight(Integer weight)
-    {
+    public ReportModuleBeanBuilder withWeight(Integer weight) {
         this.weight = weight;
         return this;
     }
 
-    public ReportModuleBeanBuilder withDescription(I18nProperty description)
-    {
+    public ReportModuleBeanBuilder withDescription(I18nProperty description) {
         this.description = description;
         return this;
     }
 
-    public ReportModuleBeanBuilder withReportCategory(ReportCategory reportCategory)
-    {
+    public ReportModuleBeanBuilder withReportCategory(ReportCategory reportCategory) {
         this.reportCategory = reportCategory;
         return this;
     }
 
-    public ReportModuleBeanBuilder withThumbnailUrl(String thumbnailUrl)
-    {
+    public ReportModuleBeanBuilder withThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
         return this;
     }
 
-    public ReportModuleBean build()
-    {
+    public ReportModuleBean build() {
         return new ReportModuleBean(this);
     }
 }

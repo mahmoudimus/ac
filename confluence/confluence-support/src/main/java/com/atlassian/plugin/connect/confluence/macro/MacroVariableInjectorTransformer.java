@@ -35,14 +35,12 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
  * resources in the editor context, each with slightly different variables (We could possibly
  * improve this to reduce duplicate code in the future).</p>
  */
-public class MacroVariableInjectorTransformer implements WebResourceTransformer
-{
+public class MacroVariableInjectorTransformer implements WebResourceTransformer {
     private final Plugin thisPlugin;
     private final I18NBeanFactory userI18NBeanFactory;
 
     public MacroVariableInjectorTransformer(PluginAccessor pluginAccessor,
-            I18NBeanFactory userI18NBeanFactory)
-    {
+                                            I18NBeanFactory userI18NBeanFactory) {
         this.userI18NBeanFactory = userI18NBeanFactory;
         Plugin connectPlugin = pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
         if (connectPlugin == null) {
@@ -52,23 +50,18 @@ public class MacroVariableInjectorTransformer implements WebResourceTransformer
     }
 
     @Override
-    public DownloadableResource transform(final Element configElement, final ResourceLocation location, String filePath, final DownloadableResource nextResource)
-    {
-        return new CharSequenceDownloadableResource(new DownloadableClasspathResource(thisPlugin, location, ""))
-        {
+    public DownloadableResource transform(final Element configElement, final ResourceLocation location, String filePath, final DownloadableResource nextResource) {
+        return new CharSequenceDownloadableResource(new DownloadableClasspathResource(thisPlugin, location, "")) {
             @Override
-            protected CharSequence transform(CharSequence original)
-            {
+            protected CharSequence transform(CharSequence original) {
                 String originalS = original.toString();
-                for (Element var : (List<Element>) configElement.elements("var"))
-                {
+                for (Element var : (List<Element>) configElement.elements("var")) {
                     String value = var.attributeValue("value");
-                    if (var.attribute("i18n-key") != null)
-                    {
+                    if (var.attribute("i18n-key") != null) {
                         value = getText(var.attributeValue("i18n-key"), value);
                     }
                     String escapedValue = location.getLocation().endsWith(".css") ? value :
-                        escapeJavaScript(value);
+                            escapeJavaScript(value);
                     originalS = originalS.replace("%%" + var.attributeValue("name") + "%%",
                             escapedValue);
                 }
@@ -78,8 +71,7 @@ public class MacroVariableInjectorTransformer implements WebResourceTransformer
         };
     }
 
-    private String getText(String key, String... values)
-    {
+    private String getText(String key, String... values) {
         return userI18NBeanFactory.getI18NBean().getText(key, values);
     }
 }

@@ -31,8 +31,7 @@ import static java.util.Collections.emptyMap;
 /**
  * A remote search request review that will do an html redirect to the remote plugin
  */
-public class RemoteSearchRequestView implements SearchRequestView
-{
+public class RemoteSearchRequestView implements SearchRequestView {
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
@@ -53,8 +52,7 @@ public class RemoteSearchRequestView implements SearchRequestView
             String moduleKey,
             URI createUri,
             String displayName,
-            JiraAuthenticationContext jiraAuthenticationContext)
-    {
+            JiraAuthenticationContext jiraAuthenticationContext) {
         this.applicationProperties = applicationProperties;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
         this.templateRenderer = templateRenderer;
@@ -67,18 +65,15 @@ public class RemoteSearchRequestView implements SearchRequestView
     }
 
     @Override
-    public void init(SearchRequestViewModuleDescriptor moduleDescriptor)
-    {
+    public void init(SearchRequestViewModuleDescriptor moduleDescriptor) {
     }
 
     @Override
-    public void writeHeaders(SearchRequest searchRequest, RequestHeaders requestHeaders, SearchRequestParams searchRequestParams)
-    {
+    public void writeHeaders(SearchRequest searchRequest, RequestHeaders requestHeaders, SearchRequestParams searchRequestParams) {
     }
 
     @Override
-    public void writeSearchResults(final SearchRequest searchRequest, final SearchRequestParams searchRequestParams, final Writer writer)
-    {
+    public void writeSearchResults(final SearchRequest searchRequest, final SearchRequestParams searchRequestParams, final Writer writer) {
         String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
 
         String link = SearchRequestViewUtils.getLink(searchRequest, baseUrl, jiraAuthenticationContext.getUser());
@@ -100,52 +95,40 @@ public class RemoteSearchRequestView implements SearchRequestView
                 .param("issues", issueKeysValue)
                 .build();
 
-        try
-        {
+        try {
             templateRenderer.render("velocity/view-search-request-redirect.vm", ImmutableMap.<String,
                     Object>of(
                     "redirectUrl", signedAddonURL,
                     "name", displayName
 
             ), writer);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new DataAccessException(e);
         }
     }
 
     private String getIssueKeysList(SearchRequest searchRequest,
-            SearchRequestParams searchRequestParams)
-    {
+                                    SearchRequestParams searchRequestParams) {
         StringWriter issueKeys = new StringWriter();
-        final SingleIssueWriter singleIssueWriter = new SingleIssueWriter()
-        {
+        final SingleIssueWriter singleIssueWriter = new SingleIssueWriter() {
             public void writeIssue(final Issue issue, final AbstractIssueView issueView, final Writer writer)
-                    throws IOException
-            {
+                    throws IOException {
                 writer.write(issue.getKey());
                 writer.write(",");
             }
         };
 
-        try
-        {
+        try {
             searchRequestViewBodyWriterUtil.writeBody(issueKeys, null, searchRequest, singleIssueWriter,
                     searchRequestParams.getPagerFilter());
-        }
-        catch (IOException e1)
-        {
+        } catch (IOException e1) {
             throw new DataAccessException(e1);
-        }
-        catch (SearchException e1)
-        {
+        } catch (SearchException e1) {
             throw new DataAccessException(e1);
         }
 
         String issueKeysValue = issueKeys.toString();
-        if (!issueKeysValue.isEmpty())
-        {
+        if (!issueKeysValue.isEmpty()) {
             issueKeysValue = issueKeysValue.substring(0, issueKeysValue.length() - 1);
         }
         return issueKeysValue;
@@ -155,21 +138,14 @@ public class RemoteSearchRequestView implements SearchRequestView
      * Get the total search count. The search count would first be retrieved from the SearchRequestParams. If not found,
      * retrieve using the search provider instead.
      */
-    private long getSearchCount(final SearchRequest searchRequest, final SearchRequestParams searchRequestParams)
-    {
+    private long getSearchCount(final SearchRequest searchRequest, final SearchRequestParams searchRequestParams) {
         final String searchCount = (String) searchRequestParams.getSession().get("searchCount");
-        if (StringUtils.isNumeric(searchCount))
-        {
+        if (StringUtils.isNumeric(searchCount)) {
             return Long.parseLong(searchCount);
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 return searchRequestViewBodyWriterUtil.searchCount(searchRequest);
-            }
-            catch (final SearchException se)
-            {
+            } catch (final SearchException se) {
                 return 0;
             }
         }

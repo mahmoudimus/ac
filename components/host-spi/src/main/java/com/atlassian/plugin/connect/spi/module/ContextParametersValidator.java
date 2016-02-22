@@ -12,8 +12,7 @@ import java.util.Collection;
  * @param <User> a type of user this class can operate on, depends on a product, e.g. in Confluence this would be a {@code ConfluenceUser} and in JIRA {@code ApplicationUser}
  */
 @PublicSpi
-public interface ContextParametersValidator<User>
-{
+public interface ContextParametersValidator<User> {
     /**
      * <p>A collection of context variables permission checks.</p>
      *
@@ -24,8 +23,8 @@ public interface ContextParametersValidator<User>
      * {@link com.atlassian.plugin.connect.spi.module.PermissionChecks}.</p>
      *
      * <ul>
-     *   <li>{@link PermissionChecks#alwaysAllowed(String)} -- when a variable is always allowed, you still need to add a permission check</li>
-     *   <li>{@link com.atlassian.plugin.connect.spi.module.PermissionChecks#mustBeLoggedIn(String)} -- when all we require is a logged-in user.</li>
+     * <li>{@link PermissionChecks#alwaysAllowed(String)} -- when a variable is always allowed, you still need to add a permission check</li>
+     * <li>{@link com.atlassian.plugin.connect.spi.module.PermissionChecks#mustBeLoggedIn(String)} -- when all we require is a logged-in user.</li>
      * </ul>
      *
      * @return a collection of permission checks
@@ -42,8 +41,8 @@ public interface ContextParametersValidator<User>
      *
      * <p>Currently there are two options:</p>
      * <ul>
-     *   <li>JIRA: ApplicationUser</li>
-     *   <li>Confluence: ConfluenceUser</li>
+     * <li>JIRA: ApplicationUser</li>
+     * <li>Confluence: ConfluenceUser</li>
      * </ul>
      *
      * @return a class of the user which permissions are validated

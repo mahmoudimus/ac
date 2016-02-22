@@ -47,9 +47,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class JiraModuleContextFilterTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class JiraModuleContextFilterTest {
     @Mock
     private PermissionManager permissionManager;
     @Mock
@@ -113,8 +112,7 @@ public class JiraModuleContextFilterTest
     private final static String FORBIDDEN_COMPONENT_ID = "888";
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         when(authenticationContext.getUser()).thenReturn(mock(ApplicationUser.class));
 
         when(validResult.isValid()).thenReturn(true);
@@ -149,44 +147,35 @@ public class JiraModuleContextFilterTest
         when(projectService.getProjectByKey(any(ApplicationUser.class), eq(FORBIDDEN_PROJECT_KEY))).thenReturn(invalidResult);
     }
 
-    private void testFilter(Map<String, String> input, Map<String, String> expectedOutput)
-    {
+    private void testFilter(Map<String, String> input, Map<String, String> expectedOutput) {
         ModuleContextParameters unfiltered = new HashMapModuleContextParameters(Collections.emptyMap());
         unfiltered.putAll(input);
 
         ModuleContextParameters filtered = jiraModuleContextFilter.filter(unfiltered);
 
-        if (expectedOutput.isEmpty())
-        {
+        if (expectedOutput.isEmpty()) {
             assertTrue("Filtered context should be empty", filtered.isEmpty());
-        }
-        else
-        {
-            for (Map.Entry<String, String> expectedEntry : expectedOutput.entrySet())
-            {
+        } else {
+            for (Map.Entry<String, String> expectedEntry : expectedOutput.entrySet()) {
                 assertThat(filtered, hasEntry(expectedEntry.getKey(), expectedEntry.getValue()));
             }
-            for (Map.Entry<String, String> unexpectedEntry : Maps.difference(input, expectedOutput).entriesOnlyOnLeft().entrySet())
-            {
+            for (Map.Entry<String, String> unexpectedEntry : Maps.difference(input, expectedOutput).entriesOnlyOnLeft().entrySet()) {
                 assertThat(filtered, not(hasEntry(unexpectedEntry.getKey(), unexpectedEntry.getValue())));
             }
             assertThat("Filtered context is the wrong size", filtered.size(), is(expectedOutput.size()));
         }
     }
 
-    private void testFilter(Map<String, String> inputAndExpectedOutput)
-    {
+    private void testFilter(Map<String, String> inputAndExpectedOutput) {
         testFilter(inputAndExpectedOutput, inputAndExpectedOutput);
     }
 
-    private void testFilteredOut(Map<String, String> input)
-    {
+    private void testFilteredOut(Map<String, String> input) {
         testFilter(input, Collections.<String, String>emptyMap());
     }
 
     @Test
-    public void testAllowedIssueIdAndKey()
-    {
+    public void testAllowedIssueIdAndKey() {
         testFilter(ImmutableMap.of(
                 ISSUE_KEY, ALLOWED_ISSUE_KEY,
                 ISSUE_ID, ALLOWED_ISSUE_ID
@@ -194,8 +183,7 @@ public class JiraModuleContextFilterTest
     }
 
     @Test
-    public void testAllowedIssueIdButForbiddenKey()
-    {
+    public void testAllowedIssueIdButForbiddenKey() {
         testFilter(ImmutableMap.of(
                 ISSUE_KEY, FORBIDDEN_ISSUE_KEY,
                 ISSUE_ID, ALLOWED_ISSUE_ID
@@ -205,8 +193,7 @@ public class JiraModuleContextFilterTest
     }
 
     @Test
-    public void testForbiddenIssueIdAndKey()
-    {
+    public void testForbiddenIssueIdAndKey() {
         testFilteredOut(ImmutableMap.of(
                 ISSUE_KEY, FORBIDDEN_ISSUE_KEY,
                 ISSUE_ID, FORBIDDEN_ISSUE_ID
@@ -214,8 +201,7 @@ public class JiraModuleContextFilterTest
     }
 
     @Test
-    public void testAllowedProjectIdAndKey()
-    {
+    public void testAllowedProjectIdAndKey() {
         testFilter(ImmutableMap.of(
                 PROJECT_KEY, ALLOWED_PROJECT_KEY,
                 PROJECT_ID, ALLOWED_PROJECT_ID
@@ -223,8 +209,7 @@ public class JiraModuleContextFilterTest
     }
 
     @Test
-    public void testAllowedProjectIdButForbiddenKey()
-    {
+    public void testAllowedProjectIdButForbiddenKey() {
         testFilter(ImmutableMap.of(
                 PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
                 PROJECT_ID, ALLOWED_PROJECT_ID
@@ -234,8 +219,7 @@ public class JiraModuleContextFilterTest
     }
 
     @Test
-    public void testForbiddenProjectIdAndKey()
-    {
+    public void testForbiddenProjectIdAndKey() {
         testFilteredOut(ImmutableMap.of(
                 PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
                 PROJECT_ID, FORBIDDEN_PROJECT_ID
@@ -243,45 +227,38 @@ public class JiraModuleContextFilterTest
     }
 
     @Test
-    public void testAllowedVersion()
-    {
+    public void testAllowedVersion() {
         testFilter(ImmutableMap.of(VERSION_ID, ALLOWED_VERSION_ID));
     }
 
     @Test
-    public void testForbiddenVersion()
-    {
+    public void testForbiddenVersion() {
         testFilteredOut(ImmutableMap.of(VERSION_ID, FORBIDDEN_VERSION_ID));
     }
 
     @Test
-    public void testAllowedComponent()
-    {
+    public void testAllowedComponent() {
         testFilter(ImmutableMap.of(COMPONENT_ID, ALLOWED_COMPONENT_ID));
     }
 
     @Test
-    public void testForbiddenComponent()
-    {
+    public void testForbiddenComponent() {
         testFilteredOut(ImmutableMap.of(COMPONENT_ID, FORBIDDEN_COMPONENT_ID));
     }
 
     @Test
-    public void testProfileNameAndKeyAllowedWhenLoggedIn()
-    {
+    public void testProfileNameAndKeyAllowedWhenLoggedIn() {
         testFilter(ImmutableMap.of(PROFILE_KEY, "key master", PROFILE_NAME, "gate keeper"));
     }
 
     @Test
-    public void testProfileNameAndKeyForbiddenWhenLoggedOut()
-    {
+    public void testProfileNameAndKeyForbiddenWhenLoggedOut() {
         when(authenticationContext.getUser()).thenReturn(null);
         testFilteredOut(ImmutableMap.of(PROFILE_KEY, "key master", PROFILE_NAME, "gate keeper"));
     }
 
     @Test
-    public void testPostFunctionIsAlwaysAllowed()
-    {
+    public void testPostFunctionIsAlwaysAllowed() {
         when(authenticationContext.getUser()).thenReturn(null);
         testFilter(ImmutableMap.of(POSTFUNCTION_ID, "ego", POSTFUNCTION_CONFIG, "alter-ego"));
     }

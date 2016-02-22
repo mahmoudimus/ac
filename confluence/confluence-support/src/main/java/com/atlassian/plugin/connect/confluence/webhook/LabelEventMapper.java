@@ -10,21 +10,17 @@ import com.atlassian.sal.api.user.UserManager;
 
 import com.google.common.collect.ImmutableMap;
 
-public class LabelEventMapper extends ConfluenceEventMapper
-{
-    public LabelEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+public class LabelEventMapper extends ConfluenceEventMapper {
+    public LabelEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         super(userManager, confluenceSettingsManager);
     }
 
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return e instanceof LabelEvent;
     }
 
     @Override
-    public Map<String, Object> toMap(ConfluenceEvent e)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent e) {
         LabelEvent event = (LabelEvent) e;
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();

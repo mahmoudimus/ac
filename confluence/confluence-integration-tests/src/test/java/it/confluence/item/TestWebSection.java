@@ -25,8 +25,7 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddonKey;
 import static org.junit.Assert.assertTrue;
 
-public class TestWebSection extends ConfluenceWebDriverTestBase
-{
+public class TestWebSection extends ConfluenceWebDriverTestBase {
     private static final String PLUGIN_KEY = randomAddonKey();
 
     private static final String TOOLS_LOCATION = "system.content.action";
@@ -44,8 +43,7 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
@@ -69,17 +67,14 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void testWebItemFoundWithinWebSection() throws MalformedURLException, XmlRpcFault
-    {
+    public void testWebItemFoundWithinWebSection() throws MalformedURLException, XmlRpcFault {
         TestUser user = testUserFactory.basicUser();
         final ConfluencePageData pageData = confluenceOps.setPage(some(user), "ds", "Page with web section", "some page content");
         final String pageId = pageData.getId();

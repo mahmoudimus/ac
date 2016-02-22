@@ -33,25 +33,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ConnectConditionClassResolverTest extends AbstractConnectAddonTest
-{
+public class ConnectConditionClassResolverTest extends AbstractConnectAddonTest {
 
     private static final String LOCATION = "fake-location";
 
     private final WebInterfaceManager webInterfaceManager;
 
     public ConnectConditionClassResolverTest(WebItemModuleProvider webItemModuleProvider,
-            TestPluginInstaller testPluginInstaller,
-            TestAuthenticator testAuthenticator,
-            WebInterfaceManager webInterfaceManager)
-    {
+                                             TestPluginInstaller testPluginInstaller,
+                                             TestAuthenticator testAuthenticator,
+                                             WebInterfaceManager webInterfaceManager) {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
         this.webInterfaceManager = webInterfaceManager;
     }
 
     @Test
-    public void shouldApplyPluginProvidedConditionsToWebItems() throws IOException
-    {
+    public void shouldApplyPluginProvidedConditionsToWebItems() throws IOException {
         String visibleItemKey = "visible-item";
         String hiddenItemKey = "hidden-item";
         ConnectAddonBean addon = newConnectAddonBean()
@@ -72,8 +69,7 @@ public class ConnectConditionClassResolverTest extends AbstractConnectAddonTest
         assertThat(displayableWebItems, contains(webItemWithKey(visibleItemKey)));
     }
 
-    private WebItemModuleBean buildWebItem(String key, String name, String condition)
-    {
+    private WebItemModuleBean buildWebItem(String key, String name, String condition) {
         return newWebItemBean()
                 .withKey(key)
                 .withUrl("/")
@@ -83,38 +79,31 @@ public class ConnectConditionClassResolverTest extends AbstractConnectAddonTest
                 .build();
     }
 
-    private Matcher<WebItemModuleDescriptor> webItemWithKey(String key)
-    {
-        return new TypeSafeMatcher<WebItemModuleDescriptor>()
-        {
+    private Matcher<WebItemModuleDescriptor> webItemWithKey(String key) {
+        return new TypeSafeMatcher<WebItemModuleDescriptor>() {
 
             @Override
-            protected boolean matchesSafely(WebItemModuleDescriptor item)
-            {
+            protected boolean matchesSafely(WebItemModuleDescriptor item) {
                 return getWebItemKey(item).equals(getWebItemModuleKey());
             }
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("web item with key ");
                 description.appendValue(getWebItemModuleKey());
             }
 
             @Override
-            protected void describeMismatchSafely(WebItemModuleDescriptor item, Description mismatchDescription)
-            {
+            protected void describeMismatchSafely(WebItemModuleDescriptor item, Description mismatchDescription) {
                 mismatchDescription.appendText("web item with key ");
                 mismatchDescription.appendValue(getWebItemKey(item));
             }
 
-            private String getWebItemKey(WebItemModuleDescriptor item)
-            {
+            private String getWebItemKey(WebItemModuleDescriptor item) {
                 return item.getKey();
             }
 
-            private String getWebItemModuleKey()
-            {
+            private String getWebItemModuleKey() {
                 return ModuleKeyUtils.addonAndModuleKey(plugin.getKey(), key);
             }
         };

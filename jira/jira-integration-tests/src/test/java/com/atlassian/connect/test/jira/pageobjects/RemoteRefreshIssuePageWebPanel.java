@@ -12,8 +12,7 @@ import org.openqa.selenium.WebElement;
 /**
  * A remote web panel containing a button to call the JavaScript API method jira.refreshIssuePage().
  */
-public class RemoteRefreshIssuePageWebPanel extends RemoteWebPanel
-{
+public class RemoteRefreshIssuePageWebPanel extends RemoteWebPanel {
 
     public static final String TEMPLATE_PATH = "jira/iframe-refresh-issue-page-button.mu";
 
@@ -22,18 +21,15 @@ public class RemoteRefreshIssuePageWebPanel extends RemoteWebPanel
     @Inject
     private TraceContext traceContext;
 
-    public RemoteRefreshIssuePageWebPanel(String id)
-    {
+    public RemoteRefreshIssuePageWebPanel(String id) {
         super(id);
     }
 
-    public RemoteWebPanel waitUntilRefreshIssuePageActionLoaded()
-    {
+    public RemoteWebPanel waitUntilRefreshIssuePageActionLoaded() {
         return waitUntilContentElementNotEmpty(REFRESH_ISSUE_PAGE_BUTTON_ID);
     }
 
-    public Tracer refreshIssuePage()
-    {
+    public Tracer refreshIssuePage() {
         Tracer tracer = traceContext.checkpoint();
 
         withinIFrame(driver -> {

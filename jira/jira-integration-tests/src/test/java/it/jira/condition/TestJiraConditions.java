@@ -36,13 +36,11 @@ import static org.hamcrest.Matchers.equalTo;
  * - user_has_issue_history
  * - is_issue_reported_by_current_user
  */
-public class TestJiraConditions extends AbstractJiraConditionsTest
-{
+public class TestJiraConditions extends AbstractJiraConditionsTest {
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void startAddon() throws Exception
-    {
+    public static void startAddon() throws Exception {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone();
         addWebItemsWithConditions();
@@ -50,17 +48,14 @@ public class TestJiraConditions extends AbstractJiraConditionsTest
     }
 
     @AfterClass
-    public static void stopAddon() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void stopAddon() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void shouldDisplayWebItemsWithEachCondition()
-    {
+    public void shouldDisplayWebItemsWithEachCondition() {
         TestUser admin = testUserFactory.admin();
         login(admin);
 
@@ -78,19 +73,15 @@ public class TestJiraConditions extends AbstractJiraConditionsTest
         assertThat(passedConditions, equalTo(CONDITIONS.stream().map(TestedCondition::getName).collect(toList())));
     }
 
-    private static void addWebItemsWithConditions()
-    {
-        for (TestedCondition condition : CONDITIONS)
-        {
+    private static void addWebItemsWithConditions() {
+        for (TestedCondition condition : CONDITIONS) {
             addon.addModules("webItems", newWebItemBeanWithCondition(condition));
         }
     }
 
-    private static WebItemModuleBean newWebItemBeanWithCondition(TestedCondition condition)
-    {
+    private static WebItemModuleBean newWebItemBeanWithCondition(TestedCondition condition) {
         SingleConditionBeanBuilder conditionBeanBuilder = newSingleConditionBean().withCondition(condition.getName());
-        if (!condition.getParameters().isEmpty())
-        {
+        if (!condition.getParameters().isEmpty()) {
             conditionBeanBuilder.withParams(condition.getParameters());
         }
         return newWebItemBean()
@@ -103,13 +94,11 @@ public class TestJiraConditions extends AbstractJiraConditionsTest
                 .build();
     }
 
-    private static String getDisplayNameForCondition(TestedCondition condition)
-    {
+    private static String getDisplayNameForCondition(TestedCondition condition) {
         return String.format("%d %s", CONDITIONS.indexOf(condition), StringUtils.substring(condition.getName(), 0, 15));
     }
 
-    private boolean isItemPresentInMoreActionsMenu(IssueMenu issueMenu, String webItemTitle)
-    {
+    private boolean isItemPresentInMoreActionsMenu(IssueMenu issueMenu, String webItemTitle) {
         return issueMenu.isItemPresentInMoreActionsMenu(webItemTitle);
     }
 }

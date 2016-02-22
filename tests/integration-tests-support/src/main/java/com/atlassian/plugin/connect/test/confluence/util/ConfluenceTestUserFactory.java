@@ -10,28 +10,24 @@ import com.atlassian.plugin.connect.test.common.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 
-public class ConfluenceTestUserFactory extends ConnectTestUserFactory
-{
+public class ConfluenceTestUserFactory extends ConnectTestUserFactory {
 
     private final ConfluenceTestedProduct product;
 
     private final DefaultUserManagementHelper userManager;
 
-    public ConfluenceTestUserFactory(ConfluenceTestedProduct product)
-    {
+    public ConfluenceTestUserFactory(ConfluenceTestedProduct product) {
         this(product, ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl()));
     }
 
-    public ConfluenceTestUserFactory(ConfluenceTestedProduct product, ConfluenceRpc rpc)
-    {
+    public ConfluenceTestUserFactory(ConfluenceTestedProduct product, ConfluenceRpc rpc) {
         this.product = product;
         DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration();
         userManager = new DefaultUserManagementHelper(rpc, defaultDirectoryConfiguration);
     }
 
     @Override
-    protected TestUser createTestUser(AuthLevel authLevel, String username)
-    {
+    protected TestUser createTestUser(AuthLevel authLevel, String username) {
         TestUser testUser = new TestUser(username);
         userManager.createUser(new User(username, username, username, username + "@example.com"));
         addConfluencePermissionsForTestUser(testUser, authLevel);
@@ -39,15 +35,12 @@ public class ConfluenceTestUserFactory extends ConnectTestUserFactory
     }
 
     @Override
-    protected HelpTipApiClient getHelpTipApiClient(TestUser testUser)
-    {
+    protected HelpTipApiClient getHelpTipApiClient(TestUser testUser) {
         return new ConfluenceHelpTipApiClient(product, testUser);
     }
 
-    private void addConfluencePermissionsForTestUser(TestUser testUser, AuthLevel authLevel)
-    {
-        switch (authLevel)
-        {
+    private void addConfluencePermissionsForTestUser(TestUser testUser, AuthLevel authLevel) {
+        switch (authLevel) {
             case ADMIN:
                 userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
             case BASIC_USER:

@@ -19,51 +19,39 @@ import org.openqa.selenium.WebDriver;
 /**
  * A helper class for downloading data from a URL, using the cookies from the current WebDriver session.
  */
-public class WebDriverSessionAwareDownloader
-{
+public class WebDriverSessionAwareDownloader {
     private final WebDriver driver;
 
-    public WebDriverSessionAwareDownloader(WebDriver driver)
-    {
+    public WebDriverSessionAwareDownloader(WebDriver driver) {
         this.driver = driver;
     }
 
-    public byte[] downloadBytes(String url) throws IOException
-    {
+    public byte[] downloadBytes(String url) throws IOException {
         CloseableHttpClient httpClient = getHttpClient();
-        try
-        {
+        try {
             HttpUriRequest request = new HttpGet(url);
             CloseableHttpResponse response = httpClient.execute(request);
             InputStream content = response.getEntity().getContent();
-            try
-            {
+            try {
                 return IOUtils.toByteArray(content);
-            }
-            finally
-            {
+            } finally {
                 content.close();
             }
-        }
-        finally
-        {
+        } finally {
             httpClient.close();
         }
     }
 
-    private CloseableHttpClient getHttpClient()
-    {
+    private CloseableHttpClient getHttpClient() {
         HttpClientBuilder builder = HttpClientBuilder.create();
         builder.setDefaultCookieStore(getWebdriverCookies());
         return builder.build();
     }
 
-    private CookieStore getWebdriverCookies()
-    {
+    private CookieStore getWebdriverCookies() {
         CookieStore cookieStore = new BasicCookieStore();
         Set<Cookie> webdriverCookies = driver.manage().getCookies();
-        for (Cookie webdriverCookie : webdriverCookies)
-        {
+        for (Cookie webdriverCookie : webdriverCookies) {
             BasicClientCookie cookie = new BasicClientCookie(webdriverCookie.getName(), webdriverCookie.getValue());
             cookie.setDomain(webdriverCookie.getDomain());
             cookie.setPath(webdriverCookie.getPath());

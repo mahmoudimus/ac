@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.isEmptyString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class TestHistory extends JiraWebDriverTestBase
-{
+public class TestHistory extends JiraWebDriverTestBase {
     private static final String PLUGIN_KEY = "my-plugin";
     private static final String PAGE_NAME = "History general page";
     private static final String GENERAL_PAGE_KEY = "my-history-general-page";
@@ -33,8 +32,7 @@ public class TestHistory extends JiraWebDriverTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModules(
@@ -51,17 +49,14 @@ public class TestHistory extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testHistoryPushState() throws MalformedURLException, URISyntaxException
-    {
+    public void testHistoryPushState() throws MalformedURLException, URISyntaxException {
         RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(testUserFactory.basicUser(), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         URI url = new URI(addonHistoryGeneralPage.hostUrl());
@@ -74,8 +69,7 @@ public class TestHistory extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testHistoryPopState() throws MalformedURLException, URISyntaxException
-    {
+    public void testHistoryPopState() throws MalformedURLException, URISyntaxException {
         RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(testUserFactory.basicUser(), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         addonHistoryGeneralPage.javascriptPushState();
@@ -88,8 +82,7 @@ public class TestHistory extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testHistoryPopStateDoesNotRunOnPushState() throws MalformedURLException, URISyntaxException
-    {
+    public void testHistoryPopStateDoesNotRunOnPushState() throws MalformedURLException, URISyntaxException {
         RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(testUserFactory.basicUser(), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         addonHistoryGeneralPage.javascriptPushState();
@@ -99,8 +92,7 @@ public class TestHistory extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testHistoryPushForward() throws MalformedURLException, URISyntaxException
-    {
+    public void testHistoryPushForward() throws MalformedURLException, URISyntaxException {
         RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(testUserFactory.basicUser(), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         addonHistoryGeneralPage.javascriptPushState();

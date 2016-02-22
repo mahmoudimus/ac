@@ -34,8 +34,7 @@ import static java.util.Collections.emptyMap;
  *
  * @since 1.2
  */
-public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void>
-{
+public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void> {
     public final static String THUMBNAIL_CSS_CLASS_PREFIX = "connect-report-thumbnail-";
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final JiraAuthenticationContext authContext;
@@ -48,12 +47,11 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
     private String thumbnailUrl;
 
     public ConnectReportModuleDescriptor(JiraAuthenticationContext authenticationContext,
-            ModuleFactory moduleFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            UrlVariableSubstitutor urlVariableSubstitutor,
-            ModuleContextFilter moduleContextFilter)
-    {
+                                         ModuleFactory moduleFactory,
+                                         IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                         DynamicDescriptorRegistration dynamicDescriptorRegistration,
+                                         UrlVariableSubstitutor urlVariableSubstitutor,
+                                         ModuleContextFilter moduleContextFilter) {
         super(moduleFactory);
         this.authContext = authenticationContext;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
@@ -63,59 +61,49 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
     }
 
     @Override
-    public void init(@NotNull final Plugin plugin, @NotNull final Element element) throws PluginParseException
-    {
+    public void init(@NotNull final Plugin plugin, @NotNull final Element element) throws PluginParseException {
         super.init(plugin, element);
         this.descriptor = element;
     }
 
     @Override
-    public void enabled()
-    {
+    public void enabled() {
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getReportDescriptor());
     }
 
     @Override
-    public void disabled()
-    {
-        if (registration != null)
-        {
+    public void disabled() {
+        if (registration != null) {
             registration.unregister();
         }
         super.disabled();
     }
 
-    private ModuleDescriptor<Report> getReportDescriptor()
-    {
+    private ModuleDescriptor<Report> getReportDescriptor() {
         ReportModuleDescriptor moduleDescriptor = new ModuleDescriptorImpl(iFrameRenderStrategyRegistry, descriptor, urlVariableSubstitutor, moduleContextFilter, ConnectReportModuleDescriptor.this, thumbnailUrl);
         moduleDescriptor.init(plugin, descriptor);
         return moduleDescriptor;
     }
 
     @Override
-    public Void getModule()
-    {
+    public Void getModule() {
         return null;
     }
 
-    public void setThumbnailUrl(final String thumbnailUrl)
-    {
+    public void setThumbnailUrl(final String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public static String getThumbnailCssClass(String key)
-    {
+    public static String getThumbnailCssClass(String key) {
         return THUMBNAIL_CSS_CLASS_PREFIX + makeSafeCssClass(key);
     }
 
-    private static String makeSafeCssClass(String string)
-    {
+    private static String makeSafeCssClass(String string) {
         return CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf("_-")).retainFrom(string);
     }
 
-    public static class ModuleDescriptorImpl extends ReportModuleDescriptorImpl
-    {
+    public static class ModuleDescriptorImpl extends ReportModuleDescriptorImpl {
         private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
         private final Element descriptor;
         private final UrlVariableSubstitutor urlVariableSubstitutor;
@@ -123,8 +111,7 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
         private final String thumbnailUrl;
 
 
-        public ModuleDescriptorImpl(final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, final Element descriptor, final UrlVariableSubstitutor urlVariableSubstitutor, final ModuleContextFilter moduleContextFilter, final ConnectReportModuleDescriptor connectReportModuleDescriptor, final String thumbnailUrl)
-        {
+        public ModuleDescriptorImpl(final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, final Element descriptor, final UrlVariableSubstitutor urlVariableSubstitutor, final ModuleContextFilter moduleContextFilter, final ConnectReportModuleDescriptor connectReportModuleDescriptor, final String thumbnailUrl) {
             super(connectReportModuleDescriptor.authContext, connectReportModuleDescriptor.moduleFactory);
             this.iFrameRenderStrategyRegistry = checkNotNull(iFrameRenderStrategyRegistry);
             this.descriptor = checkNotNull(descriptor);
@@ -134,14 +121,12 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
         }
 
         @Override
-        public Report getModule()
-        {
+        public Report getModule() {
             return new ConnectReport(iFrameRenderStrategyRegistry, getPluginKey(), getKey());
         }
 
         @Override
-        public String getUrl(final Project project)
-        {
+        public String getUrl(final Project project) {
             final String url = descriptor.attribute("url") != null ? descriptor.attribute("url").getValue() : "";
             final JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl(emptyMap());
             unfilteredContext.addProject(project);
@@ -150,21 +135,16 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
         }
 
         @Override
-        public Option<String> getUrl(final Map<String, Object> context)
-        {
+        public Option<String> getUrl(final Map<String, Object> context) {
             final Object projectFromCtx = context.get("project");
-            if (projectFromCtx != null)
-            {
+            if (projectFromCtx != null) {
                 return Option.some(getUrl((Project) projectFromCtx));
-            }
-            else
-            {
+            } else {
                 return Option.none();
             }
         }
 
-        public String getThumbnailUrl()
-        {
+        public String getThumbnailUrl() {
             return thumbnailUrl;
         }
     }

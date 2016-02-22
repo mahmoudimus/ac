@@ -15,8 +15,7 @@ import java.util.function.Consumer;
  * The modules of an add-on. Modules are loaded lazily and any validation errors are deferred to the first usage.
  * For this reason, this class provides methods for retrieving only module lists that are free of validation errors.
  */
-public class ModuleMultimap
-{
+public class ModuleMultimap {
 
     private Map<String, Supplier<List<ModuleBean>>> moduleListSuppliers;
 
@@ -27,8 +26,7 @@ public class ModuleMultimap
      *
      * @param moduleListSuppliers the map of module list suppliers
      */
-    public ModuleMultimap(Map<String, Supplier<List<ModuleBean>>> moduleListSuppliers)
-    {
+    public ModuleMultimap(Map<String, Supplier<List<ModuleBean>>> moduleListSuppliers) {
         this.moduleListSuppliers = moduleListSuppliers;
     }
 
@@ -39,11 +37,9 @@ public class ModuleMultimap
      * @param exceptionHandler the exception handler to invoke if an error occurred
      * @return the valid module lists
      */
-    public Map<String, List<ModuleBean>> getValidModuleLists(Consumer<Exception> exceptionHandler)
-    {
+    public Map<String, List<ModuleBean>> getValidModuleLists(Consumer<Exception> exceptionHandler) {
         Optional<Consumer<Exception>> optionalExceptionHandler = Optional.of(exceptionHandler);
-        for (String moduleType : moduleListSuppliers.keySet())
-        {
+        for (String moduleType : moduleListSuppliers.keySet()) {
             loadExistingModuleList(moduleType, optionalExceptionHandler);
         }
         return Collections.unmodifiableMap(validModules);
@@ -52,43 +48,36 @@ public class ModuleMultimap
     /**
      * Returns a list of modules of the given type, unless a validation error occurred when retrieving it.
      *
-     * @param type the module type for which to return the list of modules
+     * @param type             the module type for which to return the list of modules
      * @param exceptionHandler the exception handler to invoke if an error occurred
      * @return a list of modules, or {@link Optional#empty()} if an error occurred
      */
-    public Optional<List<ModuleBean>> getValidModuleListOfType(String type, Consumer<Exception> exceptionHandler)
-    {
+    public Optional<List<ModuleBean>> getValidModuleListOfType(String type, Consumer<Exception> exceptionHandler) {
         Optional<List<ModuleBean>> optionalModuleList = Optional.empty();
-        if (moduleListSuppliers.containsKey(type))
-        {
+        if (moduleListSuppliers.containsKey(type)) {
             return Optional.ofNullable(loadExistingModuleList(type, Optional.of(exceptionHandler)));
         }
         return optionalModuleList;
     }
 
-    private List<ModuleBean> loadExistingModuleList(String moduleType, Optional<Consumer<Exception>> optionalExceptionHandler)
-    {
-        try
-        {
+    private List<ModuleBean> loadExistingModuleList(String moduleType, Optional<Consumer<Exception>> optionalExceptionHandler) {
+        try {
             return validModules.computeIfAbsent(moduleType, (type) -> moduleListSuppliers.get(type).get());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             optionalExceptionHandler.ifPresent((exceptionConsumer) -> exceptionConsumer.accept(e));
             return null;
         }
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (!(otherObj instanceof ModuleMultimap))
-        {
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof ModuleMultimap)) {
             return false;
         }
         ModuleMultimap other = (ModuleMultimap) otherObj;
 
-        Consumer<Exception> noopExceptionHandler = e -> {};
+        Consumer<Exception> noopExceptionHandler = e -> {
+        };
         return new EqualsBuilder()
                 .append(moduleListSuppliers.keySet(), other.moduleListSuppliers.keySet())
                 .append(getValidModuleLists(noopExceptionHandler), other.getValidModuleLists(noopExceptionHandler))
@@ -96,11 +85,11 @@ public class ModuleMultimap
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(41, 7)
                 .append(moduleListSuppliers.keySet())
-                .append(getValidModuleLists(e -> {}))
+                .append(getValidModuleLists(e -> {
+                }))
                 .build();
     }
 }

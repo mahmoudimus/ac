@@ -4,8 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class ConnectAddonLifecycleFailedEvent extends ConnectAddonLifecycleEvent
-{
+public abstract class ConnectAddonLifecycleFailedEvent extends ConnectAddonLifecycleEvent {
     private static final int MAX_MESSAGE_LENGTH = 100;
 
     /**
@@ -23,8 +22,7 @@ public abstract class ConnectAddonLifecycleFailedEvent extends ConnectAddonLifec
      */
     private final Category category;
 
-    public enum Category
-    {
+    public enum Category {
         /**
          * The problem appears to lie with the add-on (e.g. it did not respond nicely to a callback).
          */
@@ -37,40 +35,35 @@ public abstract class ConnectAddonLifecycleFailedEvent extends ConnectAddonLifec
 
         /**
          * Emit the {@link #name()} in lower case for easier readability in analytics logs.
+         *
          * @return {@link #name()} in lower case
          */
         @Override
-        public String toString()
-        {
+        public String toString() {
             return name().toLowerCase();
         }
     }
 
-    public ConnectAddonLifecycleFailedEvent(String addonKey, String message, Category category)
-    {
+    public ConnectAddonLifecycleFailedEvent(String addonKey, String message, Category category) {
         this(addonKey, null, message, category);
     }
 
-    public ConnectAddonLifecycleFailedEvent(String addonKey, Integer statusCode, String message, Category category)
-    {
+    public ConnectAddonLifecycleFailedEvent(String addonKey, Integer statusCode, String message, Category category) {
         super(addonKey);
         this.statusCode = statusCode;
         this.message = StringUtils.substring(message, 0, MAX_MESSAGE_LENGTH);
         this.category = checkNotNull(category);
     }
 
-    public Integer getStatusCode()
-    {
+    public Integer getStatusCode() {
         return statusCode;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public Category getCategory()
-    {
+    public Category getCategory() {
         return category;
     }
 }

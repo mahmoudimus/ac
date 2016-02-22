@@ -24,8 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddonsResourceTest
-{
+public class AddonsResourceTest {
 
     @InjectMocks
     private AddonsResource resource;
@@ -58,8 +57,7 @@ public class AddonsResourceTest
     private ProductAccessor productAccessor;
 
     @Test
-    public void shouldReturnNotFoundWhenRequestingInvalidAddon()
-    {
+    public void shouldReturnNotFoundWhenRequestingInvalidAddon() {
         String key = "invalid-key";
 
         when(addonAccessor.getAddon(key)).thenReturn(Optional.empty());

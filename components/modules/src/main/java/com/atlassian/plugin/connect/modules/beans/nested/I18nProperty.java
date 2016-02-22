@@ -11,14 +11,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Represents a string that can be resolved via a localization properties file. You can use the same `i18n Property` key
  * and value in multiple places if you like, but identical keys must have identical values.
  *
- *#### Example
+ * #### Example
+ *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#I18N_EXAMPLE}
  * @schemaTitle i18n Property
  * @since 1.0
  */
-@SchemaDefinition ("i18nProperty")
-public class I18nProperty
-{
+@SchemaDefinition("i18nProperty")
+public class I18nProperty {
     /**
      * The human-readable value
      */
@@ -33,56 +33,44 @@ public class I18nProperty
      */
     private String i18n;
 
-    public I18nProperty(String defaultValue, String i18n)
-    {
+    public I18nProperty(String defaultValue, String i18n) {
         this.i18n = i18n;
         this.value = defaultValue;
     }
 
-    public String getValue()
-    {
+    public String getValue() {
         return VelocityKiller.attack(value);
     }
 
-    public String getI18n()
-    {
+    public String getI18n() {
         return VelocityKiller.attack(i18n);
     }
 
-    public String getI18nOrValue()
-    {
-        if (hasI18n())
-        {
+    public String getI18nOrValue() {
+        if (hasI18n()) {
             return getI18n();
-        }
-        else
-        {
+        } else {
             return getValue();
         }
     }
 
-    public String getRawValue()
-    {
+    public String getRawValue() {
         return value;
     }
 
-    public String getRawI18n()
-    {
+    public String getRawI18n() {
         return i18n;
     }
 
-    public boolean hasI18n()
-    {
+    public boolean hasI18n() {
         return !Strings.isNullOrEmpty(i18n);
     }
 
-    public boolean hasValue()
-    {
+    public boolean hasValue() {
         return !Strings.isNullOrEmpty(value);
     }
 
-    public static I18nProperty empty()
-    {
+    public static I18nProperty empty() {
         return new I18nProperty("", "");
     }
 
@@ -91,15 +79,12 @@ public class I18nProperty
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof I18nProperty))
-        {
+        if (!(otherObj instanceof I18nProperty)) {
             return false;
         }
 
@@ -112,8 +97,7 @@ public class I18nProperty
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(61, 11)
                 .append(value)
                 .append(i18n)

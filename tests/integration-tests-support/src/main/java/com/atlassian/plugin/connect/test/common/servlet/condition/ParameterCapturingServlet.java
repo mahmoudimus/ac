@@ -13,14 +13,11 @@ import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
-public class ParameterCapturingServlet extends ContextServlet
-{
+public class ParameterCapturingServlet extends ContextServlet {
 
-    private static final Function<String[],String> HEAD_ARRAY = new Function<String[], String>()
-    {
+    private static final Function<String[], String> HEAD_ARRAY = new Function<String[], String>() {
         @Override
-        public String apply(@Nullable final String[] input)
-        {
+        public String apply(@Nullable final String[] input) {
             return input != null && input.length > 0 ? input[0] : null;
         }
     };
@@ -28,26 +25,22 @@ public class ParameterCapturingServlet extends ContextServlet
     private volatile Map<String, String[]> paramsFromLastRequest;
     private ContextServlet delegate;
 
-    public ParameterCapturingServlet(ContextServlet delegate)
-    {
+    public ParameterCapturingServlet(ContextServlet delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public void doGet(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-    {
+    public void doGet(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         paramsFromLastRequest = req.getParameterMap();
         delegate.doGet(req, resp, context);
     }
 
-    public void doPost(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-    {
+    public void doPost(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         paramsFromLastRequest = req.getParameterMap();
         delegate.doGet(req, resp, context);
     }
 
-    public Map<String, String> getParamsFromLastRequest()
-    {
+    public Map<String, String> getParamsFromLastRequest() {
         return Maps.transformValues(paramsFromLastRequest, HEAD_ARRAY);
     }
 }

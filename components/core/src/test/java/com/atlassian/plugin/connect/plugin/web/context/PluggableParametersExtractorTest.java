@@ -28,9 +28,8 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public final class PluggableParametersExtractorTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public final class PluggableParametersExtractorTest {
     private final static Map<String, Object> CONTEXT = ImmutableMap.<String, Object>of(
             "a", 1,
             "b", 2
@@ -49,21 +48,18 @@ public final class PluggableParametersExtractorTest
     private PluggableParametersExtractor extractor;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         extractor = new PluggableParametersExtractorImpl(connectModuleContextExtractor, pluginAccessor);
         when(connectModuleContextExtractor.extractParameters(CONTEXT)).thenReturn(LOCAL_PARAMS);
     }
 
     @Test
-    public void extractorReturnsWhatConnectReturnsWhenThereAreNoExtractorsFromPlugins()
-    {
+    public void extractorReturnsWhatConnectReturnsWhenThereAreNoExtractorsFromPlugins() {
         assertThat(extractor.extractParameters(CONTEXT), equalTo(LOCAL_PARAMS));
     }
 
     @Test
-    public void extractorAddsStuffFromAllThePluginsToTheLocalConnectParameters()
-    {
+    public void extractorAddsStuffFromAllThePluginsToTheLocalConnectParameters() {
         when(connectModuleContextExtractor.extractParameters(CONTEXT)).thenReturn(LOCAL_PARAMS);
         when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextParameterResolverModuleDescriptor(mock(ModuleFactory.class)))))).thenReturn(ImmutableList.of(
                 extractorReturning(ImmutableMap.of("q", "q")), extractorReturning(ImmutableMap.of("r", "r", "t", "t"))));
@@ -74,17 +70,14 @@ public final class PluggableParametersExtractorTest
     }
 
     @Test
-    public void extractorKeepsCalmsAndCarriesOnWhenThereIsAnExceptionInAnyPlugin()
-    {
+    public void extractorKeepsCalmsAndCarriesOnWhenThereIsAnExceptionInAnyPlugin() {
         when(connectModuleContextExtractor.extractParameters(CONTEXT)).thenReturn(LOCAL_PARAMS);
         when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextParameterResolverModuleDescriptor(mock(ModuleFactory.class)))))).
                 thenReturn(Collections.singletonList(
                         new ConnectContextParametersResolver(
-                                ImmutableList.<ContextParametersExtractor>of(new ContextParametersExtractor()
-                                {
+                                ImmutableList.<ContextParametersExtractor>of(new ContextParametersExtractor() {
                                     @Override
-                                    public Map<String, String> extractParameters(final Map<String, Object> context)
-                                    {
+                                    public Map<String, String> extractParameters(final Map<String, Object> context) {
                                         throw new RuntimeException("Geronimo!");
                                     }
                                 }),
@@ -93,15 +86,12 @@ public final class PluggableParametersExtractorTest
         assertThat(extractor.extractParameters(CONTEXT), equalTo(LOCAL_PARAMS));
     }
 
-    private ConnectContextParametersResolver extractorReturning(final ImmutableMap<String, String> parameters)
-    {
+    private ConnectContextParametersResolver extractorReturning(final ImmutableMap<String, String> parameters) {
         return new ConnectContextParametersResolver(
                 ImmutableList.<ContextParametersExtractor>of(
-                        new ContextParametersExtractor()
-                        {
+                        new ContextParametersExtractor() {
                             @Override
-                            public Map<String, String> extractParameters(final Map<String, Object> context)
-                            {
+                            public Map<String, String> extractParameters(final Map<String, Object> context) {
                                 return parameters;
                             }
                         }
@@ -110,8 +100,7 @@ public final class PluggableParametersExtractorTest
         );
     }
 
-    private static ModuleContextParameters moduleParamsFromMap(Map<String, String> map)
-    {
+    private static ModuleContextParameters moduleParamsFromMap(Map<String, String> map) {
         HashMapModuleContextParameters result = new HashMapModuleContextParameters(map);
         result.putAll(map);
         return result;

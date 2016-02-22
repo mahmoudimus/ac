@@ -20,8 +20,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Component
-public class WebFragmentLocationQualifierImpl implements WebFragmentLocationQualifier
-{
+public class WebFragmentLocationQualifierImpl implements WebFragmentLocationQualifier {
 
     private static final char LOCATION_SEGMENT_SEPARATOR = '/';
 
@@ -35,8 +34,7 @@ public class WebFragmentLocationQualifierImpl implements WebFragmentLocationQual
     private Map<ConnectAddonBean, Map<String, String>> keyMapCache = new WeakHashMap<>();
 
     @Override
-    public String processLocation(String location, ConnectAddonBean addon)
-    {
+    public String processLocation(String location, ConnectAddonBean addon) {
         Iterable<String> segments = segmentSplitter.split(location);
 
         final Iterable<String> processedSegments = Iterables.transform(segments, segment -> processSegment(segment, addon));
@@ -44,37 +42,34 @@ public class WebFragmentLocationQualifierImpl implements WebFragmentLocationQual
         return segmentJoiner.join(processedSegments);
     }
 
-    private String processSegment(String location, ConnectAddonBean addon)
-    {
+    private String processSegment(String location, ConnectAddonBean addon) {
         Map<String, String> keyMap = keyMapCache.computeIfAbsent(addon, WebFragmentLocationQualifierImpl::buildKeyMap);
 
         return keyMap.getOrDefault(location, location);
     }
 
-    private static ImmutableMap<String, String> buildKeyMap(ConnectAddonBean addon)
-    {
+    private static ImmutableMap<String, String> buildKeyMap(ConnectAddonBean addon) {
         ImmutableMap.Builder<String, String> keyMapBuilder = ImmutableMap.<String, String>builder();
         Consumer<Exception> moduleValidationExceptionHandler = new ModuleValidationExceptionHandler();
 
         {
             Optional<List<ModuleBean>> optionalWebItems = addon.getModules().getValidModuleListOfType("webItems", moduleValidationExceptionHandler);
             optionalWebItems.ifPresent(
-                webItems -> keyMapBuilder.putAll(createKeyToQualifiedKeyMap(addon, webItems))
+                    webItems -> keyMapBuilder.putAll(createKeyToQualifiedKeyMap(addon, webItems))
             );
         }
 
         {
             Optional<List<ModuleBean>> optionalWebSections = addon.getModules().getValidModuleListOfType("webSections", moduleValidationExceptionHandler);
             optionalWebSections.ifPresent(
-                webSections -> keyMapBuilder.putAll(createKeyToQualifiedKeyMap(addon, webSections))
+                    webSections -> keyMapBuilder.putAll(createKeyToQualifiedKeyMap(addon, webSections))
             );
         }
 
         return keyMapBuilder.build();
     }
 
-    private static Map<String, String> createKeyToQualifiedKeyMap(ConnectAddonBean addon, List<ModuleBean> modules)
-    {
+    private static Map<String, String> createKeyToQualifiedKeyMap(ConnectAddonBean addon, List<ModuleBean> modules) {
         List<RequiredKeyBean> requiredKeyBeans = modules.stream()
                 .filter(module -> module instanceof RequiredKeyBean)
                 .map(RequiredKeyBean.class::cast)

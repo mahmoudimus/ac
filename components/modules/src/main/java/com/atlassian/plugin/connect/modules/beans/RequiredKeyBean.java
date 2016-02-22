@@ -13,8 +13,7 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * @since 1.0
  */
-public class RequiredKeyBean extends NamedBean
-{
+public class RequiredKeyBean extends NamedBean {
     /**
      * A key to identify this module.
      *
@@ -26,14 +25,14 @@ public class RequiredKeyBean extends NamedBean
      * The key is used to generate the url to your add-on's module. The url is generated as a combination of your add-on
      * key and module key. For example, an add-on which looks like:
      *
-     *    {
-     *        "key": "my-addon",
-     *        "modules": {
-     *            "configurePage": {
-     *                "key": "configure-me",
-     *            }
-     *        }
-     *    }
+     * {
+     * "key": "my-addon",
+     * "modules": {
+     * "configurePage": {
+     * "key": "configure-me",
+     * }
+     * }
+     * }
      *
      * Will have a configuration page module with a URL of `/plugins/servlet/ac/my-addon/configure-me`.
      */
@@ -43,50 +42,40 @@ public class RequiredKeyBean extends NamedBean
 
     private transient String calculatedKey;
 
-    public RequiredKeyBean()
-    {
+    public RequiredKeyBean() {
         this.key = "";
     }
 
-    public RequiredKeyBean(final RequiredKeyBeanBuilder builder)
-    {
+    public RequiredKeyBean(final RequiredKeyBeanBuilder builder) {
         super(builder);
 
-        if (null == key)
-        {
+        if (null == key) {
             this.key = "";
         }
-        if (builder.useKeyAsIs())
-        {
+        if (builder.useKeyAsIs()) {
             this.calculatedKey = this.key;
         }
     }
 
-    public String getKey(ConnectAddonBean addon)
-    {
+    public String getKey(ConnectAddonBean addon) {
         checkState(!Strings.isNullOrEmpty(key), "Modules cannot contain empty or null keys.");
-        if (Strings.isNullOrEmpty(calculatedKey))
-        {
+        if (Strings.isNullOrEmpty(calculatedKey)) {
             this.calculatedKey = addonAndModuleKey(addon.getKey(), key);
         }
         return calculatedKey;
     }
 
-    public String getRawKey()
-    {
+    public String getRawKey() {
         return key;
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof RequiredKeyBean && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof RequiredKeyBean && super.equals(otherObj))) {
             return false;
         }
 
@@ -98,8 +87,7 @@ public class RequiredKeyBean extends NamedBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(13, 37)
                 .append(super.hashCode())
                 .append(key)

@@ -15,8 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
 public class ProjectPermissionModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<ProjectPermissionModuleBean, ProjectPermissionModuleDescriptor>
-{
+        implements ConnectModuleDescriptorFactory<ProjectPermissionModuleBean, ProjectPermissionModuleDescriptor> {
     public static final String DESCRIPTOR_NAME = "project-permission";
 
     private final ConnectContainerUtil autowireUtil;
@@ -24,23 +23,20 @@ public class ProjectPermissionModuleDescriptorFactory
 
     @Autowired
     public ProjectPermissionModuleDescriptorFactory(ConnectContainerUtil autowireUtil,
-            ConditionModuleFragmentFactory conditionModuleFragmentFactory)
-    {
+                                                    ConditionModuleFragmentFactory conditionModuleFragmentFactory) {
         this.autowireUtil = autowireUtil;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
     }
 
     @Override
-    public ProjectPermissionModuleDescriptor createModuleDescriptor(ProjectPermissionModuleBean bean, ConnectAddonBean addon, Plugin theConnectPlugin)
-    {
+    public ProjectPermissionModuleDescriptor createModuleDescriptor(ProjectPermissionModuleBean bean, ConnectAddonBean addon, Plugin theConnectPlugin) {
         Element projectPermissionElement = new DOMElement(DESCRIPTOR_NAME);
 
         projectPermissionElement.addAttribute("key", bean.getKey(addon));
         projectPermissionElement.addAttribute("i18n-name-key", bean.getName().getI18nOrValue());
         projectPermissionElement.addAttribute("i18n-description-key", bean.getDescription().getI18nOrValue());
         projectPermissionElement.addAttribute("category", bean.getCategory().toString());
-        if (!bean.getConditions().isEmpty())
-        {
+        if (!bean.getConditions().isEmpty()) {
             projectPermissionElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         }
 

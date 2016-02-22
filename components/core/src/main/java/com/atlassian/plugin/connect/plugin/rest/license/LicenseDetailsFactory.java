@@ -11,10 +11,8 @@ import static com.google.common.collect.Iterables.transform;
 
 /**
  */
-public class LicenseDetailsFactory
-{
-    public static LicenseDetailsRepresentation createRemotablePluginLicense(PluginLicense pluginLicense)
-    {
+public class LicenseDetailsFactory {
+    public static LicenseDetailsRepresentation createRemotablePluginLicense(PluginLicense pluginLicense) {
         return new LicenseDetailsRepresentation(pluginLicense.isValid(),
                 pluginLicense.isEvaluation(),
                 PluginLicenses.isNearlyExpired().apply(pluginLicense),
@@ -33,8 +31,7 @@ public class LicenseDetailsFactory
                 pluginLicense.isEnterprise());
     }
 
-    private static String getContactsEmail(Iterable<Contact> contacts)
-    {
+    private static String getContactsEmail(Iterable<Contact> contacts) {
         Iterable<String> emails = transform(contacts, Contact::getEmail);
 
         return Strings.getFirstNonEmpty(emails).getOrElse((String) null);

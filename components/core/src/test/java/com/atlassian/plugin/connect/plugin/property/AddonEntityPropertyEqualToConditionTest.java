@@ -34,8 +34,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddonEntityPropertyEqualToConditionTest
-{
+public class AddonEntityPropertyEqualToConditionTest {
     public static final JsonNode COMPLICATED_EXAMPLE, LEVEL_ONE, LEVEL_TWO;
     public static final String FAKE_ADD_ON_KEY = "fake.add-on.key";
 
@@ -82,8 +81,7 @@ public class AddonEntityPropertyEqualToConditionTest
     }
 
     @Test
-    public void testGetValueForPath__no_object_name_returns_equivalent_object() throws IOException
-    {
+    public void testGetValueForPath__no_object_name_returns_equivalent_object() throws IOException {
         final Optional<JsonNode> result = getValueForPath(getComplicatedExample(), StringUtils.EMPTY);
         assertEquals(Optional.of(COMPLICATED_EXAMPLE), result);
     }
@@ -154,16 +152,16 @@ public class AddonEntityPropertyEqualToConditionTest
     @Test(expected = PluginParseException.class)
     public void testInit__missing_property_key_param_throws_plugin_parse_exception() {
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "value", "true"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "value", "true"
         ));
     }
 
     @Test(expected = PluginParseException.class)
     public void testInit__missing_value_param_throws_plugin_parse_exception() {
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key"
         ));
     }
 
@@ -171,18 +169,18 @@ public class AddonEntityPropertyEqualToConditionTest
     public void testInit__invalid_value_throws_plugin_parse_exception() {
         // The value JSON is invalid because it is missing an extra quote after element
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "value", "{\"some\", \"element}"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "value", "{\"some\", \"element}"
         ));
     }
 
     @Test
     public void testInit__provided_property_key_and_value_throws_no_exception() {
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "value", "true"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "value", "true"
         ));
     }
 
@@ -190,7 +188,7 @@ public class AddonEntityPropertyEqualToConditionTest
     @Test
     public void testShouldDisplay__mising_actual_value_results_in_not_displayed() {
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Fail(AddonPropertyServiceImpl.OperationStatusImpl.PROPERTY_NOT_FOUND));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Fail(AddonPropertyServiceImpl.OperationStatusImpl.PROPERTY_NOT_FOUND));
 
         assertFalse(sut.shouldDisplay(ImmutableMap.of()));
     }
@@ -206,13 +204,13 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", root, 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "objectName", "array",
-            "value", "[true, false]"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "objectName", "array",
+                "value", "[true, false]"
         ));
 
         assertTrue(sut.shouldDisplay(ImmutableMap.of()));
@@ -229,13 +227,13 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", root, 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "objectName", "array",
-            "value", "[false, true]"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "objectName", "array",
+                "value", "[false, true]"
         ));
 
         assertFalse(sut.shouldDisplay(ImmutableMap.of()));
@@ -253,13 +251,13 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", root, 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "objectName", "array",
-            "value", "[true, false]"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "objectName", "array",
+                "value", "[true, false]"
         ));
 
         assertFalse(sut.shouldDisplay(ImmutableMap.of()));
@@ -276,13 +274,13 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", root, 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "objectName", "array",
-            "value", "[true, false, false]"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "objectName", "array",
+                "value", "[true, false, false]"
         ));
 
         assertFalse(sut.shouldDisplay(ImmutableMap.of()));
@@ -301,12 +299,12 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", actual, 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "value", expected.toString()
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "value", expected.toString()
         ));
 
         assertTrue(sut.shouldDisplay(ImmutableMap.of()));
@@ -325,12 +323,12 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", actual, 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "value", expected.toString()
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "value", expected.toString()
         ));
 
         assertTrue(sut.shouldDisplay(ImmutableMap.of()));
@@ -348,12 +346,12 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", actual, 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "value", expected.toString()
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "value", expected.toString()
         ));
 
         assertFalse(sut.shouldDisplay(ImmutableMap.of()));
@@ -371,12 +369,12 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", actual, 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "value", expected.toString()
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "value", expected.toString()
         ));
 
         assertFalse(sut.shouldDisplay(ImmutableMap.of()));
@@ -387,13 +385,13 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", createThreeLayelJsonNode(), 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "objectName", "life.universe.everything",
-            "value", "42"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "objectName", "life.universe.everything",
+                "value", "42"
         ));
 
         assertTrue(sut.shouldDisplay(ImmutableMap.of()));
@@ -404,13 +402,13 @@ public class AddonEntityPropertyEqualToConditionTest
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", createThreeLayelJsonNode(), 12345L);
 
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "some-key",
-            "objectName", "life.universe.allthethings",
-            "value", "42"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "some-key",
+                "objectName", "life.universe.allthethings",
+                "value", "42"
         ));
 
         assertFalse(sut.shouldDisplay(ImmutableMap.of()));
@@ -433,12 +431,12 @@ public class AddonEntityPropertyEqualToConditionTest
     public void testShouldDisplay__should_coerce_expected_boolean_into_string_comparison() {
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", JsonNodeFactory.instance.textNode("true"), 12345L);
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "unimportant-key",
-            "value", "true"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "unimportant-key",
+                "value", "true"
         ));
 
         assertTrue(sut.shouldDisplay(ImmutableMap.of()));
@@ -448,12 +446,12 @@ public class AddonEntityPropertyEqualToConditionTest
     public void testShouldDisplay__should_coerce_expected_number_into_string_comparison() {
         final AddonProperty propertyResult = new AddonProperty("unimportant-key", JsonNodeFactory.instance.textNode("10"), 12345L);
         when(addonPropertyService.getPropertyValue(any(UserProfile.class), anyString(), anyString(), anyString()))
-            .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
+                .thenReturn(new AddonPropertyService.GetServiceResult.Success(propertyResult));
 
         sut.init(ImmutableMap.of(
-            ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
-            "propertyKey", "unimportant-key",
-            "value", "10"
+                ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY, FAKE_ADD_ON_KEY,
+                "propertyKey", "unimportant-key",
+                "value", "10"
         ));
 
         assertTrue(sut.shouldDisplay(ImmutableMap.of()));

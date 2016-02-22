@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
  * in the signed url
  */
 
-public interface ModuleUiParamParser
-{
+public interface ModuleUiParamParser {
     Optional<String> parseUiParameters(HttpServletRequest req);
 }

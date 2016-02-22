@@ -19,8 +19,7 @@ import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectIFrameComponent >
-{
+public abstract class AbstractConnectIFrameComponent<C extends AbstractConnectIFrameComponent> {
     @Inject
     protected AtlassianWebDriver driver;
 
@@ -32,30 +31,23 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
 
     protected abstract String getFrameId();
 
-    protected AbstractConnectIFrameComponent()
-    {
+    protected AbstractConnectIFrameComponent() {
     }
 
-    protected AbstractConnectIFrameComponent(PageElement iframe)
-    {
+    protected AbstractConnectIFrameComponent(PageElement iframe) {
         this.iframe = iframe;
     }
 
     @Init
-    public void init()
-    {
+    public void init() {
         setIFrameAndSrc();
         waitUntilTrue(iframe.timed().isPresent());
     }
 
-    private void setIFrameAndSrc()
-    {
-        try
-        {
+    private void setIFrameAndSrc() {
+        try {
             setIFrameAndSrcUnsafe();
-        }
-        catch (StaleElementReferenceException e)
-        {
+        } catch (StaleElementReferenceException e) {
             // JavaScript code can recreate the iframe while the test is clicking and hovering,
             // and webdriver complains if we are unlucky enough to find the iframe dom element before
             // the re-creation but ask for its attributes after the re-creation
@@ -63,15 +55,12 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
         }
     }
 
-    private void setIFrameAndSrcUnsafe()
-    {
+    private void setIFrameAndSrcUnsafe() {
         // A constructor variant allows the iframe element to be passed in, in which case we don't need to find it again.
-        if (iframe == null)
-        {
+        if (iframe == null) {
             iframe = elementFinder.find(By.id(getFrameId()));
         }
-        if (iframeSrc == null)
-        {
+        if (iframeSrc == null) {
             iframeSrc = iframe.getAttribute("src");
         }
     }
@@ -80,19 +69,14 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
      * Waits until a script tag (any script tag) has loaded. Most iframes containing a script tag pointing at all.js
      * or all-debug.js
      */
-    public C waitUntilContentLoaded()
-    {
+    public C waitUntilContentLoaded() {
         // wait until the remote panel has loaded
-        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
-        {
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>() {
             @Override
-            public Boolean get()
-            {
-                return withinIFrame(new Function<WebDriver, Boolean>()
-                {
+            public Boolean get() {
+                return withinIFrame(new Function<WebDriver, Boolean>() {
                     @Override
-                    public Boolean apply(WebDriver iframe)
-                    {
+                    public Boolean apply(WebDriver iframe) {
                         return !iframe.findElements(By.tagName("script")).isEmpty();
                     }
                 });
@@ -101,8 +85,7 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
         return (C) this;
     }
 
-    public C waitUntilContentElementNotEmpty(final String elementId)
-    {
+    public C waitUntilContentElementNotEmpty(final String elementId) {
         this.waitUntilContentLoaded();
         // wait until the remote panel has loaded
         waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>() {
@@ -120,29 +103,24 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
         return (C) this;
     }
 
-    public String getFromQueryString(final String key)
-    {
+    public String getFromQueryString(final String key) {
         return RemotePageUtil.findInContext(iframeSrc, key);
     }
 
-    public String getIFrameSourceUrl()
-    {
+    public String getIFrameSourceUrl() {
         return iframeSrc;
     }
 
-    public Dimension getIFrameSize()
-    {
+    public Dimension getIFrameSize() {
         return iframe.getSize();
     }
 
-    public String getIFrameElementText(String elementId)
-    {
+    public String getIFrameElementText(String elementId) {
         waitUntilContentElementNotEmpty(elementId);
         return withinIFrame(textOfElement(By.id(elementId)));
     }
 
-    public String getIFrameElement(String elementId)
-    {
+    public String getIFrameElement(String elementId) {
         waitUntilContentElementNotEmpty(elementId);
         return withinIFrame(htmlOfElement(By.id(elementId)));
     }
@@ -150,40 +128,30 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
     /**
      * Provides a {@link WebDriver} with access to the iframe's content.
      */
-    protected <T> T withinIFrame(Function<WebDriver, T> iFrameConsumer)
-    {
+    protected <T> T withinIFrame(Function<WebDriver, T> iFrameConsumer) {
         setIFrameAndSrc();
 
-        try
-        {
+        try {
             WebDriver frameDriver = driver.switchTo().frame(iframe.getAttribute("id"));
             return iFrameConsumer.apply(frameDriver);
-        }
-        finally
-        {
+        } finally {
             driver.switchTo().defaultContent();
         }
     }
 
-    protected Function<WebDriver, String> textOfElement(final By by)
-    {
-        return new Function<WebDriver, String>()
-        {
+    protected Function<WebDriver, String> textOfElement(final By by) {
+        return new Function<WebDriver, String>() {
             @Override
-            public String apply(WebDriver frame)
-            {
+            public String apply(WebDriver frame) {
                 return frame.findElement(by).getText();
             }
         };
     }
 
-    protected Function<WebDriver, String> htmlOfElement(final By by)
-    {
-        return new Function<WebDriver, String>()
-        {
+    protected Function<WebDriver, String> htmlOfElement(final By by) {
+        return new Function<WebDriver, String>() {
             @Override
-            public String apply(WebDriver frame)
-            {
+            public String apply(WebDriver frame) {
                 return frame.findElement(by).getAttribute("innerHTML");
             }
         };

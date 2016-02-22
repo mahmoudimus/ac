@@ -21,16 +21,14 @@ import static java.util.Arrays.asList;
  * Helper component that registers dynamic module descriptors
  */
 @Component
-public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegistration
-{
+public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegistration {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicDescriptorRegistrationImpl.class);
 
     private final BundleContext bundleContext;
 
     @Autowired
-    public DynamicDescriptorRegistrationImpl(BundleContext bundleContext)
-    {
+    public DynamicDescriptorRegistrationImpl(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
 
@@ -43,59 +41,49 @@ public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegis
      * @return a representation of the descriptor registration
      */
     @Override
-    public Registration registerDescriptors(ModuleDescriptor<?>... descriptors)
-    {
+    public Registration registerDescriptors(ModuleDescriptor<?>... descriptors) {
         return registerDescriptors(asList(descriptors));
     }
 
     /**
-     * Registers descriptors.  
+     * Registers descriptors.
      *
      * @param descriptors the module descriptors of the plugin
      * @return a representation of the descriptor registration
      */
     @Override
-    public Registration registerDescriptors(Iterable<ModuleDescriptor<?>> descriptors)
-    {
+    public Registration registerDescriptors(Iterable<ModuleDescriptor<?>> descriptors) {
         final List<ServiceRegistration> registrations = newArrayList();
-        for (ModuleDescriptor<?> descriptor : descriptors)
-        {
+        for (ModuleDescriptor<?> descriptor : descriptors) {
             ModuleDescriptor<?> existingDescriptor = descriptor.getPlugin().getModuleDescriptor(descriptor.getKey());
-            if (existingDescriptor != null)
-            {
+            if (existingDescriptor != null) {
                 log.error("Duplicate key '" + descriptor.getKey() + "' detected, disabling previous instance");
-                ((StateAware)existingDescriptor).disabled();
+                ((StateAware) existingDescriptor).disabled();
             }
             log.debug("Registering descriptor {}", descriptor.getClass().getName());
             registrations.add(bundleContext.registerService(ModuleDescriptor.class.getName(), descriptor, null));
         }
-        return new Registration()
-        {
+        return new Registration() {
 
             @Override
-            public void unregister()
-            {
-                for (ServiceRegistration reg : registrations)
-                {
+            public void unregister() {
+                for (ServiceRegistration reg : registrations) {
                     reg.unregister();
                 }
             }
 
             @Override
-            public Collection<ModuleDescriptor<?>> getRegisteredDescriptors()
-            {
+            public Collection<ModuleDescriptor<?>> getRegisteredDescriptors() {
                 ImmutableList.Builder<ModuleDescriptor<?>> listBuilder = ImmutableList.builder();
-                
-                for (ServiceRegistration reg : registrations)
-                {
+
+                for (ServiceRegistration reg : registrations) {
                     ModuleDescriptor descriptor = (ModuleDescriptor) bundleContext.getService(reg.getReference());
-                    
-                    if (null != descriptor)
-                    {
+
+                    if (null != descriptor) {
                         listBuilder.add(descriptor);
                     }
                 }
-                
+
                 return listBuilder.build();
             }
         };

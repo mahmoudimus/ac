@@ -16,14 +16,13 @@ import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
  * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a>
  * documentation for a complete content property example.
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_UI_SUPPORT}
  * @schemaTitle User Interface Support
  */
 @SchemaDefinition("uiSupport")
-public class UISupportModuleBean extends BaseModuleBean
-{
+public class UISupportModuleBean extends BaseModuleBean {
     /**
      * The CQL builder will use this operator when constructing the CQL string.
      */
@@ -82,43 +81,35 @@ public class UISupportModuleBean extends BaseModuleBean
     @Required
     private UISupportValueType valueType;
 
-    public UISupportModuleBean(UISupportModuleBeanBuilder builder)
-    {
+    public UISupportModuleBean(UISupportModuleBeanBuilder builder) {
         super(builder);
     }
 
-    public static UISupportModuleBeanBuilder newUISupportModuleBean()
-    {
+    public static UISupportModuleBeanBuilder newUISupportModuleBean() {
         return new UISupportModuleBeanBuilder<>();
     }
 
-    public static UISupportModuleBeanBuilder newUISupportModuleBean(UISupportModuleBean defaultBean)
-    {
+    public static UISupportModuleBeanBuilder newUISupportModuleBean(UISupportModuleBean defaultBean) {
         return new UISupportModuleBeanBuilder(defaultBean);
     }
 
-    public String getDefaultOperator()
-    {
+    public String getDefaultOperator() {
         return defaultOperator;
     }
 
-    public I18nProperty getName()
-    {
+    public I18nProperty getName() {
         return name;
     }
 
-    public String getDataUri()
-    {
+    public String getDataUri() {
         return dataUri;
     }
 
-    public I18nProperty getTooltip()
-    {
+    public I18nProperty getTooltip() {
         return tooltip;
     }
 
-    public UISupportValueType getValueType()
-    {
+    public UISupportValueType getValueType() {
         return valueType;
     }
 }

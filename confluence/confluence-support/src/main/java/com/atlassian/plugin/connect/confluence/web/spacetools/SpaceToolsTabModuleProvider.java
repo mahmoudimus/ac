@@ -42,8 +42,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * The other web item is for the legacy Space Admin section, which appears for Documentation Theme spaces.
  */
 @ConfluenceComponent
-public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModuleProvider<SpaceToolsTabModuleBean>
-{
+public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModuleProvider<SpaceToolsTabModuleBean> {
 
     @VisibleForTesting
     public static final String SPACE_TOOLS_SECTION = "system.space.tools";
@@ -67,13 +66,12 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
 
     @Autowired
     public SpaceToolsTabModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ConditionLoadingValidator conditionLoadingValidator)
-    {
+                                       ConnectJsonSchemaValidator schemaValidator,
+                                       WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                       XWorkActionDescriptorFactory xWorkActionDescriptorFactory, ProductAccessor productAccessor,
+                                       IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                       IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                       ConditionLoadingValidator conditionLoadingValidator) {
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.xWorkActionDescriptorFactory = xWorkActionDescriptorFactory;
@@ -84,26 +82,22 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
     }
 
     @Override
-    public ConnectModuleMeta<SpaceToolsTabModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<SpaceToolsTabModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<SpaceToolsTabModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<SpaceToolsTabModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         List<SpaceToolsTabModuleBean> spaceToolsTabs = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), spaceToolsTabs);
         return spaceToolsTabs;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SpaceToolsTabModuleBean> modules, ConnectAddonBean connectAddonBean)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SpaceToolsTabModuleBean> modules, ConnectAddonBean connectAddonBean) {
         Plugin plugin = pluginRetrievalService.getPlugin();
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
-        for (SpaceToolsTabModuleBean bean : modules)
-        {
+        for (SpaceToolsTabModuleBean bean : modules) {
             XWorkActionModuleBean actionBean = createActionBean(connectAddonBean, bean);
             moduleDescriptors.add(xWorkActionDescriptorFactory.create(connectAddonBean, plugin, actionBean));
 
@@ -117,16 +111,14 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
-            for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
-            {
+            for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl)) {
                 moduleDescriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(webItemModuleBean, connectAddonBean, plugin));
             }
         }
         return moduleDescriptors;
     }
 
-    private XWorkActionModuleBean createActionBean(ConnectAddonBean addon, SpaceToolsTabModuleBean bean)
-    {
+    private XWorkActionModuleBean createActionBean(ConnectAddonBean addon, SpaceToolsTabModuleBean bean) {
         String spaceAdminLegacyKey = bean.getRawKey() + SPACE_ADMIN_KEY_SUFFIX;
         SpaceToolsTabContext spaceTabContext = new SpaceToolsTabContext(addon.getKey(), bean.getRawKey(),
                 bean.getDisplayName(), spaceAdminLegacyKey);
@@ -145,14 +137,12 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
                 .build();
     }
 
-    private List<WebItemModuleBean> createWebItemBeans(SpaceToolsTabModuleBean bean, String actionUrl)
-    {
+    private List<WebItemModuleBean> createWebItemBeans(SpaceToolsTabModuleBean bean, String actionUrl) {
         Integer weight = bean.getWeight() == null ? productAccessor.getPreferredGeneralWeight() : bean.getWeight();
         String location = isNullOrEmpty(bean.getLocation()) ? DEFAULT_LOCATION : bean.getLocation();
 
         List<ConditionalBean> conditions = bean.getConditions();
-        if (conditions == null)
-        {
+        if (conditions == null) {
             conditions = newArrayList();
         }
 

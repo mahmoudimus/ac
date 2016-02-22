@@ -22,8 +22,7 @@ import static com.atlassian.plugin.connect.test.common.matcher.ValueMatchers.isA
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-public class TestUpgrade
-{
+public class TestUpgrade {
     private final String baseUrl = TestedProductAccessor.get().getTestedProduct().getProductInstance().getBaseUrl();
 
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
@@ -37,8 +36,7 @@ public class TestUpgrade
      * Check that ACDEV-651 hasn't regressed.
      */
     @Test
-    public void testPluginModulesDoNotRiseFromTheDead() throws Exception
-    {
+    public void testPluginModulesDoNotRiseFromTheDead() throws Exception {
         // install then uninstall a plugin
         plugin0 = new ConnectRunner(baseUrl, PLUGIN_KEY)
                 .setAuthenticationToNone()
@@ -70,7 +68,7 @@ public class TestUpgrade
 
         JSON pluginJson = JSON.parse(plugin1.getUpmPluginJson());
         Matcher<Iterable<? super Value>> valMatcher = hasItem(
-                hasProperty("key", addonAndModuleKey(PLUGIN_KEY,KEY_PAGE_TWO)));
+                hasProperty("key", addonAndModuleKey(PLUGIN_KEY, KEY_PAGE_TWO)));
 
         assertThat(pluginJson.get("modules"), isArrayMatching(valMatcher));
 
@@ -79,12 +77,9 @@ public class TestUpgrade
     }
 
     @After
-    public void uninstallPlugin1() throws Exception
-    {
-        for (ConnectRunner plugin : Lists.newArrayList(plugin0, plugin1))
-        {
-            if (plugin != null)
-            {
+    public void uninstallPlugin1() throws Exception {
+        for (ConnectRunner plugin : Lists.newArrayList(plugin0, plugin1)) {
+            if (plugin != null) {
                 plugin.stopAndUninstall();
             }
         }

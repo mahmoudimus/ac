@@ -35,8 +35,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of general page in Confluence
  */
-public class TestAdminPage extends ConfluenceWebDriverTestBase
-{
+public class TestAdminPage extends ConfluenceWebDriverTestBase {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String PAGE_NAME = "My Admin Page";
@@ -48,8 +47,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
@@ -66,17 +64,14 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws Exception
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws Exception {
         loginAndVisit(testUserFactory.admin(), ConfluenceAdminHomePage.class);
 
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, PLUGIN_KEY, PAGE_KEY);
@@ -87,19 +82,16 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
         final ConnectAddonEmbeddedTestPage addonContentsPage = adminPage.clickAddonLink();
-        waitUntilTrue(forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
-        {
+        waitUntilTrue(forSupplier(new DefaultTimeouts(), new Supplier<Boolean>() {
             @Override
-            public Boolean get()
-            {
+            public Boolean get() {
                 return "Hello world".equals(addonContentsPage.getValueById("hello-world-message"));
             }
         }));
     }
 
     @Test
-    public void nonAdminCanNotSeePage()
-    {
+    public void nonAdminCanNotSeePage() {
         login(testUserFactory.basicUser());
         InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
@@ -107,8 +99,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
+    public void pageIsNotAccessibleWithFalseCondition() {
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         // web item should not be displayed

@@ -19,11 +19,11 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
  * a complete example.
  *
  * <h3>Example</h3>
+ *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Extraction Configuration
  */
-public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleBean
-{
+public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleBean {
     /**
      * The <code>objectName</code> of the JSON data which should be indexed. The objectName is the key of a flattened JSON object with '.' as the path separator.
      *
@@ -46,7 +46,6 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
      * expression evaluates to a JSON array, each element will be indexed separately. This Enables searching for an exact value, e.g. a unique identifier.
      * * <code>date</code> - Two representations are possible: either a string following the ISO 8601 datetime format,
      * or a long value in Unix time. This enables efficient range filtering and sorting.
-     *
      */
     @Required
     private final ContentPropertyIndexFieldType type;
@@ -72,36 +71,30 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
      */
     private final UISupportModuleBean uiSupport;
 
-    public ContentPropertyIndexExtractionConfigurationBean(ContentPropertyIndexExtractionConfigurationBeanBuilder builder)
-    {
+    public ContentPropertyIndexExtractionConfigurationBean(ContentPropertyIndexExtractionConfigurationBeanBuilder builder) {
         this.objectName = builder.getObjectName();
         this.type = builder.getType();
         this.alias = builder.getAlias();
         this.uiSupport = builder.getUiSupport();
     }
 
-    public static ContentPropertyIndexExtractionConfigurationBeanBuilder newContentPropertyIndexExtractionConfigurationBean()
-    {
+    public static ContentPropertyIndexExtractionConfigurationBeanBuilder newContentPropertyIndexExtractionConfigurationBean() {
         return new ContentPropertyIndexExtractionConfigurationBeanBuilder();
     }
 
-    public String getObjectName()
-    {
+    public String getObjectName() {
         return objectName;
     }
 
-    public ContentPropertyIndexFieldType getType()
-    {
+    public ContentPropertyIndexFieldType getType() {
         return type;
     }
 
-    public String getAlias()
-    {
+    public String getAlias() {
         return alias;
     }
 
-    public UISupportModuleBean getUiSupport()
-    {
+    public UISupportModuleBean getUiSupport() {
         return uiSupport;
     }
 }

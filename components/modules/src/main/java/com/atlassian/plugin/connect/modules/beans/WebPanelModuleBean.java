@@ -14,15 +14,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * controls in the application interface as a group. For example, the existing "People" panel in JIRA issue view shows
  * the assignee, reporter, and similar information for the issue.
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBPANEL_EXAMPLE}
  * @schemaTitle Web Panel
  * @since 1.0
  */
 @SchemaDefinition("webPanel")
-public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
-{
+public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions {
     /**
      * The URL of the add-on resource that provides the web panel content. This URL must be relative to the add-on's baseUrl.
      */
@@ -59,90 +58,73 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
      */
     private I18nProperty tooltip;
 
-    public WebPanelModuleBean()
-    {
+    public WebPanelModuleBean() {
         this.location = "";
         this.layout = new WebPanelLayout();
         this.url = "";
         this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
     }
 
-    public WebPanelModuleBean(WebPanelModuleBeanBuilder builder)
-    {
+    public WebPanelModuleBean(WebPanelModuleBeanBuilder builder) {
         super(builder);
 
-        if (null == location)
-        {
+        if (null == location) {
             this.location = "";
         }
 
-        if (null == layout)
-        {
+        if (null == layout) {
             this.layout = new WebPanelLayout();
         }
 
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
 
-        if (null == weight)
-        {
+        if (null == weight) {
             this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
         }
 
     }
 
-    public String getLocation()
-    {
+    public String getLocation() {
         return location;
     }
 
-    public WebPanelLayout getLayout()
-    {
+    public WebPanelLayout getLayout() {
         return layout;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public Integer getWeight()
-    {
+    public Integer getWeight() {
         return weight;
     }
 
-    public I18nProperty getTooltip()
-    {
+    public I18nProperty getTooltip() {
         return tooltip;
     }
 
-    public boolean isAbsolute()
-    {
+    public boolean isAbsolute() {
         return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
     }
 
-    public static WebPanelModuleBeanBuilder newWebPanelBean()
-    {
+    public static WebPanelModuleBeanBuilder newWebPanelBean() {
         return new WebPanelModuleBeanBuilder();
     }
 
-    public static WebPanelModuleBeanBuilder newWebPanelBean(WebPanelModuleBean defaultBean)
-    {
+    public static WebPanelModuleBeanBuilder newWebPanelBean(WebPanelModuleBean defaultBean) {
         return new WebPanelModuleBeanBuilder(defaultBean);
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof WebPanelModuleBean && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof WebPanelModuleBean && super.equals(otherObj))) {
             return false;
         }
 
@@ -157,8 +139,7 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(13, 61)
                 .appendSuper(super.hashCode())
                 .append(url)

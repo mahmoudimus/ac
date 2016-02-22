@@ -16,24 +16,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Named
 @ExportAsService
-public final class RemotablePluginsPluginUriResolver implements PluginUriResolver
-{
+public final class RemotablePluginsPluginUriResolver implements PluginUriResolver {
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final ConnectAddonAccessor addonAccessor;
 
     @Inject
     public RemotablePluginsPluginUriResolver(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            ConnectAddonAccessor addonAccessor)
-    {
+                                             ConnectAddonAccessor addonAccessor) {
         this.addonAccessor = addonAccessor;
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
     }
 
     @Override
-    public Optional<URI> getUri(String pluginKey, URI path)
-    {
-        if (!path.isAbsolute() && addonAccessor.getAddon(pluginKey).isPresent())
-        {
+    public Optional<URI> getUri(String pluginKey, URI path) {
+        if (!path.isAbsolute() && addonAccessor.getAddon(pluginKey).isPresent()) {
             return Optional.of(remotablePluginAccessorFactory.get(pluginKey).getTargetUrl(path));
         }
         return Optional.absent();

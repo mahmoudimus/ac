@@ -41,8 +41,7 @@ import static it.confluence.servlet.ConfluenceAppServlets.macroPropertyPanelWith
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
-{
+public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase {
 
     public static final String PROPERTY_PANEL_URL = "/render-property-panel";
     public static final String PROPERTY_PANEL_WITH_DIALOG_URL = "/render-property-panel-with-dialog";
@@ -69,8 +68,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
     private static String addonKey;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
-    {
+    public static void startConnectAddOn() throws Exception {
         final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
         addonKey = AddonTestUtils.randomAddonKey();
 
@@ -99,17 +97,14 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddOn() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testMacroPropertyPanelContainsIFrame() throws Exception
-    {
+    public void testMacroPropertyPanelContainsIFrame() throws Exception {
         String macroBody = "My property panel iframe test";
         String body = new MacroStorageFormatBuilder(PROPERTY_PANEL_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(PROPERTY_PANEL_MACRO_KEY), body);
@@ -123,8 +118,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testMacroPropertyPanelIFrameChangesParameter() throws Exception
-    {
+    public void testMacroPropertyPanelIFrameChangesParameter() throws Exception {
         String macroBody = "My property panel iframe test";
 
         String body = new MacroStorageFormatBuilder(PROPERTY_PANEL_MACRO_KEY).richTextBody(macroBody).build();
@@ -156,8 +150,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testMacroPropertyPanelDoesNotContainIFrame() throws Exception
-    {
+    public void testMacroPropertyPanelDoesNotContainIFrame() throws Exception {
         String macroBody = "My property panel iframe test";
 
         String body = new MacroStorageFormatBuilder(EDITOR_MACRO_KEY).richTextBody(macroBody).build();
@@ -172,8 +165,7 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testMacroPropertyPanelCanLaunchDialog() throws Exception
-    {
+    public void testMacroPropertyPanelCanLaunchDialog() throws Exception {
         String macroBody = "My property panel iframe test";
 
         String body = new MacroStorageFormatBuilder(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY).richTextBody(macroBody).build();
@@ -199,58 +191,55 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
         assertThat(renderedMacro.getFromQueryString("param1"), is("ThisIsMyGreatNewParamValue"));
     }
 
-    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createPropertyPanelMacro(T builder)
-    {
+    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createPropertyPanelMacro(T builder) {
         return builder
                 .withKey(PROPERTY_PANEL_MACRO_KEY)
                 .withUrl("/echo/params?" + SINGLE_PARAM_ID + "={" + SINGLE_PARAM_ID + "}")
                 .withName(new I18nProperty(PROPERTY_PANEL_MACRO_NAME, null))
                 .withPropertyPanel(MacroPropertyPanelBean.newMacroPropertyPanelBean()
-                                .withUrl(PROPERTY_PANEL_URL)
-                                .build()
+                        .withUrl(PROPERTY_PANEL_URL)
+                        .build()
                 )
                 .withParameters(MacroParameterBean.newMacroParameterBean()
-                                .withIdentifier(SINGLE_PARAM_ID)
-                                .withName(new I18nProperty(SINGLE_PARAM_NAME, null))
-                                .withType("string")
-                                .build()
+                        .withIdentifier(SINGLE_PARAM_ID)
+                        .withName(new I18nProperty(SINGLE_PARAM_NAME, null))
+                        .withType("string")
+                        .build()
                 )
                 .withEditor(MacroEditorBean.newMacroEditorBean()
-                                .withUrl(PROPERTY_PANEL_URL)
-                                .withHeight("200px")
-                                .withWidth("200px")
-                                .build()
+                        .withUrl(PROPERTY_PANEL_URL)
+                        .withHeight("200px")
+                        .withWidth("200px")
+                        .build()
                 )
                 .build();
     }
 
-    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createPropertyPanelMacroWithDialog(T builder)
-    {
+    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createPropertyPanelMacroWithDialog(T builder) {
         return builder
                 .withKey(PROPERTY_PANEL_MACRO_WITH_DIALOG_KEY)
-                .withUrl("/echo/params?" + SINGLE_PARAM_ID +  "={" + SINGLE_PARAM_ID + "}")
+                .withUrl("/echo/params?" + SINGLE_PARAM_ID + "={" + SINGLE_PARAM_ID + "}")
                 .withName(new I18nProperty(PROPERTY_PANEL_MACRO_WITH_DIALOG_NAME, null))
                 .withPropertyPanel(MacroPropertyPanelBean.newMacroPropertyPanelBean()
-                                .withUrl(PROPERTY_PANEL_WITH_DIALOG_URL)
-                                .build()
+                        .withUrl(PROPERTY_PANEL_WITH_DIALOG_URL)
+                        .build()
                 )
                 .withParameters(MacroParameterBean.newMacroParameterBean()
-                                .withIdentifier(SINGLE_PARAM_ID)
-                                .withName(new I18nProperty(SINGLE_PARAM_NAME, null))
-                                .withType("string")
-                                .build()
+                        .withIdentifier(SINGLE_PARAM_ID)
+                        .withName(new I18nProperty(SINGLE_PARAM_NAME, null))
+                        .withType("string")
+                        .build()
                 )
                 .withEditor(MacroEditorBean.newMacroEditorBean()
-                                .withUrl(PROPERTY_PANEL_WITH_DIALOG_URL)
-                                .withHeight("200px")
-                                .withWidth("200px")
-                                .build()
+                        .withUrl(PROPERTY_PANEL_WITH_DIALOG_URL)
+                        .withHeight("200px")
+                        .withWidth("200px")
+                        .build()
                 )
                 .build();
     }
 
-    protected static ConnectPageModuleBean createPropertyPanelDialogPage(ConnectPageModuleBeanBuilder builder)
-    {
+    protected static ConnectPageModuleBean createPropertyPanelDialogPage(ConnectPageModuleBeanBuilder builder) {
         return builder
                 .withName(new I18nProperty(DIALOG_NAME, null))
                 .withUrl(PROPERTY_PANEL_URL)
@@ -260,17 +249,16 @@ public class TestMacroPropertyPanelIframe extends ConfluenceWebDriverTestBase
     }
 
 
-    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createEditorMacro(T builder)
-    {
+    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createEditorMacro(T builder) {
         return builder
                 .withKey(EDITOR_MACRO_KEY)
                 .withUrl("/echo/params?footy={footy}")
                 .withName(new I18nProperty(EDITOR_MACRO_NAME, null))
                 .withEditor(MacroEditorBean.newMacroEditorBean()
-                                .withUrl("/render-editor")
-                                .withHeight("200px")
-                                .withWidth("300px")
-                                .build()
+                        .withUrl("/render-editor")
+                        .withHeight("200px")
+                        .withWidth("300px")
+                        .build()
                 )
                 .build();
     }

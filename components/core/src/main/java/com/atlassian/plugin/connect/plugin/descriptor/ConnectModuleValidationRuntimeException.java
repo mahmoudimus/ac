@@ -6,20 +6,17 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationExcepti
  * A run-time exception wrapper around {@link ConnectModuleValidationException} to enable throwing out of Gson
  * deserialization.
  */
-public class ConnectModuleValidationRuntimeException extends RuntimeException
-{
+public class ConnectModuleValidationRuntimeException extends RuntimeException {
 
     private final ConnectModuleValidationException cause;
 
-    public ConnectModuleValidationRuntimeException(ConnectModuleValidationException cause)
-    {
+    public ConnectModuleValidationRuntimeException(ConnectModuleValidationException cause) {
         super(cause);
         this.cause = cause;
     }
 
     @Override
-    public ConnectModuleValidationException getCause()
-    {
+    public ConnectModuleValidationException getCause() {
         return cause;
     }
 }

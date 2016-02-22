@@ -22,8 +22,7 @@ import static it.jira.permission.PermissionJsonBeanMatcher.isPermission;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class TestProjectPermission extends JiraTestBase
-{
+public class TestProjectPermission extends JiraTestBase {
     private static final String pluginKey = AddonTestUtils.randomAddonKey();
     private static final String permissionKey = "plugged-project-permission";
     private static final String fullPermissionKey = ModuleKeyUtils.addonAndModuleKey(pluginKey, permissionKey);
@@ -36,8 +35,7 @@ public class TestProjectPermission extends JiraTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         myPermissionRestClient = new MyPermissionRestClient(product);
         remotePlugin = new ConnectRunner(product.environmentData().getBaseUrl().toString(), pluginKey)
                 .setAuthenticationToNone()
@@ -57,29 +55,24 @@ public class TestProjectPermission extends JiraTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         product.backdoor().project().addProject("Test project", projectKey, "admin");
     }
 
     @After
-    public void tearDown()
-    {
+    public void tearDown() {
         product.backdoor().project().deleteProject(projectKey);
     }
 
     @Test
-    public void pluggableProjectPermissionShouldDisplayOnTheProjectPermission() throws Exception
-    {
+    public void pluggableProjectPermissionShouldDisplayOnTheProjectPermission() throws Exception {
         Map<String, PermissionJsonBean> myPermissions = myPermissionRestClient.getMyPermissions();
 
         PermissionJsonBean permission = myPermissions.get(fullPermissionKey);
@@ -87,8 +80,7 @@ public class TestProjectPermission extends JiraTestBase
     }
 
     @Test
-    public void pluggableProjectPermissionShouldNotDisplayIfConditionsAreNotFulfilled() throws Exception
-    {
+    public void pluggableProjectPermissionShouldNotDisplayIfConditionsAreNotFulfilled() throws Exception {
         product.backdoor().applicationProperties().setOption(APKeys.JIRA_OPTION_VOTING, false);
 
         Map<String, PermissionJsonBean> myPermissions = myPermissionRestClient.getMyPermissions();

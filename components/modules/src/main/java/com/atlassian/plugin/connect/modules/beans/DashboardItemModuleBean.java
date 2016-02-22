@@ -10,15 +10,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  * Dashboard items allow add-on to display a summary information data on the dashboard. Each dashboard-item can be configured
  * to display information relevant to a particular user.
  *
- *#### Example
+ * #### Example
  * For a full add-on example, see [dashboard item example add-on](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-dashboard-item-example).
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DASHBOARD_ITEM_EXAMPLE}
  * @schemaTitle Dashboard Item
  * @since 1.0
  */
-public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
-{
+public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions {
     /**
      * Description of the dashboard item. This will be displayed for a user in the directory.
      */
@@ -35,7 +34,7 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * * `dashboardItem.viewType` type of the view in which dashboard item is displayed. Default (for dashboard) and directory. This list may be extended
      */
     @Required
-    @StringSchemaAttributes (format = "uri-template")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     /**
@@ -45,31 +44,30 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * In addition, configurable dashboard items should register a javascript callback for `edit click`.
      *
-     *     AP.require(['jira'], function (jira) {
-     *        jira.DashboardItem.onDashboardItemEdit(function() {
-     *           // render dashboard item configuration now
-     *        });
-     *     });
+     * AP.require(['jira'], function (jira) {
+     * jira.DashboardItem.onDashboardItemEdit(function() {
+     * // render dashboard item configuration now
+     * });
+     * });
      *
      * It is a common case to give users ability to set the name of the dashboard item. This can be achieved with a following
      * JS code:
      *
-     *     AP.require(['jira'], function(jira) {
-     *        jira.setDashboardItemTitle("Setting title works");
-     *     });
+     * AP.require(['jira'], function(jira) {
+     * jira.setDashboardItemTitle("Setting title works");
+     * });
      */
-    @CommonSchemaAttributes (defaultValue = "false")
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean configurable;
 
     /**
      * URI of the dashboard item thumbnail which is displayed in the directory.
      */
     @Required
-    @StringSchemaAttributes (format = "uri-template")
+    @StringSchemaAttributes(format = "uri-template")
     private String thumbnailUrl;
 
-    public DashboardItemModuleBean()
-    {
+    public DashboardItemModuleBean() {
         this.description = I18nProperty.empty();
         this.url = "";
         this.configurable = false;
@@ -77,33 +75,27 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
 
-    public DashboardItemModuleBean(DashboardItemModuleBeanBuilder builder)
-    {
+    public DashboardItemModuleBean(DashboardItemModuleBeanBuilder builder) {
         super(builder);
     }
 
-    public static DashboardItemModuleBeanBuilder newBuilder()
-    {
+    public static DashboardItemModuleBeanBuilder newBuilder() {
         return new DashboardItemModuleBeanBuilder();
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public Boolean isConfigurable()
-    {
+    public Boolean isConfigurable() {
         return configurable;
     }
 
-    public String getThumbnailUrl()
-    {
+    public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 }

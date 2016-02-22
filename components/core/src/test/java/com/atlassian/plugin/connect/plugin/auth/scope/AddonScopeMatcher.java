@@ -11,38 +11,32 @@ import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class AddonScopeMatcher extends BaseMatcher<AddonScope>
-{
+public class AddonScopeMatcher extends BaseMatcher<AddonScope> {
 
     private static final Logger log = LoggerFactory.getLogger(AddonScopeMatcher.class);
 
     private final String key;
     private final Collection<AddonScopeApiPath> paths;
 
-    public AddonScopeMatcher(String key, Collection<AddonScopeApiPath> paths)
-    {
+    public AddonScopeMatcher(String key, Collection<AddonScopeApiPath> paths) {
         this.key = checkNotNull(key);
         this.paths = checkNotNull(paths);
     }
 
     @Override
-    public boolean matches(Object item)
-    {
-        if (!(item instanceof AddonScope))
-        {
+    public boolean matches(Object item) {
+        if (!(item instanceof AddonScope)) {
             log.debug("Not an AddonScope: " + item);
             return false;
         }
 
         AddonScope scope = (AddonScope) item;
 
-        if (!key.equals(scope.getKey()))
-        {
+        if (!key.equals(scope.getKey())) {
             log.debug(key + " != " + scope.getKey());
         }
 
-        if (!paths.equals(scope.getPaths()))
-        {
+        if (!paths.equals(scope.getPaths())) {
             log.debug(paths.toString() + " != " + scope.getPaths());
         }
 
@@ -50,8 +44,7 @@ public class AddonScopeMatcher extends BaseMatcher<AddonScope>
     }
 
     @Override
-    public void describeTo(Description description)
-    {
+    public void describeTo(Description description) {
         description.appendText(AddonScope.class.getSimpleName());
         description.appendText("[key=");
         description.appendText(key);

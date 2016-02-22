@@ -9,16 +9,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Options for an inline dialog target
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE}
  * @schemaTitle Inline Dialog Options
- *
  * @since 1.1
  */
 @SchemaDefinition("inlineDialogOptions")
-public class InlineDialogOptions extends BaseDialogOptions implements WebItemTargetOptions
-{
+public class InlineDialogOptions extends BaseDialogOptions implements WebItemTargetOptions {
     /**
      * Determines whether the inline-Dialog will show on a mouseOver or mouseClick of the trigger
      */
@@ -62,8 +60,7 @@ public class InlineDialogOptions extends BaseDialogOptions implements WebItemTar
     public InlineDialogOptions(Boolean onHover, Integer showDelay,
                                String width, String offsetX, String offsetY,
                                Boolean isRelativeToMouse, Boolean closeOthers,
-                               Boolean onTop, Boolean persistent)
-    {
+                               Boolean onTop, Boolean persistent) {
         super(width);
         this.onHover = onHover;
         this.showDelay = showDelay;
@@ -75,70 +72,56 @@ public class InlineDialogOptions extends BaseDialogOptions implements WebItemTar
         this.persistent = persistent;
     }
 
-    public InlineDialogOptions()
-    {
+    public InlineDialogOptions() {
     }
 
-    public InlineDialogOptions(InlineDialogOptionsBuilder inlineDialogOptionsBuilder)
-    {
+    public InlineDialogOptions(InlineDialogOptionsBuilder inlineDialogOptionsBuilder) {
         super(inlineDialogOptionsBuilder);
     }
 
-    public Boolean getOnHover()
-    {
+    public Boolean getOnHover() {
         return onHover;
     }
 
-    public Integer getShowDelay()
-    {
+    public Integer getShowDelay() {
         return showDelay;
     }
 
-    public String getOffsetX()
-    {
+    public String getOffsetX() {
         return offsetX;
     }
 
-    public String getOffsetY()
-    {
+    public String getOffsetY() {
         return offsetY;
     }
 
-    public Boolean getIsRelativeToMouse()
-    {
+    public Boolean getIsRelativeToMouse() {
         return isRelativeToMouse;
     }
 
-    public Boolean getCloseOthers()
-    {
+    public Boolean getCloseOthers() {
         return closeOthers;
     }
 
-    public Boolean getOnTop()
-    {
+    public Boolean getOnTop() {
         return onTop;
     }
 
-    public Boolean getPersistent()
-    {
+    public Boolean getPersistent() {
         return persistent;
     }
 
-    public static InlineDialogOptionsBuilder newInlineDialogOptions()
-    {
+    public static InlineDialogOptionsBuilder newInlineDialogOptions() {
         return new InlineDialogOptionsBuilder();
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof InlineDialogOptions))
-        {
+        if (!(otherObj instanceof InlineDialogOptions)) {
             return false;
         }
 
@@ -158,8 +141,7 @@ public class InlineDialogOptions extends BaseDialogOptions implements WebItemTar
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(123, 99)
                 .appendSuper(super.hashCode())
                 .append(onHover)

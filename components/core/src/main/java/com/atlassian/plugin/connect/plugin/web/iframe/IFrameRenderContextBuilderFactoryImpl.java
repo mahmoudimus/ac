@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContextBuilderFactory
-{
+public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContextBuilderFactory {
 
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
@@ -18,10 +17,9 @@ public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContex
 
     @Autowired
     public IFrameRenderContextBuilderFactoryImpl(RemotablePluginAccessorFactory pluginAccessorFactory,
-            UserManager userManager,
-            HostApplicationInfo hostApplicationInfo,
-            TimeZoneManager timeZoneManager)
-    {
+                                                 UserManager userManager,
+                                                 HostApplicationInfo hostApplicationInfo,
+                                                 TimeZoneManager timeZoneManager) {
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
         this.hostApplicationInfo = hostApplicationInfo;
@@ -29,8 +27,7 @@ public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContex
     }
 
     @Override
-    public IFrameRenderContextBuilder builder()
-    {
+    public IFrameRenderContextBuilder builder() {
         return new IFrameRenderContextBuilderImpl(pluginAccessorFactory, userManager, hostApplicationInfo,
                 timeZoneManager);
     }

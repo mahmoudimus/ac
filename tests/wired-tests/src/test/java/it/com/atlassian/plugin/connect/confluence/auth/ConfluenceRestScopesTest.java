@@ -13,20 +13,18 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Collection;
 
-@Application ("confluence")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class ConfluenceRestScopesTest extends ScopeManagerTest
-{
-    public ConfluenceRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
+@Application("confluence")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class ConfluenceRestScopesTest extends ScopeManagerTest {
+    public ConfluenceRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
+
     /**
      * These tests are not exhaustive. They are samples across the common scopes (app links and Connect) and the
      * Confluence specific ones.
      */
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         return Arrays.asList(
                 ConfluenceScopeTestUtil.emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/content/12345", true),
                 ConfluenceScopeTestUtil.emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/content/2031617/history/8/macro/7c8fd5b99609c2d1864391f15993e07a", true),

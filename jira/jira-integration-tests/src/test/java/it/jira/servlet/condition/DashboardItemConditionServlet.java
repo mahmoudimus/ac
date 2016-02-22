@@ -12,29 +12,25 @@ import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 
-public class DashboardItemConditionServlet extends HttpServlet
-{
+public class DashboardItemConditionServlet extends HttpServlet {
     public static final String DASHBOARD_ITEM_CONDITION_URL = "/dashboardItemConditon";
 
     private final String expectedUser;
     private final List<String> expectedMode;
     private final String expectedKey;
 
-    public static ConditionalBean conditionBean()
-    {
+    public static ConditionalBean conditionBean() {
         return newSingleConditionBean().withCondition(DASHBOARD_ITEM_CONDITION_URL + "?dashboardItemViewType={dashboardItem.viewType}&key={dashboardItem.key}").build();
     }
 
-    public DashboardItemConditionServlet(final String expectedUser, final List<String> expectedMode, final String expectedKey)
-    {
+    public DashboardItemConditionServlet(final String expectedUser, final List<String> expectedMode, final String expectedKey) {
         this.expectedUser = expectedUser;
         this.expectedMode = expectedMode;
         this.expectedKey = expectedKey;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-    {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String mode = req.getParameter("dashboardItemViewType");
         String userKey = req.getParameter("user_key");
         String key = req.getParameter("key");
@@ -43,13 +39,11 @@ public class DashboardItemConditionServlet extends HttpServlet
         resp.getWriter().close();
     }
 
-    private boolean shouldDisplay(final String user, final String mode, final String key)
-    {
+    private boolean shouldDisplay(final String user, final String mode, final String key) {
         return expectedMode.contains(mode) && expectedUser.equals(user) && key.contains(expectedKey);
     }
 
-    public void setSupportedViewMode(final String mode)
-    {
+    public void setSupportedViewMode(final String mode) {
         expectedMode.clear();
         expectedMode.add(mode);
     }

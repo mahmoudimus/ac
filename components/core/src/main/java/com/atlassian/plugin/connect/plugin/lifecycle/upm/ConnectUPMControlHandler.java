@@ -23,8 +23,7 @@ import java.util.Optional;
 
 @ExportAsService(PluginControlHandler.class)
 @Named
-public class ConnectUPMControlHandler implements PluginControlHandler
-{
+public class ConnectUPMControlHandler implements PluginControlHandler {
     private static final Logger log = LoggerFactory.getLogger(ConnectUPMControlHandler.class);
 
     private ConnectAddonAccessor addonAccessor;
@@ -33,63 +32,49 @@ public class ConnectUPMControlHandler implements PluginControlHandler
 
     @Inject
     public ConnectUPMControlHandler(ConnectAddonAccessor addonAccessor,
-            ConnectAddonManager connectAddonManager,
-            ConnectAddonToPluginFactory addonToPluginFactory)
-    {
+                                    ConnectAddonManager connectAddonManager,
+                                    ConnectAddonToPluginFactory addonToPluginFactory) {
         this.addonAccessor = addonAccessor;
         this.connectAddonManager = connectAddonManager;
         this.addonToPluginFactory = addonToPluginFactory;
     }
 
     @Override
-    public boolean canControl(String pluginKey)
-    {
+    public boolean canControl(String pluginKey) {
         return connectAddonManager.hasDescriptor(pluginKey);
     }
 
     @Override
-    public void enablePlugins(String... pluginKeys)
-    {
-        for (String key : pluginKeys)
-        {
-            try
-            {
+    public void enablePlugins(String... pluginKeys) {
+        for (String key : pluginKeys) {
+            try {
                 connectAddonManager.enableConnectAddon(key);
-            }
-            catch (ConnectAddonEnableException e)
-            {
+            } catch (ConnectAddonEnableException e) {
                 log.error("Tried to enable Connect add-on " + e.getAddonKey() + " from UPM, but couldn't: " + e.getMessage(), e);
             }
         }
     }
 
     @Override
-    public boolean isPluginEnabled(String pluginKey)
-    {
+    public boolean isPluginEnabled(String pluginKey) {
         return addonAccessor.isAddonEnabled(pluginKey);
     }
 
     @Override
-    public void disablePlugin(String pluginKey)
-    {
-        try
-        {
+    public void disablePlugin(String pluginKey) {
+        try {
             connectAddonManager.disableConnectAddon(pluginKey);
-        }
-        catch (ConnectAddonDisableException e)
-        {
+        } catch (ConnectAddonDisableException e) {
             log.error("Unable to disable connect addon fully...", e);
         }
     }
 
     @Override
-    public Plugin getPlugin(String pluginKey)
-    {
+    public Plugin getPlugin(String pluginKey) {
         Plugin plugin = null;
 
         Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
-        if (optionalAddon.isPresent())
-        {
+        if (optionalAddon.isPresent()) {
             PluginState state = isPluginEnabled(pluginKey) ? PluginState.ENABLED : PluginState.DISABLED;
             plugin = addonToPluginFactory.create(optionalAddon.get(), state);
         }
@@ -98,20 +83,15 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     }
 
     @Override
-    public Collection<? extends Plugin> getPlugins()
-    {
+    public Collection<? extends Plugin> getPlugins() {
         List<Plugin> plugins = new ArrayList<>();
 
-        for(String pluginKey : connectAddonManager.getAllAddonKeys())
-        {
+        for (String pluginKey : connectAddonManager.getAllAddonKeys()) {
             Plugin plugin = getPlugin(pluginKey);
 
-            if(null != plugin)
-            {
+            if (null != plugin) {
                 plugins.add(plugin);
-            }
-            else
-            {
+            } else {
                 log.debug("found addon key: " + pluginKey + " in registry, but descriptor does not exist!!");
             }
         }
@@ -120,21 +100,16 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     }
 
     @Override
-    public void uninstall(Plugin plugin) throws PluginException
-    {
-        try
-        {
+    public void uninstall(Plugin plugin) throws PluginException {
+        try {
             connectAddonManager.uninstallConnectAddon(plugin.getKey());
-        }
-        catch (ConnectAddonDisableException e)
-        {
+        } catch (ConnectAddonDisableException e) {
             log.error("Unable to uninstall connect addon fully...", e);
         }
     }
 
     @Override
-    public PluginRestartState getPluginRestartState(String pluginKey)
-    {
+    public PluginRestartState getPluginRestartState(String pluginKey) {
         return PluginRestartState.NONE;
     }
 

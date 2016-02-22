@@ -19,56 +19,48 @@ import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 
-public interface AddonScopeApiPath
-{
+public interface AddonScopeApiPath {
     boolean allow(HttpServletRequest request);
+
     Iterable<ApiResourceInfo> getApiResourceInfos();
 
     void addTo(Collection<RestApiScopeHelper.RestScope> restResources, Collection<RpcEncodedSoapApiScopeHelper> soapResources,
                Collection<JsonRpcApiScopeHelper> jsonResources, Collection<XmlRpcApiScopeHelper> xmlResources,
                Collection<PathScopeHelper> paths);
 
-    static class RestApiPath implements AddonScopeApiPath
-    {
+    static class RestApiPath implements AddonScopeApiPath {
         private final Collection<RestApiScopeHelper.RestScope> resources;
         private final RestApiScopeHelper restApiScopeHelper;
 
         @VisibleForTesting
-        public RestApiPath(Collection<RestApiScopeHelper.RestScope> resources)
-        {
+        public RestApiPath(Collection<RestApiScopeHelper.RestScope> resources) {
             this.resources = resources;
             this.restApiScopeHelper = new RestApiScopeHelper(Preconditions.checkNotNull(resources));
         }
 
         @Override
-        public boolean allow(HttpServletRequest request)
-        {
+        public boolean allow(HttpServletRequest request) {
             return restApiScopeHelper.allow(request);
         }
 
         @Override
-        public Iterable<ApiResourceInfo> getApiResourceInfos()
-        {
+        public Iterable<ApiResourceInfo> getApiResourceInfos() {
             return restApiScopeHelper.getApiResourceInfos();
         }
 
         @Override
         public void addTo(Collection<RestApiScopeHelper.RestScope> restResources, Collection<RpcEncodedSoapApiScopeHelper> soapResources,
                           Collection<JsonRpcApiScopeHelper> jsonResources, Collection<XmlRpcApiScopeHelper> xmlResources,
-                          Collection<PathScopeHelper> paths)
-        {
+                          Collection<PathScopeHelper> paths) {
             restResources.addAll(this.resources);
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
@@ -79,38 +71,31 @@ public interface AddonScopeApiPath
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return new HashCodeBuilder(23, 31)
                     .append(resources)
                     .toHashCode();
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                     .append("resources", resources)
                     .toString();
         }
     }
 
-    public class SoapRpcApiPath implements AddonScopeApiPath
-    {
+    public class SoapRpcApiPath implements AddonScopeApiPath {
         private final Collection<RpcEncodedSoapApiScopeHelper> soapRpcResources;
 
-        public SoapRpcApiPath(Collection<RpcEncodedSoapApiScopeHelper> soapRpcResources)
-        {
+        public SoapRpcApiPath(Collection<RpcEncodedSoapApiScopeHelper> soapRpcResources) {
             this.soapRpcResources = soapRpcResources;
         }
 
         @Override
-        public boolean allow(HttpServletRequest request)
-        {
-            for (RpcEncodedSoapApiScopeHelper soapRpcResource : soapRpcResources)
-            {
-                if (soapRpcResource.allow(request))
-                {
+        public boolean allow(HttpServletRequest request) {
+            for (RpcEncodedSoapApiScopeHelper soapRpcResource : soapRpcResources) {
+                if (soapRpcResource.allow(request)) {
                     return true;
                 }
             }
@@ -119,13 +104,10 @@ public interface AddonScopeApiPath
         }
 
         @Override
-        public Iterable<ApiResourceInfo> getApiResourceInfos()
-        {
-            return concat(transform(soapRpcResources, new Function<RpcEncodedSoapApiScopeHelper, Iterable<ApiResourceInfo>>()
-            {
+        public Iterable<ApiResourceInfo> getApiResourceInfos() {
+            return concat(transform(soapRpcResources, new Function<RpcEncodedSoapApiScopeHelper, Iterable<ApiResourceInfo>>() {
                 @Override
-                public Iterable<ApiResourceInfo> apply(@Nullable RpcEncodedSoapApiScopeHelper input)
-                {
+                public Iterable<ApiResourceInfo> apply(@Nullable RpcEncodedSoapApiScopeHelper input) {
                     return null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos();
                 }
             }));
@@ -134,20 +116,16 @@ public interface AddonScopeApiPath
         @Override
         public void addTo(Collection<RestApiScopeHelper.RestScope> restResources, Collection<RpcEncodedSoapApiScopeHelper> soapResources,
                           Collection<JsonRpcApiScopeHelper> jsonResources, Collection<XmlRpcApiScopeHelper> xmlResources,
-                          Collection<PathScopeHelper> paths)
-        {
+                          Collection<PathScopeHelper> paths) {
             soapResources.addAll(this.soapRpcResources);
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
@@ -158,36 +136,29 @@ public interface AddonScopeApiPath
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return soapRpcResources != null ? soapRpcResources.hashCode() : 0;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                     .append("soapRpcResources", soapRpcResources)
                     .toString();
         }
     }
 
-    public class JsonRpcApiPath implements AddonScopeApiPath
-    {
+    public class JsonRpcApiPath implements AddonScopeApiPath {
         private Collection<JsonRpcApiScopeHelper> jsonRpcResources;
 
-        public JsonRpcApiPath(Collection<JsonRpcApiScopeHelper> jsonRpcResources)
-        {
+        public JsonRpcApiPath(Collection<JsonRpcApiScopeHelper> jsonRpcResources) {
             this.jsonRpcResources = jsonRpcResources;
         }
 
         @Override
-        public boolean allow(HttpServletRequest request)
-        {
-            for (JsonRpcApiScopeHelper jsonResource : jsonRpcResources)
-            {
-                if (jsonResource.allow(request))
-                {
+        public boolean allow(HttpServletRequest request) {
+            for (JsonRpcApiScopeHelper jsonResource : jsonRpcResources) {
+                if (jsonResource.allow(request)) {
                     return true;
                 }
             }
@@ -196,13 +167,10 @@ public interface AddonScopeApiPath
         }
 
         @Override
-        public Iterable<ApiResourceInfo> getApiResourceInfos()
-        {
-            return concat(transform(jsonRpcResources, new Function<JsonRpcApiScopeHelper, Iterable<ApiResourceInfo>>()
-            {
+        public Iterable<ApiResourceInfo> getApiResourceInfos() {
+            return concat(transform(jsonRpcResources, new Function<JsonRpcApiScopeHelper, Iterable<ApiResourceInfo>>() {
                 @Override
-                public Iterable<ApiResourceInfo> apply(@Nullable JsonRpcApiScopeHelper input)
-                {
+                public Iterable<ApiResourceInfo> apply(@Nullable JsonRpcApiScopeHelper input) {
                     return null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos();
                 }
             }));
@@ -211,20 +179,16 @@ public interface AddonScopeApiPath
         @Override
         public void addTo(Collection<RestApiScopeHelper.RestScope> restResources, Collection<RpcEncodedSoapApiScopeHelper> soapResources,
                           Collection<JsonRpcApiScopeHelper> jsonResources, Collection<XmlRpcApiScopeHelper> xmlResources,
-                          Collection<PathScopeHelper> paths)
-        {
+                          Collection<PathScopeHelper> paths) {
             jsonResources.addAll(this.jsonRpcResources);
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
@@ -235,36 +199,29 @@ public interface AddonScopeApiPath
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return jsonRpcResources != null ? jsonRpcResources.hashCode() : 0;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                     .append("jsonRpcResources", jsonRpcResources)
                     .toString();
         }
     }
 
-    public class XmlRpcApiPath implements AddonScopeApiPath
-    {
+    public class XmlRpcApiPath implements AddonScopeApiPath {
         private Collection<XmlRpcApiScopeHelper> xmlRpcResources;
 
-        public XmlRpcApiPath(Collection<XmlRpcApiScopeHelper> xmlRpcResources)
-        {
+        public XmlRpcApiPath(Collection<XmlRpcApiScopeHelper> xmlRpcResources) {
             this.xmlRpcResources = xmlRpcResources;
         }
 
         @Override
-        public boolean allow(HttpServletRequest request)
-        {
-            for (XmlRpcApiScopeHelper xmlResource : xmlRpcResources)
-            {
-                if (xmlResource.allow(request))
-                {
+        public boolean allow(HttpServletRequest request) {
+            for (XmlRpcApiScopeHelper xmlResource : xmlRpcResources) {
+                if (xmlResource.allow(request)) {
                     return true;
                 }
             }
@@ -273,13 +230,10 @@ public interface AddonScopeApiPath
         }
 
         @Override
-        public Iterable<ApiResourceInfo> getApiResourceInfos()
-        {
-            return concat(transform(xmlRpcResources, new Function<XmlRpcApiScopeHelper, Iterable<ApiResourceInfo>>()
-            {
+        public Iterable<ApiResourceInfo> getApiResourceInfos() {
+            return concat(transform(xmlRpcResources, new Function<XmlRpcApiScopeHelper, Iterable<ApiResourceInfo>>() {
                 @Override
-                public Iterable<ApiResourceInfo> apply(@Nullable XmlRpcApiScopeHelper input)
-                {
+                public Iterable<ApiResourceInfo> apply(@Nullable XmlRpcApiScopeHelper input) {
                     return null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos();
                 }
             }));
@@ -288,20 +242,16 @@ public interface AddonScopeApiPath
         @Override
         public void addTo(Collection<RestApiScopeHelper.RestScope> restResources, Collection<RpcEncodedSoapApiScopeHelper> soapResources,
                           Collection<JsonRpcApiScopeHelper> jsonResources, Collection<XmlRpcApiScopeHelper> xmlResources,
-                          Collection<PathScopeHelper> paths)
-        {
+                          Collection<PathScopeHelper> paths) {
             xmlResources.addAll(this.xmlRpcResources);
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
@@ -312,70 +262,56 @@ public interface AddonScopeApiPath
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return xmlRpcResources != null ? xmlRpcResources.hashCode() : 0;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                     .append("xmlRpcResources", xmlRpcResources)
                     .toString();
         }
     }
 
-    public class ApiPath implements AddonScopeApiPath
-    {
+    public class ApiPath implements AddonScopeApiPath {
         private final Collection<PathScopeHelper> paths;
 
-        public ApiPath(Collection<PathScopeHelper> paths)
-        {
+        public ApiPath(Collection<PathScopeHelper> paths) {
             this.paths = paths;
         }
 
         @Override
-        public boolean allow(final HttpServletRequest request)
-        {
-            return any(paths, new Predicate<PathScopeHelper>()
-            {
+        public boolean allow(final HttpServletRequest request) {
+            return any(paths, new Predicate<PathScopeHelper>() {
                 @Override
-                public boolean apply(@Nullable PathScopeHelper path)
-                {
+                public boolean apply(@Nullable PathScopeHelper path) {
                     return null != path && path.allow(request);
                 }
             });
         }
 
         @Override
-        public Iterable<ApiResourceInfo> getApiResourceInfos()
-        {
-            return concat(transform(paths, new Function<PathScopeHelper, Iterable<ApiResourceInfo>>()
-            {
+        public Iterable<ApiResourceInfo> getApiResourceInfos() {
+            return concat(transform(paths, new Function<PathScopeHelper, Iterable<ApiResourceInfo>>() {
                 @Override
-                public Iterable<ApiResourceInfo> apply(@Nullable PathScopeHelper input)
-                {
+                public Iterable<ApiResourceInfo> apply(@Nullable PathScopeHelper input) {
                     return null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos();
                 }
             }));
         }
 
         @Override
-        public void addTo(Collection<RestApiScopeHelper.RestScope> restResources, Collection<RpcEncodedSoapApiScopeHelper> soapResources, Collection<JsonRpcApiScopeHelper> jsonResources, Collection<XmlRpcApiScopeHelper> xmlResources, Collection<PathScopeHelper> paths)
-        {
+        public void addTo(Collection<RestApiScopeHelper.RestScope> restResources, Collection<RpcEncodedSoapApiScopeHelper> soapResources, Collection<JsonRpcApiScopeHelper> jsonResources, Collection<XmlRpcApiScopeHelper> xmlResources, Collection<PathScopeHelper> paths) {
             paths.addAll(this.paths);
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
@@ -386,14 +322,12 @@ public interface AddonScopeApiPath
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return paths != null ? paths.hashCode() : 0;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                     .append("paths", paths)
                     .toString();

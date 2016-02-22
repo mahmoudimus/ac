@@ -9,20 +9,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.ImmutableMap;
 
-public final class CustomMessageServlet extends ContextServlet
-{
+public final class CustomMessageServlet extends ContextServlet {
     private final String message;
     private Boolean resize;
 
-    public CustomMessageServlet(String message, Boolean resize)
-    {
+    public CustomMessageServlet(String message, Boolean resize) {
         this.message = message;
         this.resize = resize;
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-    {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         HttpUtils.renderHtml(resp,
                 "iframe-custom-message.mu",
                 ImmutableMap.<String, Object>builder()

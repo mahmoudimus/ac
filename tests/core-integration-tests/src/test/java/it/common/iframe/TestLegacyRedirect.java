@@ -21,8 +21,7 @@ import it.common.MultiProductWebDriverTestBase;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 
-public class TestLegacyRedirect extends MultiProductWebDriverTestBase
-{
+public class TestLegacyRedirect extends MultiProductWebDriverTestBase {
     private static final String ADDON_GENERALPAGE = "ac-general-page";
     private static final String ADDON_GENERALPAGE_NAME = "AC General Page";
 
@@ -31,14 +30,12 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
     private static final String SOME_ESCAPED_QUERY_PARAMS = "foo=bar%20blah&bar=foo";
 
     @BeforeClass
-    public static void setupUrlHandlers()
-    {
+    public static void setupUrlHandlers() {
         HttpURLConnection.setFollowRedirects(false);
     }
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("generalPages",
@@ -53,24 +50,20 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @AfterClass
-    public static void tearDownUrlHandlers()
-    {
+    public static void tearDownUrlHandlers() {
         HttpURLConnection.setFollowRedirects(true);
     }
 
 
     @Test
-    public void testLegacyPathRedirectWithQueryParams() throws Exception
-    {
+    public void testLegacyPathRedirectWithQueryParams() throws Exception {
         URL url = new URL(product.getProductInstance().getBaseUrl() + "/plugins/servlet/atlassian-connect/" +
                 remotePlugin.getAddon().getKey() + "/" + ADDON_GENERALPAGE + "?" + SOME_QUERY_PARAMS);
 
@@ -87,8 +80,7 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void testLegacyPathRedirectWithoutQueryParams() throws Exception
-    {
+    public void testLegacyPathRedirectWithoutQueryParams() throws Exception {
         URL url = new URL(product.getProductInstance().getBaseUrl() + "/plugins/servlet/atlassian-connect/" +
                 remotePlugin.getAddon().getKey() + "/" + ADDON_GENERALPAGE);
 
@@ -105,8 +97,7 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void testLegacyPathRedirectWithEscapedQueryParams() throws Exception
-    {
+    public void testLegacyPathRedirectWithEscapedQueryParams() throws Exception {
         URL url = new URL(product.getProductInstance().getBaseUrl() + "/plugins/servlet/atlassian-connect/" +
                 remotePlugin.getAddon().getKey() + "/" + ADDON_GENERALPAGE + "?" + SOME_ESCAPED_QUERY_PARAMS);
 
@@ -127,8 +118,7 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
      */
 
     @Test
-    public void testCanAccessDirectly() throws Exception
-    {
+    public void testCanAccessDirectly() throws Exception {
         String iframeServletPath = IframeUtils.iframeServletPath(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE);
         URL url = new URL(product.getProductInstance().getBaseUrl() + iframeServletPath);
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();

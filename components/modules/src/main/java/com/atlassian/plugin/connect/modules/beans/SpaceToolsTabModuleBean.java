@@ -15,52 +15,46 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * appear.
  *
  * Spaces page with the Documentation Theme do not support the Space Tools area, and instead display the
- * legacy Space Admin area. This module will insert a tab in a pre-defined location in Space Admin (look below for a 
+ * legacy Space Admin area. This module will insert a tab in a pre-defined location in Space Admin (look below for a
  * complete list of existing locations).
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SPACE_TOOLS_TAB_EXAMPLE}
  * @schemaTitle Space Tools Tab
  * @since 1.0
  */
 @SchemaDefinition("spaceTools")
-public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
-{
+public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions {
     /**
      * The url to retrieve the content from.
      * This can be absolute or relative to the addon's baseUrl
      */
     @Required
-    @StringSchemaAttributes (format = "uri-template")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
 
-    @CommonSchemaAttributes (defaultValue = "100")
+    @CommonSchemaAttributes(defaultValue = "100")
     private Integer weight;
 
     private String location;
 
-    public SpaceToolsTabModuleBean()
-    {
+    public SpaceToolsTabModuleBean() {
         init();
     }
 
-    public SpaceToolsTabModuleBean(SpaceToolsTabModuleBeanBuilder builder)
-    {
+    public SpaceToolsTabModuleBean(SpaceToolsTabModuleBeanBuilder builder) {
         super(builder);
         init();
     }
 
-    private void init()
-    {
+    private void init() {
         // Note: weight is not defaulted here. Defaulting is done later by delegating to the product accessor
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
-        if (null == location)
-        {
+        if (null == location) {
             this.location = "";
         }
     }
@@ -70,8 +64,7 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * @return the URL of the tab panel
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
@@ -87,17 +80,16 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * @return the weight of the tab panel
      */
-    public Integer getWeight()
-    {
+    public Integer getWeight() {
         return weight;
     }
 
     /**
-     *The sub-section where this Space Tools Tab should appear. The primary section for Space Tabs is
+     * The sub-section where this Space Tools Tab should appear. The primary section for Space Tabs is
      * `system.space.tools`, and the location specified here will be beneath that. e.g setting a location of
      * "contenttools" will result in a final location of `system.space.tools/contenttools`.
      *
-     *Confluence comes the following standard sections in Space Tools:
+     * Confluence comes the following standard sections in Space Tools:
      *
      * * system.space.tools/overview
      * * system.space.tools/permissions
@@ -106,28 +98,25 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
      * * system.space.tools/integrations
      * * system.space.tools/addons
      *
-     *In future, Connect addons will be able to define new web sections, which will enable add-ons to define new
+     * In future, Connect addons will be able to define new web sections, which will enable add-ons to define new
      * sub-sections for Space Tools.
      *
-     *Legacy Space Admin section cannot be defined, and is always system.space.admin/spaceops
+     * Legacy Space Admin section cannot be defined, and is always system.space.admin/spaceops
      *
      * @return the location of the tab
      */
-    public String getLocation()
-    {
+    public String getLocation() {
         return location;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         Objects.ToStringHelper toStringHelper = Objects.toStringHelper(this);
         appendToStringFields(toStringHelper);
         return toStringHelper.toString();
     }
 
-    protected void appendToStringFields(Objects.ToStringHelper toStringHelper)
-    {
+    protected void appendToStringFields(Objects.ToStringHelper toStringHelper) {
         toStringHelper
                 .add("name", getName())
                 .add("key", getRawKey())
@@ -137,15 +126,12 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof SpaceToolsTabModuleBean && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof SpaceToolsTabModuleBean && super.equals(otherObj))) {
             return false;
         }
 
@@ -159,8 +145,7 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(11, 23)
                 .appendSuper(super.hashCode())
                 .append(url)
@@ -169,13 +154,11 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
                 .build();
     }
 
-    public static SpaceToolsTabModuleBeanBuilder newSpaceToolsTabBean()
-    {
+    public static SpaceToolsTabModuleBeanBuilder newSpaceToolsTabBean() {
         return new SpaceToolsTabModuleBeanBuilder();
     }
 
-    public static SpaceToolsTabModuleBeanBuilder newSpaceToolsTabBean(SpaceToolsTabModuleBean defaultBean)
-    {
+    public static SpaceToolsTabModuleBeanBuilder newSpaceToolsTabBean(SpaceToolsTabModuleBean defaultBean) {
         return new SpaceToolsTabModuleBeanBuilder(defaultBean);
     }
 }

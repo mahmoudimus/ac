@@ -26,35 +26,31 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
  * to query content based on your custom content property.
  *
  * <h3>Example</h3>
+ *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
  * @schemaTitle Content Property
  * @since 1.0
  */
-public class ContentPropertyModuleBean extends RequiredKeyBean
-{
+public class ContentPropertyModuleBean extends RequiredKeyBean {
     /**
      * A Content Property Index Key Configuration defines which values from your JSON content property
      * object should be indexed and made available to the CQL search syntax.
      */
     private List<ContentPropertyIndexKeyConfigurationBean> keyConfigurations;
 
-    public ContentPropertyModuleBean()
-    {
+    public ContentPropertyModuleBean() {
     }
 
-    public ContentPropertyModuleBean(ContentPropertyModuleBeanBuilder contentPropertyModuleBeanBuilder)
-    {
+    public ContentPropertyModuleBean(ContentPropertyModuleBeanBuilder contentPropertyModuleBeanBuilder) {
         super(contentPropertyModuleBeanBuilder);
         keyConfigurations = contentPropertyModuleBeanBuilder.getKeyConfigurations();
     }
 
-    public List<ContentPropertyIndexKeyConfigurationBean> getKeyConfigurations()
-    {
+    public List<ContentPropertyIndexKeyConfigurationBean> getKeyConfigurations() {
         return keyConfigurations;
     }
 
-    public static ContentPropertyModuleBeanBuilder newContentPropertyModuleBean()
-    {
+    public static ContentPropertyModuleBeanBuilder newContentPropertyModuleBean() {
         return new ContentPropertyModuleBeanBuilder();
     }
 }

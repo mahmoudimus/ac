@@ -26,7 +26,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * 3. To prevent the macro output from being automatically resized, set the `data-options` attribute in the script tag for all.js to "`resize:false`". This turns off automatic resizing of the iframe.
  * 4. If the size of the macro output content size is dynamic, call `AP.resize(w,h)` immediately after the DOM of your iframe is loaded.
  *
- *#### Example
+ * #### Example
  * The following macro example is an adaptation from the [Google Maps](https://marketplace.atlassian.com/plugins/atlassian-connect-gmaps)
  * add-on. The source is hosted on [Bitbucket](https://bitbucket.org/atlassianlabs/ac-gmaps).
  *
@@ -35,8 +35,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * @since 1.0
  */
 @SchemaDefinition("dynamicContentMacro")
-public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
-{
+public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean {
     /**
      * The preferred width of the macro content.
      */
@@ -55,36 +54,29 @@ public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
      */
     private MacroRenderModesBean renderModes;
 
-    public DynamicContentMacroModuleBean()
-    {
+    public DynamicContentMacroModuleBean() {
     }
 
-    public DynamicContentMacroModuleBean(DynamicContentMacroModuleBeanBuilder builder)
-    {
+    public DynamicContentMacroModuleBean(DynamicContentMacroModuleBeanBuilder builder) {
         super(builder);
-        if (renderModes == null)
-        {
+        if (renderModes == null) {
             renderModes = MacroRenderModesBean.newMacroRenderModesBean().build();
         }
     }
 
-    public MacroRenderModesBean getRenderModes()
-    {
+    public MacroRenderModesBean getRenderModes() {
         return renderModes;
     }
 
-    public String getWidth()
-    {
+    public String getWidth() {
         return width;
     }
 
-    public String getHeight()
-    {
+    public String getHeight() {
         return height;
     }
 
-    public static DynamicContentMacroModuleBeanBuilder newDynamicContentMacroModuleBean()
-    {
+    public static DynamicContentMacroModuleBeanBuilder newDynamicContentMacroModuleBean() {
         return new DynamicContentMacroModuleBeanBuilder();
     }
 

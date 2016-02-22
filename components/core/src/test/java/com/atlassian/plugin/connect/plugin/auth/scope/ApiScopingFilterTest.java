@@ -36,8 +36,7 @@ import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class ApiScopingFilterTest
-{
+public class ApiScopingFilterTest {
     private static final String ADD_ON_KEY = "my-add-on";
 
     @Mock
@@ -61,8 +60,7 @@ public class ApiScopingFilterTest
     private UserKey userKey = new UserKey("12345");
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         when(request.getRequestURI()).thenReturn("/confluence/rest/xyz");
         when(request.getContextPath()).thenReturn("/confluence");
         when(userManager.getRemoteUserKey(any(HttpServletRequest.class))).thenReturn(userKey);
@@ -72,24 +70,21 @@ public class ApiScopingFilterTest
     }
 
     @Test
-    public void testScopeIsCheckedForAddonRequestWithKey() throws Exception
-    {
+    public void testScopeIsCheckedForAddonRequestWithKey() throws Exception {
         whenIsAddonRequestWithAddonKey();
         apiScopingFilter.doFilter(request, response, chain);
         verify(addonScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY));
     }
 
     @Test
-    public void testScopeIsNotCheckedForNonAddonRequests() throws Exception
-    {
+    public void testScopeIsNotCheckedForNonAddonRequests() throws Exception {
         when(addonKeyExtractor.isAddonRequest(request)).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(addonScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString());
     }
 
     @Test
-    public void testScopeIsNotCheckedForMissingAddonKey() throws Exception
-    {
+    public void testScopeIsNotCheckedForMissingAddonKey() throws Exception {
         when(addonKeyExtractor.isAddonRequest(request)).thenReturn(true);
         when(addonKeyExtractor.getAddonKeyFromHttpRequest(request)).thenReturn(null);
         apiScopingFilter.doFilter(request, response, chain);
@@ -98,8 +93,7 @@ public class ApiScopingFilterTest
 
 
     @Test
-    public void testDeniedApiAccessPublishesDeniedEvent() throws Exception
-    {
+    public void testDeniedApiAccessPublishesDeniedEvent() throws Exception {
         whenIsAddonRequestWithAddonKey();
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
@@ -107,16 +101,14 @@ public class ApiScopingFilterTest
     }
 
     @Test
-    public void testDeniedApiAccessDoesntPublishAllowedEvent() throws Exception
-    {
+    public void testDeniedApiAccessDoesntPublishAllowedEvent() throws Exception {
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestAllowedEvent()));
     }
 
     @Test
-    public void testAllowedApiAccessPublishesEvent() throws Exception
-    {
+    public void testAllowedApiAccessPublishesEvent() throws Exception {
         whenIsAddonRequestWithAddonKey();
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
@@ -124,17 +116,15 @@ public class ApiScopingFilterTest
     }
 
     @Test
-    public void testAllowedApiAccessDoesntPublishDeniedEvent() throws Exception
-    {
+    public void testAllowedApiAccessDoesntPublishDeniedEvent() throws Exception {
         whenIsAddonRequestWithAddonKey();
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestDeniedEvent()));
     }
-    
+
     @Test
-    public void testURIsAreTrimmedInDeniedEvents() throws IOException, ServletException
-    {
+    public void testURIsAreTrimmedInDeniedEvents() throws IOException, ServletException {
         whenIsAddonRequestWithAddonKey();
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(false);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
@@ -142,19 +132,17 @@ public class ApiScopingFilterTest
         verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
     }
 
-    @Test 
-    public void testURIsAreTrimmedInAllowedEvents() throws IOException, ServletException
-    {
+    @Test
+    public void testURIsAreTrimmedInAllowedEvents() throws IOException, ServletException {
         whenIsAddonRequestWithAddonKey();
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
     }
-    
+
     @Test
-    public void testAllowedEventsADuration() throws IOException, ServletException
-    {
+    public void testAllowedEventsADuration() throws IOException, ServletException {
         whenIsAddonRequestWithAddonKey();
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         Date start = new Date(0);
@@ -165,8 +153,7 @@ public class ApiScopingFilterTest
     }
 
     @Test
-    public void testAllowedEventsHaveStatusCode() throws IOException, ServletException
-    {
+    public void testAllowedEventsHaveStatusCode() throws IOException, ServletException {
         whenIsAddonRequestWithAddonKey();
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         FilterChain wrappedChain = new FilterChainWrapper();
@@ -177,116 +164,94 @@ public class ApiScopingFilterTest
     private class FilterChainWrapper implements FilterChain {
 
         @Override
-        public void doFilter(ServletRequest rq, ServletResponse resp) throws IOException, ServletException
-        {
+        public void doFilter(ServletRequest rq, ServletResponse resp) throws IOException, ServletException {
             HttpServletResponse.class.cast(resp).setStatus(200);
             chain.doFilter(rq, resp);
         }
     }
 
-    @Test(expected=ServletException.class)
-    public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException
-    {
+    @Test(expected = ServletException.class)
+    public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException {
         whenIsAddonRequestWithAddonKey();
         when(addonScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString())).thenReturn(true);
         doThrow(new IOException("Something went wrong")).when(chain).doFilter(any(HttpServletRequest.class),
-                                                                              any(HttpServletResponse.class));
-        try
-        {
+                any(HttpServletResponse.class));
+        try {
             apiScopingFilter.doFilter(request, response, chain);
-        }
-        finally
-        {
+        } finally {
             verify(eventPublisher).publish(argThat(hasResponseCode(500)));
         }
     }
 
-    private static TypeSafeMatcher<ScopedRequestEvent> hasRequestURI(final String uri)
-    {
-        return new TypeSafeMatcher<ScopedRequestEvent>()
-        {
+    private static TypeSafeMatcher<ScopedRequestEvent> hasRequestURI(final String uri) {
+        return new TypeSafeMatcher<ScopedRequestEvent>() {
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("got a ScopedRequestEvent with URI: ").appendValue(uri);
 
             }
 
             @Override
-            protected boolean matchesSafely(ScopedRequestEvent item)
-            {
+            protected boolean matchesSafely(ScopedRequestEvent item) {
                 return item.getHttpRequestUri().equals(uri);
             }
 
         };
     }
 
-    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasResponseCode(final int responseCode)
-    {
-        return new TypeSafeMatcher<ScopedRequestAllowedEvent>()
-        {
+    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasResponseCode(final int responseCode) {
+        return new TypeSafeMatcher<ScopedRequestAllowedEvent>() {
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("got a ScopedRequestEvent with statusCode: ").appendValue(responseCode);
 
             }
 
             @Override
-            protected boolean matchesSafely(ScopedRequestAllowedEvent item)
-            {
+            protected boolean matchesSafely(ScopedRequestAllowedEvent item) {
                 return item.getResponseCode() == responseCode;
             }
 
         };
     }
 
-    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasDuration( final long duration)
-    {
-        return new TypeSafeMatcher<ScopedRequestAllowedEvent>(){
+    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasDuration(final long duration) {
+        return new TypeSafeMatcher<ScopedRequestAllowedEvent>() {
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("ScopedRequestEvent duration was: " + duration);
-                
+
             }
 
             @Override
-            protected boolean matchesSafely(ScopedRequestAllowedEvent item)
-            {
+            protected boolean matchesSafely(ScopedRequestAllowedEvent item) {
                 return item.getDuration() == duration;
-            }};
+            }
+        };
     }
 
-    private Matcher<Object> isScopeRequestAllowedEvent()
-    {
-        return new ArgumentMatcher<Object>()
-        {
+    private Matcher<Object> isScopeRequestAllowedEvent() {
+        return new ArgumentMatcher<Object>() {
             @Override
-            public boolean matches(final Object argument)
-            {
+            public boolean matches(final Object argument) {
                 return argument instanceof ScopedRequestAllowedEvent;
             }
         };
     }
 
-    private Matcher<Object> isScopeRequestDeniedEvent()
-    {
-        return new ArgumentMatcher<Object>()
-        {
+    private Matcher<Object> isScopeRequestDeniedEvent() {
+        return new ArgumentMatcher<Object>() {
             @Override
-            public boolean matches(final Object argument)
-            {
+            public boolean matches(final Object argument) {
                 return argument instanceof ScopedRequestDeniedEvent;
             }
         };
     }
 
-    private void whenIsAddonRequestWithAddonKey()
-    {
+    private void whenIsAddonRequestWithAddonKey() {
         when(addonKeyExtractor.isAddonRequest(request)).thenReturn(true);
         when(addonKeyExtractor.getAddonKeyFromHttpRequest(request)).thenReturn(ADD_ON_KEY);
     }

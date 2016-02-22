@@ -46,8 +46,7 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 @ExportAsService(HttpContentRetriever.class)
 @Named
-public final class CachingHttpContentRetriever implements HttpContentRetriever
-{
+public final class CachingHttpContentRetriever implements HttpContentRetriever {
     private static final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
 
     private static final Set<HttpMethod> METHODS_WITH_BODY = Sets.immutableEnumSet(HttpMethod.POST, HttpMethod.PUT);
@@ -61,14 +60,12 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
     private final HttpClient httpClient;
 
     @Inject
-    public CachingHttpContentRetriever(ConnectHttpClientFactory httpClientFactory)
-    {
+    public CachingHttpContentRetriever(ConnectHttpClientFactory httpClientFactory) {
         httpClient = httpClientFactory.getInstance();
     }
 
     @Override
-    public void flushCacheByUriPattern(Pattern urlPattern)
-    {
+    public void flushCacheByUriPattern(Pattern urlPattern) {
         httpClient.flushCacheByUriPattern(urlPattern);
     }
 
@@ -79,8 +76,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
                                  @Nonnull Map<String, String[]> parameters,
                                  @Nonnull Map<String, String> headers,
                                  @Nonnull InputStream body,
-                                 @Nonnull String addonKey)
-    {
+                                 @Nonnull String addonKey) {
         checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
 
         log.debug("{}ing content from '{}'", method, url);
@@ -91,17 +87,13 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
         request = request.setHeaders(allHeaders);
 
-        if (contains(METHODS_WITH_BODY, method))
-        {
+        if (contains(METHODS_WITH_BODY, method)) {
             String contentType = headers.getOrDefault(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
             request.setContentType(contentType);
-            if(ContentType.APPLICATION_FORM_URLENCODED.getMimeType().equals(contentType))
-            {
+            if (ContentType.APPLICATION_FORM_URLENCODED.getMimeType().equals(contentType)) {
                 InputStream form = IOUtils.toInputStream(UriBuilder.joinParameters(UriBuilderUtils.toListFormat(parameters)));
                 request.setEntityStream(new SequenceInputStream(body, form));
-            }
-            else
-            {
+            } else {
                 request.setEntityStream(body);
             }
         }
@@ -115,75 +107,60 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         return request.execute(METHOD_MAPPING.get(method)).transform(responseTransformation);
     }
 
-    private String getFullUrl(HttpMethod method, URI url, Map<String, String[]> allParameters)
-    {
+    private String getFullUrl(HttpMethod method, URI url, Map<String, String[]> allParameters) {
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(url));
-        if (contains(METHODS_WITH_QUERY_PARAMS, method))
-        {
+        if (contains(METHODS_WITH_QUERY_PARAMS, method)) {
             UriBuilderUtils.addQueryParameters(uriBuilder, allParameters);
         }
         return uriBuilder.toString();
     }
 
-    private Map<String, String> getAttributes(String addonKey)
-    {
+    private Map<String, String> getAttributes(String addonKey) {
         final Map<String, String> properties = newHashMap();
         properties.put("purpose", "content-retrieval");
         properties.put("moduleKey", addonKey);
         return properties;
     }
 
-    private Map<String, String> getAllHeaders(Map<String, String> headers, Optional<String> authHeader)
-    {
+    private Map<String, String> getAllHeaders(Map<String, String> headers, Optional<String> authHeader) {
         final ImmutableMap.Builder<String, String> allHeaders = ImmutableMap.<String, String>builder().putAll(headers);
-        if (authHeader.isPresent())
-        {
+        if (authHeader.isPresent()) {
             allHeaders.put("Authorization", authHeader.get());
         }
         return allHeaders.build();
     }
 
-    private Optional<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
-    {
+    private Optional<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters) {
         return authorizationGenerator.generate(method, url, allParameters);
     }
 
-    private static class OkFunction implements Function<Response, String>
-    {
+    private static class OkFunction implements Function<Response, String> {
         private final URI url;
 
-        public OkFunction(URI url)
-        {
+        public OkFunction(URI url) {
             this.url = url;
         }
 
         @Override
-        public String apply(Response input)
-        {
+        public String apply(Response input) {
             log.debug("Returned ok content from: {}", url);
             return input.getEntity();
         }
     }
 
-    private static class OthersFunction implements Function<Response, String>
-    {
+    private static class OthersFunction implements Function<Response, String> {
         private final URI url;
 
-        public OthersFunction(URI url)
-        {
+        public OthersFunction(URI url) {
             this.url = url;
         }
 
         @Override
-        public String apply(Response input)
-        {
+        public String apply(Response input) {
             log.debug("Returned others: {}", url);
-            if ("application/json".equalsIgnoreCase(input.getContentType()))
-            {
+            if ("application/json".equalsIgnoreCase(input.getContentType())) {
                 throw new ContentRetrievalException(ContentRetrievalErrors.fromJson(input.getEntity()));
-            }
-            else
-            {
+            } else {
                 log.debug("An unknown error occurred retrieving HTTP content. Status is {}, body content " +
                         "is:\n{}\n", input.getStatusCode(), input.getEntity());
                 throw new ContentRetrievalException("Unknown error. Status is " + input.getStatusCode());
@@ -191,43 +168,34 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         }
     }
 
-    private static final class ForbiddenFunction implements Function<Response, String>
-    {
+    private static final class ForbiddenFunction implements Function<Response, String> {
         private final URI url;
 
-        public ForbiddenFunction(URI url)
-        {
+        public ForbiddenFunction(URI url) {
             this.url = url;
         }
 
         @Override
-        public String apply(Response input)
-        {
+        public String apply(Response input) {
             log.debug("Returned forbidden: {}", url);
             throw new ContentRetrievalException("Operation not authorized!");
         }
     }
 
-    private static final class FailFunction implements Function<Throwable, String>
-    {
+    private static final class FailFunction implements Function<Throwable, String> {
         private final URI url;
 
-        public FailFunction(URI url)
-        {
+        public FailFunction(URI url) {
             this.url = url;
         }
 
         @Override
-        public String apply(Throwable input)
-        {
-            if (!(input instanceof ContentRetrievalException))
-            {
+        public String apply(Throwable input) {
+            if (!(input instanceof ContentRetrievalException)) {
                 log.debug("Return failed: {}", url);
                 log.debug(input.getMessage(), input);
                 throw new ContentRetrievalException(input);
-            }
-            else
-            {
+            } else {
                 throw (ContentRetrievalException) input;
             }
         }

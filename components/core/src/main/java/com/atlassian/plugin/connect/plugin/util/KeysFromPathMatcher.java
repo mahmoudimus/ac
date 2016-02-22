@@ -7,16 +7,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class KeysFromPathMatcher
-{
+public class KeysFromPathMatcher {
     // Matches addOnKey and moduleKey from url: /addon.key/module.key
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
 
-    public Optional<AddOnKeyAndModuleKey> getAddOnKeyAndModuleKey(String path)
-    {
+    public Optional<AddOnKeyAndModuleKey> getAddOnKeyAndModuleKey(String path) {
         Matcher matcher = PATH_PATTERN.matcher(path);
-        if (!matcher.find())
-        {
+        if (!matcher.find()) {
             return Optional.empty();
         }
         String addOnKey = matcher.group(1);
@@ -25,8 +22,7 @@ public class KeysFromPathMatcher
         return Optional.of(new AddOnKeyAndModuleKey(addOnKey, moduleKey));
     }
 
-    public static final class AddOnKeyAndModuleKey
-    {
+    public static final class AddOnKeyAndModuleKey {
         private final String addOnKey;
         private final String moduleKey;
 
@@ -35,13 +31,11 @@ public class KeysFromPathMatcher
             this.moduleKey = moduleKey;
         }
 
-        public String getAddOnKey()
-        {
+        public String getAddOnKey() {
             return addOnKey;
         }
 
-        public String getModuleKey()
-        {
+        public String getModuleKey() {
             return moduleKey;
         }
     }

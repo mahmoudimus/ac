@@ -7,8 +7,7 @@ import com.atlassian.extras.api.ProductLicense;
 /**
  * Product-specific accessors
  */
-public interface ProductAccessor extends HostProperties
-{
+public interface ProductAccessor extends HostProperties {
     String getPreferredAdminSectionKey();
 
     int getPreferredAdminWeight();

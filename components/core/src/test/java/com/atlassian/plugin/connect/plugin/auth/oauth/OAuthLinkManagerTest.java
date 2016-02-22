@@ -29,18 +29,19 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
-@RunWith (MockitoJUnitRunner.class)
-public class OAuthLinkManagerTest
-{
-    @InjectMocks private OAuthLinkManager oAuthLinkManager;
+@RunWith(MockitoJUnitRunner.class)
+public class OAuthLinkManagerTest {
+    @InjectMocks
+    private OAuthLinkManager oAuthLinkManager;
 
-    @Mock private ConsumerService consumerService;
+    @Mock
+    private ConsumerService consumerService;
 
     // unmockable, unlovable final classes :(
     private final ServiceProvider serviceProvider = new ServiceProvider(
-        URI.create("http://example.com/req"),
-        URI.create("http://example.com/authz"),
-        URI.create("http://example.com/access")
+            URI.create("http://example.com/req"),
+            URI.create("http://example.com/authz"),
+            URI.create("http://example.com/access")
     );
     private final Consumer consumer = Consumer
             .key("key")
@@ -49,26 +50,22 @@ public class OAuthLinkManagerTest
             .build();
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         when(consumerService.getConsumer()).thenReturn(consumer);
-        when(consumerService.sign(any(Request.class), eq(serviceProvider))).thenAnswer(new Answer<Object>()
-        {
+        when(consumerService.sign(any(Request.class), eq(serviceProvider))).thenAnswer(new Answer<Object>() {
             @Override
-            public Object answer(final InvocationOnMock invocation) throws Throwable
-            {
+            public Object answer(final InvocationOnMock invocation) throws Throwable {
                 return invocation.getArguments()[0];
             }
         });
     }
 
     @Test
-    public void testSign()
-    {
+    public void testSign() {
         final String url = "https://how.the/path/ends";
         final Map<String, List<String>> params = ImmutableMap.<String, List<String>>of
                 ("key", ImmutableList.of("val", "sal"),
-                 "kev", ImmutableList.of("ian", "jan"));
+                        "kev", ImmutableList.of("ian", "jan"));
 
         OAuthMessage message = oAuthLinkManager.sign(serviceProvider, HttpMethod.GET, URI.create(url), params);
 
@@ -76,12 +73,11 @@ public class OAuthLinkManagerTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSignThrowsIfUrlIsNotNormalized()
-    {
+    public void testSignThrowsIfUrlIsNotNormalized() {
         final String url = "https://how.the/path/ends/../or/not";
         final Map<String, List<String>> params = ImmutableMap.<String, List<String>>of
                 ("key", ImmutableList.of("val", "sal"),
-                 "kev", ImmutableList.of("ian", "jan"));
+                        "kev", ImmutableList.of("ian", "jan"));
 
         oAuthLinkManager.sign(serviceProvider, HttpMethod.GET, URI.create(url), params); // this should throw IAE
     }

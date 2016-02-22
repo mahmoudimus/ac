@@ -14,50 +14,41 @@ import org.apache.commons.lang3.StringUtils;
  * new PathBuilder("http://example.com/").withPathFragment("path").build()
  * new PathBuilder("http://example.com").withPathFragment("path").build()
  */
-public class PathBuilder
-{
+public class PathBuilder {
     private StringBuilder path = new StringBuilder();
 
-    public PathBuilder()
-    {
+    public PathBuilder() {
         this.path = new StringBuilder();
     }
 
-    public PathBuilder(String baseUrl)
-    {
+    public PathBuilder(String baseUrl) {
         this.path = new StringBuilder(baseUrl);
     }
 
     /**
      * Appends a path segment, ensuring that there is only one path separator
      * between the existing path and the new segment
+     *
      * @param fragment A path fragment, i.e. one or multiple path segments.
      *                 Null fragments are ignored and don't change the path at all.
      *                 Empty path segments ('', '/') are represented as empty path segments (i.e. multiple adjoining separators).
      * @return the PathBuilder instance
      */
-    public PathBuilder withPathFragment(String fragment)
-    {
-        if (null != fragment)
-        {
-            if (!StringUtils.endsWith(path, "/") || "".equals(fragment) || "/".equals(fragment))
-            {
+    public PathBuilder withPathFragment(String fragment) {
+        if (null != fragment) {
+            if (!StringUtils.endsWith(path, "/") || "".equals(fragment) || "/".equals(fragment)) {
                 path.append('/');
             }
-            if (StringUtils.startsWith(fragment, "/"))
-            {
+            if (StringUtils.startsWith(fragment, "/")) {
                 path.append(fragment, 1, fragment.length());
-            }
-            else
-            {
+            } else {
                 path.append(fragment);
             }
         }
         return this;
     }
 
-    public String build()
-    {
+    public String build() {
         return path.toString();
     }
 }

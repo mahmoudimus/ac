@@ -6,30 +6,25 @@ import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 /**
  * @since 1.0
  */
-public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAccessorFactory
-{
+public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAccessorFactory {
     public static final String ADDON_BASE_URL = "http://www.example.com";
     private String baseUrl;
 
-    public RemotablePluginAccessorFactoryForTests()
-    {
+    public RemotablePluginAccessorFactoryForTests() {
         baseUrl = ADDON_BASE_URL;
     }
 
-    public void withBaseUrl(String baseUrl)
-    {
+    public void withBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
     @Override
-    public void remove(String pluginKey)
-    {
+    public void remove(String pluginKey) {
         //do nothing
     }
 
     @Override
-    public RemotablePluginAccessor get(final String pluginKey)
-    {
+    public RemotablePluginAccessor get(final String pluginKey) {
         return new RemotablePluginAccessorForTests(pluginKey, pluginKey, baseUrl);
     }
 }

@@ -5,8 +5,7 @@ import java.util.Set;
 /**
  * Contains a list of locations which are not supported in Connect.
  */
-public interface WebFragmentLocationBlacklist
-{
+public interface WebFragmentLocationBlacklist {
     /**
      * @return a set of web-panel locations which are blacklisted.
      */

@@ -31,8 +31,7 @@ import java.net.URI;
 import java.util.Set;
 
 @JiraComponent
-public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<DashboardItemModuleBean, DashboardItemModuleDescriptor>
-{
+public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<DashboardItemModuleBean, DashboardItemModuleDescriptor> {
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     private final ConditionElementParserFactory conditionElementParserFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
@@ -43,13 +42,12 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
 
     @Autowired
     public DashboardItemModuleDescriptorFactory(final ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-            final ConditionElementParserFactory conditionElementParserFactory,
-            final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            final ModuleFactory moduleFactory,
-            final PluggableParametersExtractor parametersExtractor,
-            final ModuleContextFilter moduleContextFilter,
-            final RemotablePluginAccessorFactory pluginAccessorFactory)
-    {
+                                                final ConditionElementParserFactory conditionElementParserFactory,
+                                                final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                                final ModuleFactory moduleFactory,
+                                                final PluggableParametersExtractor parametersExtractor,
+                                                final ModuleContextFilter moduleContextFilter,
+                                                final RemotablePluginAccessorFactory pluginAccessorFactory) {
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
         this.conditionElementParserFactory = conditionElementParserFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
@@ -60,8 +58,7 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
     }
 
     @Override
-    public DashboardItemModuleDescriptor createModuleDescriptor(final DashboardItemModuleBean bean, ConnectAddonBean addonBean, final Plugin plugin)
-    {
+    public DashboardItemModuleDescriptor createModuleDescriptor(final DashboardItemModuleBean bean, ConnectAddonBean addonBean, final Plugin plugin) {
         VendorBean vendor = addonBean.getVendor();
 
         DirectoryDefinition directoryDefinition = createDirectoryDefinition(addonBean, bean, vendor);
@@ -92,15 +89,11 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
     }
 
     private Condition createCondition(final Plugin plugin,
-            final ConnectAddonBean addonBean,
-            final DashboardItemModuleBean bean)
-    {
-        if (bean.getConditions().isEmpty())
-        {
+                                      final ConnectAddonBean addonBean,
+                                      final DashboardItemModuleBean bean) {
+        if (bean.getConditions().isEmpty()) {
             return new AlwaysDisplayCondition();
-        }
-        else
-        {
+        } else {
             final DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addonBean.getKey(), bean.getConditions());
 
             return conditionElementParserFactory.getConditionElementParser().makeConditions(plugin, conditionFragment, ConditionElementParser.CompositeType.AND);
@@ -108,45 +101,37 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
     }
 
     private DirectoryDefinition createDirectoryDefinition(final ConnectAddonBean addonBean,
-            final DashboardItemModuleBean moduleBean,
-            final VendorBean vendor)
-    {
+                                                          final DashboardItemModuleBean moduleBean,
+                                                          final VendorBean vendor) {
         return new ConnectDashboardItemDirectoryDefintion(moduleBean.getName().getRawValue(),
                 moduleBean.getName().getI18n(),
                 author(vendor),
                 iconUri(addonBean, moduleBean.getThumbnailUrl()));
     }
 
-    private URI iconUri(final ConnectAddonBean addonBean, final String thumbnailUrl)
-    {
+    private URI iconUri(final ConnectAddonBean addonBean, final String thumbnailUrl) {
         URI iconUri = URI.create(thumbnailUrl);
-        if (iconUri.isAbsolute())
-        {
+        if (iconUri.isAbsolute()) {
             return iconUri;
-        }
-        else
-        {
+        } else {
             return pluginAccessorFactory.get(addonBean.getKey()).getTargetUrl(iconUri);
         }
     }
 
-    private Author author(VendorBean vendorBean)
-    {
+    private Author author(VendorBean vendorBean) {
         return new ConnectDashboardItemAuthor(vendorBean.getName());
     }
 
-    private static class ConnectDashboardItemDirectoryDefintion implements DirectoryDefinition
-    {
+    private static class ConnectDashboardItemDirectoryDefintion implements DirectoryDefinition {
         private final String title;
         private final String titleI18nKey;
         private final Author author;
         private final URI thumbnail;
 
         private ConnectDashboardItemDirectoryDefintion(final String title,
-                final String titleI18nKey,
-                final Author author,
-                final URI thumbnail)
-        {
+                                                       final String titleI18nKey,
+                                                       final Author author,
+                                                       final URI thumbnail) {
             this.title = title;
             this.titleI18nKey = titleI18nKey;
             this.author = author;
@@ -154,54 +139,45 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
         }
 
         @Override
-        public String getTitle()
-        {
+        public String getTitle() {
             return title;
         }
 
         @Override
-        public Option<String> getTitleI18nKey()
-        {
+        public Option<String> getTitleI18nKey() {
             return Option.option(titleI18nKey);
         }
 
         @Override
-        public Author getAuthor()
-        {
+        public Author getAuthor() {
             return author;
         }
 
         @Override
-        public Set<Category> getCategories()
-        {
+        public Set<Category> getCategories() {
             return Sets.newHashSet(Category.JIRA);
         }
 
         @Override
-        public Option<URI> getThumbnail()
-        {
+        public Option<URI> getThumbnail() {
             return Option.some(thumbnail);
         }
     }
 
-    private static class ConnectDashboardItemAuthor implements Author
-    {
+    private static class ConnectDashboardItemAuthor implements Author {
         private final String fullname;
 
-        private ConnectDashboardItemAuthor(final String fullname)
-        {
+        private ConnectDashboardItemAuthor(final String fullname) {
             this.fullname = fullname;
         }
 
         @Override
-        public String getFullname()
-        {
+        public String getFullname() {
             return fullname;
         }
 
         @Override
-        public Option<String> getEmail()
-        {
+        public Option<String> getEmail() {
             return Option.none();
         }
     }

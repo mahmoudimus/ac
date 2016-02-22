@@ -6,11 +6,11 @@ import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Uri Factory that creates URIs to the connects servlets or to the connect add-on.
+ *
  * @since 1.0
  */
 @ThreadSafe
-public interface ConnectUriFactory
-{
+public interface ConnectUriFactory {
     ConnectAddonUriBuilder createConnectAddonUriBuilder();
 
     String createConnectIFrameServletUri(String addOnKey, String moduleKey, ModuleContextParameters moduleContext);

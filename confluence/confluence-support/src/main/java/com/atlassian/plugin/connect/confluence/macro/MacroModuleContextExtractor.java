@@ -8,8 +8,7 @@ import java.util.Map;
 /**
  *
  */
-public interface MacroModuleContextExtractor
-{
+public interface MacroModuleContextExtractor {
     ModuleContextParameters extractParameters(String storageFormatBody, ConversionContext conversionContext,
-            Map<String, String> parameters);
+                                              Map<String, String> parameters);
 }

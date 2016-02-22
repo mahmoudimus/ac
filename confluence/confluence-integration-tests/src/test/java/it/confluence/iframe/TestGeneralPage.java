@@ -38,8 +38,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of general page in Confluence
  */
-public class TestGeneralPage extends ConfluenceWebDriverTestBase
-{
+public class TestGeneralPage extends ConfluenceWebDriverTestBase {
     private static final String SPACE = "ds";
     private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String KEY_MY_CONTEXT_PAGE = "my-context-page";
@@ -57,8 +56,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     public TestRule resetToggleableCondition = runner.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         runner = new ConnectRunner(product)
                 .setAuthenticationToNone()
                 .addModules(
@@ -86,24 +84,20 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Before
-    public void beforeEachTest()
-    {
+    public void beforeEachTest() {
         this.addonKey = runner.getAddon().getKey();
         this.awesomePageModuleKey = addonAndModuleKey(addonKey, KEY_MY_AWESOME_PAGE);
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws Exception
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws Exception {
         login(testUserFactory.basicUser());
 
         ConfluenceViewPage createdPage = createAndVisitViewPage();
@@ -117,7 +111,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         assertThat(addonContentsPage.isFullSize(), is(true));
 
         // check iframe url params
-        Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
+        Map<String, String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
         verifyContainsStandardAddonQueryParameters(iframeQueryParams, product.getProductInstance().getContextPath());
         assertThat(iframeQueryParams, hasEntry("page_id", createdPage.getPageId()));
         assertThat(iframeQueryParams, hasEntry("page_version", "1"));
@@ -125,8 +119,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition() throws Exception
-    {
+    public void pageIsNotAccessibleWithFalseCondition() throws Exception {
         runner.setToggleableConditionShouldDisplay(false);
 
         login(testUserFactory.basicUser());
@@ -141,8 +134,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(PAGE_NAME));
     }
 
-    private ConfluenceViewPage createAndVisitViewPage() throws Exception
-    {
+    private ConfluenceViewPage createAndVisitViewPage() throws Exception {
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), SPACE, "A test page", "some page content");
         return product.visit(ConfluenceViewPage.class, pageData.getId());
     }

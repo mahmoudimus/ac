@@ -8,16 +8,14 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ModuleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@ModuleType (ListableModuleDescriptorFactory.class)
+@ModuleType(ListableModuleDescriptorFactory.class)
 @Component
-public final class ConnectContextParameterResolverModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectContextParameterResolverModuleDescriptor>
-{
+public final class ConnectContextParameterResolverModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectContextParameterResolverModuleDescriptor> {
 
     private static final String TYPE = "connect-context-parameters-resolver";
 
     @Autowired
-    public ConnectContextParameterResolverModuleDescriptorFactory(HostContainer hostContainer)
-    {
+    public ConnectContextParameterResolverModuleDescriptorFactory(HostContainer hostContainer) {
         super(hostContainer, TYPE, ConnectContextParameterResolverModuleDescriptor.class);
     }
 }

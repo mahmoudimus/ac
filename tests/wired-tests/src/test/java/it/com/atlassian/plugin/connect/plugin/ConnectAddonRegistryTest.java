@@ -22,9 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (AtlassianPluginsTestRunner.class)
-public class ConnectAddonRegistryTest
-{
+@RunWith(AtlassianPluginsTestRunner.class)
+public class ConnectAddonRegistryTest {
     public static final String CONTEXT_PATH = "http://ondemand.com/someProduct";
     public static final String PLUGIN_KEY = "my-plugin";
     public static final String PLUGIN_NAME = "My Plugin";
@@ -38,16 +37,14 @@ public class ConnectAddonRegistryTest
 
     private HttpServletRequest servletRequest;
 
-    public ConnectAddonRegistryTest(ConnectAddonRegistry connectAddonRegistry, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
-    {
+    public ConnectAddonRegistryTest(ConnectAddonRegistry connectAddonRegistry, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator) {
         this.connectAddonRegistry = connectAddonRegistry;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
     }
 
     @BeforeClass
-    public void setup()
-    {
+    public void setup() {
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
 
@@ -55,8 +52,7 @@ public class ConnectAddonRegistryTest
     }
 
     @Test
-    public void baseUrlIsStored() throws Exception
-    {
+    public void baseUrlIsStored() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -75,24 +71,19 @@ public class ConnectAddonRegistryTest
 
         Plugin plugin = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             assertEquals(BASE_URL, connectAddonRegistry.getBaseUrl(plugin.getKey()));
-        }
-        finally
-        {
-            if (null != plugin)
-            {
+        } finally {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    public void baseUrlIsRemoved() throws Exception
-    {
+    public void baseUrlIsRemoved() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -111,8 +102,7 @@ public class ConnectAddonRegistryTest
 
         Plugin plugin = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             String pluginKey = plugin.getKey();
@@ -124,11 +114,8 @@ public class ConnectAddonRegistryTest
 
             assertEquals("", connectAddonRegistry.getBaseUrl(pluginKey));
 
-        }
-        finally
-        {
-            if (null != plugin)
-            {
+        } finally {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }

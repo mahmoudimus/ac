@@ -16,20 +16,20 @@ import static com.google.common.collect.Lists.newArrayList;
  *
  * Project permissions are useful if you need to manage permissions for operations performed on objects
  * related with project like issues, comments, versions or your add-on's entities related with projects.
-
+ *
  * User's permissions can be checked using [/mypermissions](https://docs.atlassian.com/jira/REST/latest/#api/2/-getPermissions).
  *
  * __Note:__ Project permissions added using this module are not supported for use with the `has_project_permission` condition.
  *
  * You can define condition for project permissions. I may sense if permission that depends on global JIRA settings like time-tracking, voting or sub-tasks.
  *
- *#### Example
+ * #### Example
+ *
  * @exampleJson {@link ConnectJsonExamples#PROJECT_PERMISSION_EXAMPLE}
  * @schemaTitle Project Permission
  * @since 1.1
  */
-public class ProjectPermissionModuleBean extends RequiredKeyBean implements BeanWithConditions
-{
+public class ProjectPermissionModuleBean extends RequiredKeyBean implements BeanWithConditions {
     /**
      * Description of the project permission. It will be displayed under the permission's name.
      */
@@ -39,7 +39,7 @@ public class ProjectPermissionModuleBean extends RequiredKeyBean implements Bean
     /**
      * The category of the project permission. This determines in which section the permission will be displayed.
      */
-    @CommonSchemaAttributes (defaultValue = "other")
+    @CommonSchemaAttributes(defaultValue = "other")
     private ProjectPermissionCategory category;
 
     /**
@@ -47,50 +47,46 @@ public class ProjectPermissionModuleBean extends RequiredKeyBean implements Bean
      */
     private List<ConditionalBean> conditions;
 
-    public ProjectPermissionModuleBean()
-    {
+    public ProjectPermissionModuleBean() {
         super();
         this.description = I18nProperty.empty();
         this.category = ProjectPermissionCategory.OTHER;
         this.conditions = newArrayList();
     }
 
-    public ProjectPermissionModuleBean(ProjectPermissionModuleBeanBuilder builder)
-    {
+    public ProjectPermissionModuleBean(ProjectPermissionModuleBeanBuilder builder) {
         super(builder);
 
-        if (null == conditions)
-        {
+        if (null == conditions) {
             this.conditions = newArrayList();
         }
     }
 
-    public static ProjectPermissionModuleBeanBuilder newProjectPermissionModuleBean()
-    {
+    public static ProjectPermissionModuleBeanBuilder newProjectPermissionModuleBean() {
         return new ProjectPermissionModuleBeanBuilder();
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public ProjectPermissionCategory getCategory()
-    {
+    public ProjectPermissionCategory getCategory() {
         return category;
     }
 
-    public List<ConditionalBean> getConditions()
-    {
+    public List<ConditionalBean> getConditions() {
         return conditions;
     }
 
     @Override
-    public boolean equals(final Object otherObj)
-    {
-        if (this == otherObj) { return true; }
+    public boolean equals(final Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
 
-        if (otherObj == null || getClass() != otherObj.getClass()) { return false; }
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
 
         final ProjectPermissionModuleBean that = (ProjectPermissionModuleBean) otherObj;
 
@@ -103,8 +99,7 @@ public class ProjectPermissionModuleBean extends RequiredKeyBean implements Bean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
                 .append(description)
