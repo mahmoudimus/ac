@@ -10,7 +10,7 @@ public class LifecycleCallbackException extends Exception
 
     public LifecycleCallbackException(String message, String i18nKey)
     {
-        this(message, i18nKey, (Serializable) null);
+        this(message, i18nKey, (Serializable[]) null);
     }
 
     public LifecycleCallbackException(String message, String i18nKey, Serializable... params)
