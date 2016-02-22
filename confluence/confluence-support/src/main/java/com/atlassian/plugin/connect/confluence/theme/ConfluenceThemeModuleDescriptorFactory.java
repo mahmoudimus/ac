@@ -8,6 +8,9 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteBean;
@@ -40,61 +43,77 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
     private final I18NBeanFactory i18nBeanFactory;
     private final RequestFactory<?> requestFactory;
     private final PluginAccessor pluginAccessor;
+    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
+
 
     @Autowired
     public ConfluenceThemeModuleDescriptorFactory(ModuleFactory moduleFactory,
                                                   I18NBeanFactory i18nBeanFactory,
                                                   RequestFactory<?> requestFactory,
-                                                  PluginAccessor pluginAccessor)
+                                                  PluginAccessor pluginAccessor,
+                                                  IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                                  IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
     {
         this.moduleFactory = moduleFactory;
         this.i18nBeanFactory = i18nBeanFactory;
         this.requestFactory = requestFactory;
         this.pluginAccessor = pluginAccessor;
+        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }
 
     @Override
-    public ThemeModuleDescriptor createModuleDescriptor(ConfluenceThemeModuleBean bean,
+    public ThemeModuleDescriptor createModuleDescriptor(ConfluenceThemeModuleBean themeBean,
                                                         ConnectAddonBean addon,
                                                         Plugin plugin)
     {
 
-        return createModuleDescriptor(bean, addon, plugin, Collections.emptyList());
+        return createModuleDescriptor(themeBean, addon, plugin, Collections.emptyList());
     }
 
-    public ThemeModuleDescriptor createModuleDescriptor(ConfluenceThemeModuleBean bean,
+    public ThemeModuleDescriptor createModuleDescriptor(ConfluenceThemeModuleBean themeBean,
                                                         ConnectAddonBean addon,
                                                         Plugin plugin,
                                                         List<LayoutModuleDescriptor> layouts)
     {
         Element dom = new DOMElement("theme");
-        dom.addAttribute("key", ConfluenceThemeUtils.getThemeKey(addon, bean));
+        dom.addAttribute("key", ConfluenceThemeUtils.getThemeKey(addon, themeBean));
         /*TODO: see if name really needs to be i18n-able. can we get away without it?*/
-        dom.addAttribute("name", i18nBeanFactory.getI18NBean().getText(bean.getName().getKeyOrValue()));
+        dom.addAttribute("name", i18nBeanFactory.getI18NBean().getText(themeBean.getName().getKeyOrValue()));
         dom.addAttribute("class", ConfluenceRemoteAddonTheme.class.getName());
         dom.addAttribute("disable-sitemesh", "false");
         dom.addElement("resource").addAttribute("name", THEME_ICON_NAME)
                         .addAttribute("type", "download")
-                        .addAttribute("location", addon.getBaseUrl() + bean.getIcon().getUrl());
+                        .addAttribute("location", addon.getBaseUrl() + themeBean.getIcon().getUrl());
 
         /*TODO: create an override registry*/
-        final ConfluenceThemeRouteInterceptionsBean routes = bean.getRoutes();
-        List<PropertyDescriptor> routeNames = ConfluenceThemeUtils.filterProperties(routes);
-        for (PropertyDescriptor prop : routeNames)
+        final ConfluenceThemeRouteInterceptionsBean routes = themeBean.getRoutes();
+        for (PropertyDescriptor prop : ConfluenceThemeUtils.filterProperties(routes))
         {
-            ConfluenceThemeRouteBean confluenceThemeRouteBean = ConfluenceThemeUtils.getRouteBeanFromProperty(routes, prop);
-            String navigationTargetName = prop.getName();
-            List<NavigationTargetOverrideInfo> navigationTargetOverrideInfo = NavigationTargetName.forNavigationTargetName(navigationTargetName);
-            for (NavigationTargetOverrideInfo targetOverrideInfo : navigationTargetOverrideInfo)
+            ConfluenceThemeRouteBean routeBean = ConfluenceThemeUtils.getRouteBeanFromProperty(routes, prop);
+            String navTargetName = prop.getName();
+            for (NavigationTargetOverrideInfo overrideInfo : NavigationTargetName.forNavigationTargetName(navTargetName))
             {
                 dom.addElement("xwork-velocity-result-override")
-                   .addAttribute("package", targetOverrideInfo.getPackageToOverride())
-                   .addAttribute("action", targetOverrideInfo.getActionToOverride())
-                   .addAttribute("result", targetOverrideInfo.getResultToOverride())
-                   .addAttribute("override", targetOverrideInfo.getTemplateLocation());
+                   .addAttribute("package", overrideInfo.getPackageToOverride())
+                   .addAttribute("action", overrideInfo.getActionToOverride())
+                   .addAttribute("result", overrideInfo.getResultToOverride())
+                   .addAttribute("override", overrideInfo.getTemplateLocation());
                 dom.addElement("param")
-                   .addAttribute("name", ConfluenceThemeUtils.getOverrideTypeName(targetOverrideInfo))
-                   .addAttribute("value", confluenceThemeRouteBean.getUrl());
+                   .addAttribute("name", ConfluenceThemeUtils.getOverrideTypeName(overrideInfo))
+                   .addAttribute("value", routeBean.getUrl());
+
+                IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                                                                                        .addon(addon.getKey())
+                                                                                        .module(themeBean.getRawKey())
+                                                                                        .genericBodyTemplate()
+                                                                                        .urlTemplate(routeBean.getUrl())
+                                                                                        .ensureUniqueNamespace(false)
+                                                                                        .dimensions("100%", "100%")
+                                                                                        .sign(true)
+                                                                                        .build();
+                iFrameRenderStrategyRegistry.register(addon.getKey(), themeBean.getRawKey(), overrideInfo.name(), renderStrategy);
             }
         }
         for (LayoutModuleDescriptor layout : layouts)
@@ -109,7 +128,7 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
            .addAttribute("value", addon.getKey());
         dom.addElement("param")
            .addAttribute("name", THEME_MODULE_KEY_PROPERTY_KEY)
-           .addAttribute("value", bean.getRawKey());
+           .addAttribute("value", themeBean.getRawKey());
 
         ThemeModuleDescriptor themeModuleDescriptor = new ConnectThemeModuleDescriptor(moduleFactory, pluginAccessor);
         themeModuleDescriptor.init(plugin, dom);

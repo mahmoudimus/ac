@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.confluence.theme;
 
+import com.atlassian.annotations.Internal;
 import com.atlassian.confluence.plugin.descriptor.ThemeModuleDescriptor;
 import com.atlassian.confluence.themes.ExperimentalUnsupportedTheme;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
@@ -15,8 +16,13 @@ import java.util.Map;
 
 /**
  * A theme implementation which delegates the actual theming to an iframe from a connect addon.
+ * The creation of the theme module in connect must also register the iframe rendering strategy for all possible
+ * navigation targets ({@link NavigationTargetName}.
+ *
+ * Do not rename this class, since it's name is used in the theme module descriptor xml, which is saved in the database.
  */
-public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
+@Internal
+public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
@@ -58,12 +64,17 @@ public class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
         return addonKey;
     }
 
-    public LayoutConstants getLayoutTypes()
+    public Constants getLayoutTypes()
     {
-        return new LayoutConstants();
+        return new Constants();
     }
 
-    public static final class LayoutConstants
+    /**
+     * A class to hold some constants, for use in velocity templates to ensure type safety and ease of refactor.
+     * Not intended to be used by other plugins.
+     */
+    @Internal
+    public static final class Constants
     {
         public NavigationTargetOverrideInfo getBlog()
         {

@@ -35,7 +35,8 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
     public ConfluenceLayoutModuleFactory(ModuleFactory moduleFactory,
                                          I18NBeanFactory i18nBeanFactory,
                                          RequestFactory<?> requestFactory,
-                                         PluginAccessor pluginAccessor) {
+                                         PluginAccessor pluginAccessor)
+    {
         this.moduleFactory = moduleFactory;
         this.i18nBeanFactory = i18nBeanFactory;
         this.requestFactory = requestFactory;
@@ -59,7 +60,7 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
         Element dom = new DOMElement("layout");
         dom.addAttribute("key", ConfluenceThemeUtils.getLayoutKey(addon, bean, overrideInfo));
         dom.addAttribute("name", ConfluenceThemeUtils.getLayoutName(addon, bean, overrideInfo));
-        dom.addAttribute("class", ConnectThemeDecorator.class.getName());
+        dom.addAttribute("class", ConnectConfluenceThemeDecorator.class.getName());
         dom.addAttribute("overrides", overrideInfo.getDecoratorToOverride());
         dom.addElement("resource")
            .addAttribute("type", "velocity")
