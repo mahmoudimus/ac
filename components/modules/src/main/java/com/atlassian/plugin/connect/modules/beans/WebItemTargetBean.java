@@ -16,13 +16,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @schemaTitle Web Item Target
  * @since 1.0
  */
-public class WebItemTargetBean extends BaseModuleBean
-{
+public class WebItemTargetBean extends BaseModuleBean {
     /**
      * Defines how the web-item content should be loaded by the page. By default, the web-item is loaded in the same
      * page. The target can be set to open the web-item url as a modal dialog or an inline dialog.
      */
-    @CommonSchemaAttributes (defaultValue = "page")
+    @CommonSchemaAttributes(defaultValue = "page")
     private WebItemTargetType type;
 
     // TODO: The table with descriptions is needed until we fix ACDEV-1381
@@ -123,65 +122,52 @@ public class WebItemTargetBean extends BaseModuleBean
      */
     private WebItemTargetOptions options;
 
-    public WebItemTargetBean()
-    {
+    public WebItemTargetBean() {
         this.type = WebItemTargetType.page;
     }
 
-    public WebItemTargetBean(final BaseModuleBeanBuilder builder)
-    {
+    public WebItemTargetBean(final BaseModuleBeanBuilder builder) {
         super(builder);
-        if (null == type)
-        {
+        if (null == type) {
             type = WebItemTargetType.page;
         }
     }
 
-    public boolean isPageTarget()
-    {
+    public boolean isPageTarget() {
         return WebItemTargetType.page.equals(getType());
     }
 
-    public boolean isDialogTarget()
-    {
+    public boolean isDialogTarget() {
         return WebItemTargetType.dialog.equals(getType());
     }
 
-    public boolean isInlineDialogTarget()
-    {
+    public boolean isInlineDialogTarget() {
         return WebItemTargetType.inlineDialog.equals(getType());
     }
 
-    public WebItemTargetType getType()
-    {
+    public WebItemTargetType getType() {
         return type;
     }
 
-    public WebItemTargetOptions getOptions()
-    {
+    public WebItemTargetOptions getOptions() {
         return options;
     }
 
-    public static WebItemTargetBeanBuilder newWebItemTargetBean()
-    {
+    public static WebItemTargetBeanBuilder newWebItemTargetBean() {
         return new WebItemTargetBeanBuilder();
     }
 
-    public static WebItemTargetBeanBuilder newWebItemTargetBean(WebItemTargetBean bean)
-    {
+    public static WebItemTargetBeanBuilder newWebItemTargetBean(WebItemTargetBean bean) {
         return new WebItemTargetBeanBuilder(bean);
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof WebItemTargetBean))
-        {
+        if (!(otherObj instanceof WebItemTargetBean)) {
             return false;
         }
 
@@ -194,8 +180,7 @@ public class WebItemTargetBean extends BaseModuleBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(19, 23)
                 .appendSuper(super.hashCode())
                 .append(type)

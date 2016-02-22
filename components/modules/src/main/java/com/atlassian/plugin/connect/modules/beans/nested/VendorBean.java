@@ -16,8 +16,7 @@ import com.google.common.base.Objects;
  * @since 1.0
  */
 @SchemaDefinition("vendor")
-public class VendorBean extends BaseModuleBean
-{
+public class VendorBean extends BaseModuleBean {
     /**
      * The name of the plugin vendor.
      * Supply your name or the name of the company you work for.
@@ -30,66 +29,51 @@ public class VendorBean extends BaseModuleBean
     @StringSchemaAttributes(format = "uri")
     private String url;
 
-    public VendorBean()
-    {
+    public VendorBean() {
         this.name = "";
         this.url = "";
     }
 
-    public VendorBean(VendorBeanBuilder builder)
-    {
+    public VendorBean(VendorBeanBuilder builder) {
         super(builder);
 
-        if (null == name)
-        {
+        if (null == name) {
             this.name = "";
         }
 
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public static VendorBeanBuilder newVendorBean()
-    {
+    public static VendorBeanBuilder newVendorBean() {
         return new VendorBeanBuilder();
     }
 
-    public static VendorBeanBuilder newVendorBean(VendorBean defaultBean)
-    {
+    public static VendorBeanBuilder newVendorBean(VendorBean defaultBean) {
         return new VendorBeanBuilder(defaultBean);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hashCode(name, url);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == this)
-        {
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
-        }
-        else if (!(obj instanceof VendorBean))
-        {
+        } else if (!(obj instanceof VendorBean)) {
             return false;
-        }
-        else
-        {
+        } else {
             final VendorBean that = (VendorBean) obj;
             return Objects.equal(name, that.name) &&
                     Objects.equal(url, that.url);

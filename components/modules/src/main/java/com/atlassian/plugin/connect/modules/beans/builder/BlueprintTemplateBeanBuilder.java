@@ -10,29 +10,25 @@ public class BlueprintTemplateBeanBuilder<T extends BlueprintTemplateBeanBuilder
     private String url;
     private BlueprintTemplateContextBean blueprintContext;
 
-    public BlueprintTemplateBeanBuilder()
-    {
+    public BlueprintTemplateBeanBuilder() {
     }
 
-    public T withUrl(String url)
-    {
+    public T withUrl(String url) {
         this.url = url;
         return (T) this;
     }
 
-    public T withBlueprintContextUrl(String contextUrl)
-    {
+    public T withBlueprintContextUrl(String contextUrl) {
         blueprintContext = newBlueprintTemplateContextBeanBuilder().withUrl(contextUrl).build();
         return (T) this;
     }
-    public T withBlueprintContext(BlueprintTemplateContextBean blueprintContext)
-    {
+
+    public T withBlueprintContext(BlueprintTemplateContextBean blueprintContext) {
         this.blueprintContext = blueprintContext;
         return (T) this;
     }
 
-    public B build()
-    {
+    public B build() {
         //noinspection unchecked
         return (B) new BlueprintTemplateBean(this);
     }

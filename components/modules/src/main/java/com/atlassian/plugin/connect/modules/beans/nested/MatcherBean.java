@@ -21,8 +21,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MatcherBeanBuilder;
  * @since 1.1
  */
 @SchemaDefinition("matchers")
-public class MatcherBean extends BaseModuleBean
-{
+public class MatcherBean extends BaseModuleBean {
 
     /**
      * The pattern is a string that defines a single URL to match.
@@ -31,33 +30,27 @@ public class MatcherBean extends BaseModuleBean
     @StringSchemaAttributes(maxLength = 1024)
     private String pattern;
 
-    public MatcherBean()
-    {
+    public MatcherBean() {
         this.pattern = "";
     }
 
-    public MatcherBean(MatcherBeanBuilder builder)
-    {
+    public MatcherBean(MatcherBeanBuilder builder) {
         super(builder);
 
-        if (null == pattern)
-        {
+        if (null == pattern) {
             this.pattern = "";
         }
     }
 
-    public static MatcherBeanBuilder newMatcherBean()
-    {
+    public static MatcherBeanBuilder newMatcherBean() {
         return new MatcherBeanBuilder();
     }
 
-    public static MatcherBeanBuilder newMatcherBean(MatcherBean defaultBean)
-    {
+    public static MatcherBeanBuilder newMatcherBean(MatcherBean defaultBean) {
         return new MatcherBeanBuilder(defaultBean);
     }
 
-    public String getPattern()
-    {
+    public String getPattern() {
         return pattern;
     }
 }

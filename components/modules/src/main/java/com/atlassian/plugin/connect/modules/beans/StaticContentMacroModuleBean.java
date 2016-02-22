@@ -38,24 +38,19 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
  * @since 1.0
  */
 @SchemaDefinition("staticContentMacro")
-public class StaticContentMacroModuleBean extends BaseContentMacroModuleBean
-{
-    public StaticContentMacroModuleBean()
-    {
+public class StaticContentMacroModuleBean extends BaseContentMacroModuleBean {
+    public StaticContentMacroModuleBean() {
     }
 
-    public StaticContentMacroModuleBean(StaticContentMacroModuleBeanBuilder builder)
-    {
+    public StaticContentMacroModuleBean(StaticContentMacroModuleBeanBuilder builder) {
         super(builder);
     }
 
-    public static StaticContentMacroModuleBeanBuilder newStaticContentMacroModuleBean()
-    {
+    public static StaticContentMacroModuleBeanBuilder newStaticContentMacroModuleBean() {
         return new StaticContentMacroModuleBeanBuilder();
     }
 
-    public static StaticContentMacroModuleBeanBuilder newStaticContentMacroModuleBean(StaticContentMacroModuleBean defaultBean)
-    {
+    public static StaticContentMacroModuleBeanBuilder newStaticContentMacroModuleBean(StaticContentMacroModuleBean defaultBean) {
         return new StaticContentMacroModuleBeanBuilder(defaultBean);
     }
 }

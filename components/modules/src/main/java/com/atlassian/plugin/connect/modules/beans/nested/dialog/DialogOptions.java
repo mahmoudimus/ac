@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested.dialog;
 
 import com.atlassian.json.schema.annotation.SchemaDefinition;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -16,8 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 1.1
  */
 @SchemaDefinition("dialogOptions")
-public class DialogOptions extends BaseDialogOptions implements WebItemTargetOptions
-{
+public class DialogOptions extends BaseDialogOptions implements WebItemTargetOptions {
     /**
      * Sets how high the dialog is in pixels
      */
@@ -28,53 +26,43 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
      */
     private Boolean chrome;
 
-    public DialogOptions(String width, String height, Boolean chrome)
-    {
+    public DialogOptions(String width, String height, Boolean chrome) {
         super(width);
         this.height = height;
         this.chrome = chrome;
     }
 
-    public DialogOptions()
-    {
+    public DialogOptions() {
 
     }
 
-    public DialogOptions(DialogOptionsBuilder dialogOptionsBuilder)
-    {
+    public DialogOptions(DialogOptionsBuilder dialogOptionsBuilder) {
         super(dialogOptionsBuilder);
     }
 
-    public String getHeight()
-    {
+    public String getHeight() {
         return height;
     }
 
-    public Boolean getChrome()
-    {
+    public Boolean getChrome() {
         return chrome;
     }
 
-    public static DialogOptionsBuilder newDialogOptions()
-    {
+    public static DialogOptionsBuilder newDialogOptions() {
         return new DialogOptionsBuilder();
     }
 
-    public static DialogOptionsBuilder newDialogOptions(DialogOptions bean)
-    {
+    public static DialogOptionsBuilder newDialogOptions(DialogOptions bean) {
         return new DialogOptionsBuilder(bean);
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof DialogOptions))
-        {
+        if (!(otherObj instanceof DialogOptions)) {
             return false;
         }
 
@@ -88,8 +76,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(123, 99)
                 .appendSuper(super.hashCode())
                 .append(height)
