@@ -16,7 +16,7 @@ requirejs.config({
     'jquery': '../target/qunit/dependencies/js/external/jquery/jquery',
     'aui-soy': '//aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy',
     'Squire' : '../node_modules/squirejs/src/Squire',
-    'underscore': '../src/test/resources/fixtures/underscore-1.5.2',
+    'underscore': '../node_modules/underscore/underscore',
     // host side
     'connect-host': 'main/resources/js/core/connect-host',
     'ac/dialog': 'main/resources/js/core/connect-host-dialog',
