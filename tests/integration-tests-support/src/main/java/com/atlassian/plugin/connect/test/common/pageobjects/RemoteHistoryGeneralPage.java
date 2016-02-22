@@ -18,8 +18,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Page with buttons for executing the javascript history plugin
  */
-public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
-{
+public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
@@ -30,8 +29,7 @@ public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
@@ -47,15 +45,12 @@ public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
         driver.navigate().back();
     }
 
-    private boolean waitForHistoryChange(final String oldText)
-    {
+    private boolean waitForHistoryChange(final String oldText) {
 
-        driver.waitUntil(new Function<WebDriver, Boolean>()
-        {
+        driver.waitUntil(new Function<WebDriver, Boolean>() {
 
             @Override
-            public Boolean apply(WebDriver webDriver)
-            {
+            public Boolean apply(WebDriver webDriver) {
                 return !driver.findElement(By.id("log")).getText().equals(oldText);
 
             }
@@ -64,11 +59,9 @@ public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
     }
 
     public void javascriptForward() {
-        runInFrame(new Callable<Void>()
-        {
+        runInFrame(new Callable<Void>() {
             @Override
-            public Void call() throws Exception
-            {
+            public Void call() throws Exception {
                 String text = driver.findElement(By.id("log")).getText();
                 driver.findElement(By.id("forward")).click();
                 waitForHistoryChange(text);
@@ -91,12 +84,10 @@ public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
     }
 
     public void javascriptPushState() {
-        runInFrame(new Callable<Void>()
-        {
+        runInFrame(new Callable<Void>() {
 
             @Override
-            public Void call() throws Exception
-            {
+            public Void call() throws Exception {
                 String text = driver.findElement(By.id("log")).getText();
                 driver.findElement(By.id("pushstate")).click();
                 waitForHistoryChange(text);
@@ -105,41 +96,36 @@ public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
         });
     }
 
-    public String logMessage(){
+    public String logMessage() {
         return getValue("log");
     }
 
-    public void clearLog(){
-        runInFrame(new Callable<String>()
-        {
+    public void clearLog() {
+        runInFrame(new Callable<String>() {
 
             @Override
-            public String call() throws Exception
-            {
+            public String call() throws Exception {
                 driver.findElement(By.id("clearlog")).click();
                 return null;
             }
         });
     }
 
-    public String logNewUrl(){
-        return runInFrame(new Callable<String>()
-        {
+    public String logNewUrl() {
+        return runInFrame(new Callable<String>() {
 
             @Override
-            public String call() throws Exception
-            {
+            public String call() throws Exception {
                 return driver.findElement(By.className("newurl")).getText();
             }
         });
     }
-    public String logOldUrl(){
-        return runInFrame(new Callable<String>()
-        {
+
+    public String logOldUrl() {
+        return runInFrame(new Callable<String>() {
 
             @Override
-            public String call() throws Exception
-            {
+            public String call() throws Exception {
                 return driver.findElement(By.className("oldurl")).getText();
             }
         });

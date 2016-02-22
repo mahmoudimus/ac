@@ -15,17 +15,14 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
 
-public class UserRequestSender
-{
+public class UserRequestSender {
     private final String baseUrl;
 
-    public UserRequestSender(String baseUrl)
-    {
+    public UserRequestSender(String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
-    public <T> T sendRequestAsUser(HttpRequest request, ResponseHandler<T> handler, String username, String password) throws Exception
-    {
+    public <T> T sendRequestAsUser(HttpRequest request, ResponseHandler<T> handler, String username, String password) throws Exception {
         URI uri = new java.net.URI(baseUrl);
 
         HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
@@ -44,16 +41,14 @@ public class UserRequestSender
         return getDefaultHttpClient(username, password).execute(targetHost, request, handler, localcontext);
     }
 
-    public DefaultHttpClient getDefaultHttpClient(String username, String password)
-    {
+    public DefaultHttpClient getDefaultHttpClient(String username, String password) {
         DefaultHttpClient httpclient = new DefaultHttpClient(new BasicClientConnectionManager());
         httpclient.getCredentialsProvider().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
 
         return httpclient;
     }
 
-    public String getBaseUrl()
-    {
+    public String getBaseUrl() {
         return baseUrl;
     }
 }

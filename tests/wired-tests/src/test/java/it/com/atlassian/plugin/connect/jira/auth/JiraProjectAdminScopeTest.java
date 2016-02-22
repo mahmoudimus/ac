@@ -13,32 +13,27 @@ import org.junit.runner.RunWith;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraProjectAdminScopeTest extends JiraAdminScopeTestBase
-{
+public class JiraProjectAdminScopeTest extends JiraAdminScopeTestBase {
     public JiraProjectAdminScopeTest(TestPluginInstaller testPluginInstaller,
                                      JwtApplinkFinder jwtApplinkFinder,
                                      PermissionManager jiraPermissionManager,
                                      UserManager userManager,
-                                     TestAuthenticator testAuthenticator)
-    {
+                                     TestAuthenticator testAuthenticator) {
         super(testPluginInstaller, jwtApplinkFinder, jiraPermissionManager, userManager, testAuthenticator);
     }
 
     @Override
-    protected ScopeName getScope()
-    {
+    protected ScopeName getScope() {
         return ScopeName.PROJECT_ADMIN;
     }
 
     @Override
-    protected ScopeName getScopeOneDown()
-    {
+    protected ScopeName getScopeOneDown() {
         return ScopeName.DELETE;
     }
 
     @Override
-    protected boolean shouldBeTopLevelAdmin()
-    {
+    protected boolean shouldBeTopLevelAdmin() {
         return false;
     }
 }

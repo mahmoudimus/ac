@@ -9,6 +9,5 @@ import com.google.gson.reflect.TypeToken;
 /**
  * A type alias for the response from a blueprint template context request.
  */
-public class BlueprintContextResponseTypeToken extends TypeToken<List<BlueprintContextValue>>
-{
+public class BlueprintContextResponseTypeToken extends TypeToken<List<BlueprintContextValue>> {
 }

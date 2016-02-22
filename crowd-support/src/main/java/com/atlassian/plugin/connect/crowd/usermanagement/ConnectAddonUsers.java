@@ -26,55 +26,43 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Sets.newHashSet;
 
 @JiraComponent
-public class ConnectAddonUsers
-{
+public class ConnectAddonUsers {
     private ConnectAddonAccessor addonAccessor;
     private final ApplicationService applicationService;
     private final CrowdApplicationProvider crowdApplicationProvider;
     private final MembershipQuery<User> membershipQuery;
 
     @Autowired
-    public ConnectAddonUsers(ConnectAddonAccessor addonAccessor, ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider)
-    {
+    public ConnectAddonUsers(ConnectAddonAccessor addonAccessor, ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider) {
         this.addonAccessor = addonAccessor;
         this.applicationService = applicationService;
         this.crowdApplicationProvider = crowdApplicationProvider;
         membershipQuery = queryFor(User.class, user()).childrenOf(group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
     }
 
-    public Iterable<User> getAddonUsers()
-    {
-        try
-        {
+    public Iterable<User> getAddonUsers() {
+        try {
             return filter(applicationService.searchDirectGroupRelationships(crowdApplicationProvider.getCrowdApplication(), membershipQuery),
                     isHostProductAddonUserKey());
-        }
-        catch (ApplicationNotFoundException e)
-        {
+        } catch (ApplicationNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Predicate<User> isHostProductAddonUserKey()
-    {
+    private Predicate<User> isHostProductAddonUserKey() {
         final Set<String> allAddonUserKeys = getAddonUserKeys();
-        return new Predicate<User>()
-        {
+        return new Predicate<User>() {
             @Override
-            public boolean apply(User user)
-            {
+            public boolean apply(User user) {
                 return allAddonUserKeys.contains(user.getName());
             }
         };
     }
 
-    private HashSet<String> getAddonUserKeys()
-    {
-        return newHashSet(transform(addonAccessor.getAllAddonKeys(), new Function<String, String>()
-        {
+    private HashSet<String> getAddonUserKeys() {
+        return newHashSet(transform(addonAccessor.getAllAddonKeys(), new Function<String, String>() {
             @Override
-            public String apply(String addonKey)
-            {
+            public String apply(String addonKey) {
                 return ADDON_USERNAME_PREFIX + addonKey;
             }
         }));

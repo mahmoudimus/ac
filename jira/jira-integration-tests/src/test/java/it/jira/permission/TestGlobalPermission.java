@@ -15,8 +15,7 @@ import java.util.Map;
 import static it.jira.permission.PermissionJsonBean.PermissionType.GLOBAL;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TestGlobalPermission extends JiraTestBase
-{
+public class TestGlobalPermission extends JiraTestBase {
     private static final String pluginKey = AddonTestUtils.randomAddonKey();
 
     private static final String permissionKey = "plugged-global-permission";
@@ -27,8 +26,7 @@ public class TestGlobalPermission extends JiraTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         myPermissionRestClient = new MyPermissionRestClient(product);
         remotePlugin = new ConnectRunner(product.environmentData().getBaseUrl().toString(), pluginKey)
                 .setAuthenticationToNone()
@@ -45,17 +43,14 @@ public class TestGlobalPermission extends JiraTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void pluggableGlobalPermissionShouldAppearOnTheGlobalPermissionList() throws Exception
-    {
+    public void pluggableGlobalPermissionShouldAppearOnTheGlobalPermissionList() throws Exception {
         Map<String, PermissionJsonBean> myPermissions = myPermissionRestClient.getMyPermissions();
 
         PermissionJsonBean customPermission = myPermissions.get(fullPermissionKey);

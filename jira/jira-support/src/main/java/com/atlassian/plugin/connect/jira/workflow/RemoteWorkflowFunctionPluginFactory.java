@@ -12,35 +12,30 @@ import java.util.UUID;
 
 
 public class RemoteWorkflowFunctionPluginFactory extends AbstractWorkflowPluginFactory
-        implements WorkflowPluginFunctionFactory
-{
+        implements WorkflowPluginFunctionFactory {
     // I hate these strings - but we can't change them without breaking backwards compatibility
     public static final String STORED_POSTFUNCTION_ID = "remoteWorkflowPostFunctionUUID";
     public static final String STORED_POSTFUNCTION_CONFIG = "remoteWorkflowPostFunctionConfiguration";
 
     @Override
-    protected void getVelocityParamsForInput(final Map<String, Object> velocityParams)
-    {
+    protected void getVelocityParamsForInput(final Map<String, Object> velocityParams) {
         velocityParams.put(JiraModuleContextFilter.POSTFUNCTION_ID, UUID.randomUUID().toString());
     }
 
     @Override
-    protected void getVelocityParamsForView(final Map<String, Object> velocityParams, final AbstractDescriptor descriptor)
-    {
+    protected void getVelocityParamsForView(final Map<String, Object> velocityParams, final AbstractDescriptor descriptor) {
         final FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
         velocityParams.put(JiraModuleContextFilter.POSTFUNCTION_ID, functionDescriptor.getArgs().get(STORED_POSTFUNCTION_ID));
         velocityParams.put(JiraModuleContextFilter.POSTFUNCTION_CONFIG, functionDescriptor.getArgs().get(STORED_POSTFUNCTION_CONFIG));
     }
 
     @Override
-    protected void getVelocityParamsForEdit(final Map<String, Object> velocityParams, final AbstractDescriptor descriptor)
-    {
+    protected void getVelocityParamsForEdit(final Map<String, Object> velocityParams, final AbstractDescriptor descriptor) {
         getVelocityParamsForView(velocityParams, descriptor);
     }
 
     @Override
-    public Map<String, ?> getDescriptorParams(final Map<String, Object> formParams)
-    {
+    public Map<String, ?> getDescriptorParams(final Map<String, Object> formParams) {
         final String uuid = extractSingleParam(formParams, JiraModuleContextFilter.POSTFUNCTION_ID);
         final String functionConfiguration = extractSingleParam(formParams, JiraModuleContextFilter.POSTFUNCTION_CONFIG + "-" + uuid);
 

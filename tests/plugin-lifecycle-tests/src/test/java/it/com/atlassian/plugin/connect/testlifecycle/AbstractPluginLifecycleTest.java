@@ -20,8 +20,7 @@ import java.util.Collection;
 
 import static org.junit.Assert.fail;
 
-public class AbstractPluginLifecycleTest
-{
+public class AbstractPluginLifecycleTest {
 
     public static final String JSON_TEMPLATE_PREFIX = "/json/";
 
@@ -35,10 +34,9 @@ public class AbstractPluginLifecycleTest
     protected Plugin theConnectPlugin;
 
     public AbstractPluginLifecycleTest(PluginController pluginController,
-            LifecyclePluginHelper pluginHelper,
-            LifecycleUpmHelper upmHelper,
-            LifecycleTestAuthenticator testAuthenticator)
-    {
+                                       LifecyclePluginHelper pluginHelper,
+                                       LifecycleUpmHelper upmHelper,
+                                       LifecycleTestAuthenticator testAuthenticator) {
         this.pluginController = pluginController;
         this.pluginHelper = pluginHelper;
         this.upmHelper = upmHelper;
@@ -46,51 +44,39 @@ public class AbstractPluginLifecycleTest
     }
 
     @BeforeClass
-    public void setupBeforeAllTests()
-    {
+    public void setupBeforeAllTests() {
         testAuthenticator.authenticateUser("admin");
     }
 
     @After
-    public void tearDown()
-    {
-        if (null != theConnectPlugin)
-        {
-            try
-            {
+    public void tearDown() {
+        if (null != theConnectPlugin) {
+            try {
                 pluginController.uninstall(theConnectPlugin);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.warn("Failed to uninstall plugin", e);
-            }
-            finally
-            {
+            } finally {
                 theConnectPlugin = null;
             }
         }
     }
 
-    protected Plugin installAndEnableAddon(String template) throws IOException
-    {
+    protected Plugin installAndEnableAddon(String template) throws IOException {
         Plugin plugin = upmHelper.installAddon(getAddonJson(template));
         upmHelper.getUpmControlHandler().enablePlugins(plugin.getKey());
         return plugin;
     }
 
-    protected String getAddonJson(String template) throws IOException
-    {
+    protected String getAddonJson(String template) throws IOException {
         InputStream is = this.getClass().getResourceAsStream(AbstractPluginLifecycleTest.JSON_TEMPLATE_PREFIX + template);
         String json = IOUtils.toString(is);
         return json;
     }
 
-    protected void assertStateAndModuleCount(Plugin originalAddonPlugin, PluginState state, int moduleCount, String prefix)
-    {
+    protected void assertStateAndModuleCount(Plugin originalAddonPlugin, PluginState state, int moduleCount, String prefix) {
         StringBuilder sb = new StringBuilder();
 
-        if (!Strings.isNullOrEmpty(prefix))
-        {
+        if (!Strings.isNullOrEmpty(prefix)) {
             sb.append(prefix).append(" - ");
         }
 
@@ -103,19 +89,16 @@ public class AbstractPluginLifecycleTest
         int addonModuleCount = addonModules.size();
 
         boolean failed = false;
-        if (!state.equals(addonState))
-        {
+        if (!state.equals(addonState)) {
             sb.append("expected state ").append(state.name()).append(" but was ").append(addonState.name());
             failed = true;
         }
-        if (moduleCount != addonModuleCount)
-        {
+        if (moduleCount != addonModuleCount) {
             sb.append(", expected module size ").append(moduleCount).append(" but was ").append(addonModuleCount);
             failed = true;
         }
 
-        if (failed)
-        {
+        if (failed) {
             fail(sb.toString());
         }
     }

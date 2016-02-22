@@ -19,8 +19,7 @@ import java.util.List;
  * @since 1.2
  */
 @JiraComponent
-public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<ReportModuleBean>
-{
+public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<ReportModuleBean> {
 
     private static final ReportModuleMeta META = new ReportModuleMeta();
 
@@ -28,27 +27,22 @@ public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<Repo
 
     @Autowired
     public ReportModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            ConnectReportModuleDescriptorFactory moduleDescriptorFactory)
-    {
+                                ConnectJsonSchemaValidator schemaValidator,
+                                ConnectReportModuleDescriptorFactory moduleDescriptorFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.moduleDescriptorFactory = moduleDescriptorFactory;
     }
 
     @Override
-    public ConnectModuleMeta<ReportModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<ReportModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, ConnectAddonBean addon)
-    {
-        return Lists.transform(modules, new Function<ReportModuleBean, ModuleDescriptor>()
-        {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, ConnectAddonBean addon) {
+        return Lists.transform(modules, new Function<ReportModuleBean, ModuleDescriptor>() {
             @Override
-            public ModuleDescriptor apply(final ReportModuleBean bean)
-            {
+            public ModuleDescriptor apply(final ReportModuleBean bean) {
                 return moduleDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()
                 );
             }

@@ -5,7 +5,6 @@ import com.atlassian.plugin.web.descriptors.ConditionElementParser;
 /**
  * @since 1.0
  */
-public interface ConditionElementParserFactory
-{
+public interface ConditionElementParserFactory {
     ConditionElementParser getConditionElementParser();
 }

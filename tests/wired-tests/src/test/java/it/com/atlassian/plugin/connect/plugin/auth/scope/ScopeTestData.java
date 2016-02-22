@@ -3,8 +3,7 @@ package it.com.atlassian.plugin.connect.plugin.auth.scope;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 
-public class ScopeTestData
-{
+public class ScopeTestData {
     public final ScopeName scope;
     public final HttpMethod method;
     public final String path;
@@ -12,8 +11,7 @@ public class ScopeTestData
     public final boolean expectedOutcome;
     public final String contextPath;
 
-    public ScopeTestData(final ScopeName scope, final HttpMethod method, final String path, final String requestBody, final boolean expectedOutcome, final String contextPath)
-    {
+    public ScopeTestData(final ScopeName scope, final HttpMethod method, final String path, final String requestBody, final boolean expectedOutcome, final String contextPath) {
         this.scope = scope;
         this.method = method;
         this.path = path;
@@ -23,8 +21,7 @@ public class ScopeTestData
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ScopeTestData{" +
                 "scope=" + scope +
                 ", method=" + method +

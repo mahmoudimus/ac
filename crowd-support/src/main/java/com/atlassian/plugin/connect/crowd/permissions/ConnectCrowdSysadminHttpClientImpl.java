@@ -27,16 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
 public class ConnectCrowdSysadminHttpClientImpl
-        implements ConnectCrowdSysadminHttpClient
-{
+        implements ConnectCrowdSysadminHttpClient {
     private final ApplicationLinkService applicationLinkService;
     private final CrowdClientProvider crowdClientProvider;
 
     @Autowired
     public ConnectCrowdSysadminHttpClientImpl(
             ApplicationLinkService applicationLinkService,
-            CrowdClientProvider crowdClientProvider)
-    {
+            CrowdClientProvider crowdClientProvider) {
         this.applicationLinkService = applicationLinkService;
         this.crowdClientProvider = crowdClientProvider;
     }
@@ -49,11 +47,9 @@ public class ConnectCrowdSysadminHttpClientImpl
             throws CredentialsRequiredException, ResponseException,
             ApplicationPermissionException, InactiveAccountException,
             ApplicationAccessDeniedException, OperationFailedException,
-            InvalidAuthenticationException
-    {
+            InvalidAuthenticationException {
         Optional<ApplicationLink> possibleCrowd = Optional.ofNullable(Iterables.getFirst(applicationLinkService.getApplicationLinks(CrowdApplicationType.class), null));
-        if (!possibleCrowd.isPresent())
-        {
+        if (!possibleCrowd.isPresent()) {
             throw new OperationFailedException("There was no Crowd application link. This is a problem");
         }
         ReadOnlyApplicationLink crowd = possibleCrowd.get();
@@ -67,11 +63,10 @@ public class ConnectCrowdSysadminHttpClientImpl
     private HttpCookie generateSysadminCookie()
             throws InactiveAccountException, OperationFailedException,
             ApplicationAccessDeniedException, ApplicationPermissionException,
-            InvalidAuthenticationException
-    {
+            InvalidAuthenticationException {
         final UserAuthenticationContext sysadminAuthenticationContext = new UserAuthenticationContext("sysadmin",
                 null,
-                new ValidationFactor[] {}, "jira");
+                new ValidationFactor[]{}, "jira");
         {
             String ssoToken = crowdClientProvider.getCrowdClient().authenticateSSOUserWithoutValidatingPassword(sysadminAuthenticationContext);
             return new HttpCookie("studio.crowd.tokenkey", ssoToken);

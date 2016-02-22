@@ -5,15 +5,14 @@ import com.atlassian.plugin.Plugin;
 
 import java.util.Collection;
 
-public interface DynamicDescriptorRegistration
-{
+public interface DynamicDescriptorRegistration {
     Registration registerDescriptors(ModuleDescriptor<?>... descriptors);
 
     Registration registerDescriptors(Iterable<ModuleDescriptor<?>> descriptors);
 
-    public static interface Registration
-    {
+    public static interface Registration {
         void unregister();
+
         Collection<ModuleDescriptor<?>> getRegisteredDescriptors();
     }
 }

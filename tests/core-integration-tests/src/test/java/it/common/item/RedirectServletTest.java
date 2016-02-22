@@ -51,8 +51,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-public class RedirectServletTest extends MultiProductWebDriverTestBase
-{
+public class RedirectServletTest extends MultiProductWebDriverTestBase {
     private static final String WEB_ITEM_KEY = "checkPageJwtExpiry";
     private static final String ABSOLUTE_PAGE_KEY = "absolutePage";
     private static final String WEB_ITEM_ON_URL = "/pcp";
@@ -64,14 +63,12 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     private ConnectRunner runner;
 
     @BeforeClass
-    public static void setupUrlHandlers()
-    {
+    public static void setupUrlHandlers() {
         HttpURLConnection.setFollowRedirects(false);
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         WebItemTargetBean pageTarget = newWebItemTargetBean()
                 .withType(WebItemTargetType.page)
                 .build();
@@ -97,31 +94,27 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         runner.stopAndUninstall();
     }
 
     @AfterClass
-    public static void tearDownUrlHandlers()
-    {
+    public static void tearDownUrlHandlers() {
         HttpURLConnection.setFollowRedirects(true);
     }
 
     @Test
-    public void shouldReturnRedirectionToAddOnServer() throws Exception
-    {
+    public void shouldReturnRedirectionToAddOnServer() throws Exception {
         String addOnPageUrl = runner.getAddon().getBaseUrl() + WEB_ITEM_ON_URL;
 
         HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
-        String url =  response.getHeaderField("Location");
+        String url = response.getHeaderField("Location");
 
         assertThat(url, Matchers.startsWith(addOnPageUrl));
     }
 
     @Test
-    public void shouldSignRedirectionWithFreshJwtToken() throws Exception
-    {
+    public void shouldSignRedirectionWithFreshJwtToken() throws Exception {
         HttpURLConnection response1 = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
 
         long timeBeforeClick = getSystemTimeBeforeJwtIssue();
@@ -138,8 +131,7 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void shouldReturnCachedResponseWithTemporaryRedirect() throws Exception
-    {
+    public void shouldReturnCachedResponseWithTemporaryRedirect() throws Exception {
         HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
         assertThat(response.getResponseCode(), is(HttpStatus.SC_TEMPORARY_REDIRECT));
 
@@ -152,41 +144,35 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void shouldReturnNotFoundIfModuleKeyDoesNotBelongsToModuleThatNeedsRedirection() throws Exception
-    {
+    public void shouldReturnNotFoundIfModuleKeyDoesNotBelongsToModuleThatNeedsRedirection() throws Exception {
         HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, ABSOLUTE_PAGE_KEY));
         assertThat(response.getResponseCode(), is(HttpStatus.SC_NOT_FOUND));
     }
 
     @Test
-    public void shouldReturnNotFoundIfAddonKeyIsNotValid() throws Exception
-    {
+    public void shouldReturnNotFoundIfAddonKeyIsNotValid() throws Exception {
         String addOnKey = "not-existing-add-onn";
         HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
         assertThat(response.getResponseCode(), is(HttpStatus.SC_NOT_FOUND));
     }
 
     @Test
-    public void shouldReturnNotFoundIfAddonHasBeenUninstalled() throws Exception
-    {
+    public void shouldReturnNotFoundIfAddonHasBeenUninstalled() throws Exception {
         runner.stopAndUninstall();
 
         HttpURLConnection response = doRedirectRequest(getPathToRedirectServlet(addOnKey, WEB_ITEM_KEY));
         assertThat(response.getResponseCode(), Is.is(HttpStatus.SC_NOT_FOUND));
     }
 
-    private HttpURLConnection doRedirectRequest(URI uri) throws IOException
-    {
+    private HttpURLConnection doRedirectRequest(URI uri) throws IOException {
         return (HttpURLConnection) uri.toURL().openConnection();
     }
 
-    private URI getPathToRedirectServlet(String addOnKey, String moduleKey)
-    {
+    private URI getPathToRedirectServlet(String addOnKey, String moduleKey) {
         return UriBuilder.fromPath(baseUrl).path(RedirectServletPath.forModule(addOnKey, moduleKey)).build();
     }
 
-    private long getClaimDate(String urlToAddOn) throws Exception
-    {
+    private long getClaimDate(String urlToAddOn) throws Exception {
         JwtIssuerSharedSecretService sharedSecretService = issuer -> INSTALL_HANDLER_SERVLET.getInstallPayload().getSharedSecret();
         JwtIssuerValidator jwtIssuerValidator = issuer -> true;
         NimbusJwtReaderFactory jwtReaderFactory = new NimbusJwtReaderFactory(jwtIssuerValidator, sharedSecretService);
@@ -198,42 +184,33 @@ public class RedirectServletTest extends MultiProductWebDriverTestBase
         return jwtDateReader.getClaimDate();
     }
 
-    private String getQueryParam(String key, String url)
-    {
+    private String getQueryParam(String key, String url) {
         return RemotePageUtil.findInContext(url, key);
     }
 
-    private String readJwt(String urlToAddOn)
-    {
+    private String readJwt(String urlToAddOn) {
         return getQueryParam(JwtConstants.JWT_PARAM_NAME, urlToAddOn);
     }
 
-    private static class JwtDateReader implements JwtClaimVerifier
-    {
+    private static class JwtDateReader implements JwtClaimVerifier {
 
         private long claimDate = 0;
 
         @Override
-        public void verify(@Nonnull Object claim) throws JwtVerificationException, JwtParseException
-        {
-            if (claim instanceof Date)
-            {
+        public void verify(@Nonnull Object claim) throws JwtVerificationException, JwtParseException {
+            if (claim instanceof Date) {
                 claimDate = ((Date) claim).getTime();
-            }
-            else
-            {
+            } else {
                 throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to be a Date but it was a %s: [%s]", claim.getClass().getSimpleName(), claim));
             }
         }
 
-        public long getClaimDate()
-        {
+        public long getClaimDate() {
             return claimDate;
         }
     }
 
-    private long getSystemTimeBeforeJwtIssue()
-    {
+    private long getSystemTimeBeforeJwtIssue() {
         // Checking the system time across two JVM's seems unreliable, so allow a considerable discrepancy
         return System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(JwtConstants.TIME_CLAIM_LEEWAY_SECONDS);
     }

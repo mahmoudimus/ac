@@ -9,22 +9,18 @@ import com.atlassian.sal.api.user.UserManager;
 
 import com.google.common.collect.ImmutableMap;
 
-public class BlogPostEventMapper extends ConfluenceEventMapper
-{
-    public BlogPostEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+public class BlogPostEventMapper extends ConfluenceEventMapper {
+    public BlogPostEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         super(userManager, confluenceSettingsManager);
     }
 
     @Override
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return e instanceof BlogPostEvent;
     }
 
     @Override
-    public Map<String, Object> toMap(ConfluenceEvent e)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent e) {
         BlogPostEvent event = (BlogPostEvent) e;
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();

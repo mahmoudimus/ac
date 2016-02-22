@@ -17,8 +17,7 @@ import org.junit.runner.RunWith;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraPermissionScopeTransitionExistingTest extends AbstractJiraPermissionScopeTest
-{
+public class JiraPermissionScopeTransitionExistingTest extends AbstractJiraPermissionScopeTest {
 
     public JiraPermissionScopeTransitionExistingTest(ConnectUserService connectUserService,
                                                      PermissionManager permissionManager,
@@ -27,8 +26,7 @@ public class JiraPermissionScopeTransitionExistingTest extends AbstractJiraPermi
                                                      UserManager userManager,
                                                      TestPluginInstaller testPluginInstaller,
                                                      TestAuthenticator testAuthenticator,
-                                                     JiraTestUtil jiraTestUtil)
-    {
+                                                     JiraTestUtil jiraTestUtil) {
         super(connectUserService,
                 permissionManager,
                 projectService,
@@ -40,26 +38,22 @@ public class JiraPermissionScopeTransitionExistingTest extends AbstractJiraPermi
     }
 
     @Test
-    public void testAdminToProjectAdminTransitionForExistingProjects() throws Exception
-    {
+    public void testAdminToProjectAdminTransitionForExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterTransition(getAdminAddon(), getProjectAdminAddon(), Permission.PROJECT_ADMIN);
     }
 
     @Test
-    public void testProjectAdminToDeleteTransitionForExistingProjects() throws Exception
-    {
+    public void testProjectAdminToDeleteTransitionForExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterTransition(getProjectAdminAddon(), getDeleteAddon(), Permission.DELETE_ISSUE);
     }
 
     @Test
-    public void testDeleteToWriteTransitionForExistingProjects() throws Exception
-    {
+    public void testDeleteToWriteTransitionForExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterTransition(getDeleteAddon(), getWriteAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
-    public void testWriteToReadTransitionForExistingProjects() throws Exception
-    {
+    public void testWriteToReadTransitionForExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterTransition(getWriteAddon(), getReadAddon(), Permission.EDIT_ISSUE);
     }
 }

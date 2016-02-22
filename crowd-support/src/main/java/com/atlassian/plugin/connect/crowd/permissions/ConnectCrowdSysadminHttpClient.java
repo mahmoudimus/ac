@@ -14,8 +14,7 @@ import com.atlassian.sal.api.net.ResponseException;
  * Borrowed from com.atlassian.usermanagement.client.impl.UserManagementRequestServiceImpl#executeAsSysadmin
  * until there is an officially-supported way to configure unified user management permissions.
  */
-public interface ConnectCrowdSysadminHttpClient
-{
+public interface ConnectCrowdSysadminHttpClient {
     void executeAsSysadmin(Request.MethodType methodType, String url, String jsonString)
             throws CredentialsRequiredException, ResponseException,
             ApplicationPermissionException, InactiveAccountException, ApplicationAccessDeniedException,

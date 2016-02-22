@@ -9,8 +9,7 @@ import it.confluence.ConfluenceWebDriverTestBase;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public abstract class AbstractConfluenceConditionsTest extends ConfluenceWebDriverTestBase
-{
+public abstract class AbstractConfluenceConditionsTest extends ConfluenceWebDriverTestBase {
     protected static final List<String> CONDITION_NAMES = newArrayList(
             "can_edit_space_styles",
             "create_content",

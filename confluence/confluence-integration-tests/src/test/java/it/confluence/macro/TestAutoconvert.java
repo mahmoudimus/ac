@@ -44,16 +44,14 @@ import static org.junit.Assert.assertEquals;
 /**
  * Integration tests that create a Connect Addon that uses the autoconvert feature and exercise its usage in Confluence pages.
  */
-public class TestAutoconvert extends ConfluenceWebDriverTestBase
-{
+public class TestAutoconvert extends ConfluenceWebDriverTestBase {
     private static final Logger logger = LoggerFactory.getLogger(TestAutoconvert.class);
     private static final String DYNAMIC_MACRO_WITH_AUTOCONVERT = "Dynamic Macro With Autoconvert";
     private static final String STATIC_MACRO_WITH_AUTOCONVERT = "Static Macro With Autoconvert";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
                 .withUrl("/dynamic-macro?url={url}")
                 .withKey("dynamic-macro-with-autoconvert")
@@ -109,10 +107,8 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
@@ -122,29 +118,25 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
      */
 
     @Test
-    public void testAutoconvertDynamicMacroOnCreate() throws Exception
-    {
+    public void testAutoconvertDynamicMacroOnCreate() throws Exception {
         EditorPage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic");
     }
 
     @Test
-    public void testAutoconvertDynamicMacroWithTokenOnCreate() throws Exception
-    {
+    public void testAutoconvertDynamicMacroWithTokenOnCreate() throws Exception {
         EditorPage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic/variable");
     }
 
     @Test
-    public void testAutoconvertStaticMacroOnCreate() throws Exception
-    {
+    public void testAutoconvertStaticMacroOnCreate() throws Exception {
         EditorPage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static");
     }
 
     @Test
-    public void testAutoconvertStaticMacroWithTokenOnCreate() throws Exception
-    {
+    public void testAutoconvertStaticMacroWithTokenOnCreate() throws Exception {
         EditorPage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
     }
@@ -154,29 +146,25 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
      */
 
     @Test
-    public void testAutoconvertDynamicMacroOnEdit() throws Exception
-    {
+    public void testAutoconvertDynamicMacroOnEdit() throws Exception {
         EditorPage editorPage = getNewSavedPageForEditing(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic");
     }
 
     @Test
-    public void testAutoconvertDynamicMacroWithTokenOnEdit() throws Exception
-    {
+    public void testAutoconvertDynamicMacroWithTokenOnEdit() throws Exception {
         EditorPage editorPage = getNewSavedPageForEditing(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic/variable");
     }
 
     @Test
-    public void testAutoconvertStaticMacroOnEdit() throws Exception
-    {
+    public void testAutoconvertStaticMacroOnEdit() throws Exception {
         EditorPage editorPage = getNewSavedPageForEditing(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static");
     }
 
     @Test
-    public void testAutoconvertStaticMacroWithTokenOnEdit() throws Exception
-    {
+    public void testAutoconvertStaticMacroWithTokenOnEdit() throws Exception {
         EditorPage editorPage = getNewSavedPageForEditing(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
     }
@@ -186,15 +174,13 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
      */
 
     @Test
-    public void testAutoconvertPrefixNoMatch() throws Exception
-    {
+    public void testAutoconvertPrefixNoMatch() throws Exception {
         EditorPage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndNoMatch(editorPage, "WontMatchhttps://google.com");
     }
 
     @Test
-    public void testAutoconvertSuffixNoMatch() throws Exception
-    {
+    public void testAutoconvertSuffixNoMatch() throws Exception {
         EditorPage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         pasteLinkAndNoMatch(editorPage, "https://google.comwontmatch");
     }
@@ -203,8 +189,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
         Testing helper methods
      */
 
-    public EditorPage getNewSavedPageForEditing(User user, Space space)
-    {
+    public EditorPage getNewSavedPageForEditing(User user, Space space) {
         String title = "Test page " + System.currentTimeMillis();
         Page page = new Page(space, title, "I'm some testing content!");
         rpc.createPage(page);
@@ -213,18 +198,16 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
         return editorPage;
     }
 
-    private String pasteLinkAndSave(EditorPage editorPage, Option<String> macroName, String link)
-    {
+    private String pasteLinkAndSave(EditorPage editorPage, Option<String> macroName, String link) {
         EditorContent editorContent = editorPage.getEditor().getContent();
         editorContent.focus();
         editorContent.pasteContent(link);
         editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
         // if the macro name is specified we need to wait for the autoconvert to complete
-        if (macroName.isDefined())
-        {
+        if (macroName.isDefined()) {
             TimedQuery<Boolean> query = editorContent.isElementPresentInEditorContentTimed(By.cssSelector("img[data-macro-name='" + macroName.get() + "']"));
-            Poller.waitUntilTrue("autoconvert round trip failed: "+editorContent.getTimedHtml().byDefaultTimeout(), query);
+            Poller.waitUntilTrue("autoconvert round trip failed: " + editorContent.getTimedHtml().byDefaultTimeout(), query);
             logger.error("found image - content: " + editorContent.getTimedHtml().byDefaultTimeout());
         }
 
@@ -233,10 +216,8 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
         return rpc.getPageContent(pageId);
     }
 
-    private void pasteLinkAndMatch(EditorPage editorPage, String macroName, String link)
-    {
-        try
-        {
+    private void pasteLinkAndMatch(EditorPage editorPage, String macroName, String link) {
+        try {
             String pageContent = pasteLinkAndSave(editorPage, Option.some(macroName), link);
             Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
             // check that the macro was created correctly
@@ -248,16 +229,13 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
             assertEquals(1, parameterElements.size());
             Element urlParameter = parameterElements.get(0);
             assertEquals(link, urlParameter.text());
-        }
-        finally
-        {
+        } finally {
             cancelEditor(editorPage);
         }
 
     }
 
-    private void pasteLinkAndNoMatch(EditorPage editorPage, String link)
-    {
+    private void pasteLinkAndNoMatch(EditorPage editorPage, String link) {
         String pageContent = pasteLinkAndSave(editorPage, Option.<String>none(), link);
         Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
         // check that the macro was created correctly

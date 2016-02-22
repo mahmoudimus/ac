@@ -7,8 +7,7 @@ import java.util.Optional;
 
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 
-public interface IFrameRenderStrategy
-{
+public interface IFrameRenderStrategy {
     boolean shouldShow(Map<String, ? extends Object> conditionContext);
 
     boolean needRedirection();

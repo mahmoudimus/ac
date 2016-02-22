@@ -20,75 +20,60 @@ import org.osgi.framework.Version;
 /**
  * Manifest for a remote plugin
  */
-public class RemotePluginContainerManifestProducer implements ManifestProducer
-{
-    public Manifest getManifest(final URI url) throws ManifestNotFoundException
-    {
-        return new Manifest()
-        {
-            public ApplicationId getId()
-            {
+public class RemotePluginContainerManifestProducer implements ManifestProducer {
+    public Manifest getManifest(final URI url) throws ManifestNotFoundException {
+        return new Manifest() {
+            public ApplicationId getId() {
                 return ApplicationIdUtil.generate(url);
             }
 
-            public String getName()
-            {
+            public String getName() {
                 return "Plugin Container";
             }
 
-            public TypeId getTypeId()
-            {
+            public TypeId getTypeId() {
                 return RemotePluginContainerApplicationTypeImpl.TYPE_ID;
             }
 
-            public String getVersion()
-            {
+            public String getVersion() {
                 return null;
             }
 
-            public Long getBuildNumber()
-            {
+            public Long getBuildNumber() {
                 return 1L;
             }
 
-            public URI getUrl()
-            {
+            public URI getUrl() {
                 return URI.create("https://localhost");
             }
 
             @Override
-            public URI getIconUrl()
-            {
+            public URI getIconUrl() {
                 return null;
             }
 
-            public Version getAppLinksVersion()
-            {
+            public Version getAppLinksVersion() {
                 return null;
             }
 
             @Override
-            public Set<Class<? extends AuthenticationProvider>> getInboundAuthenticationTypes()
-            {
+            public Set<Class<? extends AuthenticationProvider>> getInboundAuthenticationTypes() {
                 return ImmutableSet.<Class<? extends AuthenticationProvider>>of(OAuthAuthenticationProvider.class);
             }
 
             @Override
-            public Set<Class<? extends AuthenticationProvider>> getOutboundAuthenticationTypes()
-            {
+            public Set<Class<? extends AuthenticationProvider>> getOutboundAuthenticationTypes() {
                 return ImmutableSet.<Class<? extends AuthenticationProvider>>of(OAuthAuthenticationProvider.class);
             }
 
             @Override
-            public Boolean hasPublicSignup()
-            {
+            public Boolean hasPublicSignup() {
                 return false;
             }
         };
     }
 
-    public ApplicationStatus getStatus(URI url)
-    {
+    public ApplicationStatus getStatus(URI url) {
         return ApplicationStatus.AVAILABLE;
     }
 }

@@ -25,8 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class TestCrowdAddonUserService
-{
+public class TestCrowdAddonUserService {
     public static final String PRODUCT_KEY = "the-product";
     public static final String ADDON_KEY = "the-addon-key";
     public static final String ADDON_USERNAME = usernameForAddon(ADDON_KEY);
@@ -45,8 +44,7 @@ public class TestCrowdAddonUserService
     private User user;
 
     @Before
-    public void beforeEach()
-    {
+    public void beforeEach() {
         initMocks(this);
         when(user.getName()).thenReturn(ADDON_USERNAME);
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
@@ -58,10 +56,9 @@ public class TestCrowdAddonUserService
                 hostProperties);
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
-    public void getOrCreateUserNameCreatesAddonUser() throws Exception
-    {
+    public void getOrCreateUserNameCreatesAddonUser() throws Exception {
         when(hostProperties.getKey()).thenReturn(PRODUCT_KEY);
         crowdAddonUserService.getOrCreateAddonUserName(ADDON_KEY, ADDON_NAME);
 
@@ -71,15 +68,13 @@ public class TestCrowdAddonUserService
     }
 
     @Test
-    public void getOrCreateUserNameCreatesAddonGroup() throws Exception
-    {
+    public void getOrCreateUserNameCreatesAddonGroup() throws Exception {
         crowdAddonUserService.getOrCreateAddonUserName(ADDON_KEY, ADDON_NAME);
         verify(connectAddonUserGroupProvisioningService).ensureGroupExists(ADDON_USER_GROUP_KEY);
     }
 
     @Test
-    public void getOrCreateUserNameAddsAddonUserToGroupsWhenUserIsNew() throws Exception
-    {
+    public void getOrCreateUserNameAddsAddonUserToGroupsWhenUserIsNew() throws Exception {
         when(crowdAddonUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
         when(crowdAddonUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
 
@@ -91,8 +86,7 @@ public class TestCrowdAddonUserService
     }
 
     @Test
-    public void getOrCreateUserNameAddsPreExistingUserToAddonGroupOnly() throws Exception
-    {
+    public void getOrCreateUserNameAddsPreExistingUserToAddonGroupOnly() throws Exception {
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
                 any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
 
@@ -106,16 +100,14 @@ public class TestCrowdAddonUserService
     }
 
     @Test
-    public void getOrCreateUserNameDoesNotInvalidateSessionsWhenUserIsNew() throws Exception
-    {
+    public void getOrCreateUserNameDoesNotInvalidateSessionsWhenUserIsNew() throws Exception {
         crowdAddonUserService.getOrCreateAddonUserName(ADDON_KEY, ADDON_NAME);
 
         verify(connectCrowdService, never()).invalidateSessions(ADDON_USERNAME);
     }
 
     @Test
-    public void getOrCreateUserNameInvalidatesSessionsForPreExistingUser() throws Exception
-    {
+    public void getOrCreateUserNameInvalidatesSessionsForPreExistingUser() throws Exception {
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
                 any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
 

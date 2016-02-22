@@ -49,8 +49,7 @@ import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class WebItemModuleDescriptorFactoryTest
-{
+public class WebItemModuleDescriptorFactoryTest {
     private static final String ADDON_BASE_URL = "https://myapp.heroku.com/foo";
 
     @Mock
@@ -74,8 +73,7 @@ public class WebItemModuleDescriptorFactoryTest
     private ConnectAddonBean addon;
 
     @Before
-    public void setup() throws ConditionLoadingException
-    {
+    public void setup() throws ConditionLoadingException {
         plugin = new PluginForTests("my-key", "My Plugin");
         this.addon = newConnectAddonBean().withKey("my-key").build();
 
@@ -93,11 +91,9 @@ public class WebItemModuleDescriptorFactoryTest
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
 
         when(webFragmentHelper.renderVelocityFragment(anyString(), anyMap())).thenAnswer(
-                new Answer<Object>()
-                {
+                new Answer<Object>() {
                     @Override
-                    public Object answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
+                    public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                         Object[] args = invocationOnMock.getArguments();
                         return (String) args[0];
                     }
@@ -106,28 +102,25 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void completeKeyIsCorrect()
-    {
+    public void completeKeyIsCorrect() {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         descriptor.enabled();
 
-        assertThat(descriptor.getCompleteKey(), is("my-key:" + addonAndModuleKey("my-key","my-web-item")));
+        assertThat(descriptor.getCompleteKey(), is("my-key:" + addonAndModuleKey("my-key", "my-web-item")));
     }
 
     @Test
-    public void linkIdIsCorrect()
-    {
+    public void linkIdIsCorrect() {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         descriptor.enabled();
 
-        assertThat(descriptor.getLink().getId(), is(addonAndModuleKey("my-key-my-key","my-web-item")));
+        assertThat(descriptor.getLink().getId(), is(addonAndModuleKey("my-key-my-key", "my-web-item")));
     }
 
     @Test
-    public void sectionIsCorrect()
-    {
+    public void sectionIsCorrect() {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         descriptor.enabled();
@@ -136,8 +129,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void urlPrefixIsCorrect()
-    {
+    public void urlPrefixIsCorrect() {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         descriptor.enabled();
@@ -146,8 +138,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void weightIsCorrect()
-    {
+    public void weightIsCorrect() {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         descriptor.enabled();
@@ -156,8 +147,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void iconIsCorrect()
-    {
+    public void iconIsCorrect() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withIcon(
                         newIconBean()
@@ -178,8 +168,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsEmptyWhenNotDefined()
-    {
+    public void styleClassIsEmptyWhenNotDefined() {
         WebItemModuleBean bean = createWebItemBeanBuilder().build();
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         descriptor.enabled();
@@ -188,8 +177,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsPresetWhenDefined()
-    {
+    public void styleClassIsPresetWhenDefined() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withStyleClasses("batman", "robin", "mr-freeze")
                 .build();
@@ -200,8 +188,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsCorrectWithNoTarget()
-    {
+    public void styleClassIsCorrectWithNoTarget() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().build())
                 .build();
@@ -212,8 +199,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsCorrectWithDialogTarget()
-    {
+    public void styleClassIsCorrectWithDialogTarget() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
@@ -224,8 +210,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsCorrectWithInlineDialogTarget()
-    {
+    public void styleClassIsCorrectWithInlineDialogTarget() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
@@ -235,8 +220,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsCorrectWithStylesAndInlineDialogTarget()
-    {
+    public void styleClassIsCorrectWithStylesAndInlineDialogTarget() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withStyleClasses("batman", "robin")
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
@@ -248,7 +232,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsCorrectWithPluginKeyAndDialogTarget(){
+    public void styleClassIsCorrectWithPluginKeyAndDialogTarget() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
@@ -258,7 +242,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsCorrectWithModuleKeyAndDialogTarget(){
+    public void styleClassIsCorrectWithModuleKeyAndDialogTarget() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
@@ -268,7 +252,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsCorrectWithPluginKeyAndInlineDialogTarget(){
+    public void styleClassIsCorrectWithPluginKeyAndInlineDialogTarget() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
@@ -278,7 +262,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void styleClassIsCorrectWithModuleKeyAndInlineDialogTarget(){
+    public void styleClassIsCorrectWithModuleKeyAndInlineDialogTarget() {
         WebItemModuleBean bean = createWebItemBeanBuilder()
                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
@@ -287,8 +271,7 @@ public class WebItemModuleDescriptorFactoryTest
         assertTrue(descriptor.getStyleClass().contains("ap-module-key-" + descriptor.getKey()));
     }
 
-    private WebItemModuleBeanBuilder createWebItemBeanBuilder()
-    {
+    private WebItemModuleBeanBuilder createWebItemBeanBuilder() {
         return newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withKey("my-web-item")

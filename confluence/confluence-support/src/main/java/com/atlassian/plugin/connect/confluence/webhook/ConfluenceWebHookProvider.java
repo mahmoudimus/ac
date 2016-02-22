@@ -39,19 +39,16 @@ import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
  */
 @ExportAsService
 @ConfluenceComponent
-public class ConfluenceWebHookProvider implements WebHookProvider
-{
+public class ConfluenceWebHookProvider implements WebHookProvider {
     private final ConfluenceEventSerializerFactory serializer;
 
     @Inject
-    public ConfluenceWebHookProvider(ConfluenceEventSerializerFactory serializer)
-    {
+    public ConfluenceWebHookProvider(ConfluenceEventSerializerFactory serializer) {
         this.serializer = serializer;
     }
 
     @Override
-    public void provide(WebHookRegistrar publish)
-    {
+    public void provide(WebHookRegistrar publish) {
         publish.webhook("group_removed").whenFired(GroupRemoveEvent.class).serializedWith(serializer);
         publish.webhook("group_created").whenFired(GroupCreateEvent.class).serializedWith(serializer);
         publish.webhook("user_removed").whenFired(UserRemoveEvent.class).serializedWith(serializer);

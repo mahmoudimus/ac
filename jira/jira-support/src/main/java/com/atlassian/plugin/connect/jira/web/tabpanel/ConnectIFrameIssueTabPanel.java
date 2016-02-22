@@ -26,28 +26,24 @@ import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUt
 import static com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
 import static java.util.Collections.emptyMap;
 
-public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
-{
+public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3 {
     private final IFrameRenderStrategy iFrameRenderStrategy;
     private final ModuleContextFilter moduleContextFilter;
 
-    public ConnectIFrameIssueTabPanel(IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter)
-    {
+    public ConnectIFrameIssueTabPanel(IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter) {
         this.iFrameRenderStrategy = iFrameRenderStrategy;
         this.moduleContextFilter = moduleContextFilter;
     }
 
     @Override
-    public boolean showPanel(final ShowPanelRequest request)
-    {
+    public boolean showPanel(final ShowPanelRequest request) {
         Map<String, Object> conditionContext = Maps.newHashMap();
         populateConditionContext(conditionContext, request);
         return iFrameRenderStrategy.shouldShow(conditionContext);
     }
 
     @Override
-    public List<IssueAction> getActions(final GetActionsRequest request)
-    {
+    public List<IssueAction> getActions(final GetActionsRequest request) {
         // parse and filter module context
         JiraModuleContextParameters unfilteredContext = createUnfilteredContext(request.issue());
         ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
@@ -58,24 +54,20 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
         return Lists.<IssueAction>newArrayList(stringAction);
     }
 
-    protected void populateConditionContext(Map<String, Object> conditionContext, ShowPanelRequest request)
-    {
+    protected void populateConditionContext(Map<String, Object> conditionContext, ShowPanelRequest request) {
         JiraHelper helper = new JiraHelper(ExecutingHttpRequest.get(), request.issue().getProjectObject(),
                 ImmutableMap.<String, Object>of("issue", request.issue()));
         conditionContext.put(CONTEXT_KEY_HELPER, helper);
-        if (!request.isAnonymous())
-        {
+        if (!request.isAnonymous()) {
             ApplicationUser user = request.remoteUser();
-            if (user != null)
-            {
+            if (user != null) {
                 conditionContext.put(CONTEXT_KEY_USERNAME, user.getUsername());
             }
         }
         conditionContext.put(MODULE_CONTEXT_KEY, createUnfilteredContext(request.issue()));
     }
 
-    private JiraModuleContextParameters createUnfilteredContext(final Issue issue)
-    {
+    private JiraModuleContextParameters createUnfilteredContext(final Issue issue) {
         JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl(emptyMap());
         unfilteredContext.addIssue(issue);
         return unfilteredContext;

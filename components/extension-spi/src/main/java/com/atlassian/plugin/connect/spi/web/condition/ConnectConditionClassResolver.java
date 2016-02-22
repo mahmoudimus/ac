@@ -27,8 +27,7 @@ import com.google.common.annotations.VisibleForTesting;
  *
  * @see com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor
  */
-public interface ConnectConditionClassResolver
-{
+public interface ConnectConditionClassResolver {
 
     /**
      * Returns the list of entries provided by this condition class resolver.
@@ -40,8 +39,7 @@ public interface ConnectConditionClassResolver
     /**
      * A condition class resolver entry, representing a mapping from symbolic condition name to condition class.
      */
-    final class Entry
-    {
+    final class Entry {
 
         private final String conditionName;
 
@@ -53,8 +51,7 @@ public interface ConnectConditionClassResolver
 
         private final boolean inlineSupport;
 
-        private Entry(Builder builder)
-        {
+        private Entry(Builder builder) {
             this.conditionName = builder.conditionName;
             this.conditionClass = builder.conditionClass;
             this.parameterPredicates = builder.parameterPredicates;
@@ -63,20 +60,18 @@ public interface ConnectConditionClassResolver
         }
 
         @VisibleForTesting
-        public String getConditionName()
-        {
+        public String getConditionName() {
             return conditionName;
         }
 
         /**
          * Creates a builder for an entry with the given fields.
          *
-         * @param conditionName the symbolic name of the condition
+         * @param conditionName  the symbolic name of the condition
          * @param conditionClass the condition class
          * @return a resolver entry builder
          */
-        public static Builder newEntry(String conditionName, Class<? extends Condition> conditionClass)
-        {
+        public static Builder newEntry(String conditionName, Class<? extends Condition> conditionClass) {
             return new Builder(conditionName, conditionClass);
         }
 
@@ -87,8 +82,7 @@ public interface ConnectConditionClassResolver
          * @param conditionBean a condition element from an add-on descriptor
          * @return the condition class or {@link Optional#empty()}
          */
-        public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean)
-        {
+        public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean) {
             return getConditionClass(conditionBean, false, false);
         }
 
@@ -99,8 +93,7 @@ public interface ConnectConditionClassResolver
          * @param conditionBean a condition element from an add-on descriptor
          * @return the condition class or {@link Optional#empty()}
          */
-        public Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean)
-        {
+        public Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean) {
             return getConditionClass(conditionBean, false, true);
         }
 
@@ -111,45 +104,36 @@ public interface ConnectConditionClassResolver
          * @param conditionBean a condition element from an add-on descriptor
          * @return the condition class or {@link Optional#empty()}
          */
-        public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean)
-        {
+        public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean) {
             return getConditionClass(conditionBean, true, false);
         }
 
-        private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean, boolean requireContextFree, boolean inline)
-        {
+        private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean, boolean requireContextFree, boolean inline) {
             Optional<Class<? extends Condition>> optionalClass = Optional.empty();
             if (isApplicableToContext(requireContextFree)
                     && this.conditionName.equals(conditionBean.getCondition())
                     && isApplicableToParameters(conditionBean.getParams())
-                    && (!inline || inlineSupport))
-            {
+                    && (!inline || inlineSupport)) {
                 optionalClass = Optional.of(conditionClass);
             }
             return optionalClass;
         }
 
-        private boolean isApplicableToContext(boolean requireContextFree)
-        {
+        private boolean isApplicableToContext(boolean requireContextFree) {
             return !requireContextFree || contextFree;
         }
 
-        private boolean isApplicableToParameters(Map<String, String> conditionParameters)
-        {
+        private boolean isApplicableToParameters(Map<String, String> conditionParameters) {
             return parameterPredicates.stream()
-                    .reduce(new BinaryOperator<Predicate<Map<String, String>>>()
-                    {
+                    .reduce(new BinaryOperator<Predicate<Map<String, String>>>() {
                         @Override
-                        public Predicate<Map<String, String>> apply(Predicate<Map<String, String>> p1, Predicate<Map<String, String>> p2)
-                        {
+                        public Predicate<Map<String, String>> apply(Predicate<Map<String, String>> p1, Predicate<Map<String, String>> p2) {
                             return p1.and(p2);
                         }
                     })
-                    .map(new Function<Predicate<Map<String, String>>, Boolean>()
-                    {
+                    .map(new Function<Predicate<Map<String, String>>, Boolean>() {
                         @Override
-                        public Boolean apply(Predicate<Map<String, String>> predicate)
-                        {
+                        public Boolean apply(Predicate<Map<String, String>> predicate) {
                             return predicate.test(conditionParameters);
                         }
                     })
@@ -159,8 +143,7 @@ public interface ConnectConditionClassResolver
         /**
          * A builder for condition class resolver entries.
          */
-        public static final class Builder
-        {
+        public static final class Builder {
 
             private String conditionName;
 
@@ -171,8 +154,7 @@ public interface ConnectConditionClassResolver
             private boolean contextFree;
             public boolean inlineSupport = true;
 
-            private Builder(String conditionName, Class<? extends Condition> conditionClass)
-            {
+            private Builder(String conditionName, Class<? extends Condition> conditionClass) {
                 this.conditionName = conditionName;
                 this.conditionClass = conditionClass;
             }
@@ -184,8 +166,7 @@ public interface ConnectConditionClassResolver
              * @param parameterPredicates predicates on the parameters of the condition
              * @return the builder
              */
-            public Builder withPredicates(Predicate<Map<String, String>>... parameterPredicates)
-            {
+            public Builder withPredicates(Predicate<Map<String, String>>... parameterPredicates) {
                 this.parameterPredicates = Arrays.asList(parameterPredicates);
                 return this;
             }
@@ -197,8 +178,7 @@ public interface ConnectConditionClassResolver
              *
              * @return the builder
              */
-            public Builder contextFree()
-            {
+            public Builder contextFree() {
                 this.contextFree = true;
                 return this;
             }
@@ -211,8 +191,7 @@ public interface ConnectConditionClassResolver
              *
              * @return this builder
              */
-            public Builder withoutInlineSupport()
-            {
+            public Builder withoutInlineSupport() {
                 this.inlineSupport = false;
                 return this;
             }
@@ -222,8 +201,7 @@ public interface ConnectConditionClassResolver
              *
              * @return the resolver entry
              */
-            public Entry build()
-            {
+            public Entry build() {
                 return new Entry(this);
             }
         }

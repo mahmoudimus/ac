@@ -17,8 +17,7 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteMessageGeneralPage extends ConnectAddonPage implements Page
-{
+public class RemoteMessageGeneralPage extends ConnectAddonPage implements Page {
 
     @Inject
     protected PageElementFinder elementFinder;
@@ -28,13 +27,11 @@ public class RemoteMessageGeneralPage extends ConnectAddonPage implements Page
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
-    public void openInfoMessage()
-    {
+    public void openInfoMessage() {
         runInFrame(() -> {
             PageElement element = elementFinder.find(By.id("display-message"));
             waitUntilTrue(element.timed().isVisible());
@@ -43,8 +40,7 @@ public class RemoteMessageGeneralPage extends ConnectAddonPage implements Page
         });
     }
 
-    public String getMessageTitleText()
-    {
+    public String getMessageTitleText() {
         return elementFinder.find(By.cssSelector("#ac-message-container .aui-message .title")).getText();
     }
 }

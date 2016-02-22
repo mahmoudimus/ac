@@ -21,13 +21,11 @@ import static org.junit.Assert.assertThat;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class RequestJsonParameterUtilTest
-{
+public class RequestJsonParameterUtilTest {
     RequestJsonParameterUtil extractor = new RequestJsonParameterUtil();
 
     @Test
-    public void doesNotModifyParamsIfContextParamNotProvided()
-    {
+    public void doesNotModifyParamsIfContextParamNotProvided() {
         final Map<String, String[]> requestParams = ImmutableMap.of(
                 "project.id", new String[]{"10", "20"},
                 "project.key", new String[]{"myKey"},
@@ -39,8 +37,7 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test
-    public void extractsContextFromParamAndAddsToParamMap()
-    {
+    public void extractsContextFromParamAndAddsToParamMap() {
         String[] contextJsonStr = new String[]{"{\"project\":{\"id\":10100}}"};
 
         Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr, "someparam", new String[]{"somevalue"});
@@ -53,20 +50,17 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test(expected = InvalidContextParameterException.class)
-    public void throwsErrorWhenFailToParseJson()
-    {
+    public void throwsErrorWhenFailToParseJson() {
         extractor.tryExtractContextFromJson(ImmutableMap.of(CONTEXT_PARAMETER_KEY, new String[]{"mary had a little lamb"}));
     }
 
     @Test(expected = InvalidContextParameterException.class)
-    public void throwsErrorWhenFailToParseJsonDueToNullValue()
-    {
+    public void throwsErrorWhenFailToParseJsonDueToNullValue() {
         extractor.tryExtractContextFromJson(ImmutableMap.of(CONTEXT_PARAMETER_KEY, new String[]{"{\"project\":{\"key\":}}"}));
     }
 
     @Test
-    public void emptyJsonValueMapsToSingleArrayWithEmptyString()
-    {
+    public void emptyJsonValueMapsToSingleArrayWithEmptyString() {
         String[] contextJsonStr = new String[]{"{\"project\":{\"key\": \"\"}}"};
 
         Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr);
@@ -75,8 +69,7 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test
-    public void contextJsonParamOverwritesUrlParam()
-    {
+    public void contextJsonParamOverwritesUrlParam() {
         String[] contextJsonStr = new String[]{"{\"project\":{\"id\":10100}}"};
 
         Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr, "project.id",
@@ -87,8 +80,7 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test
-    public void jsonArraysConvertToStringArrayValues()
-    {
+    public void jsonArraysConvertToStringArrayValues() {
         String[] contextJsonStr = new String[]{"{\"project\":{\"ids\": [10100, 500]}}"};
 
         Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr);
@@ -98,8 +90,7 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test
-    public void copesWithNullValuesInParameters()
-    {
+    public void copesWithNullValuesInParameters() {
         String[] contextJsonStr = new String[]{"{\"project\":{\"id\":10100}}"};
 
         final HashMap<String, String[]> requestParams = Maps.newHashMap();
@@ -112,19 +103,17 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test
-    public void copesWithExplicitNullValuesAtTopLevel()
-    {
+    public void copesWithExplicitNullValuesAtTopLevel() {
         ImmutableMap<String, String[]> requestParams =
-                ImmutableMap.of(CONTEXT_PARAMETER_KEY, new String[] { "{\"project\":null}" });
+                ImmutableMap.of(CONTEXT_PARAMETER_KEY, new String[]{"{\"project\":null}"});
         final Map<String, String[]> processedParams = extractor.tryExtractContextFromJson(requestParams);
         assertThat(processedParams.entrySet(), hasSize(1));
-        assertThat(processedParams.get("project"), is(new String[] {null}));
+        assertThat(processedParams.get("project"), is(new String[]{null}));
     }
 
 
     @Test
-    public void upperCaseUrlParamsNotOverriddenByJson()
-    {
+    public void upperCaseUrlParamsNotOverriddenByJson() {
         String[] contextJsonStr = new String[]{"{\"project\":{\"id\":10100}}"};
 
         Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr, "PROJECT.ID",
@@ -136,8 +125,7 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test
-    public void upperCaseContextJsonParamDoesNotOverwriteLowerCaseUrlParam()
-    {
+    public void upperCaseContextJsonParamDoesNotOverwriteLowerCaseUrlParam() {
         String[] contextJsonStr = new String[]{"{\"PROJECT\":{\"ID\":10100}}"};
 
         Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr, "project.id",
@@ -149,8 +137,7 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test(expected = InvalidContextParameterException.class)
-    public void throwsWhenMultipleJsonParamsSupplied()
-    {
+    public void throwsWhenMultipleJsonParamsSupplied() {
         String[] contextJsonStr = new String[]{"{\"project\":{\"id\":10100}}", "{\"issue\":{\"key\":\"FOO\"}}"};
 
         extractor.tryExtractContextFromJson(ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr));
@@ -158,8 +145,7 @@ public class RequestJsonParameterUtilTest
 
 
     @Test
-    public void nonUTFIsAccepted()
-    {
+    public void nonUTFIsAccepted() {
         String[] contextJsonStr = new String[]{"{\"project\":{\"key\": \"foo\\ud800\\udc35\"}}"};
 
         Map<String, String[]> requestParams = ImmutableMap.of(CONTEXT_PARAMETER_KEY, contextJsonStr);

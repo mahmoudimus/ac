@@ -8,18 +8,15 @@ import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
 /**
  * @since 1.0
  */
-public class WebSectionModuleDescriptorFactoryForTests implements ProductSpecificWebSectionModuleDescriptorFactory
-{
+public class WebSectionModuleDescriptorFactoryForTests implements ProductSpecificWebSectionModuleDescriptorFactory {
     private WebInterfaceManager webInterfaceManager;
 
-    public WebSectionModuleDescriptorFactoryForTests(WebInterfaceManager webInterfaceManager)
-    {
+    public WebSectionModuleDescriptorFactoryForTests(WebInterfaceManager webInterfaceManager) {
         this.webInterfaceManager = webInterfaceManager;
     }
 
     @Override
-    public WebSectionModuleDescriptor createWebSectionModuleDescriptor()
-    {
+    public WebSectionModuleDescriptor createWebSectionModuleDescriptor() {
         return new DefaultWebSectionModuleDescriptor(webInterfaceManager);
     }
 }

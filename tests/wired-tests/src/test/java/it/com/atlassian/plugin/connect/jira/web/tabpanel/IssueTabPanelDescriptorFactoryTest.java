@@ -19,40 +19,33 @@ import static org.junit.Assert.assertEquals;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class IssueTabPanelDescriptorFactoryTest extends AbstractTabPanelDescriptorFactoryTest
-{
-    public IssueTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
-    {
+public class IssueTabPanelDescriptorFactoryTest extends AbstractTabPanelDescriptorFactoryTest {
+    public IssueTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor) {
         super(descriptorFactory, testPluginInstaller, testAuthenticator, pluginAccessor);
     }
 
     @Override
-    protected String getModuleFieldName()
-    {
+    protected String getModuleFieldName() {
         return new IssueTabPanelModuleMeta().getDescriptorKey();
     }
 
     @Override
-    protected TabPanelDescriptorHints getDescriptorHints()
-    {
+    protected TabPanelDescriptorHints getDescriptorHints() {
         return IssueTabPanelModuleProvider.HINTS;
     }
 
     @Test
-    public void createsElementWithCorrectOrder()
-    {
+    public void createsElementWithCorrectOrder() {
         assertEquals(MODULE_WEIGHT, ((ConnectIssueTabPanelModuleDescriptor) getDescriptor()).getOrder());
     }
 
     @Test
-    public void createsElementWithCorrectClass()
-    {
+    public void createsElementWithCorrectClass() {
         assertEquals(getDescriptorHints().getModuleClass().getName(), ((ConnectIssueTabPanelModuleDescriptor) getDescriptor()).getModuleClassName());
     }
 
     @Test
-    public void createsElementWithCorrectLabelText() throws IOException
-    {
+    public void createsElementWithCorrectLabelText() throws IOException {
         assertEquals(MODULE_NAME, ((ConnectIssueTabPanelModuleDescriptor) getDescriptorFromInstalledPlugin()).getLabel());
     }
 }

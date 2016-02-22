@@ -16,8 +16,7 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
  *
  * @since v1.1.58
  */
-public interface TestedProductAccessor
-{
+public interface TestedProductAccessor {
     void login(TestUser user);
 
     <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args);
@@ -28,10 +27,8 @@ public interface TestedProductAccessor
 
     String getGloballyVisibleLocation();
 
-    static TestedProductAccessor get()
-    {
-        switch (System.getProperty("testedProduct", ""))
-        {
+    static TestedProductAccessor get() {
+        switch (System.getProperty("testedProduct", "")) {
             case "confluence":
                 return new ConfluenceTestedProductAccessor();
             default:

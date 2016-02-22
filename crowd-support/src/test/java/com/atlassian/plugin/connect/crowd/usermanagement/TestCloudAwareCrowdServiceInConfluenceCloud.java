@@ -33,22 +33,31 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class TestCloudAwareCrowdServiceInConfluenceCloud
-{
+public class TestCloudAwareCrowdServiceInConfluenceCloud {
     public static final PasswordCredential PASSWORD = PasswordCredential.unencrypted("addon-password");
-    @Mock private ApplicationService applicationService;
-    @Mock private CrowdApplicationProvider crowdApplicationProvider;
-    @Mock private HostProperties hostProperties;
-    @Mock private CrowdServiceLocator crowdServiceLocator;
-    @Mock private ConnectCrowdBase remote;
-    @Mock private ConnectCrowdBase embedded;
-    @Mock private FeatureManager featureManager;
-    @Mock private CrowdClientProvider crowdClientProvider;
-    @Mock private UserReconciliation userReconciliation;
+    @Mock
+    private ApplicationService applicationService;
+    @Mock
+    private CrowdApplicationProvider crowdApplicationProvider;
+    @Mock
+    private HostProperties hostProperties;
+    @Mock
+    private CrowdServiceLocator crowdServiceLocator;
+    @Mock
+    private ConnectCrowdBase remote;
+    @Mock
+    private ConnectCrowdBase embedded;
+    @Mock
+    private FeatureManager featureManager;
+    @Mock
+    private CrowdClientProvider crowdClientProvider;
+    @Mock
+    private UserReconciliation userReconciliation;
 
     private CloudAwareCrowdService cloudAwareCrowdService;
 
-    @Rule public ExpectedException thrown = ExpectedException.none();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private static final String ADDON_USER_NAME = "addon-user-name";
     private static final String ADDON_DISPLAY_NAME = "Addon Display Name";
@@ -56,8 +65,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
     private static final ImmutableMap<String, Set<String>> ATTRIBUTES = ImmutableMap.<String, Set<String>>of("attribute-name", newHashSet(singletonList("attribute-value")));
 
     @Before
-    public void beforeEach()
-    {
+    public void beforeEach() {
         initMocks(this);
 
         mockCrowdServiceLocator(crowdServiceLocator, embedded, remote);
@@ -68,10 +76,9 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, crowdApplicationProvider, hostProperties, featureManager, crowdClientProvider, userReconciliation);
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
-    public void createOrEnableUserUsesRemote()
-    {
+    public void createOrEnableUserUsesRemote() {
         final User mockUser = mock(User.class);
         when(embedded.findUserByName(anyString())).thenReturn((Optional) Optional.of(mockUser));
         Map<String, Set<String>> noAttributes = Collections.emptyMap();
@@ -81,22 +88,19 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         verify(embedded, never()).createOrEnableUser(anyString(), anyString(), anyString(), any(PasswordCredential.class));
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
     public void createOrEnableUserSetsAttributesOnBothSidesAfterSync()
-            throws InterruptedException
-    {
+            throws InterruptedException {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
 
         when(embedded.findUserByName(anyString())).thenReturn(Optional.empty(), (Optional) Optional.of(user));
 
         ScheduledThreadPoolExecutor simulatedCrowdSyncEvent = new ScheduledThreadPoolExecutor(1);
-        simulatedCrowdSyncEvent.schedule(new Runnable()
-        {
+        simulatedCrowdSyncEvent.schedule(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 cloudAwareCrowdService.handleSync();
             }
         }, 1, TimeUnit.SECONDS);
@@ -107,16 +111,15 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
     }
 
     @Test
-    public void createOrEnableUserSetsAttributesOnSecondSyncEvent()
-    {
+    public void createOrEnableUserSetsAttributesOnSecondSyncEvent() {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
 
         when(embedded.findUserByName(anyString())).thenReturn(
-            Optional.empty(),               // No user is found when we search for an existing user
-            Optional.empty(),               // The user still doesn't show up after a directory sync
-            (Optional) Optional.of(user),   // The user shows up after a second directory sync
-            (Optional) Optional.of(user)    // The user is still there when we double-check at the end
+                Optional.empty(),               // No user is found when we search for an existing user
+                Optional.empty(),               // The user still doesn't show up after a directory sync
+                (Optional) Optional.of(user),   // The user shows up after a second directory sync
+                (Optional) Optional.of(user)    // The user is still there when we double-check at the end
         );
 
         cloudAwareCrowdService.setSyncTimeout(1);
@@ -124,21 +127,17 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         ScheduledThreadPoolExecutor simulatedCrowdSyncEvent = new ScheduledThreadPoolExecutor(2);
 
         // The first sync event
-        simulatedCrowdSyncEvent.schedule(new Runnable()
-        {
+        simulatedCrowdSyncEvent.schedule(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 cloudAwareCrowdService.handleSync();
             }
         }, 300, TimeUnit.MILLISECONDS);
 
         // The second sync event
-        simulatedCrowdSyncEvent.schedule(new Runnable()
-        {
+        simulatedCrowdSyncEvent.schedule(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 cloudAwareCrowdService.handleSync();
             }
         }, 600, TimeUnit.MILLISECONDS);
@@ -151,14 +150,13 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
 
 
     @Test
-    public void createOrEnableUserSetsAttributesOnBothSidesAfterMissedSyncEvent()
-    {
+    public void createOrEnableUserSetsAttributesOnBothSidesAfterMissedSyncEvent() {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
 
         when(embedded.findUserByName(anyString())).thenReturn(
-            Optional.empty(),               // No user is found when we search for an existing user
-            (Optional) Optional.of(user)    // The user shows up after the timeout has elapsed
+                Optional.empty(),               // No user is found when we search for an existing user
+                (Optional) Optional.of(user)    // The user shows up after the timeout has elapsed
         );
 
         cloudAwareCrowdService.setSyncTimeout(1);
@@ -168,10 +166,9 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         verify(embedded).setAttributesOnUser(ADDON_USER_NAME, ATTRIBUTES);
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
-    public void createOrEnableUserThrowsWhenUserFailsToSync()
-    {
+    public void createOrEnableUserThrowsWhenUserFailsToSync() {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
         when(embedded.findUserByName(anyString())).thenReturn(Optional.empty());

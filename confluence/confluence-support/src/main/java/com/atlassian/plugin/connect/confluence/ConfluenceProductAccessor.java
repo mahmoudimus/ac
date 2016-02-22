@@ -15,68 +15,57 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 @ConfluenceComponent
-public final class ConfluenceProductAccessor implements ProductAccessor
-{
+public final class ConfluenceProductAccessor implements ProductAccessor {
 
     private final LicenseService licenseService;
 
     @Autowired
-    public ConfluenceProductAccessor(LicenseService licenseService)
-    {
+    public ConfluenceProductAccessor(LicenseService licenseService) {
         this.licenseService = licenseService;
     }
 
     @Override
-    public String getPreferredAdminSectionKey()
-    {
+    public String getPreferredAdminSectionKey() {
         return "system.admin/marketplace_confluence";
     }
 
     @Override
-    public int getPreferredAdminWeight()
-    {
+    public int getPreferredAdminWeight() {
         return 100;
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return "confluence";
     }
 
     @Override
-    public int getPreferredGeneralWeight()
-    {
+    public int getPreferredGeneralWeight() {
         return 1000;
     }
 
     @Override
-    public String getPreferredGeneralSectionKey()
-    {
+    public String getPreferredGeneralSectionKey() {
         return "system.browse";
     }
 
     @Override
-    public int getPreferredProfileWeight()
-    {
+    public int getPreferredProfileWeight() {
         return 100;
     }
 
     @Override
-    public String getPreferredProfileSectionKey()
-    {
+    public String getPreferredProfileSectionKey() {
         return "system.profile";
     }
 
     @Override
-    public boolean needsAdminPageNameEscaping()
-    {
+    public boolean needsAdminPageNameEscaping() {
         return true;
     }
 
     @Override
-    public Optional<ProductLicense> getProductLicense()
-    {
+    public Optional<ProductLicense> getProductLicense() {
         AtlassianLicense atlassianLicense = licenseService.retrieveAtlassianLicense();
         return Optional.ofNullable(atlassianLicense.getProductLicense(Product.CONFLUENCE));
     }

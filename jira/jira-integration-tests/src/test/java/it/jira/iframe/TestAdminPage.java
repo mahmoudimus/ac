@@ -34,8 +34,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test of general page in JIRA
  */
-public class TestAdminPage extends JiraWebDriverTestBase
-{
+public class TestAdminPage extends JiraWebDriverTestBase {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String PAGE_NAME = "My Admin Page";
@@ -47,8 +46,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
@@ -65,17 +63,14 @@ public class TestAdminPage extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException {
         loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
@@ -88,8 +83,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     }
 
     @Test
-    public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
-    {
+    public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException {
         loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
@@ -99,16 +93,14 @@ public class TestAdminPage extends JiraWebDriverTestBase
     }
 
     @Test
-    public void nonAdminCanNotSeePage()
-    {
+    public void nonAdminCanNotSeePage() {
         InsufficientPermissionsPage page = loginAndVisit(testUserFactory.basicUser(), InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
+    public void pageIsNotAccessibleWithFalseCondition() {
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         login(testUserFactory.admin());

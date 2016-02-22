@@ -27,22 +27,20 @@ import org.slf4j.LoggerFactory;
  * Connect version of dashboard-item.
  */
 public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescriptor<DashboardItemModule>
-        implements DashboardItemModuleDescriptor
-{
+        implements DashboardItemModuleDescriptor {
     private static final Logger log = LoggerFactory.getLogger(ConnectDashboardItemModuleDescriptor.class);
     private final DirectoryDefinition directoryDefinition;
     private final I18nProperty description;
     private final DashboardItemModule module;
 
     public ConnectDashboardItemModuleDescriptor(final ModuleFactory moduleFactory,
-            final DirectoryDefinition directoryDefinition,
-            final IFrameRenderStrategy renderStrategy,
-            final ModuleContextFilter moduleContextFilter,
-            final PluggableParametersExtractor parametersExtractor,
-            final Boolean configurable,
-            final I18nProperty description,
-            final Condition condition)
-    {
+                                                final DirectoryDefinition directoryDefinition,
+                                                final IFrameRenderStrategy renderStrategy,
+                                                final ModuleContextFilter moduleContextFilter,
+                                                final PluggableParametersExtractor parametersExtractor,
+                                                final Boolean configurable,
+                                                final I18nProperty description,
+                                                final Condition condition) {
         super(moduleFactory);
         this.directoryDefinition = directoryDefinition;
         this.description = description;
@@ -50,38 +48,32 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
     }
 
     @Override
-    public Option<String> getGadgetSpecUriToReplace()
-    {
+    public Option<String> getGadgetSpecUriToReplace() {
         // Connect dashboard-item are not allowed to replace any of the existing gadgets
         return Option.none();
     }
 
     @Override
-    public Option<DirectoryDefinition> getDirectoryDefinition()
-    {
+    public Option<DirectoryDefinition> getDirectoryDefinition() {
         return Option.option(directoryDefinition);
     }
 
     @Override
-    public DashboardItemModule getModule()
-    {
+    public DashboardItemModule getModule() {
         return module;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return description.getValue();
     }
 
     @Override
-    public String getDescriptionKey()
-    {
+    public String getDescriptionKey() {
         return description.getI18n();
     }
 
-    private static class ConnectDashboardItemModule implements DashboardItemModule
-    {
+    private static class ConnectDashboardItemModule implements DashboardItemModule {
         private final Boolean configurable;
         private final Condition condition;
         private final DirectoryDefinition directoryDefinition;
@@ -90,12 +82,11 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         private final IFrameRenderStrategy renderStrategy;
 
         private ConnectDashboardItemModule(final PluggableParametersExtractor moduleContextExtractor,
-                final DirectoryDefinition directoryDefinition,
-                final IFrameRenderStrategy renderStrategy,
-                final ModuleContextFilter moduleContextFilter,
-                final Boolean configurable,
-                final Condition condition)
-        {
+                                           final DirectoryDefinition directoryDefinition,
+                                           final IFrameRenderStrategy renderStrategy,
+                                           final ModuleContextFilter moduleContextFilter,
+                                           final Boolean configurable,
+                                           final Condition condition) {
             this.moduleContextExtractor = moduleContextExtractor;
             this.directoryDefinition = directoryDefinition;
             this.renderStrategy = renderStrategy;
@@ -105,46 +96,36 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         }
 
         @Override
-        public Option<DirectoryDefinition> getDirectoryDefinition()
-        {
+        public Option<DirectoryDefinition> getDirectoryDefinition() {
             return Option.some(directoryDefinition);
         }
 
         @Override
-        public boolean isConfigurable()
-        {
+        public boolean isConfigurable() {
             return configurable;
         }
 
         @Override
-        public Option<String> getAMDModule()
-        {
+        public Option<String> getAMDModule() {
             return Option.some("atlassian-connect/connect-dashboard-item");
         }
 
         @Override
         public Option<String> getWebResourceKey() {
-            return Option.none() ;
+            return Option.none();
         }
 
         @Override
-        public void renderContent(final Writer writer, final Map<String, Object> context)
-        {
+        public void renderContent(final Writer writer, final Map<String, Object> context) {
             ModuleContextParameters unfilteredContext = moduleContextExtractor.extractParameters(context);
             ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
-            try
-            {
+            try {
                 renderStrategy.render(filteredContext, writer, Optional.empty());
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 log.error("Error rendering dashboard item {} {}", directoryDefinition.getTitle(), e);
-                try
-                {
+                try {
                     writer.write("Error rendering " + directoryDefinition.getTitle());
-                }
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     log.error("Error rendering dashboard item error message {} {}", directoryDefinition.getTitle(), ex);
                 }
             }
@@ -152,8 +133,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
 
         @Nonnull
         @Override
-        public Condition getCondition()
-        {
+        public Condition getCondition() {
             return condition;
         }
     }

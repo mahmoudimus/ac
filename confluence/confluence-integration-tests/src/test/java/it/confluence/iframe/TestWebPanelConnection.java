@@ -28,8 +28,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test web panels in web panel redirected locations works and points to the redirect servlet.
  */
-public final class TestWebPanelConnection extends ConfluenceWebDriverTestBase
-{
+public final class TestWebPanelConnection extends ConfluenceWebDriverTestBase {
     // this is not a true redirected location but it's defined as this in reference plugin for the test purpose.
     private static final String REDIRECTED_LOCATION = "atl.editor";
     private static final String LOCATION = "atl.general";
@@ -42,23 +41,19 @@ public final class TestWebPanelConnection extends ConfluenceWebDriverTestBase
     private static WebPanelModuleBean webPanel;
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Before
-    public void beforeEachTest()
-    {
+    public void beforeEachTest() {
         login(testUserFactory.basicUser());
     }
 
     @Test
-    public void webPanelInRedirectedLocationShouldPointsToRedirectServletAndDisplaysProperly() throws Exception
-    {
+    public void webPanelInRedirectedLocationShouldPointsToRedirectServletAndDisplaysProperly() throws Exception {
         webPanel = newWebPanelBean()
                 .withName(new I18nProperty("Editor Panel", null))
                 .withKey(WEB_PANEL_KEY)
@@ -84,8 +79,7 @@ public final class TestWebPanelConnection extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void webPanelWithAddOnBaseUrlWithPathShouldConnectionWithConnectJs() throws Exception
-    {
+    public void webPanelWithAddOnBaseUrlWithPathShouldConnectionWithConnectJs() throws Exception {
         webPanel = newWebPanelBean()
                 .withName(new I18nProperty("Panel in redirected location", null))
                 .withKey("test-web-panel")
@@ -106,8 +100,7 @@ public final class TestWebPanelConnection extends ConfluenceWebDriverTestBase
         confluencePageOperations.findWebPanel(webPanel.getKey(remotePlugin.getAddon())).waitUntilContentElementNotEmpty("channel-connected-message");
     }
 
-    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
-    {
+    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception {
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), SPACE, "Page with webpanel", "some page content");
         return product.visit(pageClass, pageData.getId());
     }

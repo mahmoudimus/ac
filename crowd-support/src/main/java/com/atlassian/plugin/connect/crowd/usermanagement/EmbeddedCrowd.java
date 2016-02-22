@@ -26,28 +26,22 @@ import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmbeddedCrowd extends ConnectCrowdBase
-{
+public class EmbeddedCrowd extends ConnectCrowdBase {
     private static final Logger log = LoggerFactory.getLogger(EmbeddedCrowd.class);
     private final ApplicationService applicationService;
     private final CrowdApplicationProvider crowdApplicationProvider;
 
-    public EmbeddedCrowd(ApplicationService applicationService, UserReconciliation userReconciliation, CrowdApplicationProvider crowdApplicationProvider)
-    {
+    public EmbeddedCrowd(ApplicationService applicationService, UserReconciliation userReconciliation, CrowdApplicationProvider crowdApplicationProvider) {
         super(userReconciliation);
         this.applicationService = applicationService;
         this.crowdApplicationProvider = crowdApplicationProvider;
     }
 
     @Override
-    public void setAttributesOnUser(String username, Map<String, Set<String>> attributes)
-    {
-        try
-        {
+    public void setAttributesOnUser(String username, Map<String, Set<String>> attributes) {
+        try {
             applicationService.storeUserAttributes(getCrowdApplication(), username, attributes);
-        }
-        catch (OperationFailedException | UserNotFoundException | ApplicationPermissionException e)
-        {
+        } catch (OperationFailedException | UserNotFoundException | ApplicationPermissionException e) {
             throw new ConnectAddonInitException(e);
         }
     }
@@ -55,19 +49,14 @@ public class EmbeddedCrowd extends ConnectCrowdBase
     @Override
     public void ensureUserIsInGroup(String username, String groupName)
             throws ApplicationNotFoundException, UserNotFoundException,
-            ApplicationPermissionException, GroupNotFoundException, OperationFailedException
-    {
+            ApplicationPermissionException, GroupNotFoundException, OperationFailedException {
         log.info("Attempting to make user '{}' a member of group '{}' (if not already a member).", username, groupName);
 
-        if (!applicationService.isUserDirectGroupMember(getCrowdApplication(), username, groupName))
-        {
-            try
-            {
+        if (!applicationService.isUserDirectGroupMember(getCrowdApplication(), username, groupName)) {
+            try {
                 applicationService.addUserToGroup(getCrowdApplication(), username, groupName);
                 log.info("Added user '{}' to group '{}',", username, groupName);
-            }
-            catch (MembershipAlreadyExistsException e)
-            {
+            } catch (MembershipAlreadyExistsException e) {
                 // ignore, because the membership that we're trying to create exists
             }
         }
@@ -76,29 +65,21 @@ public class EmbeddedCrowd extends ConnectCrowdBase
     @Override
     public void removeUserFromGroup(String username, String groupName)
             throws ApplicationNotFoundException, UserNotFoundException,
-            ApplicationPermissionException, GroupNotFoundException, OperationFailedException
-    {
-        try
-        {
+            ApplicationPermissionException, GroupNotFoundException, OperationFailedException {
+        try {
             applicationService.removeUserFromGroup(getCrowdApplication(), username, groupName);
             log.info("Removed user '{}' from group '{}'.", username, groupName);
-        }
-        catch (MembershipNotFoundException e)
-        {
+        } catch (MembershipNotFoundException e) {
             // ignore, we wanted to remove the member anyway
         }
     }
 
     @Override
-    public Group findGroupByKey(String groupName) throws ApplicationNotFoundException
-    {
+    public Group findGroupByKey(String groupName) throws ApplicationNotFoundException {
         Group group;
-        try
-        {
+        try {
             group = applicationService.findGroupByName(getCrowdApplication(), groupName);
-        }
-        catch (GroupNotFoundException gnf)
-        {
+        } catch (GroupNotFoundException gnf) {
             group = null;
         }
         return group;
@@ -106,83 +87,59 @@ public class EmbeddedCrowd extends ConnectCrowdBase
 
     @Override
     protected void addUser(UserTemplate userTemplate, PasswordCredential passwordCredential)
-            throws OperationFailedException, InvalidUserException
-    {
-        try
-        {
+            throws OperationFailedException, InvalidUserException {
+        try {
             applicationService.addUser(getCrowdApplication(), userTemplate, passwordCredential);
-        }
-        catch (InvalidCredentialException | ApplicationPermissionException e)
-        {
+        } catch (InvalidCredentialException | ApplicationPermissionException e) {
             throw new ConnectAddonInitException(e);
         }
     }
 
     @Override
-    protected void updateUser(UserTemplate requiredUpdates)
-    {
-        try
-        {
+    protected void updateUser(UserTemplate requiredUpdates) {
+        try {
             applicationService.updateUser(getCrowdApplication(), requiredUpdates);
-        }
-        catch (InvalidUserException | ApplicationPermissionException
-                | OperationFailedException | UserNotFoundException e)
-        {
+        } catch (InvalidUserException | ApplicationPermissionException
+                | OperationFailedException | UserNotFoundException e) {
             throw new ConnectAddonInitException(e);
         }
     }
 
     @Override
-    protected void updateUserCredential(String username, PasswordCredential passwordCredential)
-    {
-        try
-        {
+    protected void updateUserCredential(String username, PasswordCredential passwordCredential) {
+        try {
             applicationService.updateUserCredential(getCrowdApplication(), username, passwordCredential);
-        }
-        catch (OperationFailedException e)
-        {
+        } catch (OperationFailedException e) {
             log.warn("Tried to update the add-on user credentials but the operation failed: " + e.getMessage());
-        }
-        catch ( ApplicationPermissionException | UserNotFoundException | InvalidCredentialException e)
-        {
+        } catch (ApplicationPermissionException | UserNotFoundException | InvalidCredentialException e) {
             throw new ConnectAddonInitException(e);
         }
     }
 
     @Override
-    public Optional<? extends User> findUserByName(String username)
-    {
-        try
-        {
+    public Optional<? extends User> findUserByName(String username) {
+        try {
             return Optional.ofNullable(applicationService.findUserByName(getCrowdApplication(), username));
-        }
-        catch (UserNotFoundException e)
-        {
+        } catch (UserNotFoundException e) {
             return Optional.empty();
         }
     }
 
     @Override
     protected void addGroup(String groupName)
-            throws InvalidGroupException, OperationFailedException, ApplicationPermissionException
-    {
+            throws InvalidGroupException, OperationFailedException, ApplicationPermissionException {
         applicationService.addGroup(getCrowdApplication(), new GroupTemplate(groupName));
     }
 
     @Override
-    public void invalidateSessions(String username)
-    {
+    public void invalidateSessions(String username) {
         throw new UnsupportedOperationException("Cannot invalidate session tokens in Embedded Crowd");
     }
 
-    private Application getCrowdApplication()
-    {
-        try
-        {
+    private Application getCrowdApplication() {
+        try {
             return crowdApplicationProvider.getCrowdApplication();
-        }
-        catch (ApplicationNotFoundException e)
-        {
+        } catch (ApplicationNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

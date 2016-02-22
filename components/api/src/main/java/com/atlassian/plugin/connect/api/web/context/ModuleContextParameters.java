@@ -7,8 +7,7 @@ import java.util.Map;
 /**
  * @since 1.0
  */
-public interface ModuleContextParameters extends Map<String, String>
-{
+public interface ModuleContextParameters extends Map<String, String> {
     void addProfileUser(UserProfile userProfile);
 
     /**

@@ -16,8 +16,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class JiraRestBeanMarshaler
-{
+public class JiraRestBeanMarshaler {
     private final JiraBaseUrls jiraBaseUrls;
     private final ProjectRoleManager projectRoleManager;
     private final BeanBuilderFactory beanBuilderFactory;
@@ -25,42 +24,33 @@ public class JiraRestBeanMarshaler
     @Autowired
     public JiraRestBeanMarshaler(JiraBaseUrls jiraBaseUrls,
                                  ProjectRoleManager projectRoleManager,
-                                 BeanBuilderFactory beanBuilderFactory)
-    {
+                                 BeanBuilderFactory beanBuilderFactory) {
         this.jiraBaseUrls = jiraBaseUrls;
         this.projectRoleManager = projectRoleManager;
         this.beanBuilderFactory = beanBuilderFactory;
     }
 
-    public JSONObject getRemoteIssue(final Issue issue)
-    {
+    public JSONObject getRemoteIssue(final Issue issue) {
         final DefaultJaxbJsonMarshaller jsonMarshaller = new DefaultJaxbJsonMarshaller();
         IssueBean issueBean = beanBuilderFactory.newIssueBeanBuilder(issue, IncludedFields.includeAllByDefault(null))
                 .uriBuilder(new UriBuilderImpl())
                 .build();
         String text = jsonMarshaller.marshal(issueBean);
-        try
-        {
+        try {
             return new JSONObject(text);
-        }
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             throw new IllegalStateException(e);
         }
 
     }
 
-    public JSONObject getRemoteComment(Comment comment)
-    {
+    public JSONObject getRemoteComment(Comment comment) {
         final DefaultJaxbJsonMarshaller jsonMarshaller = new DefaultJaxbJsonMarshaller();
         CommentJsonBean bean = CommentJsonBean.shortBean(comment, jiraBaseUrls, projectRoleManager);
         String data = jsonMarshaller.marshal(bean);
-        try
-        {
+        try {
             return new JSONObject(data);
-        }
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             throw new IllegalStateException(e);
         }
     }

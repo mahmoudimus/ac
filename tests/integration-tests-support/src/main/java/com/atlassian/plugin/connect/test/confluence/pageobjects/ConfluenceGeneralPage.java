@@ -14,8 +14,7 @@ import org.openqa.selenium.By;
 
 import javax.inject.Inject;
 
-public class ConfluenceGeneralPage implements GeneralPage
-{
+public class ConfluenceGeneralPage implements GeneralPage {
 
     @Inject
     private PageElementFinder elementFinder;
@@ -26,35 +25,30 @@ public class ConfluenceGeneralPage implements GeneralPage
     private final String pageKey;
     private final String addonKey;
 
-    public ConfluenceGeneralPage(String pageKey, String addonKey)
-    {
+    public ConfluenceGeneralPage(String pageKey, String addonKey) {
         this.pageKey = pageKey;
         this.addonKey = addonKey;
     }
 
     @Init
     @SuppressWarnings("unused")
-    public void init()
-    {
+    public void init() {
         Poller.waitUntilTrue(findLinkElement().withTimeout(TimeoutType.PAGE_LOAD).timed().isVisible());
     }
 
     @Override
-    public ConnectAddonEmbeddedTestPage clickAddonLink()
-    {
+    public ConnectAddonEmbeddedTestPage clickAddonLink() {
         PageElement link = findLinkElement();
         RemotePageUtil.clickAddonLinkWithKeyboardFallback(link);
         return pageBinder.bind(ConnectAddonEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
     @Override
-    public PageElement findLinkElement()
-    {
+    public PageElement findLinkElement() {
         return elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, pageKey)), TimeoutType.DEFAULT);
     }
 
-    public String getRemotePluginLinkHref()
-    {
+    public String getRemotePluginLinkHref() {
         return findLinkElement().getAttribute("href");
     }
 }

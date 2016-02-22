@@ -29,21 +29,17 @@ import org.apache.http.client.utils.URLEncodedUtils;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 
-public class AddonTestUtils
-{
-    public static String randomAddonKey()
-    {
+public class AddonTestUtils {
+    public static String randomAddonKey() {
         // include underscores in add-on key: used in the separator at ModuleKeyUtils
         return "some.test_addon__" + RandomStringUtils.randomAlphanumeric(8).replaceAll("3", "4").toLowerCase();
     }
 
-    public static String randomModuleKey()
-    {
+    public static String randomModuleKey() {
         return RandomStringUtils.randomAlphanumeric(20).replaceAll("3", "4").toLowerCase();
     }
 
-    public static WebItemModuleBean randomWebItemBean()
-    {
+    public static WebItemModuleBean randomWebItemBean() {
         return newWebItemBean()
                 .withName(new I18nProperty(randomModuleKey(), null))
                 .withKey(randomModuleKey())
@@ -53,31 +49,27 @@ public class AddonTestUtils
     }
 
     private static Pattern regex = Pattern.compile("[(!\"#$%&'\\(\\)*+,./:;<=>?@\\[\\\\\\]^`{|}~)]");
-    public static String escapeJQuerySelector(String selector)
-    {
-        if (selector == null)
-        {
+
+    public static String escapeJQuerySelector(String selector) {
+        if (selector == null) {
             return null;
         }
         return regex.matcher(selector).replaceAll("\\\\$0");
     }
 
-    public static String generateJwtSignature(HttpMethod httpMethod, URI uri, String addonKey, String secret, String contextPath, String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException
-    {
+    public static String generateJwtSignature(HttpMethod httpMethod, URI uri, String addonKey, String secret, String contextPath, String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
         JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, secret);
 
         // Parse param values and build a map
         final List<NameValuePair> rawParams = URLEncodedUtils.parse(uri, "UTF-8");
         final ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.builder();
-        for (NameValuePair rawParam : rawParams)
-        {
+        for (NameValuePair rawParam : rawParams) {
             builder.put(rawParam.getName(), rawParam.getValue());
         }
 
         final ImmutableMap.Builder<String, String[]> paramsMap = ImmutableMap.builder();
-        for (Map.Entry<String, Collection<String>> stringCollectionEntry : builder.build().asMap().entrySet())
-        {
+        for (Map.Entry<String, Collection<String>> stringCollectionEntry : builder.build().asMap().entrySet()) {
             final Collection<String> collection = stringCollectionEntry.getValue();
             paramsMap.put(stringCollectionEntry.getKey(), collection.toArray(new String[collection.size()]));
         }
@@ -86,8 +78,7 @@ public class AddonTestUtils
                 .issuer(addonKey)
                 .queryHash(HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(httpMethod.name(), uri.getPath(), URI.create(contextPath).getPath(), paramsMap.build())));
 
-        if (null != subject)
-        {
+        if (null != subject) {
             jsonBuilder.subject(subject);
         }
 

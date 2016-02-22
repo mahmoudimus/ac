@@ -32,8 +32,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 
-public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
-{
+public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase {
     private static final String WEB_PANELS = "webPanels";
 
     private static final String IFRAME_URL_EDIT = "/tcwp-edit";
@@ -62,8 +61,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         // iframe url and params are checked by it.confluence.iframe.TestRedirectedWebPanel.webPanelInRedirectedLocationShouldPointsToRedirectServletAndDisplaysProperly the
         editorWebPanel = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("Editor Panel", null))
@@ -103,73 +101,62 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Before
-    public void beforeEachTest()
-    {
+    public void beforeEachTest() {
         login(testUserFactory.basicUser());
     }
 
     @Test
-    public void webPanelExistsOnEditPage() throws Exception
-    {
+    public void webPanelExistsOnEditPage() throws Exception {
         RemoteWebPanel webPanel = findEditPageWebPanel();
         assertThat(webPanel, is(not(nullValue())));
     }
 
     @Test
-    public void iFrameHeightIsCorrectOnEditPage() throws Exception
-    {
+    public void iFrameHeightIsCorrectOnEditPage() throws Exception {
         RemoteWebPanel webPanel = findEditPageWebPanel();
         assertThat(webPanel.getIFrameSize().getHeight(), is(IFRAME_EDIT_HEIGHT));
     }
 
     @Test
-    public void iFrameWidthIsCorrectOnEditPage() throws Exception
-    {
+    public void iFrameWidthIsCorrectOnEditPage() throws Exception {
         RemoteWebPanel webPanel = findEditPageWebPanel();
         assertThat(webPanel.getIFrameSize().getWidth(), is(IFRAME_WIDTH));
     }
 
     @Test
-    public void iFrameContentIsCorrectOnEditPage() throws Exception
-    {
+    public void iFrameContentIsCorrectOnEditPage() throws Exception {
         RemoteWebPanel webPanel = findEditPageWebPanel().waitUntilContentLoaded();
         assertThat(webPanel.getCustomMessage(), is(IFRAME_CONTENT_EDIT));
     }
 
     @Test
-    public void webPanelExistsOnViewPage() throws Exception
-    {
+    public void webPanelExistsOnViewPage() throws Exception {
         RemoteWebPanel webPanel = findViewPageWebPanel();
         assertThat(webPanel, is(not(nullValue())));
     }
 
     @Test
-    public void webPanelIsNotAccessibleWithFalseCondition() throws Exception
-    {
+    public void webPanelIsNotAccessibleWithFalseCondition() throws Exception {
         remotePlugin.setToggleableConditionShouldDisplay(false);
         createAndVisitPage(ConfluenceViewPage.class); // revisit the view page now that condition has been set to false
         assertThat(confluencePageOperations.existsWebPanel(viewWebPanel.getKey(remotePlugin.getAddon())), is(false));
     }
 
     @Test
-    public void iFrameUrlIsCorrectOnViewPage() throws Exception
-    {
+    public void iFrameUrlIsCorrectOnViewPage() throws Exception {
         RemoteWebPanel webPanel = findViewPageWebPanel();
         assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_VIEW));
     }
 
     @Test
-    public void iFrameParametersAreCorrectOnViewPage() throws Exception
-    {
+    public void iFrameParametersAreCorrectOnViewPage() throws Exception {
         ConfluenceViewPage viewPage = createAndVisitPage(ConfluenceViewPage.class);
         RemoteWebPanel webPanel = confluencePageOperations.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
         assertThat(webPanel.getSpaceKey(), is(SPACE));
@@ -178,92 +165,78 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void iFrameHeightIsCorrectOnViewPage() throws Exception
-    {
+    public void iFrameHeightIsCorrectOnViewPage() throws Exception {
         RemoteWebPanel webPanel = findViewPageWebPanel();
         assertThat(webPanel.getIFrameSize().getHeight(), is(IFRAME_VIEW_HEIGHT));
     }
 
     @Test
-    public void iFrameWidthIsCorrectOnViewPage() throws Exception
-    {
+    public void iFrameWidthIsCorrectOnViewPage() throws Exception {
         RemoteWebPanel webPanel = findViewPageWebPanel();
         assertThat(webPanel.getIFrameSize().getWidth(), is(IFRAME_WIDTH));
     }
 
     @Test
-    public void iFrameContentIsCorrectOnViewPage() throws Exception
-    {
+    public void iFrameContentIsCorrectOnViewPage() throws Exception {
         RemoteWebPanel webPanel = findViewPageWebPanel().waitUntilContentLoaded();
         assertThat(webPanel.getCustomMessage(), is(IFRAME_CONTENT_VIEW));
     }
 
     @Test
-    public void webPanelExistsOnProfilePage() throws Exception
-    {
+    public void webPanelExistsOnProfilePage() throws Exception {
         RemoteWebPanel webPanel = findProfilePageWebPanel();
         assertThat(webPanel, is(not(nullValue())));
     }
 
     @Test
-    public void iFrameUrlIsCorrectOnProfilePage() throws Exception
-    {
+    public void iFrameUrlIsCorrectOnProfilePage() throws Exception {
         RemoteWebPanel webPanel = findProfilePageWebPanel();
         assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_PROFILE));
     }
 
     @Test
-    public void iFrameHeightIsCorrectOnProfilePage() throws Exception
-    {
+    public void iFrameHeightIsCorrectOnProfilePage() throws Exception {
         RemoteWebPanel webPanel = findProfilePageWebPanel();
         assertThat(webPanel.getIFrameSize().getHeight(), is(IFRAME_PROFILE_HEIGHT));
     }
 
     @Test
-    public void iFrameWidthIsCorrectOnProfilePage() throws Exception
-    {
+    public void iFrameWidthIsCorrectOnProfilePage() throws Exception {
         RemoteWebPanel webPanel = findProfilePageWebPanel();
         assertThat(webPanel.getIFrameSize().getWidth(), is(IFRAME_WIDTH));
     }
 
     @Test
-    public void iFrameContentIsCorrectOnProfilePage() throws Exception
-    {
+    public void iFrameContentIsCorrectOnProfilePage() throws Exception {
         RemoteWebPanel webPanel = findProfilePageWebPanel().waitUntilContentLoaded();
         assertThat(webPanel.getCustomMessage(), is(IFRAME_CONTENT_PROFILE));
     }
 
-    private RemoteWebPanel findEditPageWebPanel() throws Exception
-    {
+    private RemoteWebPanel findEditPageWebPanel() throws Exception {
         createAndVisitPage(ConfluenceEditPage.class);
         return confluencePageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
     }
 
-    private RemoteWebPanel findViewPageWebPanel() throws Exception
-    {
+    private RemoteWebPanel findViewPageWebPanel() throws Exception {
         createAndVisitPage(ConfluenceViewPage.class);
         return confluencePageOperations.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
     }
 
-    private RemoteWebPanel findProfilePageWebPanel() throws Exception
-    {
+    private RemoteWebPanel findProfilePageWebPanel() throws Exception {
         product.visit(ConfluenceUserProfilePage.class);
         return confluencePageOperations.findWebPanel(profileWebPanel.getKey(remotePlugin.getAddon()));
     }
 
-    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
-    {
+    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception {
         ConfluenceOps.ConfluencePageData pageData = createPage();
         return product.visit(pageClass, pageData.getId());
     }
 
-    private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
-    {
+    private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault {
         return confluenceOps.setPage(some(testUserFactory.basicUser()), SPACE, "Page with webpanel", "some page content");
     }
 
-    private static String px(int px)
-    {
+    private static String px(int px) {
         return px + "px";
     }
 

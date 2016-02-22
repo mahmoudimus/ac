@@ -16,8 +16,7 @@ import org.apache.http.entity.ContentType;
 /**
  * Retrieves and caches http content.
  */
-public interface HttpContentRetriever
-{
+public interface HttpContentRetriever {
     InputStream EMPTY_STREAM = new ByteArrayInputStream(new byte[0]);
 
     void flushCacheByUriPattern(Pattern urlPattern);

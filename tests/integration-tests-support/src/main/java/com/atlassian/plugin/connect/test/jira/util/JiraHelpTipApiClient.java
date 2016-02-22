@@ -8,35 +8,29 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 /**
  * A client for the JIRA Help Tip REST API.
  */
-public class JiraHelpTipApiClient extends HelpTipApiClient
-{
+public class JiraHelpTipApiClient extends HelpTipApiClient {
 
-    public JiraHelpTipApiClient(JiraTestedProduct product, TestUser user)
-    {
+    public JiraHelpTipApiClient(JiraTestedProduct product, TestUser user) {
         super(product, user);
     }
 
-    public void dismissAllHelpTips() throws Exception
-    {
+    public void dismissAllHelpTips() throws Exception {
         dismissBrowseProjectHelpTips();
         dismissConfigureProjectTips();
         dismissMiscellaneousHelpTips();
     }
 
-    public void dismissBrowseProjectHelpTips() throws Exception
-    {
+    public void dismissBrowseProjectHelpTips() throws Exception {
         dismissHelpTip("sidebar-chaperone-collapse-tip");
         dismissHelpTip("sidebar-chaperone-disable-tip");
         dismissHelpTip("sidebar-chaperone-general-overview-tip");
     }
 
-    public void dismissConfigureProjectTips() throws Exception
-    {
+    public void dismissConfigureProjectTips() throws Exception {
         dismissHelpTip("hipchat.feature.discovery.tip");
     }
 
-    public void dismissMiscellaneousHelpTips() throws Exception
-    {
+    public void dismissMiscellaneousHelpTips() throws Exception {
         dismissHelpTip("automaticTransitionDevSummaryTooltip");
         dismissHelpTip("devstatus.cta.createbranch.tooltip");
         dismissHelpTip("permission-helper-helptip");

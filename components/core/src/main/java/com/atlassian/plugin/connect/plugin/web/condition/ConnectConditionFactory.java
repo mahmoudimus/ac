@@ -10,12 +10,11 @@ import java.util.List;
  *
  * @since 1.0
  */
-public interface ConnectConditionFactory
-{
+public interface ConnectConditionFactory {
 
     /**
-     * @param addonKey the key of the add-on
-     * @param conditionalBeans the conditions to include
+     * @param addonKey             the key of the add-on
+     * @param conditionalBeans     the conditions to include
      * @param additionalConditions the plugins2 conditions to include
      * @return a {@link Condition} that returns true iff the logical tests defined by the supplied list of
      * {@link ConditionalBean} evaluate to {@code TRUE} AND instances of the specified plugins2 {@link Condition}

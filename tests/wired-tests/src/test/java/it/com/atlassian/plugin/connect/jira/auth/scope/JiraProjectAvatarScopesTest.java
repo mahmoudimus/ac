@@ -15,19 +15,16 @@ import java.util.Collection;
 
 import static it.com.atlassian.plugin.connect.jira.auth.scope.JiraScopeTestHelper.emptyBodyForJira;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class JiraProjectAvatarScopesTest extends ScopeManagerTest
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class JiraProjectAvatarScopesTest extends ScopeManagerTest {
     private static final String PROJECT_AVATAR_URL = "/jira/secure/projectavatar";
 
-    public JiraProjectAvatarScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
+    public JiraProjectAvatarScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
-    
-    public static Collection<ScopeTestData> testData()
-    {
+
+    public static Collection<ScopeTestData> testData() {
         return Arrays.asList(
                 // happy path
                 emptyBodyForJira(ScopeName.READ, HttpMethod.GET, PROJECT_AVATAR_URL, true),

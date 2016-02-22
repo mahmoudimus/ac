@@ -18,14 +18,12 @@ import static com.atlassian.plugin.connect.test.common.servlet.ConnectRunner.new
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestXdmEvents extends JiraWebDriverTestBase
-{
+public class TestXdmEvents extends JiraWebDriverTestBase {
     private static ConnectRunner remotePluginA;
     private static ConnectRunner remotePluginB;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePluginA = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webPanels",
@@ -66,8 +64,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testXdmEvents() throws Exception
-    {
+    public void testXdmEvents() throws Exception {
         login(testUserFactory.basicUser());
 
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for panel");
@@ -127,19 +124,13 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        try
-        {
-            if (remotePluginA != null)
-            {
+    public static void stopConnectAddon() throws Exception {
+        try {
+            if (remotePluginA != null) {
                 remotePluginA.stopAndUninstall();
             }
-        }
-        finally
-        {
-            if (remotePluginB != null)
-            {
+        } finally {
+            if (remotePluginB != null) {
                 remotePluginB.stopAndUninstall();
             }
         }

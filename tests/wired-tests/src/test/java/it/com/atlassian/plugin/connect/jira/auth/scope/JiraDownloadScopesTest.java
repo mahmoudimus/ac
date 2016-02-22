@@ -15,17 +15,14 @@ import java.util.Collection;
 
 import static it.com.atlassian.plugin.connect.jira.auth.scope.JiraScopeTestHelper.emptyBodyForJira;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class JiraDownloadScopesTest extends ScopeManagerTest
-{
-    public JiraDownloadScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class JiraDownloadScopesTest extends ScopeManagerTest {
+    public JiraDownloadScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
 
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         // this is a small scope so the test is exhaustive
         return Arrays.asList(
                 // basic case

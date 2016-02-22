@@ -11,16 +11,22 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IFrameRenderStrategyBuilderImplTest
-{
-    private @Mock ConnectUriFactory connectUriFactory;
-    private @Mock IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
-    private @Mock TemplateRenderer templateRenderer;
-    private @Mock ConnectConditionFactory connectConditionFactory;
+public class IFrameRenderStrategyBuilderImplTest {
+    private
+    @Mock
+    ConnectUriFactory connectUriFactory;
+    private
+    @Mock
+    IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
+    private
+    @Mock
+    TemplateRenderer templateRenderer;
+    private
+    @Mock
+    ConnectConditionFactory connectConditionFactory;
 
     @Test
-    public void nullTitleDoesNotProduceNpe() throws IOException
-    {
+    public void nullTitleDoesNotProduceNpe() throws IOException {
         new IFrameRenderStrategyBuilderImpl(connectUriFactory, iFrameRenderContextBuilderFactory, templateRenderer, connectConditionFactory)
                 .title(null)
                 .build()

@@ -38,30 +38,35 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TestIFrameRenderer
-{
-    @Mock private TemplateRenderer templateRenderer;
-    @Mock private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    @Mock private RemotablePluginAccessor remotePluginAccessor;
-    @Mock private HostApplicationInfo hostApplicationInfo;
-    @Mock private LicenseRetriever licenseRetriever;
-    @Mock private LocaleHelper localeHelper;
-    @Mock private TimeZoneManager timeZoneManager;
-    @Mock private UserManager userManager;
+public class TestIFrameRenderer {
+    @Mock
+    private TemplateRenderer templateRenderer;
+    @Mock
+    private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    @Mock
+    private RemotablePluginAccessor remotePluginAccessor;
+    @Mock
+    private HostApplicationInfo hostApplicationInfo;
+    @Mock
+    private LicenseRetriever licenseRetriever;
+    @Mock
+    private LocaleHelper localeHelper;
+    @Mock
+    private TimeZoneManager timeZoneManager;
+    @Mock
+    private UserManager userManager;
 
     private IFrameRenderer iframeRenderer;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         MockitoAnnotations.initMocks(this);
         this.iframeRenderer = new IFrameRendererImpl(templateRenderer, hostApplicationInfo, remotablePluginAccessorFactory,
                 timeZoneManager, licenseRetriever, localeHelper, userManager);
     }
 
     @Test
-    public void testRenderTemplatePath() throws Exception
-    {
+    public void testRenderTemplatePath() throws Exception {
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
         iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), emptyContext());
 
@@ -70,8 +75,7 @@ public class TestIFrameRenderer
     }
 
     @Test
-    public void testRenderInlineTemplatePath() throws Exception
-    {
+    public void testRenderInlineTemplatePath() throws Exception {
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
         iframeRenderer.renderInline(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), emptyContext());
 
@@ -80,8 +84,7 @@ public class TestIFrameRenderer
     }
 
     @Test
-    public void testContext() throws IOException
-    {
+    public void testContext() throws IOException {
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
         iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", emptyParams(), emptyContext());
 
@@ -96,8 +99,7 @@ public class TestIFrameRenderer
     }
 
     @Test
-    public void testProductContext() throws Exception
-    {
+    public void testProductContext() throws Exception {
         Map<String, Object> productContext = ImmutableMap.<String, Object>of(
                 "hell", ImmutableMap.of("o", "world", "a", "good"),
                 "good", "bye"
@@ -114,11 +116,10 @@ public class TestIFrameRenderer
     }
 
     @Test
-    public void testQueryParams() throws Exception
-    {
+    public void testQueryParams() throws Exception {
         Map<String, String[]> params = ImmutableMap.of(
-                "hello", new String[]{ "world" },
-                "hella", new String[]{ "good" }
+                "hello", new String[]{"world"},
+                "hella", new String[]{"good"}
         );
         mockAllTheThings("jim", "my-timezone", "my-context-path", "my-url", "a.b", "my-signed-url");
         iframeRenderer.render(createContext("a.b", "my-path", "my-namespace"), "", params, emptyContext());
@@ -129,8 +130,7 @@ public class TestIFrameRenderer
     }
 
     private void mockAllTheThings(String remoteUser, String timezone, String iframeContextPath, String iframeHostUrl,
-        String pluginKey, String expectedSignedUrl)
-    {
+                                  String pluginKey, String expectedSignedUrl) {
         when(timeZoneManager.getUserTimeZone()).thenReturn(new SimpleTimeZone(10, timezone));
         UserProfile userProfile = mock(UserProfile.class);
         when(userProfile.getUserKey()).thenReturn(new UserKey(remoteUser + "-key"));
@@ -143,56 +143,46 @@ public class TestIFrameRenderer
         when(remotePluginAccessor.signGetUrl(any(URI.class), any(Map.class))).thenReturn(expectedSignedUrl);
     }
 
-    private Map<String, String[]> getActualSignedUrlParams()
-    {
+    private Map<String, String[]> getActualSignedUrlParams() {
         ArgumentCaptor<Map> argument = ArgumentCaptor.forClass(Map.class);
         verify(remotePluginAccessor).signGetUrl(any(URI.class), argument.capture());
         return argument.getValue();
     }
 
-    private String getActualTemplateRendererPath() throws IOException
-    {
+    private String getActualTemplateRendererPath() throws IOException {
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
         verify(templateRenderer).render(argument.capture(), any(Map.class), any(Writer.class));
         return argument.getValue();
     }
 
-    private Map<String, Object> getActualTemplateRendererContext() throws IOException
-    {
+    private Map<String, Object> getActualTemplateRendererContext() throws IOException {
         ArgumentCaptor<Map> argument = ArgumentCaptor.forClass(Map.class);
         verify(templateRenderer).render(anyString(), argument.capture(), any(Writer.class));
         return argument.getValue();
     }
 
-    public static final Map<String, String[]> emptyParams()
-    {
+    public static final Map<String, String[]> emptyParams() {
         return Collections.emptyMap();
     }
 
-    public static final Map<String, Object> emptyContext()
-    {
+    public static final Map<String, Object> emptyContext() {
         return Collections.emptyMap();
     }
 
-    public static IFrameContext createContext(String pluginKey, String iframePath, String namespace)
-    {
+    public static IFrameContext createContext(String pluginKey, String iframePath, String namespace) {
         return createContext(pluginKey, iframePath, namespace, Collections.<String, Object>emptyMap());
     }
 
-    public static IFrameContext createContext(String pluginKey, String iframePath, String namespace, Map<String, Object> params)
-    {
+    public static IFrameContext createContext(String pluginKey, String iframePath, String namespace, Map<String, Object> params) {
         final Map<String, Object> internalParams = Maps.newHashMap(params);
-        IFrameParams iframeParams = new IFrameParams()
-        {
+        IFrameParams iframeParams = new IFrameParams() {
             @Override
-            public Map<String, Object> getAsMap()
-            {
+            public Map<String, Object> getAsMap() {
                 return internalParams;
             }
 
             @Override
-            public void setParam(String key, String value)
-            {
+            public void setParam(String key, String value) {
                 internalParams.put(key, value);
             }
         };

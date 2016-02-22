@@ -7,19 +7,16 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import javax.inject.Inject;
 
 @JiraComponent
-public class JiraApplinkServiceProvider implements MutatingApplicationLinkServiceProvider
-{
+public class JiraApplinkServiceProvider implements MutatingApplicationLinkServiceProvider {
     private final MutatingApplicationLinkService applicationLinkService;
 
     @Inject
-    public JiraApplinkServiceProvider(final MutatingApplicationLinkService applicationLinkService)
-    {
+    public JiraApplinkServiceProvider(final MutatingApplicationLinkService applicationLinkService) {
         this.applicationLinkService = applicationLinkService;
     }
 
     @Override
-    public MutatingApplicationLinkService getMutatingApplicationLinkService()
-    {
+    public MutatingApplicationLinkService getMutatingApplicationLinkService() {
         return applicationLinkService;
     }
 }

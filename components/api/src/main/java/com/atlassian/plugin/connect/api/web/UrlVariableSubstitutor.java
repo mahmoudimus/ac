@@ -17,11 +17,11 @@ import java.util.Map;
  * given the source String "hi={foo.bar}" and an empty map, {@link UrlVariableSubstitutor#replace(String, WebFragmentContext)}
  * would return "hi="
  */
-public interface UrlVariableSubstitutor
-{
+public interface UrlVariableSubstitutor {
     /**
      * Replaces all variables in the given source with values from the given context.
-     * @param source string containing variables
+     *
+     * @param source  string containing variables
      * @param context context containing values to replace
      * @return source with variables replaced by values.
      */
@@ -30,7 +30,7 @@ public interface UrlVariableSubstitutor
     /**
      * Appends (rather than substitutes) a map of parameters to the end of the url.
      *
-     * @param source the original URL
+     * @param source     the original URL
      * @param parameters the parameters to append
      * @return the URL, with the supplied parameters appended
      */
@@ -38,6 +38,7 @@ public interface UrlVariableSubstitutor
 
     /**
      * Parses from the given URL a {@link java.util.Map} of name-in-source to context-variable-name.
+     *
      * @param source string containing variables (e.g. "http://server:80/path?my_page_id={page.id}" or "my_page_id={page.id}")
      * @return {@link java.util.Map} of name-in-source to context-variable-name (e.g. "my_page_id" to "page.id")
      */

@@ -6,15 +6,12 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.atlassian.plugin.web.descriptors.WebSectionModuleDescriptor;
 
 @ConfluenceComponent
-public class ConfluenceWebSectionModuleDescriptorFactory implements ProductSpecificWebSectionModuleDescriptorFactory
-{
-    public ConfluenceWebSectionModuleDescriptorFactory()
-    {
+public class ConfluenceWebSectionModuleDescriptorFactory implements ProductSpecificWebSectionModuleDescriptorFactory {
+    public ConfluenceWebSectionModuleDescriptorFactory() {
     }
 
     @Override
-    public WebSectionModuleDescriptor createWebSectionModuleDescriptor()
-    {
+    public WebSectionModuleDescriptor createWebSectionModuleDescriptor() {
         return new ConfluenceWebSectionModuleDescriptor();
     }
 }

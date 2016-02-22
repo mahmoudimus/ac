@@ -19,9 +19,8 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 /**
  * A remote web-item, which link is expected to pass context.
  */
-public class RemoteWebItem
-{
-    public static enum ItemMatchingMode { ID, LINK_TEXT, JQUERY }
+public class RemoteWebItem {
+    public static enum ItemMatchingMode {ID, LINK_TEXT, JQUERY}
 
     private static final String INLINE_DIALOG_ACTIVE_CLASS = "active";
     private final static Logger log = LoggerFactory.getLogger(RemoteWebItem.class);
@@ -36,28 +35,24 @@ public class RemoteWebItem
     private PageElement webItem;
     private String path;
 
-    public RemoteWebItem(ItemMatchingMode mode, String matchValue, Optional<String> dropDownLinkId)
-    {
+    public RemoteWebItem(ItemMatchingMode mode, String matchValue, Optional<String> dropDownLinkId) {
         this.mode = mode;
         this.matchValue = matchValue;
         this.dropDownLinkId = dropDownLinkId;
     }
 
-    public RemoteWebItem(String id, Optional<String> dropDownLinkId)
-    {
+    public RemoteWebItem(String id, Optional<String> dropDownLinkId) {
         this(ItemMatchingMode.ID, id, dropDownLinkId);
     }
 
     @Init
-    public void init()
-    {
+    public void init() {
         webItem = findWebItem();
         waitUntilTrue(webItem.timed().isPresent());
         path = webItem.getAttribute("href");
     }
 
-    private PageElement findWebItem()
-    {
+    private PageElement findWebItem() {
         By by;
         switch (mode) {
             case ID:
@@ -75,26 +70,21 @@ public class RemoteWebItem
         return elementFinder.find(by);
     }
 
-    private boolean isPageBackedWebItem()
-    {
+    private boolean isPageBackedWebItem() {
         String href = webItem.getAttribute("href");
         return href.contains("/plugins/servlet/atlassian-connect/") || href.contains("/plugins/servlet/ac/");
     }
 
-    public String getLinkText()
-    {
+    public String getLinkText() {
         return webItem.getText();
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return webItem.getAttribute("title");
     }
 
-    public void click()
-    {
-        if (dropDownLinkId.isPresent())
-        {
+    public void click() {
+        if (dropDownLinkId.isPresent()) {
             PageElement element = elementFinder.find(By.id(dropDownLinkId.get()));
             waitUntilTrue(element.timed().isVisible());
             element.javascript().mouse().click();
@@ -102,10 +92,8 @@ public class RemoteWebItem
         webItem.javascript().mouse().click();
     }
 
-    public void hover()
-    {
-        if (dropDownLinkId.isPresent())
-        {
+    public void hover() {
+        if (dropDownLinkId.isPresent()) {
             PageElement element = elementFinder.find(By.id(dropDownLinkId.get()));
             waitUntilTrue(element.timed().isVisible());
             element.javascript().mouse().click();
@@ -113,52 +101,41 @@ public class RemoteWebItem
         webItem.javascript().mouse().mouseover();
     }
 
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return webItem != null && webItem.isVisible();
     }
 
-    public String getFromQueryString(final String key)
-    {
+    public String getFromQueryString(final String key) {
         return RemotePageUtil.findInContext(path, key);
     }
 
-    public String getPath()
-    {
+    public String getPath() {
         return path;
     }
 
-    public boolean isInlineDialog()
-    {
+    public boolean isInlineDialog() {
         return null != webItem && webItem.hasClass("ap-inline-dialog");
     }
 
-    public boolean isActiveInlineDialog()
-    {
-        if (!isInlineDialog())
-        {
+    public boolean isActiveInlineDialog() {
+        if (!isInlineDialog()) {
             return false;
         }
 
-        try
-        {
+        try {
             waitUntilTrue(webItem.timed().hasClass(INLINE_DIALOG_ACTIVE_CLASS));
             return true;
-        }
-        catch (AssertionError e)
-        {
+        } catch (AssertionError e) {
             log.error(String.format("Timed out waiting for web item with id '%s' to get css class '%s'.", webItem.getAttribute("id"), INLINE_DIALOG_ACTIVE_CLASS), e);
             return false;
         }
     }
 
-    public boolean isDialog()
-    {
+    public boolean isDialog() {
         return null != webItem && webItem.hasClass("ap-dialog");
     }
 
-    public boolean isActiveDialog()
-    {
+    public boolean isActiveDialog() {
         PageElement dialog = elementFinder.find(By.className("aui-dialog2-content"));
         return (dialog.isPresent() && dialog.isVisible());
     }

@@ -22,13 +22,11 @@ import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
 import java.util.Map;
 
-public class ConfluenceEventMapper
-{
+public class ConfluenceEventMapper {
     private final UserManager userManager;
     private final SettingsManager confluenceSettingsManager;
 
-    public ConfluenceEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+    public ConfluenceEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         this.userManager = userManager;
         this.confluenceSettingsManager = confluenceSettingsManager;
     }
@@ -37,17 +35,17 @@ public class ConfluenceEventMapper
      * This transforms the event {@code e} into a simple {@link java.util.Map} that is easily transformed into a valid JSON object.
      * To make sure this works properly the objects put into the map (as values) should be of either types:
      * <ul>
-     *     <li>{@link Byte}</li>
-     *     <li>{@link Character}</li>
-     *     <li>{@link Short}</li>
-     *     <li>{@link Integer}</li>
-     *     <li>{@link Long}</li>
-     *     <li>{@link Boolean}</li>
-     *     <li>{@link Double}</li>
-     *     <li>{@link String}</li>
-     *     <li>a {@link java.util.Collection} of type following those same rules</li>
-     *     <li>an array of type following those same rules</li>
-     *     <li>a {@link java.util.Map} with {@link String} as keys and values of type following those same rules</li>
+     * <li>{@link Byte}</li>
+     * <li>{@link Character}</li>
+     * <li>{@link Short}</li>
+     * <li>{@link Integer}</li>
+     * <li>{@link Long}</li>
+     * <li>{@link Boolean}</li>
+     * <li>{@link Double}</li>
+     * <li>{@link String}</li>
+     * <li>a {@link java.util.Collection} of type following those same rules</li>
+     * <li>an array of type following those same rules</li>
+     * <li>a {@link java.util.Map} with {@link String} as keys and values of type following those same rules</li>
      * </ul>
      *
      * The {@link Object#toString()} will be used on standard java objects (in packages java. and javax.).
@@ -55,8 +53,7 @@ public class ConfluenceEventMapper
      * @param event the event
      * @return a map of event properties
      */
-    public Map<String, Object> toMap(ConfluenceEvent event)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent event) {
         UserProfile user = userManager.getRemoteUser();
         String username = user == null ? "" : user.getUsername();
         String userKey = user == null ? "" : user.getUserKey().getStringValue();
@@ -69,48 +66,38 @@ public class ConfluenceEventMapper
         );
     }
 
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return true; // can handle any kind of ConfluenceEvent, but not in any particularly meaningful way :-)
     }
 
-    protected Map<String, Object> labelableToMap(Labelable labelable)
-    {
+    protected Map<String, Object> labelableToMap(Labelable labelable) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
 
         builder.put("labels", Lists.transform(labelable.getLabels(), label -> labelToMap(label, true)));
 
-        if (labelable instanceof ContentEntityObject)
-        {
+        if (labelable instanceof ContentEntityObject) {
             builder.putAll(contentEntityObjectToMap((ContentEntityObject) labelable));
-        }
-        else if (labelable instanceof Attachment)
-        {
+        } else if (labelable instanceof Attachment) {
             builder.putAll(attachmentToMap((Attachment) labelable));
         }
 
         return builder.build();
     }
 
-    protected Map<String, Object> labelToMap(Label label)
-    {
+    protected Map<String, Object> labelToMap(Label label) {
         return labelToMap(label, false);
     }
 
-    private String getUserUsername(ConfluenceUser user)
-    {
+    private String getUserUsername(ConfluenceUser user) {
         return user == null ? "" : user.getName();
     }
 
-    private String getUserUserKey(ConfluenceUser user)
-    {
+    private String getUserUserKey(ConfluenceUser user) {
         return user == null ? "" : user.getKey().getStringValue();
     }
 
-    protected Map<String, Object> labelToMap(Label label, boolean nameOnly)
-    {
-        if (nameOnly)
-        {
+    protected Map<String, Object> labelToMap(Label label, boolean nameOnly) {
+        if (nameOnly) {
             return ImmutableMap.<String, Object>of("name", label.getName());
         }
 
@@ -127,8 +114,7 @@ public class ConfluenceEventMapper
         );
     }
 
-    protected Map<String, Object> userProfileToMap(UserProfile userProfile)
-    {
+    protected Map<String, Object> userProfileToMap(UserProfile userProfile) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
 
         builder.put("userKey", userProfile.getUserKey().getStringValue());
@@ -139,14 +125,11 @@ public class ConfluenceEventMapper
         return builder.build();
     }
 
-    protected Map<String, Object> contentEntityObjectToMap(ContentEntityObject ceo, boolean idOnly)
-    {
+    protected Map<String, Object> contentEntityObjectToMap(ContentEntityObject ceo, boolean idOnly) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.put("id", ceo.getId());
-        if (!idOnly)
-        {
-            if (!isBlank(ceo.getTitle()))
-            {
+        if (!idOnly) {
+            if (!isBlank(ceo.getTitle())) {
                 builder.put("title", ceo.getTitle());
             }
 
@@ -158,12 +141,10 @@ public class ConfluenceEventMapper
             builder.put("modificationDate", ceo.getLastModificationDate() != null ? ceo.getLastModificationDate().getTime() : "");
             builder.put("version", ceo.getVersion());
             builder.put("self", getFullUrl(ceo.getUrlPath()));
-            if (ceo instanceof Spaced)
-            {
+            if (ceo instanceof Spaced) {
                 // TODO: Consider adding additional information about the space, eg. title, logo & description.
                 Space space = ((Spaced) ceo).getSpace();
-                if (space != null)
-                {
+                if (space != null) {
                     builder.put("spaceKey", space.getKey());
                 }
             }
@@ -171,8 +152,7 @@ public class ConfluenceEventMapper
         return builder.build();
     }
 
-    protected Map<String, Object> contentBlueprintToMap(ContentBlueprint blueprint)
-    {
+    protected Map<String, Object> contentBlueprintToMap(ContentBlueprint blueprint) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
 
         builder.put("id", blueprint.getId());
@@ -187,13 +167,11 @@ public class ConfluenceEventMapper
         return builder.build();
     }
 
-    protected String getFullUrl(String relativeUrl)
-    {
+    protected String getFullUrl(String relativeUrl) {
         return confluenceSettingsManager.getGlobalSettings().getBaseUrl() + relativeUrl;
     }
 
-    protected Map<String, Object> attachmentToMap(Attachment attachment)
-    {
+    protected Map<String, Object> attachmentToMap(Attachment attachment) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.put("fileName", attachment.getFileName());
         builder.put("version", attachment.getVersion());
@@ -211,21 +189,18 @@ public class ConfluenceEventMapper
         return builder.build();
     }
 
-    protected Map<String, Object> spaceToMap(Space space)
-    {
+    protected Map<String, Object> spaceToMap(Space space) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
 
         builder.put("key", space.getKey());
         builder.put("title", space.getDisplayTitle());
-        if (space.getDescription() != null)
-        {
+        if (space.getDescription() != null) {
             builder.put("description", space.getDescription().getBodyAsString());
         }
         builder.put("isPersonalSpace", space.isPersonal());
         builder.put("self", getFullUrl(space.getUrlPath()));
         Page homePage = space.getHomePage();
-        if (homePage != null)
-        {
+        if (homePage != null) {
             builder.put("homePage", contentEntityObjectToMap(homePage, true));
         }
 
@@ -239,25 +214,20 @@ public class ConfluenceEventMapper
         return builder.build();
     }
 
-    protected Map<String, Object> contentEntityObjectToMap(ContentEntityObject ceo)
-    {
+    protected Map<String, Object> contentEntityObjectToMap(ContentEntityObject ceo) {
         return contentEntityObjectToMap(ceo, false);
     }
 
-    protected Map<String, Object> commentToMap(Comment comment)
-    {
+    protected Map<String, Object> commentToMap(Comment comment) {
         return commentToMap(comment, false);
     }
 
-    protected Map<String, Object> commentToMap(Comment comment, boolean idOnly)
-    {
+    protected Map<String, Object> commentToMap(Comment comment, boolean idOnly) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.putAll(contentEntityObjectToMap(comment, idOnly));
-        if (!idOnly)
-        {
+        if (!idOnly) {
             builder.put("parent", contentEntityObjectToMap(comment.getOwner()));
-            if (comment.getParent() != null)
-            {
+            if (comment.getParent() != null) {
                 builder.put("inReplyTo", commentToMap(comment.getParent(), true));
             }
         }

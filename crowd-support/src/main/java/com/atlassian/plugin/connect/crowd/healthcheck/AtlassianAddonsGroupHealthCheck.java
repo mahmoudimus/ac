@@ -23,8 +23,7 @@ import java.util.Set;
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.validAddonEmailAddress;
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.validAddonUsername;
 
-public class AtlassianAddonsGroupHealthCheck implements HealthCheck
-{
+public class AtlassianAddonsGroupHealthCheck implements HealthCheck {
     // Used until we can upgrade to health check 2.0.7
     private static final String CHECK_NAME = "com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck";
     private static final String CHECK_DESCRIPTION = "This was provided by plugin 'com.atlassian.plugins.atlassian-connect-plugin:addonsGroupHealthCheck' via class 'com.atlassian.plugin.connect.plugin.AtlassianAddonsGroupHealthCheck'";
@@ -35,35 +34,29 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     private final CrowdApplicationProvider crowdApplicationProvider;
 
     public AtlassianAddonsGroupHealthCheck(ApplicationService applicationService,
-            CrowdApplicationProvider crowdApplicationProvider)
-    {
+                                           CrowdApplicationProvider crowdApplicationProvider) {
         this.applicationService = applicationService;
         this.crowdApplicationProvider = crowdApplicationProvider;
     }
 
     @Override
-    public HealthStatus check()
-    {
+    public HealthStatus check() {
         long healthCheckTime = System.currentTimeMillis();
 
-        try
-        {
+        try {
             Collection<User> users = getAddonUsers();
 
             Set<User> usersWithIncorrectEmails = Sets.newHashSet();
             Set<User> usersWithIncorrectPrefix = Sets.newHashSet();
             Set<User> usersIncorrectlyActive = Sets.newHashSet();
 
-            for (User user : users)
-            {
-                if (!validAddonEmailAddress(user))
-                {
+            for (User user : users) {
+                if (!validAddonEmailAddress(user)) {
                     log.warn("Add-on user '" + user.getName() + "' has incorrect email '" + user.getEmailAddress() + "'");
                     usersWithIncorrectEmails.add(user);
                 }
 
-                if (!validAddonUsername(user))
-                {
+                if (!validAddonUsername(user)) {
                     log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
                     usersWithIncorrectPrefix.add(user);
                 }
@@ -73,20 +66,16 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
             StringBuilder reason = new StringBuilder();
 
-            if (!isHealthy)
-            {
+            if (!isHealthy) {
                 reason.append("Add-on group has invalid membership: ");
 
-                if (!usersWithIncorrectEmails.isEmpty())
-                {
+                if (!usersWithIncorrectEmails.isEmpty()) {
                     reason.append(failurePrefix(usersWithIncorrectEmails.size())).append(" unexpected email values. ");
                 }
-                if (!usersWithIncorrectPrefix.isEmpty())
-                {
+                if (!usersWithIncorrectPrefix.isEmpty()) {
                     reason.append(failurePrefix(usersWithIncorrectPrefix.size())).append(" unexpected username values. ");
                 }
-                if (!usersIncorrectlyActive.isEmpty())
-                {
+                if (!usersIncorrectlyActive.isEmpty()) {
                     reason.append(failurePrefix(usersIncorrectlyActive.size())).append(" no applink association. ");
                 }
 
@@ -95,21 +84,17 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
             return new DefaultHealthStatus(CHECK_NAME, CHECK_DESCRIPTION, com.atlassian.healthcheck.core.Application.Plugin,
                     isHealthy, reason.toString(), healthCheckTime);
-        }
-        catch (ApplicationNotFoundException e)
-        {
+        } catch (ApplicationNotFoundException e) {
             return new DefaultHealthStatus(CHECK_NAME, CHECK_DESCRIPTION, com.atlassian.healthcheck.core.Application.Plugin,
                     false, "Could not find application " + e.getApplicationName(), healthCheckTime);
         }
     }
 
-    private String failurePrefix(final int size)
-    {
+    private String failurePrefix(final int size) {
         return size + (size == 1 ? " member has" : " members have");
     }
 
-    protected Collection<User> getAddonUsers() throws ApplicationNotFoundException
-    {
+    protected Collection<User> getAddonUsers() throws ApplicationNotFoundException {
         Application application = crowdApplicationProvider.getCrowdApplication();
 
         MembershipQuery<User> query = QueryBuilder

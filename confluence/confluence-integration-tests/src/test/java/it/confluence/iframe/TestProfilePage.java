@@ -38,8 +38,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of profile page in Confluence
  */
-public class TestProfilePage extends ConfluenceWebDriverTestBase
-{
+public class TestProfilePage extends ConfluenceWebDriverTestBase {
     protected static final String MY_AWESOME_PAGE = "My Awesome Page";
     protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
 
@@ -48,28 +47,25 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
     private String awesomePageModuleKey;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         startConnectAddon("profilePages", new ProfilePageModuleMeta(), "/my-awesome-profile?profile_user={profileUser.name}&profile_key={profileUser.key}");
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException {
         runner.setToggleableConditionShouldDisplay(true);
 
         TestUser user = testUserFactory.basicUser();
         login(user);
         ConnectAddonEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(
                 LINK_TEXT, MY_AWESOME_PAGE, user);
-        Map<String,String> queryParams = page.getIframeQueryParams();
+        Map<String, String> queryParams = page.getIframeQueryParams();
         assertThat(queryParams.get("profile_user"), is(user.getUsername()));
         assertThat(queryParams.get("profile_key"), isNotBlank());
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
+    public void pageIsNotAccessibleWithFalseCondition() {
         runner.setToggleableConditionShouldDisplay(false);
 
         // web item should not be displayed
@@ -85,8 +81,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
     }
 
     @Before
-    public void beforeEachTest()
-    {
+    public void beforeEachTest() {
         this.addonKey = runner.getAddon().getKey();
         this.awesomePageModuleKey = addonAndModuleKey(addonKey, MY_AWESOME_PAGE_KEY);
     }
@@ -94,8 +89,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
 
     private ConnectAddonEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(
             RemoteWebItem.ItemMatchingMode mode, String id, TestUser user)
-            throws MalformedURLException, URISyntaxException
-    {
+            throws MalformedURLException, URISyntaxException {
         login(user);
 
         product.visit(ConfluenceUserProfilePage.class);
@@ -113,8 +107,7 @@ public class TestProfilePage extends ConfluenceWebDriverTestBase
         return addonContentPage;
     }
 
-    private static void startConnectAddon(String fieldName, ConnectModuleMeta meta, String url) throws Exception
-    {
+    private static void startConnectAddon(String fieldName, ConnectModuleMeta meta, String url) throws Exception {
         ConnectPageModuleBeanBuilder pageBeanBuilder = new ConnectPageModuleBeanBuilder().withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
                 .withUrl(url)

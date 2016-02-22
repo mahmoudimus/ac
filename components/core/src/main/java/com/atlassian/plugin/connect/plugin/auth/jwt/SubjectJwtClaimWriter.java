@@ -21,24 +21,20 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ExportAsService(JwtClaimWriter.class)
-public class SubjectJwtClaimWriter implements JwtClaimWriter
-{
+public class SubjectJwtClaimWriter implements JwtClaimWriter {
     private final UserManager userManager;
 
     @Autowired
-    public SubjectJwtClaimWriter(UserManager userManager)
-    {
+    public SubjectJwtClaimWriter(UserManager userManager) {
         this.userManager = userManager;
     }
 
-    public void write(@Nonnull JwtJsonBuilder builder)
-    {
+    public void write(@Nonnull JwtJsonBuilder builder) {
         UserProfile remoteUser = userManager.getRemoteUser();
 
         Map<String, Object> jwtContextClaim = Maps.newHashMap();
 
-        if (remoteUser != null)
-        {
+        if (remoteUser != null) {
             String userKeyValue = remoteUser.getUserKey().getStringValue();
 
             Map<String, String> jwtContextUser = ImmutableMap.of(

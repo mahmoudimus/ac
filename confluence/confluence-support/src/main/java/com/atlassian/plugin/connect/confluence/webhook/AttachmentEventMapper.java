@@ -12,37 +12,31 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-public class AttachmentEventMapper extends ConfluenceEventMapper
-{
-    public AttachmentEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+public class AttachmentEventMapper extends ConfluenceEventMapper {
+    public AttachmentEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         super(userManager, confluenceSettingsManager);
     }
 
     @Override
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return e instanceof AttachmentEvent;
     }
 
     @Override
-    public Map<String, Object> toMap(ConfluenceEvent e)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent e) {
         AttachmentEvent event = (AttachmentEvent) e;
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.putAll(super.toMap(e));
         builder.put("attachedTo", contentEntityObjectToMap(event.getContent()));
 
-        Function<Attachment, Map<String, Object>> f = new Function<Attachment, Map<String, Object>>()
-        {
+        Function<Attachment, Map<String, Object>> f = new Function<Attachment, Map<String, Object>>() {
             @Override
-            public Map<String, Object> apply(Attachment attachment)
-            {
+            public Map<String, Object> apply(Attachment attachment) {
                 return attachmentToMap(attachment);
             }
         };
-        builder.put("attachments", Lists.transform(event.getAttachments(),  f));
+        builder.put("attachments", Lists.transform(event.getAttachments(), f));
         return builder.build();
     }
 }

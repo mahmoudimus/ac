@@ -17,8 +17,7 @@ import java.util.Optional;
 
 @Component
 @ExportAsService
-public class ConnectAddonAccessorImpl implements ConnectAddonAccessor
-{
+public class ConnectAddonAccessorImpl implements ConnectAddonAccessor {
 
     private final ConnectAddonRegistry addonRegistry;
     private final ConnectAddonBeanFactory addonBeanFactory;
@@ -26,52 +25,43 @@ public class ConnectAddonAccessorImpl implements ConnectAddonAccessor
 
     @Inject
     public ConnectAddonAccessorImpl(ConnectAddonRegistry addonRegistry,
-            ConnectAddonBeanFactory connectAddonBeanFactory,
-            BeanToModuleRegistrar beanToModuleRegistrar)
-    {
+                                    ConnectAddonBeanFactory connectAddonBeanFactory,
+                                    BeanToModuleRegistrar beanToModuleRegistrar) {
         this.addonRegistry = addonRegistry;
         this.addonBeanFactory = connectAddonBeanFactory;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
     }
 
     @Override
-    public boolean isAddonEnabled(final String addonKey)
-    {
+    public boolean isAddonEnabled(final String addonKey) {
         return beanToModuleRegistrar.descriptorsAreRegistered(addonKey);
     }
 
     @Override
-    public Optional<ConnectAddonBean> getAddon(String addonKey) throws InvalidDescriptorException
-    {
+    public Optional<ConnectAddonBean> getAddon(String addonKey) throws InvalidDescriptorException {
         return getAddonForDescriptor(addonRegistry.getDescriptor(addonKey));
     }
 
     @Override
-    public Collection<String> getAllAddonKeys()
-    {
+    public Collection<String> getAllAddonKeys() {
         return addonRegistry.getAllAddonKeys();
     }
 
     @Override
-    public Collection<ConnectAddonBean> getAllAddons() throws InvalidDescriptorException
-    {
+    public Collection<ConnectAddonBean> getAllAddons() throws InvalidDescriptorException {
         ImmutableList.Builder<ConnectAddonBean> addonsBuilder = ImmutableList.builder();
-        for (AddonSettings addonSettings : addonRegistry.getAllAddonSettings())
-        {
+        for (AddonSettings addonSettings : addonRegistry.getAllAddonSettings()) {
             Optional<ConnectAddonBean> optionalAddon = getAddonForDescriptor(addonSettings.getDescriptor());
-            if (optionalAddon.isPresent())
-            {
+            if (optionalAddon.isPresent()) {
                 addonsBuilder.add(optionalAddon.get());
             }
         }
         return addonsBuilder.build();
     }
 
-    private Optional<ConnectAddonBean> getAddonForDescriptor(@Nullable String descriptor) throws InvalidDescriptorException
-    {
+    private Optional<ConnectAddonBean> getAddonForDescriptor(@Nullable String descriptor) throws InvalidDescriptorException {
         Optional<ConnectAddonBean> optionalAddon = Optional.empty();
-        if (!Strings.isNullOrEmpty(descriptor))
-        {
+        if (!Strings.isNullOrEmpty(descriptor)) {
             optionalAddon = Optional.of(addonBeanFactory.fromJson(descriptor));
         }
         return optionalAddon;

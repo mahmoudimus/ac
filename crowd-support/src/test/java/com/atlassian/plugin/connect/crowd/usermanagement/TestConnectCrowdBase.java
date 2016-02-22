@@ -30,24 +30,22 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class TestConnectCrowdBase
-{
-    @Mock private UserReconciliation userReconciliation;
+public class TestConnectCrowdBase {
+    @Mock
+    private UserReconciliation userReconciliation;
 
     private MockCrowdImplementation crowdBase;
 
     @Before
-    public void beforeEach()
-    {
+    public void beforeEach() {
         initMocks(this);
         when(userReconciliation.getFixes(any(User.class), anyString(), anyString(), anyBoolean())).thenReturn(Optional.<UserTemplate>empty());
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
     public void createOrEnableUserReportsExistingUserAsExisting()
-            throws UserNotFoundException
-    {
+            throws UserNotFoundException {
         crowdBase = new MockCrowdImplementation(userReconciliation, new UserTemplate("name"));
         UserCreationResult result = crowdBase.createOrEnableUser("name", "Display Name", "email@address.com", PasswordCredential.NONE);
 
@@ -56,8 +54,7 @@ public class TestConnectCrowdBase
 
     @Test
     public void createOrEnableUserReportsNewlyCreatedUserAsNewlyCreated()
-            throws UserNotFoundException
-    {
+            throws UserNotFoundException {
         crowdBase = new MockCrowdImplementation(userReconciliation, null);
         UserCreationResult result = crowdBase.createOrEnableUser("name", "Display Name", "email@address.com", PasswordCredential.NONE);
 
@@ -69,89 +66,73 @@ public class TestConnectCrowdBase
         assertThat("Newly created user is reported as newly created", result.isNewlyCreated(), is(true));
     }
 
-    private static class MockCrowdImplementation extends ConnectCrowdBase
-    {
+    private static class MockCrowdImplementation extends ConnectCrowdBase {
         private User user;
 
-        public MockCrowdImplementation(UserReconciliation userReconciliation, User user)
-        {
+        public MockCrowdImplementation(UserReconciliation userReconciliation, User user) {
             super(userReconciliation);
             this.user = user;
         }
 
         @Override
-        public void setAttributesOnUser(String username, Map<String, Set<String>> attributes)
-        {
+        public void setAttributesOnUser(String username, Map<String, Set<String>> attributes) {
         }
 
         @Override
-        public Optional<? extends User> findUserByName(String username)
-        {
-            if (user != null)
-            {
+        public Optional<? extends User> findUserByName(String username) {
+            if (user != null) {
                 assertThat("Crowd base searches for the user by name", username, is(user.getName()));
                 return Optional.of(user);
-            }
-            else
-            {
+            } else {
                 return Optional.empty();
             }
         }
 
         @Override
         protected void addUser(UserTemplate userTemplate, PasswordCredential passwordCredential)
-                throws OperationFailedException, InvalidUserException
-        {
-            if (user != null)
-            {
+                throws OperationFailedException, InvalidUserException {
+            if (user != null) {
                 fail("User should not be re-created");
             }
             user = userTemplate;
         }
 
         @Override
-        protected void updateUserCredential(String username, PasswordCredential passwordCredential)
-        {
+        protected void updateUserCredential(String username, PasswordCredential passwordCredential) {
             assertThat("PasswordCredential should be NONE", passwordCredential, is(PasswordCredential.NONE));
         }
 
         @Override
-        protected void updateUser(UserTemplate fixes)
-        {
+        protected void updateUser(UserTemplate fixes) {
             throw new UnsupportedOperationException("Not implemented");
         }
 
         @Override
         protected void addGroup(String groupName)
-                throws InvalidGroupException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
-        {
+                throws InvalidGroupException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException {
             throw new UnsupportedOperationException("Not implemented");
         }
 
         @Override
         public void ensureUserIsInGroup(String userKey, String groupKey)
-                throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
-        {
+                throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException {
             throw new UnsupportedOperationException("Not implemented");
         }
 
         @Override
         public void removeUserFromGroup(String userKey, String groupKey)
-                throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
-        {
+                throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException {
             throw new UnsupportedOperationException("Not implemented");
         }
 
         @Override
         public Group findGroupByKey(String groupKey)
-                throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
-        {
+                throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException {
             throw new UnsupportedOperationException("Not implemented");
         }
 
         @Override
-        public void invalidateSessions(String username)
-        {
+        public void invalidateSessions(String username) {
             throw new UnsupportedOperationException("Not implemented");
         }
     }

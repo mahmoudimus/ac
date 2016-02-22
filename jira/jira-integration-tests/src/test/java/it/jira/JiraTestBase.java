@@ -11,8 +11,7 @@ import org.junit.BeforeClass;
 
 import it.jira.project.TestProject;
 
-public class JiraTestBase
-{
+public class JiraTestBase {
 
     private static final String PROJECT_TEMPLATE_KEY = "com.atlassian.jira-core-project-templates:jira-core-task-management";
 
@@ -21,19 +20,16 @@ public class JiraTestBase
     protected static TestProject project;
 
     @BeforeClass
-    public static void beforeClass() throws RemoteException
-    {
+    public static void beforeClass() throws RemoteException {
         project = addProject();
     }
 
     @AfterClass
-    public static void afterClass() throws RemoteException
-    {
+    public static void afterClass() throws RemoteException {
         product.backdoor().project().deleteProject(project.getKey());
     }
 
-    public static TestProject addProject()
-    {
+    public static TestProject addProject() {
         String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
         String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
                 "Test project " + projectKey, projectKey, "admin", PROJECT_TEMPLATE_KEY));

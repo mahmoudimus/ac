@@ -18,19 +18,24 @@ import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModul
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<StaticContentMacroModuleBean, StaticContentMacroModuleBeanBuilder>
-{
-    @Mock private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    @Mock private ConnectUriFactory connectUriFactory;
-    @Mock private MacroModuleContextExtractor macroModuleContextExtractor;
-    @Mock private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    @Mock private MacroContentManager macroContentManager;
-    @Mock private UserManager userManager;
-    @Mock private UrlVariableSubstitutor urlVariableSubstitutor;
+public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<StaticContentMacroModuleBean, StaticContentMacroModuleBeanBuilder> {
+    @Mock
+    private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    @Mock
+    private ConnectUriFactory connectUriFactory;
+    @Mock
+    private MacroModuleContextExtractor macroModuleContextExtractor;
+    @Mock
+    private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    @Mock
+    private MacroContentManager macroContentManager;
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Override
-    protected XhtmlMacroModuleDescriptor createModuleDescriptorForTest()
-    {
+    protected XhtmlMacroModuleDescriptor createModuleDescriptorForTest() {
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
 
         StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
@@ -44,8 +49,7 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
     }
 
     @Override
-    protected StaticContentMacroModuleBeanBuilder newContentMacroModuleBeanBuilder()
-    {
+    protected StaticContentMacroModuleBeanBuilder newContentMacroModuleBeanBuilder() {
         return newStaticContentMacroModuleBean();
     }
 }

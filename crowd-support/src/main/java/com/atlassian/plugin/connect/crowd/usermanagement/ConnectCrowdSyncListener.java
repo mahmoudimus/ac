@@ -12,19 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
  * We can't use one of our components directly, because the event system
  * appears to create a new instance instead of using the existing component.
  */
-public class ConnectCrowdSyncListener
-{
+public class ConnectCrowdSyncListener {
     private final ConnectCrowdSyncService syncService;
 
     @Autowired
-    public ConnectCrowdSyncListener(ConnectCrowdSyncService syncService)
-    {
+    public ConnectCrowdSyncListener(ConnectCrowdSyncService syncService) {
         this.syncService = syncService;
     }
 
     @EventListener
-    public void reportSyncedUser(RemoteDirectorySynchronisedEvent event)
-    {
+    public void reportSyncedUser(RemoteDirectorySynchronisedEvent event) {
         syncService.handleSync();
     }
 

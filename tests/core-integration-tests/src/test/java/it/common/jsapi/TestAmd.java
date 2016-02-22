@@ -16,16 +16,14 @@ import it.common.MultiProductWebDriverTestBase;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 
-public class TestAmd extends MultiProductWebDriverTestBase
-{
+public class TestAmd extends MultiProductWebDriverTestBase {
 
     private static final String PAGE_KEY = "amdTest";
 
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
                 .addModules("generalPages",
@@ -41,17 +39,14 @@ public class TestAmd extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testAmd()
-    {
+    public void testAmd() {
         ConnectGeneralTestPage page = loginAndVisit(testUserFactory.basicUser(),
                 ConnectGeneralTestPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 

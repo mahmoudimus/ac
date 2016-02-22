@@ -29,15 +29,13 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
     private JsonNode expectedValue;
     private String jsonPath;
 
-    public AddonEntityPropertyEqualToCondition(final AddonPropertyService addonPropertyService, final UserManager userManager)
-    {
+    public AddonEntityPropertyEqualToCondition(final AddonPropertyService addonPropertyService, final UserManager userManager) {
         this.addonPropertyService = addonPropertyService;
         this.userManager = userManager;
     }
 
     @Override
-    public void init(final Map<String, String> params) throws PluginParseException
-    {
+    public void init(final Map<String, String> params) throws PluginParseException {
         super.init(params);
 
         // Required values
@@ -46,7 +44,8 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
 
         // Validate the required values
         final Optional<JsonNode> potentialValue = parseStringToJson(rawValue);
-        if(!potentialValue.isPresent()) throw new PluginParseException("The 'value' of the add-on entity_property_equal_to condition could not be parsed into JSON. Please check that it is valid json: " + rawValue);
+        if (!potentialValue.isPresent())
+            throw new PluginParseException("The 'value' of the add-on entity_property_equal_to condition could not be parsed into JSON. Please check that it is valid json: " + rawValue);
         this.expectedValue = potentialValue.get();
 
         // Optional values
@@ -56,61 +55,60 @@ public class AddonEntityPropertyEqualToCondition extends AbstractConnectConditio
 
     private static String getRequiredProperty(Map<String, String> params, String paramName) {
         final String property = params.get(paramName);
-        if(property == null) throw new PluginParseException("Add-on entity_property_equal_to condition is missing parameter: " + paramName);
+        if (property == null)
+            throw new PluginParseException("Add-on entity_property_equal_to condition is missing parameter: " + paramName);
         return property;
     }
 
     private void validateObjectNameHasCorrectSyntax(final String objectName) {
-        if(StringUtils.isNotBlank(objectName)) {
+        if (StringUtils.isNotBlank(objectName)) {
             final Optional<String> potentialError = validateObjectName(objectName);
-            if(potentialError.isPresent()) {
+            if (potentialError.isPresent()) {
                 throw new PluginParseException("Failed to read the objectName property: " + potentialError.get() + " (" + objectName + ")");
             }
         }
     }
 
     private static Optional<String> validateObjectName(String objectName) {
-        if(objectName.contains("..")) return Optional.of("Two '.' characters in a row is not valid in an objectName");
+        if (objectName.contains("..")) return Optional.of("Two '.' characters in a row is not valid in an objectName");
 
         return Optional.empty();
     }
 
     @Override
-    public boolean shouldDisplay(final Map<String, Object> context)
-    {
+    public boolean shouldDisplay(final Map<String, Object> context) {
         UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUserKey());
         return addonPropertyService.getPropertyValue(userProfile, addonKey, addonKey, propertyKey).fold(
-            input -> false,
-            input -> {
-                // Load the actual value
-                JsonNode actualValue = input.getValue();
+                input -> false,
+                input -> {
+                    // Load the actual value
+                    JsonNode actualValue = input.getValue();
 
-                // If an objectName has been specified then attempt to extract that node
-                if (StringUtils.isNotBlank(jsonPath))
-                {
-                    final Optional<JsonNode> potentialValue = getValueForPath(actualValue, jsonPath);
-                    if (!potentialValue.isPresent()) return false;
-                    actualValue = potentialValue.get();
+                    // If an objectName has been specified then attempt to extract that node
+                    if (StringUtils.isNotBlank(jsonPath)) {
+                        final Optional<JsonNode> potentialValue = getValueForPath(actualValue, jsonPath);
+                        if (!potentialValue.isPresent()) return false;
+                        actualValue = potentialValue.get();
+                    }
+
+                    if (expectedValue.equals(actualValue)) return true;
+
+                    // All of the code below this point in this method should be deleted by https://ecosystem.atlassian.net/browse/ACJIRA-825
+                    // In the past this condition worked purely on string comparison and therefore boolean values and numerical values
+                    // would successfully compare against their string equivalents.
+                    if (StringUtils.isNotBlank(jsonPath)) return false;
+                    if (!expectedValue.isValueNode() || !actualValue.isValueNode()) return false;
+                    final boolean stringComparisonEqual = actualValue.isTextual() && expectedValue.asText().equals(
+                            actualValue.getTextValue());
+                    if (stringComparisonEqual) {
+                        log.warn("Deprecation Warning: entity_property_equal_to condition was not equivalent by JSON comparison but was by String comparison. "
+                                + "Please ensure that the entity property values and the condition 'value' are of the same json type. "
+                                + "Type coercion has made the actual value: '" + actualValue + "' be equivalent to the expected value"
+                                + "'" + expectedValue + "'. Please update the expected 'value' in the entity property condition"
+                                + "to match the actual value. This condition was defined in the add-on: " + addonKey);
+                    }
+                    return stringComparisonEqual;
                 }
-
-                if(expectedValue.equals(actualValue)) return true;
-
-                // All of the code below this point in this method should be deleted by https://ecosystem.atlassian.net/browse/ACJIRA-825
-                // In the past this condition worked purely on string comparison and therefore boolean values and numerical values
-                // would successfully compare against their string equivalents.
-                if(StringUtils.isNotBlank(jsonPath)) return false;
-                if (!expectedValue.isValueNode() || !actualValue.isValueNode()) return false;
-                final boolean stringComparisonEqual = actualValue.isTextual() && expectedValue.asText().equals(
-                    actualValue.getTextValue());
-                if (stringComparisonEqual) {
-                    log.warn("Deprecation Warning: entity_property_equal_to condition was not equivalent by JSON comparison but was by String comparison. "
-                        + "Please ensure that the entity property values and the condition 'value' are of the same json type. "
-                        + "Type coercion has made the actual value: '" + actualValue + "' be equivalent to the expected value"
-                        + "'" + expectedValue + "'. Please update the expected 'value' in the entity property condition"
-                        + "to match the actual value. This condition was defined in the add-on: " + addonKey);
-                }
-                return stringComparisonEqual;
-            }
         );
     }
 

@@ -19,8 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CanUseApplicationConditionTest
-{
+public class CanUseApplicationConditionTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -33,14 +32,12 @@ public class CanUseApplicationConditionTest
     private final CanUseApplicationCondition condition = new CanUseApplicationCondition(applicationAuthorizationService, jiraAuthenticationContext);
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         when(jiraAuthenticationContext.getLoggedInUser()).thenReturn(USER);
     }
 
     @Test
-    public void conditionEvaluatesToTrueIfApplicationIsInstalledAndUserIsLicensed()
-    {
+    public void conditionEvaluatesToTrueIfApplicationIsInstalledAndUserIsLicensed() {
         initConditionWith(APPLICATION_KEY.value());
         when(applicationAuthorizationService.canUseApplication(USER, APPLICATION_KEY)).thenReturn(true);
         when(applicationAuthorizationService.isApplicationInstalledAndLicensed(APPLICATION_KEY)).thenReturn(true);
@@ -58,8 +55,7 @@ public class CanUseApplicationConditionTest
     }
 
     @Test
-    public void conditionEvaluatesToFalseIfApplicationIsInstalledButUserIsNotLicensed()
-    {
+    public void conditionEvaluatesToFalseIfApplicationIsInstalledButUserIsNotLicensed() {
         initConditionWith(APPLICATION_KEY.value());
         when(applicationAuthorizationService.isApplicationInstalledAndLicensed(APPLICATION_KEY)).thenReturn(true);
 
@@ -67,8 +63,7 @@ public class CanUseApplicationConditionTest
     }
 
     @Test
-    public void conditionEvaluatesToFalseIfUserIsLicensedButApplicationIsNotInstalled()
-    {
+    public void conditionEvaluatesToFalseIfUserIsLicensedButApplicationIsNotInstalled() {
         initConditionWith(APPLICATION_KEY.value());
         when(applicationAuthorizationService.canUseApplication(USER, APPLICATION_KEY)).thenReturn(true);
 
@@ -76,23 +71,20 @@ public class CanUseApplicationConditionTest
     }
 
     @Test
-    public void ExceptionIsThrownIfKeyIsInvalid()
-    {
+    public void ExceptionIsThrownIfKeyIsInvalid() {
         thrown.expect(PluginParseException.class);
         thrown.expectMessage("invalid application key: \"///;;;'[][][$%#$%,,, ---  =>\"");
         initConditionWith("///;;;'[][][$%#$%,,, ---  =>");
     }
 
     @Test
-    public void ExceptionIsThrownIfKeyIsNull()
-    {
+    public void ExceptionIsThrownIfKeyIsNull() {
         thrown.expect(PluginParseException.class);
         thrown.expectMessage("\"applicationKey\" parameter is required in the can_use_application condition");
         initConditionWith(null);
     }
 
-    private void initConditionWith(String applicationKey)
-    {
+    private void initConditionWith(String applicationKey) {
         Map<String, String> properties = Maps.newHashMap();
         properties.put("applicationKey", applicationKey);
         condition.init(properties);

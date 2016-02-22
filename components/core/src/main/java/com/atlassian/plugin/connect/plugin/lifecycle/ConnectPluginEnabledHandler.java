@@ -14,8 +14,7 @@ import javax.inject.Named;
 
 @Named
 @ExportAsService(LifecycleAware.class)
-public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
-{
+public class ConnectPluginEnabledHandler extends AbstractInitializingComponent {
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonManager.class);
 
     private final ConnectAddonRegistry addonRegistry;
@@ -23,30 +22,23 @@ public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
 
     @Inject
     public ConnectPluginEnabledHandler(ConnectAddonRegistry addonRegistry,
-            ConnectAddonManager addonManager, EventPublisher eventPublisher)
-    {
+                                       ConnectAddonManager addonManager, EventPublisher eventPublisher) {
         super(eventPublisher);
         this.addonRegistry = addonRegistry;
         this.addonManager = addonManager;
     }
 
     @Override
-    protected void finalInit()
-    {
+    protected void finalInit() {
         enableAddons();
     }
 
-    private void enableAddons()
-    {
+    private void enableAddons() {
         //enable all the addons if needed
-        for (String addonKey : addonRegistry.getAddonKeysToEnableOnRestart())
-        {
-            try
-            {
+        for (String addonKey : addonRegistry.getAddonKeysToEnableOnRestart()) {
+            try {
                 addonManager.enableConnectAddon(addonKey);
-            }
-            catch (ConnectAddonEnableException e)
-            {
+            } catch (ConnectAddonEnableException e) {
                 log.error("Could not enable add-on " + e.getAddonKey() + " during enablement of the Connect plugin: " + e.getMessage(), e);
             }
         }

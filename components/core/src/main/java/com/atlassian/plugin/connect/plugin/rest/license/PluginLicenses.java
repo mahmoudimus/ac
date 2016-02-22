@@ -13,18 +13,15 @@ import org.joda.time.Interval;
  *
  * Remove this once UPM supports this rest resource
  */
-class PluginLicenses
-{
+class PluginLicenses {
     /**
      * Number of days before expiration when a license is considered to be "nearly expired".
      */
     public static final Integer NEARLY_EXPIRED_DAYS = 7;
 
-    public static Predicate<PluginLicense> isNearlyExpired()
-    {
+    public static Predicate<PluginLicense> isNearlyExpired() {
         return license -> {
-            for (DateTime expiryDate : license.getExpiryDate())
-            {
+            for (DateTime expiryDate : license.getExpiryDate()) {
                 return new Interval(expiryDate.minusDays(NEARLY_EXPIRED_DAYS), expiryDate).contains(new DateTime());
             }
             return false; //no expiration date means it is never "nearly expired"

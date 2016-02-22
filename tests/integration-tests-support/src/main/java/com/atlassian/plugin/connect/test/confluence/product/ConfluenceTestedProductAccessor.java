@@ -16,52 +16,43 @@ import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFacto
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 
-public class ConfluenceTestedProductAccessor implements TestedProductAccessor
-{
+public class ConfluenceTestedProductAccessor implements TestedProductAccessor {
     private final FixedConfluenceTestedProduct product;
 
-    public ConfluenceTestedProductAccessor()
-    {
+    public ConfluenceTestedProductAccessor() {
         product = getConfluenceProduct();
     }
 
     @Override
-    public void login(TestUser user)
-    {
+    public void login(TestUser user) {
         product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
     }
 
     @Override
-    public <P extends Page> P loginAndVisit(TestUser user, Class<P> page, Object... args)
-    {
+    public <P extends Page> P loginAndVisit(TestUser user, Class<P> page, Object... args) {
         return product.login(toConfluenceUser(user), page, args);
     }
 
     @Override
-    public TestedProduct<WebDriverTester> getTestedProduct()
-    {
+    public TestedProduct<WebDriverTester> getTestedProduct() {
         return getConfluenceProduct();
     }
 
-    public static User toConfluenceUser(TestUser user)
-    {
+    public static User toConfluenceUser(TestUser user) {
         return new User(user.getUsername(), user.getPassword(), user.getDisplayName(), user.getEmail());
     }
 
     @Override
-    public ConnectTestUserFactory getUserFactory()
-    {
+    public ConnectTestUserFactory getUserFactory() {
         return new ConfluenceTestUserFactory(product);
     }
 
     @Override
-    public String getGloballyVisibleLocation()
-    {
+    public String getGloballyVisibleLocation() {
         return "system.header/left";
     }
 
-    public final FixedConfluenceTestedProduct getConfluenceProduct()
-    {
+    public final FixedConfluenceTestedProduct getConfluenceProduct() {
         FixedConfluenceTestedProduct product;
         product = TestedProductFactory.create(FixedConfluenceTestedProduct.class);
         product.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);

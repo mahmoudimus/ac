@@ -26,8 +26,7 @@ import java.util.List;
  *
  * @param <T> the type of the add-on descriptor module representation
  */
-public interface ConnectModuleProvider<T extends BaseModuleBean>
-{
+public interface ConnectModuleProvider<T extends BaseModuleBean> {
 
     /**
      * Returns the metadata for this module.
@@ -44,7 +43,7 @@ public interface ConnectModuleProvider<T extends BaseModuleBean>
      * This method is called <b>before</b> {@link #deserializeAddonDescriptorModules(String, ShallowConnectAddonBean)}.
      *
      * @param jsonModuleListEntry the string representation of the module list entry JSON element
-     * @param descriptor the add-on descriptor (without the module list)
+     * @param descriptor          the add-on descriptor (without the module list)
      * @return the module beans deserialized from the module list entry
      * @throws ConnectModuleValidationException if the syntax or semantics of the module list entry are invalid
      */
@@ -65,7 +64,7 @@ public interface ConnectModuleProvider<T extends BaseModuleBean>
      * Creates plugin module descriptors representing the given list of add-on modules.
      *
      * @param modules the add-on modules for which to create plugin module descriptors
-     * @param addon the add-on descriptor
+     * @param addon   the add-on descriptor
      */
     List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon);
 }

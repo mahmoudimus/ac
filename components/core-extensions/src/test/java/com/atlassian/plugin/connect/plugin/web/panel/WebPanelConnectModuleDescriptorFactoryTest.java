@@ -26,8 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WebPanelConnectModuleDescriptorFactoryTest
-{
+public class WebPanelConnectModuleDescriptorFactoryTest {
 
     @Mock
     private ConnectContainerUtil connectContainerUtil;
@@ -50,8 +49,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     private WebPanelConnectModuleDescriptorFactory descriptorFactory;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         descriptorFactory = new WebPanelConnectModuleDescriptorFactory(connectContainerUtil,
                 webFragmentLocationQualifier, conditionModuleFragmentFactory);
         when(connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class)).thenReturn(descriptor);
@@ -59,8 +57,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     }
 
     @Test
-    public void webPanelModuleDescriptorHasCorrectLocation() throws Exception
-    {
+    public void webPanelModuleDescriptorHasCorrectLocation() throws Exception {
         String location = "location";
         String expectedLocation = "somelocation";
         when(webFragmentLocationQualifier.processLocation(location, addon)).thenReturn(expectedLocation);
@@ -71,24 +68,19 @@ public class WebPanelConnectModuleDescriptorFactoryTest
         verify(descriptor).init(any(Plugin.class), argThat(hasLocationAttributeEqualTo(expectedLocation)));
     }
 
-    private Matcher<Element> hasLocationAttributeEqualTo(final String value)
-    {
-        return new TypeSafeMatcher<Element>()
-        {
+    private Matcher<Element> hasLocationAttributeEqualTo(final String value) {
+        return new TypeSafeMatcher<Element>() {
             @Override
-            protected boolean matchesSafely(final Element element)
-            {
+            protected boolean matchesSafely(final Element element) {
                 return getLocationAttributeValue(element).equals(value);
             }
 
-            private Object getLocationAttributeValue(final Element element)
-            {
+            private Object getLocationAttributeValue(final Element element) {
                 return element.attribute("location").getData();
             }
 
             @Override
-            public void describeTo(final Description description)
-            {
+            public void describeTo(final Description description) {
                 description.appendText("Element with location with value: ").appendValue(value);
             }
         };

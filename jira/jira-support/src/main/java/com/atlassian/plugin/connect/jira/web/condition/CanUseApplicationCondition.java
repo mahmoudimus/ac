@@ -13,44 +13,40 @@ import com.atlassian.plugin.web.Condition;
 
 import static java.lang.String.format;
 
-public class CanUseApplicationCondition implements Condition
-{
+public class CanUseApplicationCondition implements Condition {
     private Optional<ApplicationKey> key;
 
     private final ApplicationAuthorizationService applicationService;
     private final JiraAuthenticationContext authenticationContext;
 
-    public CanUseApplicationCondition(ApplicationAuthorizationService applicationService, JiraAuthenticationContext authenticationContext)
-    {
+    public CanUseApplicationCondition(ApplicationAuthorizationService applicationService, JiraAuthenticationContext authenticationContext) {
         this.applicationService = applicationService;
         this.authenticationContext = authenticationContext;
     }
 
     @Override
-    public void init(Map<String, String> params) throws PluginParseException
-    {
+    public void init(Map<String, String> params) throws PluginParseException {
         String keyParameter = params.get("applicationKey");
-        if (keyParameter == null)
-        {
+        if (keyParameter == null) {
             throw new PluginParseException("\"applicationKey\" parameter is required in the can_use_application condition");
         }
         Either<String, ApplicationKey> applicationKey = ApplicationKeys.TO_APPLICATION_KEY.apply(keyParameter);
 
         key = applicationKey.fold(
-                param -> { throw new PluginParseException(format("invalid application key: \"%s\"", param)); },
+                param -> {
+                    throw new PluginParseException(format("invalid application key: \"%s\"", param));
+                },
                 Optional::of);
     }
 
     @Override
-    public boolean shouldDisplay(Map<String, Object> context)
-    {
+    public boolean shouldDisplay(Map<String, Object> context) {
         return key.filter(this::isApplicationInstalled)
                 .map(appKey -> applicationService.canUseApplication(authenticationContext.getLoggedInUser(), appKey))
                 .orElse(false);
     }
 
-    private boolean isApplicationInstalled(final ApplicationKey key)
-    {
+    private boolean isApplicationInstalled(final ApplicationKey key) {
         return ApplicationKeys.CORE.equals(key) ||
                 applicationService.isApplicationInstalledAndLicensed(key);
     }

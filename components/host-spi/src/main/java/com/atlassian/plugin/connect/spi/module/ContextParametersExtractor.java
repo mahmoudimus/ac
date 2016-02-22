@@ -9,14 +9,13 @@ import java.util.Map;
  * parameters for Connect add-ons based on the current context.
  *
  * <p>
- *     Note that it's not enough to simply provide the parameters.
- *     Each parameter needs to pass a permission check.
- *     You can define permission checks by implementing {@link ContextParametersValidator}
+ * Note that it's not enough to simply provide the parameters.
+ * Each parameter needs to pass a permission check.
+ * You can define permission checks by implementing {@link ContextParametersValidator}
  * </p>
  */
 @PublicSpi
-public interface ContextParametersExtractor
-{
+public interface ContextParametersExtractor {
     /**
      * Extracts parameters from the rendering context so that they can be used by Connect add-ons.
      *

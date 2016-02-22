@@ -17,22 +17,18 @@ import org.openqa.selenium.By;
 /**
  * A working replacement for the CreateDialog page object in Confluence.
  */
-public class CreateContentDialog extends CreateDialog
-{
-    public CreateContentDialog createWithBlueprintWizard(String completeKey)
-    {
+public class CreateContentDialog extends CreateDialog {
+    public CreateContentDialog createWithBlueprintWizard(String completeKey) {
         clickBlueprintItem(completeKey);
         return this;
     }
 
-    public CreateContentDialog clickCreateButton()
-    {
+    public CreateContentDialog clickCreateButton() {
         getCreateButton().click();
         return this;
     }
 
-    public EditContentPage getEditContentPage()
-    {
+    public EditContentPage getEditContentPage() {
         Editor editor = pageBinder.bind(Editor.class);
         Poller.waitUntil("Waiting for editor to become active.",
                 editor.isEditorCurrentlyActive(), Matchers.is(true), Poller.by(1, TimeUnit.HOURS));
@@ -40,20 +36,17 @@ public class CreateContentDialog extends CreateDialog
         return pageBinder.bind(EditContentPage.class);
     }
 
-    public EditorPage createWithBlueprint(String completeKey)
-    {
+    public EditorPage createWithBlueprint(String completeKey) {
         clickBlueprintItem(completeKey);
         return getEditContentPage();
     }
 
-    public PageElement getErrorMessage()
-    {
+    public PageElement getErrorMessage() {
         By locator = By.cssSelector(".aui-flag .aui-message");
         return this.pageElementFinder.find(locator);
     }
 
-    public PageElement getCreateButton()
-    {
+    public PageElement getCreateButton() {
         /**
          * For blueprint with wizard. The page will have multiple create button presents
          * We should choose one that isn't disabled.
@@ -62,8 +55,7 @@ public class CreateContentDialog extends CreateDialog
         return getDialog().find(locator);
     }
 
-    public CreateContentDialog clickBlueprintItem(String completeKey)
-    {
+    public CreateContentDialog clickBlueprintItem(String completeKey) {
         waitForBlueprint(completeKey).click();
         getCreateButton().click();
 

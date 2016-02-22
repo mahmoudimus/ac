@@ -17,20 +17,17 @@ import java.util.List;
 import static it.com.atlassian.plugin.connect.jira.auth.scope.JiraScopeTestHelper.emptyBodyForJira;
 import static java.util.Arrays.asList;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class TempoRestScopesTest extends ScopeManagerTest
-{
-    public TempoRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
-            super(scopeManager, scopeTestHelper, testData());
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class TempoRestScopesTest extends ScopeManagerTest {
+    public TempoRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
+        super(scopeManager, scopeTestHelper, testData());
     }
 
     /**
      * These tests are not exhaustive. They are samples across the JIRA endpoints.
      */
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         List<ScopeTestData> params = new ArrayList<>();
 
         params.addAll(asList(

@@ -45,31 +45,41 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JiraAddonUserProvisioningServiceTest
-{
+public class JiraAddonUserProvisioningServiceTest {
     private static String USERNAME = "addon-blaah";
     private static String ADDONS_ADMIN_GROUP = "atlassian-addons-admin";
     private static String REN_GROUP = "ren-users";
 
-    @Mock private GlobalPermissionManager jiraPermissionManager;
-    @Mock private PermissionSchemeManager permissionSchemeManager;
-    @Mock private ProjectManager projectManager;
-    @Mock private ProjectRoleService projectRoleService;
-    @Mock private UserManager userManager;
-    @Mock private ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService;
-    @Mock private PermissionManager jiraProjectPermissionManager;
-    @Mock private ApplicationUser adminUser;
-    @Mock private ApplicationAuthorizationService applicationAuthorizationService;
-    @Mock private Group group;
-    @Mock private ConnectCrowdPermissions connectCrowdPermissions;
-    @Mock private ApplicationRoleManager applicationRoleManager;
-    @Mock private ApplicationRole applicationRole;
+    @Mock
+    private GlobalPermissionManager jiraPermissionManager;
+    @Mock
+    private PermissionSchemeManager permissionSchemeManager;
+    @Mock
+    private ProjectManager projectManager;
+    @Mock
+    private ProjectRoleService projectRoleService;
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService;
+    @Mock
+    private PermissionManager jiraProjectPermissionManager;
+    @Mock
+    private ApplicationUser adminUser;
+    @Mock
+    private ApplicationAuthorizationService applicationAuthorizationService;
+    @Mock
+    private Group group;
+    @Mock
+    private ConnectCrowdPermissions connectCrowdPermissions;
+    @Mock
+    private ApplicationRoleManager applicationRoleManager;
+    @Mock
+    private ApplicationRole applicationRole;
 
-    private TransactionTemplate transactionTemplate = new TransactionTemplate()
-    {
+    private TransactionTemplate transactionTemplate = new TransactionTemplate() {
         @Override
-        public <T> T execute(TransactionCallback<T> action)
-        {
+        public <T> T execute(TransactionCallback<T> action) {
             return action.doInTransaction();
         }
     };
@@ -77,8 +87,7 @@ public class JiraAddonUserProvisioningServiceTest
     private Set<Group> groups;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         provisioningService = new JiraAddonUserProvisioningService(jiraPermissionManager,
                 projectManager,
                 userManager,
@@ -99,8 +108,7 @@ public class JiraAddonUserProvisioningServiceTest
     @Test
     public void testMissingAdminPermissionReturnsCorrectErrorCode()
             throws ApplicationNotFoundException,
-            OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
-    {
+            OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException {
         when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
 
         when(connectAddonUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(false);
@@ -111,13 +119,10 @@ public class JiraAddonUserProvisioningServiceTest
         Set<ScopeName> previousScopes = newHashSet();
         Set<ScopeName> newScopes = newHashSet(ScopeName.ADMIN);
 
-        try
-        {
+        try {
             provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
             fail("Provisioning addon should not have succeeded");
-        }
-        catch (ConnectAddonInitException exception)
-        {
+        } catch (ConnectAddonInitException exception) {
             assertEquals(exception.getI18nKey(), ConnectAddonInitException.ADDON_ADMINS_MISSING_PERMISSION);
         }
     }
@@ -125,8 +130,7 @@ public class JiraAddonUserProvisioningServiceTest
     @Test
     public void testAdminGrantProvidesCorrectProductAndApplicationIdInRenaissance()
             throws ApplicationPermissionException,
-            OperationFailedException, ApplicationNotFoundException, InvalidAuthenticationException
-    {
+            OperationFailedException, ApplicationNotFoundException, InvalidAuthenticationException {
         when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
         when(connectAddonUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(true);
         when(connectCrowdPermissions.giveAdminPermission(anyString(), anyString(), anyString())).thenReturn(ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED);
@@ -143,8 +147,7 @@ public class JiraAddonUserProvisioningServiceTest
     @Test
     public void testAdminGrantProvidesCorrectProductAndApplicationIdInDarkAges()
             throws ApplicationPermissionException,
-            OperationFailedException, ApplicationNotFoundException, InvalidAuthenticationException
-    {
+            OperationFailedException, ApplicationNotFoundException, InvalidAuthenticationException {
         when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
         when(connectAddonUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(true);
         when(connectCrowdPermissions.giveAdminPermission(anyString(), anyString(), anyString())).thenReturn(ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED);
@@ -159,8 +162,7 @@ public class JiraAddonUserProvisioningServiceTest
     }
 
     @Test
-    public void testGetDefaultProductGroupsOneOrMoreExpectedRenaissance()
-    {
+    public void testGetDefaultProductGroupsOneOrMoreExpectedRenaissance() {
         when(applicationAuthorizationService.rolesEnabled()).thenReturn(true);
         when(applicationRoleManager.getRoles()).thenReturn(newHashSet(applicationRole));
         when(applicationRole.getDefaultGroups()).thenReturn(groups);
@@ -169,8 +171,7 @@ public class JiraAddonUserProvisioningServiceTest
     }
 
     @Test
-    public void testGetDefaultProductGroupsOneOrMoreExpectedDarkAges()
-    {
+    public void testGetDefaultProductGroupsOneOrMoreExpectedDarkAges() {
         when(applicationAuthorizationService.rolesEnabled()).thenReturn(false);
 
         assertThat(provisioningService.getDefaultProductGroupsOneOrMoreExpected(), containsInAnyOrder("jira-users", "users"));
@@ -178,8 +179,7 @@ public class JiraAddonUserProvisioningServiceTest
     }
 
     @Test
-    public void testGetDefaultProductGroupsAlwaysExpectedReturnsEmptySet()
-    {
+    public void testGetDefaultProductGroupsAlwaysExpectedReturnsEmptySet() {
         assertThat(provisioningService.getDefaultProductGroupsAlwaysExpected(), empty());
     }
 }

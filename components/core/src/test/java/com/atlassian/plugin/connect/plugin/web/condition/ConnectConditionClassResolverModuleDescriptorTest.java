@@ -16,8 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectConditionClassResolverModuleDescriptorTest
-{
+public class ConnectConditionClassResolverModuleDescriptorTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -28,14 +27,12 @@ public class ConnectConditionClassResolverModuleDescriptorTest
     private Plugin plugin;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         descriptor = new ConnectConditionClassResolverModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY);
     }
 
     @Test
-    public void shouldRejectModuleWithoutKey()
-    {
+    public void shouldRejectModuleWithoutKey() {
         Element element = buildModuleElement(Optional.empty(), Optional.of("some-class"));
 
         expectedException.expect(ValidationException.class);
@@ -45,8 +42,7 @@ public class ConnectConditionClassResolverModuleDescriptorTest
     }
 
     @Test
-    public void shouldRejectModuleWithoutClassAttribute()
-    {
+    public void shouldRejectModuleWithoutClassAttribute() {
         Element element = buildModuleElement(Optional.of("some-key"), Optional.empty());
         expectModuleValidationExceptionOnMissingClass(element);
 
@@ -54,29 +50,24 @@ public class ConnectConditionClassResolverModuleDescriptorTest
     }
 
     @Test
-    public void shouldRejectModuleWithEmptyClassAttribute()
-    {
+    public void shouldRejectModuleWithEmptyClassAttribute() {
         Element element = buildModuleElement(Optional.of("some-key"), Optional.of(""));
         expectModuleValidationExceptionOnMissingClass(element);
 
         descriptor.init(plugin, element);
     }
 
-    private void expectModuleValidationExceptionOnMissingClass(Element element)
-    {
+    private void expectModuleValidationExceptionOnMissingClass(Element element) {
         expectedException.expect(ValidationException.class);
         expectedException.expectMessage(String.format("A resolver class must be specified via the 'class' attribute: %s", element.asXML()));
     }
 
-    private Element buildModuleElement(Optional<String> optionalKey, Optional<String> optionalClass)
-    {
+    private Element buildModuleElement(Optional<String> optionalKey, Optional<String> optionalClass) {
         Element element = new DOMElement("connect-condition-class-resolver");
-        if (optionalKey.isPresent())
-        {
+        if (optionalKey.isPresent()) {
             element.addAttribute("key", optionalKey.get());
         }
-        if (optionalClass.isPresent())
-        {
+        if (optionalClass.isPresent()) {
             element.addAttribute("class", optionalClass.get());
         }
         return element;

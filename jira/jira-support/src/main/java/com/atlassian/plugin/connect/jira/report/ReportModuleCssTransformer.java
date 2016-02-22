@@ -15,76 +15,64 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.List;
 
-public class ReportModuleCssTransformer implements WebResourceTransformerFactory
-{
+public class ReportModuleCssTransformer implements WebResourceTransformerFactory {
     private final PluginAccessor pluginAccessor;
 
-    public ReportModuleCssTransformer(final PluginAccessor pluginAccessor)
-    {
+    public ReportModuleCssTransformer(final PluginAccessor pluginAccessor) {
         this.pluginAccessor = pluginAccessor;
     }
 
     @Override
-    public TransformerUrlBuilder makeUrlBuilder(final TransformerParameters transformerParameters)
-    {
+    public TransformerUrlBuilder makeUrlBuilder(final TransformerParameters transformerParameters) {
         return new ReportModulesUriBuilder(pluginAccessor);
     }
 
     @Override
-    public UrlReadingWebResourceTransformer makeResourceTransformer(final TransformerParameters transformerParameters)
-    {
-        return new UrlReadingWebResourceTransformer()
-        {
+    public UrlReadingWebResourceTransformer makeResourceTransformer(final TransformerParameters transformerParameters) {
+        return new UrlReadingWebResourceTransformer() {
             @Override
-            public DownloadableResource transform(final TransformableResource transformableResource, final QueryParams queryParams)
-            {
+            public DownloadableResource transform(final TransformableResource transformableResource, final QueryParams queryParams) {
                 return new ThumbnailCssClassesGenerator(transformableResource.nextResource(), pluginAccessor);
             }
         };
     }
 
-    static class ReportModulesUriBuilder implements TransformerUrlBuilder
-    {
+    static class ReportModulesUriBuilder implements TransformerUrlBuilder {
         private final PluginAccessor pluginAccessor;
 
-        ReportModulesUriBuilder(final PluginAccessor pluginAccessor) {this.pluginAccessor = pluginAccessor;}
+        ReportModulesUriBuilder(final PluginAccessor pluginAccessor) {
+            this.pluginAccessor = pluginAccessor;
+        }
 
         @Override
-        public void addToUrl(final UrlBuilder urlBuilder)
-        {
+        public void addToUrl(final UrlBuilder urlBuilder) {
             final List<ConnectReportModuleDescriptor.ModuleDescriptorImpl> moduleDescriptorsByClass =
                     pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectReportModuleDescriptor.ModuleDescriptorImpl.class);
 
             final HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
-            for (ConnectReportModuleDescriptor.ModuleDescriptorImpl moduleDescriptor : moduleDescriptorsByClass)
-            {
+            for (ConnectReportModuleDescriptor.ModuleDescriptorImpl moduleDescriptor : moduleDescriptorsByClass) {
                 hashCodeBuilder.append(moduleDescriptor.getKey());
             }
             urlBuilder.addToHash("connect report thumbnail", hashCodeBuilder.build());
         }
     }
 
-    static class ThumbnailCssClassesGenerator extends CharSequenceDownloadableResource
-    {
+    static class ThumbnailCssClassesGenerator extends CharSequenceDownloadableResource {
         private final PluginAccessor pluginAccessor;
 
-        protected ThumbnailCssClassesGenerator(final DownloadableResource originalResource, final PluginAccessor pluginAccessor)
-        {
+        protected ThumbnailCssClassesGenerator(final DownloadableResource originalResource, final PluginAccessor pluginAccessor) {
             super(originalResource);
             this.pluginAccessor = pluginAccessor;
         }
 
         @Override
-        protected CharSequence transform(final CharSequence original)
-        {
+        protected CharSequence transform(final CharSequence original) {
             final List<ConnectReportModuleDescriptor.ModuleDescriptorImpl> moduleDescriptorsByClass =
                     pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectReportModuleDescriptor.ModuleDescriptorImpl.class);
 
             final StringBuilder stringBuilder = new StringBuilder();
-            for (ConnectReportModuleDescriptor.ModuleDescriptorImpl moduleDescriptor : moduleDescriptorsByClass)
-            {
-                if (StringUtil.isNotBlank(moduleDescriptor.getThumbnailUrl()))
-                {
+            for (ConnectReportModuleDescriptor.ModuleDescriptorImpl moduleDescriptor : moduleDescriptorsByClass) {
+                if (StringUtil.isNotBlank(moduleDescriptor.getThumbnailUrl())) {
                     stringBuilder
                             .append(".")
                             .append(ConnectReportModuleDescriptor.getThumbnailCssClass(moduleDescriptor.getKey()))

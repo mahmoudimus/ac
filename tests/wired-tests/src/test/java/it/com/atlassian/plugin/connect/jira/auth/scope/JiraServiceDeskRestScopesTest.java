@@ -19,17 +19,14 @@ import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 import static it.com.atlassian.plugin.connect.jira.auth.scope.JiraScopeTestHelper.emptyBodyForJira;
 import static java.util.Arrays.asList;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class JiraServiceDeskRestScopesTest extends ScopeManagerTest
-{
-    public JiraServiceDeskRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class JiraServiceDeskRestScopesTest extends ScopeManagerTest {
+    public JiraServiceDeskRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
 
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         List<ScopeTestData> params = new ArrayList<>();
 
         final String publicServiceDeskApiPath = "jira/rest/servicedeskapi/";
@@ -86,7 +83,7 @@ public class JiraServiceDeskRestScopesTest extends ScopeManagerTest
                 // field
                 emptyBodyForJira(ScopeName.READ, HttpMethod.GET, publicServiceDeskApiPath + "servicedesk/10000/requesttype/1234/field", true)
 
-                ));
+        ));
         return params;
     }
 }
