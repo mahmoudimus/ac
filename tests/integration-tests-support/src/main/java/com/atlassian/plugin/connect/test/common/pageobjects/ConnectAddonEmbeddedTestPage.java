@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import java.util.concurrent.Callable;
-
 import org.openqa.selenium.By;
 
 public class ConnectAddonEmbeddedTestPage extends ConnectAddonPage
@@ -83,28 +81,12 @@ public class ConnectAddonEmbeddedTestPage extends ConnectAddonPage
 
     public String getValueBySelector(final String selector)
     {
-        return runInFrame(new Callable<String>()
-        {
-
-            @Override
-            public String call() throws Exception
-            {
-                return driver.findElement(By.cssSelector(selector)).getText();
-            }
-        });
+        return runInFrame(() -> driver.findElement(By.cssSelector(selector)).getText());
     }
 
     public String getValueById(final String id)
     {
-        return runInFrame(new Callable<String>()
-        {
-
-            @Override
-            public String call() throws Exception
-            {
-                return driver.findElement(By.id(id)).getText();
-            }
-        });
+        return runInFrame(() -> driver.findElement(By.id(id)).getText());
     }
 
     public String getTitle()

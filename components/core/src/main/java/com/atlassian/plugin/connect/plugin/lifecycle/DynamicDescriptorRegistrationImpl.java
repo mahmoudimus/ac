@@ -1,18 +1,20 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.StateAware;
 import com.atlassian.plugin.connect.api.lifecycle.DynamicDescriptorRegistration;
+
 import com.google.common.collect.ImmutableList;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Collection;
-import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
@@ -75,10 +77,7 @@ public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegis
             @Override
             public void unregister()
             {
-                for (ServiceRegistration reg : registrations)
-                {
-                    reg.unregister();
-                }
+                registrations.forEach(org.osgi.framework.ServiceRegistration::unregister);
             }
 
             @Override

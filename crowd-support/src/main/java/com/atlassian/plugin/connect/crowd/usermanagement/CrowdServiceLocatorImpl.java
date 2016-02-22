@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.manager.application.ApplicationService;
-
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import org.springframework.stereotype.Component;
 
 @ConfluenceComponent
 @JiraComponent

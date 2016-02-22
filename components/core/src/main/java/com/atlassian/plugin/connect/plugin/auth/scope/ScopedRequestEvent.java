@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.fugue.Pair;
@@ -12,7 +11,6 @@ import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.JsonRpcApiScopeH
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RpcEncodedSoapApiScopeHelper;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.XmlRpcApiScopeHelper;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -42,51 +40,25 @@ public abstract class ScopedRequestEvent
         this.addonKey = addonKey;
     }
 
-    private static Predicate<String> endsWith(final String it)
-    {
-        return new Predicate<String>()
-        {
-
-            @Override
-            public boolean apply(@Nullable String suffix)
-            {
-                return it.endsWith(suffix);
-            }
-        };
-    }
-
-    private static Predicate<String> startsWith(final String it)
-    {
-        return new Predicate<String>()
-            {
-
-                @Override
-                public boolean apply(@Nullable String prefix)
-                {
-                    return it.startsWith(prefix);
-                }
-            };
-    }
-
     private static boolean isXmlRpcUri(String uri)
     {
-        return Iterables.any(XMLRPC_PATHS, endsWith(uri));
+        return Iterables.any(XMLRPC_PATHS, uri::endsWith);
     }
 
     private static boolean isJsonRpcUri(String uri)
     {
-        return Iterables.any(JSON_RPC_PATHS, endsWith(uri));
+        return Iterables.any(JSON_RPC_PATHS, uri::endsWith);
     }
 
     private static boolean isSoapUri(String uri)
     {
-        return Iterables.any(SOAP_PATHS, endsWith(uri));
+        return Iterables.any(SOAP_PATHS, uri::endsWith);
     }
 
     private static boolean isJsonRpcLightUri(HttpServletRequest rq)
     {
         String pathInfo = ServletUtils.extractPathInfo(rq);
-        return Iterables.any(JSON_RPC_PATHS, startsWith(pathInfo));
+        return Iterables.any(JSON_RPC_PATHS, pathInfo::startsWith);
     }
 
     /**

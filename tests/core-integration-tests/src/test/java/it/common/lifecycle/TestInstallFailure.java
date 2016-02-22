@@ -169,25 +169,9 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
 
     private void assertValidJwt(String jwt) throws JwtParseException, JwtVerificationException, JwtUnknownIssuerException, JwtIssuerLacksSharedSecretException
     {
-        final JwtIssuerSharedSecretService sharedSecretService = new JwtIssuerSharedSecretService()
-        {
+        final JwtIssuerSharedSecretService sharedSecretService = issuer -> sharedSecret;
 
-            @Override
-            public String getSharedSecret(String issuer) throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
-            {
-                return sharedSecret;
-            }
-        };
-
-        final JwtIssuerValidator jwtIssuerValidator = new JwtIssuerValidator()
-        {
-
-            @Override
-            public boolean isValid(String issuer)
-            {
-                return true;
-            }
-        };
+        final JwtIssuerValidator jwtIssuerValidator = issuer -> true;
 
         final NimbusJwtReaderFactory readerFactory = new NimbusJwtReaderFactory(jwtIssuerValidator, sharedSecretService);
 

@@ -6,9 +6,9 @@ import java.util.Optional;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService.DeleteServiceResult;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService.PutServiceResult;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -23,9 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import static com.atlassian.plugin.connect.api.property.AddonPropertyService.OperationStatus;
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl.OperationStatusImpl;
@@ -347,14 +345,8 @@ public class AddonPropertyServiceImplTest
     {
         mockExecuteInTransaction();
         final Object obj = new Object();
-        PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, property.getKey(), "0", new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Object>>()
-        {
-            @Override
-            public AddonPropertyService.ServiceConditionResult<Object> apply(final Optional<AddonProperty> input)
-            {
-                return AddonPropertyService.ServiceConditionResult.FAILURE_WITH_OBJECT(obj);
-            }
-        });
+        PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, property.getKey(), "0",
+            input -> AddonPropertyService.ServiceConditionResult.FAILURE_WITH_OBJECT(obj));
         Function<Object, Object> mockFunction = (Function<Object, Object>) mock(Function.class);
         foldableServiceResult.fold(mockFunction, null, null);
         verify(mockFunction).apply(obj);
@@ -460,28 +452,17 @@ public class AddonPropertyServiceImplTest
 
     private Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Void>> alwaysTrue()
     {
-        return new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Void>>()
-        {
-            @Override
-            public AddonPropertyService.ServiceConditionResult<Void> apply(final Optional<AddonProperty> input)
-            {
-                return AddonPropertyService.ServiceConditionResult.SUCCESS();
-            }
-        };
+        return input -> AddonPropertyService.ServiceConditionResult.SUCCESS();
     }
 
     private void mockExecuteInTransaction()
     {
-        when(store.executeInTransaction(any(AddonPropertyStore.TransactionAction.class))).thenAnswer(new Answer<Object>()
-        {
-            @Override
-            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
-            {
+        when(store.executeInTransaction(any(AddonPropertyStore.TransactionAction.class))).thenAnswer(
+            invocationOnMock -> {
                 Object[] arguments = invocationOnMock.getArguments();
                 AddonPropertyStore.TransactionAction c = (AddonPropertyStore.TransactionAction) arguments[0];
                 return c.call();
-            }
-        });
+            });
     }
 
     @SuppressWarnings("unchecked")

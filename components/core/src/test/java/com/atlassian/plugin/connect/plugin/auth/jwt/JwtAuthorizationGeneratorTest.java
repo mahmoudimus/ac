@@ -1,5 +1,12 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
@@ -13,8 +20,10 @@ import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -22,13 +31,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimStringMatcher.hasJwtClaim;
@@ -269,14 +271,7 @@ public class JwtAuthorizationGeneratorTest
 
     private Supplier<String> constantSecretSupplier(final String secret)
     {
-        return new Supplier<String>()
-        {
-            @Override
-            public String get()
-            {
-                return secret;
-            }
-        };
+        return () -> secret;
     }
 
     private ArgumentMatcher<String> hasQueryHash(String expectedQueryHash)

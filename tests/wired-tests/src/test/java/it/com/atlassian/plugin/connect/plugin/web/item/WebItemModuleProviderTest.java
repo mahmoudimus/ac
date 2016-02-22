@@ -114,7 +114,7 @@ public class WebItemModuleProviderTest
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>()));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class WebItemModuleProviderTest
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>()));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class WebItemModuleProviderTest
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>()));
     }
 
     @Test
@@ -247,7 +247,7 @@ public class WebItemModuleProviderTest
 
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) connectPlugin.getModuleDescriptor(moduleKey);
 
-            assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class),new HashMap<String, Object>()));
+            assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class), new HashMap<>()));
         }
         finally
         {
@@ -277,7 +277,7 @@ public class WebItemModuleProviderTest
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals(CONTEXT_PATH + "/local/jira/admin", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals(CONTEXT_PATH + "/local/jira/admin", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>()));
     }
 
     @Test

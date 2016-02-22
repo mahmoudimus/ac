@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
+import javax.inject.Inject;
+
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
@@ -8,14 +10,13 @@ import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
+
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
-
-import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
@@ -83,40 +84,20 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
     public C waitUntilContentLoaded()
     {
         // wait until the remote panel has loaded
-        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
-        {
-            @Override
-            public Boolean get()
-            {
-                return withinIFrame(new Function<WebDriver, Boolean>()
-                {
-                    @Override
-                    public Boolean apply(WebDriver iframe)
-                    {
-                        return !iframe.findElements(By.tagName("script")).isEmpty();
-                    }
-                });
-            }
-        }));
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), () -> withinIFrame(iframe -> !iframe.findElements(By.tagName("script")).isEmpty())));
         return (C) this;
     }
 
     public C waitUntilContentElementNotEmpty(final String elementId)
     {
         this.waitUntilContentLoaded();
+
         // wait until the remote panel has loaded
-        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>() {
-            @Override
-            public Boolean get() {
-                return withinIFrame(new Function<WebDriver, Boolean>() {
-                    @Override
-                    public Boolean apply(WebDriver iframe) {
-                        String escapedId = AddonTestUtils.escapeJQuerySelector(elementId);
-                        return iframe.findElements(ByJquery.$("#" + escapedId + ":empty")).isEmpty();
-                    }
-                });
-            }
-        }));
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), () -> withinIFrame(iframe -> {
+            String escapedId = AddonTestUtils.escapeJQuerySelector(elementId);
+            return iframe.findElements(ByJquery.$("#" + escapedId + ":empty")).isEmpty();
+        })));
+
         return (C) this;
     }
 
@@ -167,25 +148,11 @@ public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectI
 
     protected Function<WebDriver, String> textOfElement(final By by)
     {
-        return new Function<WebDriver, String>()
-        {
-            @Override
-            public String apply(WebDriver frame)
-            {
-                return frame.findElement(by).getText();
-            }
-        };
+        return frame -> frame.findElement(by).getText();
     }
 
     protected Function<WebDriver, String> htmlOfElement(final By by)
     {
-        return new Function<WebDriver, String>()
-        {
-            @Override
-            public String apply(WebDriver frame)
-            {
-                return frame.findElement(by).getAttribute("innerHTML");
-            }
-        };
+        return frame -> frame.findElement(by).getAttribute("innerHTML");
     }
 }

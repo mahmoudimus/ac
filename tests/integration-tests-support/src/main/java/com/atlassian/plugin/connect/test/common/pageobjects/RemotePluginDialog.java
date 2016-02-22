@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import com.google.common.base.Function;
-import org.openqa.selenium.WebDriver;
-
 /**
  * Describes a <tt>dialog-page</tt> Remote Module - must be bound after the dialog has been opened.
  */
@@ -23,14 +20,7 @@ public class RemotePluginDialog extends RemoteDialog
     public void submitAndWaitUntilSubmitted()
     {
         submitButton.click();
-        poller.waitUntil(new Function<WebDriver, Boolean>()
-        {
-            @Override
-            public Boolean apply(WebDriver webDriver)
-            {
-                return wasSubmitted();
-            }
-        });
+        poller.waitUntil(webDriver -> wasSubmitted());
     }
 
     public boolean wasSubmitted()

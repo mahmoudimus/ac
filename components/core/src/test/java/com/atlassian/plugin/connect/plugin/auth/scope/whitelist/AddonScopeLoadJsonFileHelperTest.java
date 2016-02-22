@@ -56,9 +56,9 @@ public class AddonScopeLoadJsonFileHelperTest
         Map<ScopeName, AddonScope> map = new HashMap<>();
 
         PathScopeHelper pathScope = new PathScopeHelper(false, "/" + key);
-        AddonScopeApiPath apiPath = new AddonScopeApiPath.ApiPath(Arrays.asList(pathScope));
+        AddonScopeApiPath apiPath = new AddonScopeApiPath.ApiPath(Collections.singletonList(pathScope));
 
-        map.put(scopeName, new AddonScope("none", Arrays.asList(apiPath)));
+        map.put(scopeName, new AddonScope("none", Collections.singletonList(apiPath)));
 
         return map;
     }

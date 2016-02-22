@@ -19,13 +19,9 @@ public class ViewChangingSearchResult
     public <T> T openView(String name, Class<T> viewClass)
     {
         driver.findElement(By.id("viewOptions")).click();
-        for (WebElement element : driver.findElements(By.className("aui-list-item-link")))
-        {
-            if (name.equals(element.getText()))
-            {
-                element.click();
-            }
-        }
+        driver.findElements(By.className("aui-list-item-link")).stream()
+            .filter(element -> name.equals(element.getText()))
+            .forEach(org.openqa.selenium.WebElement::click);
         return pageBinder.bind(viewClass);
     }
 }

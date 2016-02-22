@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.jira.auth;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.crowd.embedded.api.Group;
@@ -168,17 +169,11 @@ public class TestJiraLicenseChangeListener
         HashSet<ApplicationKey> oldApps = new HashSet<>();
         HashSet<ApplicationKey> newApps = new HashSet<>();
 
-        for (String key : oldKeys)
-        {
-            oldApps.add(ApplicationKey.valueOf(key));
-        }
+        oldKeys.stream().map(ApplicationKey::valueOf).forEach(oldApps::add);
         when(oldLicenseDetails.getLicensedApplications()).thenReturn(
                 new MockLicensedApplications(oldApps));
 
-        for (String key : newKeys)
-        {
-            newApps.add(ApplicationKey.valueOf(key));
-        }
+        newKeys.stream().map(ApplicationKey::valueOf).forEach(newApps::add);
         when(newLicenseDetails.getLicensedApplications()).thenReturn(
             new MockLicensedApplications(newApps));
 

@@ -55,13 +55,6 @@ public class ProjectPermissionModuleProvider extends AbstractJiraConnectModulePr
     @Override
     public List<ModuleDescriptor> createPluginModuleDescriptors(List<ProjectPermissionModuleBean> modules, ConnectAddonBean addon)
     {
-        return Lists.transform(modules, new Function<ProjectPermissionModuleBean, ModuleDescriptor>()
-        {
-            @Override
-            public ModuleDescriptor apply(final ProjectPermissionModuleBean bean)
-            {
-                return descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin());
-            }
-        });
+        return Lists.transform(modules, bean -> descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()));
     }
 }

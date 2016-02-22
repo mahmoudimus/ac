@@ -2,8 +2,6 @@ package com.atlassian.plugin.connect.testsupport.filter;
 
 import java.util.Optional;
 
-import com.atlassian.fugue.Option;
-
 /**
  * A helper that supports queuing pre-canned responses to Http requests. Test classes get the helper from some servlet
  * or filter that supports pre-canned responses and adds responses to the queue. The servlet will later pull the latest

@@ -2,9 +2,8 @@ package com.atlassian.plugin.connect.test.common.pageobjects;
 
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.utils.element.ElementConditions;
-import com.google.common.base.Function;
+
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
@@ -37,16 +36,10 @@ public class RemoteInlineDialog extends AbstractRemoteDialog<RemoteInlineDialog>
 
     public void hideAndWaitUntilHidden()
     {
-        withinIFrame(new Function<WebDriver, Void>()
-        {
-
-            @Override
-            public Void apply(WebDriver driver)
-            {
-                WebElement button = driver.findElement(By.id(INLINE_DIALOG_HIDE_BUTTON_ID));
-                button.click();
-                return null;
-            }
+        withinIFrame(driver1 -> {
+            WebElement button = driver1.findElement(By.id(INLINE_DIALOG_HIDE_BUTTON_ID));
+            button.click();
+            return null;
         });
         waitUntilHidden();
     }

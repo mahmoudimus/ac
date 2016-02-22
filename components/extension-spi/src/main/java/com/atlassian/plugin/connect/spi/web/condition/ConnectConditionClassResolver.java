@@ -137,22 +137,8 @@ public interface ConnectConditionClassResolver
         private boolean isApplicableToParameters(Map<String, String> conditionParameters)
         {
             return parameterPredicates.stream()
-                    .reduce(new BinaryOperator<Predicate<Map<String, String>>>()
-                    {
-                        @Override
-                        public Predicate<Map<String, String>> apply(Predicate<Map<String, String>> p1, Predicate<Map<String, String>> p2)
-                        {
-                            return p1.and(p2);
-                        }
-                    })
-                    .map(new Function<Predicate<Map<String, String>>, Boolean>()
-                    {
-                        @Override
-                        public Boolean apply(Predicate<Map<String, String>> predicate)
-                        {
-                            return predicate.test(conditionParameters);
-                        }
-                    })
+                    .reduce(Predicate::and)
+                    .map(predicate -> predicate.test(conditionParameters))
                     .orElse(true);
         }
 

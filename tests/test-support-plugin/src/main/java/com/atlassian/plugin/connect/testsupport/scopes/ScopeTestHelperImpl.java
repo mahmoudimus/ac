@@ -1,5 +1,10 @@
 package com.atlassian.plugin.connect.testsupport.scopes;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -8,19 +13,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 public class ScopeTestHelperImpl implements ScopeTestHelper
 {
@@ -99,7 +100,7 @@ public class ScopeTestHelperImpl implements ScopeTestHelper
         // scopes are optional so that we can have "no scopes" test classes
         if (null != scopeName)
         {
-            connectAddonBeanBuilder = connectAddonBeanBuilder.withScopes(new HashSet<>(asList(scopeName)));
+            connectAddonBeanBuilder = connectAddonBeanBuilder.withScopes(new HashSet<>(singletonList(scopeName)));
         }
 
         return connectAddonBeanBuilder.build();

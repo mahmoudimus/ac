@@ -93,15 +93,10 @@ public class WebItemModuleDescriptorFactoryTest
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
 
         when(webFragmentHelper.renderVelocityFragment(anyString(), anyMap())).thenAnswer(
-                new Answer<Object>()
-                {
-                    @Override
-                    public Object answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        Object[] args = invocationOnMock.getArguments();
-                        return (String) args[0];
-                    }
-                }
+            invocationOnMock -> {
+                Object[] args = invocationOnMock.getArguments();
+                return (String) args[0];
+            }
         );
     }
 
@@ -142,7 +137,7 @@ public class WebItemModuleDescriptorFactoryTest
         WebItemModuleDescriptor descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
         descriptor.enabled();
 
-        assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()), startsWith("http://www.google.com"));
+        assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<>()), startsWith("http://www.google.com"));
     }
 
     @Test

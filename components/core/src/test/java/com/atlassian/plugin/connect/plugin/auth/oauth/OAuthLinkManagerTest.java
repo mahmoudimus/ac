@@ -1,26 +1,27 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import net.oauth.OAuthMessage;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
+import net.oauth.OAuthMessage;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,14 +53,8 @@ public class OAuthLinkManagerTest
     public void setUp()
     {
         when(consumerService.getConsumer()).thenReturn(consumer);
-        when(consumerService.sign(any(Request.class), eq(serviceProvider))).thenAnswer(new Answer<Object>()
-        {
-            @Override
-            public Object answer(final InvocationOnMock invocation) throws Throwable
-            {
-                return invocation.getArguments()[0];
-            }
-        });
+        when(consumerService.sign(any(Request.class), eq(serviceProvider))).thenAnswer(
+            invocation -> invocation.getArguments()[0]);
     }
 
     @Test

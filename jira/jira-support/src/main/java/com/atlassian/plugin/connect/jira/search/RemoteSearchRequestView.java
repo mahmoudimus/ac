@@ -119,14 +119,9 @@ public class RemoteSearchRequestView implements SearchRequestView
             SearchRequestParams searchRequestParams)
     {
         StringWriter issueKeys = new StringWriter();
-        final SingleIssueWriter singleIssueWriter = new SingleIssueWriter()
-        {
-            public void writeIssue(final Issue issue, final AbstractIssueView issueView, final Writer writer)
-                    throws IOException
-            {
-                writer.write(issue.getKey());
-                writer.write(",");
-            }
+        final SingleIssueWriter singleIssueWriter = (issue, issueView, writer) -> {
+            writer.write(issue.getKey());
+            writer.write(",");
         };
 
         try
@@ -134,11 +129,7 @@ public class RemoteSearchRequestView implements SearchRequestView
             searchRequestViewBodyWriterUtil.writeBody(issueKeys, null, searchRequest, singleIssueWriter,
                     searchRequestParams.getPagerFilter());
         }
-        catch (IOException e1)
-        {
-            throw new DataAccessException(e1);
-        }
-        catch (SearchException e1)
+        catch (IOException | SearchException e1)
         {
             throw new DataAccessException(e1);
         }

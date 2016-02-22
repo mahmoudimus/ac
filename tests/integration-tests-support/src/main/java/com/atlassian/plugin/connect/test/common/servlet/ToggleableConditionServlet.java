@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 
 import org.junit.rules.TestRule;
-import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -55,26 +54,19 @@ public class ToggleableConditionServlet extends HttpServlet
      */
     public TestRule resetToInitialValueRule()
     {
-        return new TestRule()
+        return (base, description) -> new Statement()
         {
             @Override
-            public Statement apply(final Statement base, final Description description)
+            public void evaluate() throws Throwable
             {
-                return new Statement()
+                try
                 {
-                    @Override
-                    public void evaluate() throws Throwable
-                    {
-                        try
-                        {
-                            base.evaluate();
-                        }
-                        finally
-                        {
-                            setShouldDisplay(initialValue);
-                        }
-                    }
-                };
+                    base.evaluate();
+                }
+                finally
+                {
+                    setShouldDisplay(initialValue);
+                }
             }
         };
     }

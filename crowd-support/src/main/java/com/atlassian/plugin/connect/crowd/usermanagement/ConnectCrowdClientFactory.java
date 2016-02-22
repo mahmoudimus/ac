@@ -2,10 +2,8 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.integration.rest.service.factory.RestCrowdClientFactory;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
-
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import org.springframework.stereotype.Component;
 
 /**
  * A dummy subclass to allow access to the CrowdClientFactory, which JIRA and Confluence don't provide directly.

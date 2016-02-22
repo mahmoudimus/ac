@@ -23,7 +23,7 @@ public class AddonUrlTemplatePair
         String servletDescriptorUrl = relativeAddonUrl.getServletDescriptorUrl();
 
         hostUrlPaths = new HostUrlPaths(new UrlTemplate(relativeAddonUrl.getRelativeUri()),
-                ImmutableList.<String>of(servletDescriptorUrl, servletDescriptorUrl + "/*"));
+                ImmutableList.of(servletDescriptorUrl, servletDescriptorUrl + "/*"));
     }
 
 

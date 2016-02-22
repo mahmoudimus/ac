@@ -69,40 +69,21 @@ public final class JiraAdminPage implements AdminPage
 
     public String getRemotePluginLinkHref()
     {
-        return withLinkElement(new Function<PageElement, String>()
-        {
-            @Override
-            public String apply(PageElement linkElement)
-            {
-                return linkElement.getAttribute("href");
-            }
-        });
+        return withLinkElement(linkElement -> linkElement.getAttribute("href"));
     }
 
     public String getRemotePluginLinkText()
     {
-        return withLinkElement(new Function<PageElement, String>()
-        {
-            @Override
-            public String apply(PageElement linkElement)
-            {
-                return linkElement.getText();
-            }
-        });
+        return withLinkElement(PageElement::getText);
     }
 
     private <T> T withLinkElement(Function<PageElement, T> function)
     {
         return link.get().fold(
-                new Supplier<T>()
-                {
-                    @Override
-                    public T get()
-                    {
-                        throw new IllegalStateException(format("Could not find link '%s'", link()));
-                    }
-                },
-                function
+            () -> {
+                throw new IllegalStateException(format("Could not find link '%s'", link()));
+            },
+            function
         );
     }
 

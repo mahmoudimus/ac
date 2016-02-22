@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.testsupport;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -10,19 +13,16 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginControlHandler;
 import com.atlassian.upm.spi.PluginInstallHandler;
+
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
+
 import org.apache.commons.lang.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.springframework.beans.factory.DisposableBean;
-
-import javax.annotation.Nullable;
-import java.io.File;
-import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -125,13 +125,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
 
         checkNotNull(handler);
 
-        return Iterables.transform(handler.getPlugins(), new Function<Plugin, String>() {
-            @Override
-            public String apply(@Nullable Plugin input)
-            {
-                return (null != input) ? input.getKey() : null;
-            }
-        });
+        return Iterables.transform(handler.getPlugins(), input -> (null != input) ? input.getKey() : null);
     }
 
     private File createTempDescriptor(String json) throws IOException

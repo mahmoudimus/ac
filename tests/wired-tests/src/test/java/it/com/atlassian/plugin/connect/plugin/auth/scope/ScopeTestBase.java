@@ -32,7 +32,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashSet;
+
+import com.google.common.collect.Sets;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -40,6 +43,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.plugin.auth.jwt.JwtAuthorizationGenerator.constructParameterMap;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -100,7 +104,7 @@ public abstract class ScopeTestBase
         // scopes are optional so that we can have "no scopes" test classes
         if (null != addonScope)
         {
-            connectAddonBeanBuilder = connectAddonBeanBuilder.withScopes(new HashSet<ScopeName>(asList(addonScope)));
+            connectAddonBeanBuilder = connectAddonBeanBuilder.withScopes(Sets.newHashSet(addonScope));
         }
 
         addonBean = connectAddonBeanBuilder.build();

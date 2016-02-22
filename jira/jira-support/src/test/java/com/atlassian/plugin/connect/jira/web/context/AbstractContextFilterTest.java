@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
@@ -205,21 +207,10 @@ public final class AbstractContextFilterTest
 
         private List<PermissionCheck<ApplicationUser>> permissionChecks(Iterable<String> allowed, Iterable<String> forbidden)
         {
-            return ImmutableList.copyOf(Iterables.concat(Iterables.transform(allowed, new Function<String, PermissionCheck<ApplicationUser>>()
-            {
-                @Override
-                public PermissionCheck<ApplicationUser> apply(final String input)
-                {
-                    return allow(input);
-                }
-            }), Iterables.transform(forbidden, new Function<String, PermissionCheck<ApplicationUser>>()
-            {
-                @Override
-                public PermissionCheck<ApplicationUser> apply(final String input)
-                {
-                    return forbid(input);
-                }
-            })));
+            return ImmutableList.copyOf(concat(
+                transform(allowed, AbstractContextFilterTest::allow),
+                transform(forbidden, AbstractContextFilterTest::forbid)
+            ));
         }
     }
 

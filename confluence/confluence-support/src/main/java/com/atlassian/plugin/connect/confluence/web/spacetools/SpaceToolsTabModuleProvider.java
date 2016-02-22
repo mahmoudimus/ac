@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.confluence.web.spacetools;
 
+import java.util.List;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
@@ -20,14 +23,13 @@ import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean.newXWorkActionBean;
@@ -44,7 +46,6 @@ import static com.google.common.collect.Lists.newArrayList;
 @ConfluenceComponent
 public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModuleProvider<SpaceToolsTabModuleBean>
 {
-
     @VisibleForTesting
     public static final String SPACE_TOOLS_SECTION = "system.space.tools";
     @VisibleForTesting
@@ -117,10 +118,9 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
-            for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
-            {
-                moduleDescriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(webItemModuleBean, connectAddonBean, plugin));
-            }
+            createWebItemBeans(bean, actionUrl).stream()
+                .map(webItemModuleBean -> webItemModuleDescriptorFactory.createModuleDescriptor(webItemModuleBean, connectAddonBean, plugin))
+                .forEach(moduleDescriptors::add);
         }
         return moduleDescriptors;
     }

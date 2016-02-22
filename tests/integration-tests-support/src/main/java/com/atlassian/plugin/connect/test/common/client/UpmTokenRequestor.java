@@ -43,40 +43,34 @@ public class UpmTokenRequestor
         //until we get a valid response even if we get a 200.
         final StringBuilder upmToken = new StringBuilder();
 
-        Callable<Boolean> tokenChecker = new Callable<Boolean>()
-        {
-            @Override
-            public Boolean call() throws Exception
+        Callable<Boolean> tokenChecker = () -> {
+            // Perform a GET on the root UPM resource in order to receive a generated XSRF token. We require this token in
+            // order to send a valid plugin upload request.
+            // UPM does not seem to honour the "X-Atlassian-Token: no-check" header that can normally be used to disable
+            // XSRF token checking for a request.
+            String authType = URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8");
+            HttpHead upmTokenRequest = new HttpHead(getUpmPluginsRestURL(true) + "&" + authType);
+            upmTokenRequest.addHeader("Accept", "application/vnd.atl.plugins.installed+json"); // UPM returns custom JSON content types.
+
+            HttpResponse response = userRequestSender.getDefaultHttpClient(defaultUsername, defaultPassword).execute(upmTokenRequest);
+            Header[] tokenHeaders = response.getHeaders(UPM_TOKEN_HEADER);
+
+            if (tokenHeaders == null || tokenHeaders.length == 0)
             {
-                // Perform a GET on the root UPM resource in order to receive a generated XSRF token. We require this token in
-                // order to send a valid plugin upload request.
-                // UPM does not seem to honour the "X-Atlassian-Token: no-check" header that can normally be used to disable
-                // XSRF token checking for a request.
-                String authType = URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8");
-                HttpHead upmTokenRequest = new HttpHead(getUpmPluginsRestURL(true) + "&" + authType);
-                upmTokenRequest.addHeader("Accept", "application/vnd.atl.plugins.installed+json"); // UPM returns custom JSON content types.
-
-                HttpResponse response = userRequestSender.getDefaultHttpClient(defaultUsername, defaultPassword).execute(upmTokenRequest);
-                Header[] tokenHeaders = response.getHeaders(UPM_TOKEN_HEADER);
-
-                if (tokenHeaders == null || tokenHeaders.length == 0)
-                {
-                    EntityUtils.consume(response.getEntity());
-                    return false;
-                }
-
-                if (tokenHeaders.length > 1)
-                {
-                    throw new IOException(getTokenHeaderExceptionMessage("Multiple UPM Token Headers found on response", response));
-                }
-
-                upmToken.append(tokenHeaders[0].getValue());
                 EntityUtils.consume(response.getEntity());
-
-                return true;
+                return false;
             }
-        };
 
+            if (tokenHeaders.length > 1)
+            {
+                throw new IOException(getTokenHeaderExceptionMessage("Multiple UPM Token Headers found on response", response));
+            }
+
+            upmToken.append(tokenHeaders[0].getValue());
+            EntityUtils.consume(response.getEntity());
+
+            return true;
+        };
 
         ScheduledFuture<Boolean> tokenCheck = scheduledExecutor.schedule(tokenChecker, period, TimeUnit.MILLISECONDS);
 

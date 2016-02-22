@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.web.item;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -116,22 +115,8 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             throws ConnectModuleValidationException
     {
         List<String> blacklistedLocationsUsed = webItemModuleBeans.stream()
-                .filter(new Predicate<WebItemModuleBean>()
-                {
-                    @Override
-                    public boolean test(WebItemModuleBean webItem)
-                    {
-                        return webFragmentLocationBlacklist.getBlacklistedWebItemLocations().contains(webItem.getLocation());
-                    }
-                })
-                .map(new Function<WebItemModuleBean, String>()
-                {
-                    @Override
-                    public String apply(WebItemModuleBean webItemModuleBean)
-                    {
-                        return webItemModuleBean.getLocation();
-                    }
-                })
+                .filter(webItem -> webFragmentLocationBlacklist.getBlacklistedWebItemLocations().contains(webItem.getLocation()))
+                .map(WebItemModuleBean::getLocation)
                 .collect(Collectors.toList());
 
         if (blacklistedLocationsUsed.size() > 0)
@@ -210,15 +195,8 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     @VisibleForTesting
     List<ConditionalBean> filterProductSpecificConditions(List<ConditionalBean> conditions)
     {
-        return filterSingleConditionsRecursively(conditions, new Predicate<SingleConditionBean>()
-        {
-
-            @Override
-            public boolean test(SingleConditionBean conditionalBean)
-            {
-                return conditionClassAccessor.getConditionClassForNoContext(conditionalBean).isPresent();
-            }
-        });
+        return filterSingleConditionsRecursively(conditions,
+            conditionalBean -> conditionClassAccessor.getConditionClassForNoContext(conditionalBean).isPresent());
     }
 
     private List<ConditionalBean> filterSingleConditionsRecursively(List<ConditionalBean> conditions,

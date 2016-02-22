@@ -5,8 +5,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
 import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
 
 import org.junit.Before;
@@ -30,28 +28,18 @@ public class TestLifecycle
     @Test
     public void testPluginInstalledFired() throws Exception
     {
-        WebHookTestServlet.runInstallInJsonRunner(baseUrl, pluginKey, new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                final WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body, ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase(), pluginKey);
-            }
+        WebHookTestServlet.runInstallInJsonRunner(baseUrl, pluginKey, waiter -> {
+            final WebHookBody body = waiter.waitForHook();
+            assertWebHookDidFire(body, ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase(), pluginKey);
         });
     }
 
     @Test
     public void testPluginEnabledFired() throws Exception
     {
-        WebHookTestServlet.runEnableInJsonRunner(baseUrl, pluginKey, new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                final WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body, ConnectAddonManager.SyncHandler.ENABLED.name().toLowerCase(), pluginKey);
-            }
+        WebHookTestServlet.runEnableInJsonRunner(baseUrl, pluginKey, waiter -> {
+            final WebHookBody body = waiter.waitForHook();
+            assertWebHookDidFire(body, ConnectAddonManager.SyncHandler.ENABLED.name().toLowerCase(), pluginKey);
         });
     }
 

@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.lifecycle;
 
 import java.io.Serializable;
 
+import com.google.common.collect.ImmutableList;
+
 public class LifecycleCallbackException extends Exception
 {
     private final String i18nKey;
@@ -10,7 +12,7 @@ public class LifecycleCallbackException extends Exception
 
     public LifecycleCallbackException(String message, String i18nKey)
     {
-        this(message, i18nKey, null);
+        this(message, i18nKey, ImmutableList.of());
     }
 
     public LifecycleCallbackException(String message, String i18nKey, Serializable... params)

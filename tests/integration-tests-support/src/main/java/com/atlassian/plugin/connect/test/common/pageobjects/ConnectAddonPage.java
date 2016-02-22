@@ -1,5 +1,13 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
+
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
@@ -7,21 +15,13 @@ import com.atlassian.pageobjects.elements.WebDriverElement;
 import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
-import com.google.common.base.Function;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
@@ -81,15 +81,10 @@ public class ConnectAddonPage
 
     private void waitForFirstScriptToLoad()
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.tagName("script"));
-                waitUntilTrue(element.timed().isPresent());
-                return null;
-            }
+        runInFrame(() -> {
+            PageElement element = elementFinder.find(By.tagName("script"));
+            waitUntilTrue(element.timed().isPresent());
+            return null;
         });
     }
 
@@ -163,15 +158,9 @@ public class ConnectAddonPage
 
     private boolean waitForCssClass(final String cssClass)
     {
-        driver.waitUntil(new Function<WebDriver, Boolean>()
-        {
-
-            @Override
-            public Boolean apply(WebDriver webDriver)
-            {
-                List<String> classes = Arrays.asList(iframe().getAttribute("class").split(" "));
-                return classes.contains(cssClass);
-            }
+        driver.waitUntil(webDriver -> {
+            List<String> classes = Arrays.asList(iframe().getAttribute("class").split(" "));
+            return classes.contains(cssClass);
         });
         return true;
     }

@@ -67,7 +67,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
     private final ApplicationManager applicationManager;
     private final ApplicationService applicationService;
     private final UserManager userManager;
-    private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
+    private final AtomicReference<Plugin> installedPlugin = new AtomicReference<>();
 
     protected final RequestUtil requestUtil;
 

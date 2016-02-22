@@ -30,24 +30,14 @@ public class WebDriverSessionAwareDownloader
 
     public byte[] downloadBytes(String url) throws IOException
     {
-        CloseableHttpClient httpClient = getHttpClient();
-        try
+        try (CloseableHttpClient httpClient = getHttpClient())
         {
             HttpUriRequest request = new HttpGet(url);
             CloseableHttpResponse response = httpClient.execute(request);
-            InputStream content = response.getEntity().getContent();
-            try
+            try (InputStream content = response.getEntity().getContent())
             {
                 return IOUtils.toByteArray(content);
             }
-            finally
-            {
-                content.close();
-            }
-        }
-        finally
-        {
-            httpClient.close();
         }
     }
 

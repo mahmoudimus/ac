@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
@@ -18,12 +22,6 @@ import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.api.web.redirect.RedirectData.AccessDeniedTemplateType.IFRAME;
 
@@ -92,22 +90,8 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     private void assertLocationNotBlacklisted(ShallowConnectAddonBean descriptor, List<WebPanelModuleBean> webPanelModuleBeans) throws ConnectModuleValidationException
     {
         List<String> blacklistedLocationsUsed = webPanelModuleBeans.stream()
-                .filter(new Predicate<WebPanelModuleBean>()
-                {
-                    @Override
-                    public boolean test(WebPanelModuleBean webPanel)
-                    {
-                        return webFragmentLocationBlacklist.getBlacklistedWebPanelLocations().contains(webPanel.getLocation());
-                    }
-                })
-                .map(new Function<WebPanelModuleBean, String>()
-                {
-                    @Override
-                    public String apply(WebPanelModuleBean webPanelModuleBean)
-                    {
-                        return webPanelModuleBean.getLocation();
-                    }
-                })
+                .filter(webPanel -> webFragmentLocationBlacklist.getBlacklistedWebPanelLocations().contains(webPanel.getLocation()))
+                .map(WebPanelModuleBean::getLocation)
                 .collect(Collectors.toList());
 
         if (blacklistedLocationsUsed.size() > 0)

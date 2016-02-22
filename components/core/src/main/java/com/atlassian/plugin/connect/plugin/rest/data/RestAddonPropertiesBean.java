@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import org.codehaus.jackson.annotate.JsonProperty;
-
 import java.util.List;
+
+import com.google.common.collect.Iterables;
+
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 
@@ -18,14 +18,7 @@ public class RestAddonPropertiesBean
 
     public RestAddonPropertiesBean(final Iterable<String> keys, final String baseURL)
     {
-        properties = copyOf(Iterables.transform(keys, new Function<String, RestAddonPropertyBean>()
-        {
-            @Override
-            public RestAddonPropertyBean apply(final String key)
-            {
-                return new RestAddonPropertyBean(baseURL + "/" + key, key);
-            }
-        }));
+        properties = copyOf(Iterables.transform(keys, key -> new RestAddonPropertyBean(baseURL + "/" + key, key)));
     }
 
     public static RestAddonPropertiesBean valueOf(final Iterable<String> keys, final String baseURL)

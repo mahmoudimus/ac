@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import java.util.concurrent.Callable;
-
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import com.atlassian.pageobjects.PageBinder;
@@ -12,11 +9,8 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
-import com.google.common.base.Function;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
@@ -54,28 +48,16 @@ public class RemoteXdmEventPanel
         By selector = By.id("embedded-" + ModuleKeyUtils.addonAndModuleKey(addonId, moduleId));
         driver.waitUntilElementIsLocated(selector);
         this.containerDiv = driver.findElement(selector);
-        driver.waitUntil(new Function<WebDriver, Boolean>()
-        {
-            @Override
-            public Boolean apply(@Nullable WebDriver input)
-            {
-                return containerDiv.getAttribute("class").contains("iframe-init");
-            }
-        });
+        driver.waitUntil(input -> containerDiv.getAttribute("class").contains("iframe-init"));
     }
 
     public void emit()
     {
-        runInFrame(driver, containerDiv, new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id("emit-button"));
-                waitUntilTrue(element.timed().isVisible());
-                element.click();
-                return null;
-            }
+        runInFrame(driver, containerDiv, () -> {
+            PageElement element = elementFinder.find(By.id("emit-button"));
+            waitUntilTrue(element.timed().isVisible());
+            element.click();
+            return null;
         });
     }
 
@@ -94,28 +76,16 @@ public class RemoteXdmEventPanel
     {
         final String logLineId = panelId + "-" + eventId;
         final By selector = By.id(logLineId);
-        return runInFrame(driver, containerDiv, new Callable<Boolean>()
-        {
-            @Override
-            public Boolean call() throws Exception
+        return runInFrame(driver, containerDiv, () -> {
+            try
             {
-                try
-                {
-                    driver.waitUntil(new Function<WebDriver, Boolean>()
-                    {
-                        @Override
-                        public Boolean apply(WebDriver webDriver)
-                        {
-                            return webDriver.findElement(selector) != null;
-                        }
-                    }, 1);
-                }
-                catch (TimeoutException e)
-                {
-                    return true;
-                }
-                return false;
+                driver.waitUntil(webDriver -> webDriver.findElement(selector) != null, 1);
             }
+            catch (TimeoutException e)
+            {
+                return true;
+            }
+            return false;
         });
     }
 

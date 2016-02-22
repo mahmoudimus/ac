@@ -18,7 +18,6 @@ import com.atlassian.plugin.connect.plugin.request.DefaultRemotablePluginAccesso
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 
@@ -90,14 +89,7 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
         String signatureMethod = OAuth.RSA_SHA1;
         String oauthVersion = "1.0";
 
-        Map<String, List<String>> params = Maps.newLinkedHashMap(transformValues(queryParams, new Function<String[], List<String>>()
-        {
-            @Override
-            public List<String> apply(String[] from)
-            {
-                return Arrays.asList(from);
-            }
-        }));
+        Map<String, List<String>> params = Maps.newLinkedHashMap(transformValues(queryParams, Arrays::asList));
 
         params.put(OAuth.OAUTH_SIGNATURE_METHOD, singletonList(signatureMethod));
         params.put(OAuth.OAUTH_NONCE, singletonList(nonce));

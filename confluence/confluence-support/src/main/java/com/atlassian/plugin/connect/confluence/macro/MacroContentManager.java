@@ -1,5 +1,14 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
@@ -15,23 +24,16 @@ import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectAddonUriBuilder;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * TODO once we drop XML, refactor this to take into account that we no longer support specifying a method type and to
@@ -107,28 +109,23 @@ public class MacroContentManager implements DisposableBean
             // todo: do we want to give feedback to the app of what was cleaned?
             final String cleanedXhtml = xhtmlCleaner.cleanQuietly(remoteXhtml);
             return transactionTemplate.execute(
-                    new TransactionCallback<String>()
+                () -> {
+                    try
                     {
-                        @Override
-                        public String doInTransaction()
-                        {
-                            try
-                            {
-                                return xhtmlUtils.convertStorageToView(cleanedXhtml, conversionContext);
-                            }
-                            catch (Exception e)
-                            {
-                                log.warn("Unable to convert storage format for app {} with error {}",
-                                        accessor.getKey(), e.getMessage());
-                                if (log.isDebugEnabled())
-                                {
-                                    log.debug("Error converting storage format", e);
-                                }
-                                throw new ContentRetrievalException(
-                                        "Unable to convert storage format to HTML: " + e.getMessage(), e);
-                            }
-                        }
+                        return xhtmlUtils.convertStorageToView(cleanedXhtml, conversionContext);
                     }
+                    catch (Exception e)
+                    {
+                        log.warn("Unable to convert storage format for app {} with error {}",
+                                accessor.getKey(), e.getMessage());
+                        if (log.isDebugEnabled())
+                        {
+                            log.debug("Error converting storage format", e);
+                        }
+                        throw new ContentRetrievalException(
+                                "Unable to convert storage format to HTML: " + e.getMessage(), e);
+                    }
+                }
             );
         }
         catch (ContentRetrievalException e)

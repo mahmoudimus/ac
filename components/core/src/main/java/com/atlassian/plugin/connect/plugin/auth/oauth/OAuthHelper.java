@@ -44,12 +44,8 @@ public class OAuthHelper
         return transform(requestParameters, toOAuthParameters);
     }
 
-    private static final Function<com.atlassian.oauth.Request.Parameter, OAuth.Parameter> toOAuthParameters = new Function<com.atlassian.oauth.Request.Parameter, OAuth.Parameter>()
-    {
-        public OAuth.Parameter apply(final com.atlassian.oauth.Request.Parameter p)
-        {
-            Check.notNull(p, "parameter");
-            return new OAuth.Parameter(p.getName(), p.getValue());
-        }
+    private static final Function<com.atlassian.oauth.Request.Parameter, OAuth.Parameter> toOAuthParameters = p -> {
+        Check.notNull(p, "parameter");
+        return new OAuth.Parameter(p.getName(), p.getValue());
     };
 }

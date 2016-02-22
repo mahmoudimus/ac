@@ -34,14 +34,7 @@ public class PageChildrenReorderEventMapper extends ConfluenceEventMapper
         builder.putAll(super.toMap(e));
         builder.put("page", contentEntityObjectToMap(event.getPage()));
 
-        final Function<Page, Map<String, Object>> toMap = new Function<Page, Map<String, Object>>()
-        {
-            @Override
-            public Map<String, Object> apply(Page page)
-            {
-                return contentEntityObjectToMap(page);
-            }
-        };
+        final Function<Page, Map<String, Object>> toMap = PageChildrenReorderEventMapper.this::contentEntityObjectToMap;
 
         builder.put("oldSortedChildren", Lists.<Page, Map<String, Object>>transform(event.getOldSortedChildren(), toMap));
         builder.put("newSortedChildren", Lists.<Page, Map<String, Object>>transform(event.getNewSortedChildren(), toMap));

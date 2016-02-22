@@ -1,18 +1,19 @@
 package com.atlassian.connect.test.confluence.pageobjects;
 
-import com.atlassian.fugue.Option;
-import com.google.common.base.Function;
-import com.atlassian.plugin.connect.test.common.util.TestUser;
-import org.apache.commons.codec.binary.Base64;
-import redstone.xmlrpc.XmlRpcArray;
-import redstone.xmlrpc.XmlRpcClient;
-import redstone.xmlrpc.XmlRpcFault;
-import redstone.xmlrpc.XmlRpcStruct;
-
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+
+import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+
+import org.apache.commons.codec.binary.Base64;
+
+import redstone.xmlrpc.XmlRpcArray;
+import redstone.xmlrpc.XmlRpcClient;
+import redstone.xmlrpc.XmlRpcFault;
+import redstone.xmlrpc.XmlRpcStruct;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -72,16 +73,11 @@ public final class ConfluenceOps
         return client;
     }
 
-    private Option<String> getAuthHeader(Option<TestUser> user)
+    private Option<String> getAuthHeader(Option<TestUser> potentialUser)
     {
-        return user.map(new Function<TestUser, String>()
-        {
-            @Override
-            public String apply(TestUser u)
-            {
-                final byte[] authBytes = String.format("%s:%s", u.getUsername(), u.getPassword()).getBytes(Charset.defaultCharset());
-                return "Basic " + new String(Base64.encodeBase64(authBytes));
-            }
+        return potentialUser.map(user -> {
+            final byte[] authBytes = String.format("%s:%s", user.getUsername(), user.getPassword()).getBytes(Charset.defaultCharset());
+            return "Basic " + new String(Base64.encodeBase64(authBytes));
         });
     }
 

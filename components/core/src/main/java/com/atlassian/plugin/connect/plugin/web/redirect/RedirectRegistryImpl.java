@@ -1,20 +1,21 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
+import java.util.Map;
+import java.util.Optional;
+
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonDisabledEvent;
+
 import com.google.common.collect.Maps;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiFunction;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 
@@ -35,18 +36,13 @@ public class RedirectRegistryImpl implements RedirectRegistry, InitializingBean,
     public void register(String addOnKey, String moduleKey, RedirectData redirectData)
     {
         String moduleKeyOnly = ModuleKeyUtils.moduleKeyOnly(addOnKey, moduleKey);
-        store.compute(addOnKey, new BiFunction<String, Map<String, RedirectData>, Map<String, RedirectData>>()
-        {
-            @Override
-            public Map<String, RedirectData> apply(String key, Map<String, RedirectData> addonMap)
+        store.compute(addOnKey, (key, addonMap) -> {
+            if (addonMap == null)
             {
-                if (addonMap == null)
-                {
-                    addonMap = Maps.newConcurrentMap();
-                }
-                addonMap.put(moduleKeyOnly, redirectData);
-                return addonMap;
+                addonMap = Maps.newConcurrentMap();
             }
+            addonMap.put(moduleKeyOnly, redirectData);
+            return addonMap;
         });
     }
 

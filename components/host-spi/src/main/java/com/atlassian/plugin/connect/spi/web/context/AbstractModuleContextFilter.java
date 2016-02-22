@@ -3,8 +3,6 @@ package com.atlassian.plugin.connect.spi.web.context;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Options;
 import com.atlassian.plugin.PluginAccessor;
@@ -87,35 +85,28 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
 
     private Iterable<PermissionCheck<T>> getAllPermissionChecks()
     {
-        return concat(getPermissionChecks(), concat(transform(getValidatorsFromPlugins(), new Function<ContextParametersValidator<T>, Iterable<PermissionCheck<T>>>()
-        {
-            @Override
-            public Iterable<PermissionCheck<T>> apply(final ContextParametersValidator<T> validator)
-            {
-                return transform(validator.getPermissionChecks(), new Function<PermissionCheck<T>, PermissionCheck<T>>()
+        return concat(getPermissionChecks(), concat(
+            transform(getValidatorsFromPlugins(),
+                new Function<ContextParametersValidator<T>, Iterable<PermissionCheck<T>>>()
                 {
                     @Override
-                    public PermissionCheck<T> apply(final PermissionCheck<T> permissionCheck)
+                    public Iterable<PermissionCheck<T>> apply(final ContextParametersValidator<T> validator)
                     {
-                        return new SafePermissionCheckFromPlugIn<T>(permissionCheck);
+                        return transform(validator.getPermissionChecks(), SafePermissionCheckFromPlugIn::new);
                     }
-                });
-            }
-        })));
+                })
+        ));
     }
 
     private Iterable<ContextParametersValidator<T>> getValidatorsFromPlugins()
     {
-        Iterable<ContextParametersValidator> validators = Iterables.concat(Iterables.transform(pluginAccessor.getModules(
-                        new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class)),
-                new Function<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver, List<ContextParametersValidator>>() {
-                    @Override
-                    public List<ContextParametersValidator> apply(final ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver input)
-                    {
-                        return input.getValidators();
-                    }
-                }));
-        return Options.flatten(Iterables.transform(validators, AbstractModuleContextFilter.this::tryCast));
+        final Collection<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver> modules =
+            pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class));
+
+        Iterable<ContextParametersValidator> validators =
+            concat(transform(modules, ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver::getValidators));
+
+        return Options.flatten(transform(validators, AbstractModuleContextFilter.this::tryCast));
     }
 
     private Option<ContextParametersValidator<T>> tryCast(ContextParametersValidator<?> unidentifiedValidator)

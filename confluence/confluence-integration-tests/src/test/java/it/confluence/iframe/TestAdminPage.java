@@ -7,14 +7,12 @@ import com.atlassian.connect.test.confluence.pageobjects.ConfluenceAdminPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
-
-import com.google.common.base.Supplier;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -87,14 +85,8 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
         final ConnectAddonEmbeddedTestPage addonContentsPage = adminPage.clickAddonLink();
-        waitUntilTrue(forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
-        {
-            @Override
-            public Boolean get()
-            {
-                return "Hello world".equals(addonContentsPage.getValueById("hello-world-message"));
-            }
-        }));
+        waitUntilTrue(forSupplier(new DefaultTimeouts(),
+            () -> "Hello world".equals(addonContentsPage.getValueById("hello-world-message"))));
     }
 
     @Test

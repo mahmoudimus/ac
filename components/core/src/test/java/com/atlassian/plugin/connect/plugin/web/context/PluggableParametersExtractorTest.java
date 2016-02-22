@@ -1,25 +1,27 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
+import java.util.Collections;
+import java.util.Map;
+
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
-import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.module.ModuleFactory;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Collections;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.util.matcher.UnitTestMatchers.predicateThatWillMatch;
 import static org.hamcrest.Matchers.equalTo;
@@ -80,13 +82,8 @@ public final class PluggableParametersExtractorTest
         when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextParameterResolverModuleDescriptor(mock(ModuleFactory.class)))))).
                 thenReturn(Collections.singletonList(
                         new ConnectContextParametersResolver(
-                                ImmutableList.<ContextParametersExtractor>of(new ContextParametersExtractor()
-                                {
-                                    @Override
-                                    public Map<String, String> extractParameters(final Map<String, Object> context)
-                                    {
-                                        throw new RuntimeException("Geronimo!");
-                                    }
+                                ImmutableList.<ContextParametersExtractor>of(context -> {
+                                    throw new RuntimeException("Geronimo!");
                                 }),
                                 Collections.<ContextParametersValidator>emptyList())));
 
@@ -96,16 +93,7 @@ public final class PluggableParametersExtractorTest
     private ConnectContextParametersResolver extractorReturning(final ImmutableMap<String, String> parameters)
     {
         return new ConnectContextParametersResolver(
-                ImmutableList.<ContextParametersExtractor>of(
-                        new ContextParametersExtractor()
-                        {
-                            @Override
-                            public Map<String, String> extractParameters(final Map<String, Object> context)
-                            {
-                                return parameters;
-                            }
-                        }
-                ),
+                ImmutableList.<ContextParametersExtractor>of(context -> parameters),
                 Collections.<ContextParametersValidator>emptyList()
         );
     }

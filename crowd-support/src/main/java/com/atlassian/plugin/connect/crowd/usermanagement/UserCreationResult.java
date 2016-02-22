@@ -8,8 +8,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class UserCreationResult
 {
-    private User user;
-    private boolean isNewlyCreated;
+    private final User user;
+    private final boolean isNewlyCreated;
 
     public UserCreationResult(User user, UserNewness userNewness)
     {
@@ -17,7 +17,7 @@ public class UserCreationResult
         checkNotNull(userNewness, "The newness of the created user needs to be communicated");
 
         this.user = user;
-        isNewlyCreated = (userNewness == UserNewness.NEWLY_CREATED);
+        this.isNewlyCreated = (userNewness == UserNewness.NEWLY_CREATED);
     }
 
     @Nonnull

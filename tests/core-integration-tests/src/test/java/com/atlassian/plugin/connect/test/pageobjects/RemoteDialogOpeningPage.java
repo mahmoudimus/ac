@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import java.util.concurrent.Callable;
-
 import javax.inject.Inject;
 
 import com.atlassian.pageobjects.Page;

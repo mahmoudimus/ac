@@ -15,8 +15,6 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.pageobjects.AccessDeniedIFramePage;
 
-import com.google.common.base.Supplier;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -117,14 +115,8 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, ENCODED_SPACES_PAGE_KEY, remotePlugin.getAddon().getKey());
         final ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();
 
-        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
-        {
-            @Override
-            public Boolean get()
-            {
-                return "Hello world".equals(remotePluginTest.getValueById("hello-world-message"));
-            }
-        }));
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(),
+            () -> "Hello world".equals(remotePluginTest.getValueById("hello-world-message"))));
     }
 
     @Test

@@ -1,5 +1,7 @@
 package it.com.atlassian.plugin.connect.plugin;
 
+import java.io.IOException;
+
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.ConnectAddonController;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
@@ -14,14 +16,12 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
-import it.com.atlassian.plugin.connect.util.io.TestFileReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
+import it.com.atlassian.plugin.connect.util.io.TestFileReader;
 
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AtlassianPluginsTestRunner.class)

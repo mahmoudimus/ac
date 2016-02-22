@@ -87,16 +87,7 @@ public class RemoteWorkflowPostFunctionProvider extends AbstractJiraFunctionProv
         try
         {
             final List<Step> historySteps = workflowStore.findHistorySteps(entry.getId());
-            final Step previousStep = Iterables.find(historySteps, new Predicate<Step>()
-            {
-
-                @Override
-                public boolean apply(final Step step)
-                {
-                    return step.getId() == previousStepId;
-                }
-            }, null);
-
+            final Step previousStep = historySteps.stream().filter(step -> step.getId() == previousStepId).findFirst().orElse(null);
             return workflowDescriptor.getStep(previousStep.getStepId()).getName();
         }
         catch (StoreException e)

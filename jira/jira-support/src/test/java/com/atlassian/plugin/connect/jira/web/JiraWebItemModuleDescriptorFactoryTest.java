@@ -136,10 +136,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
                 "admin_issues_menu",
                 "admin_project_menu");
 
-        for (String key : ADMIN_MENUS_KEYS)
-        {
-            testWebItemLinkContainsAllQueryParamsForSection(key);
-        }
+        ADMIN_MENUS_KEYS.forEach(this::testWebItemLinkContainsAllQueryParamsForSection);
     }
 
     @Test
@@ -186,22 +183,10 @@ public class JiraWebItemModuleDescriptorFactoryTest
     private UrlVariableSubstitutor createUrlSubstitutor()
     {
         UrlVariableSubstitutor mock = mock(UrlVariableSubstitutor.class);
-        when(mock.append(anyString(), anyMap())).then(new Answer<Object>()
-        {
-            @Override
-            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
-            {
-                return invocationOnMock.getArguments()[0];
-            }
-        });
-        when(mock.replace(anyString(), any(WebFragmentContext.class))).then(new Answer<Object>()
-        {
-            @Override
-            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
-            {
-                String template = (String) invocationOnMock.getArguments()[0];
-                return template.replaceAll("\\{.*?\\}", "");
-            }
+        when(mock.append(anyString(), anyMap())).then(invocationOnMock -> invocationOnMock.getArguments()[0]);
+        when(mock.replace(anyString(), any(WebFragmentContext.class))).then(invocationOnMock -> {
+            String template = (String) invocationOnMock.getArguments()[0];
+            return template.replaceAll("\\{.*?\\}", "");
         });
         return mock;
     }

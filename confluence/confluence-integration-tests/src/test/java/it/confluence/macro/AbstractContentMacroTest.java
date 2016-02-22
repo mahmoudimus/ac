@@ -356,25 +356,20 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
-        selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                RemotePluginDialog dialog = null;
+        selectMacro(editorPage, EDITOR_MACRO_NAME, () -> {
+            RemotePluginDialog dialog = null;
 
-                try
+            try
+            {
+                dialog = confluencePageOperations.findDialog(EDITOR_MACRO_KEY);
+                String content = dialog.getValueById("description");
+                Assert.assertThat(content, CoreMatchers.is("Select from:"));
+            }
+            finally
+            {
+                if (dialog != null)
                 {
-                    dialog = confluencePageOperations.findDialog(EDITOR_MACRO_KEY);
-                    String content = dialog.getValueById("description");
-                    Assert.assertThat(content, CoreMatchers.is("Select from:"));
-                }
-                finally
-                {
-                    if (dialog != null)
-                    {
-                        dialog.cancelAndWaitUntilHidden();
-                    }
+                    dialog.cancelAndWaitUntilHidden();
                 }
             }
         });
@@ -394,26 +389,21 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     {
         final CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
-        selectMacro(editorPage, CUSTOM_TITLE_EDITOR_MACRO_NAME, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                RemotePluginDialog dialog = null;
+        selectMacro(editorPage, CUSTOM_TITLE_EDITOR_MACRO_NAME, () -> {
+            RemotePluginDialog dialog = null;
 
-                try
+            try
+            {
+                dialog = confluencePageOperations.findDialog(CUSTOM_TITLE_EDITOR_MACRO_KEY);
+                Assert.assertThat(dialog.getTitle(), CoreMatchers.is(CUSTOM_TITLE));
+            }
+            finally
+            {
+                if (dialog != null)
                 {
-                    dialog = confluencePageOperations.findDialog(CUSTOM_TITLE_EDITOR_MACRO_KEY);
-                    Assert.assertThat(dialog.getTitle(), CoreMatchers.is(CUSTOM_TITLE));
+                    dialog.cancelAndWaitUntilHidden();
                 }
-                finally
-                {
-                    if (dialog != null)
-                    {
-                        dialog.cancelAndWaitUntilHidden();
-                    }
-                    cancelEditor(editorPage);
-                }
+                cancelEditor(editorPage);
             }
         });
     }
@@ -423,26 +413,21 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     {
         final CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
-        selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                RemotePluginDialog dialog = null;
+        selectMacro(editorPage, EDITOR_MACRO_NAME, () -> {
+            RemotePluginDialog dialog = null;
 
-                try
+            try
+            {
+                dialog = confluencePageOperations.findDialog(EDITOR_MACRO_KEY);
+                Assert.assertThat(dialog.getTitle(), CoreMatchers.containsString(EDITOR_MACRO_NAME));
+            }
+            finally
+            {
+                if (dialog != null)
                 {
-                    dialog = confluencePageOperations.findDialog(EDITOR_MACRO_KEY);
-                    Assert.assertThat(dialog.getTitle(), CoreMatchers.containsString(EDITOR_MACRO_NAME));
+                    dialog.cancelAndWaitUntilHidden();
                 }
-                finally
-                {
-                    if (dialog != null)
-                    {
-                        dialog.cancelAndWaitUntilHidden();
-                    }
-                    cancelEditor(editorPage);
-                }
+                cancelEditor(editorPage);
             }
         });
     }

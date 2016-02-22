@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.spi.module;
 
 import com.atlassian.annotations.PublicApi;
 import com.atlassian.annotations.PublicSpi;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public final class PermissionChecks
      */
     public static <T> PermissionCheck<T> alwaysAllowed(String parameterName)
     {
-        return new AlwaysAllowed<T>(parameterName);
+        return new AlwaysAllowed<>(parameterName);
     }
 
     /**
@@ -39,7 +40,7 @@ public final class PermissionChecks
      */
     public static <T> PermissionCheck<T> mustBeLoggedIn(String parameterName)
     {
-        return new MustBeLoggedIn<T>(parameterName);
+        return new MustBeLoggedIn<>(parameterName);
     }
 
     /**

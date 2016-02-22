@@ -51,7 +51,7 @@ public class AddonValidationTest
     @Rule
     public final DisableDevMode disableDevMode = new DisableDevMode(); // TLS validation is disabled in dev mode
 
-    private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
+    private final AtomicReference<Plugin> installedPlugin = new AtomicReference<>();
 
     public AddonValidationTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
             ApplicationProperties applicationProperties)

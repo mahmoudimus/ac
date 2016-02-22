@@ -18,8 +18,6 @@ import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.request.BaseSigningRemotablePluginAccessorTest;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 
 import org.junit.Test;
@@ -123,16 +121,8 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
 
     private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl) throws ExecutionException, InterruptedException
     {
-        Supplier<URI> baseUrlSupplier = new Supplier<URI>()
-        {
-            @Override
-            public URI get()
-            {
-                return URI.create(baseUrl);
-            }
-        };
         OAuthLinkManager oAuthLinkManager = new MockOAuthLinkManager(mock(ServiceProviderConsumerStore.class), mock(AuthenticationConfigurationManager.class), mock(ConsumerService.class, RETURNS_DEEP_STUBS));
-        return new OAuthSigningRemotablePluginAccessor(mockPlugin(), baseUrlSupplier, createDummyServiceProvider(),
+        return new OAuthSigningRemotablePluginAccessor(mockPlugin(), () -> URI.create(baseUrl), createDummyServiceProvider(),
                 mockCachingHttpContentRetriever(), oAuthLinkManager);
     }
 
@@ -161,11 +151,11 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
             {
                 if (OAuth.OAUTH_NONCE.equals(param.getKey()))
                 {
-                    paramsWithPredicatableOAuthValues.put(param.getKey(), Arrays.asList("fake_nonce"));
+                    paramsWithPredicatableOAuthValues.put(param.getKey(), Collections.singletonList("fake_nonce"));
                 }
                 else if (OAuth.OAUTH_TIMESTAMP.equals(param.getKey()))
                 {
-                    paramsWithPredicatableOAuthValues.put(param.getKey(), Arrays.asList("fake_timestamp"));
+                    paramsWithPredicatableOAuthValues.put(param.getKey(), Collections.singletonList("fake_timestamp"));
                 }
                 else
                 {
@@ -173,14 +163,9 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
                 }
             }
 
-            return newArrayList(Maps.transformValues(paramsWithPredicatableOAuthValues, new Function<List<String>, String>()
-            {
-                @Override
-                public String apply(List<String> strings)
-                {
-                    // TODO: Doesn't handle multiple values with the same param name
-                    return strings.get(0);
-                }
+            return newArrayList(Maps.transformValues(paramsWithPredicatableOAuthValues, strings -> {
+                // TODO: Doesn't handle multiple values with the same param name
+                return strings.get(0);
             }).entrySet());
         }
 

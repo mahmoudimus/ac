@@ -55,14 +55,7 @@ public class JiraViewProfilePage extends ViewProfilePage
 
     private void assertCorrectUrl(final String linkPart)
     {
-        driver.waitUntil(new Function<WebDriver, Boolean>()
-        {
-            @Override
-            public Boolean apply(final WebDriver webDriver)
-            {
-                return webDriver.getCurrentUrl().contains(linkPart);
-            }
-        });
+        driver.waitUntil(webDriver -> webDriver.getCurrentUrl().contains(linkPart));
     }
 
     public RemoteWebPanel findWebPanel(String panelId)

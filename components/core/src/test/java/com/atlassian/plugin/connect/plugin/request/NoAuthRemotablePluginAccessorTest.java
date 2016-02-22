@@ -10,8 +10,6 @@ import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 
-import com.google.common.base.Supplier;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -71,16 +69,7 @@ public class NoAuthRemotablePluginAccessorTest extends BaseSigningRemotablePlugi
 
     private RemotablePluginAccessor createRemotePluginAccessor() throws ExecutionException, InterruptedException
     {
-        Supplier<URI> baseUrlSupplier = new Supplier<URI>()
-        {
-            @Override
-            public URI get()
-            {
-                return URI.create(BASE_URL);
-            }
-        };
-
-        return new NoAuthRemotablePluginAccessor(mockPlugin(), baseUrlSupplier, mockCachingHttpContentRetriever());
+        return new NoAuthRemotablePluginAccessor(mockPlugin(), () -> URI.create(BASE_URL), mockCachingHttpContentRetriever());
     }
 
     @Override

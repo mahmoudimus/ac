@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import java.util.concurrent.Callable;
-
 import javax.inject.Inject;
 
 import com.atlassian.pageobjects.PageBinder;
@@ -56,16 +54,11 @@ public class RemoteCloseDialogPage extends AbstractConnectIFrameComponent<Remote
     public RemoteCloseDialogPage close()
     {
         WebElement containerDiv = driver.findElement(By.id(key)); // have to repeat as we can't get this from PageElement
-        runInFrame(driver, containerDiv, new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id("dialog-close-button"));
-                waitUntilTrue(element.timed().isVisible());
-                element.javascript().mouse().click();
-                return null;
-            }
+        runInFrame(driver, containerDiv, () -> {
+            PageElement element = elementFinder.find(By.id("dialog-close-button"));
+            waitUntilTrue(element.timed().isVisible());
+            element.javascript().mouse().click();
+            return null;
         });
         return this;
     }

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode;
@@ -10,15 +11,11 @@ import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
 
 /**
@@ -71,22 +68,14 @@ public class ConnectPageOperations
 
     public void waitUntilNConnectIFramesPresent(final int n)
     {
-        new WebDriverPoller(driver).waitUntil(new Function<WebDriver, Boolean>()
-        {
-            @Override
-            public Boolean apply(final WebDriver input)
-            {
-                return n == size(filter(input.findElements(By.tagName("iframe")), new Predicate<WebElement>()
-                {
-                    @Override
-                    public boolean apply(final WebElement input)
-                    {
-                        String id = input.getAttribute("id");
-                        return id != null && id.startsWith("easyXDM_embedded-");
-                    }
-                }));
-            }
-        });
+        final java.util.function.Predicate<WebElement> isConnectIframe = webElement -> {
+            final String id = webElement.getAttribute("id");
+            return id != null && id.startsWith("easyXDM_embedded-");
+        };
+
+        new WebDriverPoller(driver).waitUntil(webDriver -> n == size(
+            webDriver.findElements(By.tagName("iframe")).stream().filter(isConnectIframe).collect(Collectors.toList())
+        ));
     }
 
     public boolean existsWebItem(String webItemId)

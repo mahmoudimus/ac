@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 
 public class EchoContextServlet extends ContextServlet
 {
-    private volatile BlockingDeque<Map<String, Object>> contexts = new LinkedBlockingDeque<Map<String, Object>>();
+    private volatile BlockingDeque<Map<String, Object>> contexts = new LinkedBlockingDeque<>();
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException

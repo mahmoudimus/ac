@@ -85,7 +85,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     {
         final ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
 
-        assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
+        assertThat(page.getTabs().getTabs(), IsCollectionContaining.hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
         final String linkId = addonAndModuleKey(remotePlugin.getAddon().getKey(), PROJECT_CONFIG_MODULE_KEY);
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
@@ -108,13 +108,13 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     {
         ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
         assertThat("Addon project config tab should be present", page.getTabs().getTabs(),
-                IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
+                IsCollectionContaining.hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         page = product.visit(ProjectSummaryPageTab.class, project.getKey());
         assertThat("Addon project config tab should NOT be present", page.getTabs().getTabs(),
-                not(IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME))));
+                not(IsCollectionContaining.hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME))));
     }
 
     private TypeSafeMatcher<ProjectConfigTabs.Tab> projectConfigTabMatcher(final String tabName)

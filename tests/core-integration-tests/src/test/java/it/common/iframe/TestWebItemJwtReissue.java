@@ -3,13 +3,10 @@ package it.common.iframe;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
 
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
@@ -123,23 +120,9 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     @Before
     public void createJwtReaderFactory()
     {
-        final JwtIssuerSharedSecretService sharedSecretService = new JwtIssuerSharedSecretService()
-        {
-            @Override
-            public String getSharedSecret(String issuer) throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
-            {
-                return INSTALL_HANDLER_SERVLET.getInstallPayload().getSharedSecret();
-            }
-        };
+        final JwtIssuerSharedSecretService sharedSecretService = issuer -> INSTALL_HANDLER_SERVLET.getInstallPayload().getSharedSecret();
 
-        final JwtIssuerValidator jwtIssuerValidator = new JwtIssuerValidator()
-        {
-            @Override
-            public boolean isValid(String issuer)
-            {
-                return true;
-            }
-        };
+        final JwtIssuerValidator jwtIssuerValidator = issuer -> true;
 
         jwtReaderFactory = new NimbusJwtReaderFactory(jwtIssuerValidator, sharedSecretService);
     }
@@ -237,24 +220,19 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
 
     private JwtClaimVerifier newIssuedAtTimeClaimVerifier(final long minimumIssueTime)
     {
-        return new JwtClaimVerifier()
-        {
-            @Override
-            public void verify(@Nonnull Object claim) throws JwtVerificationException, JwtParseException
+        return claim -> {
+            if (claim instanceof Date)
             {
-                if (claim instanceof Date)
+                Date claimDate = (Date) claim;
+                lastIssuedAtTime = claimDate.getTime();
+                if (lastIssuedAtTime < minimumIssueTime)
                 {
-                    Date claimDate = (Date) claim;
-                    lastIssuedAtTime = claimDate.getTime();
-                    if (lastIssuedAtTime < minimumIssueTime)
-                    {
-                        throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to have a value greater than or equal to [%d] but it was [%d]", minimumIssueTime, lastIssuedAtTime));
-                    }
+                    throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to have a value greater than or equal to [%d] but it was [%d]", minimumIssueTime, lastIssuedAtTime));
                 }
-                else
-                {
-                    throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to be a Date but it was a %s: [%s]", claim.getClass().getSimpleName(), claim));
-                }
+            }
+            else
+            {
+                throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to be a Date but it was a %s: [%s]", claim.getClass().getSimpleName(), claim));
             }
         };
     }

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import com.atlassian.confluence.mail.notification.NotificationManager;
 import com.atlassian.confluence.pages.Page;
@@ -23,13 +22,16 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.user.User;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestUtil;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestUtil;
 
 import static com.atlassian.fugue.Pair.pair;
 import static java.util.Collections.emptyMap;
@@ -126,22 +128,14 @@ public class InlineConditionResolverConfluenceWiredTest
     @Test
     public void testAllConditionsAreTested() throws Exception
     {
-        Set<String> allConditions = conditionClassResolver.getEntries().stream().map(new Function<ConnectConditionClassResolver.Entry, String>()
-        {
-            @Override
-            public String apply(final ConnectConditionClassResolver.Entry entry)
-            {
-                return entry.getConditionName();
-            }
-        }).collect(toSet());
-        Set<String> testedConditions = CONDITIONS.stream().map(new Function<Pair<Pair<String, Optional<Boolean>>, Map<String, String>>, String>()
-        {
-            @Override
-            public String apply(final Pair<Pair<String, Optional<Boolean>>, Map<String, String>> pair)
-            {
-                return pair.left().left();
-            }
-        }).collect(toSet());
+        Set<String> allConditions = conditionClassResolver.getEntries().stream()
+            .map(ConnectConditionClassResolver.Entry::getConditionName)
+            .collect(toSet());
+
+        Set<String> testedConditions = CONDITIONS.stream()
+            .map(pair -> pair.left().left())
+            .collect(toSet());
+
         Sets.SetView<String> untestedConditions = Sets.difference(allConditions, testedConditions);
         assertTrue("All conditions should be tested, untested conditions: " + untestedConditions, untestedConditions.isEmpty());
     }

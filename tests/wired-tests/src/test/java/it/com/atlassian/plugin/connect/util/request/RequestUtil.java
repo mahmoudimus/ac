@@ -74,17 +74,15 @@ public class RequestUtil
 
             InputStream response = isResponseSuccessful(responseCode) ? connection.getInputStream() : connection.getErrorStream();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(response, "UTF-8"));
-            try
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response, "UTF-8")))
             {
-                for (String line; (line = reader.readLine()) != null;)
+                for (String line; (line = reader.readLine()) != null; )
                 {
                     output.append(line).append('\n');
                 }
             }
             finally
             {
-                reader.close();
                 response.close();
             }
             return new Response(responseCode, headerFields, output.toString());

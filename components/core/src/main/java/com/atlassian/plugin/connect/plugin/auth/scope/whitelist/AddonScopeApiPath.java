@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.concat;
@@ -121,14 +122,8 @@ public interface AddonScopeApiPath
         @Override
         public Iterable<ApiResourceInfo> getApiResourceInfos()
         {
-            return concat(transform(soapRpcResources, new Function<RpcEncodedSoapApiScopeHelper, Iterable<ApiResourceInfo>>()
-            {
-                @Override
-                public Iterable<ApiResourceInfo> apply(@Nullable RpcEncodedSoapApiScopeHelper input)
-                {
-                    return null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos();
-                }
-            }));
+            return concat(transform(soapRpcResources,
+                input -> null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos()));
         }
 
         @Override
@@ -198,14 +193,8 @@ public interface AddonScopeApiPath
         @Override
         public Iterable<ApiResourceInfo> getApiResourceInfos()
         {
-            return concat(transform(jsonRpcResources, new Function<JsonRpcApiScopeHelper, Iterable<ApiResourceInfo>>()
-            {
-                @Override
-                public Iterable<ApiResourceInfo> apply(@Nullable JsonRpcApiScopeHelper input)
-                {
-                    return null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos();
-                }
-            }));
+            return concat(transform(jsonRpcResources,
+                input -> null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos()));
         }
 
         @Override
@@ -275,14 +264,8 @@ public interface AddonScopeApiPath
         @Override
         public Iterable<ApiResourceInfo> getApiResourceInfos()
         {
-            return concat(transform(xmlRpcResources, new Function<XmlRpcApiScopeHelper, Iterable<ApiResourceInfo>>()
-            {
-                @Override
-                public Iterable<ApiResourceInfo> apply(@Nullable XmlRpcApiScopeHelper input)
-                {
-                    return null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos();
-                }
-            }));
+            return concat(transform(xmlRpcResources,
+                input -> null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos()));
         }
 
         @Override
@@ -338,27 +321,14 @@ public interface AddonScopeApiPath
         @Override
         public boolean allow(final HttpServletRequest request)
         {
-            return any(paths, new Predicate<PathScopeHelper>()
-            {
-                @Override
-                public boolean apply(@Nullable PathScopeHelper path)
-                {
-                    return null != path && path.allow(request);
-                }
-            });
+            return any(paths, path -> null != path && path.allow(request));
         }
 
         @Override
         public Iterable<ApiResourceInfo> getApiResourceInfos()
         {
-            return concat(transform(paths, new Function<PathScopeHelper, Iterable<ApiResourceInfo>>()
-            {
-                @Override
-                public Iterable<ApiResourceInfo> apply(@Nullable PathScopeHelper input)
-                {
-                    return null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos();
-                }
-            }));
+            return concat(transform(paths,
+                input -> null == input ? Collections.<ApiResourceInfo>emptySet() : input.getApiResourceInfos()));
         }
 
         @Override

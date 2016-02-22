@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ public final class WebHookTestServlet extends HttpServlet
 
     private static final Logger log = LoggerFactory.getLogger(WebHookTestServlet.class);
 
-    private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<WebHookBody>();
+    private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<>();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
