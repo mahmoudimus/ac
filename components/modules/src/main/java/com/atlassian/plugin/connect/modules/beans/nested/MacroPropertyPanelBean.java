@@ -60,6 +60,9 @@ public class MacroPropertyPanelBean extends BaseModuleBean
     @StringSchemaAttributes(format = "uri-template")
     private String url;
 
+    /**
+     * List of controls which will be added to the macro property panel
+     */
     private List<ControlBean> controls;
 
     public MacroPropertyPanelBean()
