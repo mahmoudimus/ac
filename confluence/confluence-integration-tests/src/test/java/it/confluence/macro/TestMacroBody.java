@@ -1,7 +1,5 @@
 package it.confluence.macro;
 
-import java.util.Map;
-
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
@@ -16,21 +14,20 @@ import com.atlassian.plugin.connect.test.common.servlet.HttpContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.HttpUtils;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
 import com.google.common.collect.Maps;
-
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.confluence.MacroStorageFormatBuilder;
+import it.confluence.servlet.macro.BodyHandler;
+import it.confluence.servlet.macro.MacroBodyServlet;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
-
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.confluence.MacroStorageFormatBuilder;
-import it.confluence.servlet.macro.BodyHandler;
-import it.confluence.servlet.macro.MacroBodyServlet;
 import org.openqa.selenium.WebElement;
+
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
@@ -177,7 +174,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         final Content page = makePageFromContentBody(makeNestedContentBody(macroKeys, "<h1>Hello world</h1>"));
         ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, valueOf(page.getId().asLong()));
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKeys[macroKeys.length - 1], 0);
+        RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(macroKeys[macroKeys.length - 1], 0);
         String content1 = renderedMacro.getIFrameElement("body");
         assertThat(content1, CoreMatchers.containsString("Hello world"));
     }
@@ -211,7 +208,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        WebElement element = connectPageOperations.findElementByClass("hello-world-content");
+        WebElement element = confluencePageOperations.findElementByClass("hello-world-content");
         assertThat(element.getText(), CoreMatchers.is("Hello world"));
     }
 
