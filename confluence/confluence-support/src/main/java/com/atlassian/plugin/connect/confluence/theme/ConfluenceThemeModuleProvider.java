@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
 /**
  *
  */
-public interface ConfluenceThemeModuleProvider extends ConnectModuleProvider<ConfluenceThemeModuleBean>
-{
+public interface ConfluenceThemeModuleProvider extends ConnectModuleProvider<ConfluenceThemeModuleBean> {
 
 }

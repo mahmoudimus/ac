@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.confluence.theme;
 /**
  * store some hardcoded values to map the existing values of action names, package names and result names to the appropriate override files.
  */
-public enum NavigationTargetOverrideInfo
-{
+public enum NavigationTargetOverrideInfo {
     dashboard("/decorators/main.vmd",
               "velocity/confluence/theme-support/main.vmd",
               "search",
@@ -27,12 +26,12 @@ public enum NavigationTargetOverrideInfo
          "/velocity/confluence/theme-support/page.vm",
          NavigationTargetName.contentview),
     space("/decorators/space.vmd",
-         "velocity/confluence/theme-support/space.vmd",
-         "spaces",
-         "viewspace",
-         "homepage",
-         "/velocity/confluence/theme-support/space.vm",
-         NavigationTargetName.spaceview);
+          "velocity/confluence/theme-support/space.vmd",
+          "spaces",
+          "viewspace",
+          "homepage",
+          "/velocity/confluence/theme-support/space.vm",
+          NavigationTargetName.spaceview);
 
     private final String decoratorToOverride;
     private final String decoratorLocation;
@@ -48,8 +47,7 @@ public enum NavigationTargetOverrideInfo
                                  String actionToOverride,
                                  String resultToOverride,
                                  String templateLocation,
-                                 NavigationTargetName navigationTargetName)
-    {
+                                 NavigationTargetName navigationTargetName) {
         this.decoratorToOverride = decoratorToOverride;
         this.decoratorLocation = decoratorLocation;
         this.packageToOverride = packageToOverride;
@@ -59,38 +57,31 @@ public enum NavigationTargetOverrideInfo
         this.navigationTargetName = navigationTargetName;
     }
 
-    public String getDecoratorToOverride()
-    {
+    public String getDecoratorToOverride() {
         return decoratorToOverride;
     }
 
-    public String getDecoratorLocation()
-    {
+    public String getDecoratorLocation() {
         return decoratorLocation;
     }
 
-    public String getPackageToOverride()
-    {
+    public String getPackageToOverride() {
         return packageToOverride;
     }
 
-    public String getActionToOverride()
-    {
+    public String getActionToOverride() {
         return actionToOverride;
     }
 
-    public String getResultToOverride()
-    {
+    public String getResultToOverride() {
         return resultToOverride;
     }
 
-    public String getTemplateLocation()
-    {
+    public String getTemplateLocation() {
         return templateLocation;
     }
 
-    public NavigationTargetName getNavigationTargetName()
-    {
+    public NavigationTargetName getNavigationTargetName() {
         return navigationTargetName;
     }
 }

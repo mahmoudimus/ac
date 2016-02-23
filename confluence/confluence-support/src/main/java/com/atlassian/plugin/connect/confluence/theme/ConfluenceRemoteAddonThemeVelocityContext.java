@@ -11,18 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ConfluenceComponent
 @Internal
-public final class ConfluenceRemoteAddonThemeVelocityContext
-{
+public final class ConfluenceRemoteAddonThemeVelocityContext {
     private final ThemeManager themeManager;
 
     @Autowired
-    public ConfluenceRemoteAddonThemeVelocityContext(@ComponentImport ThemeManager themeManager)
-    {
+    public ConfluenceRemoteAddonThemeVelocityContext(@ComponentImport ThemeManager themeManager) {
         this.themeManager = themeManager;
     }
 
-    public ThemeManager getThemeManager()
-    {
+    public ThemeManager getThemeManager() {
         return themeManager;
     }
 }

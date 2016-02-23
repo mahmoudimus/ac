@@ -11,34 +11,28 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * @schemaTitle Confluence Theme Route Interceptions
  * @since 1.1.5
  */
-public class ConfluenceThemeRouteInterceptionsBean
-{
+public class ConfluenceThemeRouteInterceptionsBean {
     private ConfluenceThemeRouteBean dashboard;
     private ConfluenceThemeRouteBean contentview;
     private ConfluenceThemeRouteBean spaceview;
 
-    public ConfluenceThemeRouteBean getContentview()
-    {
+    public ConfluenceThemeRouteBean getContentview() {
         return contentview;
     }
 
-    public ConfluenceThemeRouteBean getDashboard()
-    {
+    public ConfluenceThemeRouteBean getDashboard() {
         return dashboard;
     }
 
-    public ConfluenceThemeRouteBean getSpaceview()
-    {
+    public ConfluenceThemeRouteBean getSpaceview() {
         return spaceview;
     }
 
-    public ConfluenceThemeRouteInterceptionsBean(ConfluenceThemeRouteInterceptionsBeanBuilder builder)
-    {
-       copyFieldsByNameAndType(builder, this);
+    public ConfluenceThemeRouteInterceptionsBean(ConfluenceThemeRouteInterceptionsBeanBuilder builder) {
+        copyFieldsByNameAndType(builder, this);
     }
 
-    public static ConfluenceThemeRouteInterceptionsBeanBuilder newConfluenceThemeRouteInterceptionsBeanBuilder()
-    {
-       return new ConfluenceThemeRouteInterceptionsBeanBuilder();
+    public static ConfluenceThemeRouteInterceptionsBeanBuilder newConfluenceThemeRouteInterceptionsBeanBuilder() {
+        return new ConfluenceThemeRouteInterceptionsBeanBuilder();
     }
 }

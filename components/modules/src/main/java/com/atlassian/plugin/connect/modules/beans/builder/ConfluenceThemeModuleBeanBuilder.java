@@ -1,31 +1,27 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteInterceptionsBean;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
 /**
  *
  */
-public class ConfluenceThemeModuleBeanBuilder extends RequiredKeyBeanBuilder<ConfluenceThemeModuleBeanBuilder, ConfluenceThemeModuleBean>
-{
+public class ConfluenceThemeModuleBeanBuilder extends RequiredKeyBeanBuilder<ConfluenceThemeModuleBeanBuilder, ConfluenceThemeModuleBean> {
     private ConfluenceThemeRouteInterceptionsBean routes;
     private IconBean icon;
 
-    public ConfluenceThemeModuleBeanBuilder withRoutes(ConfluenceThemeRouteInterceptionsBean routes)
-    {
+    public ConfluenceThemeModuleBeanBuilder withRoutes(ConfluenceThemeRouteInterceptionsBean routes) {
         this.routes = routes;
         return this;
     }
 
-    public ConfluenceThemeModuleBeanBuilder withIcon(IconBean icon)
-    {
+    public ConfluenceThemeModuleBeanBuilder withIcon(IconBean icon) {
         this.icon = icon;
         return this;
     }
 
-    public ConfluenceThemeModuleBean build()
-    {
+    public ConfluenceThemeModuleBean build() {
         return new ConfluenceThemeModuleBean(this);
     }
 }

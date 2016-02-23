@@ -4,8 +4,6 @@ import com.atlassian.confluence.plugin.descriptor.LayoutModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -25,8 +23,7 @@ import java.util.stream.Collectors;
  */
 @ConfluenceComponent
 @ExportAsDevService
-public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnectModuleProvider<ConfluenceThemeModuleBean> implements ConfluenceThemeModuleProvider
-{
+public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnectModuleProvider<ConfluenceThemeModuleBean> implements ConfluenceThemeModuleProvider {
     private static final ConfuenceThemeMeta META = new ConfuenceThemeMeta();
 
     private final ConfluenceThemeModuleDescriptorFactory themeDescriptorFactory;
@@ -36,28 +33,22 @@ public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnect
     public ConfluenceThemeModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
                                              ConnectJsonSchemaValidator schemaValidator,
                                              ConfluenceThemeModuleDescriptorFactory themeDescriptorFactory,
-                                             ConfluenceLayoutModuleFactory layoutModuleFactory,
-                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
-    {
+                                             ConfluenceLayoutModuleFactory layoutModuleFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.themeDescriptorFactory = themeDescriptorFactory;
         this.layoutModuleFactory = layoutModuleFactory;
     }
 
     @Override
-    public ConnectModuleMeta<ConfluenceThemeModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<ConfluenceThemeModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConfluenceThemeModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConfluenceThemeModuleBean> modules, ConnectAddonBean addon) {
         Plugin plugin = pluginRetrievalService.getPlugin();
         List<ModuleDescriptor> descriptors = Lists.newArrayList();
-        for (ConfluenceThemeModuleBean theme : modules)
-        {
+        for (ConfluenceThemeModuleBean theme : modules) {
             List<LayoutModuleDescriptor> layouts = makeLayouts(addon, plugin, theme);
             descriptors.addAll(layouts);
             //layouts must come before the theme that uses them
@@ -67,22 +58,22 @@ public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnect
         return descriptors;
     }
 
-    private List<LayoutModuleDescriptor> makeLayouts(ConnectAddonBean addon, Plugin plugin, ConfluenceThemeModuleBean moduleBean)
-    {
+    private List<LayoutModuleDescriptor> makeLayouts(ConnectAddonBean addon, Plugin plugin, ConfluenceThemeModuleBean moduleBean) {
         ConfluenceThemeRouteInterceptionsBean routes = moduleBean.getRoutes();
         return ConfluenceThemeUtils.filterProperties(routes)
-                     .stream()
-                     .flatMap(routeProperty ->
-                              {
-                                  List<NavigationTargetOverrideInfo> type = NavigationTargetName.forNavigationTargetName(routeProperty.getName());
-                                  return Lists.transform(
-                                          type,
-                                          overrideInfo -> layoutModuleFactory.createModuleDescriptor(
-                                                  addon,
-                                                  plugin,
-                                                  moduleBean,
-                                                  overrideInfo)).stream();
-                              })
-                     .collect(Collectors.toList());
+                                   .stream()
+                                   .flatMap(routeProperty ->
+                                            {
+                                                List<NavigationTargetOverrideInfo> type = NavigationTargetName.forNavigationTargetName(
+                                                        routeProperty.getName());
+                                                return Lists.transform(
+                                                        type,
+                                                        overrideInfo -> layoutModuleFactory.createModuleDescriptor(
+                                                                addon,
+                                                                plugin,
+                                                                moduleBean,
+                                                                overrideInfo)).stream();
+                                            })
+                                   .collect(Collectors.toList());
     }
 }

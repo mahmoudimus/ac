@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -23,8 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 @ConfluenceComponent
-public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFactory<ConfluenceThemeModuleBean, LayoutModuleDescriptor>
-{
+public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFactory<ConfluenceThemeModuleBean, LayoutModuleDescriptor> {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceLayoutModuleFactory.class);
     private final ModuleFactory moduleFactory;
     private final I18NBeanFactory i18nBeanFactory;
@@ -35,8 +33,7 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
     public ConfluenceLayoutModuleFactory(ModuleFactory moduleFactory,
                                          I18NBeanFactory i18nBeanFactory,
                                          RequestFactory<?> requestFactory,
-                                         PluginAccessor pluginAccessor)
-    {
+                                         PluginAccessor pluginAccessor) {
         this.moduleFactory = moduleFactory;
         this.i18nBeanFactory = i18nBeanFactory;
         this.requestFactory = requestFactory;
@@ -46,8 +43,7 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
     @Override
     public LayoutModuleDescriptor createModuleDescriptor(ConfluenceThemeModuleBean bean,
                                                          ConnectAddonBean addon,
-                                                         Plugin plugin)
-    {
+                                                         Plugin plugin) {
         return createModuleDescriptor(addon, plugin, bean, NavigationTargetOverrideInfo.dashboard);
     }
 
@@ -55,8 +51,7 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
     public LayoutModuleDescriptor createModuleDescriptor(ConnectAddonBean addon,
                                                          Plugin plugin,
                                                          ConfluenceThemeModuleBean bean,
-                                                         NavigationTargetOverrideInfo overrideInfo)
-    {
+                                                         NavigationTargetOverrideInfo overrideInfo) {
         Element dom = new DOMElement("layout");
         dom.addAttribute("key", ConfluenceThemeUtils.getLayoutKey(addon, bean, overrideInfo));
         dom.addAttribute("name", ConfluenceThemeUtils.getLayoutName(addon, bean, overrideInfo));
@@ -70,8 +65,7 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
         LayoutModuleDescriptor layoutModuleDescriptor = new ConnectLayoutModuleDescriptor(moduleFactory);
         layoutModuleDescriptor.init(plugin, dom);
 
-        if (log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(dom));
         }
 
@@ -79,20 +73,16 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
     }
 
     //this class hacks around bug : https://ecosystem.atlassian.net/browse/PLUG-1177
-    private static class ConnectLayoutModuleDescriptor extends LayoutModuleDescriptor
-    {
+    private static class ConnectLayoutModuleDescriptor extends LayoutModuleDescriptor {
         private Class<? extends ThemedDecorator> hackedModuleClazz;
 
-        ConnectLayoutModuleDescriptor(ModuleFactory moduleFactory)
-        {
+        ConnectLayoutModuleDescriptor(ModuleFactory moduleFactory) {
             super(moduleFactory);
         }
 
         @Override
-        public Class<ThemedDecorator> getModuleClass()
-        {
-            if (hackedModuleClazz == null)
-            {
+        public Class<ThemedDecorator> getModuleClass() {
+            if (hackedModuleClazz == null) {
                 hackedModuleClazz = moduleFactory.createModule(getModuleClassName(), this).getClass();
             }
             return (Class<ThemedDecorator>) hackedModuleClazz;

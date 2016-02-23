@@ -18,26 +18,23 @@ import java.util.Map;
  * A theme implementation which delegates the actual theming to an iframe from a connect addon.
  * The creation of the theme module in connect must also register the iframe rendering strategy for all possible
  * navigation targets ({@link NavigationTargetName}.
- *
+ * <p/>
  * Do not rename this class, since it's name is used in the theme module descriptor xml, which is saved in the database.
  */
 @Internal
-public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme
-{
+public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedTheme {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private String addonKey;
     private String themeKey;
 
     @Autowired
-    public ConfluenceRemoteAddonTheme(IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
-    {
+    public ConfluenceRemoteAddonTheme(IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry) {
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     @Override
-    public void init(ThemeModuleDescriptor moduleDescriptor)
-    {
+    public void init(ThemeModuleDescriptor moduleDescriptor) {
         super.init(moduleDescriptor);
         Map<String, String> params = moduleDescriptor.getParams();
         addonKey = params.get(ConfluenceThemeModuleDescriptorFactory.ADDON_KEY_PROPERTY_KEY);
@@ -45,27 +42,26 @@ public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedThe
     }
 
     @HtmlSafe
-    public String getRemoteThemeIframe(NavigationTargetOverrideInfo navigationTargetOverrideInfo, final Map<String, String> extraParams)
-    {
-        IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, themeKey, navigationTargetOverrideInfo.name());
+    public String getRemoteThemeIframe(NavigationTargetOverrideInfo navigationTargetOverrideInfo, final Map<String, String> extraParams) {
+        IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey,
+                                                                                            themeKey,
+                                                                                            navigationTargetOverrideInfo
+                                                                                                    .name());
         ModuleContextParameters context = makeThemeModuleParametersMap(extraParams);
         return IFrameRenderStrategyUtil.renderToString(context, iFrameRenderStrategy);
     }
 
-    private ModuleContextParameters makeThemeModuleParametersMap(Map<String, String> extraParams)
-    {
+    private ModuleContextParameters makeThemeModuleParametersMap(Map<String, String> extraParams) {
         ModuleContextParameters context = new HashMapModuleContextParameters(Collections.emptyMap());
         context.putAll(extraParams);
         return context;
     }
 
-    public String getAddonKey()
-    {
+    public String getAddonKey() {
         return addonKey;
     }
 
-    public Constants getLayoutTypes()
-    {
+    public Constants getLayoutTypes() {
         return new Constants();
     }
 
@@ -74,25 +70,20 @@ public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedThe
      * Not intended to be used by other plugins.
      */
     @Internal
-    public static final class Constants
-    {
-        public NavigationTargetOverrideInfo getBlog()
-        {
+    public static final class Constants {
+        public NavigationTargetOverrideInfo getBlog() {
             return NavigationTargetOverrideInfo.blogpost;
         }
 
-        public NavigationTargetOverrideInfo getMain()
-        {
+        public NavigationTargetOverrideInfo getMain() {
             return NavigationTargetOverrideInfo.dashboard;
         }
 
-        public NavigationTargetOverrideInfo getPage()
-        {
+        public NavigationTargetOverrideInfo getPage() {
             return NavigationTargetOverrideInfo.page;
         }
 
-        public NavigationTargetOverrideInfo getSpace()
-        {
+        public NavigationTargetOverrideInfo getSpace() {
             return NavigationTargetOverrideInfo.space;
         }
     }

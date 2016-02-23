@@ -6,10 +6,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 /**
  *
  */
-public class ConfuenceThemeMeta extends ConnectModuleMeta<ConfluenceThemeModuleBean>
-{
-    public ConfuenceThemeMeta()
-    {
+public class ConfuenceThemeMeta extends ConnectModuleMeta<ConfluenceThemeModuleBean> {
+    public ConfuenceThemeMeta() {
         super("confluenceThemes", ConfluenceThemeModuleBean.class);
     }
 }
