@@ -82,7 +82,6 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
            .addAttribute("type", "download")
            .addAttribute("location", addon.getBaseUrl() + themeBean.getIcon().getUrl());
 
-        /*TODO: create an override registry*/
         final ConfluenceThemeRouteInterceptionsBean routes = themeBean.getRoutes();
         for (PropertyDescriptor prop : ConfluenceThemeUtils.filterProperties(routes)) {
             ConfluenceThemeRouteBean routeBean = ConfluenceThemeUtils.getRouteBeanFromProperty(routes, prop);

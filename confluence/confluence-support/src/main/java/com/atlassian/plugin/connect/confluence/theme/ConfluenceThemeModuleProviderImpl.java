@@ -62,18 +62,17 @@ public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnect
         ConfluenceThemeRouteInterceptionsBean routes = moduleBean.getRoutes();
         return ConfluenceThemeUtils.filterProperties(routes)
                                    .stream()
-                                   .flatMap(routeProperty ->
-                                            {
-                                                List<NavigationTargetOverrideInfo> type = NavigationTargetName.forNavigationTargetName(
-                                                        routeProperty.getName());
-                                                return Lists.transform(
-                                                        type,
-                                                        overrideInfo -> layoutModuleFactory.createModuleDescriptor(
-                                                                addon,
-                                                                plugin,
-                                                                moduleBean,
-                                                                overrideInfo)).stream();
-                                            })
+                                   .flatMap(routeProperty -> {
+                                       List<NavigationTargetOverrideInfo> type = NavigationTargetName.forNavigationTargetName(
+                                               routeProperty.getName());
+                                       return Lists.transform(
+                                               type,
+                                               overrideInfo -> layoutModuleFactory.createModuleDescriptor(
+                                                       addon,
+                                                       plugin,
+                                                       moduleBean,
+                                                       overrideInfo)).stream();
+                                   })
                                    .collect(Collectors.toList());
     }
 }

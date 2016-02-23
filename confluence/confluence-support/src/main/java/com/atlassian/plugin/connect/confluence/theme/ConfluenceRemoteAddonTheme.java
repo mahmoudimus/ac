@@ -45,8 +45,7 @@ public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedThe
     public String getRemoteThemeIframe(NavigationTargetOverrideInfo navigationTargetOverrideInfo, final Map<String, String> extraParams) {
         IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey,
                                                                                             themeKey,
-                                                                                            navigationTargetOverrideInfo
-                                                                                                    .name());
+                                                                                            navigationTargetOverrideInfo.name());
         ModuleContextParameters context = makeThemeModuleParametersMap(extraParams);
         return IFrameRenderStrategyUtil.renderToString(context, iFrameRenderStrategy);
     }
