@@ -48,10 +48,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class InlineConditionResolverJiraWiredTest
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class InlineConditionResolverJiraWiredTest {
     private final static List<Pair<Pair<String, Optional<Boolean>>, Map<String, String>>> CONDITIONS = ImmutableList.<Pair<Pair<String, Optional<Boolean>>, Map<String, String>>>builder()
             .add(pair(pair("can_attach_file_to_issue", Optional.of(true)), emptyMap()))
             .add(pair(pair("can_manage_attachments", Optional.of(true)), emptyMap()))
@@ -108,8 +107,7 @@ public class InlineConditionResolverJiraWiredTest
             final VoteService voteService,
             final SubTaskManager subTaskManager,
             final UserIssueHistoryManager historyManager,
-            final IssuePropertyService issuePropertyService)
-    {
+            final IssuePropertyService issuePropertyService) {
         this.inlineConditionResolver = inlineConditionResolver;
         this.extractor = extractor;
         this.testAuthenticator = testAuthenticator;
@@ -121,8 +119,7 @@ public class InlineConditionResolverJiraWiredTest
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         final ApplicationUser user = jiraTestUtil.getAdmin();
         testAuthenticator.authenticateUser(user.getUsername());
 
@@ -141,27 +138,24 @@ public class InlineConditionResolverJiraWiredTest
     }
 
     @Test
-    public void testAllConditionsAreTested() throws Exception
-    {
+    public void testAllConditionsAreTested() throws Exception {
         Set<String> allConditions = conditionClassResolver.getEntries().stream()
-            .map(ConnectConditionClassResolver.Entry::getConditionName)
-            .collect(toSet());
+                .map(ConnectConditionClassResolver.Entry::getConditionName)
+                .collect(toSet());
 
         Set<String> testedConditions = CONDITIONS.stream()
-            .map(pair -> pair.left().left())
-            .collect(toSet());
+                .map(pair -> pair.left().left())
+                .collect(toSet());
 
         Sets.SetView<String> untestedConditions = Sets.difference(allConditions, testedConditions);
         assertTrue("All conditions should be tested, untested conditions: " + untestedConditions, untestedConditions.isEmpty());
     }
 
     @Test
-    public void testConditions() throws Exception
-    {
+    public void testConditions() throws Exception {
         Map<String, Object> reversedContext = extractor.reverseExtraction(httpRequest, redirectContext());
 
-        for (Pair<Pair<String, Optional<Boolean>>, Map<String, String>> conditionAndParams : CONDITIONS)
-        {
+        for (Pair<Pair<String, Optional<Boolean>>, Map<String, String>> conditionAndParams : CONDITIONS) {
             String name = conditionAndParams.left().left();
             Optional<Boolean> expectedValue = conditionAndParams.left().right();
             Map<String, String> params = conditionAndParams.right();
@@ -171,8 +165,7 @@ public class InlineConditionResolverJiraWiredTest
         }
     }
 
-    private Map<String, String> redirectContext()
-    {
+    private Map<String, String> redirectContext() {
         return ImmutableMap.of(
                 "issue.id", issue.getId().toString(),
                 "project.id", project.getId().toString());

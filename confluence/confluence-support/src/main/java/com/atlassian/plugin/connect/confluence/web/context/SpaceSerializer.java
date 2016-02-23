@@ -12,11 +12,9 @@ import java.util.Map;
  * Serializes space objects.
  */
 @ConfluenceComponent
-public class SpaceSerializer implements ParameterSerializer<Space>
-{
+public class SpaceSerializer implements ParameterSerializer<Space> {
     @Override
-    public Map<String, Object> serialize(Space space)
-    {
+    public Map<String, Object> serialize(Space space) {
         return ImmutableMap.<String, Object>of("space", ImmutableMap.of(
                 "id", space.getId(),
                 "key", space.getKey()

@@ -29,8 +29,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectAddonManagerTest
-{
+public class ConnectAddonManagerTest {
     private static final String SIMPLE_ADDON_BASE_URL = "https://example.test.com";
 
     @Mock
@@ -91,19 +90,16 @@ public class ConnectAddonManagerTest
     }
 
     private static Matcher<NameValuePair> matchName(final String name) {
-        return new BaseMatcher<NameValuePair>()
-        {
+        return new BaseMatcher<NameValuePair>() {
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("nameMatcher");
                 description.appendText("[name=").appendText(name).appendText("]");
             }
 
             @Override
-            public boolean matches(Object o)
-            {
-                if(!(o instanceof NameValuePair)) return false;
+            public boolean matches(Object o) {
+                if (!(o instanceof NameValuePair)) return false;
                 final NameValuePair nvp = (NameValuePair) o;
                 return nvp.getName().equals(name);
             }

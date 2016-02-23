@@ -20,27 +20,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * can be transmitted via the WebHookPublisher.
  */
 @JiraComponent
-public final class JiraEventSerializerFactory implements EventSerializerFactory<JiraEvent>
-{
+public final class JiraEventSerializerFactory implements EventSerializerFactory<JiraEvent> {
     private static final Logger log = LoggerFactory.getLogger(JiraEventSerializerFactory.class);
 
     protected final List<JiraEventMapper> mappers;
 
     @Autowired
-    public JiraEventSerializerFactory(JiraRestBeanMarshaler jiraRestBeanMarshaler)
-    {
+    public JiraEventSerializerFactory(JiraRestBeanMarshaler jiraRestBeanMarshaler) {
         // This list is deliberately ordered. More-specific mappers must appear in the
         // list _before_ less-specific mappers, or else they will never get invoked.
         this.mappers = ImmutableList.<JiraEventMapper>of(new IssueEventMapper(checkNotNull(jiraRestBeanMarshaler)));
     }
 
     @Override
-    public EventSerializer create(JiraEvent event)
-    {
-        for (JiraEventMapper mapper : mappers)
-        {
-            if (mapper.handles(event))
-            {
+    public EventSerializer create(JiraEvent event) {
+        for (JiraEventMapper mapper : mappers) {
+            if (mapper.handles(event)) {
                 return EventSerializers.forMap(event, mapper.toMap(event));
             }
         }

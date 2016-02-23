@@ -11,20 +11,17 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 
-public class TestPostInstallPage extends AbstractUpmPageTest
-{
+public class TestPostInstallPage extends AbstractUpmPageTest {
 
     private static final String MODULE_NAME = "postInstallPage";
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         startConnectAddon(MODULE_NAME, new PostInstallPageModuleMeta());
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException {
         runCanClickOnPageLinkAndSeeAddonContents(PluginManager.class, LINK_TEXT, "Get started", testUserFactory.admin());
     }
 }

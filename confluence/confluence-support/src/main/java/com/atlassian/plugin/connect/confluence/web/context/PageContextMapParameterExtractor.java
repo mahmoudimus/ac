@@ -19,37 +19,28 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @see ContentContextMapParameterExtractor
  */
 @ConfluenceComponent
-public class PageContextMapParameterExtractor implements ContextMapParameterExtractor<AbstractPage>
-{
+public class PageContextMapParameterExtractor implements ContextMapParameterExtractor<AbstractPage> {
     private static final String PAGE_CONTEXT_PARAMETER = "page";
     private static final String ACTION_PARAMETER = "action";
     private final PageSerializer pageSerializer;
 
     @Autowired
-    public PageContextMapParameterExtractor(PageSerializer pageSerializer)
-    {
+    public PageContextMapParameterExtractor(PageSerializer pageSerializer) {
         this.pageSerializer = pageSerializer;
     }
 
 
     @Override
-    public Optional<AbstractPage> extract(final Map<String, Object> context)
-    {
-        if (context.containsKey("webInterfaceContext"))
-        {
+    public Optional<AbstractPage> extract(final Map<String, Object> context) {
+        if (context.containsKey("webInterfaceContext")) {
             WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get("webInterfaceContext");
-            if (null != webInterfaceContext && null != webInterfaceContext.getPage())
-            {
+            if (null != webInterfaceContext && null != webInterfaceContext.getPage()) {
                 return Optional.of(webInterfaceContext.getPage());
 
             }
-        }
-        else if (context.containsKey(PAGE_CONTEXT_PARAMETER) && context.get(PAGE_CONTEXT_PARAMETER) instanceof AbstractPage)
-        {
+        } else if (context.containsKey(PAGE_CONTEXT_PARAMETER) && context.get(PAGE_CONTEXT_PARAMETER) instanceof AbstractPage) {
             return Optional.of((AbstractPage) context.get(PAGE_CONTEXT_PARAMETER));
-        }
-        else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction)
-        {
+        } else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction) {
             AbstractPageAwareAction action = (AbstractPageAwareAction) context.get(ACTION_PARAMETER);
             return Optional.ofNullable(action.getPage());
         }
@@ -57,8 +48,7 @@ public class PageContextMapParameterExtractor implements ContextMapParameterExtr
     }
 
     @Override
-    public ParameterSerializer<AbstractPage> serializer()
-    {
+    public ParameterSerializer<AbstractPage> serializer() {
         return pageSerializer;
     }
 }

@@ -13,19 +13,17 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Collection;
 
-@Application ("confluence")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class ConfluenceJSONRPCScopesTest extends ScopeManagerTest
-{
-    public ConfluenceJSONRPCScopesTest(AddonScopeManager scopeManager,  ScopeTestHelper scopeTestHelper)
-    {
+@Application("confluence")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class ConfluenceJSONRPCScopesTest extends ScopeManagerTest {
+    public ConfluenceJSONRPCScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
+
     /**
      * These tests are not exhaustive. They are samples across the different scopes and API versions.
      */
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         return Arrays.asList(
                 ConfluenceScopeTestUtil.emptyBodyForConfluence(ScopeName.READ, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v2/convertWikiToStorageFormat", true),
                 ConfluenceScopeTestUtil.emptyBodyForConfluence(null, HttpMethod.POST, "/confluence/rpc/json-rpc/confluenceservice-v2/convertWikiToStorageFormat", false),

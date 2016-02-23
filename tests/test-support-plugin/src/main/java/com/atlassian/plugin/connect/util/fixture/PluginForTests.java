@@ -8,54 +8,45 @@ import com.atlassian.plugin.impl.AbstractPlugin;
 /**
  * @since 1.0
  */
-public class PluginForTests extends AbstractPlugin
-{
-    public PluginForTests(String pluginKey, String pluginName)
-    {
+public class PluginForTests extends AbstractPlugin {
+    public PluginForTests(String pluginKey, String pluginName) {
         setKey(pluginKey);
         setName(pluginName);
         setPluginsVersion(2);
     }
 
     @Override
-    public boolean isUninstallable()
-    {
+    public boolean isUninstallable() {
         return true;
     }
 
     @Override
-    public boolean isDeleteable()
-    {
+    public boolean isDeleteable() {
         return true;
     }
 
     @Override
-    public boolean isDynamicallyLoaded()
-    {
+    public boolean isDynamicallyLoaded() {
         return false;
     }
 
     @Override
-    public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws ClassNotFoundException
-    {
+    public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws ClassNotFoundException {
         return null;
     }
 
     @Override
-    public ClassLoader getClassLoader()
-    {
+    public ClassLoader getClassLoader() {
         return null;
     }
 
     @Override
-    public URL getResource(String path)
-    {
+    public URL getResource(String path) {
         return null;
     }
 
     @Override
-    public InputStream getResourceAsStream(String name)
-    {
+    public InputStream getResourceAsStream(String name) {
         return null;
     }
 }

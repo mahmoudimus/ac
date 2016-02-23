@@ -33,8 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class ConnectAddonUsersTest
-{
+public class ConnectAddonUsersTest {
     private ConnectAddonUsers connectAddonUsers;
 
     @Mock
@@ -47,8 +46,7 @@ public class ConnectAddonUsersTest
     private ConnectAddonAccessor addonAccessor;
 
     @Before
-    public void beforeEach() throws ApplicationNotFoundException
-    {
+    public void beforeEach() throws ApplicationNotFoundException {
         initMocks(this);
 
         List<Object> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
@@ -61,14 +59,13 @@ public class ConnectAddonUsersTest
 
     @Test
     public void getAddonUsersForHostProductFiltersFromMembersOfAddonsGroup()
-            throws ApplicationNotFoundException
-    {
+            throws ApplicationNotFoundException {
         connectAddonUsers.getAddonUsers();
 
         ArgumentCaptor<MembershipQuery> userQueryCaptor = ArgumentCaptor.forClass(MembershipQuery.class);
         verify(applicationService).searchDirectGroupRelationships(eq(application), userQueryCaptor.capture());
 
-        @SuppressWarnings ("unchecked")
+        @SuppressWarnings("unchecked")
         MembershipQuery<User> userQuery = userQueryCaptor.getValue();
 
         assertThat(userQuery, notNullValue());
@@ -80,34 +77,28 @@ public class ConnectAddonUsersTest
 
     @Test
     public void getAddonUsersForHostProductRetrievesAddonsForRegisteredAddonUsers()
-            throws ApplicationNotFoundException
-    {
+            throws ApplicationNotFoundException {
         Iterable<User> users = connectAddonUsers.getAddonUsers();
 
         assertThat(users, IsIterableWithSize.<User>iterableWithSize(1));
         assertThat(users, contains(hasName("addon_rad-jira-addon")));
     }
 
-    private Matcher<User> hasName(final String name)
-    {
-        return new TypeSafeMatcher<User>()
-        {
+    private Matcher<User> hasName(final String name) {
+        return new TypeSafeMatcher<User>() {
             @Override
-            protected boolean matchesSafely(User user)
-            {
+            protected boolean matchesSafely(User user) {
                 return user != null && user.getName().equals(name);
             }
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("Expected user with name ").appendValue(name);
             }
         };
     }
 
-    private static User mockUser(String name)
-    {
+    private static User mockUser(String name) {
         User mockUser = mock(User.class);
         when(mockUser.getName()).thenReturn(name);
         return mockUser;

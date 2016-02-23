@@ -26,8 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
-{
+public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase {
 
     private static final String REMOTE_PLUGIN_DIALOG_KEY = "remotePluginDialog";
     private static final String SIZE_TO_PARENT_DIALOG_KEY = "sizeToParentDialog";
@@ -37,8 +36,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         logout();
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
@@ -89,17 +87,14 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void testLoadGeneralDialog() throws MalformedURLException
-    {
+    public void testLoadGeneralDialog() throws MalformedURLException {
         login(testUserFactory.basicUser());
         HomePage homePage = product.visit(HomePage.class);
 
@@ -117,8 +112,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void testSizeToParentDoesNotWorkInDialog()
-    {
+    public void testSizeToParentDoesNotWorkInDialog() {
         login(testUserFactory.basicUser());
         product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, SIZE_TO_PARENT_DIALOG_KEY, runner.getAddon().getKey());
@@ -127,8 +121,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void testMultipleDialogs() throws MalformedURLException
-    {
+    public void testMultipleDialogs() throws MalformedURLException {
         login(testUserFactory.basicUser());
         product.visit(HomePage.class);
 
@@ -153,8 +146,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
         dialog1.cancelAndWaitUntilHidden();
     }
 
-    private RemoteLayeredDialog launchSecondDialog(RemoteLayeredDialog dialog1, String addonKey)
-    {
+    private RemoteLayeredDialog launchSecondDialog(RemoteLayeredDialog dialog1, String addonKey) {
         dialog1.clickButtonWithClass("ap-dialog-custom-button");
 
         // The second dialog should be opened, and have the expected content.

@@ -23,8 +23,7 @@ import java.util.Map;
 
 @ExportAsDevService
 @Component
-public class ConnectAddonBeanFactory
-{
+public class ConnectAddonBeanFactory {
 
     private final ConnectJsonSchemaValidator descriptorSchemaValidator;
     private final ShallowConnectAddonBeanValidatorService shallowAddonBeanValidatorService;
@@ -36,50 +35,41 @@ public class ConnectAddonBeanFactory
     public ConnectAddonBeanFactory(ConnectJsonSchemaValidator descriptorSchemaValidator,
                                    ShallowConnectAddonBeanValidatorService shallowAddonBeanValidatorService,
                                    PluginRetrievalService pluginRetrievalService,
-                                   PluginAccessor pluginAccessor)
-    {
+                                   PluginAccessor pluginAccessor) {
         this.descriptorSchemaValidator = descriptorSchemaValidator;
         this.shallowAddonBeanValidatorService = shallowAddonBeanValidatorService;
         this.pluginRetrievalService = pluginRetrievalService;
         this.pluginAccessor = pluginAccessor;
     }
 
-    public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException
-    {
+    public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException {
         return descriptorCache.computeIfAbsent(jsonDescriptor, this::fromJsonImpl);
     }
 
-    public void remove(String jsonDescriptor)
-    {
+    public void remove(String jsonDescriptor) {
         descriptorCache.remove(jsonDescriptor);
     }
 
-    public void removeAll()
-    {
+    public void removeAll() {
         descriptorCache.clear();
     }
 
-    protected ConnectAddonBean fromJsonImpl(final String jsonDescriptor) throws InvalidDescriptorException
-    {
+    protected ConnectAddonBean fromJsonImpl(final String jsonDescriptor) throws InvalidDescriptorException {
         validateDescriptorAgainstShallowSchema(jsonDescriptor);
         ConnectAddonBean addon = deserializeDescriptor(jsonDescriptor);
         shallowAddonBeanValidatorService.validate(addon);
         return addon;
     }
 
-    private void validateDescriptorAgainstShallowSchema(String jsonDescriptor)
-    {
-        try
-        {
+    private void validateDescriptorAgainstShallowSchema(String jsonDescriptor) {
+        try {
             descriptorSchemaValidator.assertValidDescriptor(jsonDescriptor, getShallowSchemaUrl());
-        } catch (ConnectJsonSchemaValidationException e)
-        {
+        } catch (ConnectJsonSchemaValidationException e) {
             throw new InvalidDescriptorException(e.getMessage(), e.getI18nKey(), e.getI18nParameters());
         }
     }
 
-    private ConnectAddonBean deserializeDescriptor(final String jsonDescriptor)
-    {
+    private ConnectAddonBean deserializeDescriptor(final String jsonDescriptor) {
         JsonElement element = new JsonParser().parse(jsonDescriptor);
         ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJson(element);
         ModuleListDeserializer moduleDeserializer = new PluggableModuleListDeserializer(pluginAccessor, shallowBean);
@@ -90,8 +80,7 @@ public class ConnectAddonBeanFactory
         return new ConnectAddonBeanBuilder(shallowBean).withModuleList(moduleList).build();
     }
 
-    private URL getShallowSchemaUrl()
-    {
+    private URL getShallowSchemaUrl() {
         return pluginRetrievalService.getPlugin().getResource("/schema/shallow-schema.json");
     }
 }

@@ -10,8 +10,7 @@ import com.atlassian.util.concurrent.Promise;
 /**
  * Abstracts interactions with the remote plugin
  */
-public interface RemotablePluginAccessor
-{
+public interface RemotablePluginAccessor {
     String getKey();
 
     /**

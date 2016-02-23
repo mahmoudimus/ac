@@ -25,8 +25,7 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
 import static com.atlassian.plugin.connect.api.web.redirect.RedirectData.AccessDeniedTemplateType.IFRAME;
 
-public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<WebPanelModuleBean>
-{
+public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<WebPanelModuleBean> {
     private static final WebPanelModuleMeta META = new WebPanelModuleMeta();
 
     private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
@@ -39,16 +38,15 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     private final RedirectedWebPanelSectionSearcher redirectedWebPanelSectionSearcher;
 
     public WebPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            WebPanelConnectModuleDescriptorFactory webPanelFactory,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebFragmentLocationBlacklist webFragmentLocationBlacklist,
-            ConditionLoadingValidator conditionLoadingValidator,
-            RedirectRegistry redirectRegistry,
-            RedirectDataBuilderFactory redirectDataBuilderFactory,
-            RedirectedWebPanelSectionSearcher redirectedWebPanelSectionSearcher)
-    {
+                                  ConnectJsonSchemaValidator schemaValidator,
+                                  WebPanelConnectModuleDescriptorFactory webPanelFactory,
+                                  IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                  IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                  WebFragmentLocationBlacklist webFragmentLocationBlacklist,
+                                  ConditionLoadingValidator conditionLoadingValidator,
+                                  RedirectRegistry redirectRegistry,
+                                  RedirectDataBuilderFactory redirectDataBuilderFactory,
+                                  RedirectedWebPanelSectionSearcher redirectedWebPanelSectionSearcher) {
         super(pluginRetrievalService, schemaValidator);
         this.webPanelFactory = webPanelFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
@@ -61,14 +59,12 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     }
 
     @Override
-    public ConnectModuleMeta<WebPanelModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<WebPanelModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<WebPanelModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<WebPanelModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         List<WebPanelModuleBean> webPanels = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), webPanels);
         assertLocationNotBlacklisted(descriptor, webPanels);
@@ -76,33 +72,28 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectAddonBean addon) {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
-        for (WebPanelModuleBean webPanel : modules)
-        {
+        for (WebPanelModuleBean webPanel : modules) {
             registerIframeRenderStrategy(webPanel, addon);
             descriptors.add(webPanelFactory.createModuleDescriptor(webPanel, addon, pluginRetrievalService.getPlugin()));
         }
         return descriptors;
     }
 
-    private void assertLocationNotBlacklisted(ShallowConnectAddonBean descriptor, List<WebPanelModuleBean> webPanelModuleBeans) throws ConnectModuleValidationException
-    {
+    private void assertLocationNotBlacklisted(ShallowConnectAddonBean descriptor, List<WebPanelModuleBean> webPanelModuleBeans) throws ConnectModuleValidationException {
         List<String> blacklistedLocationsUsed = webPanelModuleBeans.stream()
                 .filter(webPanel -> webFragmentLocationBlacklist.getBlacklistedWebPanelLocations().contains(webPanel.getLocation()))
                 .map(WebPanelModuleBean::getLocation)
                 .collect(Collectors.toList());
 
-        if (blacklistedLocationsUsed.size() > 0)
-        {
+        if (blacklistedLocationsUsed.size() > 0) {
             String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
             throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
         }
     }
 
-    private void registerIframeRenderStrategy(WebPanelModuleBean webPanel, ConnectAddonBean descriptor)
-    {
+    private void registerIframeRenderStrategy(WebPanelModuleBean webPanel, ConnectAddonBean descriptor) {
         boolean webPanelNeedsRedirection = redirectedWebPanelSectionSearcher.doesWebPanelNeedsToBeRedirected(webPanel, descriptor);
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
@@ -116,8 +107,7 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
                 .build();
         iFrameRenderStrategyRegistry.register(descriptor.getKey(), webPanel.getRawKey(), renderStrategy);
 
-        if (webPanelNeedsRedirection)
-        {
+        if (webPanelNeedsRedirection) {
             RedirectData redirectData = redirectDataBuilderFactory.builder()
                     .addOn(descriptor.getKey())
                     .urlTemplate(webPanel.getUrl())

@@ -16,8 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @JiraComponent
-public class GlobalPermissionModuleProvider extends AbstractJiraConnectModuleProvider<GlobalPermissionModuleBean>
-{
+public class GlobalPermissionModuleProvider extends AbstractJiraConnectModuleProvider<GlobalPermissionModuleBean> {
 
     private static final GlobalPermissionModuleMeta META = new GlobalPermissionModuleMeta();
 
@@ -25,22 +24,19 @@ public class GlobalPermissionModuleProvider extends AbstractJiraConnectModulePro
 
     @Autowired
     public GlobalPermissionModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            GlobalPermissionModuleDescriptorFactory descriptorFactory)
-    {
+                                          ConnectJsonSchemaValidator schemaValidator,
+                                          GlobalPermissionModuleDescriptorFactory descriptorFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.descriptorFactory = descriptorFactory;
     }
 
     @Override
-    public ConnectModuleMeta<GlobalPermissionModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<GlobalPermissionModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(final List<GlobalPermissionModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(final List<GlobalPermissionModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()));
     }
 }

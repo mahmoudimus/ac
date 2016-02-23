@@ -15,28 +15,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider
-{
+public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider {
 
     private static final AdminPageModuleMeta META = new AdminPageModuleMeta();
 
     @Autowired
     public AdminPageModuleProvider(PluginRetrievalService pluginRetrievalService,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ConditionClassAccessor conditionClassAccessor,
-            ConnectJsonSchemaValidator schemaValidator,
-            ConditionLoadingValidator conditionLoadingValidator,
-            ProductAccessor productAccessor)
-    {
+                                   IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                   IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                   WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                   ConditionClassAccessor conditionClassAccessor,
+                                   ConnectJsonSchemaValidator schemaValidator,
+                                   ConditionLoadingValidator conditionLoadingValidator,
+                                   ProductAccessor productAccessor) {
         super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
                 webItemModuleDescriptorFactory, conditionClassAccessor, schemaValidator, conditionLoadingValidator, productAccessor);
     }
 
     @Override
-    public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<ConnectPageModuleBean> getMeta() {
         return META;
     }
 }

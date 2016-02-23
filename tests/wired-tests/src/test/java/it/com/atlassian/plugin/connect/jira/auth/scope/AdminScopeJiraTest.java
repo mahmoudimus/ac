@@ -16,22 +16,19 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class AdminScopeJiraTest extends ScopeTestBase
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class AdminScopeJiraTest extends ScopeTestBase {
     public AdminScopeJiraTest(TestPluginInstaller testPluginInstaller,
-            TestAuthenticator testAuthenticator,
-            JwtWriterFactory jwtWriterFactory,
-            ConnectAddonRegistry connectAddonRegistry,
-            ApplicationProperties applicationProperties)
-    {
+                              TestAuthenticator testAuthenticator,
+                              JwtWriterFactory jwtWriterFactory,
+                              ConnectAddonRegistry connectAddonRegistry,
+                              ApplicationProperties applicationProperties) {
         super(ScopeName.ADMIN, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
     }
 
     @Test
-    public void shouldAllowUsageOfRoleResource() throws IOException, NoSuchAlgorithmException
-    {
+    public void shouldAllowUsageOfRoleResource() throws IOException, NoSuchAlgorithmException {
         assertValidRequest(HttpMethod.GET, "/rest/api/2/role");
     }
 }

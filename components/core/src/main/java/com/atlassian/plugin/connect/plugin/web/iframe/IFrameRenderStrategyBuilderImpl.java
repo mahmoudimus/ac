@@ -34,8 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuilder,
         IFrameRenderStrategyBuilder.AddonUriBuilder, IFrameRenderStrategyBuilder.ModuleUriBuilder,
-        IFrameRenderStrategyBuilder.TemplatedBuilder, IFrameRenderStrategyBuilder.InitializedBuilder
-{
+        IFrameRenderStrategyBuilder.TemplatedBuilder, IFrameRenderStrategyBuilder.InitializedBuilder {
     private static final String TEMPLATE_PATH = "velocity/";
     private static final String TEMPLATE_GENERIC_BODY = TEMPLATE_PATH + "iframe-body.vm";
     private static final String TEMPLATE_GENERIC_INLINE = TEMPLATE_PATH + "iframe-body-inline.vm";
@@ -79,8 +78,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             final ConnectUriFactory connectUriFactory,
             final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
             final TemplateRenderer templateRenderer,
-            final ConnectConditionFactory connectConditionFactory)
-    {
+            final ConnectConditionFactory connectConditionFactory) {
         this.connectUriFactory = connectUriFactory;
         this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
         this.templateRenderer = templateRenderer;
@@ -89,148 +87,126 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public AddonUriBuilder addon(final String key)
-    {
+    public AddonUriBuilder addon(final String key) {
         addonKey = checkNotNull(key);
         return this;
     }
 
     @Override
-    public ModuleUriBuilder module(final String key)
-    {
+    public ModuleUriBuilder module(final String key) {
         moduleKey = checkNotNull(key);
         return this;
     }
 
     @Override
-    public TemplatedBuilder pageTemplate()
-    {
+    public TemplatedBuilder pageTemplate() {
         template = TEMPLATE_PAGE;
         accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_PAGE;
         return this;
     }
 
     @Override
-    public TemplatedBuilder genericBodyTemplate()
-    {
+    public TemplatedBuilder genericBodyTemplate() {
         template = TEMPLATE_GENERIC_BODY;
         accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
         return this;
     }
 
     @Override
-    public TemplatedBuilder genericBodyTemplate(boolean inline)
-    {
+    public TemplatedBuilder genericBodyTemplate(boolean inline) {
         template = inline ? TEMPLATE_GENERIC_INLINE : TEMPLATE_GENERIC_BODY;
         accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
         return this;
     }
 
     @Override
-    public TemplatedBuilder dialogTemplate()
-    {
+    public TemplatedBuilder dialogTemplate() {
         template = TEMPLATE_GENERIC_BODY;
         accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
         return this;
     }
 
     @Override
-    public TemplatedBuilder template(final ModuleTemplate moduleTemplate)
-    {
+    public TemplatedBuilder template(final ModuleTemplate moduleTemplate) {
         template = moduleTemplate.template;
         accessDeniedTemplate = moduleTemplate.accessDeniedTemplate;
         return this;
     }
 
     @Override
-    public InitializedBuilder urlTemplate(final String urlTemplate)
-    {
+    public InitializedBuilder urlTemplate(final String urlTemplate) {
         this.urlTemplate = urlTemplate;
         return this;
     }
 
     @Override
-    public InitializedBuilder condition(final ConditionalBean condition)
-    {
-        if (condition != null)
-        {
+    public InitializedBuilder condition(final ConditionalBean condition) {
+        if (condition != null) {
             conditionalBeans.add(condition);
         }
         return this;
     }
 
     @Override
-    public InitializedBuilder conditions(final Iterable<ConditionalBean> conditions)
-    {
+    public InitializedBuilder conditions(final Iterable<ConditionalBean> conditions) {
         Iterables.addAll(conditionalBeans, conditions);
         return this;
     }
 
     @Override
-    public InitializedBuilder conditionClass(final Class<? extends Condition> condition)
-    {
-        if (condition != null)
-        {
+    public InitializedBuilder conditionClass(final Class<? extends Condition> condition) {
+        if (condition != null) {
             conditionClasses.add(condition);
         }
         return this;
     }
 
     @Override
-    public InitializedBuilder conditionClasses(final Iterable<Class<? extends Condition>> conditions)
-    {
+    public InitializedBuilder conditionClasses(final Iterable<Class<? extends Condition>> conditions) {
         Iterables.addAll(conditionClasses, conditions);
         return this;
     }
 
     @Override
-    public InitializedBuilder title(final String title)
-    {
+    public InitializedBuilder title(final String title) {
         this.title = title;
         return this;
     }
 
     @Override
-    public InitializedBuilder decorator(final String decorator)
-    {
+    public InitializedBuilder decorator(final String decorator) {
         this.decorator = decorator;
         return this;
     }
 
     @Override
-    public InitializedBuilder dimensions(String width, String height)
-    {
+    public InitializedBuilder dimensions(String width, String height) {
         this.width = width;
         this.height = height;
         return this;
     }
 
     @Override
-    public InitializedBuilder additionalRenderContext(final String key, final Object object)
-    {
+    public InitializedBuilder additionalRenderContext(final String key, final Object object) {
         this.additionalRenderContext.put(key, object);
         return this;
     }
 
     @Override
-    public InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace)
-    {
+    public InitializedBuilder ensureUniqueNamespace(boolean uniqueNamespace) {
         this.uniqueNamespace = uniqueNamespace;
         return this;
     }
 
     @Override
-    public InitializedBuilder dialog(boolean isDialog)
-    {
+    public InitializedBuilder dialog(boolean isDialog) {
         this.isDialog = isDialog;
         return this;
     }
 
     @Override
-    public InitializedBuilder simpleDialog(boolean isSimpleDialog)
-    {
-        if (isSimpleDialog)
-        {
+    public InitializedBuilder simpleDialog(boolean isSimpleDialog) {
+        if (isSimpleDialog) {
             this.isDialog = true;
         }
         this.isSimpleDialog = isSimpleDialog;
@@ -238,29 +214,25 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public InitializedBuilder resizeToParent(boolean resizeToParent)
-    {
+    public InitializedBuilder resizeToParent(boolean resizeToParent) {
         this.resizeToParent = resizeToParent;
         return this;
     }
 
     @Override
-    public InitializedBuilder sign(final boolean sign)
-    {
+    public InitializedBuilder sign(final boolean sign) {
         this.sign = sign;
         return this;
     }
 
     @Override
-    public InitializedBuilder redirect(final boolean redirect)
-    {
+    public InitializedBuilder redirect(final boolean redirect) {
         this.redirect = redirect;
         return this;
     }
 
     @Override
-    public IFrameRenderStrategy build()
-    {
+    public IFrameRenderStrategy build() {
         Condition condition = connectConditionFactory.createCondition(addonKey, conditionalBeans, conditionClasses);
 
         return new IFrameRenderStrategyImpl(connectUriFactory, iFrameRenderContextBuilderFactory, templateRenderer,
@@ -270,8 +242,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @VisibleForTesting
-    public static class IFrameRenderStrategyImpl implements IFrameRenderStrategy
-    {
+    public static class IFrameRenderStrategyImpl implements IFrameRenderStrategy {
 
         private final ConnectUriFactory connectUriFactory;
         private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
@@ -317,8 +288,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final boolean resizeToParent,
                 final boolean sign,
                 final String contentType,
-                boolean redirect)
-        {
+                boolean redirect) {
             this.connectUriFactory = connectUriFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
             this.templateRenderer = templateRenderer;
@@ -344,8 +314,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         @Override
         public void render(final ModuleContextParameters moduleContextParameters, final Writer writer, Optional<String> uiParameters)
-                throws IOException
-        {
+                throws IOException {
             String namespace = generateNamespace();
 
             String signedUri = buildUrl(moduleContextParameters, uiParameters, namespace);
@@ -369,37 +338,32 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             templateRenderer.render(template, renderContext, writer);
         }
 
-        private String generateNamespace()
-        {
+        private String generateNamespace() {
             return uniqueNamespace ? ModuleKeyUtils.randomName(moduleKey) : moduleKey;
         }
 
         @VisibleForTesting
-        public String buildUrl(ModuleContextParameters moduleContextParameters, Optional<String> uiParameters)
-        {
+        public String buildUrl(ModuleContextParameters moduleContextParameters, Optional<String> uiParameters) {
             return buildUrl(moduleContextParameters, uiParameters, generateNamespace());
         }
 
-        private String buildUrl(ModuleContextParameters moduleContextParameters, Optional<String> uiParameters, String namespace)
-        {
-            if (redirect)
-            {
+        private String buildUrl(ModuleContextParameters moduleContextParameters, Optional<String> uiParameters, String namespace) {
+            if (redirect) {
                 return connectUriFactory.createRedirectServletUri(addOnKey, namespace, moduleContextParameters);
             }
             return connectUriFactory.createConnectAddonUriBuilder()
-                            .addon(addOnKey)
-                            .namespace(namespace)
-                            .urlTemplate(urlTemplate)
-                            .context(moduleContextParameters)
-                            .uiParams(uiParameters)
-                            .dialog(isDialog)
-                            .sign(sign)
-                            .build();
+                    .addon(addOnKey)
+                    .namespace(namespace)
+                    .urlTemplate(urlTemplate)
+                    .context(moduleContextParameters)
+                    .uiParams(uiParameters)
+                    .dialog(isDialog)
+                    .sign(sign)
+                    .build();
         }
 
         @Override
-        public void renderAccessDenied(final Writer writer) throws IOException
-        {
+        public void renderAccessDenied(final Writer writer) throws IOException {
             Map<String, Object> renderContext = ImmutableMap.<String, Object>builder()
                     .put("title", StringUtils.defaultIfEmpty(title, ""))
                     .put("decorator", ATL_GENERAL)
@@ -409,35 +373,29 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
-        public boolean shouldShow(Map<String, ? extends Object> conditionContext)
-        {
-            return condition == null || condition.shouldDisplay((Map<String,Object>)conditionContext);
+        public boolean shouldShow(Map<String, ? extends Object> conditionContext) {
+            return condition == null || condition.shouldDisplay((Map<String, Object>) conditionContext);
         }
 
         @Override
-        public boolean needRedirection()
-        {
+        public boolean needRedirection() {
             return redirect;
         }
 
         @Override
-        public void shouldShowOrThrow(final Map<String, Object> conditionContext)
-        {
-            if (!shouldShow(conditionContext))
-            {
+        public void shouldShowOrThrow(final Map<String, Object> conditionContext) {
+            if (!shouldShow(conditionContext)) {
                 throw new PermissionDeniedException(addOnKey, "Cannot render iframe for this page.");
             }
         }
 
         @Override
-        public String getContentType()
-        {
+        public String getContentType() {
             return contentType;
         }
 
         @Override
-        public IFrameRenderStrategy toJsonRenderStrategy()
-        {
+        public IFrameRenderStrategy toJsonRenderStrategy() {
             return new IFrameRenderStrategyImpl(connectUriFactory, iFrameRenderContextBuilderFactory, templateRenderer,
                     addOnKey, moduleKey, TEMPLATE_JSON, TEMPLATE_ACCESS_DENIED_JSON, urlTemplate, title,
                     decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,

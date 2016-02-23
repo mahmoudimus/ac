@@ -30,8 +30,7 @@ import static org.mockito.Mockito.when;
 /**
  * Abstract class for all tests that register some connect add-ons and then assert some things about them
  */
-public abstract class AbstractConnectAddonTest
-{
+public abstract class AbstractConnectAddonTest {
     public static final String CONTEXT_PATH = "http://ondemand.com/";
     public static final String PLUGIN_KEY = "my-plugin";
     public static final String PLUGIN_NAME = "My Plugin";
@@ -46,43 +45,36 @@ public abstract class AbstractConnectAddonTest
     protected HttpServletRequest servletRequest;
     protected Plugin plugin;
 
-    public AbstractConnectAddonTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
-    {
+    public AbstractConnectAddonTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator) {
         this.webItemModuleProvider = webItemModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
     }
 
     @BeforeClass
-    public void setup()
-    {
+    public void setup() {
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
     }
 
     @Before
-    public void setupTest()
-    {
+    public void setupTest() {
         testAuthenticator.authenticateUser("admin");
     }
 
     @After
-    public void cleanUp() throws IOException
-    {
-        if (plugin != null)
-        {
+    public void cleanUp() throws IOException {
+        if (plugin != null) {
             testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
         }
     }
 
-    protected final void actAsAnonymous()
-    {
+    protected final void actAsAnonymous() {
         testAuthenticator.unauthenticate();
     }
 
-    protected final WebItemModuleDescriptor registerWebItem(String queryString, String location) throws IOException
-    {
+    protected final WebItemModuleDescriptor registerWebItem(String queryString, String location) throws IOException {
         checkIfPluginAlreadyInstalled();
 
         WebItemModuleBean bean = newWebItemBean()
@@ -114,18 +106,15 @@ public abstract class AbstractConnectAddonTest
         return descriptor;
     }
 
-    private void checkIfPluginAlreadyInstalled()
-    {
-        if (plugin != null)
-        {
+    private void checkIfPluginAlreadyInstalled() {
+        if (plugin != null) {
             throw new IllegalStateException("You can test only one add-on at a time!");
         }
     }
 
     // Equivalent to assertThat(hay, containsString(needle));
     // Hamcrest matchers throw LinkageError for some reason so we need to do this like that.
-    protected void assertStringContains(String hay, String needle)
-    {
+    protected void assertStringContains(String hay, String needle) {
         assertTrue("expected: contains '" + needle + " ', actual: " + hay, hay.contains(needle));
     }
 }

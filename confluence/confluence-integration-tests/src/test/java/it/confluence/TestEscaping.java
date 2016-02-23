@@ -46,8 +46,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class TestEscaping extends ConfluenceWebDriverTestBase
-{
+public class TestEscaping extends ConfluenceWebDriverTestBase {
     private static final String MODULE_NAME = "F1ND M3 <b>${user}</b>";
     private static final String MODULE_NAME_CONF_ESCAPED = "F1ND M3 <b>\\${user}</b>";
     private static final String MACRO_EDITOR_TITLE = "Insert ‘" + MODULE_NAME_CONF_ESCAPED + "’ Macro";
@@ -66,8 +65,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModule("generalPages",
@@ -116,11 +114,11 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
                                 .build()
                 )
                 .addModules("spaceToolsTabs", newSpaceToolsTabBean()
-                                .withName(new I18nProperty(MODULE_NAME, null))
-                                .withKey(SPACE_TOOLS_TAB_KEY)
-                                .withLocation("overview")
-                                .withUrl(MODULE_URL)
-                                .build()
+                        .withName(new I18nProperty(MODULE_NAME, null))
+                        .withKey(SPACE_TOOLS_TAB_KEY)
+                        .withLocation("overview")
+                        .withUrl(MODULE_URL)
+                        .build()
                 )
                 .addRoute(MODULE_URL, ConnectAppServlets.helloWorldServlet())
                 .start();
@@ -131,34 +129,26 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
 
     // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
     @After
-    public void afterEachTest()
-    {
-        if (null != editorPage)
-        {
-            try
-            {
+    public void afterEachTest() {
+        if (null != editorPage) {
+            try {
                 editorPage.cancel();
                 editorPage = null;
-            }
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 logger.error("Failed to cancel editor page due to the following Throwable. This will most likely result in 'unexpected alert open' exceptions in subsequent tests.", t);
             }
         }
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void testGeneralPage() throws Exception
-    {
+    public void testGeneralPage() throws Exception {
         ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(testUserFactory.admin(), ConnectConfluenceAdminHomePage.class);
         adminHomePage.openHelpMenu();
         RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>empty());
@@ -166,8 +156,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testWebItem() throws Exception
-    {
+    public void testWebItem() throws Exception {
         login(testUserFactory.basicUser());
         createAndVisitViewPage();
         RemoteWebItem webItem = confluencePageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.of("action-menu-link"));
@@ -177,72 +166,58 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testAdminPage() throws Exception
-    {
+    public void testAdminPage() throws Exception {
         loginAndVisit(testUserFactory.admin(), ConfluenceAdminHomePage.class);
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
 
     @Test
-    public void testMacroTitle() throws Exception
-    {
+    public void testMacroTitle() throws Exception {
         editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
 
-        try
-        {
+        try {
             assertNotNull(macroBrowserAndEditor.macro);
             assertIsEscaped(macroBrowserAndEditor.macro.getTitle().byDefaultTimeout());
-        }
-        finally
-        {
+        } finally {
             macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
     @Test
-    public void testMacroEditorTitle() throws Exception
-    {
+    public void testMacroEditorTitle() throws Exception {
         editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
-        try
-        {
+        try {
             assertNotNull(macroBrowserAndEditor.macroForm);
             assertEquals(MACRO_EDITOR_TITLE, macroBrowserAndEditor.macroForm.getTitle().byDefaultTimeout());
-        }
-        finally
-        {
+        } finally {
             macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
     @Test
-    public void testMacroParameter() throws Exception
-    {
+    public void testMacroParameter() throws Exception {
         editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
-        try
-        {
+        try {
             assertNotNull(macroBrowserAndEditor.macroForm);
             assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
             WebElement label = confluencePageOperations.findLabel("macro-param-test");
             assertIsEscaped(label.getText());
-        }
-        finally
-        {
+        } finally {
             macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
     @Test
-    public void testProfilePage() throws Exception
-    {
+    public void testProfilePage() throws Exception {
         loginAndVisit(testUserFactory.basicUser(), ConfluenceUserProfilePage.class);
         RemoteWebItem webItem = confluencePageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
                 "a[href*='" + getServletPath(PROFILE_PAGE_KEY) + "']", Optional.<String>empty());
@@ -250,45 +225,38 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testSpaceAdminTab() throws Exception
-    {
+    public void testSpaceAdminTab() throws Exception {
         loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, TestSpace.DEMO);
         LinkedRemoteContent addonPage = confluencePageOperations.findRemoteLinkedContent(
                 RemoteWebItem.ItemMatchingMode.LINK_TEXT, MODULE_NAME, Optional.<String>empty(), getModuleKey(SPACE_TOOLS_TAB_KEY));
         assertIsEscaped(addonPage.getWebItem().getLinkText());
     }
 
-    private void assertIsEscaped(String text)
-    {
+    private void assertIsEscaped(String text) {
         // Confluence's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
         // Note that we're checking against the original name, not an escaped version, as getText() returns the
         // unescaped text. If markup was interpreted, the tags would be missing in the text.
         assertThat(text, anyOf(is(MODULE_NAME), is(MODULE_NAME_CONF_ESCAPED)));
     }
 
-    private ConfluenceViewPage createAndVisitViewPage() throws Exception
-    {
+    private ConfluenceViewPage createAndVisitViewPage() throws Exception {
         return createAndVisitPage(ConfluenceViewPage.class);
     }
 
-    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
-    {
+    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception {
         String pageId = Long.toString(createPage());
         return product.visit(pageClass, pageId);
     }
 
-    private long createPage() throws MalformedURLException, XmlRpcFault
-    {
+    private long createPage() throws MalformedURLException, XmlRpcFault {
         return rpc.createPage(new com.atlassian.confluence.it.Page(TestSpace.DEMO, RandomStringUtils.randomAlphabetic(8), "some page content"));
     }
 
-    private String getModuleKey(String module)
-    {
+    private String getModuleKey(String module) {
         return ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 
-    private String getServletPath(String module)
-    {
+    private String getServletPath(String module) {
         return "/confluence" + IframeUtils.iframeServletPath(runner.getAddon().getKey(), module);
     }
 }

@@ -14,8 +14,7 @@ import org.openqa.selenium.By;
 /**
  * View project page.
  */
-public class JiraViewProjectPage extends SummaryPage implements Page
-{
+public class JiraViewProjectPage extends SummaryPage implements Page {
 
     @Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
@@ -23,18 +22,15 @@ public class JiraViewProjectPage extends SummaryPage implements Page
     @Inject
     private PageBinder pageBinder;
 
-    public JiraViewProjectPage(String projectKey)
-    {
+    public JiraViewProjectPage(String projectKey) {
         super(projectKey);
     }
 
-    public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownMenuId)
-    {
+    public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownMenuId) {
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownMenuId);
     }
 
-    public Boolean webItemDoesNotExist(String webItemId)
-    {
+    public Boolean webItemDoesNotExist(String webItemId) {
         return !driver.elementExists(By.id(webItemId));
     }
 }

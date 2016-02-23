@@ -9,23 +9,19 @@ import com.google.inject.Inject;
 
 import org.openqa.selenium.By;
 
-public class ConfluencePageOperations extends ConnectPageOperations
-{
+public class ConfluencePageOperations extends ConnectPageOperations {
     @Inject
-    public ConfluencePageOperations(PageBinder pageBinder, AtlassianWebDriver driver)
-    {
+    public ConfluencePageOperations(PageBinder pageBinder, AtlassianWebDriver driver) {
         super(pageBinder, driver);
     }
 
-    public RemotePluginDialog editMacro(String macroKey)
-    {
+    public RemotePluginDialog editMacro(String macroKey) {
         String macroNodeSelector = "$(\"#wysiwygTextarea_ifr\").contents().find(\"table[data-macro-name='" + macroKey + "']\")";
         driver.executeScript("tinymce.confluence.macrobrowser.editMacro(" + macroNodeSelector + ")");
         return findDialog(macroKey);
     }
 
-    public void reorderConfluenceTableOnPage()
-    {
+    public void reorderConfluenceTableOnPage() {
         driver.findElement(By.className("tablesorter-header-inner")).click();
     }
 }

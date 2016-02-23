@@ -13,22 +13,18 @@ import java.util.Optional;
  * Extracts issue parameters that can be included in webpanel's iframe url.
  */
 @JiraComponent
-public class IssueContextMapParameterExtractor implements ContextMapParameterExtractor<Issue>
-{
+public class IssueContextMapParameterExtractor implements ContextMapParameterExtractor<Issue> {
     private static final String ISSUE_CONTEXT_KEY = "issue";
     private IssueSerializer issueSerializer;
 
     @Autowired
-    public IssueContextMapParameterExtractor(IssueSerializer issueSerializer)
-    {
+    public IssueContextMapParameterExtractor(IssueSerializer issueSerializer) {
         this.issueSerializer = issueSerializer;
     }
 
     @Override
-    public Optional<Issue> extract(final Map<String, Object> context)
-    {
-        if (context.containsKey(ISSUE_CONTEXT_KEY))
-        {
+    public Optional<Issue> extract(final Map<String, Object> context) {
+        if (context.containsKey(ISSUE_CONTEXT_KEY)) {
             Issue issue = (Issue) context.get(ISSUE_CONTEXT_KEY);
             return Optional.ofNullable(issue);
         }
@@ -36,8 +32,7 @@ public class IssueContextMapParameterExtractor implements ContextMapParameterExt
     }
 
     @Override
-    public ParameterSerializer<Issue> serializer()
-    {
+    public ParameterSerializer<Issue> serializer() {
         return issueSerializer;
     }
 

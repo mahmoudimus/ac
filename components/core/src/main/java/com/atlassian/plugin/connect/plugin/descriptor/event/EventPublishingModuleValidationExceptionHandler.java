@@ -14,20 +14,17 @@ import java.util.function.Consumer;
  * validation exceptions.
  */
 @Component
-public class EventPublishingModuleValidationExceptionHandler extends ModuleValidationExceptionHandler
-{
+public class EventPublishingModuleValidationExceptionHandler extends ModuleValidationExceptionHandler {
 
     private EventPublisher eventPublisher;
 
     @Autowired
-    public EventPublishingModuleValidationExceptionHandler(EventPublisher eventPublisher)
-    {
+    public EventPublishingModuleValidationExceptionHandler(EventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 
     @Override
-    public void acceptModuleValidationCause(ConnectModuleValidationException cause)
-    {
+    public void acceptModuleValidationCause(ConnectModuleValidationException cause) {
         eventPublisher.publish(new ConnectAddonModuleValidationFailedAfterInstallEvent(cause));
     }
 }

@@ -9,15 +9,12 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 @ConfluenceComponent
 @JiraComponent
-public class UserReconciliationImpl implements UserReconciliation
-{
+public class UserReconciliationImpl implements UserReconciliation {
     @Override
-    public Optional<UserTemplate> getFixes(User user, String requiredDisplayName, String requiredEmailAddress, boolean active)
-    {
+    public Optional<UserTemplate> getFixes(User user, String requiredDisplayName, String requiredEmailAddress, boolean active) {
         if (user.getEmailAddress().equals(requiredEmailAddress)
                 && user.getDisplayName().equals(requiredDisplayName)
-                && user.isActive() == active)
-        {
+                && user.isActive() == active) {
             return Optional.empty();
         }
 

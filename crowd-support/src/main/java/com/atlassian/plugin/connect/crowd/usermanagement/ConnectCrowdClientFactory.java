@@ -10,8 +10,8 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
  *
  * Used to work around a crowd bug (https://ecosystem.atlassian.net/browse/EMBCWD-975)
  */
-@SuppressWarnings ("UnusedDeclaration")
+@SuppressWarnings("UnusedDeclaration")
 @JiraComponent
 @ConfluenceComponent
-public class ConnectCrowdClientFactory extends RestCrowdClientFactory implements CrowdClientFactory
-{ }
+public class ConnectCrowdClientFactory extends RestCrowdClientFactory implements CrowdClientFactory {
+}

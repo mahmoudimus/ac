@@ -15,8 +15,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
-{
+public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase {
     private static final String SEARCH_TERMS = "Welcome to Confluence";
 
     private SearchResultPage searchResultPage;
@@ -24,22 +23,19 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
     private TestUser user;
 
     @Before
-    public void setupSearchPage() throws Exception
-    {
+    public void setupSearchPage() throws Exception {
         user = testUserFactory.basicUser();
         searchResultPage = loginAndVisit(user, SearchResultPage.class);
     }
 
-    private void search(String terms) throws Exception
-    {
+    private void search(String terms) throws Exception {
         searchResultPage.doResultsSearch(terms);
         Poller.waitUntilTrue(searchResultPage.hasMatchingResults());
     }
 
     @Test
     @Ignore
-    public void testSearchPerformedWebHookFired() throws Exception
-    {
+    public void testSearchPerformedWebHookFired() throws Exception {
         WebHookTestServlet.runInJsonRunner(product.getProductInstance().getBaseUrl(), "search_performed", waiter -> {
             search(SEARCH_TERMS);
 

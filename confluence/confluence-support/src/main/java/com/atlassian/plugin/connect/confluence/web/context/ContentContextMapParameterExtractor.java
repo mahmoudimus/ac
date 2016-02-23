@@ -16,8 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @ConfluenceComponent
-public class ContentContextMapParameterExtractor implements ContextMapParameterExtractor<ContentEntityObject>
-{
+public class ContentContextMapParameterExtractor implements ContextMapParameterExtractor<ContentEntityObject> {
     private static final Logger LOG = LoggerFactory.getLogger(ContentContextMapParameterExtractor.class);
 
     public static final String CONTENT_CONTEXT_PARAMETER = "content";
@@ -28,41 +27,28 @@ public class ContentContextMapParameterExtractor implements ContextMapParameterE
     private final ContentSerializer contentSerializer;
 
     @Autowired
-    public ContentContextMapParameterExtractor(ContentSerializer contentSerializer)
-    {
+    public ContentContextMapParameterExtractor(ContentSerializer contentSerializer) {
         this.contentSerializer = contentSerializer;
     }
 
     @Override
-    public Optional<ContentEntityObject> extract(Map<String, Object> context)
-    {
-        if (context.containsKey(CONTENT_CONTEXT_PARAMETER))
-        {
+    public Optional<ContentEntityObject> extract(Map<String, Object> context) {
+        if (context.containsKey(CONTENT_CONTEXT_PARAMETER)) {
             Object contentFromContext = context.get(CONTENT_CONTEXT_PARAMETER);
-            if (contentFromContext instanceof ContentEntityObject)
-            {
-                return Optional.of((ContentEntityObject)contentFromContext);
-            }
-            else
-            {
+            if (contentFromContext instanceof ContentEntityObject) {
+                return Optional.of((ContentEntityObject) contentFromContext);
+            } else {
                 LOG.debug("Encountered a 'content' context parameter that is a " + contentFromContext.getClass().getName() + " rather than a ContentEntityObject. Skipping.");
             }
-        }
-        else if (context.containsKey(WEB_INTERFACE_CONTEXT_PARAMETER))
-        {
+        } else if (context.containsKey(WEB_INTERFACE_CONTEXT_PARAMETER)) {
             WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get(WEB_INTERFACE_CONTEXT_PARAMETER);
-            if (null != webInterfaceContext && null != webInterfaceContext.getPage())
-            {
+            if (null != webInterfaceContext && null != webInterfaceContext.getPage()) {
                 return Optional.<ContentEntityObject>of(webInterfaceContext.getPage());
 
             }
-        }
-        else if (context.containsKey(PAGE_CONTEXT_PARAMETER) && context.get(PAGE_CONTEXT_PARAMETER) instanceof AbstractPage)
-        {
+        } else if (context.containsKey(PAGE_CONTEXT_PARAMETER) && context.get(PAGE_CONTEXT_PARAMETER) instanceof AbstractPage) {
             return Optional.of((ContentEntityObject) context.get(PAGE_CONTEXT_PARAMETER));
-        }
-        else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction)
-        {
+        } else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction) {
             AbstractPageAwareAction action = (AbstractPageAwareAction) context.get(ACTION_PARAMETER);
             return Optional.<ContentEntityObject>ofNullable(action.getPage());
         }
@@ -70,8 +56,7 @@ public class ContentContextMapParameterExtractor implements ContextMapParameterE
     }
 
     @Override
-    public ParameterSerializer<ContentEntityObject> serializer()
-    {
+    public ParameterSerializer<ContentEntityObject> serializer() {
         return contentSerializer;
     }
 }

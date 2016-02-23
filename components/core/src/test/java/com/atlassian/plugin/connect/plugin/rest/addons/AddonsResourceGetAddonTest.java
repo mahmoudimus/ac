@@ -49,8 +49,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public class AddonsResourceGetAddonTest
-{
+public class AddonsResourceGetAddonTest {
     private AddonsResource resource;
 
     @Mock
@@ -87,8 +86,7 @@ public class AddonsResourceGetAddonTest
     private final boolean isPluginEnabled;
 
     public AddonsResourceGetAddonTest(Class<? extends RestLimitedAddon> expectedEntityClass,
-                                      boolean isSystemAdmin, boolean isPluginEnabled)
-    {
+                                      boolean isSystemAdmin, boolean isPluginEnabled) {
 
         MockitoAnnotations.initMocks(this);
         this.expectedEntityClass = expectedEntityClass;
@@ -97,16 +95,14 @@ public class AddonsResourceGetAddonTest
     }
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.resource = new AddonsResource(this.addonRegistry, this.licenseRetriever, this.connectApplinkManager,
                 this.connectAddonManager, this.connectAddonInstaller, this.applicationProperties, this.userManager,
                 this.productAccessor, addonAccessor);
     }
 
     @Parameterized.Parameters
-    public static Collection entityClassByClientType()
-    {
+    public static Collection entityClassByClientType() {
         return Arrays.asList(new Object[][]{
                 {RestInternalAddon.class, true, true},
                 {RestAddon.class, false, true},
@@ -115,8 +111,7 @@ public class AddonsResourceGetAddonTest
     }
 
     @Test
-    public void shouldReturnCorrectAddonRepresentation()
-    {
+    public void shouldReturnCorrectAddonRepresentation() {
         String key = "my-addon-key";
         String version = "0.1";
         PluginState state = isPluginEnabled ? PluginState.INSTALLED : PluginState.DISABLED;
@@ -164,8 +159,7 @@ public class AddonsResourceGetAddonTest
         assertThat(limitedAddon.getVersion(), equalTo(version));
         assertThat(limitedAddon.getState(), equalTo(state.name()));
 
-        if (RestAddon.class.isAssignableFrom(expectedEntityClass))
-        {
+        if (RestAddon.class.isAssignableFrom(expectedEntityClass)) {
             RestAddon addon = (RestAddon) limitedAddon;
 
             RestHost host = addon.getHost();
@@ -182,8 +176,7 @@ public class AddonsResourceGetAddonTest
 
             assertThat(addon.getLinks(), instanceOf(RestRelatedLinks.class));
 
-            if (RestInternalAddon.class.isAssignableFrom(expectedEntityClass))
-            {
+            if (RestInternalAddon.class.isAssignableFrom(expectedEntityClass)) {
                 RestInternalAddon internalAddon = (RestInternalAddon) limitedAddon;
 
                 assertThat(internalAddon.getApplink(), nullValue());

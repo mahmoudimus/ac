@@ -23,8 +23,7 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestCommonConditionsInJira extends JiraWebDriverTestBase
-{
+public class TestCommonConditionsInJira extends JiraWebDriverTestBase {
     private static ConnectRunner runner;
 
     private static String onlyBettyWebItem;
@@ -35,8 +34,7 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         betty = testUserFactory.admin();
         barney = testUserFactory.basicUser();
 
@@ -48,122 +46,110 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
-                    newWebItemBean()
-                        .withName(new I18nProperty("Only Betty", onlyBettyWebItem))
-                        .withKey(onlyBettyWebItem)
-                        .withLocation("system.top.navigation.bar")
-                        .withWeight(1)
-                        .withUrl("http://www.google.com")
-                        .withConditions(
-                                newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                newSingleConditionBean().withCondition(onlyBettyConditionUrl).build()
-                        )
-                        .build(),
-                    newWebItemBean()
-                        .withName(new I18nProperty("Betty And Barney", bettyAndBarneyWebitem))
-                        .withKey(bettyAndBarneyWebitem)
-                        .withLocation("system.top.navigation.bar")
-                        .withWeight(1)
-                        .withUrl("http://www.google.com")
-                        .withConditions(
-                                newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                newCompositeConditionBean()
-                                    .withType(CompositeConditionType.OR)
-                                    .withConditions(
-                                            newSingleConditionBean().withCondition(onlyBettyConditionUrl).build(),
-                                            newSingleConditionBean().withCondition(onlyBarneyConditionUrl).build()
-                                    ).build()
-                        )
-                        .build(),
-                    newWebItemBean()
-                        .withName(new I18nProperty("Admin Rights", ADMIN_RIGHTS_WEBITEM))
-                        .withKey(ADMIN_RIGHTS_WEBITEM)
-                        .withLocation("system.top.navigation.bar")
-                        .withWeight(1)
-                        .withUrl("http://www.google.com")
-                        .withConditions(
-                            newSingleConditionBean().withCondition("user_is_admin").build()
-                        )
-                        .build())
+                        newWebItemBean()
+                                .withName(new I18nProperty("Only Betty", onlyBettyWebItem))
+                                .withKey(onlyBettyWebItem)
+                                .withLocation("system.top.navigation.bar")
+                                .withWeight(1)
+                                .withUrl("http://www.google.com")
+                                .withConditions(
+                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                                        newSingleConditionBean().withCondition(onlyBettyConditionUrl).build()
+                                )
+                                .build(),
+                        newWebItemBean()
+                                .withName(new I18nProperty("Betty And Barney", bettyAndBarneyWebitem))
+                                .withKey(bettyAndBarneyWebitem)
+                                .withLocation("system.top.navigation.bar")
+                                .withWeight(1)
+                                .withUrl("http://www.google.com")
+                                .withConditions(
+                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                                        newCompositeConditionBean()
+                                                .withType(CompositeConditionType.OR)
+                                                .withConditions(
+                                                        newSingleConditionBean().withCondition(onlyBettyConditionUrl).build(),
+                                                        newSingleConditionBean().withCondition(onlyBarneyConditionUrl).build()
+                                                ).build()
+                                )
+                                .build(),
+                        newWebItemBean()
+                                .withName(new I18nProperty("Admin Rights", ADMIN_RIGHTS_WEBITEM))
+                                .withKey(ADMIN_RIGHTS_WEBITEM)
+                                .withLocation("system.top.navigation.bar")
+                                .withWeight(1)
+                                .withUrl("http://www.google.com")
+                                .withConditions(
+                                        newSingleConditionBean().withCondition("user_is_admin").build()
+                                )
+                                .build())
                 .addRoute(onlyBarneyConditionUrl, new CheckUsernameConditionServlet(barney))
                 .addRoute(onlyBettyConditionUrl, new CheckUsernameConditionServlet(betty))
                 .start();
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void bettyCanSeeBettyWebItem()
-    {
+    public void bettyCanSeeBettyWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(onlyBettyWebItem), Optional.<String>empty()));
     }
 
     @Test
-    public void barneyCannotSeeBettyWebItem()
-    {
+    public void barneyCannotSeeBettyWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
-    public void adminCannotSeeBettyWebItem()
-    {
+    public void adminCannotSeeBettyWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(testUserFactory.admin(), JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
-    public void bettyCanSeeBettyAndBarneyWebItem()
-    {
+    public void bettyCanSeeBettyAndBarneyWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>empty()));
     }
 
     @Test
-    public void barneyCanSeeBettyAndBarneyWebItem()
-    {
+    public void barneyCanSeeBettyAndBarneyWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
         assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>empty()));
     }
 
     @Test
-    public void adminCannotSeeBettyAndBarneyWebItem()
-    {
+    public void adminCannotSeeBettyAndBarneyWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(testUserFactory.admin(), JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(bettyAndBarneyWebitem)));
     }
 
     @Test
-    public void bettyCanSeeAdminRightsWebItem()
-    {
+    public void bettyCanSeeAdminRightsWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>empty()));
     }
 
     @Test
-    public void barneyCannotSeeAdminRightsWebItem()
-    {
+    public void barneyCannotSeeAdminRightsWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
     }
 
     @Test
-    public void adminCanSeeAdminRightsWebItem()
-    {
+    public void adminCanSeeAdminRightsWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(testUserFactory.admin(), JiraViewProjectPage.class, project.getKey());
         assertNotNull("Web item should be found", viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>empty()));
     }
 
-    private String getModuleKey(String module)
-    {
+    private String getModuleKey(String module) {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 }

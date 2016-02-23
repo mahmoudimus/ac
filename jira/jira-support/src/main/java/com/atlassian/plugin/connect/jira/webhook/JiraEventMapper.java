@@ -5,11 +5,9 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-public class JiraEventMapper
-{
+public class JiraEventMapper {
 
-    public boolean handles(JiraEvent event)
-    {
+    public boolean handles(JiraEvent event) {
         return false;
     }
 
@@ -35,8 +33,7 @@ public class JiraEventMapper
      * @param event the event
      * @return a map of event properties
      */
-    public Map<String, Object> toMap(JiraEvent event)
-    {
+    public Map<String, Object> toMap(JiraEvent event) {
         return ImmutableMap.<String, Object>of(
                 "timestamp", event.getTime().getTime()
         );

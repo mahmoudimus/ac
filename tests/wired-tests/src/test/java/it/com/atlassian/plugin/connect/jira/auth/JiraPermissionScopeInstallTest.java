@@ -16,8 +16,7 @@ import org.junit.runner.RunWith;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeTest
-{
+public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeTest {
 
     public JiraPermissionScopeInstallTest(ConnectUserService connectUserService,
                                           PermissionManager permissionManager,
@@ -26,8 +25,7 @@ public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeT
                                           UserManager userManager,
                                           TestPluginInstaller testPluginInstaller,
                                           TestAuthenticator testAuthenticator,
-                                          JiraTestUtil jiraTestUtil)
-    {
+                                          JiraTestUtil jiraTestUtil) {
         super(connectUserService,
                 permissionManager,
                 projectService,
@@ -39,62 +37,52 @@ public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeT
     }
 
     @Test
-    public void addonIsMadeAdminOfExistingProjects() throws Exception
-    {
+    public void addonIsMadeAdminOfExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterInstall(getProjectAdminAddon(), Permission.PROJECT_ADMIN);
     }
 
     @Test
-    public void addonIsMadeAdminOfNewProject() throws Exception
-    {
+    public void addonIsMadeAdminOfNewProject() throws Exception {
         checkHasPermissionForNewProjectAfterInstall(getProjectAdminAddon(), Permission.PROJECT_ADMIN);
     }
 
     @Test
-    public void addonCanCreateIssuesInExistingProjects() throws Exception
-    {
+    public void addonCanCreateIssuesInExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterInstall(getWriteAddon(), Permission.CREATE_ISSUE);
     }
 
     @Test
-    public void addonCanCreateIssueInNewProject() throws Exception
-    {
+    public void addonCanCreateIssueInNewProject() throws Exception {
         checkHasPermissionForNewProjectAfterInstall(getWriteAddon(), Permission.CREATE_ISSUE);
     }
 
     @Test
-    public void addonCanUpdateIssuesInExistingProjects() throws Exception
-    {
+    public void addonCanUpdateIssuesInExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterInstall(getWriteAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
-    public void addonCanUpdateIssueInNewProject() throws Exception
-    {
+    public void addonCanUpdateIssueInNewProject() throws Exception {
         checkHasPermissionForNewProjectAfterInstall(getWriteAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
-    public void addonCanDeleteIssuesInExistingProjects() throws Exception
-    {
+    public void addonCanDeleteIssuesInExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterInstall(getDeleteAddon(), Permission.DELETE_ISSUE);
     }
 
     @Test
-    public void addonCanDeleteIssueInNewProject() throws Exception
-    {
+    public void addonCanDeleteIssueInNewProject() throws Exception {
         checkHasPermissionForNewProjectAfterInstall(getDeleteAddon(), Permission.DELETE_ISSUE);
     }
 
     @Test
-    public void addonCannotEditIssuesInExistingProjects() throws Exception
-    {
+    public void addonCannotEditIssuesInExistingProjects() throws Exception {
         checkHasPermissionForAllProjectsAfterInstall(getReadAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
-    public void addonCannotEditIssueInNewProject() throws Exception
-    {
+    public void addonCannotEditIssueInNewProject() throws Exception {
         checkHasPermissionForNewProjectAfterInstall(getReadAddon(), Permission.EDIT_ISSUE);
     }
 }

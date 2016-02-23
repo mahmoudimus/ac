@@ -22,9 +22,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class SubjectJwtClaimWriterTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class SubjectJwtClaimWriterTest {
     @Mock
     private JwtJsonBuilder builder;
     @Mock
@@ -34,10 +33,9 @@ public class SubjectJwtClaimWriterTest
     @InjectMocks
     private SubjectJwtClaimWriter claimWriter;
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
-    public void noSubjectAddedWhenNotAutenticated()
-    {
+    public void noSubjectAddedWhenNotAutenticated() {
         claimWriter.write(builder);
 
         verify(builder, never()).subject(anyString());
@@ -48,10 +46,9 @@ public class SubjectJwtClaimWriterTest
         assertThat(context.isEmpty(), is(true));
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
-    public void subjectAndContextUserAddedWhenAuthenticated()
-    {
+    public void subjectAndContextUserAddedWhenAuthenticated() {
         when(userManager.getRemoteUser()).thenReturn(userProfile);
         when(userProfile.getUsername()).thenReturn("bwayne");
         when(userProfile.getUserKey()).thenReturn(new UserKey("batman"));

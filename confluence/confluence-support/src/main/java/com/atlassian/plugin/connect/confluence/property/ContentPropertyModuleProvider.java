@@ -18,8 +18,7 @@ import java.util.List;
  * Representation of a group of extractions specified by an add-on.
  */
 @ConfluenceComponent
-public class ContentPropertyModuleProvider extends AbstractConfluenceConnectModuleProvider<ContentPropertyModuleBean>
-{
+public class ContentPropertyModuleProvider extends AbstractConfluenceConnectModuleProvider<ContentPropertyModuleBean> {
 
     private static final ContentPropertyModuleMeta META = new ContentPropertyModuleMeta();
 
@@ -27,22 +26,19 @@ public class ContentPropertyModuleProvider extends AbstractConfluenceConnectModu
 
     @Autowired
     public ContentPropertyModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            ContentPropertyIndexSchemaModuleDescriptorFactory factory)
-    {
+                                         ConnectJsonSchemaValidator schemaValidator,
+                                         ContentPropertyIndexSchemaModuleDescriptorFactory factory) {
         super(pluginRetrievalService, schemaValidator);
         this.contentPropertyIndexFactory = factory;
     }
 
     @Override
-    public ConnectModuleMeta<ContentPropertyModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<ContentPropertyModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ContentPropertyModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ContentPropertyModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> contentPropertyIndexFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()
         ));
     }

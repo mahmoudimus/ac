@@ -45,8 +45,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyIframeURLHasVersionNumber;
 import static org.junit.Assert.assertTrue;
 
-public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
-{
+public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase {
 
     private static final String JWT_EXPIRY_PAGE_KEY = "checkPageJwtExpiry";
     private static final String JWT_EXPIRY_DIALOG_KEY = "checkDialogJwtExpiry";
@@ -67,8 +66,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     private long lastIssuedAtTime;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         logout();
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
@@ -109,17 +107,14 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Before
-    public void createJwtReaderFactory()
-    {
+    public void createJwtReaderFactory() {
         final JwtIssuerSharedSecretService sharedSecretService = issuer -> INSTALL_HANDLER_SERVLET.getInstallPayload().getSharedSecret();
 
         final JwtIssuerValidator jwtIssuerValidator = issuer -> true;
@@ -129,8 +124,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
 
     // because we issue a new JWT when it is clicked
     @Test
-    public void dialogClickGetsNewJwt() throws JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
-    {
+    public void dialogClickGetsNewJwt() throws JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException {
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_DIALOG_KEY);
 
@@ -143,8 +137,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void pageClicksGetsNewJwt() throws Exception
-    {
+    public void pageClicksGetsNewJwt() throws Exception {
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_PAGE_KEY);
         URL webItemUrl = new URL(page.findLinkElement().getAttribute("href"));
@@ -165,8 +158,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     // because we issue a new JWT when it is clicked
     @Test
     @Ignore
-    public void inlineDialogClickGetsNewJwt() throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtVerificationException, JwtParseException
-    {
+    public void inlineDialogClickGetsNewJwt() throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtVerificationException, JwtParseException {
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG_KEY);
 
@@ -179,8 +171,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void verifyInlineDialogHasVersionNumber()
-    {
+    public void verifyInlineDialogHasVersionNumber() {
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG_KEY);
         page.clickAddonLink();
@@ -188,22 +179,19 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         verifyIframeURLHasVersionNumber(inlineDialog);
     }
 
-    private void doRequest(final URL url) throws IOException
-    {
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+    private void doRequest(final URL url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.connect();
         connection.getResponseCode(); // it waits for response
     }
 
-    private String getJwtFromParameterCapturingServlet(ParameterCapturingServlet parameterCapturingServlet)
-    {
-        final Map<String,String> params = parameterCapturingServlet.getParamsFromLastRequest();
+    private String getJwtFromParameterCapturingServlet(ParameterCapturingServlet parameterCapturingServlet) {
+        final Map<String, String> params = parameterCapturingServlet.getParamsFromLastRequest();
         assertTrue("A JWT parameter should have been included in the request for dialog content", params.containsKey(JwtConstants.JWT_PARAM_NAME));
         return params.get(JwtConstants.JWT_PARAM_NAME);
     }
 
-    private void verifyIssuedAtTime(long minimumIssuedTime, ParameterCapturingServlet parameterCapturingServlet) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
-    {
+    private void verifyIssuedAtTime(long minimumIssuedTime, ParameterCapturingServlet parameterCapturingServlet) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException {
         String jwt = getJwtFromParameterCapturingServlet(parameterCapturingServlet);
         JwtClaimVerifier issuedAtTimeClaimVerifier = newIssuedAtTimeClaimVerifier(minimumIssuedTime);
         final JwtReader jwtReader = jwtReaderFactory.getReader(jwt);
@@ -212,46 +200,37 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         jwtReader.readAndVerify(jwt, verifiers); // will throw if the issued-at-time fails verification
     }
 
-    private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey)
-    {
+    private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey) {
         product.visit(HomePage.class);
         return product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, runner.getAddon().getKey());
     }
 
-    private JwtClaimVerifier newIssuedAtTimeClaimVerifier(final long minimumIssueTime)
-    {
+    private JwtClaimVerifier newIssuedAtTimeClaimVerifier(final long minimumIssueTime) {
         return claim -> {
-            if (claim instanceof Date)
-            {
+            if (claim instanceof Date) {
                 Date claimDate = (Date) claim;
                 lastIssuedAtTime = claimDate.getTime();
-                if (lastIssuedAtTime < minimumIssueTime)
-                {
+                if (lastIssuedAtTime < minimumIssueTime) {
                     throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to have a value greater than or equal to [%d] but it was [%d]", minimumIssueTime, lastIssuedAtTime));
                 }
-            }
-            else
-            {
+            } else {
                 throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to be a Date but it was a %s: [%s]", claim.getClass().getSimpleName(), claim));
             }
         };
     }
 
-    private long getSystemTimeBeforeJwtIssue()
-    {
+    private long getSystemTimeBeforeJwtIssue() {
         // Checking the system time across two JVM's seems unreliable, so allow a considerable discrepancy
         return System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(JwtConstants.TIME_CLAIM_LEEWAY_SECONDS);
     }
 
-    private void openAndCloseDialog(RemotePluginAwarePage page)
-    {
+    private void openAndCloseDialog(RemotePluginAwarePage page) {
         page.clickAddonLink();
         RemoteDialog dialog = product.getPageBinder().bind(RemoteDialog.class);
         dialog.cancelAndWaitUntilHidden();
     }
 
-    private void openAndCloseInlineDialog(RemotePluginAwarePage page)
-    {
+    private void openAndCloseInlineDialog(RemotePluginAwarePage page) {
         page.clickAddonLink();
         RemoteInlineDialog inlineDialog = product.getPageBinder().bind(RemoteInlineDialog.class);
         inlineDialog.hideAndWaitUntilHidden();

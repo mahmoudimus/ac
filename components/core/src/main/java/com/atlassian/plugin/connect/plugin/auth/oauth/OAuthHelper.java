@@ -13,22 +13,20 @@ import static com.google.common.collect.Iterables.transform;
 /**
  * Helps with oauth operations
  */
-public class OAuthHelper
-{
+public class OAuthHelper {
     /**
      * Converts the {@code Request} to an {@code OAuthMessage}.
      *
      * @param request {@code Request} to be converted to an {@code OAuthMessage}
      * @return {@code OAuthMessage} converted from the {@code Request}
      */
-    public static OAuthMessage asOAuthMessage(final com.atlassian.oauth.Request request)
-    {
+    public static OAuthMessage asOAuthMessage(final com.atlassian.oauth.Request request) {
         Check.notNull(request, "request");
         return new OAuthMessage(
-            request.getMethod().name(),
-            request.getUri().toString(),
-            // We'd rather not do the copy, but since we need a Collection of these things we don't have much choice
-            ImmutableList.copyOf(asOAuthParameters(request.getParameters()))
+                request.getMethod().name(),
+                request.getUri().toString(),
+                // We'd rather not do the copy, but since we need a Collection of these things we don't have much choice
+                ImmutableList.copyOf(asOAuthParameters(request.getParameters()))
         );
     }
 
@@ -38,8 +36,7 @@ public class OAuthHelper
      * @param requestParameters {@code Request.Parameter}s to be converted to {@code OAuth.Parameter}s
      * @return {@code OAuth.Parameter}s converted from the {@code Request.Parameter}s
      */
-    public static Iterable<OAuth.Parameter> asOAuthParameters(final Iterable<com.atlassian.oauth.Request.Parameter> requestParameters)
-    {
+    public static Iterable<OAuth.Parameter> asOAuthParameters(final Iterable<com.atlassian.oauth.Request.Parameter> requestParameters) {
         Check.notNull(requestParameters, "requestParameters");
         return transform(requestParameters, toOAuthParameters);
     }

@@ -30,31 +30,26 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
  * @schemaTitle Content Property
  * @since 1.0
  */
-public class ContentPropertyModuleBean extends RequiredKeyBean
-{
+public class ContentPropertyModuleBean extends RequiredKeyBean {
     /**
      * A Content Property Index Key Configuration defines which values from your JSON content property
      * object should be indexed and made available to the CQL search syntax.
      */
     private List<ContentPropertyIndexKeyConfigurationBean> keyConfigurations;
 
-    public ContentPropertyModuleBean()
-    {
+    public ContentPropertyModuleBean() {
     }
 
-    public ContentPropertyModuleBean(ContentPropertyModuleBeanBuilder contentPropertyModuleBeanBuilder)
-    {
+    public ContentPropertyModuleBean(ContentPropertyModuleBeanBuilder contentPropertyModuleBeanBuilder) {
         super(contentPropertyModuleBeanBuilder);
         keyConfigurations = contentPropertyModuleBeanBuilder.getKeyConfigurations();
     }
 
-    public List<ContentPropertyIndexKeyConfigurationBean> getKeyConfigurations()
-    {
+    public List<ContentPropertyIndexKeyConfigurationBean> getKeyConfigurations() {
         return keyConfigurations;
     }
 
-    public static ContentPropertyModuleBeanBuilder newContentPropertyModuleBean()
-    {
+    public static ContentPropertyModuleBeanBuilder newContentPropertyModuleBean() {
         return new ContentPropertyModuleBeanBuilder();
     }
 }

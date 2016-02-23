@@ -42,8 +42,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class TestEntityProperty extends JiraTestBase
-{
+public class TestEntityProperty extends JiraTestBase {
     private static final TestKitLocalEnvironmentData localEnvironmentData = new TestKitLocalEnvironmentData();
     private static final String ATTACHMENT_PROPERTY_KEY = "attachment";
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
@@ -58,8 +57,7 @@ public class TestEntityProperty extends JiraTestBase
     private TestProject testProject;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
 
         List<EntityPropertyIndexExtractionConfigurationBean> extractions = newArrayList(
                 new EntityPropertyIndexExtractionConfigurationBean("size", EntityPropertyIndexType.number, JQL_ALIAS_ATTACHMENT_SIZE),
@@ -90,10 +88,8 @@ public class TestEntityProperty extends JiraTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
@@ -102,50 +98,42 @@ public class TestEntityProperty extends JiraTestBase
      * Create a new project for easily deleting all created issues in tear-down
      */
     @Before
-    public void setup()
-    {
+    public void setup() {
         testProject = addProject();
     }
 
     @After
-    public void tearDown()
-    {
+    public void tearDown() {
         projectControl.deleteProject(testProject.getKey());
     }
 
     @Test
-    public void stringIssuePropertyIndexedAndSearchableByFullyQualifiedPropertyName() throws JSONException
-    {
+    public void stringIssuePropertyIndexedAndSearchableByFullyQualifiedPropertyName() throws JSONException {
         setPropertyAndSearchForValue("issue.property[attachment].extension", Operator.EQUALS, "jpg");
     }
 
     @Test
-    public void stringIssuePropertyIndexedAndSearchableByJqlAlias() throws JSONException
-    {
+    public void stringIssuePropertyIndexedAndSearchableByJqlAlias() throws JSONException {
         setPropertyAndSearchForValue(JQL_ALIAS_ATTACHMENT_EXTENSION, Operator.EQUALS, "jpg");
     }
 
     @Test
-    public void issuePropertyIndexedAndSearchableByFullyQualifiedPropertyName() throws JSONException
-    {
+    public void issuePropertyIndexedAndSearchableByFullyQualifiedPropertyName() throws JSONException {
         setPropertyAndSearchForValue("issue.property[attachment].size", Operator.GREATER_THAN, "5");
     }
 
     @Test
-    public void integerIssuePropertyIndexedAndSearchableByJqlAlias() throws JSONException
-    {
+    public void integerIssuePropertyIndexedAndSearchableByJqlAlias() throws JSONException {
         setPropertyAndSearchForValue(JQL_ALIAS_ATTACHMENT_SIZE, Operator.GREATER_THAN, "5");
     }
 
     @Test
-    public void attachmentNonIndexedValueIndexed() throws JSONException
-    {
-        setPropertyAndSearchForValue("issue.property[attachment].author", Operator.EQUALS,  "\"luke skywalker\"");
+    public void attachmentNonIndexedValueIndexed() throws JSONException {
+        setPropertyAndSearchForValue("issue.property[attachment].author", Operator.EQUALS, "\"luke skywalker\"");
     }
 
     @Test
-    public void conflictingAliasFromTwoAddons() throws Exception
-    {
+    public void conflictingAliasFromTwoAddons() throws Exception {
         final List<EntityPropertyIndexExtractionConfigurationBean> extractions = ImmutableList.of(
                 // the same alias
                 new EntityPropertyIndexExtractionConfigurationBean("extension", EntityPropertyIndexType.string, JQL_ALIAS_ATTACHMENT_EXTENSION)
@@ -187,8 +175,7 @@ public class TestEntityProperty extends JiraTestBase
         remotePlugin.stopAndUninstall();
     }
 
-    private void setPropertyAndSearchForValue(String jqlName, Operator operator, String searchValue) throws JSONException
-    {
+    private void setPropertyAndSearchForValue(String jqlName, Operator operator, String searchValue) throws JSONException {
         IssueCreateResponse issue = issueClient.createIssue(testProject.getKey(), "Some issue with attachment data");
 
         // Issue property should be indexed during PUT operation
@@ -204,18 +191,15 @@ public class TestEntityProperty extends JiraTestBase
         assertHasIssues(searchRequest, newArrayList(issue.key));
     }
 
-    private SearchResult getSearchResult(final String jqlName, final Operator operator, final String searchValue)
-    {
+    private SearchResult getSearchResult(final String jqlName, final Operator operator, final String searchValue) {
         return searchClient.getSearch(new SearchRequest().jql(String.format("%s %s %s", jqlName, operator.getDisplayString(), searchValue)));
     }
 
-    private static JSONObject getAttachmentData()
-    {
+    private static JSONObject getAttachmentData() {
         return new JSONObject(ImmutableMap.<String, Object>of("size", 10, "extension", "jpg", "author", "luke skywalker"));
     }
 
-    private static void assertHasIssues(SearchResult searchResult, List<String> issueKeys)
-    {
+    private static void assertHasIssues(SearchResult searchResult, List<String> issueKeys) {
         assertThat(searchResult.issues, Matchers.hasSize(issueKeys.size()));
         assertThat(Lists.transform(searchResult.issues, issue -> issue.key), Matchers.<String>hasItem(Matchers.isOneOf(issueKeys.toArray())));
     }

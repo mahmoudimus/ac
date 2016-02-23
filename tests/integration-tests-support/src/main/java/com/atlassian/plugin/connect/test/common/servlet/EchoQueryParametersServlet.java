@@ -19,53 +19,46 @@ import com.google.common.collect.ImmutableMap;
 
 import org.apache.http.NameValuePair;
 
-public class EchoQueryParametersServlet extends MustacheServlet
-{
+public class EchoQueryParametersServlet extends MustacheServlet {
     private volatile BlockingDeque<NameValuePairs> queryParameters = new LinkedBlockingDeque<>();
 
-    public EchoQueryParametersServlet()
-    {
+    public EchoQueryParametersServlet() {
         this("echo-query.mu");
     }
 
-    public EchoQueryParametersServlet(String templatePath)
-    {
+    public EchoQueryParametersServlet(String templatePath) {
         super(templatePath);
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-    {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         NameValuePairs parameters = new NameValuePairs(req.getParameterMap());
         queryParameters.push(parameters);
 
-        List<Map<String,String>> nvps = new ArrayList<>();
+        List<Map<String, String>> nvps = new ArrayList<>();
 
-        for (NameValuePair pair : parameters.getNameValuePairs())
-        {
-            HashMap<String,String> nvp = new HashMap<>();
+        for (NameValuePair pair : parameters.getNameValuePairs()) {
+            HashMap<String, String> nvp = new HashMap<>();
 
-            nvp.put("name",pair.getName());
-            nvp.put("value",pair.getValue());
+            nvp.put("name", pair.getName());
+            nvp.put("value", pair.getValue());
             nvps.add(nvp);
         }
 
-        Map<String,Object> newContext = new HashMap<String, Object>();
+        Map<String, Object> newContext = new HashMap<String, Object>();
         newContext.putAll(context);
 
-        newContext.put("nvp",nvps);
+        newContext.put("nvp", nvps);
 
-        super.doGet(req,resp, ImmutableMap.copyOf(newContext));
+        super.doGet(req, resp, ImmutableMap.copyOf(newContext));
     }
 
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-    {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         doGet(req, resp, context);
     }
 
-    public NameValuePairs waitForQueryParameters() throws InterruptedException
-    {
+    public NameValuePairs waitForQueryParameters() throws InterruptedException {
         return queryParameters.poll(5, TimeUnit.SECONDS);
     }
 }

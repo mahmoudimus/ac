@@ -12,22 +12,18 @@ import static org.junit.Assert.assertThat;
 import static org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class NotTransitionDownScopeUtilTest extends BaseScopeUtilTest
-{
-    public NotTransitionDownScopeUtilTest(Object previousTopScope, Object newTopScope, boolean expectedResult)
-    {
+public class NotTransitionDownScopeUtilTest extends BaseScopeUtilTest {
+    public NotTransitionDownScopeUtilTest(Object previousTopScope, Object newTopScope, boolean expectedResult) {
         super(previousTopScope, newTopScope, expectedResult);
     }
 
     @Parameters
-    public static Collection<Object[]> parameters()
-    {
+    public static Collection<Object[]> parameters() {
         return generateTestParams(READ_OR_LESS, ALL_SCOPES, false);
     }
 
     @Test
-    public void notTransitionDownWhenPreviousReadOrLess()
-    {
+    public void notTransitionDownWhenPreviousReadOrLess() {
         logParams();
         assertThat(isTransitionDownToReadOrLess(previousScopes, newScopes), is(expectedResult));
     }

@@ -14,8 +14,7 @@ import com.atlassian.sal.api.user.UserProfile;
 
 import org.apache.commons.io.IOUtils;
 
-public class ServletRequestSnapshot
-{
+public class ServletRequestSnapshot {
     private final String contextPath;
     private final String servletPath;
     private final String pathInfo;
@@ -31,8 +30,7 @@ public class ServletRequestSnapshot
     private final UserProfile remoteUserProfile;
     private final String remoteUsername;
 
-    public ServletRequestSnapshot(HttpServletRequest request, UserManager userManager)
-    {
+    public ServletRequestSnapshot(HttpServletRequest request, UserManager userManager) {
         this.contextPath = request.getContextPath();
         this.servletPath = request.getServletPath();
         this.pathInfo = request.getPathInfo();
@@ -43,174 +41,142 @@ public class ServletRequestSnapshot
         this.serverPort = request.getServerPort();
 
         Enumeration<String> attrNames = request.getAttributeNames();
-        while(attrNames.hasMoreElements())
-        {
+        while (attrNames.hasMoreElements()) {
             String attrName = attrNames.nextElement();
-            attributes.put(attrName,request.getAttribute(attrName));
+            attributes.put(attrName, request.getAttribute(attrName));
         }
 
         Enumeration<String> headerNames = request.getHeaderNames();
-        while(headerNames.hasMoreElements())
-        {
+        while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
-            headers.put(headerName,request.getHeader(headerName));
+            headers.put(headerName, request.getHeader(headerName));
         }
 
         Enumeration<String> paramNames = request.getParameterNames();
-        while(paramNames.hasMoreElements())
-        {
+        while (paramNames.hasMoreElements()) {
             String paramName = paramNames.nextElement();
-            parameters.put(paramName,request.getParameterValues(paramName));
+            parameters.put(paramName, request.getParameterValues(paramName));
         }
-        
+
         this.entity = extractEntity(request);
         UserProfile remoteUser = userManager.getRemoteUser(request);
         this.remoteUserProfile = remoteUser;
         this.remoteUsername = null == remoteUser ? null : remoteUser.getUsername();
     }
 
-    private static String extractEntity(HttpServletRequest request)
-    {
-        try
-        {
+    private static String extractEntity(HttpServletRequest request) {
+        try {
             return IOUtils.toString(request.getInputStream());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             return "";
         }
     }
 
-    public String getContextPath()
-    {
+    public String getContextPath() {
         return contextPath;
     }
 
-    public String getServletPath()
-    {
+    public String getServletPath() {
         return servletPath;
     }
 
-    public String getPathInfo()
-    {
+    public String getPathInfo() {
         return pathInfo;
     }
 
-    public String getRequestUri()
-    {
+    public String getRequestUri() {
         return requestUri;
     }
 
-    public StringBuffer getRequestURL()
-    {
+    public StringBuffer getRequestURL() {
         return requestURL;
     }
 
-    public Map<String, Object> getAttributes()
-    {
+    public Map<String, Object> getAttributes() {
         return attributes;
     }
 
-    public Map<String, String> getHeaders()
-    {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 
-    public boolean hasJwtHeader()
-    {
+    public boolean hasJwtHeader() {
         Optional<String> authorizationHeader = getAuthorizationHeader();
         return authorizationHeader.isPresent() &&
-               authorizationHeader.get().matches("^" + JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + ".+\\..+\\..+$");
+                authorizationHeader.get().matches("^" + JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + ".+\\..+\\..+$");
     }
 
-    public Map<String, String[]> getParameters()
-    {
+    public Map<String, String[]> getParameters() {
         return parameters;
     }
 
-    public boolean hasJwtParameter()
-    {
+    public boolean hasJwtParameter() {
         return parameters.containsKey(JwtConstants.JWT_PARAM_NAME) &&
-               parameters.get(JwtConstants.JWT_PARAM_NAME).length == 1 &&
-               parameters.get(JwtConstants.JWT_PARAM_NAME)[0].matches("^.+\\..+\\..+$");
+                parameters.get(JwtConstants.JWT_PARAM_NAME).length == 1 &&
+                parameters.get(JwtConstants.JWT_PARAM_NAME)[0].matches("^.+\\..+\\..+$");
     }
 
-    public boolean hasJwt()
-    {
+    public boolean hasJwt() {
         return hasJwtHeader() || hasJwtParameter();
     }
 
-    public String getJwtToken()
-    {
-        if (hasJwtHeader() && hasJwtParameter())
-        {
+    public String getJwtToken() {
+        if (hasJwtHeader() && hasJwtParameter()) {
             throw new RuntimeException("Request has JWT token as both a header and a parameter. I don't know which one to choose!");
         }
 
-        if (hasJwtHeader())
-        {
+        if (hasJwtHeader()) {
             return getJwtHeader();
         }
 
-        if (hasJwtParameter())
-        {
+        if (hasJwtParameter()) {
             return getJwtParameter();
         }
 
         throw new RuntimeException("This request does not contain a JWT token!");
     }
 
-    public String getMethod()
-    {
+    public String getMethod() {
         return method.toUpperCase();
     }
 
-    public String getServerName()
-    {
+    public String getServerName() {
         return serverName;
     }
 
-    public int getServerPort()
-    {
+    public int getServerPort() {
         return serverPort;
     }
 
-    public String getEntity()
-    {
+    public String getEntity() {
         return entity;
     }
 
-    public String getRemoteUsername()
-    {
+    public String getRemoteUsername() {
         return remoteUsername;
     }
 
-    public UserProfile getRemoteUserProfile()
-    {
+    public UserProfile getRemoteUserProfile() {
         return remoteUserProfile;
     }
 
-    private String getJwtHeader()
-    {
+    private String getJwtHeader() {
         final Optional<String> header = getAuthorizationHeader();
         return header.isPresent() ? header.get().substring(4) : null; // if it exists, remove the "JWT " prefix
     }
 
-    private String getJwtParameter()
-    {
+    private String getJwtParameter() {
         final String[] jwtParams = parameters.get(JwtConstants.JWT_PARAM_NAME);
         return null != jwtParams && jwtParams.length > 0 ? jwtParams[0] : null;
     }
 
     // the case of the header can be changed at runtime :(
-    private Optional<String> getAuthorizationHeader()
-    {
+    private Optional<String> getAuthorizationHeader() {
         final Optional<String> header = getHeader(JwtConstants.HttpRequests.AUTHORIZATION_HEADER);
         return header.isPresent() ? header : getHeader(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
     }
 
-    private Optional<String> getHeader(String headerName)
-    {
+    private Optional<String> getHeader(String headerName) {
         return headers.containsKey(headerName) ? Optional.of(headers.get(headerName)) : Optional.empty();
     }
 }

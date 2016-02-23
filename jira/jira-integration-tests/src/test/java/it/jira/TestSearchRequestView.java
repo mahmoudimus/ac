@@ -24,8 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
-public class TestSearchRequestView extends JiraWebDriverTestBase
-{
+public class TestSearchRequestView extends JiraWebDriverTestBase {
     private static final String LABEL = "A Search Request View";
     private static final String MODULE_KEY = "my-search-request-view";
     private static final String SERVLET_URL = "/search";
@@ -37,8 +36,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         searchRequestViewServlet = new EchoQueryParametersServlet();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
@@ -51,25 +49,22 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
                         .withKey(MODULE_KEY)
                         .withDescription(new I18nProperty("A description", null))
                         .withConditions(
-                            newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                            toggleableConditionBean()
+                                newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                                toggleableConditionBean()
                         ).build())
                 .addRoute(SERVLET_URL, ConnectAppServlets.wrapContextAwareServlet(searchRequestViewServlet))
                 .start();
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void verifyEntryIsPresentWhenLoggedIn() throws Exception
-    {
+    public void verifyEntryIsPresentWhenLoggedIn() throws Exception {
         login(testUserFactory.basicUser());
         IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
 
@@ -77,8 +72,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @Test
-    public void verifyEntryIsNotPresentWhenUnauthenticated() throws Exception
-    {
+    public void verifyEntryIsNotPresentWhenUnauthenticated() throws Exception {
         logout();
         IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
 
@@ -86,8 +80,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @Test
-    public void verifyEntryIsNotPresentWhenAddonConditionIsFalse() throws Exception
-    {
+    public void verifyEntryIsNotPresentWhenAddonConditionIsFalse() throws Exception {
         login(testUserFactory.basicUser());
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
@@ -97,8 +90,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @Test
-    public void verifyIssueKeyIsPartOfUrl() throws Exception
-    {
+    public void verifyIssueKeyIsPartOfUrl() throws Exception {
         login(testUserFactory.basicUser());
         IssueCreateResponse issue = createIssue();
         findSearchRequestViewEntry().click();
@@ -109,8 +101,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @Test
-    public void verifyPaginationParametersArePartOfUrl() throws Exception
-    {
+    public void verifyPaginationParametersArePartOfUrl() throws Exception {
         NameValuePairs queryParameters = logInAndGetSearchRequestViewQueryParameters();
         assertThat(queryParameters.all("startIssue"), hasSize(greaterThan(0)));
         assertThat(queryParameters.all("endIssue"), hasSize(greaterThan(0)));
@@ -118,21 +109,18 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     }
 
     @Test
-    public void verifyOAuthParametersAreNotPartOfUrl() throws Exception
-    {
+    public void verifyOAuthParametersAreNotPartOfUrl() throws Exception {
         NameValuePairs queryParameters = logInAndGetSearchRequestViewQueryParameters();
         assertThat(queryParameters.allStartingWith("oauth_"), hasSize(0));
     }
 
     @Test
-    public void verifyJwtParameterIsPartOfUrl() throws Exception
-    {
+    public void verifyJwtParameterIsPartOfUrl() throws Exception {
         NameValuePairs queryParameters = logInAndGetSearchRequestViewQueryParameters();
         assertThat(queryParameters.allStartingWith("jwt"), hasSize(1));
     }
 
-    private NameValuePairs logInAndGetSearchRequestViewQueryParameters() throws Exception
-    {
+    private NameValuePairs logInAndGetSearchRequestViewQueryParameters() throws Exception {
         login(testUserFactory.basicUser());
         createIssue();
         findSearchRequestViewEntry().click();
@@ -142,21 +130,18 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
         return queryParameters;
     }
 
-    private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry() throws Exception
-    {
+    private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry() throws Exception {
         JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
         searchPage.enterQuery("project = " + project.getKey()).submit();
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
         return viewsMenu.entryWithLabel(LABEL);
     }
 
-    private IssueCreateResponse createIssue() throws Exception
-    {
+    private IssueCreateResponse createIssue() throws Exception {
         return product.backdoor().issues().createIssue(project.getKey(), "test issue");
     }
 
-    private void assertNoTimeout(NameValuePairs queryParameters)
-    {
+    private void assertNoTimeout(NameValuePairs queryParameters) {
         assertThat("Request did not time out", queryParameters != null);
     }
 

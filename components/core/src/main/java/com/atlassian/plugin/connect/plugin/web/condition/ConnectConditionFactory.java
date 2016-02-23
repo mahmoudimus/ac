@@ -10,8 +10,7 @@ import java.util.List;
  *
  * @since 1.0
  */
-public interface ConnectConditionFactory
-{
+public interface ConnectConditionFactory {
 
     /**
      * @param addonKey the key of the add-on

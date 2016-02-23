@@ -26,8 +26,7 @@ import java.util.List;
  *
  * @param <T> the type of the add-on descriptor module representation
  */
-public interface ConnectModuleProvider<T extends BaseModuleBean>
-{
+public interface ConnectModuleProvider<T extends BaseModuleBean> {
 
     /**
      * Returns the metadata for this module.

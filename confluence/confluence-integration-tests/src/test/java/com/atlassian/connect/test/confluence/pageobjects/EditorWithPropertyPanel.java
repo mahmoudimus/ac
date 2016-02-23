@@ -6,15 +6,13 @@ import org.openqa.selenium.By;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-public class EditorWithPropertyPanel extends EditorContent
-{
+public class EditorWithPropertyPanel extends EditorContent {
     /**
      * Click on the macro, then wait for the property panel to appear.
      * @param macroName
      * @return The open property panel.
      */
-    public MacroPropertyPanelWithIframe openPropertyPanel(final String macroName)
-    {
+    public MacroPropertyPanelWithIframe openPropertyPanel(final String macroName) {
         execute.onTinyMceIFrame(() -> {
             PageElement inlineMacro = page.find(By.cssSelector(".editor-inline-macro[data-macro-name=\"" + macroName
                     + "\"]"));
@@ -29,12 +27,9 @@ public class EditorWithPropertyPanel extends EditorContent
 
         final PageElement iframe = propertyPanelElement.find(By.tagName("iframe"));
 
-        try
-        {
+        try {
             waitUntilTrue(iframe.timed().isPresent());
-        }
-        catch (AssertionError e)
-        {
+        } catch (AssertionError e) {
             //Iframe not found.
         }
 

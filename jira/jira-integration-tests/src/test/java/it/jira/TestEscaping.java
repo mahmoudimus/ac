@@ -51,8 +51,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class TestEscaping extends JiraWebDriverTestBase
-{
+public class TestEscaping extends JiraWebDriverTestBase {
     private static final String ADDON_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String MODULE_NAME = "<b>${user}</b>";
@@ -78,8 +77,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
                 .addModule("generalPages",
@@ -166,52 +164,44 @@ public class TestEscaping extends JiraWebDriverTestBase
     }
 
     @After
-    public void logOutCurrentUser()
-    {
+    public void logOutCurrentUser() {
         logout();
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void testGeneralPage() throws Exception
-    {
+    public void testGeneralPage() throws Exception {
         RemoteWebItem webItem = findWebItem(GENERAL_PAGE_KEY);
         assertIsEscaped(webItem.getLinkText());
     }
 
     @Test
-    public void testWebItem() throws Exception
-    {
+    public void testWebItem() throws Exception {
         RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY);
         assertIsEscaped(webItem.getLinkText());
     }
 
     @Test
-    public void testWebItemTooltip() throws Exception
-    {
+    public void testWebItemTooltip() throws Exception {
         RemoteWebItem webItem = findWebItem(WEB_ITEM_KEY);
         assertIsEscaped(webItem.getTitle());
     }
 
     @Test
-    public void testAdminPage() throws Exception
-    {
+    public void testAdminPage() throws Exception {
         product.quickLoginAsAdmin(ViewGeneralConfigurationPage.class);
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
 
     @Test
-    public void testIssueTabPanel() throws Exception
-    {
+    public void testIssueTabPanel() throws Exception {
         login(testUserFactory.basicUser());
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "test issue tab panel");
         JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(JiraViewIssuePageWithRemotePluginIssueTab.class,
@@ -220,8 +210,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testProfileTabPanel() throws Exception
-    {
+    public void testProfileTabPanel() throws Exception {
         product.quickLoginAsAdmin(ViewProfilePage.class);
         String moduleKey = getModuleKey(PROFILE_TAB_PANEL_KEY);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a", Optional.<String>empty(), moduleKey);
@@ -229,8 +218,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testProjectAdminTabPanel() throws Exception
-    {
+    public void testProjectAdminTabPanel() throws Exception {
         final String moduleKey = getModuleKey(PROJECT_ADMIN_TAB_PANEL_KEY);
         ProjectSummaryPageTab page = product.quickLoginAsAdmin(ProjectSummaryPageTab.class, project.getKey());
         ProjectConfigTabs.Tab tab = Iterables.find(page.getTabs().getTabs(), currentTab -> moduleKey.equals(currentTab.getId()));
@@ -238,8 +226,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testProjectTabPanel() throws Exception
-    {
+    public void testProjectTabPanel() throws Exception {
         login(testUserFactory.basicUser());
         JiraProjectSummaryPageWithAddonTab summaryPage
                 = product.visit(JiraProjectSummaryPageWithAddonTab.class, project.getKey(), ADDON_KEY, PROJECT_TAB_PANEL_KEY);
@@ -249,8 +236,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testSearchRequestView() throws Exception
-    {
+    public void testSearchRequestView() throws Exception {
         JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
         searchPage.enterQuery("project = " + project.getKey()).submit();
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
@@ -259,8 +245,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testWebPanel() throws Exception
-    {
+    public void testWebPanel() throws Exception {
         login(testUserFactory.basicUser());
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "test web panel");
         ViewIssuePageWithAddonFragments page = product.visit(ViewIssuePageWithAddonFragments.class, issue.key());
@@ -269,8 +254,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testWorkflowPostFunction() throws Exception
-    {
+    public void testWorkflowPostFunction() throws Exception {
         final String id = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(WORKFLOW_POST_FUNCTION_KEY);
 
         JiraAddWorkflowTransitionPostFunctionPage workflowTransitionPage = product.quickLoginAsAdmin(
@@ -280,22 +264,19 @@ public class TestEscaping extends JiraWebDriverTestBase
         assertIsEscaped(entry.getDescription());
     }
 
-    private void assertIsEscaped(String text)
-    {
+    private void assertIsEscaped(String text) {
         // Jira's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
         // Note that we're checking against the original name, not an escaped version, as getText() returns the
         // unescaped text. If markup was interpreted, the tags would be missing in the text.
         assertThat(text, anyOf(is(MODULE_NAME), is(MODULE_NAME_JIRA_ESCAPED)));
     }
 
-    private RemoteWebItem findWebItem(String moduleKey)
-    {
+    private RemoteWebItem findWebItem(String moduleKey) {
         product.visit(JiraViewProjectPage.class, project.getKey());
         return connectPageOperations.findWebItem(getModuleKey(moduleKey), Optional.<String>empty());
     }
 
-    private String getModuleKey(String module)
-    {
+    private String getModuleKey(String module) {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 }

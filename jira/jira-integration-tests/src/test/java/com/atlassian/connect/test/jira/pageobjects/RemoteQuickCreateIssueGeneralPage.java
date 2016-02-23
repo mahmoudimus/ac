@@ -15,25 +15,21 @@ import org.openqa.selenium.WebElement;
 /**
  * Page with buttons for executing the javascript jira quick issue create
  */
-public class RemoteQuickCreateIssueGeneralPage extends ConnectAddonPage implements Page
-{
+public class RemoteQuickCreateIssueGeneralPage extends ConnectAddonPage implements Page {
 
     @Inject
     protected AtlassianWebDriver driver;
 
-    public RemoteQuickCreateIssueGeneralPage(String addonKey, String moduleKey)
-    {
+    public RemoteQuickCreateIssueGeneralPage(String addonKey, String moduleKey) {
         super(addonKey, moduleKey, true);
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
-    public void launchQuickCreate()
-    {
+    public void launchQuickCreate() {
         runInFrame(() -> {
             driver.findElement(By.id("dialog")).click();
             return null;
@@ -41,18 +37,15 @@ public class RemoteQuickCreateIssueGeneralPage extends ConnectAddonPage implemen
 
     }
 
-    public String getCreatedIssueSummary()
-    {
+    public String getCreatedIssueSummary() {
         return getValue("summarytext");
     }
 
-    public WebElement getQuickCreateDialog()
-    {
+    public WebElement getQuickCreateDialog() {
         return driver.findElement(By.id("create-issue-dialog"));
     }
 
-    public String logMessage()
-    {
+    public String logMessage() {
         return getValue("log");
     }
 

@@ -9,22 +9,18 @@ import com.atlassian.sal.api.user.UserManager;
 
 import com.google.common.collect.ImmutableMap;
 
-public class PageEventMapper extends ConfluenceEventMapper
-{
-    public PageEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+public class PageEventMapper extends ConfluenceEventMapper {
+    public PageEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         super(userManager, confluenceSettingsManager);
     }
 
     @Override
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return e instanceof PageEvent;
     }
 
     @Override
-    public Map<String, Object> toMap(ConfluenceEvent e)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent e) {
         PageEvent event = (PageEvent) e;
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();

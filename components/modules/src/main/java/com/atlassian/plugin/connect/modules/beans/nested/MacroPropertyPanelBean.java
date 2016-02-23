@@ -45,8 +45,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBean
  *
  * @schemaTitle Macro Property Panel
  */
-public class MacroPropertyPanelBean extends BaseModuleBean
-{
+public class MacroPropertyPanelBean extends BaseModuleBean {
     /**
      * The URL to the event handling page in the add-on.
      */
@@ -54,37 +53,30 @@ public class MacroPropertyPanelBean extends BaseModuleBean
     @StringSchemaAttributes(format = "uri-template")
     private String url;
 
-    public MacroPropertyPanelBean()
-    {
+    public MacroPropertyPanelBean() {
         init();
     }
 
-    public MacroPropertyPanelBean(MacroPropertyPanelBeanBuilder builder)
-    {
+    public MacroPropertyPanelBean(MacroPropertyPanelBeanBuilder builder) {
         super(builder);
         init();
     }
 
-    private void init()
-    {
-        if (null == url)
-        {
+    private void init() {
+        if (null == url) {
             url = "";
         }
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean()
-    {
+    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean() {
         return new MacroPropertyPanelBeanBuilder();
     }
 
-    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean(MacroPropertyPanelBean defaultBean)
-    {
+    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean(MacroPropertyPanelBean defaultBean) {
         return new MacroPropertyPanelBeanBuilder(defaultBean);
     }
 }

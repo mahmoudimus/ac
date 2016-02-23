@@ -27,8 +27,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test of general page in JIRA
  */
-public class TestJiraIssueCreate extends JiraWebDriverTestBase
-{
+public class TestJiraIssueCreate extends JiraWebDriverTestBase {
     private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String PAGE_NAME = "My Awesome Page";
 
@@ -40,8 +39,7 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         addonKey = AddonTestUtils.randomAddonKey();
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
@@ -58,17 +56,14 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void canReceiveCreatedIssuesFromAddon() throws MalformedURLException, URISyntaxException
-    {
+    public void canReceiveCreatedIssuesFromAddon() throws MalformedURLException, URISyntaxException {
         loginAndVisit(testUserFactory.basicUser(), JiraViewProjectPage.class, project.getKey());
         RemoteQuickCreateIssueGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteQuickCreateIssueGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
 

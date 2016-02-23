@@ -9,10 +9,12 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 /**
  * @since 1.0
  */
-public interface JiraModuleContextParameters extends ModuleContextParameters
-{
+public interface JiraModuleContextParameters extends ModuleContextParameters {
     void addIssue(Issue issue);
+
     void addProject(Project project);
+
     void addVersion(Version version);
+
     void addComponent(ProjectComponent projectComponent, Project project);
 }

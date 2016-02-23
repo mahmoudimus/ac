@@ -18,53 +18,42 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 /**
  *
  */
-public class ToggleableConditionServlet extends HttpServlet
-{
+public class ToggleableConditionServlet extends HttpServlet {
     public static final String TOGGLE_CONDITION_URL = "/toggleableCondition";
 
-    public static ConditionalBean toggleableConditionBean()
-    {
+    public static ConditionalBean toggleableConditionBean() {
         return newSingleConditionBean().withCondition(TOGGLE_CONDITION_URL).build();
     }
 
     private final AtomicBoolean shouldDisplay;
     private final boolean initialValue;
 
-    public ToggleableConditionServlet(boolean initialValue)
-    {
+    public ToggleableConditionServlet(boolean initialValue) {
         this.initialValue = initialValue;
         this.shouldDisplay = new AtomicBoolean(initialValue);
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-    {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.getWriter().write("{\"shouldDisplay\" : " + shouldDisplay.get() + "}");
         resp.getWriter().close();
     }
 
-    public void setShouldDisplay(boolean shouldDisplay)
-    {
+    public void setShouldDisplay(boolean shouldDisplay) {
         this.shouldDisplay.set(shouldDisplay);
     }
 
     /**
      * @return a {@link org.junit.rules.TestRule} that reverts the condition back to it's initial value.
      */
-    public TestRule resetToInitialValueRule()
-    {
-        return (base, description) -> new Statement()
-        {
+    public TestRule resetToInitialValueRule() {
+        return (base, description) -> new Statement() {
             @Override
-            public void evaluate() throws Throwable
-            {
-                try
-                {
+            public void evaluate() throws Throwable {
+                try {
                     base.evaluate();
-                }
-                finally
-                {
+                } finally {
                     setShouldDisplay(initialValue);
                 }
             }

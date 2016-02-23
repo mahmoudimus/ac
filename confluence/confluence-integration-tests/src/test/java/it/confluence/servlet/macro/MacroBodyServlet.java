@@ -32,10 +32,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * The body handler will be called with the collected body.
  */
-public class MacroBodyServlet extends ContextServlet
-{
-    public enum CollectionType
-    {
+public class MacroBodyServlet extends ContextServlet {
+    public enum CollectionType {
         BY_HASH,
         BY_ID
     }
@@ -47,8 +45,7 @@ public class MacroBodyServlet extends ContextServlet
     private final String addonKey;
 
     public MacroBodyServlet(CollectionType collectionType, String baseUrl, String addonKey,
-                            InstallHandlerServlet installHandlerServlet, BodyHandler bodyHandler)
-    {
+                            InstallHandlerServlet installHandlerServlet, BodyHandler bodyHandler) {
         this.collectionType = collectionType;
         this.baseUrl = baseUrl;
         this.addonKey = addonKey;
@@ -57,16 +54,13 @@ public class MacroBodyServlet extends ContextServlet
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context)
-    {
-        try
-        {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) {
+        try {
             String pageId = req.getParameter("pageId");
             String pageVersion = req.getParameter("pageVersion");
 
             URL url = null;
-            switch (collectionType)
-            {
+            switch (collectionType) {
                 case BY_ID:
                     String macroId = req.getParameter("macroId");
                     url = URI.create(baseUrl + "/rest/api/content/" + pageId + "/history/" + pageVersion + "/macro/id/" + macroId).toURL();
@@ -94,9 +88,7 @@ public class MacroBodyServlet extends ContextServlet
             String body = o.get("body").toString();
 
             bodyHandler.processBody(req, resp, context, body);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace(System.err);
             // this should cause the test to fail
             throw new RuntimeException(e);

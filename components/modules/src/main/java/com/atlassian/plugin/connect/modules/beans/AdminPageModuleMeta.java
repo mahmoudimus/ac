@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class AdminPageModuleMeta extends ConnectModuleMeta<ConnectPageModuleBean>
-{
+public class AdminPageModuleMeta extends ConnectModuleMeta<ConnectPageModuleBean> {
 
-    public AdminPageModuleMeta()
-    {
+    public AdminPageModuleMeta() {
         super("adminPages", ConnectPageModuleBean.class);
     }
 }

@@ -12,22 +12,18 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-public class PageChildrenReorderEventMapper extends ConfluenceEventMapper
-{
-    public PageChildrenReorderEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+public class PageChildrenReorderEventMapper extends ConfluenceEventMapper {
+    public PageChildrenReorderEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         super(userManager, confluenceSettingsManager);
     }
 
     @Override
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return e instanceof PageChildrenReorderEvent;
     }
 
     @Override
-    public Map<String, Object> toMap(ConfluenceEvent e)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent e) {
         PageChildrenReorderEvent event = (PageChildrenReorderEvent) e;
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();

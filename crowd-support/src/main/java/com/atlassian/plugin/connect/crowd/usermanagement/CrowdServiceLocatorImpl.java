@@ -6,17 +6,14 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 @ConfluenceComponent
 @JiraComponent
-public class CrowdServiceLocatorImpl implements CrowdServiceLocator
-{
+public class CrowdServiceLocatorImpl implements CrowdServiceLocator {
     @Override
-    public ConnectCrowdBase embedded(ApplicationService applicationService, UserReconciliation userReconciliation, CrowdApplicationProvider crowdApplicationProvider)
-    {
+    public ConnectCrowdBase embedded(ApplicationService applicationService, UserReconciliation userReconciliation, CrowdApplicationProvider crowdApplicationProvider) {
         return new EmbeddedCrowd(applicationService, userReconciliation, crowdApplicationProvider);
     }
 
     @Override
-    public ConnectCrowdBase remote(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
-    {
+    public ConnectCrowdBase remote(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation) {
         return new RemoteCrowd(crowdClientProvider, userReconciliation);
     }
 }

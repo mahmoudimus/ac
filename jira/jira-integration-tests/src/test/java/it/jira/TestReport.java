@@ -20,34 +20,28 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 
-public class TestReport extends JiraWebDriverTestBase
-{
+public class TestReport extends JiraWebDriverTestBase {
     private static final String ADDON_KEY = AddonTestUtils.randomAddonKey();
 
-    private static final TestReportInfo firstTestReport = new TestReportInfo("Agile Test Report", "description", "agile-test-report", "projectKey", ReportCategory.AGILE)
-    {
+    private static final TestReportInfo firstTestReport = new TestReportInfo("Agile Test Report", "description", "agile-test-report", "projectKey", ReportCategory.AGILE) {
         @Override
-        public String getExpectedContextParamValue()
-        {
+        public String getExpectedContextParamValue() {
             return project.getKey();
         }
     };
-    private static final TestReportInfo secondTestReport = new TestReportInfo("Other Test Report", "some description", "other-test-report", "projectId", ReportCategory.OTHER)
-    {
+    private static final TestReportInfo secondTestReport = new TestReportInfo("Other Test Report", "some description", "other-test-report", "projectId", ReportCategory.OTHER) {
         @Override
-        public String getExpectedContextParamValue()
-        {
+        public String getExpectedContextParamValue() {
             return project.getId();
         }
     };
 
-    private static final TestReportInfo[] reportInfos = new TestReportInfo[] { firstTestReport, secondTestReport };
+    private static final TestReportInfo[] reportInfos = new TestReportInfo[]{firstTestReport, secondTestReport};
 
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void setUpClass() throws Exception
-    {
+    public static void setUpClass() throws Exception {
         logout();
 
         addon = new ConnectRunner(product, ADDON_KEY)
@@ -74,40 +68,32 @@ public class TestReport extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void tearDown() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void tearDown() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void allConnectReportsDisplayedOnProjectCentricNavigationReportPage()
-    {
+    public void allConnectReportsDisplayedOnProjectCentricNavigationReportPage() {
         ReportsPage reportsPage = goToProjectReportPage();
-        for (TestReportInfo reportInfo : reportInfos)
-        {
+        for (TestReportInfo reportInfo : reportInfos) {
             ReportsPage.Report report = getReportFromReportsPage(reportsPage, reportInfo);
             assertThat(report.getDescription().byDefaultTimeout(), is(reportInfo.description));
         }
     }
 
     @Test
-    public void connectProjectOrientedNavigationReportDisplaysIframe()
-    {
-        for (TestReportInfo reportInfo : reportInfos)
-        {
+    public void connectProjectOrientedNavigationReportDisplaysIframe() {
+        for (TestReportInfo reportInfo : reportInfos) {
             ConnectAddonEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage(reportInfo);
             assertThat(embeddedReportPage.getMessage(), is("Success"));
         }
     }
 
     @Test
-    public void contextParameterPassedToProjectOrientedNavigationReport()
-    {
-        for (TestReportInfo reportInfo : reportInfos)
-        {
+    public void contextParameterPassedToProjectOrientedNavigationReport() {
+        for (TestReportInfo reportInfo : reportInfos) {
             final ConnectAddonEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage(reportInfo);
             final Map<String, String> queryParams = embeddedReportPage.getIframeQueryParams();
 
@@ -116,33 +102,28 @@ public class TestReport extends JiraWebDriverTestBase
         }
     }
 
-    private ReportsPage goToProjectReportPage()
-    {
+    private ReportsPage goToProjectReportPage() {
         return loginAndVisit(testUserFactory.basicUser(), ReportsPage.class, project.getKey());
     }
 
-    private ReportsPage.Report getReportFromReportsPage(ReportsPage reportsPage, TestReportInfo reportInfo)
-    {
+    private ReportsPage.Report getReportFromReportsPage(ReportsPage reportsPage, TestReportInfo reportInfo) {
         return reportsPage.getReportsSection(reportInfo.reportCategory.getKey()).getReport(reportInfo.title);
     }
 
-    private ConnectAddonEmbeddedTestPage goToEmbeddedReportPage(TestReportInfo reportInfo)
-    {
+    private ConnectAddonEmbeddedTestPage goToEmbeddedReportPage(TestReportInfo reportInfo) {
         ReportsPage reportsPage = goToProjectReportPage();
         ReportsPage.Report report = getReportFromReportsPage(reportsPage, reportInfo);
         return report.visit(ConnectAddonEmbeddedTestPage.class, ADDON_KEY, reportInfo.key, true);
     }
 
-    private static abstract class TestReportInfo
-    {
+    private static abstract class TestReportInfo {
         final String title;
         final String description;
         final String key;
         final String contextParam;
         final ReportCategory reportCategory;
 
-        private TestReportInfo(final String title, final String description, final String key, final String contextParam, final ReportCategory reportCategory)
-        {
+        private TestReportInfo(final String title, final String description, final String key, final String contextParam, final ReportCategory reportCategory) {
             this.title = title;
             this.description = description;
             this.key = key;

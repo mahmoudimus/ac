@@ -12,8 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectProjectAdminTab
  * @schemaTitle Project Admin Tab Panel
  */
 @SchemaDefinition("projectAdminTabPanel")
-public class ConnectProjectAdminTabPanelModuleBean extends ConnectTabPanelModuleBean
-{
+public class ConnectProjectAdminTabPanelModuleBean extends ConnectTabPanelModuleBean {
     private static final String PROJECT_CONFIG_TAB_LOCATION_PREFIX = "atl.jira.proj.config/";
 
     /**
@@ -30,34 +29,29 @@ public class ConnectProjectAdminTabPanelModuleBean extends ConnectTabPanelModule
 
     private String location;
 
-    public ConnectProjectAdminTabPanelModuleBean() {}
+    public ConnectProjectAdminTabPanelModuleBean() {
+    }
 
-    public ConnectProjectAdminTabPanelModuleBean(ConnectProjectAdminTabPanelModuleBeanBuilder builder)
-    {
+    public ConnectProjectAdminTabPanelModuleBean(ConnectProjectAdminTabPanelModuleBeanBuilder builder) {
         super(builder);
-        if (null == location)
-        {
+        if (null == location) {
             this.location = "";
         }
     }
 
-    public static ConnectProjectAdminTabPanelModuleBeanBuilder newProjectAdminTabPanelBean()
-    {
+    public static ConnectProjectAdminTabPanelModuleBeanBuilder newProjectAdminTabPanelBean() {
         return new ConnectProjectAdminTabPanelModuleBeanBuilder();
     }
 
-    public static ConnectProjectAdminTabPanelModuleBeanBuilder newProjectAdminTabPanelBean(ConnectProjectAdminTabPanelModuleBean defaultBean)
-    {
+    public static ConnectProjectAdminTabPanelModuleBeanBuilder newProjectAdminTabPanelBean(ConnectProjectAdminTabPanelModuleBean defaultBean) {
         return new ConnectProjectAdminTabPanelModuleBeanBuilder(defaultBean);
     }
 
-    public String getLocation()
-    {
+    public String getLocation() {
         return location;
     }
 
-    public String getAbsoluteLocation()
-    {
+    public String getAbsoluteLocation() {
         return PROJECT_CONFIG_TAB_LOCATION_PREFIX + location;
     }
 

@@ -21,8 +21,7 @@ import org.slf4j.LoggerFactory;
 import static com.atlassian.fugue.Option.some;
 import static java.lang.String.format;
 
-public final class JiraAdminPage implements AdminPage
-{
+public final class JiraAdminPage implements AdminPage {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
@@ -37,24 +36,20 @@ public final class JiraAdminPage implements AdminPage
     private final String addonKey;
     private final String moduleKey;
 
-    private final Supplier<Option<PageElement>> link = new Supplier<Option<PageElement>>()
-    {
+    private final Supplier<Option<PageElement>> link = new Supplier<Option<PageElement>>() {
         @Override
-        public Option<PageElement> get()
-        {
+        public Option<PageElement> get() {
             return driver.elementExists(link()) ? some(elementFinder.find(link())) : Option.<PageElement>none();
         }
     };
 
-    public JiraAdminPage(String addonKey, String moduleKey)
-    {
+    public JiraAdminPage(String addonKey, String moduleKey) {
         this.addonKey = addonKey;
         this.moduleKey = moduleKey;
     }
 
     @Override
-    public ConnectAddonEmbeddedTestPage clickAddonLink()
-    {
+    public ConnectAddonEmbeddedTestPage clickAddonLink() {
         final PageElement linkElement = link.get().get();
         linkElement.click();
         logger.debug("Link '{}' was found and clicked.", linkElement);
@@ -62,33 +57,28 @@ public final class JiraAdminPage implements AdminPage
     }
 
     @Override
-    public PageElement findLinkElement()
-    {
+    public PageElement findLinkElement() {
         return link.get().get();
     }
 
-    public String getRemotePluginLinkHref()
-    {
+    public String getRemotePluginLinkHref() {
         return withLinkElement(linkElement -> linkElement.getAttribute("href"));
     }
 
-    public String getRemotePluginLinkText()
-    {
+    public String getRemotePluginLinkText() {
         return withLinkElement(PageElement::getText);
     }
 
-    private <T> T withLinkElement(Function<PageElement, T> function)
-    {
+    private <T> T withLinkElement(Function<PageElement, T> function) {
         return link.get().fold(
-            () -> {
-                throw new IllegalStateException(format("Could not find link '%s'", link()));
-            },
-            function
+                () -> {
+                    throw new IllegalStateException(format("Could not find link '%s'", link()));
+                },
+                function
         );
     }
 
-    private By link()
-    {
+    private By link() {
         return By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
     }
 

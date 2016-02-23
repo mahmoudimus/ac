@@ -7,10 +7,8 @@ import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 
 @Defaults(instanceId = "confluence", contextPath = "/confluence", httpPort = 1990)
-public class FixedConfluenceTestedProduct extends ConfluenceTestedProduct
-{
-    public FixedConfluenceTestedProduct(TestedProductFactory.TesterFactory<WebDriverTester> testerFactory, ProductInstance productInstance)
-    {
+public class FixedConfluenceTestedProduct extends ConfluenceTestedProduct {
+    public FixedConfluenceTestedProduct(TestedProductFactory.TesterFactory<WebDriverTester> testerFactory, ProductInstance productInstance) {
         super(testerFactory, productInstance);
     }
 }

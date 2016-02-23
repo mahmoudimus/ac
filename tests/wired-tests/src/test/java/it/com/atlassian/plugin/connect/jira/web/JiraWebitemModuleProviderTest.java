@@ -22,23 +22,20 @@ import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest {
     private final JiraTestUtil jiraTestUtil;
 
     public JiraWebitemModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
                                          TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-                                         JiraTestUtil jiraTestUtil)
-    {
+                                         JiraTestUtil jiraTestUtil) {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
         this.jiraTestUtil = jiraTestUtil;
     }
 
     @Test
-    public void singleAddonLinkWithContextPrams() throws Exception
-    {
+    public void singleAddonLinkWithContextPrams() throws Exception {
         Project project = jiraTestUtil.createProject();
         WebItemModuleDescriptor descriptor = registerWebItem("myProject={project.key}", "atl.admin/menu");
 

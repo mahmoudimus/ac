@@ -53,25 +53,24 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 1.0
  */
 @ObjectSchemaAttributes(maxProperties = 10000, docOverrides = {@FieldDocOverride
-            (
+        (
                 fieldName = "conditions",
-                description = 
+                description =
                         "Conditions can be added to display only when all the given conditions are true.\n\n" +
-                        "The only supported conditions for pages are:\n" +
-                        "<ul>\n" +
-                        "<li><code>entity_property_equal_to</code>\n" +
-                        "<li><code>feature_flag</code>\n" +
-                        "<li><code>user_is_admin</code>\n" +
-                        "<li><code>user_is_logged_in</code>\n" +
-                        "<li><code>user_is_sysadmin</code>\n" +
-                        "<li><code>addon_is_licensed</code>\n" +
-                        "</ul>"
-            )
-    }
+                                "The only supported conditions for pages are:\n" +
+                                "<ul>\n" +
+                                "<li><code>entity_property_equal_to</code>\n" +
+                                "<li><code>feature_flag</code>\n" +
+                                "<li><code>user_is_admin</code>\n" +
+                                "<li><code>user_is_logged_in</code>\n" +
+                                "<li><code>user_is_sysadmin</code>\n" +
+                                "<li><code>addon_is_licensed</code>\n" +
+                                "</ul>"
+        )
+}
 )
 @SchemaDefinition("pageModule")
-public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
-{
+public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions {
     /**
      * The url to retrieve the content from.
      * This must be relative to the add-on's baseUrl. 
@@ -87,26 +86,21 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
 
     private IconBean icon;
 
-    public ConnectPageModuleBean()
-    {
+    public ConnectPageModuleBean() {
         init();
     }
 
-    public ConnectPageModuleBean(ConnectPageModuleBeanBuilder builder)
-    {
+    public ConnectPageModuleBean(ConnectPageModuleBeanBuilder builder) {
         super(builder);
         init();
     }
 
-    private void init()
-    {
+    private void init() {
         // Note: weight is not defaulted here. Defaulting is done later by delegating to the product accessor
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
-        if (null == location)
-        {
+        if (null == location) {
             this.location = "";
         }
     }
@@ -116,8 +110,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * @return the URL of the page
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
@@ -133,8 +126,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * @return the weight of the page
      */
-    public Integer getWeight()
-    {
+    public Integer getWeight() {
         return weight;
     }
 
@@ -145,8 +137,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * @return the icon associated with the link to the page
      */
-    public IconBean getIcon()
-    {
+    public IconBean getIcon() {
         return icon;
     }
 
@@ -165,7 +156,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * <li><a href="https://developer.atlassian.com/display/JIRADEV/Web+Fragments">JIRA locations</a></li>
      * <li><a href="https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules">Confluence locations</a></li>
      * </ul>
-     *  
+     *
      * If the <code>location</code> property is not specified, a default location is used:
      *
      * JIRA:
@@ -188,22 +179,19 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * In this case, set the value of <code>location</code> to "none".
      *
      * @return the location of the link to the page
-     */ 
-    public String getLocation()
-    {
+     */
+    public String getLocation() {
         return location;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         Objects.ToStringHelper toStringHelper = Objects.toStringHelper(this);
         appendToStringFields(toStringHelper);
         return toStringHelper.toString();
     }
 
-    protected void appendToStringFields(Objects.ToStringHelper toStringHelper)
-    {
+    protected void appendToStringFields(Objects.ToStringHelper toStringHelper) {
         toStringHelper
                 .add("name", getName())
                 .add("key", getRawKey())
@@ -214,15 +202,12 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof ConnectPageModuleBean && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof ConnectPageModuleBean && super.equals(otherObj))) {
             return false;
         }
 
@@ -237,8 +222,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(11, 23)
                 .appendSuper(super.hashCode())
                 .append(url)
@@ -249,13 +233,11 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
 
-    public static ConnectPageModuleBeanBuilder newPageBean()
-    {
+    public static ConnectPageModuleBeanBuilder newPageBean() {
         return new ConnectPageModuleBeanBuilder();
     }
 
-    public static ConnectPageModuleBeanBuilder newPageBean(ConnectPageModuleBean defaultBean)
-    {
+    public static ConnectPageModuleBeanBuilder newPageBean(ConnectPageModuleBean defaultBean) {
         return new ConnectPageModuleBeanBuilder(defaultBean);
     }
 }

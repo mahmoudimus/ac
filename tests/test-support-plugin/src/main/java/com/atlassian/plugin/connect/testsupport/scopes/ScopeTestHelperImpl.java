@@ -23,23 +23,19 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static java.util.Collections.singletonList;
 
-public class ScopeTestHelperImpl implements ScopeTestHelper
-{
+public class ScopeTestHelperImpl implements ScopeTestHelper {
     private static final Logger log = LoggerFactory.getLogger(ScopeTestHelperImpl.class);
 
     private final TestPluginInstaller testPluginInstaller;
 
-    public ScopeTestHelperImpl(TestPluginInstaller testPluginInstaller) throws IOException
-    {
+    public ScopeTestHelperImpl(TestPluginInstaller testPluginInstaller) throws IOException {
         this.testPluginInstaller = testPluginInstaller;
     }
 
     @Override
-    public Map<ScopeName, Plugin> installScopedAddons() throws IOException
-    {
+    public Map<ScopeName, Plugin> installScopedAddons() throws IOException {
         final Map<ScopeName, Plugin> installedPlugins = new HashMap<>();
-        for (ScopeName scopeName : ScopeName.values())
-        {
+        for (ScopeName scopeName : ScopeName.values()) {
             ConnectAddonBean addonBean = createAddonBeanWithScope(scopeName);
             final Plugin addon = testPluginInstaller.installAddon(addonBean);
             installedPlugins.put(scopeName, addon);
@@ -53,32 +49,24 @@ public class ScopeTestHelperImpl implements ScopeTestHelper
     }
 
     @Override
-    public void uninstallScopedAddons(Map<ScopeName, Plugin> installedPlugins)
-    {
-        for (Plugin plugin : installedPlugins.values())
-        {
-            try
-            {
+    public void uninstallScopedAddons(Map<ScopeName, Plugin> installedPlugins) {
+        for (Plugin plugin : installedPlugins.values()) {
+            try {
                 testPluginInstaller.uninstallAddon(plugin);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 log.error(String.format("Unable to uninstall add-on '%s'", plugin.getKey()), e);
             }
         }
     }
 
-    private String getPluginKeyForScopeName(final ScopeName scopeName)
-    {
-        if (scopeName == null)
-        {
+    private String getPluginKeyForScopeName(final ScopeName scopeName) {
+        if (scopeName == null) {
             return "NO_SCOPE" + '-' + AddonUtil.randomPluginKey();
         }
         return scopeName.toString() + '-' + AddonUtil.randomPluginKey();
     }
 
-    private ConnectAddonBean createAddonBeanWithScope(ScopeName scopeName)
-    {
+    private ConnectAddonBean createAddonBeanWithScope(ScopeName scopeName) {
         final String key = getPluginKeyForScopeName(scopeName);
         ConnectAddonBeanBuilder connectAddonBeanBuilder = newConnectAddonBean()
                 .withKey(key)
@@ -98,8 +86,7 @@ public class ScopeTestHelperImpl implements ScopeTestHelper
                         .build());
 
         // scopes are optional so that we can have "no scopes" test classes
-        if (null != scopeName)
-        {
+        if (null != scopeName) {
             connectAddonBeanBuilder = connectAddonBeanBuilder.withScopes(new HashSet<>(singletonList(scopeName)));
         }
 

@@ -40,8 +40,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of general page in JIRA
  */
-public class TestGeneralPage extends JiraWebDriverTestBase
-{
+public class TestGeneralPage extends JiraWebDriverTestBase {
     private static final String KEY_MY_CONTEXT_PAGE = "my-context-page";
     private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String PAGE_NAME = "My Awesome Page";
@@ -59,8 +58,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         addonKey = AddonTestUtils.randomAddonKey();
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
@@ -74,36 +72,32 @@ public class TestGeneralPage extends JiraWebDriverTestBase
                                 .withWeight(1234)
                                 .build()
                         , newPageBean()
-                        .withName(new I18nProperty(CONTEXT_PAGE_NAME, null))
-                        .withKey(KEY_MY_CONTEXT_PAGE)
-                        .withUrl("/pg?project_id={project.id}&project_key={project.key}")
-                        .withConditions(newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
-                                "?project_id={project.id}&project_key={project.key}").build())
-                        .withWeight(1234)
-                        .build())
+                                .withName(new I18nProperty(CONTEXT_PAGE_NAME, null))
+                                .withKey(KEY_MY_CONTEXT_PAGE)
+                                .withUrl("/pg?project_id={project.id}&project_key={project.key}")
+                                .withConditions(newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
+                                        "?project_id={project.id}&project_key={project.key}").build())
+                                .withWeight(1234)
+                                .build())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Before
-    public void beforeEachTest()
-    {
-        this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
+    public void beforeEachTest() {
+        this.awesomePageModuleKey = addonAndModuleKey(addonKey, KEY_MY_AWESOME_PAGE);
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException {
         loginAndVisit(testUserFactory.basicUser(), JiraViewProjectPage.class, project.getKey());
 
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, addonKey);
@@ -115,15 +109,14 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         assertThat(addonContentsPage.isFullSize(), is(true));
 
         // check iframe url params
-        Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
+        Map<String, String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
         verifyContainsStandardAddonQueryParameters(iframeQueryParams, product.getProductInstance().getContextPath());
         assertThat(iframeQueryParams, hasEntry("project_key", project.getKey()));
         assertThat(iframeQueryParams, hasEntry("project_id", project.getId()));
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
+    public void pageIsNotAccessibleWithFalseCondition() {
         loginAndVisit(testUserFactory.basicUser(), HomePage.class);
 
         // web item should be displayed

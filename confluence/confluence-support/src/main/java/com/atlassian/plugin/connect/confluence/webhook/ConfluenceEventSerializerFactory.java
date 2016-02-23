@@ -20,15 +20,13 @@ import java.util.List;
  * can be transmitted via the WebHookPublisher.
  */
 @ConfluenceComponent
-public final class ConfluenceEventSerializerFactory implements EventSerializerFactory<ConfluenceEvent>
-{
+public final class ConfluenceEventSerializerFactory implements EventSerializerFactory<ConfluenceEvent> {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceEventSerializerFactory.class);
 
     private final List<ConfluenceEventMapper> mappers;
 
     @Autowired
-    public ConfluenceEventSerializerFactory(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+    public ConfluenceEventSerializerFactory(UserManager userManager, SettingsManager confluenceSettingsManager) {
         // This list is deliberately ordered. More-specific mappers such as PageMoveEventMapper must appear in the
         // list _before_ less-specific mappers such as PageEventMapper, or else they will never get invoked.
         mappers = ImmutableList.of(
@@ -50,12 +48,9 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
     }
 
     @Override
-    public EventSerializer create(ConfluenceEvent event)
-    {
-        for (ConfluenceEventMapper mapper : mappers)
-        {
-            if (mapper.handles(event))
-            {
+    public EventSerializer create(ConfluenceEvent event) {
+        for (ConfluenceEventMapper mapper : mappers) {
+            if (mapper.handles(event)) {
                 return EventSerializers.forMap(event, mapper.toMap(event));
             }
         }

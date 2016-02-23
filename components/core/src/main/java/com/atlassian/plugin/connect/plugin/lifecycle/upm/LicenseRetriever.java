@@ -14,28 +14,23 @@ import javax.annotation.Nonnull;
  * Retrieves a license for a given plugin
  */
 @Component
-public class LicenseRetriever
-{
+public class LicenseRetriever {
     private final RemotePluginLicenseService remotePluginLicenseService;
 
     @Autowired
-    public LicenseRetriever(RemotePluginLicenseService remotePluginLicenseService)
-    {
+    public LicenseRetriever(RemotePluginLicenseService remotePluginLicenseService) {
         this.remotePluginLicenseService = remotePluginLicenseService;
     }
 
-    public Option<PluginLicense> getLicense(@Nonnull String pluginKey)
-    {
+    public Option<PluginLicense> getLicense(@Nonnull String pluginKey) {
         return remotePluginLicenseService.getRemotePluginLicense(Preconditions.checkNotNull(pluginKey, "pluginKey"));
     }
 
-    public LicenseStatus getLicenseStatus(String pluginKey)
-    {
+    public LicenseStatus getLicenseStatus(String pluginKey) {
         return getLicense(pluginKey).map(input -> LicenseStatus.fromBoolean(input.isActive())).getOrElse(LicenseStatus.NONE);
     }
 
-    public String getServiceEntitlementNumber(String pluginKey)
-    {
+    public String getServiceEntitlementNumber(String pluginKey) {
         return getLicense(pluginKey).flatMap(PluginLicense::getSupportEntitlementNumber).getOrElse((String) null);
     }
 

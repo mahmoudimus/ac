@@ -16,8 +16,7 @@ import org.openqa.selenium.By;
 /**
  *
  */
-public class ConfluenceAdminPage implements AdminPage
-{
+public class ConfluenceAdminPage implements AdminPage {
     @Inject
     private PageElementFinder elementFinder;
 
@@ -29,34 +28,28 @@ public class ConfluenceAdminPage implements AdminPage
     private PageElement linkElement;
 
 
-    public ConfluenceAdminPage(String addonKey, String moduleKey)
-    {
+    public ConfluenceAdminPage(String addonKey, String moduleKey) {
         this.addonKey = addonKey;
         this.moduleKey = moduleKey;
     }
 
     @Override
-    public ConnectAddonEmbeddedTestPage clickAddonLink()
-    {
+    public ConnectAddonEmbeddedTestPage clickAddonLink() {
         findLinkElement().click();
         return pageBinder.bind(ConnectAddonEmbeddedTestPage.class, addonKey, moduleKey, true);
     }
 
-    public String getRemotePluginLinkHref()
-    {
+    public String getRemotePluginLinkHref() {
         return findLinkElement().getAttribute("href");
     }
 
-    public String getRemotePluginLinkText()
-    {
+    public String getRemotePluginLinkText() {
         return findLinkElement().getText();
     }
 
     @Override
-    public PageElement findLinkElement()
-    {
-        if (linkElement == null)
-        {
+    public PageElement findLinkElement() {
+        if (linkElement == null) {
             // pageKey == linkId
             linkElement = elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey)), TimeoutType.DEFAULT);
         }

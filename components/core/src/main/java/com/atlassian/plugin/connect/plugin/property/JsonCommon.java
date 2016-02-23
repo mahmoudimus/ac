@@ -9,19 +9,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 /**
  * This class contains common JSON methods.
  */
-public class JsonCommon
-{
-    private JsonCommon() {}
+public class JsonCommon {
+    private JsonCommon() {
+    }
 
     public static Optional<JsonNode> parseStringToJson(String rawJson) {
         ObjectMapper objectMapper = new ObjectMapper();
         final JsonNode parsedJson;
-        try
-        {
+        try {
             parsedJson = objectMapper.readTree(rawJson);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             return Optional.empty();
         }
         return Optional.of(parsedJson);

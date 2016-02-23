@@ -13,17 +13,14 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Collection;
 
-@Application ("confluence")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class ConfluenceDownloadScopesTest extends ScopeManagerTest
-{
-    public ConfluenceDownloadScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
+@Application("confluence")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class ConfluenceDownloadScopesTest extends ScopeManagerTest {
+    public ConfluenceDownloadScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
 
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         // this is a small scope so the test is exhaustive
         return Arrays.asList(
                 // basic case

@@ -9,10 +9,8 @@ import com.google.common.collect.ImmutableMap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ConnectAddonUserUtil
-{
-    public static String usernameForAddon(String addonKey)
-    {
+public class ConnectAddonUserUtil {
+    public static String usernameForAddon(String addonKey) {
         checkNotNull(addonKey);
         return Constants.ADDON_USERNAME_PREFIX + addonKey;
     }
@@ -23,8 +21,7 @@ public class ConnectAddonUserUtil
      * @param applicationName the name of the application the attribute was created from. This is mostly for an audit trail.
      * @return An ImmutableMap allowing the marking of a user as a Connect Addon user
      */
-    public static ImmutableMap<String, Set<String>> buildConnectAddonUserAttribute(String applicationName)
-    {
+    public static ImmutableMap<String, Set<String>> buildConnectAddonUserAttribute(String applicationName) {
         return ImmutableMap.of(buildAttributeConnectAddonAttributeName(applicationName), Collections.singleton("true"));
     }
 
@@ -33,8 +30,7 @@ public class ConnectAddonUserUtil
      * @param applicationName the name of the application the attribute was created from. This is mostly for an audit trail.
      * @return String representation of the Connect Addon User attribute name. <em>synch.APPLICATION_NAME.atlassian-connect-user</em>
      */
-    public static String buildAttributeConnectAddonAttributeName(String applicationName)
-    {
+    public static String buildAttributeConnectAddonAttributeName(String applicationName) {
         return "synch." + applicationName + ".atlassian-connect-user";
     }
 
@@ -43,8 +39,7 @@ public class ConnectAddonUserUtil
      * @param user the user to validate
      * @return true if the user has a valid username
      */
-    public static boolean validAddonUsername(User user)
-    {
+    public static boolean validAddonUsername(User user) {
         String name = user.getName();
         return name != null && name.startsWith(Constants.ADDON_USERNAME_PREFIX);
     }
@@ -54,13 +49,11 @@ public class ConnectAddonUserUtil
      * @param user the user to validate
      * @return true if the email address is valid
      */
-    public static boolean validAddonEmailAddress(User user)
-    {
+    public static boolean validAddonEmailAddress(User user) {
         return Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress());
     }
 
-    public static class Constants
-    {
+    public static class Constants {
         /**
          * All Addon usernames are prefixed with this string
          */

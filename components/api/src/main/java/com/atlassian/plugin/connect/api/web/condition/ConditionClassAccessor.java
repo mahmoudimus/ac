@@ -10,8 +10,7 @@ import java.util.Optional;
  *
  * @see Condition
  */
-public interface ConditionClassAccessor
-{
+public interface ConditionClassAccessor {
 
     /**
      * Returns a condition class for use with the given condition element <b>where the full host application context is

@@ -17,27 +17,28 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class SpaceToolsContextInterceptorTest
-{
-    @Mock private SpaceToolsIFrameAction action;
-    @Mock private ActionInvocation actionInvocation;
-    @Mock private ActionProxy actionProxy;
-    @Mock private ActionConfig actionConfig;
+@RunWith(MockitoJUnitRunner.class)
+public class SpaceToolsContextInterceptorTest {
+    @Mock
+    private SpaceToolsIFrameAction action;
+    @Mock
+    private ActionInvocation actionInvocation;
+    @Mock
+    private ActionProxy actionProxy;
+    @Mock
+    private ActionConfig actionConfig;
 
     private SpaceToolsContextInterceptor interceptor;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         interceptor = new SpaceToolsContextInterceptor();
         when(actionInvocation.getProxy()).thenReturn(actionProxy);
         when(actionProxy.getConfig()).thenReturn(actionConfig);
     }
 
     @Test
-    public void testSpaceToolsActionIntercepted() throws Exception
-    {
+    public void testSpaceToolsActionIntercepted() throws Exception {
         SpaceToolsTabContext context = mock(SpaceToolsTabContext.class);
         when(actionConfig.getParams()).thenReturn(ImmutableMap.of("context", context));
         when(actionInvocation.getAction()).thenReturn(action);
@@ -46,8 +47,7 @@ public class SpaceToolsContextInterceptorTest
     }
 
     @Test
-    public void testNonSpaceToolsActionIgnored() throws Exception
-    {
+    public void testNonSpaceToolsActionIgnored() throws Exception {
         when(actionInvocation.getAction()).thenReturn(mock(Action.class));
         interceptor.before(actionInvocation);
         verify(actionInvocation).getAction();

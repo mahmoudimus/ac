@@ -13,8 +13,7 @@ import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
  * Provided by the host application to allow connect to manage add-on users and check whether impersonated users
  * are active.
  */
-public interface ConnectUserService
-{
+public interface ConnectUserService {
     /**
      * Disables the add-on user for the add-on with key {@code addonKey}
      *
@@ -55,5 +54,5 @@ public interface ConnectUserService
      */
     @Nonnull
     String provisionAddonUserWithScopes(@Nonnull ConnectAddonBean addon,
-            @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException;
+                                        @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException;
 }

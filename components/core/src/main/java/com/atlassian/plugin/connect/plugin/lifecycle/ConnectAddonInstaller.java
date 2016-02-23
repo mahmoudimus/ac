@@ -38,8 +38,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class ConnectAddonInstaller
-{
+public class ConnectAddonInstaller {
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
     private final EventPublisher eventPublisher;
@@ -65,8 +64,7 @@ public class ConnectAddonInstaller
                                  ConnectAddonRegistry addonRegistry,
                                  ConnectAddonBeanModuleValidatorService connectAddonBeanModuleValidatorService,
                                  ConnectApplinkManager connectApplinkManager,
-                                 ConnectUserService connectUserService)
-    {
+                                 ConnectUserService connectUserService) {
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
         this.eventPublisher = eventPublisher;
@@ -80,8 +78,7 @@ public class ConnectAddonInstaller
         this.connectUserService = connectUserService;
     }
 
-    public Plugin install(String jsonDescriptor) throws ConnectAddonInstallException
-    {
+    public Plugin install(String jsonDescriptor) throws ConnectAddonInstallException {
         String pluginKey = null;
         Plugin addonPluginWrapper;
         AddonSettings previousSettings = new AddonSettings();
@@ -94,8 +91,7 @@ public class ConnectAddonInstaller
 
         long startTime = System.currentTimeMillis();
 
-        try
-        {
+        try {
             ConnectAddonBean addon = connectAddonBeanFactory.fromJson(jsonDescriptor);
             connectAddonBeanModuleValidatorService.validateModules(addon, new InstallationModuleValidationExceptionHandler());
 
@@ -104,19 +100,15 @@ public class ConnectAddonInstaller
             previousSettings = addonRegistry.getAddonSettings(pluginKey);
             targetState = PluginState.valueOf(previousSettings.getRestartState());
 
-            if (maybePreviousApplink.isPresent() && !Strings.isNullOrEmpty(previousSettings.getDescriptor()))
-            {
+            if (maybePreviousApplink.isPresent() && !Strings.isNullOrEmpty(previousSettings.getDescriptor())) {
                 ApplicationLink applink = maybePreviousApplink.get();
                 baseUrl = applink.getRpcUrl().toString();
                 maybePreviousAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
                 maybePreviousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink);
                 reusePreviousPublicKeyOrSharedSecret = true; // do NOT issue a new secret every time the add-on vendor updates their descriptor
-            }
-            else if (PluginState.UNINSTALLED.equals(targetState))
-            {
+            } else if (PluginState.UNINSTALLED.equals(targetState)) {
                 // has been installed and then uninstalled: we should sign the new installation with the old secret (if there was one)
-                if (!StringUtils.isEmpty(previousSettings.getSecret()))
-                {
+                if (!StringUtils.isEmpty(previousSettings.getSecret())) {
                     maybePreviousPublicKeyOrSharedSecret = Optional.of(previousSettings.getSecret());
                     // leave reusePreviousPublicKeyOrSharedSecret=false because we crossed an uninstall/reinstall boundary
                 }
@@ -130,15 +122,12 @@ public class ConnectAddonInstaller
 
             PluginState actualState = addonRegistry.getRestartState(pluginKey);
             addonPluginWrapper = addonToPluginFactory.create(addon, actualState);
-        }
-        catch (Exception e)
-        {
-            if (null != pluginKey)
-            {
+        } catch (Exception e) {
+            if (null != pluginKey) {
                 publishInstallFailedEvent(pluginKey, e);
                 undoFailedInstallation(pluginKey, previousSettings, targetState, maybePreviousApplink, maybePreviousAuthType,
-                                       maybePreviousPublicKeyOrSharedSecret, baseUrl,
-                                       e);
+                        maybePreviousPublicKeyOrSharedSecret, baseUrl,
+                        e);
             }
             Throwables.propagateIfInstanceOf(e, ConnectAddonInstallException.class);
             throw new ConnectAddonInstallException(e.getMessage(), e);
@@ -151,29 +140,23 @@ public class ConnectAddonInstaller
         return addonPluginWrapper;
     }
 
-    private void undoFailedInstallation(String pluginKey, AddonSettings previousSettings, PluginState targetState, Optional<ApplicationLink> maybePreviousApplink, Optional<AuthenticationType> maybePreviousAuthType, Optional<String> maybePreviousPublicKeyOrSharedSecret, String baseUrl, Exception e) throws ConnectAddonInstallException
-    {
+    private void undoFailedInstallation(String pluginKey, AddonSettings previousSettings, PluginState targetState, Optional<ApplicationLink> maybePreviousApplink, Optional<AuthenticationType> maybePreviousAuthType, Optional<String> maybePreviousPublicKeyOrSharedSecret, String baseUrl, Exception e) throws ConnectAddonInstallException {
         if (!Strings.isNullOrEmpty(previousSettings.getDescriptor())
-            && maybePreviousApplink.isPresent()
-            && maybePreviousAuthType.isPresent())
-        {
+                && maybePreviousApplink.isPresent()
+                && maybePreviousAuthType.isPresent()) {
             rollBackToPreviousVersion(pluginKey, previousSettings, targetState, maybePreviousAuthType, maybePreviousPublicKeyOrSharedSecret, baseUrl, e);
-        }
-        else
-        {
+        } else {
             removeFailedInstallation(pluginKey, previousSettings, e);
         }
     }
 
-    private void removeFailedInstallation(String pluginKey, AddonSettings previousSettings, Exception e)
-    {
+    private void removeFailedInstallation(String pluginKey, AddonSettings previousSettings, Exception e) {
         log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...", e);
         connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
 
         // if we were trying to reinstall after uninstalling then leave the previous "uninstalled" settings behind
         // (i.e. nothing changed as a result of a failed re-installation attempt)
-        if (PluginState.UNINSTALLED.equals(PluginState.valueOf(previousSettings.getRestartState())))
-        {
+        if (PluginState.UNINSTALLED.equals(PluginState.valueOf(previousSettings.getRestartState()))) {
             log.error("An exception occurred while installing the plugin '["
                     + pluginKey
                     + "]. Restoring previous uninstalled-remnant settings...", e);
@@ -181,97 +164,71 @@ public class ConnectAddonInstaller
         }
     }
 
-    private void rollBackToPreviousVersion(String pluginKey, AddonSettings previousSettings, PluginState targetState, Optional<AuthenticationType> maybePreviousAuthType, Optional<String> maybePreviousPublicKeyOrSharedSecret, String baseUrl, Exception e) throws ConnectAddonInstallException
-    {
+    private void rollBackToPreviousVersion(String pluginKey, AddonSettings previousSettings, PluginState targetState, Optional<AuthenticationType> maybePreviousAuthType, Optional<String> maybePreviousPublicKeyOrSharedSecret, String baseUrl, Exception e) throws ConnectAddonInstallException {
         log.error("An exception occurred while installing the plugin '["
-                  + pluginKey
-                  + "]. Restoring previous version...", e);
+                + pluginKey
+                + "]. Restoring previous version...", e);
         ConnectAddonBean previousAddon = connectAddonBeanFactory.fromJson(previousSettings.getDescriptor());
         String addonUserKey = this.connectUserService.getOrCreateAddonUserName(pluginKey,
                 previousAddon.getName());
         addonRegistry.storeAddonSettings(pluginKey, previousSettings);
         connectApplinkManager.createAppLink(previousAddon,
-                                            baseUrl,
-                                            maybePreviousAuthType.get(),
-                                            maybePreviousPublicKeyOrSharedSecret.orElse(""),
-                                            addonUserKey);
+                baseUrl,
+                maybePreviousAuthType.get(),
+                maybePreviousPublicKeyOrSharedSecret.orElse(""),
+                addonUserKey);
         setAddonState(targetState, pluginKey);
     }
 
     // add some extra detail to the analytics events, if we have it, to facilitate analysis
-    private void publishInstallFailedEvent(String pluginKey, Exception e)
-    {
-        if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackHttpCodeException)
-        {
+    private void publishInstallFailedEvent(String pluginKey, Exception e) {
+        if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackHttpCodeException) {
             eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, ((LifecycleCallbackHttpCodeException) e.getCause()).getHttpCode(), e.getMessage(),
-                                                                      ConnectAddonLifecycleFailedEvent.Category.ADDON));
-        }
-        else if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackBadResponseException)
-        {
+                    ConnectAddonLifecycleFailedEvent.Category.ADDON));
+        } else if (e instanceof ConnectAddonInstallException && e.getCause() instanceof LifecycleCallbackBadResponseException) {
             eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.ADDON));
-        }
-        else
-        {
+        } else {
             eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage(), ConnectAddonLifecycleFailedEvent.Category.CONNECT));
         }
     }
 
-    private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddonInstallException
-    {
-        if (null == targetState)
-        {
+    private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddonInstallException {
+        if (null == targetState) {
             return;
-        }
-        else if (targetState == PluginState.ENABLED)
-        {
-            try
-            {
+        } else if (targetState == PluginState.ENABLED) {
+            try {
                 connectAddonManager.enableConnectAddon(pluginKey);
-            }
-            catch (ConnectAddonEnableException e)
-            {
+            } catch (ConnectAddonEnableException e) {
                 log.error("Could not enable add-on " + e.getAddonKey() + " during its installation: " + e.getMessage(), e);
             }
-        }
-        else if (targetState == PluginState.DISABLED)
-        {
-            try
-            {
+        } else if (targetState == PluginState.DISABLED) {
+            try {
                 connectAddonManager.disableConnectAddon(pluginKey);
-            }
-            catch (ConnectAddonDisableException cause)
-            {
+            } catch (ConnectAddonDisableException cause) {
                 throw new ConnectAddonInstallException("Could not disable add-on", cause);
             }
         }
     }
 
-    private void removeOldPlugin(String pluginKey)
-    {
+    private void removeOldPlugin(String pluginKey) {
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
 
         /*!
         With the app key validated for the user, the previous app with that key,
         if any, is uninstalled.
         */
-        if (plugin != null)
-        {
+        if (plugin != null) {
             pluginController.uninstall(plugin);
 
             final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
-            if (appLink != null)
-            {
+            if (appLink != null) {
                 // Blow away the applink
                 oAuthLinkManager.unassociateProviderWithLink(appLink);
                 connectApplinkManager.deleteAppLink(pluginKey);
             }
-        }
-        else if (connectAddonManager.hasDescriptor(pluginKey))
-        {
+        } else if (connectAddonManager.hasDescriptor(pluginKey)) {
             connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
-        }
-        else
-        {
+        } else {
             /*!
              However, if there is no previous app, then the app key is checked
              to ensure it doesn't already exist as a OAuth client key.  This
@@ -279,30 +236,24 @@ public class ConnectAddonInstaller
              link from getting that link removed when the app is uninstalled.
              If it was created by connect then it is ok
             */
-            if (oAuthLinkManager.isAppAssociated(pluginKey))
-            {
+            if (oAuthLinkManager.isAppAssociated(pluginKey)) {
                 final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
-                if (appLink != null)
-                {
+                if (appLink != null) {
                     // Is an applink created by connect.
                     // Blow away the applink
                     oAuthLinkManager.unassociateProviderWithLink(appLink);
                     connectApplinkManager.deleteAppLink(pluginKey);
-                }
-                else
-                {
+                } else {
                     throw new PermissionDeniedException(pluginKey, "App key '" + pluginKey + "' is already associated with an OAuth link");
                 }
             }
         }
     }
 
-    private static class InstallationModuleValidationExceptionHandler extends ModuleValidationExceptionHandler
-    {
+    private static class InstallationModuleValidationExceptionHandler extends ModuleValidationExceptionHandler {
 
         @Override
-        public void acceptModuleValidationCause(ConnectModuleValidationException e)
-        {
+        public void acceptModuleValidationCause(ConnectModuleValidationException e) {
             InvalidDescriptorException exception = new InvalidDescriptorException(e.getMessage(),
                     e.getI18nKey(), e.getI18nParameters());
             exception.initCause(e);

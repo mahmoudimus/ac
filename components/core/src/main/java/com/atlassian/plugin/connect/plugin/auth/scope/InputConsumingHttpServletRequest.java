@@ -14,8 +14,7 @@ import java.io.InputStreamReader;
 /**
  * Consumes the input stream for a request, allowing multiple executions
  */
-public class InputConsumingHttpServletRequest extends HttpServletRequestWrapper
-{
+public class InputConsumingHttpServletRequest extends HttpServletRequestWrapper {
     private byte[] input = null;
 
     /**
@@ -24,30 +23,24 @@ public class InputConsumingHttpServletRequest extends HttpServletRequestWrapper
      * @param request the HTTP servlet request
      * @throws IllegalArgumentException if the request is null
      */
-    public InputConsumingHttpServletRequest(HttpServletRequest request)
-    {
+    public InputConsumingHttpServletRequest(HttpServletRequest request) {
         super(request);
     }
 
     @Override
-    public ServletInputStream getInputStream() throws IOException
-    {
+    public ServletInputStream getInputStream() throws IOException {
         lazilyLoadInput();
         final ByteArrayInputStream bin = new ByteArrayInputStream(input);
-        return new ServletInputStream()
-        {
+        return new ServletInputStream() {
             @Override
-            public int read() throws IOException
-            {
+            public int read() throws IOException {
                 return bin.read();
             }
         };
     }
 
-    private void lazilyLoadInput() throws IOException
-    {
-        if (input == null)
-        {
+    private void lazilyLoadInput() throws IOException {
+        if (input == null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             IOUtils.copy(super.getInputStream(), bout);
             input = bout.toByteArray();
@@ -55,8 +48,7 @@ public class InputConsumingHttpServletRequest extends HttpServletRequestWrapper
     }
 
     @Override
-    public BufferedReader getReader() throws IOException
-    {
+    public BufferedReader getReader() throws IOException {
         lazilyLoadInput();
         return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(input), "UTF-8"));
     }

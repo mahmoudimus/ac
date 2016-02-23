@@ -22,8 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @ConfluenceComponent
-public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<ConfluenceUser>
-{
+public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<ConfluenceUser> {
     public static final String PAGE_ID = "page.id";
     public static final String PAGE_VERSION = "page.version";
     public static final String PAGE_TYPE = "page.type";
@@ -51,8 +50,7 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
             UserManager userManager,
             SpaceManager spaceManager,
             PageManager pageManager,
-            @Qualifier ("contentEntityManager") ContentEntityManager contentEntityManager)
-    {
+            @Qualifier("contentEntityManager") ContentEntityManager contentEntityManager) {
         super(pluginAccessor, ConfluenceUser.class);
         this.permissionManager = permissionManager;
         this.userAccessor = userAccessor;
@@ -64,62 +62,50 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
     }
 
     @Override
-    protected ConfluenceUser getCurrentUser()
-    {
+    protected ConfluenceUser getCurrentUser() {
         UserKey userKey = userManager.getRemoteUserKey();
         return userKey == null ? null : userAccessor.getExistingUserByKey(userKey);
     }
 
     @Override
-    protected Iterable<PermissionCheck<ConfluenceUser>> getPermissionChecks()
-    {
+    protected Iterable<PermissionCheck<ConfluenceUser>> getPermissionChecks() {
         return permissionChecks;
     }
 
-    private Iterable<PermissionCheck<ConfluenceUser>> constructPermissionChecks()
-    {
+    private Iterable<PermissionCheck<ConfluenceUser>> constructPermissionChecks() {
         return ImmutableList.of(
-                new PermissionCheck<ConfluenceUser>()
-                {
+                new PermissionCheck<ConfluenceUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return SPACE_KEY;
                     }
 
                     @Override
-                    public boolean hasPermission(final String spaceKey, final ConfluenceUser user)
-                    {
+                    public boolean hasPermission(final String spaceKey, final ConfluenceUser user) {
                         Space space = spaceManager.getSpace(spaceKey);
                         return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
                     }
                 },
-                new PermissionChecks.LongValue<ConfluenceUser>()
-                {
+                new PermissionChecks.LongValue<ConfluenceUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return SPACE_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final long spaceId, final ConfluenceUser user)
-                    {
+                    public boolean hasPermission(final long spaceId, final ConfluenceUser user) {
                         Space space = spaceManager.getSpace(spaceId);
                         return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
                     }
                 },
-                new PermissionChecks.LongValue<ConfluenceUser>()
-                {
+                new PermissionChecks.LongValue<ConfluenceUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return CONTENT_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final long contentId, final ConfluenceUser user)
-                    {
+                    public boolean hasPermission(final long contentId, final ConfluenceUser user) {
                         ContentEntityObject content = contentEntityManager.getById(contentId);
                         return content != null && permissionManager.hasPermission(user, Permission.VIEW, content);
                     }
@@ -127,49 +113,40 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
                 PermissionChecks.<ConfluenceUser>alwaysAllowed(CONTENT_TYPE),
                 PermissionChecks.<ConfluenceUser>alwaysAllowed(CONTENT_VERSION),
                 PermissionChecks.<ConfluenceUser>alwaysAllowed(CONTENT_PLUGIN),
-                new PermissionChecks.LongValue<ConfluenceUser>()
-                {
+                new PermissionChecks.LongValue<ConfluenceUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return PAGE_ID;
                     }
 
                     @Override
-                    public boolean hasPermission(final long pageId, final ConfluenceUser user)
-                    {
+                    public boolean hasPermission(final long pageId, final ConfluenceUser user) {
                         AbstractPage page = pageManager.getAbstractPage(pageId);
                         return page != null && permissionManager.hasPermission(user, Permission.VIEW, page);
                     }
                 },
                 PermissionChecks.<ConfluenceUser>alwaysAllowed(PAGE_TYPE),
                 PermissionChecks.<ConfluenceUser>alwaysAllowed(PAGE_VERSION),
-                new PermissionCheck<ConfluenceUser>()
-                {
+                new PermissionCheck<ConfluenceUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return PROFILE_KEY;
                     }
 
                     @Override
-                    public boolean hasPermission(final String profileKey, final ConfluenceUser currentUser)
-                    {
+                    public boolean hasPermission(final String profileKey, final ConfluenceUser currentUser) {
                         ConfluenceUser profileUser = userAccessor.getExistingUserByKey(new UserKey(profileKey));
                         return profileUser != null && permissionManager.hasPermission(currentUser, Permission.VIEW, profileUser);
                     }
                 },
-                new PermissionCheck<ConfluenceUser>()
-                {
+                new PermissionCheck<ConfluenceUser>() {
                     @Override
-                    public String getParameterName()
-                    {
+                    public String getParameterName() {
                         return PROFILE_NAME;
                     }
 
                     @Override
-                    public boolean hasPermission(final String profileName, final ConfluenceUser currentUser)
-                    {
+                    public boolean hasPermission(final String profileName, final ConfluenceUser currentUser) {
                         ConfluenceUser profileUser = userAccessor.getUserByName(profileName);
                         return profileUser != null && permissionManager.hasPermission(currentUser, Permission.VIEW, profileUser);
                     }

@@ -11,8 +11,7 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMa
 /**
  * Represents any type of addon that has a link (web item) and content (servlet) Includes the tab panels and pages
  */
-public class LinkedRemoteContent
-{
+public class LinkedRemoteContent {
     private RemoteWebItem webItem;
     private final String pageKey;
     private final ItemMatchingMode mode;
@@ -23,13 +22,11 @@ public class LinkedRemoteContent
     @Inject
     private PageBinder pageBinder;
 
-    public LinkedRemoteContent(ItemMatchingMode mode, String id, Optional<String> dropDownLinkId, String pageKey)
-    {
+    public LinkedRemoteContent(ItemMatchingMode mode, String id, Optional<String> dropDownLinkId, String pageKey) {
         this(mode, id, dropDownLinkId, pageKey, "");
     }
 
-    public LinkedRemoteContent(ItemMatchingMode mode, String id, Optional<String> dropDownLinkId, String pageKey, String extraPrefix)
-    {
+    public LinkedRemoteContent(ItemMatchingMode mode, String id, Optional<String> dropDownLinkId, String pageKey, String extraPrefix) {
         this.mode = mode;
         this.matchValue = id;
         this.dropDownLinkId = dropDownLinkId;
@@ -37,29 +34,24 @@ public class LinkedRemoteContent
         this.extraPrefix = extraPrefix;
     }
 
-    public LinkedRemoteContent(String matchValue, Optional<String> dropDownLinkId, String pageKey)
-    {
+    public LinkedRemoteContent(String matchValue, Optional<String> dropDownLinkId, String pageKey) {
         this(ItemMatchingMode.ID, matchValue, dropDownLinkId, pageKey);
     }
 
     @Init
-    public void init()
-    {
+    public void init() {
         webItem = pageBinder.bind(RemoteWebItem.class, mode, matchValue, Optional.ofNullable(dropDownLinkId.orElse(null))); // Doh!
     }
 
-    public RemoteWebItem getWebItem()
-    {
+    public RemoteWebItem getWebItem() {
         return webItem;
     }
 
-    public ConnectAddonEmbeddedTestPage click()
-    {
+    public ConnectAddonEmbeddedTestPage click() {
         return click(ConnectAddonEmbeddedTestPage.class, extraPrefix, pageKey, true);
     }
 
-    public <T> T click(Class<T> type, Object... args)
-    {
+    public <T> T click(Class<T> type, Object... args) {
         webItem.click();
 
         return pageBinder.bind(type, args);

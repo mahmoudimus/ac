@@ -16,8 +16,7 @@ import javax.inject.Inject;
 
 @Component
 @ExportAsService
-public class ConnectAddonControllerImpl implements ConnectAddonController
-{
+public class ConnectAddonControllerImpl implements ConnectAddonController {
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonControllerImpl.class);
 
     private final ConnectAddonManager addonManager;
@@ -25,46 +24,35 @@ public class ConnectAddonControllerImpl implements ConnectAddonController
 
     @Inject
     public ConnectAddonControllerImpl(ConnectAddonManager addonManager,
-                                      ConnectAddonInstaller addonInstaller)
-    {
+                                      ConnectAddonInstaller addonInstaller) {
         this.addonManager = addonManager;
         this.addonInstaller = addonInstaller;
     }
 
     @Override
-    public void enableAddon(String addonKey) throws ConnectAddonEnableException
-    {
+    public void enableAddon(String addonKey) throws ConnectAddonEnableException {
         addonManager.enableConnectAddon(addonKey);
     }
 
     @Override
-    public void disableAddon(String addonKey)
-    {
-        try
-        {
+    public void disableAddon(String addonKey) {
+        try {
             addonManager.disableConnectAddon(addonKey);
-        }
-        catch (ConnectAddonDisableException e)
-        {
+        } catch (ConnectAddonDisableException e) {
             log.error("Unable to disable addon user for addon: " + addonKey, e);
         }
     }
 
     @Override
-    public void installAddon(String jsonDescriptor) throws ConnectAddonInstallException
-    {
+    public void installAddon(String jsonDescriptor) throws ConnectAddonInstallException {
         addonInstaller.install(jsonDescriptor);
     }
 
     @Override
-    public void uninstallAddon(String addonKey)
-    {
-        try
-        {
+    public void uninstallAddon(String addonKey) {
+        try {
             addonManager.uninstallConnectAddon(addonKey);
-        }
-        catch (ConnectAddonDisableException e)
-        {
+        } catch (ConnectAddonDisableException e) {
             log.error("Unable to disable addon user for addon: " + addonKey, e);
         }
     }

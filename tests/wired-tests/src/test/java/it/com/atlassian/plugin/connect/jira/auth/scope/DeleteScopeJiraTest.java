@@ -21,26 +21,23 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class DeleteScopeJiraTest extends ScopeTestBase
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class DeleteScopeJiraTest extends ScopeTestBase {
     private final JiraTestUtil scopeTestUtil;
 
     public DeleteScopeJiraTest(TestPluginInstaller testPluginInstaller,
-            TestAuthenticator testAuthenticator,
-            JwtWriterFactory jwtWriterFactory,
-            ConnectAddonRegistry connectAddonRegistry,
-            ApplicationProperties applicationProperties,
-            JiraTestUtil scopeTestUtil)
-    {
+                               TestAuthenticator testAuthenticator,
+                               JwtWriterFactory jwtWriterFactory,
+                               ConnectAddonRegistry connectAddonRegistry,
+                               ApplicationProperties applicationProperties,
+                               JiraTestUtil scopeTestUtil) {
         super(ScopeName.DELETE, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
         this.scopeTestUtil = scopeTestUtil;
     }
 
     @Test
-    public void shouldAllowToRemoveProperty() throws IOException, JSONException, NoSuchAlgorithmException
-    {
+    public void shouldAllowToRemoveProperty() throws IOException, JSONException, NoSuchAlgorithmException {
         Comment comment = scopeTestUtil.createComment();
         EntityProperty property = scopeTestUtil.createCommentProperty(comment);
 

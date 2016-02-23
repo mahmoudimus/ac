@@ -27,8 +27,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
-{
+public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase {
     private static final String ONLY_BETTY_PAGE_KEY = "onlyBetty";
     private static final String SIZE_TO_PARENT_PAGE_KEY = "sizeToParent";
     private static final String ENCODED_SPACES_PAGE_KEY = "encodedSpaces";
@@ -39,8 +38,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     private static TestUser betty;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         betty = testUserFactory.admin();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
@@ -81,25 +79,21 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testNoAdminPageForNonAdmin()
-    {
+    public void testNoAdminPageForNonAdmin() {
         login(testUserFactory.basicUser());
         AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class, "app1", "remotePluginAdmin");
         assertFalse(page.isIframeAvailable());
     }
 
     @Test
-    public void testRemoteConditionSucceeds()
-    {
+    public void testRemoteConditionSucceeds() {
         loginAndVisit(betty, HomePage.class);
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, ONLY_BETTY_PAGE_KEY, remotePlugin.getAddon().getKey());
         ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();
@@ -108,20 +102,18 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     }
 
     @Test
-    public void testEncodedSpaceInPageModuleUrl()
-    {
+    public void testEncodedSpaceInPageModuleUrl() {
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
         loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, ENCODED_SPACES_PAGE_KEY, remotePlugin.getAddon().getKey());
         final ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();
 
         waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(),
-            () -> "Hello world".equals(remotePluginTest.getValueById("hello-world-message"))));
+                () -> "Hello world".equals(remotePluginTest.getValueById("hello-world-message"))));
     }
 
     @Test
-    public void testSizeToParent()
-    {
+    public void testSizeToParent() {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, SIZE_TO_PARENT_PAGE_KEY, remotePlugin.getAddon().getKey());
         ConnectAddonEmbeddedTestPage remotePluginTest = page.clickAddonLink();

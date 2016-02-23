@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.api;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 
-public interface ConnectAddonController
-{
+public interface ConnectAddonController {
     /**
      * Enables the provided Connect add-on, if installed.
      *

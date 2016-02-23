@@ -19,26 +19,23 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class NoScopeJiraTest extends ScopeTestBase
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class NoScopeJiraTest extends ScopeTestBase {
     private final JiraTestUtil scopeTestUtil;
 
     public NoScopeJiraTest(TestPluginInstaller testPluginInstaller,
-            TestAuthenticator testAuthenticator,
-            JwtWriterFactory jwtWriterFactory,
-            ConnectAddonRegistry connectAddonRegistry,
-            ApplicationProperties applicationProperties,
-            JiraTestUtil scopeTestUtil)
-    {
+                           TestAuthenticator testAuthenticator,
+                           JwtWriterFactory jwtWriterFactory,
+                           ConnectAddonRegistry connectAddonRegistry,
+                           ApplicationProperties applicationProperties,
+                           JiraTestUtil scopeTestUtil) {
         super(null, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
         this.scopeTestUtil = scopeTestUtil;
     }
 
     @Test
-    public void doesNotAllowToReadCommentProperty() throws IOException, JSONException, NoSuchAlgorithmException
-    {
+    public void doesNotAllowToReadCommentProperty() throws IOException, JSONException, NoSuchAlgorithmException {
         Comment comment = scopeTestUtil.createComment();
         EntityProperty commentProperty = scopeTestUtil.createCommentProperty(comment);
 
@@ -46,8 +43,7 @@ public class NoScopeJiraTest extends ScopeTestBase
     }
 
     @Test
-    public void doesNotAllowToDeleteProperty() throws IOException, JSONException, NoSuchAlgorithmException
-    {
+    public void doesNotAllowToDeleteProperty() throws IOException, JSONException, NoSuchAlgorithmException {
         Comment comment = scopeTestUtil.createComment();
         EntityProperty commentProperty = scopeTestUtil.createCommentProperty(comment);
 

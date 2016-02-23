@@ -16,9 +16,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@RunWith (MockitoJUnitRunner.class)
-public class IsLicensedConditionTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class IsLicensedConditionTest {
     @Mock
     private RemotePluginLicenseService pluginLicenseService;
 

@@ -19,21 +19,18 @@ import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 import static it.com.atlassian.plugin.connect.jira.auth.scope.JiraScopeTestHelper.emptyBodyForJira;
 import static java.util.Arrays.asList;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class JiraSoftwareRestScopesTest extends ScopeManagerTest
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class JiraSoftwareRestScopesTest extends ScopeManagerTest {
 
     /**
      * These tests are not exhaustive. They touch parts of JIRA Agile API that was selectively made available to Connect apps.
      */
-    public JiraSoftwareRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
+    public JiraSoftwareRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
 
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         List<ScopeTestData> params = new ArrayList<>();
 
         final String publicSoftwareApiPath = "jira/rest/agile/1.0/board";

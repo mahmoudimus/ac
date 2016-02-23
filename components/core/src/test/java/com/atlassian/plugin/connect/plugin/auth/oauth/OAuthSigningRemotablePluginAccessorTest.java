@@ -36,106 +36,89 @@ import static org.mockito.Mockito.mock;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
-{
+public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest {
     private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
 
     @Test
-    public void createdRemotePluginAccessorHasCorrectPluginKey() throws ExecutionException, InterruptedException
-    {
+    public void createdRemotePluginAccessorHasCorrectPluginKey() throws ExecutionException, InterruptedException {
         assertThat(createRemotePluginAccessor().getKey(), is(PLUGIN_KEY));
     }
 
     @Test
-    public void createdRemotePluginAccessorHasCorrectPluginName() throws ExecutionException, InterruptedException
-    {
+    public void createdRemotePluginAccessorHasCorrectPluginName() throws ExecutionException, InterruptedException {
         assertThat(createRemotePluginAccessor().getName(), is(PLUGIN_NAME));
     }
 
     @Test
-    public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException
-    {
+    public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException {
         assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS, HttpContentRetriever.EMPTY_STREAM).get(),
-                   is(EXPECTED_GET_RESPONSE));
+                is(EXPECTED_GET_RESPONSE));
     }
 
     @Test
-    public void createdRemotePluginAccessorCorrectlySignsTheRequestUrl() throws ExecutionException, InterruptedException
-    {
+    public void createdRemotePluginAccessorCorrectlySignsTheRequestUrl() throws ExecutionException, InterruptedException {
         assertThat(createRemotePluginAccessor().signGetUrl(GET_PATH, Collections.singletonMap("param", new String[]{"value"})),
                 is("http://server:1234/contextPath/path?param=value&oauth_signature_method=RSA-SHA1&oauth_nonce=fake_nonce&oauth_version=1.0&oauth_timestamp=fake_timestamp"));
     }
 
     @Test
-    public void createdRemotePluginAccessorHasCorrectBaseUrl() throws ExecutionException, InterruptedException
-    {
+    public void createdRemotePluginAccessorHasCorrectBaseUrl() throws ExecutionException, InterruptedException {
         assertThat(createRemotePluginAccessor().getBaseUrl().toString(), is(BASE_URL));
     }
 
     @Test
-    public void createdRemotePluginAccessorCreatesCorrectGetUrl() throws ExecutionException, InterruptedException
-    {
+    public void createdRemotePluginAccessorCreatesCorrectGetUrl() throws ExecutionException, InterruptedException {
         // FIXME: due to a bug in OAuthSigningRemotablePluginAccessor or its dependencies, using multiple parameter values causes only the first value to be used
         assertThat(createRemotePluginAccessor().createGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsIncorrectlyAbsolute() throws ExecutionException, InterruptedException
-    {
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsIncorrectlyAbsolute() throws ExecutionException, InterruptedException {
         assertThat(createRemotePluginAccessor().createGetUrl(UNEXPECTED_ABSOLUTE_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsAbsoluteToAddon() throws ExecutionException, InterruptedException
-    {
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsAbsoluteToAddon() throws ExecutionException, InterruptedException {
         assertThat(createRemotePluginAccessor().createGetUrl(FULL_PATH_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
     @Test
-    public void authorizationGeneratorIsNotNull() throws ExecutionException, InterruptedException
-    {
+    public void authorizationGeneratorIsNotNull() throws ExecutionException, InterruptedException {
         assertThat(createRemotePluginAccessor().getAuthorizationGenerator(), is(not(nullValue())));
     }
 
     @Test
-    public void slashesAreNormalizedOnConcatenation() throws Exception
-    {
+    public void slashesAreNormalizedOnConcatenation() throws Exception {
         RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon/");
-        assertThat(accessor.createGetUrl(URI.create("/handler"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler"));
+        assertThat(accessor.createGetUrl(URI.create("/handler"), Collections.<String, String[]>emptyMap()), is("https://example.com/addon/handler"));
     }
 
     @Test
-    public void trailingSlashesAreLeftIntact() throws Exception
-    {
+    public void trailingSlashesAreLeftIntact() throws Exception {
         RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon");
-        assertThat(accessor.createGetUrl(URI.create("/handler/"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler/"));
+        assertThat(accessor.createGetUrl(URI.create("/handler/"), Collections.<String, String[]>emptyMap()), is("https://example.com/addon/handler/"));
     }
 
-    private RemotablePluginAccessor createRemotePluginAccessor() throws ExecutionException, InterruptedException
-    {
+    private RemotablePluginAccessor createRemotePluginAccessor() throws ExecutionException, InterruptedException {
         return createRemotePluginAccessor(BASE_URL);
     }
 
-    private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl) throws ExecutionException, InterruptedException
-    {
+    private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl) throws ExecutionException, InterruptedException {
         OAuthLinkManager oAuthLinkManager = new MockOAuthLinkManager(mock(ServiceProviderConsumerStore.class), mock(AuthenticationConfigurationManager.class), mock(ConsumerService.class, RETURNS_DEEP_STUBS));
         return new OAuthSigningRemotablePluginAccessor(mockPlugin(), () -> URI.create(baseUrl), createDummyServiceProvider(),
                 mockCachingHttpContentRetriever(), oAuthLinkManager);
     }
 
     @Override
-    protected Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders)
-    {
+    protected Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders) {
         return preSigningHeaders;
     }
 
-    private static class MockOAuthLinkManager extends OAuthLinkManager
-    {
-        public MockOAuthLinkManager(ServiceProviderConsumerStore serviceProviderConsumerStore, AuthenticationConfigurationManager authenticationConfigurationManager, ConsumerService consumerService)
-        {
+    private static class MockOAuthLinkManager extends OAuthLinkManager {
+        public MockOAuthLinkManager(ServiceProviderConsumerStore serviceProviderConsumerStore, AuthenticationConfigurationManager authenticationConfigurationManager, ConsumerService consumerService) {
             super(serviceProviderConsumerStore, authenticationConfigurationManager, consumerService);
         }
 
@@ -143,22 +126,15 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
         public List<Map.Entry<String, String>> signAsParameters(ServiceProvider serviceProvider,
                                                                 HttpMethod method,
                                                                 URI url,
-                                                                Map<String, List<String>> originalParams)
-        {
+                                                                Map<String, List<String>> originalParams) {
             Map<String, List<String>> paramsWithPredicatableOAuthValues = new LinkedHashMap<String, List<String>>(originalParams.size());
 
-            for (Map.Entry<String, List<String>> param : originalParams.entrySet())
-            {
-                if (OAuth.OAUTH_NONCE.equals(param.getKey()))
-                {
+            for (Map.Entry<String, List<String>> param : originalParams.entrySet()) {
+                if (OAuth.OAUTH_NONCE.equals(param.getKey())) {
                     paramsWithPredicatableOAuthValues.put(param.getKey(), Collections.singletonList("fake_nonce"));
-                }
-                else if (OAuth.OAUTH_TIMESTAMP.equals(param.getKey()))
-                {
+                } else if (OAuth.OAUTH_TIMESTAMP.equals(param.getKey())) {
                     paramsWithPredicatableOAuthValues.put(param.getKey(), Collections.singletonList("fake_timestamp"));
-                }
-                else
-                {
+                } else {
                     paramsWithPredicatableOAuthValues.put(param.getKey(), param.getValue());
                 }
             }
@@ -173,8 +149,7 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
         public String generateAuthorizationHeader(HttpMethod method,
                                                   ServiceProvider serviceProvider,
                                                   URI url,
-                                                  Map<String, List<String>> originalParams)
-        {
+                                                  Map<String, List<String>> originalParams) {
             return null; // results in no Authorization header being added, allowing us to assert that headers-in == headers-out
         }
     }

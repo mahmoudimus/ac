@@ -15,37 +15,32 @@ import static org.junit.Assert.assertThat;
  * @param <M> The type of module bean that is required for the matching methods on this class
  * @param <T> The type of module bean the test is running against. Note this is typically a subtype of M
  */
-public abstract class ModuleBeanParamMatcher<M extends ModuleBean, T extends M> extends ArgumentMatcher<T>
-{
+public abstract class ModuleBeanParamMatcher<M extends ModuleBean, T extends M> extends ArgumentMatcher<T> {
     private final String name;
     private final Object expectedValue;
     private final Class<M> beanClass;
 
-    public ModuleBeanParamMatcher(Class<M> beanClass, String name, Object expectedValue)
-    {
+    public ModuleBeanParamMatcher(Class<M> beanClass, String name, Object expectedValue) {
         this.name = checkNotNull(name);
         this.expectedValue = checkNotNull(expectedValue);
         this.beanClass = checkNotNull(beanClass);
     }
 
     @Override
-    public boolean matches(Object argument)
-    {
+    public boolean matches(Object argument) {
         assertThat(argument, is(instanceOf(beanClass)));
         T moduleBean = (T) argument;
         return matchesOnModuleBean(moduleBean, expectedValue);
     }
 
-    protected boolean matchesOnModuleBean(T moduleBean, Object expectedValue)
-    {
+    protected boolean matchesOnModuleBean(T moduleBean, Object expectedValue) {
         return Objects.equal(getValue(moduleBean), expectedValue);
     }
 
     protected abstract Object getValue(T moduleBean);
 
     @Override
-    public void describeTo(Description description)
-    {
+    public void describeTo(Description description) {
         description.appendText("ModuleBean with param ");
         description.appendValue(name);
         description.appendText(" = ");

@@ -42,8 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WebItemModuleProviderImplTest
-{
+public class WebItemModuleProviderImplTest {
 
     private static final String BLACKLISTED_LOCATION = "blacklistedLocation";
     private static final String VALID_CONDITION = "some-condition";
@@ -62,8 +61,7 @@ public class WebItemModuleProviderImplTest
     private WebFragmentLocationBlacklist blacklist;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         when(blacklist.getBlacklistedWebItemLocations()).thenReturn(Sets.newHashSet());
         when(conditionClassAccessor.getConditionClassForNoContext(any(SingleConditionBean.class)))
                 .thenReturn(Optional.empty());
@@ -74,30 +72,26 @@ public class WebItemModuleProviderImplTest
     }
 
     @Test
-    public void shouldRetainEmptyConditionsForIframe()
-    {
+    public void shouldRetainEmptyConditionsForIframe() {
         assertThat(provider.filterProductSpecificConditions(newWebItemWithConditions(Collections.<ConditionalBean>emptyList()).getConditions()), empty());
     }
 
     @Test
-    public void shouldRetainConditionsForIframe()
-    {
+    public void shouldRetainConditionsForIframe() {
         List<ConditionalBean> conditions = newArrayList(newCondition(VALID_CONDITION),
                 newCompositeConditionBean().withConditions(newCondition(OTHER_VALID_CONDITION)).build());
         assertThat(provider.filterProductSpecificConditions(newWebItemWithConditions(conditions).getConditions()), contains(conditions.toArray()));
     }
 
     @Test
-    public void shouldExcludeTopLevelInvalidConditionForIframe()
-    {
+    public void shouldExcludeTopLevelInvalidConditionForIframe() {
         CompositeConditionBean compositeCondition = newCompositeConditionBean().withConditions(newCondition(OTHER_VALID_CONDITION)).build();
         List<ConditionalBean> conditions = newArrayList(newCondition("foo"), compositeCondition);
         assertThat(provider.filterProductSpecificConditions(newWebItemWithConditions(conditions).getConditions()), contains(compositeCondition));
     }
 
     @Test
-    public void shouldExcludeSingleNestedInvalidConditionForIframe()
-    {
+    public void shouldExcludeSingleNestedInvalidConditionForIframe() {
         SingleConditionBean singleCondition = newCondition(VALID_CONDITION);
         List<ConditionalBean> conditions = newArrayList(singleCondition,
                 newCompositeConditionBean().withConditions(newCondition("foo")).build());
@@ -105,8 +99,7 @@ public class WebItemModuleProviderImplTest
     }
 
     @Test
-    public void shouldExcludeNestedInvalidConditionForIframeAndLeaveValid()
-    {
+    public void shouldExcludeNestedInvalidConditionForIframeAndLeaveValid() {
         SingleConditionBean singleCondition = newCondition(VALID_CONDITION);
         List<ConditionalBean> conditions = newArrayList(singleCondition,
                 newCompositeConditionBean().withConditions(newCondition("foo"), newCondition(OTHER_VALID_CONDITION)).build());
@@ -115,44 +108,37 @@ public class WebItemModuleProviderImplTest
     }
 
     @Test
-    public void shouldThrowExceptionIfBlacklistedLocationIsUsed() throws ConnectModuleValidationException
-    {
+    public void shouldThrowExceptionIfBlacklistedLocationIsUsed() throws ConnectModuleValidationException {
         ShallowConnectAddonBean descriptor = mock(ShallowConnectAddonBean.class);
         when(blacklist.getBlacklistedWebItemLocations()).thenReturn(Sets.newHashSet(BLACKLISTED_LOCATION));
         List<WebItemModuleBean> webItemModuleBeans = Lists.newArrayList(
                 newWebItemBean()
-                    .withLocation(BLACKLISTED_LOCATION)
-                    .build()
+                        .withLocation(BLACKLISTED_LOCATION)
+                        .build()
         );
         expectedException.expect(ConnectModuleValidationException.class);
         expectedException.expectMessage(format("Installation failed. The add-on includes a web fragment with an unsupported location ([%s]).", BLACKLISTED_LOCATION));
         provider.assertLocationNotBlacklisted(descriptor, webItemModuleBeans);
     }
 
-    private WebItemModuleBean newWebItemWithConditions(Collection<ConditionalBean> conditions)
-    {
+    private WebItemModuleBean newWebItemWithConditions(Collection<ConditionalBean> conditions) {
         return newWebItemBean().withConditions(conditions).build();
     }
 
-    private SingleConditionBean newCondition(String condition)
-    {
+    private SingleConditionBean newCondition(String condition) {
         return newSingleConditionBean().withCondition(condition).build();
     }
 
-    private Matcher<SingleConditionBean> isSingleConditionBeanFor(String condition)
-    {
-        return new TypeSafeMatcher<SingleConditionBean>()
-        {
+    private Matcher<SingleConditionBean> isSingleConditionBeanFor(String condition) {
+        return new TypeSafeMatcher<SingleConditionBean>() {
 
             @Override
-            protected boolean matchesSafely(SingleConditionBean conditionBean)
-            {
+            protected boolean matchesSafely(SingleConditionBean conditionBean) {
                 return condition.equals(conditionBean.getCondition());
             }
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("Single condition with condition ")
                         .appendValue(condition);
             }

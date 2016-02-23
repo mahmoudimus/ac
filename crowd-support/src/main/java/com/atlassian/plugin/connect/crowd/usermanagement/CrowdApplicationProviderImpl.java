@@ -10,25 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
 @JiraComponent
-public class CrowdApplicationProviderImpl implements CrowdApplicationProvider
-{
+public class CrowdApplicationProviderImpl implements CrowdApplicationProvider {
     private final ApplicationManager applicationManager;
 
     @Autowired
-    public CrowdApplicationProviderImpl(ApplicationManager applicationManager)
-    {
+    public CrowdApplicationProviderImpl(ApplicationManager applicationManager) {
         this.applicationManager = applicationManager;
     }
 
     @Override
-    public Application getCrowdApplication() throws ApplicationNotFoundException
-    {
+    public Application getCrowdApplication() throws ApplicationNotFoundException {
         return applicationManager.findByName(getCrowdApplicationName());
     }
 
     @Override
-    public String getCrowdApplicationName()
-    {
+    public String getCrowdApplicationName() {
         return "crowd-embedded";
     }
 }

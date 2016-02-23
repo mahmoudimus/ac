@@ -9,8 +9,7 @@ import com.atlassian.crowd.model.user.UserTemplate;
  * A utility intented to be used within the crowd-support package only,
  * for determining whether any fixes need to be made to an add-on user
  */
-public interface UserReconciliation
-{
+public interface UserReconciliation {
     /**
      * Check whether the user has the name, address and active status we expect.
      *

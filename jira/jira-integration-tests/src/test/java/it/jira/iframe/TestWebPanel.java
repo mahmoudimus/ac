@@ -35,8 +35,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of remote web panels in JIRA.
  */
-public final class TestWebPanel extends JiraWebDriverTestBase
-{
+public final class TestWebPanel extends JiraWebDriverTestBase {
     // web panel keys
     private static final String ISSUE_PANEL_LEFT_KEY = "jira-issue-left-web-panel";
     private static final String ISSUE_PANEL_LEFT2_KEY = "jira-issue-left-web-panel-2";
@@ -52,8 +51,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     public ExpectedException expectedException = ExpectedException.none();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         product.quickLoginAsAdmin();
 
         runner = new ConnectRunner(product)
@@ -99,7 +97,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
                         newWebPanelBean()
                                 .withName(new I18nProperty("Panel with condition", null))
                                 .withKey(WEB_PANEL_WITH_CONDITION_KEY)
-                                        // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
+                                // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
                                 .withUrl("/cwp?projectKey={project.key}")
                                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                                 .withLayout(new WebPanelLayout("100%", "200px"))
@@ -118,17 +116,14 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void testViewIssuePageWithArbitraryDataInUrl() throws Exception
-    {
+    public void testViewIssuePageWithArbitraryDataInUrl() throws Exception {
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for panel");
         ViewIssuePageWithAddonFragments viewIssuePage = product.visit(ViewIssuePageWithAddonFragments.class, issue.key);
         RemoteWebPanel panel = viewIssuePage.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT2_KEY)).waitUntilContentLoaded();
@@ -142,8 +137,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testViewProjectAdminPanel() throws Exception
-    {
+    public void testViewProjectAdminPanel() throws Exception {
         TestUser user = testUserFactory.admin();
         login(user);
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
@@ -159,8 +153,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testLeftWebPanelOnIssuePage() throws RemoteException
-    {
+    public void testLeftWebPanelOnIssuePage() throws RemoteException {
         TestUser user = testUserFactory.basicUser();
         login(user);
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for left remotable-web-panel panel");
@@ -178,8 +171,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testRightWebPanelOnIssuePage() throws RemoteException
-    {
+    public void testRightWebPanelOnIssuePage() throws RemoteException {
         TestUser user = testUserFactory.basicUser();
         login(user);
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Another test issue for right remotable-web-panel panel");
@@ -197,8 +189,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testWebPanelInProjectHeader()
-    {
+    public void testWebPanelInProjectHeader() {
         TestUser user = testUserFactory.admin();
         login(user);
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
@@ -214,8 +205,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testWebPanelInUserProfile()
-    {
+    public void testWebPanelInUserProfile() {
         TestUser user = testUserFactory.basicUser();
         login(user);
         final String userProfileName = testUserFactory.basicUser().getUsername();
@@ -233,8 +223,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     }
 
     @Test
-    public void panelIsNotVisibleWithFalseCondition()
-    {
+    public void panelIsNotVisibleWithFalseCondition() {
         product.visit(JiraViewProjectPage.class, project.getKey());
 
         assertThat("Addon web panel should be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(true));
@@ -245,8 +234,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         assertThat("Addon web panel should NOT be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(false));
     }
 
-    private String getModuleKey(ConnectRunner runner, String module)
-    {
+    private String getModuleKey(ConnectRunner runner, String module) {
         return ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 }

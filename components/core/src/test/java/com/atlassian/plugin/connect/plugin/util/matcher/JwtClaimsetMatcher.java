@@ -14,38 +14,30 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class JwtClaimsetMatcher extends ArgumentMatcher<String>
-{
+public class JwtClaimsetMatcher extends ArgumentMatcher<String> {
     private final Set<String> expectedClaimNames;
 
-    private JwtClaimsetMatcher(String... expectedClaimNames)
-    {
+    private JwtClaimsetMatcher(String... expectedClaimNames) {
         this.expectedClaimNames = new HashSet<>(Arrays.asList(expectedClaimNames));
     }
 
-    public static JwtClaimsetMatcher hasJwtClaimset(String... expectedClaimNames)
-    {
+    public static JwtClaimsetMatcher hasJwtClaimset(String... expectedClaimNames) {
         return new JwtClaimsetMatcher(expectedClaimNames);
     }
 
     @Override
-    public boolean matches(Object argument)
-    {
+    public boolean matches(Object argument) {
         assertThat(argument, is(instanceOf(String.class)));
-        try
-        {
+        try {
             JSONObject jsonObject = (JSONObject) new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse((String) argument);
             return jsonObject.keySet().equals(expectedClaimNames);
-        }
-        catch (ParseException e)
-        {
+        } catch (ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void describeTo(Description description)
-    {
+    public void describeTo(Description description) {
         description.appendText("Expecting exactly these claims: ");
         description.appendValueList("[", ",", "]", expectedClaimNames);
     }

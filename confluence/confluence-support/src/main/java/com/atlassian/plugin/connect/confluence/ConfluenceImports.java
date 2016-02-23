@@ -35,10 +35,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * This class does nothing but is here to centralize the Confluence component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
-@SuppressWarnings ("ALL")
+@SuppressWarnings("ALL")
 @Scanned
-public class ConfluenceImports
-{
+public class ConfluenceImports {
     @Inject
     public ConfluenceImports(
             @ConfluenceImport BandanaManager bandanaManager,
@@ -47,7 +46,7 @@ public class ConfluenceImports
             @ConfluenceImport LicenseService licenseService,
             @ConfluenceImport MultiQueueTaskManager multiQueueTaskManager,
             @ConfluenceImport PageManager pageManager,
-            @ConfluenceImport ("confluencePermissionManager") PermissionManager permissionManager,
+            @ConfluenceImport("confluencePermissionManager") PermissionManager permissionManager,
             @ConfluenceImport SettingsManager settingsManager,
             @ConfluenceImport SpaceManager spaceManager,
             @ConfluenceImport SpacePermissionManager spacePermissionManager,
@@ -64,7 +63,6 @@ public class ConfluenceImports
             @ConfluenceImport PageTemplateManager pageTemplateManager,
             @ConfluenceImport FavouriteManager favouriteManager,
             @ConfluenceImport NotificationManager notificationManager,
-            @ConfluenceImport ContentBodyConversionService converter)
-    {
+            @ConfluenceImport ContentBodyConversionService converter) {
     }
 }

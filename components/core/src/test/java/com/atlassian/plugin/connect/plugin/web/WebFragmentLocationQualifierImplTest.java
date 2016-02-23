@@ -11,8 +11,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class WebFragmentLocationQualifierImplTest
-{
+public class WebFragmentLocationQualifierImplTest {
 
     private static final String ADDON_KEY = "DasAddonz";
     private static final String PRODUCT_LOCATION = "tools-menu";
@@ -22,8 +21,7 @@ public class WebFragmentLocationQualifierImplTest
     private ConnectAddonBean addon;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         addon = ConnectAddonBean.newConnectAddonBean()
                 .withKey(ADDON_KEY)
                 .withModules("webItems",
@@ -47,36 +45,31 @@ public class WebFragmentLocationQualifierImplTest
     }
 
     @Test
-    public void returnsInputWhenNoMatchingKey()
-    {
+    public void returnsInputWhenNoMatchingKey() {
         final String location = "should-not-match";
         assertThat(locationQualifier.processLocation(location, addon), is(location));
     }
 
     @Test
-    public void returnsQualifiedKeyWhenMatchesWebItemKeyExactly()
-    {
+    public void returnsQualifiedKeyWhenMatchesWebItemKeyExactly() {
         assertThat(locationQualifier.processLocation(PRODUCT_LOCATION, addon), is(qualify(PRODUCT_LOCATION)));
     }
 
     @Test
-    public void substitutesAllKeysInLocation()
-    {
+    public void substitutesAllKeysInLocation() {
         assertThat(locationQualifier.processLocation(PRODUCT_LOCATION + '/' + WEB_SECTION_KEY, addon),
                 is(qualify(PRODUCT_LOCATION) + '/' + qualify(WEB_SECTION_KEY)));
     }
 
     @Test
-    public void substitutesOnlyKeysInLocation()
-    {
+    public void substitutesOnlyKeysInLocation() {
         final String segment = "should-not-be-qualified";
 
         assertThat(locationQualifier.processLocation(PRODUCT_LOCATION + '/' + segment, addon),
                 is(qualify(PRODUCT_LOCATION) + '/' + segment));
     }
 
-    private String qualify(String str)
-    {
+    private String qualify(String str) {
         return ModuleKeyUtils.addonAndModuleKey(ADDON_KEY, str);
     }
 }

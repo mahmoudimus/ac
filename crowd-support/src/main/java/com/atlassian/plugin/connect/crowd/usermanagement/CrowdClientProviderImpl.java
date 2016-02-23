@@ -12,19 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
 @JiraComponent
-public class CrowdClientProviderImpl implements CrowdClientProvider
-{
+public class CrowdClientProviderImpl implements CrowdClientProvider {
     private final CrowdClientFactory crowdClientFactory;
 
     @Autowired
-    public CrowdClientProviderImpl(CrowdClientFactory crowdClientFactory)
-    {
+    public CrowdClientProviderImpl(CrowdClientFactory crowdClientFactory) {
         this.crowdClientFactory = crowdClientFactory;
     }
 
     @Override
-    public CrowdClient getCrowdClient()
-    {
+    public CrowdClient getCrowdClient() {
         ClientResourceLocator resourceLocator = new ClientResourceLocator(Constants.PROPERTIES_FILE);
         return crowdClientFactory.newInstance(ClientPropertiesImpl.newInstanceFromResourceLocator(resourceLocator));
     }

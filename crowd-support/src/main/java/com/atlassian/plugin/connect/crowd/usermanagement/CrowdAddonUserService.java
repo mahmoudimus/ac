@@ -35,8 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @ExportAsDevService
 @ConfluenceComponent
 @JiraComponent
-public class CrowdAddonUserService implements ConnectUserService
-{
+public class CrowdAddonUserService implements ConnectUserService {
     public static final PasswordCredential PREVENT_LOGIN = PasswordCredential.NONE;
 
     private final CrowdAddonUserProvisioningService crowdAddonUserProvisioningService;
@@ -47,9 +46,8 @@ public class CrowdAddonUserService implements ConnectUserService
 
     @Autowired
     public CrowdAddonUserService(CrowdAddonUserProvisioningService crowdAddonUserProvisioningService,
-            ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService, ConnectCrowdService connectCrowdService,
-            HostProperties hostProperties)
-    {
+                                 ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService, ConnectCrowdService connectCrowdService,
+                                 HostProperties hostProperties) {
         this.connectCrowdService = connectCrowdService;
         this.hostProperties = hostProperties;
         this.crowdAddonUserProvisioningService = checkNotNull(crowdAddonUserProvisioningService);
@@ -58,58 +56,48 @@ public class CrowdAddonUserService implements ConnectUserService
 
     @Nonnull
     @Override
-    public String getOrCreateAddonUserName(@Nonnull String addonKey, @Nonnull String addonDisplayName) throws ConnectAddonInitException
-    {
-        try
-        {
+    public String getOrCreateAddonUserName(@Nonnull String addonKey, @Nonnull String addonDisplayName) throws ConnectAddonInitException {
+        try {
             return createOrEnableAddonUser(ConnectAddonUserUtil.usernameForAddon(checkNotNull(addonKey)), checkNotNull(addonDisplayName));
-        }
-        catch ( ApplicationPermissionException
+        } catch (ApplicationPermissionException
                 | UserNotFoundException
                 | GroupNotFoundException
                 | ApplicationNotFoundException
                 | OperationFailedException
-                | InvalidAuthenticationException e)
-        {
+                | InvalidAuthenticationException e) {
             throw new ConnectAddonInitException(e);
         }
     }
 
     @Override
-    public void disableAddonUser(@Nonnull String addonKey) throws ConnectAddonDisableException
-    {
+    public void disableAddonUser(@Nonnull String addonKey) throws ConnectAddonDisableException {
         connectCrowdService.disableUser(usernameForAddon(addonKey));
     }
 
     @Override
-    public boolean isActive(@Nonnull String username)
-    {
+    public boolean isActive(@Nonnull String username) {
         return connectCrowdService.isUserActive(username);
     }
 
     @Nonnull
     @Override
-    public String provisionAddonUserWithScopes(@Nonnull ConnectAddonBean addon, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException
-    {
+    public String provisionAddonUserWithScopes(@Nonnull ConnectAddonBean addon, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddonInitException {
         String username = getOrCreateAddonUserName(checkNotNull(addon.getKey()), checkNotNull(addon.getName()));
         crowdAddonUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
         return username;
     }
 
     private String createOrEnableAddonUser(String username, String addonDisplayName)
-            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, GroupNotFoundException, InvalidAuthenticationException
-    {
+            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, GroupNotFoundException, InvalidAuthenticationException {
         connectAddonUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
         UserCreationResult userCreationResult = connectCrowdService.createOrEnableUser(username, addonDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddonUserAttribute(hostProperties.getKey()));
         User user = userCreationResult.getUser();
-        if (!userCreationResult.isNewlyCreated())
-        {
+        if (!userCreationResult.isNewlyCreated()) {
             connectCrowdService.invalidateSessions(user.getName());
         }
 
         connectAddonUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
-        if (userCreationResult.isNewlyCreated())
-        {
+        if (userCreationResult.isNewlyCreated()) {
             addNewUserToRequiredGroups(user);
         }
 
@@ -117,17 +105,12 @@ public class CrowdAddonUserService implements ConnectUserService
     }
 
     private void addNewUserToRequiredGroups(User user)
-            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, OperationFailedException, InvalidAuthenticationException
-    {
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, OperationFailedException, InvalidAuthenticationException {
         String username = user.getName();
-        for (String group : crowdAddonUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
-        {
-            try
-            {
+        for (String group : crowdAddonUserProvisioningService.getDefaultProductGroupsAlwaysExpected()) {
+            try {
                 connectAddonUserGroupProvisioningService.ensureUserIsInGroup(username, group);
-            }
-            catch (GroupNotFoundException e)
-            {
+            } catch (GroupNotFoundException e) {
                 // carry on if the group does not exist so that an admin deleting a group will not kill all add-on installations
                 log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist! " +
                         "The user needs to be a member of this group, otherwise the add-on will not function correctly. " +
@@ -138,21 +121,16 @@ public class CrowdAddonUserService implements ConnectUserService
 
         int numPossibleDefaultGroupsAddedTo = 0;
         String errorMessage = String.format("Could not make user '%s' a member of one of groups ", username);
-        for (String group : crowdAddonUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected())
-        {
-            try
-            {
+        for (String group : crowdAddonUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()) {
+            try {
                 connectAddonUserGroupProvisioningService.ensureUserIsInGroup(username, group);
                 numPossibleDefaultGroupsAddedTo++;
-            }
-            catch (GroupNotFoundException e)
-            {
+            } catch (GroupNotFoundException e) {
                 errorMessage += String.format("%s, ", group);
             }
 
         }
-        if (numPossibleDefaultGroupsAddedTo == 0 && crowdAddonUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0)
-        {
+        if (numPossibleDefaultGroupsAddedTo == 0 && crowdAddonUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0) {
             log.error(errorMessage + "because none of those groups exist!" +
                     "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +
                     "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +

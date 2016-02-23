@@ -46,8 +46,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class TestDashboardItem extends JiraWebDriverTestBase
-{
+public class TestDashboardItem extends JiraWebDriverTestBase {
     private static final String ADDON_KEY = AddonTestUtils.randomAddonKey();
     private static final String DASHBOARD_ITEM_DESCRIPTION = "Dashboard item description";
 
@@ -62,8 +61,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void setUpClass() throws Exception
-    {
+    public static void setUpClass() throws Exception {
         logout();
 
         addon = new ConnectRunner(product, ADDON_KEY)
@@ -78,17 +76,14 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void tearDown() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void tearDown() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void testAddingDashboardItemToDashboard()
-    {
+    public void testAddingDashboardItemToDashboard() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
         addDashboardItemToDashboard(dashboard);
 
@@ -100,8 +95,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testTwoDashboardItemsWithTheSameKeyAddedSuccessfulyToTheDashboard()
-    {
+    public void testTwoDashboardItemsWithTheSameKeyAddedSuccessfulyToTheDashboard() {
         final DashboardPage dashboard = createDashboard(generateDashboardTitle());
 
         dashboard.gadgets()
@@ -118,8 +112,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemVisibleInDirectory()
-    {
+    public void testDashboardItemVisibleInDirectory() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
 
         AddGadgetDialog gadgetDialog = dashboard.gadgets()
@@ -130,8 +123,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemHasProperDescription()
-    {
+    public void testDashboardItemHasProperDescription() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
 
         AddGadgetDialog gadgetDialog = dashboard.gadgets()
@@ -142,8 +134,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemHasProperVendorInformation()
-    {
+    public void testDashboardItemHasProperVendorInformation() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
 
         AddGadgetDialog gadgetDialog = dashboard.gadgets()
@@ -154,8 +145,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemContentIsDisplayed()
-    {
+    public void testDashboardItemContentIsDisplayed() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
         addDashboardItemToDashboard(dashboard);
 
@@ -166,8 +156,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemCanReadProperties() throws JSONException
-    {
+    public void testDashboardItemCanReadProperties() throws JSONException {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
         addDashboardItemToDashboard(dashboard);
 
@@ -181,8 +170,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemReactsToEditClick()
-    {
+    public void testDashboardItemReactsToEditClick() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
 
         closeBaseUrlBanner();
@@ -204,8 +192,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemCanSetTitle()
-    {
+    public void testDashboardItemCanSetTitle() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
         addDashboardItemToDashboard(dashboard);
 
@@ -222,8 +209,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemCanSeeThatItIsEditable()
-    {
+    public void testDashboardItemCanSeeThatItIsEditable() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
         addDashboardItemToDashboard(dashboard, DASHBOARD_ITEM_TITLE);
 
@@ -234,8 +220,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemCanSeeThatItIsNotEditable()
-    {
+    public void testDashboardItemCanSeeThatItIsNotEditable() {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
         addDashboardItemToDashboard(dashboard, NON_CONFIGURABLE_DASHBOARD_ITEM_TITLE);
 
@@ -246,8 +231,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testDashboardItemRespectConditionForDirectoryView() throws Exception
-    {
+    public void testDashboardItemRespectConditionForDirectoryView() throws Exception {
         String title = "Dashboard item with condition";
         String moduleKey = "dashboard-item-with-condition";
         DashboardItemConditionServlet conditionServlet =
@@ -297,8 +281,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         addonRunner.stopAndUninstall();
     }
 
-    private static DashboardItemModuleBean buildDashboardItemModule(String title, String key, boolean configurable)
-    {
+    private static DashboardItemModuleBean buildDashboardItemModule(String title, String key, boolean configurable) {
         return DashboardItemModuleBean.newBuilder()
                 .withDescription(new I18nProperty(DASHBOARD_ITEM_DESCRIPTION, null))
                 .withName(new I18nProperty(title, null))
@@ -309,13 +292,11 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                 .build();
     }
 
-    private DashboardPage bindDashboardPage()
-    {
+    private DashboardPage bindDashboardPage() {
         return product.getPageBinder().bind(DashboardPage.class);
     }
 
-    private ConnectDashboardItemElement getOnlyDashboardItem()
-    {
+    private ConnectDashboardItemElement getOnlyDashboardItem() {
         ConnectDashboardPageWrapper connectDashboard = bindConnectDashboardPage();
         Iterable<ConnectDashboardItemElement> dashboardItems = connectDashboard.getDashboardItems(ADDON_KEY, DASHBOARD_ITEM_KEY);
 
@@ -323,13 +304,11 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         return getOnlyElement(dashboardItems);
     }
 
-    private void addDashboardItemToDashboard(final DashboardPage dashboard)
-    {
+    private void addDashboardItemToDashboard(final DashboardPage dashboard) {
         addDashboardItemToDashboard(dashboard, DASHBOARD_ITEM_TITLE);
     }
 
-    private void addDashboardItemToDashboard(final DashboardPage dashboard, final String title)
-    {
+    private void addDashboardItemToDashboard(final DashboardPage dashboard, final String title) {
         dashboard.gadgets()
                 .openAddGadgetDialog()
                 .searchFor(title)
@@ -337,12 +316,15 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                 .simpleClose();
     }
 
-    private ConnectDashboardPageWrapper bindConnectDashboardPage() {return product.getPageBinder().bind(ConnectDashboardPageWrapper.class);}
+    private ConnectDashboardPageWrapper bindConnectDashboardPage() {
+        return product.getPageBinder().bind(ConnectDashboardPageWrapper.class);
+    }
 
-    private String generateDashboardTitle() {return RandomStringUtils.random(20);}
+    private String generateDashboardTitle() {
+        return RandomStringUtils.random(20);
+    }
 
-    private DashboardPage createDashboard(final String dashboardName)
-    {
+    private DashboardPage createDashboard(final String dashboardName) {
         final AddDashboardPage addDashboardPage = loginAndVisit(TEST_USER, AddDashboardPage.class);
         addDashboardPage.setName(dashboardName);
 
@@ -351,18 +333,15 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         return product.visit(DashboardPage.class);
     }
 
-    public static class ConnectDashboardPageWrapper extends GadgetContainer
-    {
+    public static class ConnectDashboardPageWrapper extends GadgetContainer {
         @Inject
         private PageElementFinder elementFinder;
 
-        public Iterable<PageElement> getAllGadgets()
-        {
+        public Iterable<PageElement> getAllGadgets() {
             return Iterables.filter(dashboard.findAll(By.className("dashboard-item-title")), pageElement -> !pageElement.getAttribute("id").isEmpty());
         }
 
-        public Iterable<ConnectDashboardItemElement> getDashboardItems(final String addonKey, final String moduleKey)
-        {
+        public Iterable<ConnectDashboardItemElement> getDashboardItems(final String addonKey, final String moduleKey) {
             final List<PageElement> iFrameContainers = elementFinder.findAll(By.className("iframe-init"));
             final Iterable<PageElement> gadgetsContainers = Iterables.filter(iFrameContainers, pageElement -> {
                 return pageElement.getAttribute("id").contains(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
@@ -375,51 +354,42 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         }
     }
 
-    public static class ConnectDashboardItemElement extends ConnectAddonEmbeddedTestPage
-    {
+    public static class ConnectDashboardItemElement extends ConnectAddonEmbeddedTestPage {
         @Inject
         protected PageElementFinder elementFinder;
 
-        public ConnectDashboardItemElement(final String addonKey, final String pageElementKey)
-        {
+        public ConnectDashboardItemElement(final String addonKey, final String pageElementKey) {
             super(addonKey, pageElementKey, true);
         }
 
-        public String getDashboardItemId()
-        {
+        public String getDashboardItemId() {
             return getValueById("dashboardItemId");
         }
 
-        public String getDashboardId()
-        {
+        public String getDashboardId() {
             return getValueById("dashboardId");
         }
 
-        public String getPropertiesStatus()
-        {
+        public String getPropertiesStatus() {
             return waitForValue("propertiesStatus");
         }
 
-        public String getProperties()
-        {
+        public String getProperties() {
             return waitForValue("properties");
         }
 
-        public boolean getEditable()
-        {
+        public boolean getEditable() {
             return Boolean.valueOf(waitForValue("editable"));
         }
 
-        public void assertEditClicked()
-        {
+        public void assertEditClicked() {
             runInFrame(() -> {
                 Poller.waitUntilTrue(elementFinder.find(By.id("editBox")).timed().isVisible());
                 return null;
             });
         }
 
-        public void changeTitle()
-        {
+        public void changeTitle() {
             runInFrame(() -> {
                 elementFinder.find(By.id("set-title")).click();
                 return null;
@@ -427,16 +397,12 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         }
     }
 
-    private void closeBaseUrlBanner()
-    {
-        try
-        {
+    private void closeBaseUrlBanner() {
+        try {
             WebElement banner = product.getTester().getDriver().findElement(By.xpath("//div[@id='aui-flag-container']"));
             WebElement closeButton = banner.findElement(By.xpath("//span[@role='button']"));
             closeButton.click();
-        }
-        catch (RuntimeException ex)
-        {
+        } catch (RuntimeException ex) {
             // apparently the banner is not present
         }
     }

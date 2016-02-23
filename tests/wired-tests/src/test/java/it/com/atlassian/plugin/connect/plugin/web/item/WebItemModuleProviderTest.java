@@ -51,9 +51,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (AtlassianPluginsTestRunner.class)
-public class WebItemModuleProviderTest
-{
+@RunWith(AtlassianPluginsTestRunner.class)
+public class WebItemModuleProviderTest {
     public static final String PLUGIN_NAME = "My Plugin";
     public static final String MODULE_NAME = "My Web Item";
     public static final String MODULE_KEY = "my-web-item";
@@ -73,8 +72,7 @@ public class WebItemModuleProviderTest
     private String pluginKey;
 
     public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
-                                     TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
-    {
+                                     TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor) {
         this.webItemModuleProvider = webItemModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -82,14 +80,12 @@ public class WebItemModuleProviderTest
     }
 
     @BeforeClass
-    public void authenticate()
-    {
+    public void authenticate() {
         testAuthenticator.authenticateUser("admin");
     }
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.pluginKey = randomPluginKey();
         this.addon = newConnectAddonBean().withKey(pluginKey).build();
         this.servletRequest = mock(HttpServletRequest.class);
@@ -97,8 +93,7 @@ public class WebItemModuleProviderTest
     }
 
     @Test
-    public void singleAbsoluteLink() throws Exception
-    {
+    public void singleAbsoluteLink() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -118,8 +113,7 @@ public class WebItemModuleProviderTest
     }
 
     @Test
-    public void singleAbsoluteLinkWithPageContext() throws Exception
-    {
+    public void singleAbsoluteLinkWithPageContext() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -140,8 +134,7 @@ public class WebItemModuleProviderTest
     }
 
     @Test
-    public void singleAbsoluteLinkWithProductContext() throws Exception
-    {
+    public void singleAbsoluteLinkWithProductContext() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -162,8 +155,7 @@ public class WebItemModuleProviderTest
     }
 
     @Test
-    public void singlePageLink() throws Exception
-    {
+    public void singlePageLink() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -184,28 +176,23 @@ public class WebItemModuleProviderTest
         assertThat(descriptor.getLink(), pointsTo(servletRequest, expectedUrl));
     }
 
-    private Matcher<? super WebLink> pointsTo(final HttpServletRequest servletRequest, final String url)
-    {
-        return new TypeSafeMatcher<WebLink>()
-        {
+    private Matcher<? super WebLink> pointsTo(final HttpServletRequest servletRequest, final String url) {
+        return new TypeSafeMatcher<WebLink>() {
             @Override
-            protected boolean matchesSafely(WebLink webLink)
-            {
+            protected boolean matchesSafely(WebLink webLink) {
                 String displayableUrl = webLink.getDisplayableUrl(servletRequest, Collections.<String, Object>emptyMap());
                 return displayableUrl.startsWith(url);
             }
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("weblink containing url starting with " + url);
             }
         };
     }
 
     @Test
-    public void singlePageLinkName() throws Exception
-    {
+    public void singlePageLinkName() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -224,43 +211,36 @@ public class WebItemModuleProviderTest
 
         Plugin plugin = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             final Plugin connectPlugin = getConnectPlugin();
-            final String moduleKey = addonAndModuleKey(pluginKey,MODULE_KEY);
+            final String moduleKey = addonAndModuleKey(pluginKey, MODULE_KEY);
 
             WaitUntil.invoke(new WaitUntil.WaitCondition() {
                 @Override
-                public boolean isFinished()
-                {
+                public boolean isFinished() {
                     return null != connectPlugin.getModuleDescriptor(moduleKey);
                 }
 
                 @Override
-                public String getWaitMessage()
-                {
+                public String getWaitMessage() {
                     return "waiting for addon module to be registered...";
                 }
             });
 
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) connectPlugin.getModuleDescriptor(moduleKey);
 
-            assertEquals(MODULE_NAME,descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class), new HashMap<>()));
-        }
-        finally
-        {
-            if (null != plugin)
-            {
+            assertEquals(MODULE_NAME, descriptor.getWebLabel().getDisplayableLabel(mock(HttpServletRequest.class), new HashMap<>()));
+        } finally {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    public void singleProductLink() throws Exception
-    {
+    public void singleProductLink() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -281,8 +261,7 @@ public class WebItemModuleProviderTest
     }
 
     @Test
-    public void singleAddonLink() throws Exception
-    {
+    public void singleAddonLink() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -300,8 +279,7 @@ public class WebItemModuleProviderTest
 
         Plugin plugin = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
@@ -312,19 +290,15 @@ public class WebItemModuleProviderTest
             descriptor.enabled();
 
             assertAddonLinkHrefIsCorrect(descriptor, bean, addon);
-        }
-        finally
-        {
-            if (null != plugin)
-            {
+        } finally {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    public void dialogOptions() throws Exception
-    {
+    public void dialogOptions() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -334,9 +308,9 @@ public class WebItemModuleProviderTest
                         newWebItemTargetBean()
                                 .withType(WebItemTargetType.dialog)
                                 .withOptions(DialogOptions.newDialogOptions()
-                                                .withWidth("100")
-                                                .withHeight("300px")
-                                                .build()
+                                        .withWidth("100")
+                                        .withHeight("300px")
+                                        .build()
                                 )
                                 .build()
                 )
@@ -352,8 +326,7 @@ public class WebItemModuleProviderTest
 
         Plugin plugin = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(
@@ -367,19 +340,15 @@ public class WebItemModuleProviderTest
             assertAddonLinkHrefIsCorrect(descriptor, bean, addon);
             assertTrue("expected param [-acopt-width]", descriptor.getParams().containsKey("-acopt-width"));
             assertTrue("expected param [-acopt-height]", descriptor.getParams().containsKey("-acopt-height"));
-        }
-        finally
-        {
-            if (null != plugin)
-            {
+        } finally {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    public void multipleWebItems() throws Exception
-    {
+    public void multipleWebItems() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
@@ -404,8 +373,7 @@ public class WebItemModuleProviderTest
 
         Plugin plugin = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean, bean2), addon);
@@ -420,25 +388,21 @@ public class WebItemModuleProviderTest
 
             assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
             assertAddonLinkHrefIsCorrect(descriptor2, bean2, addon);
-        }
-        finally
-        {
-            if (null != plugin)
-            {
+        } finally {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    public void velocityKiller() throws Exception
-    {
+    public void velocityKiller() throws Exception {
         WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty(VELOCITY_LABEL, ""))
                 .withKey(MODULE_KEY)
                 .withUrl("/my/addon")
                 .withLocation("system.top.navigation.bar")
-                .withTooltip(new I18nProperty(VELOCITY_TOOLTIP,""))
+                .withTooltip(new I18nProperty(VELOCITY_TOOLTIP, ""))
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -451,54 +415,43 @@ public class WebItemModuleProviderTest
 
         Plugin plugin = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
-            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) getConnectPlugin().getModuleDescriptor(addonAndModuleKey(pluginKey,MODULE_KEY));
+            WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) getConnectPlugin().getModuleDescriptor(addonAndModuleKey(pluginKey, MODULE_KEY));
 
-            Map<String,Object> vars = new HashMap<String, Object>();
-            vars.put("var","ooops");
-            vars.put("awesome","awesome-ooops");
+            Map<String, Object> vars = new HashMap<String, Object>();
+            vars.put("var", "ooops");
+            vars.put("awesome", "awesome-ooops");
 
-            String label = descriptor.getWebLabel().getDisplayableLabel(servletRequest,vars);
-            String tooltip = descriptor.getTooltip().getDisplayableLabel(servletRequest,vars);
+            String label = descriptor.getWebLabel().getDisplayableLabel(servletRequest, vars);
+            String tooltip = descriptor.getTooltip().getDisplayableLabel(servletRequest, vars);
 
             //by the time we get the displayable label, it's already gone through velocity and so we get the literal variables non-escaped.
             assertEquals(VELOCITY_LABEL, label);
-            assertEquals(VELOCITY_TOOLTIP, descriptor.getTooltip().getDisplayableLabel(servletRequest,vars));
+            assertEquals(VELOCITY_TOOLTIP, descriptor.getTooltip().getDisplayableLabel(servletRequest, vars));
 
-        }
-        finally
-        {
-            if (null != plugin)
-            {
+        } finally {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
-    private void assertAddonLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addonBean)
-    {
+    private void assertAddonLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addonBean) {
         final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<>());
 
         final WebItemTargetBean target = webItemModuleBean.getTarget();
-        if (target.isDialogTarget() || target.isInlineDialogTarget())
-        {
+        if (target.isDialogTarget() || target.isInlineDialogTarget()) {
             assertThat(href, startsWith(ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean))));
-        }
-        else if (target.isPageTarget() && !webItemModuleBean.isAbsolute())
-        {
+        } else if (target.isPageTarget() && !webItemModuleBean.isAbsolute()) {
             assertThat(href, containsString(RedirectServletPath.forModule(pluginKey, webItemModuleBean.getKey(addonBean))));
-        }
-        else
-        {
+        } else {
             assertThat(href, startsWith(BASE_URL + "/my/addon"));
         }
     }
 
-    private Plugin getConnectPlugin()
-    {
+    private Plugin getConnectPlugin() {
         return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
     }
 }

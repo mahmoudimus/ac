@@ -12,44 +12,37 @@ import static com.google.common.collect.Lists.newArrayList;
 /**
  * @since 1.0
  */
-public class CompositeConditionBeanBuilder extends BaseModuleBeanBuilder<CompositeConditionBeanBuilder, CompositeConditionBean>
-{
+public class CompositeConditionBeanBuilder extends BaseModuleBeanBuilder<CompositeConditionBeanBuilder, CompositeConditionBean> {
     private List<ConditionalBean> conditions;
     private CompositeConditionType type;
 
-    public CompositeConditionBeanBuilder()
-    {
+    public CompositeConditionBeanBuilder() {
         this.conditions = newArrayList();
         this.type = CompositeConditionType.AND;
     }
 
-    public CompositeConditionBeanBuilder(CompositeConditionBean defaultBean)
-    {
+    public CompositeConditionBeanBuilder(CompositeConditionBean defaultBean) {
         this.conditions = defaultBean.getConditions();
         this.type = defaultBean.getType();
     }
 
-    public CompositeConditionBeanBuilder withConditions(List<ConditionalBean> conditions)
-    {
+    public CompositeConditionBeanBuilder withConditions(List<ConditionalBean> conditions) {
         this.conditions = conditions;
         return this;
     }
 
-    public CompositeConditionBeanBuilder withConditions(ConditionalBean... conditions)
-    {
+    public CompositeConditionBeanBuilder withConditions(ConditionalBean... conditions) {
         this.conditions.addAll(Arrays.asList(conditions));
         return this;
     }
 
-    public CompositeConditionBeanBuilder withType(CompositeConditionType type)
-    {
+    public CompositeConditionBeanBuilder withType(CompositeConditionType type) {
         this.type = type;
         return this;
     }
 
     @Override
-    public CompositeConditionBean build()
-    {
+    public CompositeConditionBean build() {
         return new CompositeConditionBean(this);
     }
 }

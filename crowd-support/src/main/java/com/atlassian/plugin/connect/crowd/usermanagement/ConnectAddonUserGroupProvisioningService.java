@@ -13,8 +13,7 @@ import com.atlassian.crowd.model.group.Group;
 /**
  * Perform operations on user groups.
  */
-public interface ConnectAddonUserGroupProvisioningService
-{
+public interface ConnectAddonUserGroupProvisioningService {
     /**
      * Ensure that the nominated user is in the nominated group. Add membership if the user is not already a member.
      *
@@ -44,6 +43,7 @@ public interface ConnectAddonUserGroupProvisioningService
      */
     void ensureUserIsInGroups(String userKey, Set<String> groupKeys)
             throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException;
+
     /**
      * Remove the user from the nominated group. It is not an error condition if the user is not a member of the group.
      *

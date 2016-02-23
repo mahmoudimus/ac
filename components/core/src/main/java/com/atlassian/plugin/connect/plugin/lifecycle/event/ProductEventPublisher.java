@@ -15,8 +15,7 @@ import javax.inject.Named;
  */
 @ExportAsService
 @Named
-public class ProductEventPublisher implements LifecycleAware
-{
+public class ProductEventPublisher implements LifecycleAware {
     public static final String PLUGINS_LAST_VERSION = "plugins.lastVersion";
     private final EventPublisher eventPublisher;
     private final ApplicationProperties applicationProperties;
@@ -26,10 +25,9 @@ public class ProductEventPublisher implements LifecycleAware
 
     @Inject
     public ProductEventPublisher(EventPublisher eventPublisher,
-            ApplicationProperties applicationProperties,
-            PluginSettingsFactory pluginSettingsFactory,
-            PluginRetrievalService pluginRetrievalService)
-    {
+                                 ApplicationProperties applicationProperties,
+                                 PluginSettingsFactory pluginSettingsFactory,
+                                 PluginRetrievalService pluginRetrievalService) {
         this.eventPublisher = eventPublisher;
         this.applicationProperties = applicationProperties;
         this.pluginSettingsFactory = pluginSettingsFactory;
@@ -37,22 +35,18 @@ public class ProductEventPublisher implements LifecycleAware
     }
 
     @Override
-    public void onStart()
-    {
-        if (!started)
-        {
+    public void onStart() {
+        if (!started) {
             String lastProductVersion = getLastVersion("server");
             String currentProductVersion = getCurrentServerVersion();
-            if (!currentProductVersion.equals(lastProductVersion))
-            {
+            if (!currentProductVersion.equals(lastProductVersion)) {
                 eventPublisher.publish(new ServerUpgradedEvent(lastProductVersion, currentProductVersion));
                 saveCurrentVersion("server", currentProductVersion);
             }
 
             String lastVersion = getLastVersion("plugins");
             String currentVersion = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
-            if (!currentVersion.equals(lastVersion))
-            {
+            if (!currentVersion.equals(lastVersion)) {
                 eventPublisher.publish(new PluginsUpgradedEvent(lastVersion, currentVersion));
                 saveCurrentVersion("plugins", currentVersion);
             }
@@ -61,28 +55,23 @@ public class ProductEventPublisher implements LifecycleAware
     }
 
     @Override
-    public void onStop()
-    {
+    public void onStop() {
         started = false;
     }
 
-    private void saveCurrentVersion(String type, String currentVersion)
-    {
+    private void saveCurrentVersion(String type, String currentVersion) {
         pluginSettingsFactory.createGlobalSettings().put(getSettingsKey(type), currentVersion);
     }
 
-    private String getSettingsKey(String type)
-    {
+    private String getSettingsKey(String type) {
         return PLUGINS_LAST_VERSION + "." + type;
     }
 
-    private String getCurrentServerVersion()
-    {
+    private String getCurrentServerVersion() {
         return applicationProperties.getBuildNumber();
     }
 
-    private String getLastVersion(String type)
-    {
+    private String getLastVersion(String type) {
         String value = (String) pluginSettingsFactory.createGlobalSettings().get(
                 getSettingsKey(type));
         return value != null ? value : "";

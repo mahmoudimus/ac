@@ -10,37 +10,28 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-public class ResourceServlet extends ContextServlet
-{
+public class ResourceServlet extends ContextServlet {
     private final String resourcePath;
     private final String contentType;
 
-    public ResourceServlet(String resourcePath, String contentType)
-    {
+    public ResourceServlet(String resourcePath, String contentType) {
         this.resourcePath = resourcePath;
         this.contentType = contentType;
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-    {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         InputStream resourceAsStream = null;
-        try
-        {
+        try {
             resourceAsStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
-            if (null == resourceAsStream)
-            {
+            if (null == resourceAsStream) {
                 resp.sendError(404);
-            }
-            else
-            {
+            } else {
                 resp.setContentType(contentType);
                 IOUtils.copy(resourceAsStream, resp.getOutputStream());
             }
-        }
-        finally
-        {
-           IOUtils.closeQuietly(resourceAsStream);
+        } finally {
+            IOUtils.closeQuietly(resourceAsStream);
         }
     }
 }

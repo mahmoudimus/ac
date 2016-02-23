@@ -16,8 +16,7 @@ import java.util.concurrent.Callable;
 /**
  * Page with a date picker control
  */
-public class RemoteDatePickerGeneralPage extends ConnectAddonPage implements Page
-{
+public class RemoteDatePickerGeneralPage extends ConnectAddonPage implements Page {
 
     public static String TEMPLATE_PATH = "jira/iframe-date-picker.mu";
 
@@ -33,19 +32,16 @@ public class RemoteDatePickerGeneralPage extends ConnectAddonPage implements Pag
     @Inject
     protected AtlassianWebDriver driver;
 
-    public RemoteDatePickerGeneralPage(String addonKey, String moduleKey)
-    {
+    public RemoteDatePickerGeneralPage(String addonKey, String moduleKey) {
         super(addonKey, moduleKey, true);
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
-    public CalendarPopup openDatePicker(String triggerId)
-    {
+    public CalendarPopup openDatePicker(String triggerId) {
         runInFrame(() -> {
             driver.findElement(By.id(triggerId)).click();
             return null;
@@ -53,13 +49,11 @@ public class RemoteDatePickerGeneralPage extends ConnectAddonPage implements Pag
         return product.getPageBinder().bind(CalendarPopup.class);
     }
 
-    public String getSelectedDate(String fieldId)
-    {
+    public String getSelectedDate(String fieldId) {
         return runInFrame(() -> driver.findElement(By.id(fieldId)).getAttribute("value"));
     }
 
-    public String getSelectedIsoDate(String fieldId)
-    {
+    public String getSelectedIsoDate(String fieldId) {
         return runInFrame(() -> driver.findElement(By.id(fieldId)).getAttribute("data-iso"));
     }
 

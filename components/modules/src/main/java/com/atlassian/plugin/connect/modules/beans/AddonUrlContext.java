@@ -6,8 +6,7 @@ import com.atlassian.json.schema.annotation.SchemaDefinition;
  * @since 1.0
  */
 @SchemaDefinition("urlContext")
-public enum AddonUrlContext
-{
+public enum AddonUrlContext {
     /**
      * A context that uses the url as the module key to point to an existing page
      */
@@ -24,8 +23,7 @@ public enum AddonUrlContext
     product;
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return super.toString().toLowerCase();
     }
 }

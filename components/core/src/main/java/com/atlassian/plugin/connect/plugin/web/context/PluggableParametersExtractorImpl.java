@@ -26,39 +26,31 @@ import java.util.stream.Collectors;
  * This component extracts context parameters based on local Connect project extractors as well as extractors loaded from plug-ins.
  */
 @Component
-public class PluggableParametersExtractorImpl implements PluggableParametersExtractor
-{
+public class PluggableParametersExtractorImpl implements PluggableParametersExtractor {
     private final static Logger log = LoggerFactory.getLogger(PluggableParametersExtractorImpl.class);
 
     private final WebFragmentModuleContextExtractor connectModuleContextExtractor;
     private final PluginAccessor pluginAccessor;
 
     @Autowired
-    public PluggableParametersExtractorImpl(final WebFragmentModuleContextExtractor connectModuleContextExtractor, final PluginAccessor pluginAccessor)
-    {
+    public PluggableParametersExtractorImpl(final WebFragmentModuleContextExtractor connectModuleContextExtractor, final PluginAccessor pluginAccessor) {
         this.connectModuleContextExtractor = connectModuleContextExtractor;
         this.pluginAccessor = pluginAccessor;
     }
 
-    public ModuleContextParameters extractParameters(Map<String, Object> context)
-    {
+    public ModuleContextParameters extractParameters(Map<String, Object> context) {
         ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters(context);
         moduleContextParameters.putAll(connectModuleContextExtractor.extractParameters(context));
         moduleContextParameters.putAll(extractByPlugins(context));
         return moduleContextParameters;
     }
 
-    private Map<String, String> extractByPlugins(final Map<String, Object> context)
-    {
+    private Map<String, String> extractByPlugins(final Map<String, Object> context) {
         ImmutableMap.Builder<String, String> result = ImmutableMap.builder();
-        for (ContextParametersExtractor contextParametersExtractor : getExtractors())
-        {
-            try
-            {
+        for (ContextParametersExtractor contextParametersExtractor : getExtractors()) {
+            try {
                 result.putAll(contextParametersExtractor.extractParameters(context));
-            }
-            catch (Throwable ex)
-            {
+            } catch (Throwable ex) {
                 log.warn("Exception when extracting parameters", ex);
             }
         }
@@ -66,12 +58,11 @@ public class PluggableParametersExtractorImpl implements PluggableParametersExtr
         return result.build();
     }
 
-    private Iterable<ContextParametersExtractor> getExtractors()
-    {
+    private Iterable<ContextParametersExtractor> getExtractors() {
         return pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class))
-            .stream()
-            .map(ConnectContextParametersResolver::getExtractors)
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+                .stream()
+                .map(ConnectContextParametersResolver::getExtractors)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 }

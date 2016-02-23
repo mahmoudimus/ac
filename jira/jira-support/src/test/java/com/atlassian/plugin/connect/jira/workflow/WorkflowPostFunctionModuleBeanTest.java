@@ -15,27 +15,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class WorkflowPostFunctionModuleBeanTest
-{
+public class WorkflowPostFunctionModuleBeanTest {
     private static final UrlBean ABSOLUTE_BEAN = new UrlBean("https://twitter.com");
 
     @Test
-    public void verifyName() throws Exception
-    {
+    public void verifyName() throws Exception {
         WorkflowPostFunctionModuleBean bean = createModuleBean();
         assertEquals("My Post Function", bean.getName().getValue());
     }
 
     @Test
-    public void verifyDescription() throws Exception
-    {
+    public void verifyDescription() throws Exception {
         WorkflowPostFunctionModuleBean bean = createModuleBean();
         assertEquals("Some description", bean.getDescription().getValue());
     }
 
     @Test
-    public void verifyCreate() throws Exception
-    {
+    public void verifyCreate() throws Exception {
         WorkflowPostFunctionModuleBean bean = createModuleBean();
 
         assertTrue(bean.hasCreate());
@@ -44,8 +40,7 @@ public class WorkflowPostFunctionModuleBeanTest
     }
 
     @Test
-    public void verifyEdit() throws Exception
-    {
+    public void verifyEdit() throws Exception {
         WorkflowPostFunctionModuleBean bean = createModuleBean();
 
         assertTrue(bean.hasEdit());
@@ -54,8 +49,7 @@ public class WorkflowPostFunctionModuleBeanTest
     }
 
     @Test
-    public void verifyView() throws Exception
-    {
+    public void verifyView() throws Exception {
         WorkflowPostFunctionModuleBean bean = createModuleBean();
 
         assertTrue(bean.hasView());
@@ -64,8 +58,7 @@ public class WorkflowPostFunctionModuleBeanTest
     }
 
     @Test
-    public void verifyTriggered() throws Exception
-    {
+    public void verifyTriggered() throws Exception {
         WorkflowPostFunctionModuleBean bean = createModuleBean();
 
         assertTrue(bean.hasTriggered());
@@ -73,8 +66,7 @@ public class WorkflowPostFunctionModuleBeanTest
     }
 
     @Test
-    public void verifyAddonMarshalling() throws Exception
-    {
+    public void verifyAddonMarshalling() throws Exception {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
         WorkflowPostFunctionModuleBean addon = gson.fromJson(json, WorkflowPostFunctionModuleBean.class);
@@ -97,31 +89,26 @@ public class WorkflowPostFunctionModuleBeanTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void absoluteUrlsAreNotAllowedOnView()
-    {
+    public void absoluteUrlsAreNotAllowedOnView() {
         newWorkflowPostFunctionBean().withView(ABSOLUTE_BEAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void absoluteUrlsAreNotAllowedOnEdit()
-    {
+    public void absoluteUrlsAreNotAllowedOnEdit() {
         newWorkflowPostFunctionBean().withEdit(ABSOLUTE_BEAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void absoluteUrlsAreNotAllowedOnCreate()
-    {
+    public void absoluteUrlsAreNotAllowedOnCreate() {
         newWorkflowPostFunctionBean().withCreate(ABSOLUTE_BEAN);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void absoluteUrlsAreNotAllowedOnTriggered()
-    {
+    public void absoluteUrlsAreNotAllowedOnTriggered() {
         newWorkflowPostFunctionBean().withTriggered(ABSOLUTE_BEAN);
     }
 
-    private WorkflowPostFunctionModuleBean createModuleBean()
-    {
+    private WorkflowPostFunctionModuleBean createModuleBean() {
         return newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Post Function", "my.pf.name"))
                 .withDescription(new I18nProperty("Some description", "my.pf.desc"))
@@ -132,8 +119,7 @@ public class WorkflowPostFunctionModuleBeanTest
                 .build();
     }
 
-    private static String readTestFile() throws IOException
-    {
+    private static String readTestFile() throws IOException {
         return readAddonTestFile("workflowPostFunction.json");
     }
 }

@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.spi;
 
-public interface HostProperties
-{
+public interface HostProperties {
     String getKey();
 }

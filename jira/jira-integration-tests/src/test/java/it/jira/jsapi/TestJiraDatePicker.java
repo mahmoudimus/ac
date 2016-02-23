@@ -29,8 +29,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of AC date picker component in JIRA
  */
-public class TestJiraDatePicker extends JiraWebDriverTestBase
-{
+public class TestJiraDatePicker extends JiraWebDriverTestBase {
     private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String PAGE_NAME = "My Awesome Page";
 
@@ -42,8 +41,7 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         addonKey = AddonTestUtils.randomAddonKey();
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
@@ -60,17 +58,14 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void shouldPickDateWithTime()
-    {
+    public void shouldPickDateWithTime() {
         RemoteDatePickerGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteDatePickerGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
         assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.DATE_TIME_FIELD), equalTo(""));
         CalendarPopup calendar = generalPage.openDatePicker(RemoteDatePickerGeneralPage.DATE_TIME_TRIGGER);
@@ -82,8 +77,7 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
     }
 
     @Test
-    public void shouldPickDate()
-    {
+    public void shouldPickDate() {
         RemoteDatePickerGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteDatePickerGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
         assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.DATE_FIELD), equalTo(""));
         CalendarPopup calendar = generalPage.openDatePicker(RemoteDatePickerGeneralPage.DATE_TRIGGER);
@@ -94,8 +88,7 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
     }
 
     @Test
-    public void shouldUseTodayAsDefaultDate()
-    {
+    public void shouldUseTodayAsDefaultDate() {
         RemoteDatePickerGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteDatePickerGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
         assertThat(generalPage.getSelectedDate(RemoteDatePickerGeneralPage.TODAY_FIELD), equalTo(""));
         CalendarPopup calendar = generalPage.openDatePicker(RemoteDatePickerGeneralPage.TODAY_TRIGGER);
@@ -109,8 +102,7 @@ public class TestJiraDatePicker extends JiraWebDriverTestBase
     }
 
     @Test
-    public void shouldCloseCalendarOnSelection()
-    {
+    public void shouldCloseCalendarOnSelection() {
         RemoteDatePickerGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteDatePickerGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
         assertThat(generalPage.getSelectedDate("today-field"), equalTo(""));
         CalendarPopup calendar = generalPage.openDatePicker("today-trigger");

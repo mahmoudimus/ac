@@ -13,25 +13,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.Maps;
 
-public class EchoContextServlet extends ContextServlet
-{
+public class EchoContextServlet extends ContextServlet {
     private volatile BlockingDeque<Map<String, Object>> contexts = new LinkedBlockingDeque<>();
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-    {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         contexts.push(Maps.newHashMap(context));
         HttpUtils.renderHtml(resp, "http-context.mu", context);
     }
 
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-    {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         doGet(req, resp, context);
     }
 
-    public Map<String, Object> waitForContext() throws InterruptedException, TimeoutException
-    {
+    public Map<String, Object> waitForContext() throws InterruptedException, TimeoutException {
         Map<String, Object> poll = contexts.poll(10, TimeUnit.SECONDS);
         if (poll == null) {
             throw new TimeoutException("Ran out of time waiting for a request context. Perhaps no request was made "

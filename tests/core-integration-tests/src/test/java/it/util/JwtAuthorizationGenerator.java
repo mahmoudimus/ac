@@ -35,8 +35,7 @@ import org.apache.http.util.CharArrayBuffer;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 //Copied mostly from AC Play
-public class JwtAuthorizationGenerator
-{
+public class JwtAuthorizationGenerator {
     private static final char[] QUERY_DELIMITERS = new char[]{'&'};
 
     /**
@@ -47,21 +46,18 @@ public class JwtAuthorizationGenerator
 
     private final JwtWriterFactory jwtWriterFactory;
 
-    public JwtAuthorizationGenerator(JwtWriterFactory jwtWriterFactory)
-    {
+    public JwtAuthorizationGenerator(JwtWriterFactory jwtWriterFactory) {
         this(jwtWriterFactory, JWT_EXPIRY_WINDOW_SECONDS_DEFAULT);
     }
 
-    public JwtAuthorizationGenerator(JwtWriterFactory jwtWriterFactory, int jwtExpiryWindowSeconds)
-    {
+    public JwtAuthorizationGenerator(JwtWriterFactory jwtWriterFactory, int jwtExpiryWindowSeconds) {
         this.jwtWriterFactory = checkNotNull(jwtWriterFactory);
         this.jwtExpiryWindowSeconds = jwtExpiryWindowSeconds;
     }
 
     public String generate(String method, String productBaseUrl, URI uri, Map<String, List<String>> parameters,
                            Optional<String> userId, String issuer, String sharedSecret)
-            throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, URISyntaxException
-    {
+            throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, URISyntaxException {
         final String path = uri.getPath();
         final URI baseUrl = new URI(productBaseUrl);
         final String productContext = baseUrl.getPath();
@@ -75,32 +71,27 @@ public class JwtAuthorizationGenerator
 
     public String generate(String httpMethod, URI url, Map<String, List<String>> parameters,
                            Optional<String> userId, String issuer, String sharedSecret)
-            throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
-    {
+            throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException {
         Map<String, String[]> paramsAsArrays = Maps.transformValues(parameters, input -> checkNotNull(input).toArray(new String[input.size()]));
         return encodeJwt(httpMethod, url, paramsAsArrays, userId.orElse(null), issuer, sharedSecret);
     }
 
     private String encodeJwt(String httpMethod, URI targetPath, Map<String, String[]> params, String userKeyValue, String issuer, String sharedSecret)
-            throws JwtUnknownIssuerException, JwtIssuerLacksSharedSecretException
-    {
+            throws JwtUnknownIssuerException, JwtIssuerLacksSharedSecretException {
 
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(TimeUtil.currentTimeSeconds())
                 .expirationTime(TimeUtil.currentTimePlusNSeconds(jwtExpiryWindowSeconds))
                 .issuer(issuer);
 
-        if (null != userKeyValue)
-        {
+        if (null != userKeyValue) {
             jsonBuilder = jsonBuilder.subject(userKeyValue);
         }
 
         Map<String, String[]> completeParams = params;
 
-        try
-        {
-            if (!StringUtils.isEmpty(targetPath.getQuery()))
-            {
+        try {
+            if (!StringUtils.isEmpty(targetPath.getQuery())) {
                 completeParams = new HashMap(params);
                 completeParams.putAll(constructParameterMap(targetPath));
             }
@@ -109,9 +100,7 @@ public class JwtAuthorizationGenerator
                     targetPath.getPath(), "", completeParams);
 
             JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, canonicalHttpUriRequest);
-        }
-        catch (UnsupportedEncodingException | NoSuchAlgorithmException e)
-        {
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
 
@@ -119,21 +108,17 @@ public class JwtAuthorizationGenerator
     }
 
 
-    private String issueJwt(String jsonPayload, String sharedSecret) throws JwtSigningException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
-    {
+    private String issueJwt(String jsonPayload, String sharedSecret) throws JwtSigningException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException {
         return getJwtWriter(sharedSecret).jsonToJwt(jsonPayload);
     }
 
-    private JwtWriter getJwtWriter(String sharedSecret) throws JwtUnknownIssuerException, JwtIssuerLacksSharedSecretException
-    {
+    private JwtWriter getJwtWriter(String sharedSecret) throws JwtUnknownIssuerException, JwtIssuerLacksSharedSecretException {
         return jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, sharedSecret);
     }
 
-    private static Map<String, String[]> constructParameterMap(URI uri) throws UnsupportedEncodingException
-    {
+    private static Map<String, String[]> constructParameterMap(URI uri) throws UnsupportedEncodingException {
         final String query = uri.getQuery();
-        if (query == null)
-        {
+        if (query == null) {
             return Collections.emptyMap();
         }
 
@@ -143,12 +128,10 @@ public class JwtAuthorizationGenerator
         buffer.append(query);
         ParserCursor cursor = new ParserCursor(0, buffer.length());
 
-        while (!cursor.atEnd())
-        {
+        while (!cursor.atEnd()) {
             NameValuePair nameValuePair = BasicHeaderValueParser.DEFAULT.parseNameValuePair(buffer, cursor, QUERY_DELIMITERS);
 
-            if (!StringUtils.isEmpty(nameValuePair.getName()))
-            {
+            if (!StringUtils.isEmpty(nameValuePair.getName())) {
                 String decodedName = urlDecode(nameValuePair.getName());
                 String decodedValue = urlDecode(nameValuePair.getValue());
                 String[] oldValues = queryParams.get(decodedName);
@@ -161,8 +144,7 @@ public class JwtAuthorizationGenerator
         return queryParams;
     }
 
-    private static String urlDecode(final String content) throws UnsupportedEncodingException
-    {
+    private static String urlDecode(final String content) throws UnsupportedEncodingException {
         return null == content ? null : URLDecoder.decode(content, "UTF-8");
     }
 }

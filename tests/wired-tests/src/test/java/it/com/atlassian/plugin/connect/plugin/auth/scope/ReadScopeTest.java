@@ -15,27 +15,23 @@ import org.junit.runner.RunWith;
  * These tests are not exhaustive. They are samples across the cross-product endpoints.
  */
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ReadScopeTest extends ScopeTestBase
-{
+public class ReadScopeTest extends ScopeTestBase {
     public ReadScopeTest(TestPluginInstaller testPluginInstaller,
                          TestAuthenticator testAuthenticator,
                          JwtWriterFactory jwtWriterFactory,
                          ConnectAddonRegistry connectAddonRegistry,
-                         ApplicationProperties applicationProperties)
-    {
+                         ApplicationProperties applicationProperties) {
         super(ScopeName.READ, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry,
                 applicationProperties);
     }
 
     @Test
-    public void shouldAllowGetApplinksEntities() throws Exception
-    {
+    public void shouldAllowGetApplinksEntities() throws Exception {
         assertValidRequest(HttpMethod.GET, "/rest/applinks/2.0/entities");
     }
 
     @Test
-    public void shouldForbidPostApplinksEntities() throws Exception
-    {
+    public void shouldForbidPostApplinksEntities() throws Exception {
         assertForbiddenRequest(HttpMethod.POST, "/rest/applinks/2.0/entities");
     }
 }

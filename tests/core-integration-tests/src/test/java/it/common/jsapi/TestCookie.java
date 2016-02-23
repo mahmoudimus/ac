@@ -15,16 +15,14 @@ import it.common.MultiProductWebDriverTestBase;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 
-public class TestCookie extends MultiProductWebDriverTestBase
-{
+public class TestCookie extends MultiProductWebDriverTestBase {
     private static final String PAGE_KEY = "ac-general-cookie-page";
 
     private static ConnectRunner remotePlugin;
 
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("generalPages",
@@ -40,10 +38,8 @@ public class TestCookie extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
@@ -53,8 +49,7 @@ public class TestCookie extends MultiProductWebDriverTestBase
      */
 
     @Test
-    public void testCreateCookie() throws Exception
-    {
+    public void testCreateCookie() throws Exception {
         RemoteCookieGeneralPage remoteCookiePage = loginAndVisit(testUserFactory.basicUser(),
                 RemoteCookieGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
@@ -69,8 +64,7 @@ public class TestCookie extends MultiProductWebDriverTestBase
      * Tests deleting a cookie
      */
     @Test
-    public void testEraseCookie() throws Exception
-    {
+    public void testEraseCookie() throws Exception {
         RemoteCookieGeneralPage remoteCookiePage = loginAndVisit(testUserFactory.basicUser(),
                 RemoteCookieGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 

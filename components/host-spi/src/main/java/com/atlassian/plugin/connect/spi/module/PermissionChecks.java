@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 @PublicApi
-public final class PermissionChecks
-{
+public final class PermissionChecks {
 
-    private PermissionChecks() {}
+    private PermissionChecks() {
+    }
 
     /**
      * Permission check that always allows to access the specified variable.
@@ -26,8 +26,7 @@ public final class PermissionChecks
      * @param <T> user class
      * @return always true permission check for the variable
      */
-    public static <T> PermissionCheck<T> alwaysAllowed(String parameterName)
-    {
+    public static <T> PermissionCheck<T> alwaysAllowed(String parameterName) {
         return new AlwaysAllowed<>(parameterName);
     }
 
@@ -38,8 +37,7 @@ public final class PermissionChecks
      * @param <T> user class
      * @return logged-in user permission check for the variable
      */
-    public static <T> PermissionCheck<T> mustBeLoggedIn(String parameterName)
-    {
+    public static <T> PermissionCheck<T> mustBeLoggedIn(String parameterName) {
         return new MustBeLoggedIn<>(parameterName);
     }
 
@@ -49,20 +47,15 @@ public final class PermissionChecks
      * @param <User> user class
      */
     @PublicSpi
-    public static abstract class LongValue<User> implements PermissionCheck<User>
-    {
+    public static abstract class LongValue<User> implements PermissionCheck<User> {
         private static final Logger log = LoggerFactory.getLogger(LongValue.class);
 
         @Override
-        public boolean hasPermission(final String value, final User user)
-        {
+        public boolean hasPermission(final String value, final User user) {
             long longValue;
-            try
-            {
+            try {
                 longValue = Long.parseLong(value);
-            }
-            catch (NumberFormatException e)
-            {
+            } catch (NumberFormatException e) {
                 log.debug("Failed to parse " + getParameterName(), e);
                 return false;
             }
@@ -72,38 +65,31 @@ public final class PermissionChecks
         public abstract boolean hasPermission(long value, User user);
     }
 
-    private static class AlwaysAllowed<User> implements PermissionCheck<User>
-    {
+    private static class AlwaysAllowed<User> implements PermissionCheck<User> {
         private final String parameterName;
 
-        public AlwaysAllowed(String parameterName)
-        {
+        public AlwaysAllowed(String parameterName) {
             this.parameterName = parameterName;
         }
 
         @Override
-        public String getParameterName()
-        {
+        public String getParameterName() {
             return parameterName;
         }
 
         @Override
-        public boolean hasPermission(final String value, final User user)
-        {
+        public boolean hasPermission(final String value, final User user) {
             return true;
         }
     }
 
-    private static class MustBeLoggedIn<User> extends AlwaysAllowed<User>
-    {
-        public MustBeLoggedIn(String parameterName)
-        {
+    private static class MustBeLoggedIn<User> extends AlwaysAllowed<User> {
+        public MustBeLoggedIn(String parameterName) {
             super(parameterName);
         }
 
         @Override
-        public boolean hasPermission(final String value, final User user)
-        {
+        public boolean hasPermission(final String value, final User user) {
             return user != null;
         }
     }

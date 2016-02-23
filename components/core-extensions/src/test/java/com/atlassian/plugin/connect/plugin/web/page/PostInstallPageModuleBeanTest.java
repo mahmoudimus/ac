@@ -16,12 +16,10 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-public class PostInstallPageModuleBeanTest
-{
+public class PostInstallPageModuleBeanTest {
 
     @Test
-    public void producesCorrectJSON() throws Exception
-    {
+    public void producesCorrectJSON() throws Exception {
         ConnectPageModuleBean bean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(bean, ConnectPageModuleBean.class);
@@ -31,8 +29,7 @@ public class PostInstallPageModuleBeanTest
     }
 
     @Test
-    public void producesCorrectBean() throws Exception
-    {
+    public void producesCorrectBean() throws Exception {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectPageModuleBean deserializedBean = gson.fromJson(json, ConnectPageModuleBean.class);
@@ -42,8 +39,7 @@ public class PostInstallPageModuleBeanTest
     }
 
     @Test
-    public void roundTrippingIsPreserving()
-    {
+    public void roundTrippingIsPreserving() {
         ConnectPageModuleBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(originalBean, ConnectPageModuleBean.class);
@@ -52,8 +48,7 @@ public class PostInstallPageModuleBeanTest
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }
 
-    private static ConnectPageModuleBean createBean()
-    {
+    private static ConnectPageModuleBean createBean() {
         return newPageBean()
                 .withName(new I18nProperty("Some page", "some.page.name"))
                 .withKey("post-install-page")
@@ -63,8 +58,7 @@ public class PostInstallPageModuleBeanTest
                 .build();
     }
 
-    private static String readTestFile() throws IOException
-    {
+    private static String readTestFile() throws IOException {
         return readAddonTestFile("postInstallPageAddon.json");
     }
 

@@ -8,22 +8,18 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-public class ContentEventMapper extends ConfluenceEventMapper
-{
-    public ContentEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+public class ContentEventMapper extends ConfluenceEventMapper {
+    public ContentEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         super(userManager, confluenceSettingsManager);
     }
 
     @Override
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return e instanceof ContentEvent;
     }
 
     @Override
-    public Map<String, Object> toMap(ConfluenceEvent event)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent event) {
         ContentEvent contentEvent = (ContentEvent) event;
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();

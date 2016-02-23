@@ -14,25 +14,21 @@ import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 
-public class ConnectProjectAdminTabPanelModuleBeanTest
-{
+public class ConnectProjectAdminTabPanelModuleBeanTest {
     @Test
-    public void producesCorrectJSON() throws Exception
-    {
+    public void producesCorrectJSON() throws Exception {
         String json = ConnectModulesGsonFactory.getGson().toJson(createBean(), ConnectProjectAdminTabPanelModuleBean.class);
         assertThat(json, is(sameJSONAs(expectedJson())));
     }
 
     @Test
-    public void prefixesLocationCorrectly()
-    {
+    public void prefixesLocationCorrectly() {
         ConnectProjectAdminTabPanelModuleBean moduleBean = createBean();
 
         assertThat(moduleBean.getAbsoluteLocation(), is("atl.jira.proj.config/a-location"));
     }
 
-    private ConnectProjectAdminTabPanelModuleBean createBean()
-    {
+    private ConnectProjectAdminTabPanelModuleBean createBean() {
         return newProjectAdminTabPanelBean()
                 .withName(new I18nProperty("My ProjectAdmin Tab Page", "my.projectAdminTabPage"))
                 .withUrl("/my-general-page")
@@ -41,8 +37,7 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
                 .build();
     }
 
-    private static String expectedJson() throws IOException
-    {
+    private static String expectedJson() throws IOException {
         return readAddonTestFile("projectAdminTabAddon.json");
     }
 }

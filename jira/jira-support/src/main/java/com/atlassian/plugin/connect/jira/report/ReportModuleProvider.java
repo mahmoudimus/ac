@@ -20,8 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 1.2
  */
 @JiraComponent
-public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<ReportModuleBean>
-{
+public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<ReportModuleBean> {
 
     private static final ReportModuleMeta META = new ReportModuleMeta();
 
@@ -29,22 +28,19 @@ public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<Repo
 
     @Autowired
     public ReportModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            ConnectReportModuleDescriptorFactory moduleDescriptorFactory)
-    {
+                                ConnectJsonSchemaValidator schemaValidator,
+                                ConnectReportModuleDescriptorFactory moduleDescriptorFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.moduleDescriptorFactory = moduleDescriptorFactory;
     }
 
     @Override
-    public ConnectModuleMeta<ReportModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<ReportModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> moduleDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()
         ));
     }

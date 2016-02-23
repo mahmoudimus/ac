@@ -7,11 +7,9 @@ import org.junit.Test;
 /**
  * Tests the conversion of passed in strings to valid module keys that the plugin system needs.
  */
-public class ModuleKeyUtilsTest
-{
+public class ModuleKeyUtilsTest {
     @Test
-    public void addonAndModuleKey() throws Exception
-    {
+    public void addonAndModuleKey() throws Exception {
         String addonKey = "plugin";
         String moduleKey = "module";
 
@@ -19,8 +17,7 @@ public class ModuleKeyUtilsTest
     }
 
     @Test
-    public void addonKeyWithDotsAndModuleKey() throws Exception
-    {
+    public void addonKeyWithDotsAndModuleKey() throws Exception {
         String addonKey = "com.test.plugin";
         String moduleKey = "module";
 
@@ -28,8 +25,7 @@ public class ModuleKeyUtilsTest
     }
 
     @Test
-    public void addonAndModuleKeyWithAllTheThings() throws Exception
-    {
+    public void addonAndModuleKeyWithAllTheThings() throws Exception {
         String addonKey = "com.test.my_plugin";
         String moduleKey = "module_thing1";
 
@@ -37,8 +33,7 @@ public class ModuleKeyUtilsTest
     }
 
     @Test
-    public void extractAddonKeyWithAllTheThings() throws Exception
-    {
+    public void extractAddonKeyWithAllTheThings() throws Exception {
         String addonKey = "com.test.my_plugin";
         String moduleKey = "module_thing1";
 
@@ -48,8 +43,7 @@ public class ModuleKeyUtilsTest
     }
 
     @Test
-    public void extractAddonKeyWithTwoUnderscores() throws Exception
-    {
+    public void extractAddonKeyWithTwoUnderscores() throws Exception {
         String addonKey = "com.test__plugin.my__plugin";
         String moduleKey = "module_thing1";
 
@@ -59,8 +53,7 @@ public class ModuleKeyUtilsTest
     }
 
     @Test
-    public void extractModuleKeyWithAllTheThings() throws Exception
-    {
+    public void extractModuleKeyWithAllTheThings() throws Exception {
         String addonKey = "com.test.my_plugin";
         String moduleKey = "module_thing1";
 
@@ -70,8 +63,7 @@ public class ModuleKeyUtilsTest
     }
 
     @Test
-    public void toCompleteKeyWithAllTheThings() throws Exception
-    {
+    public void toCompleteKeyWithAllTheThings() throws Exception {
         String addonKey = "com.test.my_plugin";
         String moduleKey = "module_thing1";
 
