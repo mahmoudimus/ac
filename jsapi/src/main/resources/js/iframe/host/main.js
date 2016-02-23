@@ -19,7 +19,7 @@ define('ac/create', ['ac/jira'], function(jira){
     data.containerId = "embedded-" + data.ns;
     data.options = {
       isFullPage: (data.general === "1"),
-      autoresize: (data.general === "1"),
+      autoresize: true,
       user: {
         timeZone: data.timeZone,
         fullName: data.fullName,
@@ -51,7 +51,8 @@ define('ac/create', ['ac/jira'], function(jira){
       })();
       var convertedData = convertConnectOptions(data);
       var connectAddon = connectHost.create(convertedData);
-
+      connectAddon.data('addon-key', convertedData.addon_key);
+      connectAddon.data('key', convertedData.key);
       _AP.addonAttemptCounter[convertedData.containerId] = 0;
       function doAppend() {
         var container = document.getElementById(convertedData.containerId);

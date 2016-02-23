@@ -2,7 +2,7 @@
   "use strict";
   var workflowListener,
       validationListener,
-      dashboardItemEditListener,
+      dashboardItemEditListener = function(){},
       issueCreateListener;
 
   function isFunction(arg){
@@ -69,11 +69,26 @@
   };
 
   AP.register({
-    jira_workflow_post_function_submit: function(data) {
+    jira_workflow_post_function_submit: function() {
       WorkflowConfiguration.trigger();
     }
   });
 
   AP.jira.WorkflowConfiguration = AP._hostModules.jira.WorkflowConfiguration = WorkflowConfiguration;
+
+
+  AP.register({
+    jira_dashboard_item_edit: function() {
+      dashboardItemEditListener.call();
+    }
+  });
+  
+  function onDashboardItemEdit(listener){
+    dashboardItemEditListener = listener;
+  }
+
+  AP.jira.DashboardItem = AP._hostModules.jira.DashboardItem = {onDashboardItemEdit: onDashboardItemEdit};
+
+
 
 }());

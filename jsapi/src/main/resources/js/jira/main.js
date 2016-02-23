@@ -1,10 +1,10 @@
-define("ac/jira", ['ac/jira/events','ac/jira/workflow-post-function'], function(jiraEvents, workflowPostFunctions){
+define("ac/jira", ['ac/jira/events','ac/jira/workflow-post-function', 'ac/jira/dashboard-item'], function(jiraEvents, workflowPostFunctions, dashboardItem){
   return {
     refreshIssuePage: jiraEvents.refreshIssuePage,
     getWorkflowConfiguration: workflowPostFunctions.getWorkflowConfiguration,
-    _submitWorkflowConfigurationResponse: workflowPostFunctions._submitWorkflowConfigurationResponse
-    // isDashboardItemEditable: workflowPostFunctions.isDashboardItemEditable,
+    _submitWorkflowConfigurationResponse: workflowPostFunctions._submitWorkflowConfigurationResponse,
+    isDashboardItemEditable: dashboardItem.isDashboardItemEditable,
     // openCreateIssueDialog: workflowPostFunctions.openCreateIssueDialog,
-    // setDashboardItemTitle: workflowPostFunctions.setDashboardItemTitle
+    setDashboardItemTitle: dashboardItem.setDashboardItemTitle
   };
 });
