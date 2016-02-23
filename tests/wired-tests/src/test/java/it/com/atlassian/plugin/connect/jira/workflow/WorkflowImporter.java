@@ -9,8 +9,7 @@ import java.io.IOException;
 /**
  * Allows to import XML workflow definitions
  */
-public interface WorkflowImporter
-{
+public interface WorkflowImporter {
     /**
      * Imports a workflow based on its previously exported XML definition. If the workflow exists already, the existing
      * workflow will be returned.

@@ -1,12 +1,12 @@
 package at.jira;
 
-import java.rmi.RemoteException;
-
+import at.marketplace.ConnectAddonRepresentation;
+import at.marketplace.ExternalAddonInstaller;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage.Scope;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.testutils.annotations.Retry;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +14,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.marketplace.ConnectAddonRepresentation;
-import at.marketplace.ExternalAddonInstaller;
-import it.jira.JiraWebDriverTestBase;
+import java.rmi.RemoteException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -32,18 +30,16 @@ import static org.hamcrest.core.Is.is;
 // at.confluence.TestConfluenceScopes and at.jira.TestConfluenceScopes are very similar.
 // If you make changes here, please check whether corresponding changes are needed in the other class.
 // Issue for extracting shared functionality: ACDEV-2364
-@Retry (maxAttempts=1)
-@Category (OnDemandAcceptanceTest.class)
-public class TestJiraScopes extends JiraWebDriverTestBase
-{
+@Retry(maxAttempts = 1)
+@Category(OnDemandAcceptanceTest.class)
+public class TestJiraScopes extends JiraWebDriverTestBase {
     private static final Logger log = LoggerFactory.getLogger(TestJiraScopes.class);
     public static final String SCOPE_TESTER_DESCRIPTOR_URL = "https://ac-acceptance-test-scope-checker.app.dev.atlassian.io/atlassian-connect.json";
     private ExternalAddonInstaller externalAddonInstaller;
     private ConnectAddonRepresentation addon;
 
     @Before
-    public void installAddon() throws Exception
-    {
+    public void installAddon() throws Exception {
         addon = ConnectAddonRepresentation.builder()
                 .withDescriptorUrl(SCOPE_TESTER_DESCRIPTOR_URL)
                 .withName("Atlassian Connect Scope Tester add-on")
@@ -61,16 +57,14 @@ public class TestJiraScopes extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAdminScopeIsAuthorised() throws RemoteException
-    {
+    public void testAdminScopeIsAuthorised() throws RemoteException {
         ScopesTestPage scopesTestPage = loginAndVisit(testUserFactory.basicUser(), ScopesTestPage.class, externalAddonInstaller.getAddonKey());
         String adminResponseCode = scopesTestPage.getCodeForScope(Scope.ADMIN);
         assertThat("Admin-scoped request succeeded", adminResponseCode, is("200"));
     }
 
     @After
-    public void uninstallAddon() throws Exception
-    {
+    public void uninstallAddon() throws Exception {
         log.info("Cleaning up after running a test in " + getClass().getName());
         externalAddonInstaller.uninstall();
     }

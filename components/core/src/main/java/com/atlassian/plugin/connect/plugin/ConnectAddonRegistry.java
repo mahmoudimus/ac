@@ -11,8 +11,7 @@ import java.util.Collection;
  * We should NOT go overboard here as many values can either be calculated or are not used often enough to store here.
  * We should only store values that we are going to need often across multiple components in here.
  */
-public interface ConnectAddonRegistry
-{
+public interface ConnectAddonRegistry {
     void removeAll(String pluginKey);
 
     void storeAddonSettings(String pluginKey, AddonSettings settings);
@@ -38,7 +37,7 @@ public interface ConnectAddonRegistry
     void storeRestartState(String pluginKey, PluginState state);
 
     PluginState getRestartState(String pluginKey);
-    
+
     Iterable<String> getAddonKeysToEnableOnRestart();
 
     AddonSettings getAddonSettings(String pluginKey);

@@ -17,8 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Extracts profile user parameters that can be included in webpanel's iframe url.
  */
 @JiraComponent
-public class ProfileUserContextMapParameterExtractor implements ContextMapParameterExtractor<ApplicationUser>
-{
+public class ProfileUserContextMapParameterExtractor implements ContextMapParameterExtractor<ApplicationUser> {
     public static final String PROFILE_USER_CONTEXT_KEY = "profileUser";
 
     private final UserUtil userUtil;
@@ -27,17 +26,14 @@ public class ProfileUserContextMapParameterExtractor implements ContextMapParame
     @Autowired
     public ProfileUserContextMapParameterExtractor(
             UserUtil userUtil,
-            ProfileUserSerializer profileUserSerializer)
-    {
+            ProfileUserSerializer profileUserSerializer) {
         this.profileUserSerializer = profileUserSerializer;
         this.userUtil = checkNotNull(userUtil);
     }
 
     @Override
-    public Optional<ApplicationUser> extract(final Map<String, Object> context)
-    {
-        if (context.containsKey(PROFILE_USER_CONTEXT_KEY))
-        {
+    public Optional<ApplicationUser> extract(final Map<String, Object> context) {
+        if (context.containsKey(PROFILE_USER_CONTEXT_KEY)) {
             final Principal principal = (Principal) context.get(PROFILE_USER_CONTEXT_KEY);
             return Optional.of(userUtil.getUserByName(principal.getName()));
         }
@@ -45,8 +41,7 @@ public class ProfileUserContextMapParameterExtractor implements ContextMapParame
     }
 
     @Override
-    public ParameterSerializer<ApplicationUser> serializer()
-    {
+    public ParameterSerializer<ApplicationUser> serializer() {
         return profileUserSerializer;
     }
 }

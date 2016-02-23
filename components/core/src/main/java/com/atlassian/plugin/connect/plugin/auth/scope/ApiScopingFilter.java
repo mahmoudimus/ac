@@ -24,8 +24,7 @@ import java.io.IOException;
  * A filter to restrict incoming requests unless they have been authorized via api scopes.  Only handles 2LO-authenticated
  * requests by looking for the client key as a request attribute or a header.
  */
-public class ApiScopingFilter implements Filter
-{
+public class ApiScopingFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
 
     private final AddonScopeManager addonScopeManager;
@@ -35,18 +34,16 @@ public class ApiScopingFilter implements Filter
     private final AddonKeyExtractor addonKeyExtractor;
 
     public ApiScopingFilter(AddonScopeManager addonScopeManager, UserManager userManager,
-            EventPublisher eventPublisher, AddonKeyExtractor addonKeyExtractor)
-    {
+                            EventPublisher eventPublisher, AddonKeyExtractor addonKeyExtractor) {
         this(addonScopeManager,
-             userManager,
-             eventPublisher,
+                userManager,
+                eventPublisher,
                 addonKeyExtractor,
-             new SystemClock());
+                new SystemClock());
     }
 
     public ApiScopingFilter(AddonScopeManager addonScopeManager, UserManager userManager,
-            EventPublisher eventPublisher, AddonKeyExtractor addonKeyExtractor, Clock clock)
-    {
+                            EventPublisher eventPublisher, AddonKeyExtractor addonKeyExtractor, Clock clock) {
         this.addonScopeManager = addonScopeManager;
         this.userManager = userManager;
         this.eventPublisher = eventPublisher;
@@ -55,21 +52,17 @@ public class ApiScopingFilter implements Filter
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException
-    {
+    public void init(FilterConfig filterConfig) throws ServletException {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
-    {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        if (addonKeyExtractor.isAddonRequest(req))
-        {
+        if (addonKeyExtractor.isAddonRequest(req)) {
             // Don't accept requests when the normalised and the original request uris are not the same -- see ACDEV-656
-            if (ServletUtils.normalisedAndOriginalRequestUrisDiffer(req))
-            {
+            if (ServletUtils.normalisedAndOriginalRequestUrisDiffer(req)) {
                 log.warn("Request URI '{}' was deemed as improperly formed as it did not normalise as expected",
                         new Object[]{req.getRequestURI()});
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST, "The request URI is improperly formed");
@@ -80,8 +73,7 @@ public class ApiScopingFilter implements Filter
             // a/ A server-to-server call using JWT or OAuth
             // b/ A XDM bridge call from an add-on that declared scopes (== JSON descriptor)
             String addonKey = addonKeyExtractor.getAddonKeyFromHttpRequest(req);
-            if (addonKey != null)
-            {
+            if (addonKey != null) {
                 handleScopedRequest(addonKey, req, res, chain);
                 return;
             }
@@ -89,15 +81,13 @@ public class ApiScopingFilter implements Filter
         chain.doFilter(request, response);
     }
 
-    private void handleScopedRequest(String addonKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
-    {
+    private void handleScopedRequest(String addonKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         final long startTime = clock.now().getTime();
         // we consume the input to allow inspection of the body via getInputStream
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
         HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res);
-        if (!addonScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey))
-        {
+        if (!addonScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey)) {
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{addonKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
@@ -109,9 +99,7 @@ public class ApiScopingFilter implements Filter
 
         try {
             chain.doFilter(inputConsumingRequest, wrappedResponse);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             long duration = clock.now().getTime() - startTime;
             eventPublisher.publish(new ScopedRequestAllowedEvent(req, addonKey, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, duration));
             throw ServletException.class.cast(new ServletException("Unhandled error in ApiScopingFilter").initCause(e));
@@ -121,8 +109,7 @@ public class ApiScopingFilter implements Filter
     }
 
     @Override
-    public void destroy()
-    {
+    public void destroy() {
 
     }
 }

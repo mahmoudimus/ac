@@ -8,81 +8,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Named
 @ExportAsDevService
-public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlacklist
-{
+public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlacklist {
     private final PluginAccessor pluginAccessor;
 
     @Autowired
-    public WebFragmentLocationBlacklistImpl(PluginAccessor pluginAccessor)
-    {
+    public WebFragmentLocationBlacklistImpl(PluginAccessor pluginAccessor) {
         this.pluginAccessor = pluginAccessor;
     }
 
     @Override
-    public Set<String> getBlacklistedWebPanelLocations()
-    {
+    public Set<String> getBlacklistedWebPanelLocations() {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectWebFragmentLocationBlacklistModuleDescriptor.class)
                 .stream()
-                .map(new Function<ConnectWebFragmentLocationBlacklistModuleDescriptor, ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist>()
-                {
-                    @Override
-                    public ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist apply(ConnectWebFragmentLocationBlacklistModuleDescriptor connectWebFragmentLocationBlacklistModuleDescriptor)
-                    {
-                        return connectWebFragmentLocationBlacklistModuleDescriptor.getModule();
-                    }
-                })
-                .map(new Function<ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist, ImmutableSet<String>>() {
-                    @Override
-                    public ImmutableSet<String> apply(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist connectWebFragmentLocationBlacklist)
-                    {
-                        return connectWebFragmentLocationBlacklist.getWebPanelBlacklistedLocations();
-                    }
-                })
-                .flatMap(new Function<ImmutableSet<String>, Stream<String>>()
-                {
-                    @Override
-                    public Stream<String> apply(ImmutableSet<String> strings)
-                    {
-                        return strings.stream();
-                    }
-                })
+                .map(ConnectWebFragmentLocationBlacklistModuleDescriptor::getModule)
+                .map(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist::getWebPanelBlacklistedLocations)
+                .flatMap(ImmutableSet::stream)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public Set<String> getBlacklistedWebItemLocations()
-    {
+    public Set<String> getBlacklistedWebItemLocations() {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectWebFragmentLocationBlacklistModuleDescriptor.class)
                 .stream()
-                .map(new Function<ConnectWebFragmentLocationBlacklistModuleDescriptor, ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist>()
-                {
-                    @Override
-                    public ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist apply(ConnectWebFragmentLocationBlacklistModuleDescriptor connectWebFragmentLocationBlacklistModuleDescriptor)
-                    {
-                        return connectWebFragmentLocationBlacklistModuleDescriptor.getModule();
-                    }
-                })
-                .map(new Function<ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist, ImmutableSet<String>>() {
-                    @Override
-                    public ImmutableSet<String> apply(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist connectWebFragmentLocationBlacklist)
-                    {
-                        return connectWebFragmentLocationBlacklist.getWebItemBlacklistedLocations();
-                    }
-                })
-                .flatMap(new Function<ImmutableSet<String>, Stream<String>>()
-                {
-                    @Override
-                    public Stream<String> apply(ImmutableSet<String> strings)
-                    {
-                        return strings.stream();
-                    }
-                })
+                .map(ConnectWebFragmentLocationBlacklistModuleDescriptor::getModule)
+                .map(ConnectWebFragmentLocationBlacklistModuleDescriptor.ConnectWebFragmentLocationBlacklist::getWebItemBlacklistedLocations)
+                .flatMap(ImmutableSet::stream)
                 .collect(Collectors.toSet());
     }
 

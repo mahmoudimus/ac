@@ -7,8 +7,7 @@ import java.util.Optional;
  * @param <C> type of the context.
  * @param <P> type of the object retrieved from context.
  */
-public interface ParameterExtractor<C, P>
-{
+public interface ParameterExtractor<C, P> {
     /**
      * Extracts the object from context.
      * @param context module context.

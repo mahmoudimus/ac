@@ -16,8 +16,7 @@ import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class LifecycleUpmHelper implements DisposableBean
-{
+public class LifecycleUpmHelper implements DisposableBean {
 
     private static final String DESCRIPTOR_PREFIX = "connect-descriptor-";
 
@@ -25,41 +24,34 @@ public class LifecycleUpmHelper implements DisposableBean
     private ServiceTracker installServiceTracker;
     private ServiceTracker controlServiceTracker;
 
-    public LifecycleUpmHelper(BundleContext bundleContext)
-    {
+    public LifecycleUpmHelper(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
 
-    public Plugin installAddon(String jsonDescriptor) throws IOException
-    {
+    public Plugin installAddon(String jsonDescriptor) throws IOException {
         File descriptor = createTempDescriptor(jsonDescriptor);
         return getUpmInstallHandler().installPlugin(descriptor, Option.some("application/json")).getPlugin();
     }
 
-    private File createTempDescriptor(String json) throws IOException
-    {
+    private File createTempDescriptor(String json) throws IOException {
         File tmpFile = File.createTempFile(DESCRIPTOR_PREFIX, ".json");
         Files.write(json, tmpFile, Charsets.UTF_8);
 
         return tmpFile;
     }
 
-    public PluginInstallHandler getUpmInstallHandler()
-    {
+    public PluginInstallHandler getUpmInstallHandler() {
         /*
         NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
          */
-        if (null == installServiceTracker)
-        {
+        if (null == installServiceTracker) {
             installServiceTracker = getServiceTracker(PluginInstallHandler.class);
         }
 
         checkNotNull(installServiceTracker);
-        for (ServiceReference ref : installServiceTracker.getServiceReferences())
-        {
+        for (ServiceReference ref : installServiceTracker.getServiceReferences()) {
             Object service = installServiceTracker.getService(ref);
-            if (service.getClass().getName().contains("ConnectUPMInstallHandler"))
-            {
+            if (service.getClass().getName().contains("ConnectUPMInstallHandler")) {
                 return (PluginInstallHandler) service;
             }
         }
@@ -67,26 +59,21 @@ public class LifecycleUpmHelper implements DisposableBean
         throw new IllegalStateException("Could not locate UPM install handler");
     }
 
-    public PluginControlHandler getUpmControlHandler()
-    {
+    public PluginControlHandler getUpmControlHandler() {
         /*
         NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
          */
-        if (null == controlServiceTracker)
-        {
+        if (null == controlServiceTracker) {
             controlServiceTracker = getServiceTracker(PluginControlHandler.class);
         }
 
         checkNotNull(controlServiceTracker);
         ServiceReference[] serviceReferences = controlServiceTracker.getServiceReferences();
 
-        if (null != serviceReferences)
-        {
-            for (ServiceReference ref : serviceReferences)
-            {
+        if (null != serviceReferences) {
+            for (ServiceReference ref : serviceReferences) {
                 Object service = controlServiceTracker.getService(ref);
-                if (service.getClass().getName().endsWith(".ConnectUPMControlHandler"))
-                {
+                if (service.getClass().getName().endsWith(".ConnectUPMControlHandler")) {
                     return (PluginControlHandler) service;
                 }
             }
@@ -95,12 +82,10 @@ public class LifecycleUpmHelper implements DisposableBean
         throw new IllegalStateException("Could not locate UPM control handler");
     }
 
-    private ServiceTracker getServiceTracker(Class clazz)
-    {
+    private ServiceTracker getServiceTracker(Class clazz) {
         ServiceTracker tracker;
 
-        synchronized (this)
-        {
+        synchronized (this) {
             tracker = new ServiceTracker(bundleContext, clazz.getName(), null);
             tracker.open();
         }
@@ -109,15 +94,12 @@ public class LifecycleUpmHelper implements DisposableBean
     }
 
     @Override
-    public void destroy() throws Exception
-    {
-        if (null != controlServiceTracker)
-        {
+    public void destroy() throws Exception {
+        if (null != controlServiceTracker) {
             controlServiceTracker.close();
         }
 
-        if (null != installServiceTracker)
-        {
+        if (null != installServiceTracker) {
             installServiceTracker.close();
         }
     }

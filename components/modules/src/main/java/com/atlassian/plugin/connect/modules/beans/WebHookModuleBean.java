@@ -188,73 +188,61 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 1.0
  */
 @SchemaDefinition("webhook")
-public class WebHookModuleBean extends BeanWithParams
-{
+public class WebHookModuleBean extends BeanWithParams {
     /**
      * Specifies the named event you would like to listen to (e.g., "enabled", "jira:issue_created", etc.)
      */
     @Required
     private String event;
-    
+
     /**
      * Specifies your add-on's POST webhook handler URL. This property must be a URL relative to the add-on's baseUrl. 
      */
     @Required
-    @StringSchemaAttributes (format = "uri-template")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
-    public WebHookModuleBean(WebHookModuleBeanBuilder builder)
-    {
+    public WebHookModuleBean(WebHookModuleBeanBuilder builder) {
         super(builder);
 
-        if (null == event)
-        {
+        if (null == event) {
             this.event = "";
         }
 
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
 
     }
 
-    protected WebHookModuleBean()
-    {
+    protected WebHookModuleBean() {
         this.event = "";
         this.url = "";
     }
 
-    public String getEvent()
-    {
+    public String getEvent() {
         return event;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public static WebHookModuleBeanBuilder newWebHookBean()
-    {
+    public static WebHookModuleBeanBuilder newWebHookBean() {
         return new WebHookModuleBeanBuilder();
     }
 
-    public static WebHookModuleBeanBuilder newWebHookBean(WebHookModuleBean defaultBean)
-    {
+    public static WebHookModuleBeanBuilder newWebHookBean(WebHookModuleBean defaultBean) {
         return new WebHookModuleBeanBuilder(defaultBean);
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof WebHookModuleBean && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof WebHookModuleBean && super.equals(otherObj))) {
             return false;
         }
 
@@ -267,8 +255,7 @@ public class WebHookModuleBean extends BeanWithParams
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(13, 61)
                 .appendSuper(super.hashCode())
                 .append(url)

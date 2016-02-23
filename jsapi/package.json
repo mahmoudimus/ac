@@ -7,7 +7,6 @@
     "karma": "0.12.31",
     "karma-chrome-launcher": "^0.1.7",
     "karma-firefox-launcher": "^0.1.4",
-    "karma-phantomjs-launcher": "^0.1.4",
     "karma-sinon": "1.0.4",
     "karma-qunit": "0.1.4",
     "karma-junit-reporter": "0.2.2",
@@ -15,7 +14,9 @@
     "karma-html2js-preprocessor": "~0.1",
     "karma-requirejs": "~0.2.2",
     "npm-watch": "0.0.0",
-    "qunitjs": "~1.17.0"
+    "qunitjs": "~1.17.0",
+    "squirejs": "0.2.1",
+    "underscore": "1.5.2"
   },
   "watch": {
     "postinstall": "node_modules/atlassian-connect-js/src/**/*.js"

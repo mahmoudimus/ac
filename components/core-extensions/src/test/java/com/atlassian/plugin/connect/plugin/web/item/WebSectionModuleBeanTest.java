@@ -18,11 +18,9 @@ import static com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepProp
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertThat;
 
-public class WebSectionModuleBeanTest
-{
+public class WebSectionModuleBeanTest {
     @Test
-    public void producesCorrectBean() throws Exception
-    {
+    public void producesCorrectBean() throws Exception {
         Gson gson = ConnectModulesGsonFactory.getGson();
         WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
         String json = readTestFile("defaultWebSectionTest.json");
@@ -31,27 +29,26 @@ public class WebSectionModuleBeanTest
     }
 
     @Test
-    public void producesCorrectBeanWithFunkyWebSections() throws Exception
-    {
+    public void producesCorrectBeanWithFunkyWebSections() throws Exception {
         final GsonBuilder gsonBuilder = ConnectModulesGsonFactory.getGsonBuilder();
         Gson gson = gsonBuilder.create();
 
         WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
 
         WebSectionModuleBean hiddenSpoonSection = newWebSectionBean()
-                        .withName(new I18nProperty("THERE IZ NO ∫Pººñ", null))
-                        .withKey("∫πººñ")
-                        .withLocation("hidden")
-                        .withWeight(999)
-                        .build();
+                .withName(new I18nProperty("THERE IZ NO ∫Pººñ", null))
+                .withKey("∫πººñ")
+                .withLocation("hidden")
+                .withWeight(999)
+                .build();
 
         WebSectionModuleBean falafelSection = newWebSectionBean()
-                        .withName(new I18nProperty("أنا أحب الفلافل", "i.love.falafel"))
-                        .withKey("my-falafel-section")
-                        .withLocation("recipes")
-                        .withTooltip(new I18nProperty("Chickpeas and hummous", "falafel.ingredients"))
-                        .build();
-        
+                .withName(new I18nProperty("أنا أحب الفلافل", "i.love.falafel"))
+                .withKey("my-falafel-section")
+                .withLocation("recipes")
+                .withTooltip(new I18nProperty("Chickpeas and hummous", "falafel.ingredients"))
+                .build();
+
         List<WebSectionModuleBean> beans = new ArrayList<>(Arrays.asList(webSectionBean, hiddenSpoonSection, falafelSection));
 
         String json = readTestFile("funkyWebSectionTest.json");
@@ -59,8 +56,7 @@ public class WebSectionModuleBeanTest
         assertThat(deserializedBeans, sameDeepPropertyValuesAs(beans));
     }
 
-    private WebSectionModuleBeanBuilder createWebSectionBeanBuilder()
-    {
+    private WebSectionModuleBeanBuilder createWebSectionBeanBuilder() {
         return newWebSectionBean()
                 .withName(new I18nProperty("My Web Section", "i.love.plugins"))
                 .withKey("my-web-section")
@@ -69,8 +65,7 @@ public class WebSectionModuleBeanTest
                 .withWeight(200);
     }
 
-    private static String readTestFile(String filename) throws IOException
-    {
+    private static String readTestFile(String filename) throws IOException {
         return readAddonTestFile("websection/" + filename);
     }
 }

@@ -17,27 +17,22 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class InlineConditionResolverTest
-{
+public class InlineConditionResolverTest {
     private final PluggableConditionClassAccessor conditionClassAccessor = mock(PluggableConditionClassAccessor.class);
     private final HostContainer hostContainer = mock(HostContainer.class);
     private final InlineConditionResolver resolver = new InlineConditionResolver(conditionClassAccessor, hostContainer);
 
     @Test
-    public void emptyIsReturnedIfConditionThrowsAnExceptionInInitMethod()
-    {
+    public void emptyIsReturnedIfConditionThrowsAnExceptionInInitMethod() {
         when(conditionClassAccessor.getConditionClassForInline(any(SingleConditionBean.class))).thenReturn(Optional.of(Condition.class));
-        when(hostContainer.create(Condition.class)).thenReturn(new Condition()
-        {
+        when(hostContainer.create(Condition.class)).thenReturn(new Condition() {
             @Override
-            public void init(final Map<String, String> params) throws PluginParseException
-            {
+            public void init(final Map<String, String> params) throws PluginParseException {
                 throw new PluginParseException("sorry, mate");
             }
 
             @Override
-            public boolean shouldDisplay(final Map<String, Object> context)
-            {
+            public boolean shouldDisplay(final Map<String, Object> context) {
                 return true;
             }
         });
@@ -47,17 +42,15 @@ public class InlineConditionResolverTest
     }
 
     @Test
-    public void emptyIsReturnedIfConditionThrowsAnExceptionInShouldDisplayMethod()
-    {
+    public void emptyIsReturnedIfConditionThrowsAnExceptionInShouldDisplayMethod() {
         when(conditionClassAccessor.getConditionClassForInline(any(SingleConditionBean.class))).thenReturn(Optional.of(Condition.class));
-        when(hostContainer.create(Condition.class)).thenReturn(new Condition()
-        {
+        when(hostContainer.create(Condition.class)).thenReturn(new Condition() {
             @Override
-            public void init(final Map<String, String> params) throws PluginParseException { }
+            public void init(final Map<String, String> params) throws PluginParseException {
+            }
 
             @Override
-            public boolean shouldDisplay(final Map<String, Object> context)
-            {
+            public boolean shouldDisplay(final Map<String, Object> context) {
                 throw new NullPointerException();
             }
         });
@@ -67,8 +60,7 @@ public class InlineConditionResolverTest
     }
 
     @Test
-    public void emptyIsReturnedIfConditionCannotBeCreatedFromClass()
-    {
+    public void emptyIsReturnedIfConditionCannotBeCreatedFromClass() {
         when(conditionClassAccessor.getConditionClassForInline(any(SingleConditionBean.class))).thenReturn(Optional.of(Condition.class));
         when(hostContainer.create(Condition.class)).thenThrow(RuntimeException.class);
 

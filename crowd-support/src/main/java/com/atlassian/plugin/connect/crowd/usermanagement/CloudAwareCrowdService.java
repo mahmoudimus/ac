@@ -10,10 +10,10 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.group.Group;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
-import com.atlassian.plugin.connect.spi.HostProperties;
-import com.atlassian.plugin.connect.spi.FeatureManager;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
+import com.atlassian.plugin.connect.spi.FeatureManager;
+import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -45,10 +45,9 @@ import java.util.concurrent.TransferQueue;
 @ExportAsDevService
 @ConfluenceComponent
 @JiraComponent
-public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddonUserGroupProvisioningService, ConnectCrowdSyncService
-{
+public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddonUserGroupProvisioningService, ConnectCrowdSyncService {
     private long syncTimeout = 10;
-    private HostProperties hostProperties;
+    private final HostProperties hostProperties;
     private final FeatureManager featureManager;
     private final ConnectCrowdBase remote;
     private final ConnectCrowdBase embedded;
@@ -59,10 +58,9 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddon
 
     @Autowired
     public CloudAwareCrowdService(CrowdServiceLocator crowdServiceLocator,
-            ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider,
-            HostProperties hostProperties, FeatureManager featureManager,
-            CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
-    {
+                                  ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider,
+                                  HostProperties hostProperties, FeatureManager featureManager,
+                                  CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation) {
         this.hostProperties = hostProperties;
         this.featureManager = featureManager;
         this.remote = crowdServiceLocator.remote(crowdClientProvider, userReconciliation);
@@ -70,107 +68,78 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddon
     }
 
     @Override
-    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
-    {
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential) {
         return createOrEnableUser(username, displayName, emailAddress, passwordCredential, Collections.<String, Set<String>>emptyMap());
     }
 
     @Override
-    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
-    {
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes) {
         UserCreationResult userCreationResult;
-        if (isOnDemand())
-        {
-            if (isConfluence())
-            {
+        if (isOnDemand()) {
+            if (isConfluence()) {
                 userCreationResult = createSyncedConfluenceUser(username, displayName, emailAddress, passwordCredential, attributes);
-            }
-            else
-            {
+            } else {
                 userCreationResult = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
-                if (!attributes.isEmpty())
-                {
+                if (!attributes.isEmpty()) {
                     embedded.setAttributesOnUser(username, attributes);
                     jiraPendingAttributes.putIfAbsent(username, attributes);
                 }
             }
-        }
-        else
-        {
+        } else {
             userCreationResult = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
-            if (!attributes.isEmpty())
-            {
+            if (!attributes.isEmpty()) {
                 embedded.setAttributesOnUser(username, attributes);
             }
         }
         return userCreationResult;
     }
 
-    private UserCreationResult createSyncedConfluenceUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
-    {
+    private UserCreationResult createSyncedConfluenceUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes) {
         UserCreationResult userCreationResult;
-        try
-        {
+        try {
             userCreationResult = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
-            if (!embedded.findUserByName(username).isPresent())
-            {
+            if (!embedded.findUserByName(username).isPresent()) {
                 log.debug("queueing {} for sync", username);
                 confluenceUsersToBeSynced.tryTransfer(username, syncTimeout, TimeUnit.SECONDS);
 
                 // Double checking, in case the user synced after we checked but before we waited
                 // ( or in case Crowd said it had finished the sync before it really had )
-                if (!embedded.findUserByName(username).isPresent())
-                {
+                if (!embedded.findUserByName(username).isPresent()) {
                     throw new ConnectAddonInitException("Could not find the user in the local Crowd cache");
                 }
             }
-            if (!attributes.isEmpty())
-            {
+            if (!attributes.isEmpty()) {
                 remote.setAttributesOnUser(username, attributes);
                 embedded.setAttributesOnUser(username, attributes);
             }
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             throw new ConnectAddonInitException(e);
         }
         return userCreationResult;
     }
 
     @Override
-    public void handleSync()
-    {
-        if (isConfluence())
-        {
-            for (Iterator<String> iterator = confluenceUsersToBeSynced.iterator(); iterator.hasNext(); )
-            {
+    public void handleSync() {
+        if (isConfluence()) {
+            for (Iterator<String> iterator = confluenceUsersToBeSynced.iterator(); iterator.hasNext(); ) {
                 String toSync = iterator.next();
-                if (embedded.findUserByName(toSync).isPresent())
-                {
+                if (embedded.findUserByName(toSync).isPresent()) {
                     log.info("Acknowledging receipt of synced user {}", toSync);
                     iterator.remove();
-                }
-                else
-                {
+                } else {
                     log.info("User {} hasn't synced yet - waiting for the next one, or a timeout", toSync);
                 }
             }
-        }
-        else
-        {
+        } else {
             // The user has been synchronised to the remote directory, so we can set the remote attribute
-            for (Iterator<String> iterator = jiraPendingAttributes.keySet().iterator(); iterator.hasNext(); )
-            {
+            for (Iterator<String> iterator = jiraPendingAttributes.keySet().iterator(); iterator.hasNext(); ) {
                 String toSync = iterator.next();
-                if (embedded.findUserByName(toSync).isPresent())
-                {
+                if (embedded.findUserByName(toSync).isPresent()) {
                     log.info("Setting attributes for {}", toSync);
                     Map<String, Set<String>> attributes = jiraPendingAttributes.get(toSync);
                     remote.setAttributesOnUser(toSync, attributes);
                     iterator.remove();
-                }
-                else
-                {
+                } else {
                     log.info("User {} hasn't synced yet - awaiting the next sync, or a timeout", toSync);
                 }
             }
@@ -179,133 +148,99 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddon
 
     @Override
     public void disableUser(String username)
-            throws ConnectAddonDisableException
-    {
-        if (isConfluence() && isOnDemand())
-        {
+            throws ConnectAddonDisableException {
+        if (isConfluence() && isOnDemand()) {
             remote.disableUser(username);
-        }
-        else
-        {
+        } else {
             embedded.disableUser(username);
         }
     }
 
     @Override
     public void ensureUserIsInGroup(String username, String groupName)
-            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
-    {
-        if (isConfluence() && isOnDemand())
-        {
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException {
+        if (isConfluence() && isOnDemand()) {
             remote.ensureUserIsInGroup(username, groupName);
-        }
-        else
-        {
+        } else {
             embedded.ensureUserIsInGroup(username, groupName);
         }
     }
 
     @Override
     public void ensureUserIsInGroups(String username, Set<String> groupNames)
-            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
-    {
-        for(String groupName : groupNames)
-        {
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException {
+        for (String groupName : groupNames) {
             ensureUserIsInGroup(username, groupName);
         }
     }
 
     @Override
     public void removeUserFromGroup(String username, String groupName)
-            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
-    {
-        if (isConfluence() && isOnDemand())
-        {
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException {
+        if (isConfluence() && isOnDemand()) {
             remote.removeUserFromGroup(username, groupName);
-        }
-        else
-        {
+        } else {
             embedded.removeUserFromGroup(username, groupName);
         }
     }
 
     @Override
     public boolean ensureGroupExists(String groupName)
-            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
-    {
-        if (isConfluence() && isOnDemand())
-        {
+            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException {
+        if (isConfluence() && isOnDemand()) {
             return remote.ensureGroupExists(groupName);
-        }
-        else if (isJira() && isOnDemand())
-        {
+        } else if (isJira() && isOnDemand()) {
             boolean eCreated = embedded.ensureGroupExists(groupName);
             boolean rCreated = remote.ensureGroupExists(groupName);
             return eCreated || rCreated;
-        }
-        else
-        {
+        } else {
             return embedded.ensureGroupExists(groupName);
         }
     }
 
     @Override
     public Group findGroupByKey(String groupName)
-            throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
-    {
-        if (isConfluence() && isOnDemand())
-        {
+            throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException {
+        if (isConfluence() && isOnDemand()) {
             return remote.findGroupByKey(groupName);
-        }
-        else
-        {
+        } else {
             return embedded.findGroupByKey(groupName);
         }
     }
 
     @Override
     @VisibleForTesting
-    public boolean isUserActive(String username)
-    {
+    public boolean isUserActive(String username) {
         Optional<? extends User> userOption;
-        if (isConfluence() && isOnDemand())
-        {
+        if (isConfluence() && isOnDemand()) {
             userOption = remote.findUserByName(username);
-        }
-        else
-        {
+        } else {
             userOption = embedded.findUserByName(username);
         }
         return userOption.isPresent() && userOption.get().isActive();
     }
 
     @Override
-    public void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
-    {
-        if (isOnDemand())
-        {
+    public void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException {
+        if (isOnDemand()) {
             remote.invalidateSessions(username);
         }
     }
 
     @VisibleForTesting
-    void setSyncTimeout(long timeoutSeconds)
-    {
+    void setSyncTimeout(long timeoutSeconds) {
         this.syncTimeout = timeoutSeconds;
     }
 
-    private boolean isOnDemand()
-    {
+    private boolean isOnDemand() {
         return featureManager.isOnDemand();
     }
 
-    private boolean isConfluence()
-    {
+    private boolean isConfluence() {
         return hostProperties.getKey().equalsIgnoreCase("confluence");
     }
 
-    private boolean isJira()
-    {
+    private boolean isJira() {
         return hostProperties.getKey().equalsIgnoreCase("jira");
     }
 

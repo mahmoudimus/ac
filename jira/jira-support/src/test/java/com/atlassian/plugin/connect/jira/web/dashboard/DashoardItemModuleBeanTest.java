@@ -16,56 +16,47 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class DashoardItemModuleBeanTest
-{
+public class DashoardItemModuleBeanTest {
     private static DashboardItemModuleBean expectedBean;
     private static DashboardItemModuleBean actualBean;
 
     @BeforeClass
-    public static void setUp() throws IOException
-    {
+    public static void setUp() throws IOException {
         expectedBean = createModuleBean();
         actualBean = ConnectModulesGsonFactory.getGson().fromJson(readAddonTestFile("dashboardItem.json"), DashboardItemModuleBean.class);
     }
 
     @Test
-    public void titleParsed() throws Exception
-    {
+    public void titleParsed() throws Exception {
         assertThat(expectedBean.getName(), is(actualBean.getName()));
     }
 
     @Test
-    public void descriptionParsed() throws Exception
-    {
+    public void descriptionParsed() throws Exception {
         assertThat(expectedBean.getDescription(), is(actualBean.getDescription()));
     }
 
     @Test
-    public void iconParsed()
-    {
+    public void iconParsed() {
         assertThat(expectedBean.getThumbnailUrl(), is(actualBean.getThumbnailUrl()));
     }
 
     @Test
-    public void urlParsed()
-    {
+    public void urlParsed() {
         assertThat(expectedBean.getUrl(), is(actualBean.getUrl()));
     }
 
     @Test
-    public void conditionParsed()
-    {
+    public void conditionParsed() {
         assertThat(expectedBean.getConditions(), hasItems(Iterables.toArray(expectedBean.getConditions(), ConditionalBean.class)));
     }
 
     @Test
-    public void configurableParsed()
-    {
+    public void configurableParsed() {
         assertThat(expectedBean.isConfigurable(), is(expectedBean.isConfigurable()));
     }
 
-    private static DashboardItemModuleBean createModuleBean()
-    {
+    private static DashboardItemModuleBean createModuleBean() {
         return DashboardItemModuleBean.newBuilder()
                 .withDescription(new I18nProperty("Title", "title.key"))
                 .withDescription(new I18nProperty("Description", "description.key"))

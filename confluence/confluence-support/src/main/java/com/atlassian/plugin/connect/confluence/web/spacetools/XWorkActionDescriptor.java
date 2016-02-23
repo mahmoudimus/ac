@@ -16,15 +16,13 @@ import org.dom4j.dom.DOMElement;
 
 import java.util.List;
 
-public class XWorkActionDescriptor extends AbstractModuleDescriptor implements ConfigurationProvider
-{
+public class XWorkActionDescriptor extends AbstractModuleDescriptor implements ConfigurationProvider {
     private static final ModuleFactory NOOP_MODULE_FACTORY = new NoOpModuleFactory();
 
     private final EventPublisher eventPublisher;
     private final XWorkPackageCreator xWorkPackageCreator;
 
-    public XWorkActionDescriptor(final EventPublisher eventPublisher, final Plugin plugin, final String moduleKey, final XWorkPackageCreator xWorkPackageCreator)
-    {
+    public XWorkActionDescriptor(final EventPublisher eventPublisher, final Plugin plugin, final String moduleKey, final XWorkPackageCreator xWorkPackageCreator) {
         super(NOOP_MODULE_FACTORY);
         this.eventPublisher = eventPublisher;
         this.xWorkPackageCreator = xWorkPackageCreator;
@@ -36,8 +34,7 @@ public class XWorkActionDescriptor extends AbstractModuleDescriptor implements C
     }
 
     @Override
-    public void enabled()
-    {
+    public void enabled() {
         super.enabled();
 
         ConfigurationManager.getConfigurationProviders();
@@ -47,11 +44,9 @@ public class XWorkActionDescriptor extends AbstractModuleDescriptor implements C
     }
 
     @Override
-    public void disabled()
-    {
+    public void disabled() {
         List configurationProviders = ConfigurationManager.getConfigurationProviders();
-        synchronized (configurationProviders)
-        {
+        synchronized (configurationProviders) {
             configurationProviders.remove(this);
         }
 
@@ -61,35 +56,29 @@ public class XWorkActionDescriptor extends AbstractModuleDescriptor implements C
     }
 
     @Override
-    public Object getModule()
-    {
+    public Object getModule() {
         return null;
     }
 
     @Override
-    public void init(Configuration configuration) throws ConfigurationException
-    {
+    public void init(Configuration configuration) throws ConfigurationException {
         xWorkPackageCreator.createAndRegister(configuration);
     }
 
     @Override
-    public boolean needsReload()
-    {
+    public boolean needsReload() {
         return true;
     }
 
-    private static class NoOpModuleFactory implements ModuleFactory
-    {
+    private static class NoOpModuleFactory implements ModuleFactory {
         @Override
-        public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
-        {
+        public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException {
             throw new IllegalStateException("The ModuleFactory for " + moduleDescriptor.getModuleClass().getName() + " is expected to never be called.");
         }
     }
 
     @Override
-    public String getModuleClassName()
-    {
+    public String getModuleClassName() {
         return super.getModuleClassName();
     }
 }

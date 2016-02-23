@@ -32,6 +32,7 @@ import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.net.RequestFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.soy.renderer.SoyTemplateRenderer;
@@ -42,14 +43,15 @@ import com.atlassian.webresource.api.assembler.PageBuilderService;
 
 import javax.inject.Inject;
 
+import javax.inject.Inject;
+
 /**
  * This class does nothing but is here to centralize the cross-product component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
-@SuppressWarnings ("ALL")
+@SuppressWarnings("ALL")
 @Scanned
-public class CommonImports
-{
+public class CommonImports {
     @Inject
     public CommonImports(
             @ComponentImport PluginController pluginController,
@@ -74,6 +76,7 @@ public class CommonImports
             @ComponentImport EventPublisher eventPublisher,
             @ComponentImport I18nResolver i18nResolver,
             @ComponentImport LocaleResolver localeResolver,
+            @ComponentImport TimeZoneManager timeZoneManager,
             @ComponentImport PluginSettingsFactory pluginSettingsFactory,
             @ComponentImport TypeAccessor typeAccessor,
             @ComponentImport WebResourceUrlProvider webResourceUrlProvider,
@@ -88,7 +91,6 @@ public class CommonImports
             @ComponentImport CrowdService crowdService,
             @ComponentImport DarkFeatureManager darkFeatureManager,
             @ComponentImport ActiveObjects activeObjects,
-            @ComponentImport PageBuilderService pageBuilderService)
-    {
+            @ComponentImport PageBuilderService pageBuilderService) {
     }
 }

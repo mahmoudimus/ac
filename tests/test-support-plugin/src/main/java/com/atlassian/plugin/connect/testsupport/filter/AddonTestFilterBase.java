@@ -1,9 +1,7 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.atlassian.sal.api.user.UserManager;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,17 +12,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.sal.api.user.UserManager;
-
-import org.apache.commons.lang3.StringUtils;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A ServletFilter that can act as a remote addon inside of a wired test.
  * Essentially we can use this to serve addon requests without having to boot up jetty or something.
  */
-public abstract class AddonTestFilterBase implements Filter
-{
+public abstract class AddonTestFilterBase implements Filter {
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)/([^/]+)(?:/([^/]+))?");
     public static final String FILTER_MAPPING = "/ac-test-addon";
     public static final String RESOURCE_TIMEOUT = "timeout";
@@ -35,8 +32,7 @@ public abstract class AddonTestFilterBase implements Filter
     private final AddonPrecannedResponseHelper addonPrecannedResponseHelper;
 
     public AddonTestFilterBase(AddonTestFilterResults testFilterResults, UserManager userManager,
-                               AddonPrecannedResponseHelper addonPrecannedResponseHelper)
-    {
+                               AddonPrecannedResponseHelper addonPrecannedResponseHelper) {
         this.testFilterResults = testFilterResults;
         this.userManager = userManager;
         this.addonPrecannedResponseHelper = addonPrecannedResponseHelper;
@@ -45,23 +41,19 @@ public abstract class AddonTestFilterBase implements Filter
     private FilterConfig config;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException
-    {
+    public void init(FilterConfig filterConfig) throws ServletException {
         this.config = filterConfig;
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException
-    {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
 
-        if (shouldProcess(req))
-        {
+        if (shouldProcess(req)) {
             String pathInfo = req.getServletPath();
             Matcher matcher = PATH_PATTERN.matcher(pathInfo);
-            if (matcher.find())
-            {
+            if (matcher.find()) {
                 String addonKey = matcher.group(2);
                 String addonResource = matcher.group(3);
                 String parameter = matcher.group(4);
@@ -88,52 +80,42 @@ public abstract class AddonTestFilterBase implements Filter
     }
 
     protected abstract boolean shouldProcess(HttpServletRequest request);
+
     protected abstract void processNonMatch(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException;
 
     private int getStatusCode(String addonResource, String parameter, Optional<PrecannedResponse> precannedResponse,
-                              String path)
-    {
-        if (RESOURCE_STATUS.equals(addonResource))
-        {
-            if (parameter != null)
-            {
-                if (precannedResponse.isPresent())
-                {
+                              String path) {
+        if (RESOURCE_STATUS.equals(addonResource)) {
+            if (parameter != null) {
+                if (precannedResponse.isPresent()) {
                     throw new IllegalStateException("Cannot specify a status code when a precanned response is present");
                 }
                 return Integer.parseInt(parameter);
             }
         }
 
-        return precannedResponse.isPresent()  && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath())
+        return precannedResponse.isPresent() && StringUtils.endsWith(path, precannedResponse.get().getRequiredPath())
                 ? precannedResponse.get().getStatusCode() : HttpServletResponse.SC_OK;
     }
 
-    private String getContent(String addonResource, String parameter)
-    {
-        if (RESOURCE_TIMEOUT.equals(addonResource))
-        {
+    private String getContent(String addonResource, String parameter) {
+        if (RESOURCE_TIMEOUT.equals(addonResource)) {
             long seconds = parameter == null ? 5 : Long.parseLong(parameter);
             waitSeconds(seconds);
         }
         return "hi";
     }
 
-    private void waitSeconds(long timeout)
-    {
-        try
-        {
+    private void waitSeconds(long timeout) {
+        try {
             Thread.sleep(timeout * 1000);
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             // just move along
         }
     }
 
     @Override
-    public void destroy()
-    {
+    public void destroy() {
         //do nothing
     }
 

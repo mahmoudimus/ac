@@ -35,8 +35,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * @since 1.0
  */
 @SchemaDefinition("dynamicContentMacro")
-public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
-{
+public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean {
     /**
      * The preferred width of the macro content.
      */
@@ -55,36 +54,29 @@ public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
      */
     private MacroRenderModesBean renderModes;
 
-    public DynamicContentMacroModuleBean()
-    {
+    public DynamicContentMacroModuleBean() {
     }
 
-    public DynamicContentMacroModuleBean(DynamicContentMacroModuleBeanBuilder builder)
-    {
+    public DynamicContentMacroModuleBean(DynamicContentMacroModuleBeanBuilder builder) {
         super(builder);
-        if (renderModes == null)
-        {
+        if (renderModes == null) {
             renderModes = MacroRenderModesBean.newMacroRenderModesBean().build();
         }
     }
 
-    public MacroRenderModesBean getRenderModes()
-    {
+    public MacroRenderModesBean getRenderModes() {
         return renderModes;
     }
 
-    public String getWidth()
-    {
+    public String getWidth() {
         return width;
     }
 
-    public String getHeight()
-    {
+    public String getHeight() {
         return height;
     }
 
-    public static DynamicContentMacroModuleBeanBuilder newDynamicContentMacroModuleBean()
-    {
+    public static DynamicContentMacroModuleBeanBuilder newDynamicContentMacroModuleBean() {
         return new DynamicContentMacroModuleBeanBuilder();
     }
 

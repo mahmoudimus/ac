@@ -20,11 +20,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AddonScopeLoadJsonFileHelperTest
-{
+public class AddonScopeLoadJsonFileHelperTest {
     @Test
-    public void testCombineSeparate() throws Exception
-    {
+    public void testCombineSeparate() throws Exception {
         ImmutableList<ScopeName> scopeNamesSource = ImmutableList.of(ScopeName.READ, ScopeName.WRITE);
         ImmutableList<ScopeName> scopeNamesAdding = ImmutableList.of(ScopeName.ADMIN, ScopeName.PROJECT_ADMIN);
 
@@ -38,8 +36,7 @@ public class AddonScopeLoadJsonFileHelperTest
     }
 
     @Test
-    public void testCombineSameKeys() throws Exception
-    {
+    public void testCombineSameKeys() throws Exception {
         Map<ScopeName, AddonScope> source = exampleScopeMapWithPath(ScopeName.READ, "a");
         combineScopes(
                 source,
@@ -51,35 +48,29 @@ public class AddonScopeLoadJsonFileHelperTest
         assertThat(resultingScope, allowsAccessTo("/b"));
     }
 
-    private Map<ScopeName, AddonScope> exampleScopeMapWithPath(final ScopeName scopeName, final String key)
-    {
+    private Map<ScopeName, AddonScope> exampleScopeMapWithPath(final ScopeName scopeName, final String key) {
         Map<ScopeName, AddonScope> map = new HashMap<>();
 
         PathScopeHelper pathScope = new PathScopeHelper(false, "/" + key);
-        AddonScopeApiPath apiPath = new AddonScopeApiPath.ApiPath(Arrays.asList(pathScope));
+        AddonScopeApiPath apiPath = new AddonScopeApiPath.ApiPath(Collections.singletonList(pathScope));
 
-        map.put(scopeName, new AddonScope("none", Arrays.asList(apiPath)));
+        map.put(scopeName, new AddonScope("none", Collections.singletonList(apiPath)));
 
         return map;
     }
 
-    private Map<ScopeName, AddonScope> mapWithEmptyScopeFromScopeNames(Iterable<ScopeName> scopeNames)
-    {
+    private Map<ScopeName, AddonScope> mapWithEmptyScopeFromScopeNames(Iterable<ScopeName> scopeNames) {
         Map<ScopeName, AddonScope> map = new HashMap<>();
-        for (ScopeName scopeName : scopeNames)
-        {
+        for (ScopeName scopeName : scopeNames) {
             map.put(scopeName, new AddonScope("none", Collections.<AddonScopeApiPath>emptyList()));
         }
         return map;
     }
 
-    private Matcher<? super AddonScope> allowsAccessTo(final String url)
-    {
-        return new TypeSafeMatcher<AddonScope>()
-        {
+    private Matcher<? super AddonScope> allowsAccessTo(final String url) {
+        return new TypeSafeMatcher<AddonScope>() {
             @Override
-            protected boolean matchesSafely(final AddonScope addonScope)
-            {
+            protected boolean matchesSafely(final AddonScope addonScope) {
                 HttpServletRequest request = mock(HttpServletRequest.class);
 
                 when(request.getRequestURI()).thenReturn(url);
@@ -89,8 +80,7 @@ public class AddonScopeLoadJsonFileHelperTest
             }
 
             @Override
-            public void describeTo(final Description description)
-            {
+            public void describeTo(final Description description) {
                 description.appendText("allowed access to " + url);
             }
         };

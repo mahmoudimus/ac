@@ -13,15 +13,14 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * @schemaTitle Blueprint Template
  * @since 1.1.5
  */
-public class BlueprintTemplateBean
-{
+public class BlueprintTemplateBean {
 
     /**
      * The URL of the add-on resource that provides the blueprint template content. This URL has to be relative
      * to the add-on base URL.
      */
     @Required
-    @StringSchemaAttributes(format="uri")
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
     /**
@@ -33,23 +32,19 @@ public class BlueprintTemplateBean
      */
     private BlueprintTemplateContextBean blueprintContext;
 
-    public static BlueprintTemplateBeanBuilder newBlueprintTemplateBeanBuilder()
-    {
+    public static BlueprintTemplateBeanBuilder newBlueprintTemplateBeanBuilder() {
         return new BlueprintTemplateBeanBuilder();
     }
 
-    public BlueprintTemplateBean(BlueprintTemplateBeanBuilder builder)
-    {
+    public BlueprintTemplateBean(BlueprintTemplateBeanBuilder builder) {
         copyFieldsByNameAndType(builder, this);
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public BlueprintTemplateContextBean getBlueprintContext()
-    {
+    public BlueprintTemplateContextBean getBlueprintContext() {
         return blueprintContext;
     }
 }

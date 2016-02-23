@@ -5,8 +5,7 @@ import java.util.Map;
 /**
  * Implementations of this interface are supposed to serialize parameters from P2 context to connect context.
  */
-public interface ParameterSerializer<T>
-{
+public interface ParameterSerializer<T> {
     /**
      * Serializes the whitelisted parameters from a context.
      * @param t object to serialize.

@@ -14,16 +14,14 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 public class ConnectAddonAuthenticationRequiredExceptionMapper
-        implements ExceptionMapper<ConnectAddonAuthenticationRequiredException>
-{
+        implements ExceptionMapper<ConnectAddonAuthenticationRequiredException> {
 
     public static final String AUTHENTICATION_REALM = "Atlassian Connect";
 
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonAuthenticationRequiredExceptionMapper.class);
 
     @Override
-    public Response toResponse(ConnectAddonAuthenticationRequiredException exception)
-    {
+    public Response toResponse(ConnectAddonAuthenticationRequiredException exception) {
         log.error(exception.getMessage(), exception.getCause());
         return Response.status(Response.Status.UNAUTHORIZED)
                 .header(HttpHeaders.WWW_AUTHENTICATE, "JWT realm=\"" + AUTHENTICATION_REALM + "\"")

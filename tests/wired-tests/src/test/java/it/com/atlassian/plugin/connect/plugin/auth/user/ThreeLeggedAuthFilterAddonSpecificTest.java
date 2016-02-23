@@ -26,54 +26,47 @@ import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilterTestBase
-{
-   public ThreeLeggedAuthFilterAddonSpecificTest(TestPluginInstaller testPluginInstaller,
-                                                 TestAuthenticator testAuthenticator,
-                                                 AddonTestFilterResults testFilterResults,
-                                                 JwtWriterFactory jwtWriterFactory,
-                                                 ConnectAddonRegistry connectAddonRegistry,
-                                                 ApplicationProperties applicationProperties,
-                                                 ApplicationService applicationService,
-                                                 ApplicationManager applicationManager,
-                                                 UserManager userManager)
-    {
+public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilterTestBase {
+    public ThreeLeggedAuthFilterAddonSpecificTest(TestPluginInstaller testPluginInstaller,
+                                                  TestAuthenticator testAuthenticator,
+                                                  AddonTestFilterResults testFilterResults,
+                                                  JwtWriterFactory jwtWriterFactory,
+                                                  ConnectAddonRegistry connectAddonRegistry,
+                                                  ApplicationProperties applicationProperties,
+                                                  ApplicationService applicationService,
+                                                  ApplicationManager applicationManager,
+                                                  UserManager userManager) {
         super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, applicationService, applicationManager, userManager);
     }
 
     @Override
-    protected ScopeName getScope()
-    {
+    protected ScopeName getScope() {
         return ScopeName.READ;
     }
 
     @Test
-    public void authorisedUserAgencyIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
-    {
+    public void authorisedUserAgencyIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException {
         setGlobalImpersonationEnabled(false);
         RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(200, response.getStatusCode());
     }
 
     @Test
-    public void authorisedUserAgencyHasSubjectAsRemoteUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
-    {
+    public void authorisedUserAgencyHasSubjectAsRemoteUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUsername());
     }
 
     @Test
-    public void authorisedUserAgencyHasSubjectAttribute() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
-    {
+    public void authorisedUserAgencyHasSubjectAttribute() throws IOException, NoSuchAlgorithmException, NoUserAgencyException {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(SUBJECT_USERKEY, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
 
     @Test
-    public void cannotActForANonExistentUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException, OperationFailedException, ApplicationPermissionException
-    {
+    public void cannotActForANonExistentUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException, OperationFailedException, ApplicationPermissionException {
         setGlobalImpersonationEnabled(false);
         ensureUserDoesNotExist(NON_EXISTENT_USERKEY);
         RequestUtil.Response response = issueRequest(createRequestUri(NON_EXISTENT_USERKEY));
@@ -82,8 +75,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if the add-on requests the USER_AGENCY scope, specifies a subject and the subject is inactive then the request is rejected
     @Test
-    public void cannotActForAnInactiveUser() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, IOException, NoSuchAlgorithmException
-    {
+    public void cannotActForAnInactiveUser() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(false);
         RequestUtil.Response response = issueRequest(createUriForInactiveSubject());
         assertEquals(401, response.getStatusCode());
@@ -91,8 +83,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
     @Test
-    public void noSubjectIsOk() throws IOException, NoSuchAlgorithmException
-    {
+    public void noSubjectIsOk() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(false);
         RequestUtil.Response response = issueRequest(createRequestUri(null));
         assertEquals(200, response.getStatusCode());
@@ -100,8 +91,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
     @Test
-    public void noSubjectImpliesAddonUser() throws IOException, NoSuchAlgorithmException
-    {
+    public void noSubjectImpliesAddonUser() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(null));
         assertEquals(getAddonUsername(), getCapturedRequest().getRemoteUsername());
@@ -109,8 +99,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
     @Test
-    public void noSubjectImpliesNoSubjectAttribute() throws IOException, NoSuchAlgorithmException
-    {
+    public void noSubjectImpliesNoSubjectAttribute() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(null));
         assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
@@ -118,8 +107,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if the add-on does not specify a subject then the add-on user is assigned to the request, whether or not it also requests the USER_AGENCY scope
     @Test
-    public void noSubjectResultsInAddonAttribute() throws IOException, NoSuchAlgorithmException
-    {
+    public void noSubjectResultsInAddonAttribute() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUri(null));
         assertEquals(addonBean.getKey(), getAddonIdFromRequestAttribute(getCapturedRequest()));
@@ -127,8 +115,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if this is not a request from a JWT add-on then the request proceeds through the filter chain
     @Test
-    public void nonJwtRequestsAreOk() throws IOException
-    {
+    public void nonJwtRequestsAreOk() throws IOException {
         setGlobalImpersonationEnabled(false);
         RequestUtil.Response response = issueRequest(createRequestUriWithoutJwt());
         assertEquals(200, response.getStatusCode());
@@ -136,8 +123,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if this is not a request from a JWT add-on then the request proceeds through the filter chain
     @Test
-    public void nonJwtRequestsHasNoRemoteUser() throws IOException
-    {
+    public void nonJwtRequestsHasNoRemoteUser() throws IOException {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUriWithoutJwt());
         assertEquals(null, getCapturedRequest().getRemoteUsername());
@@ -145,8 +131,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if this is not a request from a JWT add-on then the request proceeds through the filter chain
     @Test
-    public void nonJwtRequestsHaveNoSubjectAttribute() throws IOException
-    {
+    public void nonJwtRequestsHaveNoSubjectAttribute() throws IOException {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUriWithoutJwt());
         assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
@@ -154,8 +139,7 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if this is not a request from a JWT add-on then the request proceeds through the filter chain
     @Test
-    public void nonJwtRequestsHaveNoAddonAttribute() throws IOException
-    {
+    public void nonJwtRequestsHaveNoAddonAttribute() throws IOException {
         setGlobalImpersonationEnabled(false);
         issueRequest(createRequestUriWithoutJwt());
         assertEquals(null, getAddonIdFromRequestAttribute(getCapturedRequest()));
@@ -163,32 +147,28 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
 
     // if the specified add-on does not exist then the request is rejected
     @Test
-    public void aNonExistentAddonIsRejected() throws IOException, NoSuchAlgorithmException
-    {
+    public void aNonExistentAddonIsRejected() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(false);
         RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERKEY, "non-existent add-on key"));
         assertEquals(401, response.getStatusCode());
     }
 
     @Test
-    public void emptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
-    {
+    public void emptySubjectResultsInError() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(false);
         RequestUtil.Response response = issueRequest(createRequestUri(""));
         assertEquals(400, response.getStatusCode());
     }
 
     @Test
-    public void impersonationSetAndNo3LAIsOk() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetAndNo3LAIsOk() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(200, response.getStatusCode());
     }
 
     @Test
-    public void impersonationSetAndNo3LAImpliesThatTheSubjectIsTheAssignedUser() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetAndNo3LAImpliesThatTheSubjectIsTheAssignedUser() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUsername());
@@ -196,88 +176,77 @@ public class ThreeLeggedAuthFilterAddonSpecificTest extends ThreeLeggedAuthFilte
     }
 
     @Test
-    public void impersonationSetAndNo3LAImpliesThatTheSubjectAttributeIsSet() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetAndNo3LAImpliesThatTheSubjectAttributeIsSet() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(SUBJECT_USERKEY, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
 
     @Test
-    public void impersonationSetAndNo3LAImpliesThatTheAddonAttributeIsSet() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetAndNo3LAImpliesThatTheAddonAttributeIsSet() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(addonBean.getKey(), getAddonIdFromRequestAttribute(getCapturedRequest()));
     }
 
     @Test
-    public void impersonationSetButNonExistentAddonResultsInError() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetButNonExistentAddonResultsInError() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERKEY, "non-existent-add-on"));
         assertEquals(401, response.getStatusCode());
     }
 
     @Test
-    public void impersonationSetButNoSubjectIsOk() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetButNoSubjectIsOk() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         RequestUtil.Response response = issueRequest(createRequestUri(null));
         assertEquals(200, response.getStatusCode());
     }
 
     @Test
-    public void impersonationSetButNoSubjectResultsInAssignmentToTheAddonUser() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetButNoSubjectResultsInAssignmentToTheAddonUser() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(null));
         assertEquals(getAddonUsername(), getCapturedRequest().getRemoteUsername());
     }
 
     @Test
-    public void impersonationSetButNoSubjectResultsInNoSubjectAttribute() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetButNoSubjectResultsInNoSubjectAttribute() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(null));
         assertEquals(null, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
 
     @Test
-    public void impersonationSetButNoSubjectResultsInAddonAttribute() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetButNoSubjectResultsInAddonAttribute() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(null));
         assertEquals(addonBean.getKey(), getAddonIdFromRequestAttribute(getCapturedRequest()));
     }
 
     @Test
-    public void impersonationSetButEmptySubjectResultsInError() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetButEmptySubjectResultsInError() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         RequestUtil.Response response = issueRequest(createRequestUri(""));
         assertEquals(400, response.getStatusCode());
     }
 
     @Test
-    public void impersonationSetButNonExistentSubjectResultsInError() throws IOException, NoSuchAlgorithmException
-    {
+    public void impersonationSetButNonExistentSubjectResultsInError() throws IOException, NoSuchAlgorithmException {
         setGlobalImpersonationEnabled(true);
         RequestUtil.Response response = issueRequest(createRequestUri("non-existent-user"));
         assertEquals(401, response.getStatusCode());
     }
 
     @Test
-    public void impersonationSetButInactiveSubjectResultsInError() throws IOException, NoSuchAlgorithmException, OperationFailedException, ApplicationPermissionException, InvalidCredentialException, InvalidUserException
-    {
+    public void impersonationSetButInactiveSubjectResultsInError() throws IOException, NoSuchAlgorithmException, OperationFailedException, ApplicationPermissionException, InvalidCredentialException, InvalidUserException {
         setGlobalImpersonationEnabled(true);
         RequestUtil.Response response = issueRequest(createUriForInactiveSubject());
         assertEquals(401, response.getStatusCode());
     }
 
     @Override
-    protected String getAddonKey()
-    {
+    protected String getAddonKey() {
         return "com.eazybi.atlassian-connect.eazybi-jira";
     }
 

@@ -10,13 +10,11 @@ import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-public abstract class MultiProductWebDriverTestBase
-{
+public abstract class MultiProductWebDriverTestBase {
     protected static ConnectTestUserFactory testUserFactory;
     private static TestedProductAccessor testedProductAccessor;
     protected static TestedProduct<WebDriverTester> product;
@@ -31,14 +29,12 @@ public abstract class MultiProductWebDriverTestBase
     public RetryRule retryRule = new RetryRule();
     public static final int MAX_RETRY_ATTEMPTS = 3;
 
-    protected static ConnectPageOperations connectPageOperations()
-    {
+    protected static ConnectPageOperations connectPageOperations() {
         return new ConnectPageOperations(product.getPageBinder(), product.getTester().getDriver());
     }
 
     @BeforeClass
-    public static void createTestUserFactory()
-    {
+    public static void createTestUserFactory() {
         testedProductAccessor = TestedProductAccessor.get();
         product = testedProductAccessor.getTestedProduct();
         testUserFactory = testedProductAccessor.getUserFactory();
@@ -46,25 +42,21 @@ public abstract class MultiProductWebDriverTestBase
 
     @BeforeClass
     @AfterClass
-    public static void logout()
-    {
+    public static void logout() {
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
-    protected void login(TestUser user)
-    {
+    protected void login(TestUser user) {
         logout();
         testedProductAccessor.login(user);
     }
 
-    protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
-    {
+    protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args) {
         logout();
         return testedProductAccessor.loginAndVisit(user, page, args);
     }
 
-    protected static String getGloballyVisibleLocation()
-    {
+    protected static String getGloballyVisibleLocation() {
         return testedProductAccessor.getGloballyVisibleLocation();
     }
 }

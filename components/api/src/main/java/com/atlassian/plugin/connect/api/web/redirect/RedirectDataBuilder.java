@@ -2,22 +2,18 @@ package com.atlassian.plugin.connect.api.web.redirect;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 
-public interface RedirectDataBuilder
-{
+public interface RedirectDataBuilder {
     ModuleUriBuilder addOn(String key);
 
-    interface ModuleUriBuilder
-    {
+    interface ModuleUriBuilder {
         AccessDeniedTemplateTypeBuilder urlTemplate(String template);
     }
 
-    interface AccessDeniedTemplateTypeBuilder
-    {
+    interface AccessDeniedTemplateTypeBuilder {
         InitializedBuilder accessDeniedTemplateType(RedirectData.AccessDeniedTemplateType accessDeniedTemplateType);
     }
 
-    interface InitializedBuilder
-    {
+    interface InitializedBuilder {
         InitializedBuilder conditions(Iterable<ConditionalBean> conditions);
 
         InitializedBuilder title(String title);

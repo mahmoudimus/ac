@@ -1,8 +1,5 @@
 package it.jira;
 
-import java.rmi.RemoteException;
-import java.util.Optional;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
@@ -19,11 +16,13 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.rmi.RemoteException;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
@@ -32,8 +31,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class TestJira extends JiraWebDriverTestBase
-{
+public class TestJira extends JiraWebDriverTestBase {
     private static final String ADMIN_KEY = "addon-admin";
     private static final String ADVANCED_ADMIN_KEY = "advanced-addon-admin";
     private static final String ISSUE_TAB_PANEL_KEY = "issue-tab-panel";
@@ -42,8 +40,7 @@ public class TestJira extends JiraWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("adminPages",
@@ -81,17 +78,14 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException
-    {
+    public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException {
         TestUser user = testUserFactory.basicUser();
         login(user);
         // ensure one issue
@@ -110,8 +104,7 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testViewIssueTab() throws Exception
-    {
+    public void testViewIssueTab() throws Exception {
         login(testUserFactory.basicUser());
 
         IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
@@ -122,8 +115,7 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAdminPageInJiraSpecificLocation() throws Exception
-    {
+    public void testAdminPageInJiraSpecificLocation() throws Exception {
         TestUser user = testUserFactory.admin();
         String addonKey = runner.getAddon().getKey();
         loginAndVisit(user, ViewGeneralConfigurationPage.class);
@@ -137,8 +129,7 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testGeneralAdminPage() throws Exception
-    {
+    public void testGeneralAdminPage() throws Exception {
         TestUser user = testUserFactory.admin();
         String addonKey = runner.getAddon().getKey();
         loginAndVisit(user, ViewGeneralConfigurationPage.class);
@@ -150,8 +141,7 @@ public class TestJira extends JiraWebDriverTestBase
         assertEquals(user.getDisplayName(), nextPage.getFullName());
     }
 
-    private RemoteWebItem getAdminPageLink(String addonKey, String adminPageWebItemKey)
-    {
+    private RemoteWebItem getAdminPageLink(String addonKey, String adminPageWebItemKey) {
         String webitemId = ModuleKeyUtils.addonAndModuleKey(addonKey, adminPageWebItemKey);
         return connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.ID, webitemId, Optional.<String>empty());
     }

@@ -9,8 +9,9 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
 import org.reflections.Reflections;
 
+import java.beans.Introspector;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,13 +20,11 @@ import java.util.stream.Collectors;
 /**
  * Helper class to gather analytic events reflectively for testing purposes.
  */
-public final class AnalyticsWhitelistTestHelper
-{
-    private static boolean isBrowserEvent(String eventName)
-    {
+public final class AnalyticsWhitelistTestHelper {
+    private static boolean isBrowserEvent(String eventName) {
         return eventName.startsWith("connect.addon.iframe")
-         || eventName.startsWith("connect.addon.bridge")
-         || eventName.startsWith("connect.addon.dialog");
+                || eventName.startsWith("connect.addon.bridge")
+                || eventName.startsWith("connect.addon.dialog");
     }
 
     /**
@@ -35,10 +34,10 @@ public final class AnalyticsWhitelistTestHelper
      * @return a map of the name of the event to the properties of that event
      * @throws IOException if the whitelist json file given isn't in the current classpath
      */
-    public static Map<String, List<String>> getAnalyticsWhitelistFrom(final String path) throws IOException
-    {
+    public static Map<String, List<String>> getAnalyticsWhitelistFrom(final String path) throws IOException {
         String json = IOUtils.toString(ClassLoader.class.getResourceAsStream(path));
-        Map<String, List<String>> result = new Gson().fromJson(json, new TypeToken<Map<String, List<String>>>(){}.getType());
+        Map<String, List<String>> result = new Gson().fromJson(json, new TypeToken<Map<String, List<String>>>() {
+        }.getType());
         return Maps.filterEntries(result, entry -> !isBrowserEvent(entry.getKey()));
     }
 
@@ -48,14 +47,16 @@ public final class AnalyticsWhitelistTestHelper
      * @param packageName a full package name
      * @return a map of all of the events found in the package, keyed by the name, and the list of fields for each event.
      */
-    public static Map<String, List<String>> reflectAllEventClassesFrom(final String packageName)
-    {
+    public static Map<String, List<String>> reflectAllEventClassesFrom(final String packageName) {
         Map<String, List<String>> result = Maps.newHashMap();
         Set<Class<?>> union = reflectAllEvents(packageName);
-        for (Class<?> eventClass : union)
-        {
-            List<Field> fields = ConnectReflectionHelper.getAllFieldsInObjectChain(eventClass);
-            List<String> fieldNames = fields.stream().map(Field::getName).collect(Collectors.toList());
+        for (Class<?> eventClass : union) {
+            List<String> fieldNames = ConnectReflectionHelper.getAllGettersInObjectChain(eventClass)
+                    .stream()
+                    .map(Member::getName)
+                    .map(getter -> getter.replaceFirst("^get", "")) // "getSomeName" -> "SomeName"
+                    .map(Introspector::decapitalize) // "SomeName" -> "someName"
+                    .collect(Collectors.toList());
             String eventName = eventClass.getAnnotation(EventName.class).value();
 
             result.put(eventName, fieldNames);
@@ -63,11 +64,9 @@ public final class AnalyticsWhitelistTestHelper
         return result;
     }
 
-    private static Set<Class<?>> reflectAllEvents(final String ... packages)
-    {
+    private static Set<Class<?>> reflectAllEvents(final String... packages) {
         Set<Class<?>> clazzes = Sets.newHashSet();
-        for (String p : packages)
-        {
+        for (String p : packages) {
             Reflections coreReflection = new Reflections(p);
             clazzes.addAll(coreReflection.getTypesAnnotatedWith(EventName.class));
         }

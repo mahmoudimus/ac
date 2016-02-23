@@ -20,120 +20,100 @@ import java.util.Set;
 
 @ConfluenceComponent
 @ExportAsDevService
-public class ConfluenceApplicationManager implements ApplicationManager
-{
+public class ConfluenceApplicationManager implements ApplicationManager {
     private final ApplicationManager delegate;
 
-    public ConfluenceApplicationManager()
-    {
+    public ConfluenceApplicationManager() {
         this.delegate = ComponentLocator.getComponent(ApplicationManager.class); // TODO CONFDEV-22477: remove when we can @ComponentImport ApplicationManager
     }
 
     @Override
-    public Application add(Application application) throws InvalidCredentialException
-    {
+    public Application add(Application application) throws InvalidCredentialException {
         return delegate.add(application);
     }
 
     @Override
-    public Application findById(long id) throws ApplicationNotFoundException
-    {
+    public Application findById(long id) throws ApplicationNotFoundException {
         return delegate.findById(id);
     }
 
     @Override
-    public Application findByName(String name) throws ApplicationNotFoundException
-    {
+    public Application findByName(String name) throws ApplicationNotFoundException {
         return delegate.findByName(name);
     }
 
     @Override
-    public void remove(Application application) throws ApplicationManagerException
-    {
+    public void remove(Application application) throws ApplicationManagerException {
         delegate.remove(application);
     }
 
     @Override
-    public void removeDirectoryFromApplication(Directory directory, Application application) throws ApplicationManagerException
-    {
+    public void removeDirectoryFromApplication(Directory directory, Application application) throws ApplicationManagerException {
         delegate.removeDirectoryFromApplication(directory, application);
     }
 
     @Override
-    public void addDirectoryMapping(Application application, Directory directory, boolean allowAllToAuthenticate, OperationType... operationTypes) throws ApplicationNotFoundException, DirectoryNotFoundException
-    {
+    public void addDirectoryMapping(Application application, Directory directory, boolean allowAllToAuthenticate, OperationType... operationTypes) throws ApplicationNotFoundException, DirectoryNotFoundException {
         delegate.addDirectoryMapping(application, directory, allowAllToAuthenticate, operationTypes);
     }
 
     @Override
-    public void updateDirectoryMapping(Application application, Directory directory, int position) throws ApplicationNotFoundException, DirectoryNotFoundException
-    {
+    public void updateDirectoryMapping(Application application, Directory directory, int position) throws ApplicationNotFoundException, DirectoryNotFoundException {
         delegate.updateDirectoryMapping(application, directory, position);
     }
 
     @Override
-    public void updateDirectoryMapping(Application application, Directory directory, boolean allowAllToAuthenticate) throws ApplicationNotFoundException, DirectoryNotFoundException
-    {
+    public void updateDirectoryMapping(Application application, Directory directory, boolean allowAllToAuthenticate) throws ApplicationNotFoundException, DirectoryNotFoundException {
         delegate.updateDirectoryMapping(application, directory, allowAllToAuthenticate);
     }
 
     @Override
-    public void updateDirectoryMapping(Application application, Directory directory, boolean allowAllToAuthenticate, Set<OperationType> operationTypes) throws ApplicationNotFoundException, DirectoryNotFoundException
-    {
+    public void updateDirectoryMapping(Application application, Directory directory, boolean allowAllToAuthenticate, Set<OperationType> operationTypes) throws ApplicationNotFoundException, DirectoryNotFoundException {
         delegate.updateDirectoryMapping(application, directory, allowAllToAuthenticate, operationTypes);
     }
 
     @Override
-    public void addRemoteAddress(Application application, RemoteAddress remoteAddress) throws ApplicationNotFoundException
-    {
+    public void addRemoteAddress(Application application, RemoteAddress remoteAddress) throws ApplicationNotFoundException {
         delegate.addRemoteAddress(application, remoteAddress);
     }
 
     @Override
-    public void removeRemoteAddress(Application application, RemoteAddress remoteAddress) throws ApplicationNotFoundException
-    {
+    public void removeRemoteAddress(Application application, RemoteAddress remoteAddress) throws ApplicationNotFoundException {
         delegate.removeRemoteAddress(application, remoteAddress);
     }
 
     @Override
-    public void addGroupMapping(Application application, Directory directory, String groupName) throws ApplicationNotFoundException
-    {
+    public void addGroupMapping(Application application, Directory directory, String groupName) throws ApplicationNotFoundException {
         delegate.addGroupMapping(application, directory, groupName);
     }
 
     @Override
-    public void removeGroupMapping(Application application, Directory directory, String groupName) throws ApplicationNotFoundException
-    {
+    public void removeGroupMapping(Application application, Directory directory, String groupName) throws ApplicationNotFoundException {
         delegate.removeGroupMapping(application, directory, groupName);
     }
 
     @Override
-    public Application update(Application application) throws ApplicationManagerException, ApplicationNotFoundException
-    {
+    public Application update(Application application) throws ApplicationManagerException, ApplicationNotFoundException {
         return delegate.update(application);
     }
 
     @Override
-    public void updateCredential(Application application, PasswordCredential passwordCredential) throws ApplicationManagerException, ApplicationNotFoundException
-    {
+    public void updateCredential(Application application, PasswordCredential passwordCredential) throws ApplicationManagerException, ApplicationNotFoundException {
         delegate.updateCredential(application, passwordCredential);
     }
 
     @Override
-    public boolean authenticate(Application application, PasswordCredential testCredential) throws ApplicationNotFoundException
-    {
+    public boolean authenticate(Application application, PasswordCredential testCredential) throws ApplicationNotFoundException {
         return delegate.authenticate(application, testCredential);
     }
 
     @Override
-    public List<Application> search(EntityQuery query)
-    {
+    public List<Application> search(EntityQuery query) {
         return delegate.search(query);
     }
 
     @Override
-    public List<Application> findAll()
-    {
+    public List<Application> findAll() {
         return delegate.findAll();
     }
 }

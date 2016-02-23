@@ -6,8 +6,7 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 /**
  * Implementations should create product-specific WebItem module descriptors, e.g. JiraWebItemModuleDescriptor.
  */
-public interface ProductSpecificWebItemModuleDescriptorFactory
-{
+public interface ProductSpecificWebItemModuleDescriptorFactory {
     WebItemModuleDescriptor createWebItemModuleDescriptor(
             String url
             , String pluginKey

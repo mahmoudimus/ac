@@ -5,8 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
 import java.io.IOException;
 
-public interface TestPluginInstaller
-{
+public interface TestPluginInstaller {
     Plugin installAddon(ConnectAddonBean bean) throws IOException;
 
     Plugin installAddon(String jsonDescriptor) throws IOException;
@@ -20,7 +19,8 @@ public interface TestPluginInstaller
     void enableAddon(String pluginKey) throws IOException;
 
     String getInternalAddonBaseUrl(String pluginKey);
+
     String getInternalAddonBaseUrlSuffix(String pluginKey, String additionalSuffix); // no product base url in return value
-    
+
     Iterable<String> getInstalledAddonKeys();
 }

@@ -11,50 +11,41 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
-public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<DynamicContentMacroModuleBean>
-{
+public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<DynamicContentMacroModuleBean> {
     private final RemoteMacroRenderer remoteMacroRenderer;
 
     @Autowired
     public DynamicContentMacroModuleDescriptorFactory(AbsoluteAddonUrlConverter urlConverter,
-                                                      RemoteMacroRenderer remoteMacroRenderer)
-    {
+                                                      RemoteMacroRenderer remoteMacroRenderer) {
         super(urlConverter);
         this.remoteMacroRenderer = remoteMacroRenderer;
     }
 
     @Override
-    protected DOMElement createDOMElement(ConnectAddonBean addon, DynamicContentMacroModuleBean bean)
-    {
+    protected DOMElement createDOMElement(ConnectAddonBean addon, DynamicContentMacroModuleBean bean) {
         DOMElement element = super.createDOMElement(addon, bean);
 
-        if (null != bean.getWidth())
-        {
+        if (null != bean.getWidth()) {
             element.setAttribute("width", bean.getWidth());
         }
-        if (null != bean.getHeight())
-        {
+        if (null != bean.getHeight()) {
             element.setAttribute("height", bean.getHeight());
         }
 
         return element;
     }
 
-    protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final DynamicContentMacroModuleBean bean)
-    {
-        return new ModuleFactory()
-        {
+    protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final DynamicContentMacroModuleBean bean) {
+        return new ModuleFactory() {
             @Override
-            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
-            {
+            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException {
 
                 DynamicContentMacro macro = new DynamicContentMacro(
                         addon.getKey(), bean.getRawKey(),
                         MacroEnumMapper.map(bean.getBodyType()),
                         MacroEnumMapper.map(bean.getOutputType()), remoteMacroRenderer, bean.getRenderModes());
 
-                if (bean.hasImagePlaceholder())
-                {
+                if (bean.hasImagePlaceholder()) {
                     return (T) decorateWithImagePlaceHolder(addon, macro, bean.getImagePlaceholder());
                 }
                 return (T) macro;

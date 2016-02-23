@@ -20,8 +20,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * @since 1.0
  */
 @SchemaDefinition("icon")
-public class IconBean
-{
+public class IconBean {
     /**
      * The width in pixels of the icon image.
      */
@@ -39,58 +38,47 @@ public class IconBean
     @StringSchemaAttributes(format = "uri")
     private String url;
 
-    public IconBean()
-    {
+    public IconBean() {
         this.width = 16;
         this.height = 16;
         this.url = "";
     }
 
-    public IconBean(IconBeanBuilder builder)
-    {
+    public IconBean(IconBeanBuilder builder) {
         copyFieldsByNameAndType(builder, this);
 
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
     }
 
-    public int getWidth()
-    {
+    public int getWidth() {
         return width;
     }
 
-    public int getHeight()
-    {
+    public int getHeight() {
         return height;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public static IconBeanBuilder newIconBean()
-    {
+    public static IconBeanBuilder newIconBean() {
         return new IconBeanBuilder();
     }
 
-    public static IconBeanBuilder newIconBean(IconBean defaultBean)
-    {
+    public static IconBeanBuilder newIconBean(IconBean defaultBean) {
         return new IconBeanBuilder(defaultBean);
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof IconBean))
-        {
+        if (!(otherObj instanceof IconBean)) {
             return false;
         }
 
@@ -104,8 +92,7 @@ public class IconBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(53, 11)
                 .append(width)
                 .append(height)

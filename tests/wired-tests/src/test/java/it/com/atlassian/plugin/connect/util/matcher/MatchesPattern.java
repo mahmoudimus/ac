@@ -9,31 +9,25 @@ import java.util.regex.Pattern;
 //verify https://jira.codehaus.org/browse/MJAR-68 (or whatever is breaking the builds) 
 //is not affecting us anymore 
 
-public class MatchesPattern extends TypeSafeDiagnosingMatcher<String>
-{
-    public static MatchesPattern matchesPattern(String pattern)
-    {
+public class MatchesPattern extends TypeSafeDiagnosingMatcher<String> {
+    public static MatchesPattern matchesPattern(String pattern) {
         return matchesPattern(Pattern.compile(pattern));
     }
 
-    public static MatchesPattern matchesPattern(Pattern pattern)
-    {
+    public static MatchesPattern matchesPattern(Pattern pattern) {
         return new MatchesPattern(pattern);
     }
 
     private final Pattern pattern;
 
-    private MatchesPattern(Pattern pattern)
-    {
+    private MatchesPattern(Pattern pattern) {
         super(String.class);
         this.pattern = pattern;
     }
 
     @Override
-    protected boolean matchesSafely(final String string, final Description mismatchDescription)
-    {
-        if (!pattern.matcher(string).matches())
-        {
+    protected boolean matchesSafely(final String string, final Description mismatchDescription) {
+        if (!pattern.matcher(string).matches()) {
             mismatchDescription.appendText("was " + string);
             return false;
         }
@@ -41,8 +35,7 @@ public class MatchesPattern extends TypeSafeDiagnosingMatcher<String>
     }
 
     @Override
-    public void describeTo(final Description description)
-    {
+    public void describeTo(final Description description) {
         description.appendText("matches pattern " + pattern.pattern());
     }
 }

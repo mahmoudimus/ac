@@ -16,16 +16,14 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKey
 /**
  *
  */
-public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescriptor
-{
+public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescriptor {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
 
     public WebPanelConnectModuleDescriptor(HostContainer hostContainer, WebInterfaceManager webInterfaceManager,
-            ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ModuleContextFilter moduleContextFilter, PluggableParametersExtractor webFragmentModuleContextExtractor)
-    {
+                                           ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                           ModuleContextFilter moduleContextFilter, PluggableParametersExtractor webFragmentModuleContextExtractor) {
         super(hostContainer, moduleFactory, webInterfaceManager);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.moduleContextFilter = moduleContextFilter;
@@ -33,15 +31,13 @@ public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescri
     }
 
     @Override
-    public WebPanel getModule()
-    {
+    public WebPanel getModule() {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameWebPanel(renderStrategy, moduleContextFilter, webFragmentModuleContextExtractor);
     }
 
     @Override
-    public String getModuleClassName()
-    {
+    public String getModuleClassName() {
         return super.getModuleClassName();
     }
 

@@ -10,39 +10,31 @@ import java.util.Iterator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class AddonScopesMatcher extends TypeSafeMatcher<Collection<AddonScope>>
-{
+public class AddonScopesMatcher extends TypeSafeMatcher<Collection<AddonScope>> {
     private final Collection<Matcher<AddonScope>> scopeMatchers;
 
-    public AddonScopesMatcher(Collection<Matcher<AddonScope>> scopeMatchers)
-    {
+    public AddonScopesMatcher(Collection<Matcher<AddonScope>> scopeMatchers) {
         this.scopeMatchers = checkNotNull(scopeMatchers);
     }
 
     @Override
-    protected boolean matchesSafely(final Collection<AddonScope> addonScopes)
-    {
+    protected boolean matchesSafely(final Collection<AddonScope> addonScopes) {
         // shortcut for efficiency
-        if (addonScopes.size() != scopeMatchers.size())
-        {
+        if (addonScopes.size() != scopeMatchers.size()) {
             return false;
         }
 
-        for (final Matcher<AddonScope> scopeMatcher : scopeMatchers)
-        {
+        for (final Matcher<AddonScope> scopeMatcher : scopeMatchers) {
             boolean matched = false;
 
             Iterator<AddonScope> actualsIter = addonScopes.iterator();
-            while (actualsIter.hasNext() && !matched)
-            {
-                if (scopeMatcher.matches(actualsIter.next()))
-                {
+            while (actualsIter.hasNext() && !matched) {
+                if (scopeMatcher.matches(actualsIter.next())) {
                     actualsIter.remove();
                     matched = true;
                 }
             }
-            if (!matched)
-            {
+            if (!matched) {
                 return false;
             }
         }
@@ -51,8 +43,7 @@ public class AddonScopesMatcher extends TypeSafeMatcher<Collection<AddonScope>>
     }
 
     @Override
-    public void describeTo(Description description)
-    {
+    public void describeTo(Description description) {
         description.appendList(" <[", ",", "]>", scopeMatchers);
     }
 }

@@ -14,30 +14,28 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class UserEventMapperTest
-{
-    @Mock private UserManager userManager;
-    @Mock private SettingsManager settingsManager;
+@RunWith(MockitoJUnitRunner.class)
+public class UserEventMapperTest {
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private SettingsManager settingsManager;
 
     private UserEventMapper mapper;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.mapper = new UserEventMapper(userManager, settingsManager);
     }
 
     @Test
-    public void testUserProfileMapping()
-    {
+    public void testUserProfileMapping() {
         User user = mock(User.class);
         UserProfile userProfile = mock(UserProfile.class);
         UserCreateEvent event = new UserCreateEvent(this, user);
@@ -53,7 +51,7 @@ public class UserEventMapperTest
         Map<String, Object> map = mapper.toMap(event);
 
         assertThat(map, hasKey("userProfile"));
-        Map<String, String> profileMap = (Map<String, String>)map.get("userProfile");
+        Map<String, String> profileMap = (Map<String, String>) map.get("userProfile");
 
         assertThat(profileMap.get("username"), is("testuser"));
         assertThat(profileMap.get("email"), is("test@test.com"));

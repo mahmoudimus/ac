@@ -8,8 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class InstallHandlerServlet extends HttpServlet
-{
+public class InstallHandlerServlet extends HttpServlet {
     /**
      * Example payload:
      *
@@ -24,8 +23,7 @@ public class InstallHandlerServlet extends HttpServlet
      * description: 'host.consumer.default.description',
      * eventType: 'installed
      */
-    public static class InstallPayload
-    {
+    public static class InstallPayload {
         private String key;
         private String clientKey;
         private String publicKey;
@@ -37,53 +35,43 @@ public class InstallHandlerServlet extends HttpServlet
         private String description;
         private String eventType;
 
-        public String getKey()
-        {
+        public String getKey() {
             return key;
         }
 
-        public String getClientKey()
-        {
+        public String getClientKey() {
             return clientKey;
         }
 
-        public String getPublicKey()
-        {
+        public String getPublicKey() {
             return publicKey;
         }
 
-        public String getSharedSecret()
-        {
+        public String getSharedSecret() {
             return sharedSecret;
         }
 
-        public String getServerVersion()
-        {
+        public String getServerVersion() {
             return serverVersion;
         }
 
-        public String getPluginsVersion()
-        {
+        public String getPluginsVersion() {
             return pluginsVersion;
         }
 
-        public String getBaseUrl()
-        {
+        public String getBaseUrl() {
             return baseUrl;
         }
 
-        public String getProductType()
-        {
+        public String getProductType() {
             return productType;
         }
 
-        public String getDescription()
-        {
+        public String getDescription() {
             return description;
         }
 
-        public String getEventType()
-        {
+        public String getEventType() {
             return eventType;
         }
     }
@@ -91,13 +79,11 @@ public class InstallHandlerServlet extends HttpServlet
     private InstallPayload installPayload;
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-    {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         installPayload = new Gson().fromJson(req.getReader(), InstallPayload.class);
     }
 
-    public InstallPayload getInstallPayload()
-    {
+    public InstallPayload getInstallPayload() {
         return installPayload;
     }
 }

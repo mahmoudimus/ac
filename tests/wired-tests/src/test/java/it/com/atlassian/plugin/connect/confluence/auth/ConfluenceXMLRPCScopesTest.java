@@ -1,7 +1,7 @@
 package it.com.atlassian.plugin.connect.confluence.auth;
 
-import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -14,19 +14,17 @@ import java.util.Collection;
 
 import static it.com.atlassian.plugin.connect.confluence.auth.ConfluenceScopeTestUtil.xmlBodyForConfluence;
 
-@Application ("confluence")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class ConfluenceXMLRPCScopesTest extends ScopeManagerTest
-{
-    public ConfluenceXMLRPCScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
+@Application("confluence")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class ConfluenceXMLRPCScopesTest extends ScopeManagerTest {
+    public ConfluenceXMLRPCScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
+
     /**
      * These tests are not exhaustive. They are samples across the different scopes and API versions.
      */
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         return Arrays.asList(
                 xmlBodyForConfluence(ScopeName.READ, "confluence2.convertWikiToStorageFormat", true),
                 xmlBodyForConfluence(null, "confluence2.convertWikiToStorageFormat", false),

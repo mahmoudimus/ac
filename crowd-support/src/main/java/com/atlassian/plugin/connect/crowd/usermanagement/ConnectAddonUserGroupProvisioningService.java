@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Set;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.GroupNotFoundException;
@@ -10,11 +8,12 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 
+import java.util.Set;
+
 /**
  * Perform operations on user groups.
  */
-public interface ConnectAddonUserGroupProvisioningService
-{
+public interface ConnectAddonUserGroupProvisioningService {
     /**
      * Ensure that the nominated user is in the nominated group. Add membership if the user is not already a member.
      *
@@ -44,6 +43,7 @@ public interface ConnectAddonUserGroupProvisioningService
      */
     void ensureUserIsInGroups(String userKey, Set<String> groupKeys)
             throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException;
+
     /**
      * Remove the user from the nominated group. It is not an error condition if the user is not a member of the group.
      *

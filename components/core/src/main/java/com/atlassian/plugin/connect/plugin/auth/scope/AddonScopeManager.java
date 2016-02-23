@@ -5,8 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Handles access to API methods for add-ons.
  */
-public interface AddonScopeManager
-{
+public interface AddonScopeManager {
 
     /**
      * Tells whether a request can proceed given it's API scope and the plugin requested permissions.

@@ -15,8 +15,7 @@ import java.util.Map;
  * Note that this bean is not publicly exposed, and thus does not contain user-facing javadocs.
  */
 @SchemaIgnore
-public class XWorkActionModuleBean extends RequiredKeyBean
-{
+public class XWorkActionModuleBean extends RequiredKeyBean {
     private String namespace;
     private Class<?> clazz;
     private Map<String, Object> parameters;
@@ -25,43 +24,35 @@ public class XWorkActionModuleBean extends RequiredKeyBean
     private Map<String, Class<?>> resultTypes;
     private List<XWorkResultBean> resultBeans;
 
-    public XWorkActionModuleBean(XWorkActionModuleBeanBuilder builder)
-    {
+    public XWorkActionModuleBean(XWorkActionModuleBeanBuilder builder) {
         super(builder);
     }
 
-    public String getNamespace()
-    {
+    public String getNamespace() {
         return namespace;
     }
 
-    public Class<?> getClazz()
-    {
+    public Class<?> getClazz() {
         return clazz;
     }
 
-    public Map<String, Object> getParameters()
-    {
+    public Map<String, Object> getParameters() {
         return parameters;
     }
 
-    public List<String> getInterceptorRefs()
-    {
+    public List<String> getInterceptorRefs() {
         return interceptorRefs;
     }
 
-    public List<XWorkInterceptorBean> getInterceptorsBeans()
-    {
+    public List<XWorkInterceptorBean> getInterceptorsBeans() {
         return interceptorsBeans;
     }
 
-    public Map<String, Class<?>> getResultTypes()
-    {
+    public Map<String, Class<?>> getResultTypes() {
         return resultTypes;
     }
 
-    public List<XWorkResultBean> getResultBeans()
-    {
+    public List<XWorkResultBean> getResultBeans() {
         return resultBeans;
     }
 
@@ -70,13 +61,11 @@ public class XWorkActionModuleBean extends RequiredKeyBean
      *
      * @return the URL of the action
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return namespace + "/" + getRawKey() + ".action";
     }
 
-    public static XWorkActionModuleBeanBuilder newXWorkActionBean()
-    {
+    public static XWorkActionModuleBeanBuilder newXWorkActionBean() {
         return new XWorkActionModuleBeanBuilder();
     }
 }

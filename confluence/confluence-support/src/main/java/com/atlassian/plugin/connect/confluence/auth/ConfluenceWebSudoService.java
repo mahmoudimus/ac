@@ -9,19 +9,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @ConfluenceComponent
-public class ConfluenceWebSudoService implements WebSudoService
-{
+public class ConfluenceWebSudoService implements WebSudoService {
     private final WebSudoManager webSudoManager;
 
     @Autowired
-    public ConfluenceWebSudoService(WebSudoManager webSudoManager)
-    {
+    public ConfluenceWebSudoService(WebSudoManager webSudoManager) {
         this.webSudoManager = webSudoManager;
     }
 
     @Override
-    public void startWebSudoSession(HttpServletRequest request, HttpServletResponse response)
-    {
+    public void startWebSudoSession(HttpServletRequest request, HttpServletResponse response) {
         webSudoManager.startSession(request, response);
     }
 }

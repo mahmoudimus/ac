@@ -7,19 +7,16 @@ import com.atlassian.pageobjects.elements.query.TimedCondition;
 
 import javax.inject.Inject;
 
-public class JiraAdvancedSearchPage extends AdvancedSearch
-{
+public class JiraAdvancedSearchPage extends AdvancedSearch {
     @Inject
     private PageBinder pageBinder;
 
-    public IssueNavigatorViewsMenu viewsMenu()
-    {
+    public IssueNavigatorViewsMenu viewsMenu() {
         return pageBinder.bind(IssueNavigatorViewsMenu.class);
     }
 
     @Override
-    public TimedCondition isAt()
-    {
+    public TimedCondition isAt() {
         Poller.waitUntilTrue(searchButton.timed().isVisible()); // make sure the page is in it's final state (ACDEV-684)
         return super.isAt();
     }

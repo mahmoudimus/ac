@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
@@ -35,18 +29,20 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import com.google.common.annotations.VisibleForTesting;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 
 @Component
 @ExportAsDevService
-public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider<WebItemModuleBean> implements WebItemModuleProvider
-{
+public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider<WebItemModuleBean> implements WebItemModuleProvider {
 
     private static final WebItemModuleMeta META = new WebItemModuleMeta();
 
@@ -63,16 +59,15 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
 
     @Autowired
     public WebItemModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            WebItemModuleDescriptorFactory webItemFactory,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebFragmentLocationBlacklist webFragmentLocationBlacklist,
-            ConditionClassAccessor conditionClassAccessor,
-            ConditionLoadingValidator conditionLoadingValidator,
-            RedirectRegistry redirectRegistry,
-            RedirectDataBuilderFactory redirectDataBuilderFactory)
-    {
+                                     ConnectJsonSchemaValidator schemaValidator,
+                                     WebItemModuleDescriptorFactory webItemFactory,
+                                     IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                     IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                     WebFragmentLocationBlacklist webFragmentLocationBlacklist,
+                                     ConditionClassAccessor conditionClassAccessor,
+                                     ConditionLoadingValidator conditionLoadingValidator,
+                                     RedirectRegistry redirectRegistry,
+                                     RedirectDataBuilderFactory redirectDataBuilderFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.webItemFactory = webItemFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
@@ -85,14 +80,12 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     }
 
     @Override
-    public ConnectModuleMeta<WebItemModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<WebItemModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<WebItemModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<WebItemModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         final List<WebItemModuleBean> webItems = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         assertLocationNotBlacklisted(descriptor, webItems);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), webItems);
@@ -100,11 +93,9 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebItemModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebItemModuleBean> modules, ConnectAddonBean addon) {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
-        for (WebItemModuleBean bean : modules)
-        {
+        for (WebItemModuleBean bean : modules) {
             descriptors.add(beanToDescriptor(addon, pluginRetrievalService.getPlugin(), bean));
             registerIframeRenderStrategy(bean, addon);
         }
@@ -113,41 +104,23 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
 
     @VisibleForTesting
     void assertLocationNotBlacklisted(ShallowConnectAddonBean descriptor, List<WebItemModuleBean> webItemModuleBeans)
-            throws ConnectModuleValidationException
-    {
+            throws ConnectModuleValidationException {
         List<String> blacklistedLocationsUsed = webItemModuleBeans.stream()
-                .filter(new Predicate<WebItemModuleBean>()
-                {
-                    @Override
-                    public boolean test(WebItemModuleBean webItem)
-                    {
-                        return webFragmentLocationBlacklist.getBlacklistedWebItemLocations().contains(webItem.getLocation());
-                    }
-                })
-                .map(new Function<WebItemModuleBean, String>()
-                {
-                    @Override
-                    public String apply(WebItemModuleBean webItemModuleBean)
-                    {
-                        return webItemModuleBean.getLocation();
-                    }
-                })
+                .filter(webItem -> webFragmentLocationBlacklist.getBlacklistedWebItemLocations().contains(webItem.getLocation()))
+                .map(WebItemModuleBean::getLocation)
                 .collect(Collectors.toList());
 
-        if (blacklistedLocationsUsed.size() > 0)
-        {
+        if (blacklistedLocationsUsed.size() > 0) {
             final String exceptionMsg = String.format("Installation failed. The add-on includes a web fragment with an unsupported location (%s).", blacklistedLocationsUsed);
             throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMsg, "connect.install.error.invalid.location", blacklistedLocationsUsed.toArray(new String[blacklistedLocationsUsed.size()]));
         }
     }
 
-    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin plugin, WebItemModuleBean bean)
-    {
+    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin plugin, WebItemModuleBean bean) {
         ModuleDescriptor descriptor;
 
         final WebItemTargetBean target = bean.getTarget();
-        if (requiredRedirection(bean))
-        {
+        if (requiredRedirection(bean)) {
             RedirectData redirectData = redirectDataBuilderFactory.builder()
                     .addOn(addon.getKey())
                     .urlTemplate(bean.getUrl())
@@ -159,13 +132,10 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         }
 
         if (bean.isAbsolute() ||
-            bean.getContext().equals(AddonUrlContext.product) ||
-            bean.getContext().equals(AddonUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
-        {
+                bean.getContext().equals(AddonUrlContext.product) ||
+                bean.getContext().equals(AddonUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget()) {
             descriptor = webItemFactory.createModuleDescriptor(bean, addon, plugin);
-        }
-        else
-        {
+        } else {
             String localUrl = ConnectIFrameServletPath.forModule(addon.getKey(), bean.getUrl());
 
             WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
@@ -175,19 +145,16 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
         return descriptor;
     }
 
-    private boolean requiredRedirection(final WebItemModuleBean bean)
-    {
+    private boolean requiredRedirection(final WebItemModuleBean bean) {
         // Link to the add-ons may require revalidation of JWT token so they need to do request though redirect servlet.
         // Absolute links points to the external servers like wikipedia, so they do not need to be signed, so they do not need go through redirect servlet.
         return !bean.isAbsolute() && bean.getContext().equals(AddonUrlContext.addon) && bean.getTarget().getType().equals(WebItemTargetType.page);
     }
 
-    private void registerIframeRenderStrategy(WebItemModuleBean webItem, ConnectAddonBean descriptor)
-    {
+    private void registerIframeRenderStrategy(WebItemModuleBean webItem, ConnectAddonBean descriptor) {
         // Allow a web item which opens in a dialog to be opened programmatically, too
         final WebItemTargetBean target = webItem.getTarget();
-        if (target.isDialogTarget() || target.isInlineDialogTarget())
-        {
+        if (target.isDialogTarget() || target.isInlineDialogTarget()) {
             List<ConditionalBean> iframeConditions = filterProductSpecificConditions(webItem.getConditions());
             final IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addon(descriptor.getKey())
@@ -208,39 +175,24 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     }
 
     @VisibleForTesting
-    List<ConditionalBean> filterProductSpecificConditions(List<ConditionalBean> conditions)
-    {
-        return filterSingleConditionsRecursively(conditions, new Predicate<SingleConditionBean>()
-        {
-
-            @Override
-            public boolean test(SingleConditionBean conditionalBean)
-            {
-                return conditionClassAccessor.getConditionClassForNoContext(conditionalBean).isPresent();
-            }
-        });
+    List<ConditionalBean> filterProductSpecificConditions(List<ConditionalBean> conditions) {
+        return filterSingleConditionsRecursively(conditions,
+                conditionalBean -> conditionClassAccessor.getConditionClassForNoContext(conditionalBean).isPresent());
     }
 
     private List<ConditionalBean> filterSingleConditionsRecursively(List<ConditionalBean> conditions,
-            Predicate<SingleConditionBean> filterPredicate)
-    {
+                                                                    Predicate<SingleConditionBean> filterPredicate) {
         List<ConditionalBean> filteredConditions = new ArrayList<>();
-        for (ConditionalBean condition : conditions)
-        {
-            if (SingleConditionBean.class.isAssignableFrom(condition.getClass()))
-            {
-                if (filterPredicate.test((SingleConditionBean) condition))
-                {
+        for (ConditionalBean condition : conditions) {
+            if (SingleConditionBean.class.isAssignableFrom(condition.getClass())) {
+                if (filterPredicate.test((SingleConditionBean) condition)) {
                     filteredConditions.add(condition);
                 }
-            }
-            else
-            {
+            } else {
                 CompositeConditionBean compositeCondition = (CompositeConditionBean) condition;
                 List<ConditionalBean> filteredNestedConditions = filterSingleConditionsRecursively(
                         compositeCondition.getConditions(), filterPredicate);
-                if (!filteredNestedConditions.isEmpty())
-                {
+                if (!filteredNestedConditions.isEmpty()) {
                     filteredConditions.add(CompositeConditionBean.newCompositeConditionBean(compositeCondition)
                             .withConditions(filteredNestedConditions)
                             .build());
