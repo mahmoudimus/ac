@@ -8,13 +8,11 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
-
-import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
@@ -23,8 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestWebSection extends JiraWebDriverTestBase
-{
+public class TestWebSection extends JiraWebDriverTestBase {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String JIRA_HEADER_LOCATION = "system.top.navigation.bar";
@@ -37,7 +34,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     // The web section that makes the dropdown
     private static final String WEB_SECTION_ID = "dropdown-section";
     private static final String WEB_SECTION_NAME = "D-D-Drop";
-    private static final String DROPDOWN_LOCATION = addonAndModuleKey(PLUGIN_KEY,HEADER_WEB_ITEM_ID) + "/" + addonAndModuleKey(PLUGIN_KEY,WEB_SECTION_ID);
+    private static final String DROPDOWN_LOCATION = addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID) + "/" + addonAndModuleKey(PLUGIN_KEY, WEB_SECTION_ID);
     private static final String DROPDOWN_CONTENT_ID = HEADER_WEB_ITEM_ID + "-content";
 
     // The web item within the dropdown
@@ -48,8 +45,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModules(
@@ -66,31 +62,28 @@ public class TestWebSection extends JiraWebDriverTestBase
                                 .withUrl(CONTENT_WEB_ITEM_URL)
                                 .withLocation(DROPDOWN_LOCATION)
                                 .build()
-                        )
+                )
                 .addModule(
                         "webSections",
                         newWebSectionBean()
-                            .withName(new I18nProperty(WEB_SECTION_NAME, null))
-                            .withLocation(addonAndModuleKey(PLUGIN_KEY,HEADER_WEB_ITEM_ID))
-                            .withKey(WEB_SECTION_ID)
-                            .build()
+                                .withName(new I18nProperty(WEB_SECTION_NAME, null))
+                                .withLocation(addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID))
+                                .withKey(WEB_SECTION_ID)
+                                .build()
                 )
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                 .start();
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void testWebItemFoundWithinWebSection()
-    {
+    public void testWebItemFoundWithinWebSection() {
         loginAndVisit(testUserFactory.basicUser(), JiraViewProjectPage.class, project.getKey());
 
         AddonDropdownMenu dropdown = connectPageOperations.getPageBinder().bind(AddonDropdownMenu.class, By.id(addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID)), By.id(addonAndModuleKey(PLUGIN_KEY, DROPDOWN_CONTENT_ID)));
@@ -106,26 +99,21 @@ public class TestWebSection extends JiraWebDriverTestBase
         assertEquals("Web item text within web section should be correct", CONTENT_WEB_ITEM_NAME, item.getText());
     }
 
-    public static class AddonDropdownMenu extends JiraAuiDropdownMenu
-    {
-        public AddonDropdownMenu(final By triggerLocator, final By dropdownLocator)
-        {
+    public static class AddonDropdownMenu extends JiraAuiDropdownMenu {
+        public AddonDropdownMenu(final By triggerLocator, final By dropdownLocator) {
             super(triggerLocator, dropdownLocator);
         }
 
         @Override
-        public JiraAuiDropdownMenu open()
-        {
-            if (!isOpen())
-            {
+        public JiraAuiDropdownMenu open() {
+            if (!isOpen()) {
                 trigger().javascript().mouse().click();
                 waitForOpen();
             }
             return this;
         }
 
-        public PageElement getItem(By selector)
-        {
+        public PageElement getItem(By selector) {
             return getDropdown().find(selector);
         }
     }

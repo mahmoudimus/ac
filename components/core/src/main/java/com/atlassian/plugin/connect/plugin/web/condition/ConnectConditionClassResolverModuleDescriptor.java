@@ -7,19 +7,16 @@ import com.atlassian.plugin.util.validation.ValidationPattern;
 
 import static com.atlassian.plugin.util.validation.ValidationPattern.test;
 
-public class ConnectConditionClassResolverModuleDescriptor extends AbstractModuleDescriptor<ConnectConditionClassResolver>
-{
+public class ConnectConditionClassResolverModuleDescriptor extends AbstractModuleDescriptor<ConnectConditionClassResolver> {
 
     private ConnectConditionClassResolver resolver;
 
-    public ConnectConditionClassResolverModuleDescriptor(ModuleFactory moduleFactory)
-    {
+    public ConnectConditionClassResolverModuleDescriptor(ModuleFactory moduleFactory) {
         super(moduleFactory);
     }
 
     @Override
-    protected void provideValidationRules(ValidationPattern pattern)
-    {
+    protected void provideValidationRules(ValidationPattern pattern) {
         super.provideValidationRules(pattern);
         pattern
                 .rule(
@@ -28,16 +25,14 @@ public class ConnectConditionClassResolverModuleDescriptor extends AbstractModul
     }
 
     @Override
-    public void enabled()
-    {
+    public void enabled() {
         super.enabled();
         assertModuleClassImplements(ConnectConditionClassResolver.class);
         resolver = moduleFactory.createModule(moduleClassName, ConnectConditionClassResolverModuleDescriptor.this);
     }
 
     @Override
-    public ConnectConditionClassResolver getModule()
-    {
+    public ConnectConditionClassResolver getModule() {
         return resolver;
     }
 }

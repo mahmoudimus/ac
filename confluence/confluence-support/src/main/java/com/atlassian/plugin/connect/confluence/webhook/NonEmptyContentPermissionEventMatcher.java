@@ -9,11 +9,9 @@ import com.atlassian.webhooks.spi.provider.EventMatcher;
  * with a null ContentPermission, so we filter those out.
  * See CONFDEV-25705.
  */
-public class NonEmptyContentPermissionEventMatcher implements EventMatcher<ContentPermissionEvent>
-{
+public class NonEmptyContentPermissionEventMatcher implements EventMatcher<ContentPermissionEvent> {
     @Override
-    public boolean matches(ContentPermissionEvent contentPermissionEvent, Object o)
-    {
+    public boolean matches(ContentPermissionEvent contentPermissionEvent, Object o) {
         return contentPermissionEvent.getContentPermission() != null;
     }
 }

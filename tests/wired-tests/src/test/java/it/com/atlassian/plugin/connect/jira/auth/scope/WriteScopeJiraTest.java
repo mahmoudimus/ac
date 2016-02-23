@@ -18,20 +18,17 @@ import org.junit.runner.RunWith;
  */
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class WriteScopeJiraTest extends ScopeTestBase
-{
+public class WriteScopeJiraTest extends ScopeTestBase {
     public WriteScopeJiraTest(TestPluginInstaller testPluginInstaller,
                               TestAuthenticator testAuthenticator,
                               JwtWriterFactory jwtWriterFactory,
                               ConnectAddonRegistry connectAddonRegistry,
-                              ApplicationProperties applicationProperties)
-    {
+                              ApplicationProperties applicationProperties) {
         super(ScopeName.WRITE, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
     }
 
     @Test
-    public void shouldAllowPutGreenhopperRankBefore() throws Exception
-    {
+    public void shouldAllowPutGreenhopperRankBefore() throws Exception {
         assertValidRequest(HttpMethod.PUT, "/rest/greenhopper/1.0/api/rank/before");
     }
 }

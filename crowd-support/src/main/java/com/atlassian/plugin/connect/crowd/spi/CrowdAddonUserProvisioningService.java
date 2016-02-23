@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.crowd.spi;
 
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+
 import java.util.Set;
 
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
-
-public interface CrowdAddonUserProvisioningService
-{
+public interface CrowdAddonUserProvisioningService {
     void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddonInitException;
 
     /**

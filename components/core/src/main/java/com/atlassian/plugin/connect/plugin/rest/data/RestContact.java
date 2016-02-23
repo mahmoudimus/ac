@@ -5,8 +5,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 /**
  * A representation of a contact person for a product host, for use in the REST API.
  */
-public class RestContact
-{
+public class RestContact {
 
     @JsonProperty
     private final String name;
@@ -14,19 +13,16 @@ public class RestContact
     @JsonProperty
     private final String email;
 
-    public RestContact(String name, String email)
-    {
+    public RestContact(String name, String email) {
         this.name = name;
         this.email = email;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getEmail()
-    {
+    public String getEmail() {
         return email;
     }
 }

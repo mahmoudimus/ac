@@ -4,11 +4,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class VelocityKillerTest
-{
+public class VelocityKillerTest {
     @Test
-    public void testSingleVar() throws Exception
-    {
+    public void testSingleVar() throws Exception {
         String raw = "I have a $var";
         String expected = "I have a \\$var";
 
@@ -16,8 +14,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testSingleCurlyVar() throws Exception
-    {
+    public void testSingleCurlyVar() throws Exception {
         String raw = "I have a ${var}";
         String expected = "I have a \\${var}";
 
@@ -25,8 +22,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testMultipleMixedVars() throws Exception
-    {
+    public void testMultipleMixedVars() throws Exception {
         String raw = "I have a $var and some ${other-var}";
         String expected = "I have a \\$var and some \\${other-var}";
 
@@ -34,8 +30,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testNoVars() throws Exception
-    {
+    public void testNoVars() throws Exception {
         String raw = "I have no vars";
         String expected = "I have no vars";
 
@@ -43,8 +38,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testOnlyVar() throws Exception
-    {
+    public void testOnlyVar() throws Exception {
         String raw = "${var}";
         String expected = "\\${var}";
 
@@ -52,8 +46,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testEmptyString() throws Exception
-    {
+    public void testEmptyString() throws Exception {
         String raw = "";
         String expected = "";
 
@@ -61,8 +54,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testNullString() throws Exception
-    {
+    public void testNullString() throws Exception {
         String raw = null;
         String expected = null;
 
@@ -70,8 +62,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testDoubleDollar() throws Exception
-    {
+    public void testDoubleDollar() throws Exception {
         String raw = "I have a $${var}";
         String expected = "I have a $\\${var}";
 
@@ -79,8 +70,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testWTF() throws Exception
-    {
+    public void testWTF() throws Exception {
         String raw = "I have a ${$var}";
         String expected = "I have a ${\\$var}";
 
@@ -88,8 +78,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testNested() throws Exception
-    {
+    public void testNested() throws Exception {
         String raw = "I have a ${var inside a ${var} lol}";
         String expected = "I have a ${var inside a \\${var} lol}";
 
@@ -97,8 +86,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testEmptyVar() throws Exception
-    {
+    public void testEmptyVar() throws Exception {
         String raw = "I have a ${}";
         String expected = "I have a ${}";
 
@@ -106,8 +94,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testEscapedVar() throws Exception
-    {
+    public void testEscapedVar() throws Exception {
         String raw = "I have a \\${var}";
         String expected = "I have a \\\\${var}";
 
@@ -115,8 +102,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testEscapedEmptyVar() throws Exception
-    {
+    public void testEscapedEmptyVar() throws Exception {
         String raw = "I have a \\${}";
         String expected = "I have a \\${}";
 
@@ -124,8 +110,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testSebIsCrazy() throws Exception
-    {
+    public void testSebIsCrazy() throws Exception {
         String raw = "I have a \\$\\{}";
         String expected = "I have a \\$\\{}";
 
@@ -133,8 +118,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testAndDillusional() throws Exception
-    {
+    public void testAndDillusional() throws Exception {
         String raw = "I have a \\$\\{\\}";
         String expected = "I have a \\$\\{\\}";
 
@@ -142,8 +126,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testDottedVar() throws Exception
-    {
+    public void testDottedVar() throws Exception {
         String raw = "I have a $dotted.var and ${another.one}";
         String expected = "I have a \\$dotted.var and \\${another.one}";
 
@@ -151,8 +134,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testParenVar() throws Exception
-    {
+    public void testParenVar() throws Exception {
         String raw = "I have a $paren() and ${another()}";
         String expected = "I have a \\$paren() and \\${another()}";
 
@@ -160,8 +142,7 @@ public class VelocityKillerTest
     }
 
     @Test
-    public void testBangVar() throws Exception
-    {
+    public void testBangVar() throws Exception {
         String raw = "I have a $!bang";
         String expected = "I have a \\$!bang";
 

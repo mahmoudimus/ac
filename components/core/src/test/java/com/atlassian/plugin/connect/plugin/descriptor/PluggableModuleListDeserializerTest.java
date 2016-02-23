@@ -31,8 +31,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PluggableModuleListDeserializerTest extends TestCase
-{
+public class PluggableModuleListDeserializerTest extends TestCase {
 
     private static final String MODULE_TYPE = "firstModuleType";
 
@@ -51,8 +50,7 @@ public class PluggableModuleListDeserializerTest extends TestCase
     private static JsonElement testJsonElement;
 
     @BeforeClass
-    public static void createTestJson()
-    {
+    public static void createTestJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(MODULE_TYPE, "testModuleBody");
         jsonObject.addProperty("secondModuleType", "testModuleBody");
@@ -60,8 +58,7 @@ public class PluggableModuleListDeserializerTest extends TestCase
     }
 
     @Test
-    public void unknownModuleTypeShouldThrowException() throws Exception
-    {
+    public void unknownModuleTypeShouldThrowException() throws Exception {
         when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectModuleProviderModuleDescriptor(mock(ModuleFactory.class))))))
                 .thenReturn(Collections.emptyList());
 
@@ -76,8 +73,7 @@ public class PluggableModuleListDeserializerTest extends TestCase
     }
 
     @Test
-    public void deserializationReturnsCorrectNumberOfSuppliers() throws Exception
-    {
+    public void deserializationReturnsCorrectNumberOfSuppliers() throws Exception {
         Map<String, Supplier<List<ModuleBean>>> map = moduleListDeserializer.deserialize(testJsonElement, Object.class, context);
         assertThat(map.size(), equalTo(2));
     }

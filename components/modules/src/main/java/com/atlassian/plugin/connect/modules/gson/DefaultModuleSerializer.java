@@ -11,14 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultModuleSerializer implements JsonSerializer<Map<String, Supplier<List<ModuleBean>>>>
-{
+public class DefaultModuleSerializer implements JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> {
     @Override
-    public JsonElement serialize(Map<String, Supplier<List<ModuleBean>>> src, Type typeOfSrc, final JsonSerializationContext context)
-    {
+    public JsonElement serialize(Map<String, Supplier<List<ModuleBean>>> src, Type typeOfSrc, final JsonSerializationContext context) {
         Map<String, List<ModuleBean>> jsonMap = new HashMap<>();
-        for (Map.Entry<String,Supplier<List<ModuleBean>>> entry : src.entrySet())
-        {
+        for (Map.Entry<String, Supplier<List<ModuleBean>>> entry : src.entrySet()) {
             List<ModuleBean> moduleBeans = entry.getValue().get();
             jsonMap.put(entry.getKey(), moduleBeans);
         }

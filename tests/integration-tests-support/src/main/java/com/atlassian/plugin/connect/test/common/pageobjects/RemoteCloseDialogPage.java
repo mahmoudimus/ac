@@ -1,17 +1,16 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
+
+import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilFalse;
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
@@ -20,8 +19,7 @@ import static com.atlassian.plugin.connect.test.common.pageobjects.RemotePageUti
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteCloseDialogPage extends AbstractConnectIFrameComponent<RemoteCloseDialogPage>
-{
+public class RemoteCloseDialogPage extends AbstractConnectIFrameComponent<RemoteCloseDialogPage> {
 
     @Inject
     protected AtlassianWebDriver driver;
@@ -37,22 +35,19 @@ public class RemoteCloseDialogPage extends AbstractConnectIFrameComponent<Remote
     protected PageElement containerDiv;
     protected PageElement iframe;
 
-    public RemoteCloseDialogPage(String key)
-    {
+    public RemoteCloseDialogPage(String key) {
         this.key = key;
     }
 
     @Init
-    public void init()
-    {
+    public void init() {
         this.containerDiv = elementFinder.find(By.id(key));
         waitUntilTrue(this.containerDiv.timed().isPresent());
         this.iframe = containerDiv.find(By.tagName("iframe"));
         waitUntilTrue(this.iframe.timed().isPresent());
     }
 
-    public RemoteCloseDialogPage close()
-    {
+    public RemoteCloseDialogPage close() {
         WebElement containerDiv = driver.findElement(By.id(key)); // have to repeat as we can't get this from PageElement
         runInFrame(driver, containerDiv, () -> {
             PageElement element = elementFinder.find(By.id("dialog-close-button"));
@@ -63,24 +58,20 @@ public class RemoteCloseDialogPage extends AbstractConnectIFrameComponent<Remote
         return this;
     }
 
-    public void waitUntilClosed()
-    {
+    public void waitUntilClosed() {
         waitUntilFalse(this.containerDiv.timed().isPresent());
     }
 
-    public String getFromQueryString(final String key)
-    {
+    public String getFromQueryString(final String key) {
         return RemotePageUtil.findInContext(iframe.getAttribute("src"), key);
     }
 
-    public Dimension getIFrameSize()
-    {
+    public Dimension getIFrameSize() {
         return iframe.getSize();
     }
 
     @Override
-    protected String getFrameId()
-    {
+    protected String getFrameId() {
         return IframeUtils.iframeId(key);
     }
 

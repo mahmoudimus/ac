@@ -1,4 +1,3 @@
-
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
 import com.atlassian.jira.avatar.Avatar;
@@ -8,8 +7,8 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
@@ -25,8 +24,7 @@ import java.security.NoSuchAlgorithmException;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ReadScopeJiraTest extends ScopeTestBase
-{
+public class ReadScopeJiraTest extends ScopeTestBase {
     private final JiraTestUtil scopeTestUtil;
 
     public ReadScopeJiraTest(TestPluginInstaller testPluginInstaller,
@@ -34,50 +32,43 @@ public class ReadScopeJiraTest extends ScopeTestBase
                              JwtWriterFactory jwtWriterFactory,
                              ConnectAddonRegistry connectAddonRegistry,
                              ApplicationProperties applicationProperties,
-                             JiraTestUtil scopeTestUtil)
-    {
+                             JiraTestUtil scopeTestUtil) {
         super(ScopeName.READ, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry,
                 applicationProperties);
         this.scopeTestUtil = scopeTestUtil;
     }
 
     @Test
-    public void shouldAllowGetGreenhopperRapidview() throws Exception
-    {
+    public void shouldAllowGetGreenhopperRapidview() throws Exception {
         assertValidRequest(HttpMethod.GET, "/rest/greenhopper/1.0/rapidview");
     }
 
     @Test
-    public void shouldForbidPutGreenhopperRankBefore() throws Exception
-    {
+    public void shouldForbidPutGreenhopperRankBefore() throws Exception {
         assertForbiddenRequest(HttpMethod.PUT, "/rest/greenhopper/1.0/api/rank/before");
     }
 
     @Test
-    public void shouldAllowGetSecureProjectAvatar() throws Exception
-    {
+    public void shouldAllowGetSecureProjectAvatar() throws Exception {
         Project project = scopeTestUtil.createProject();
 
         assertValidRequest(HttpMethod.GET, "/secure/projectavatar?pid=" + project.getId());
     }
 
     @Test
-    public void shouldAllowGetSecureUserAvatar() throws Exception
-    {
+    public void shouldAllowGetSecureUserAvatar() throws Exception {
         assertValidRequest(HttpMethod.GET, "/secure/useravatar?ownerId=" + JiraTestUtil.ADMIN_USERNAME);
     }
 
     @Test
-    public void shouldAllowGetSecureAvatar() throws Exception
-    {
+    public void shouldAllowGetSecureAvatar() throws Exception {
         Project project = scopeTestUtil.createProject();
         Avatar avatar = project.getIssueTypes().iterator().next().getAvatar();
         assertValidRequest(HttpMethod.GET, "/secure/viewavatar?size=xsmall&avatarType=issuetype&avatarId=" + avatar.getId());
     }
 
     @Test
-    public void shouldAllowToReadCommentProperty() throws IOException, NoSuchAlgorithmException, JSONException
-    {
+    public void shouldAllowToReadCommentProperty() throws IOException, NoSuchAlgorithmException, JSONException {
         Comment comment = scopeTestUtil.createComment();
         EntityProperty property = scopeTestUtil.createCommentProperty(comment);
 
@@ -85,16 +76,14 @@ public class ReadScopeJiraTest extends ScopeTestBase
     }
 
     @Test
-    public void shouldAllowToReadCommentProperties() throws IOException, NoSuchAlgorithmException, JSONException
-    {
+    public void shouldAllowToReadCommentProperties() throws IOException, NoSuchAlgorithmException, JSONException {
         Comment comment = scopeTestUtil.createComment();
 
         assertValidRequest(HttpMethod.GET, "/rest/api/2/comment/" + comment.getId() + "/properties/");
     }
 
     @Test
-    public void shouldAllowUsageOfAutoCompleteSuggestions() throws IOException, NoSuchAlgorithmException
-    {
+    public void shouldAllowUsageOfAutoCompleteSuggestions() throws IOException, NoSuchAlgorithmException {
         assertValidRequest(HttpMethod.GET, "/rest/api/2/jql/autocompletedata/suggestions?fieldName=issuetype&fieldValue=");
     }
 

@@ -1,7 +1,5 @@
 package it.confluence.iframe;
 
-import java.util.Optional;
-
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.SpacePermission;
 import com.atlassian.confluence.it.admin.BundledTheme;
@@ -15,13 +13,13 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import java.util.Optional;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.pageobjects.elements.query.Queries.forSupplier;
@@ -34,40 +32,35 @@ import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem
  * we're referring to the post-5.0 Space Tools area. When we refer to "Space
  * Admin", we're referring to the pre-5.0 (doctheme) Space Admin area.
  */
-public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
-{
+public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase {
     private static final String TAB_MODULE_KEY = "ac-space-tab";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("spaceToolsTabs", newSpaceToolsTabBean()
-                                .withName(new I18nProperty("AC Space Tab", null))
-                                .withKey(TAB_MODULE_KEY)
-                                .withLocation("overview")
-                                .withWeight(1)
-                                .withUrl("/pg")
-                                .build()
+                        .withName(new I18nProperty("AC Space Tab", null))
+                        .withKey(TAB_MODULE_KEY)
+                        .withLocation("overview")
+                        .withWeight(1)
+                        .withUrl("/pg")
+                        .build()
                 )
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                 .start();
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void spaceAdminShowsConnectTab()
-    {
+    public void spaceAdminShowsConnectTab() {
         Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceAdminShowsConnectTabDocTheme", true);
 
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
@@ -86,8 +79,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void spaceToolsShowsConnectTab()
-    {
+    public void spaceToolsShowsConnectTab() {
         Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceToolsShowsConnectTab", false);
 
         loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, space);
@@ -102,15 +94,13 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         waitUntilTrue(forSupplier(new DefaultTimeouts(), addonContentsPage::containsHelloWorld));
     }
 
-    public Space makeSpace(String key, String name, boolean docTheme)
-    {
+    public Space makeSpace(String key, String name, boolean docTheme) {
         Space space = new Space(key, name);
         rpc.createSpace(space);
         rpc.grantAnonymousPermission(SpacePermission.VIEW, space);
         rpc.flushIndexQueue();
 
-        if (docTheme)
-        {
+        if (docTheme) {
             rpc.setThemeForSpace(space, BundledTheme.DOCUMENTATION);
         }
 

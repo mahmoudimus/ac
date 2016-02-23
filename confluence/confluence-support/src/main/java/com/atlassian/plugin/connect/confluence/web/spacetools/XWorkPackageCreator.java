@@ -28,21 +28,18 @@ import static java.util.Collections.emptyMap;
  * This class is responsible for taking an XWorkActionModuleBean and creating a fully-formed XWork PackageConfig with
  * it
  */
-public class XWorkPackageCreator
-{
+public class XWorkPackageCreator {
     private final ConnectAddonBean addon;
     private final Plugin plugin;
     private final XWorkActionModuleBean actionModuleBean;
 
-    public XWorkPackageCreator(final ConnectAddonBean addon, Plugin plugin, final XWorkActionModuleBean actionModuleBean)
-    {
+    public XWorkPackageCreator(final ConnectAddonBean addon, Plugin plugin, final XWorkActionModuleBean actionModuleBean) {
         this.addon = addon;
         this.plugin = plugin;
         this.actionModuleBean = actionModuleBean;
     }
 
-    public void createAndRegister(Configuration configuration)
-    {
+    public void createAndRegister(Configuration configuration) {
         String namespace = actionModuleBean.getNamespace();
 
         String packageName = "atlassian-connect-" + addon.getKey() + "-" + actionModuleBean.getRawKey();
@@ -63,48 +60,39 @@ public class XWorkPackageCreator
         configuration.addPackageConfig(actionModuleBean.getRawKey(), packageConfig);
     }
 
-    private void addParentPackages(PackageConfig packageConfig, Configuration configuration)
-    {
+    private void addParentPackages(PackageConfig packageConfig, Configuration configuration) {
         List<?> parentStack = ConfigurationUtil.buildParentsFromString(configuration, "default");
-        for (Object parent : parentStack)
-        {
+        for (Object parent : parentStack) {
             packageConfig.addParent((PackageConfig) parent);
         }
     }
 
-    private void addResultTypes(PackageConfig packageConfig, XWorkActionModuleBean actionModuleBean)
-    {
-        for (Map.Entry<String, Class<?>> resultType : actionModuleBean.getResultTypes().entrySet())
-        {
+    private void addResultTypes(PackageConfig packageConfig, XWorkActionModuleBean actionModuleBean) {
+        for (Map.Entry<String, Class<?>> resultType : actionModuleBean.getResultTypes().entrySet()) {
             packageConfig.addResultTypeConfig(new ResultTypeConfig(resultType.getKey(), resultType.getValue()));
         }
     }
 
-    private void addInterceptors(PackageConfig packageConfig, XWorkActionModuleBean actionModuleBean)
-    {
-        for (XWorkInterceptorBean interceptorBean : actionModuleBean.getInterceptorsBeans())
-        {
+    private void addInterceptors(PackageConfig packageConfig, XWorkActionModuleBean actionModuleBean) {
+        for (XWorkInterceptorBean interceptorBean : actionModuleBean.getInterceptorsBeans()) {
             InterceptorConfig interceptorConfig = new InterceptorConfig(interceptorBean.getName(),
                     interceptorBean.getClazz(), interceptorBean.getParams());
             packageConfig.addInterceptorConfig(interceptorConfig);
         }
     }
 
-    private ActionConfig buildActionConfig(Plugin plugin, XWorkActionModuleBean actionModuleBean)
-    {
+    private ActionConfig buildActionConfig(Plugin plugin, XWorkActionModuleBean actionModuleBean) {
         Class clazz = actionModuleBean.getClazz();
         Map<String, Object> params = actionModuleBean.getParameters();
 
         return new PluginAwareActionConfig(null, clazz.getName(), params, emptyMap(), newArrayList(), plugin);
     }
 
-    private Map<String, ResultConfig> buildResults(PackageConfig packageConfig, XWorkActionModuleBean actionModuleBean)
-    {
+    private Map<String, ResultConfig> buildResults(PackageConfig packageConfig, XWorkActionModuleBean actionModuleBean) {
         Map<String, ResultConfig> results = newHashMap();
         Map<?, ?> resultTypeConfigs = packageConfig.getAllResultTypeConfigs();
 
-        for (XWorkResultBean resultBean : actionModuleBean.getResultBeans())
-        {
+        for (XWorkResultBean resultBean : actionModuleBean.getResultBeans()) {
             ResultTypeConfig resultTypeConfig = (ResultTypeConfig) resultTypeConfigs.get(resultBean.getType());
             String name = resultBean.getName();
             results.put(name, new ResultConfig(name, resultTypeConfig.getClazz(), resultBean.getParams()));
@@ -113,15 +101,12 @@ public class XWorkPackageCreator
         return results;
     }
 
-    private List<Interceptor> buildActionInterceptors(PackageConfig packageConfig, XWorkActionModuleBean actionModuleBean)
-    {
+    private List<Interceptor> buildActionInterceptors(PackageConfig packageConfig, XWorkActionModuleBean actionModuleBean) {
         List<Interceptor> interceptors = newArrayList();
 
-        for (String interceptorRef : actionModuleBean.getInterceptorRefs())
-        {
+        for (String interceptorRef : actionModuleBean.getInterceptorRefs()) {
             List list = constructInterceptorReference(packageConfig, interceptorRef, Collections.EMPTY_MAP);
-            for (Object interceptor : list)
-            {
+            for (Object interceptor : list) {
                 interceptors.add((Interceptor) interceptor);
             }
         }

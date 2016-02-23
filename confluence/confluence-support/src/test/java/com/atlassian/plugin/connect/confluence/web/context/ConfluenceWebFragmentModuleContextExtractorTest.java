@@ -22,9 +22,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class ConfluenceWebFragmentModuleContextExtractorTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class ConfluenceWebFragmentModuleContextExtractorTest {
     @Mock
     private UserManager userManager;
 
@@ -32,8 +31,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
     private ConfluenceWebFragmentModuleContextExtractor extractor;
 
     @Test
-    public void testExtractProfileFromContext()
-    {
+    public void testExtractProfileFromContext() {
         ConfluenceUser user = mock(ConfluenceUser.class);
         UserProfile profile = mock(UserProfile.class);
         UserKey userKey = new UserKey("test-key");
@@ -49,8 +47,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
     }
 
     @Test
-    public void testExtractPageFromContext()
-    {
+    public void testExtractPageFromContext() {
         Page page = mock(Page.class);
         when(page.getId()).thenReturn(123L);
         when(page.getVersion()).thenReturn(2);
@@ -63,8 +60,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
     }
 
     @Test
-    public void testExtractSpaceFromContext()
-    {
+    public void testExtractSpaceFromContext() {
         Space space = mock(Space.class);
         when(space.getKey()).thenReturn("SPACE");
         when(space.getId()).thenReturn(321L);
@@ -75,8 +71,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
     }
 
     @Test
-    public void testExtractPageAndSpaceParametersFromContextWithAbstractPageAwareAction()
-    {
+    public void testExtractPageAndSpaceParametersFromContextWithAbstractPageAwareAction() {
         Space space = mock(Space.class);
         when(space.getKey()).thenReturn("SPACE");
         when(space.getId()).thenReturn(321L);
@@ -100,8 +95,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
     }
 
     @Test
-    public void testExtractBlogPostFromContext()
-    {
+    public void testExtractBlogPostFromContext() {
         BlogPost blogPost = mock(BlogPost.class);
         when(blogPost.getId()).thenReturn(123L);
 

@@ -12,15 +12,13 @@ import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @JiraComponent
-public class ProjectPermissionModuleProvider extends AbstractJiraConnectModuleProvider<ProjectPermissionModuleBean>
-{
+public class ProjectPermissionModuleProvider extends AbstractJiraConnectModuleProvider<ProjectPermissionModuleBean> {
 
     private static final ProjectPermissionModuleMeta META = new ProjectPermissionModuleMeta();
 
@@ -29,32 +27,28 @@ public class ProjectPermissionModuleProvider extends AbstractJiraConnectModulePr
 
     @Autowired
     public ProjectPermissionModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            ConditionLoadingValidator conditionLoadingValidator,
-            ProjectPermissionModuleDescriptorFactory descriptorFactory)
-    {
+                                           ConnectJsonSchemaValidator schemaValidator,
+                                           ConditionLoadingValidator conditionLoadingValidator,
+                                           ProjectPermissionModuleDescriptorFactory descriptorFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.conditionLoadingValidator = conditionLoadingValidator;
         this.descriptorFactory = descriptorFactory;
     }
 
     @Override
-    public ConnectModuleMeta<ProjectPermissionModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<ProjectPermissionModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ProjectPermissionModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<ProjectPermissionModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         List<ProjectPermissionModuleBean> projectPermissions = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), projectPermissions);
         return projectPermissions;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ProjectPermissionModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ProjectPermissionModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()));
     }
 }

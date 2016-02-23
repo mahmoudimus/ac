@@ -1,20 +1,18 @@
 package com.atlassian.plugin.connect.plugin.lifecycle;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.StateAware;
 import com.atlassian.plugin.connect.api.lifecycle.DynamicDescriptorRegistration;
-
 import com.google.common.collect.ImmutableList;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
@@ -23,16 +21,14 @@ import static java.util.Arrays.asList;
  * Helper component that registers dynamic module descriptors
  */
 @Component
-public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegistration
-{
+public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegistration {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicDescriptorRegistrationImpl.class);
 
     private final BundleContext bundleContext;
 
     @Autowired
-    public DynamicDescriptorRegistrationImpl(BundleContext bundleContext)
-    {
+    public DynamicDescriptorRegistrationImpl(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
 
@@ -45,8 +41,7 @@ public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegis
      * @return a representation of the descriptor registration
      */
     @Override
-    public Registration registerDescriptors(ModuleDescriptor<?>... descriptors)
-    {
+    public Registration registerDescriptors(ModuleDescriptor<?>... descriptors) {
         return registerDescriptors(asList(descriptors));
     }
 
@@ -57,44 +52,36 @@ public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegis
      * @return a representation of the descriptor registration
      */
     @Override
-    public Registration registerDescriptors(Iterable<ModuleDescriptor<?>> descriptors)
-    {
+    public Registration registerDescriptors(Iterable<ModuleDescriptor<?>> descriptors) {
         final List<ServiceRegistration> registrations = newArrayList();
-        for (ModuleDescriptor<?> descriptor : descriptors)
-        {
+        for (ModuleDescriptor<?> descriptor : descriptors) {
             ModuleDescriptor<?> existingDescriptor = descriptor.getPlugin().getModuleDescriptor(descriptor.getKey());
-            if (existingDescriptor != null)
-            {
+            if (existingDescriptor != null) {
                 log.error("Duplicate key '" + descriptor.getKey() + "' detected, disabling previous instance");
-                ((StateAware)existingDescriptor).disabled();
+                ((StateAware) existingDescriptor).disabled();
             }
             log.debug("Registering descriptor {}", descriptor.getClass().getName());
             registrations.add(bundleContext.registerService(ModuleDescriptor.class.getName(), descriptor, null));
         }
-        return new Registration()
-        {
+        return new Registration() {
 
             @Override
-            public void unregister()
-            {
+            public void unregister() {
                 registrations.forEach(org.osgi.framework.ServiceRegistration::unregister);
             }
 
             @Override
-            public Collection<ModuleDescriptor<?>> getRegisteredDescriptors()
-            {
+            public Collection<ModuleDescriptor<?>> getRegisteredDescriptors() {
                 ImmutableList.Builder<ModuleDescriptor<?>> listBuilder = ImmutableList.builder();
-                
-                for (ServiceRegistration reg : registrations)
-                {
+
+                for (ServiceRegistration reg : registrations) {
                     ModuleDescriptor descriptor = (ModuleDescriptor) bundleContext.getService(reg.getReference());
-                    
-                    if (null != descriptor)
-                    {
+
+                    if (null != descriptor) {
                         listBuilder.add(descriptor);
                     }
                 }
-                
+
                 return listBuilder.build();
             }
         };

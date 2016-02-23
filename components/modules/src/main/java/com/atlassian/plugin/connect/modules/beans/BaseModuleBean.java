@@ -7,14 +7,11 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 /**
  * @since 1.0
  */
-public class BaseModuleBean implements ModuleBean
-{
-    protected BaseModuleBean()
-    {
+public class BaseModuleBean implements ModuleBean {
+    protected BaseModuleBean() {
     }
 
-    public BaseModuleBean(BaseModuleBeanBuilder builder)
-    {
+    public BaseModuleBean(BaseModuleBeanBuilder builder) {
         copyFieldsByNameAndType(builder, this);
     }
 }

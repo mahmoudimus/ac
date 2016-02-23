@@ -18,8 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.core.UriBuilder;
 
 @Component
-public class ConnectUriFactoryImpl implements ConnectUriFactory
-{
+public class ConnectUriFactoryImpl implements ConnectUriFactory {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
@@ -31,12 +30,11 @@ public class ConnectUriFactoryImpl implements ConnectUriFactory
 
     @Autowired
     public ConnectUriFactoryImpl(final UrlVariableSubstitutor urlVariableSubstitutor,
-            final RemotablePluginAccessorFactory pluginAccessorFactory,
-            final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
-            final LicenseRetriever licenseRetriever, final LocaleHelper localeHelper,
-            final TimeZoneManager timeZoneManager,
-            final PluginRetrievalService pluginRetrievalService)
-    {
+                                 final RemotablePluginAccessorFactory pluginAccessorFactory,
+                                 final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
+                                 final LicenseRetriever licenseRetriever, final LocaleHelper localeHelper,
+                                 final TimeZoneManager timeZoneManager,
+                                 final PluginRetrievalService pluginRetrievalService) {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
@@ -48,21 +46,18 @@ public class ConnectUriFactoryImpl implements ConnectUriFactory
     }
 
     @Override
-    public ConnectAddonUriBuilder createConnectAddonUriBuilder()
-    {
+    public ConnectAddonUriBuilder createConnectAddonUriBuilder() {
         return new ConnectAddonUriBuilderImpl(urlVariableSubstitutor, pluginAccessorFactory, userManager, hostApplicationInfo,
                 licenseRetriever, localeHelper, timeZoneManager, pluginRetrievalService);
     }
 
     @Override
-    public String createConnectIFrameServletUri(final String addOnKey, final String moduleKey, final ModuleContextParameters moduleContext)
-    {
+    public String createConnectIFrameServletUri(final String addOnKey, final String moduleKey, final ModuleContextParameters moduleContext) {
         return urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(addOnKey, moduleKey), moduleContext);
     }
 
     @Override
-    public String createRedirectServletUri(final String addOnKey, final String moduleKey, final ModuleContextParameters moduleContext)
-    {
+    public String createRedirectServletUri(final String addOnKey, final String moduleKey, final ModuleContextParameters moduleContext) {
         String urlToRedirectServlet = UriBuilder.fromUri(hostApplicationInfo.getUrl()).path(hostApplicationInfo.getContextPath()).path(RedirectServletPath.forModule(addOnKey, moduleKey)).build().toString();
         return urlVariableSubstitutor.append(urlToRedirectServlet, moduleContext);
     }

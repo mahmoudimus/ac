@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-public enum ContentPropertyIndexFieldType
-{
+public enum ContentPropertyIndexFieldType {
     number,
     string,
     text,

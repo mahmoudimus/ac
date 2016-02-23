@@ -43,8 +43,7 @@ import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class SearchRequestViewModuleDescriptorFactoryTest
-{
+public class SearchRequestViewModuleDescriptorFactoryTest {
     @Mock
     private Plugin plugin;
     @Mock
@@ -73,8 +72,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private ConnectAddonBean addon;
 
     @Before
-    public void beforeEachTest() throws Exception
-    {
+    public void beforeEachTest() throws Exception {
         this.addon = newConnectAddonBean().withKey("my-plugin").build();
 
         when(plugin.getKey()).thenReturn("my-plugin");
@@ -118,68 +116,57 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyCompleteKeyIsCorrect()
-    {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:" + addonAndModuleKey("my-plugin","a-search-request-view")));
+    public void verifyCompleteKeyIsCorrect() {
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:" + addonAndModuleKey("my-plugin", "a-search-request-view")));
     }
 
     @Test
-    public void verifyNameIsSet() throws Exception
-    {
+    public void verifyNameIsSet() throws Exception {
         assertThat(descriptor.getName(), is("A Search Request View"));
     }
 
     @Test
-    public void verifyDescriptionIsSet() throws Exception
-    {
+    public void verifyDescriptionIsSet() throws Exception {
         assertThat(descriptor.getDescription(), is("A description"));
     }
 
     @Test
-    public void verifyWeightIsSet() throws Exception
-    {
+    public void verifyWeightIsSet() throws Exception {
         assertThat(descriptor.getOrder(), is(55));
     }
 
     @Test
-    public void verifyContentType() throws Exception
-    {
+    public void verifyContentType() throws Exception {
         assertThat(descriptor.getContentType(), is("text/html"));
     }
 
     @Test
-    public void verifyFileExtension() throws Exception
-    {
+    public void verifyFileExtension() throws Exception {
         assertThat(descriptor.getFileExtension(), is("html"));
     }
 
     @Test
-    public void verifySearchRequestViewIsCreated() throws Exception
-    {
+    public void verifySearchRequestViewIsCreated() throws Exception {
         assertThat(descriptor.getSearchRequestView(), is(not(nullValue())));
     }
 
     @Test
-    public void verifyIsNoSystemModule() throws Exception
-    {
+    public void verifyIsNoSystemModule() throws Exception {
         assertThat(descriptor.isSystemModule(), is(false));
     }
 
     @Test
-    public void verifyIsEnabledByDefault() throws Exception
-    {
+    public void verifyIsEnabledByDefault() throws Exception {
         assertThat(descriptor.isEnabledByDefault(), is(true));
     }
 
     @Test
-    public void verifyConditionsArePresent() throws Exception
-    {
+    public void verifyConditionsArePresent() throws Exception {
         assertThat(descriptor.getCondition(), is(not(nullValue())));
     }
 
     @Test
-    public void verifyConditionsAreNotDefault() throws Exception
-    {
+    public void verifyConditionsAreNotDefault() throws Exception {
         assertThat(descriptor.getCondition(), is(not(ConditionDescriptorFactory.DEFAULT_CONDITION)));
     }
 

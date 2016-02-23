@@ -3,29 +3,24 @@ package com.atlassian.plugin.connect.confluence;
 import com.atlassian.confluence.setup.settings.CoreFeaturesManager;
 import com.atlassian.plugin.connect.spi.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
-public class ConfluenceFeatureManager implements FeatureManager
-{
+public class ConfluenceFeatureManager implements FeatureManager {
     private final CoreFeaturesManager coreFeaturesManager;
 
     @Autowired
-    public ConfluenceFeatureManager(final CoreFeaturesManager coreFeaturesManager)
-    {
+    public ConfluenceFeatureManager(final CoreFeaturesManager coreFeaturesManager) {
         this.coreFeaturesManager = coreFeaturesManager;
     }
 
     @Override
-    public boolean isOnDemand()
-    {
+    public boolean isOnDemand() {
         return coreFeaturesManager.isOnDemand();
     }
 
     @Override
-    public boolean isPermissionsManagedByUM()
-    {
+    public boolean isPermissionsManagedByUM() {
         return false;
     }
 }

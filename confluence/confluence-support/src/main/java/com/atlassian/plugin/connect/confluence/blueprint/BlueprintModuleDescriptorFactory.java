@@ -3,12 +3,12 @@ package com.atlassian.plugin.connect.confluence.blueprint;
 import com.atlassian.confluence.plugins.createcontent.extensions.BlueprintModuleDescriptor;
 import com.atlassian.confluence.util.i18n.DocumentationBeanFactory;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.LinkBeanBuilder;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.base.Strings;
@@ -27,8 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ConfluenceComponent
 public class BlueprintModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, BlueprintModuleDescriptor>
-{
+        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, BlueprintModuleDescriptor> {
     private static final Logger log = LoggerFactory.getLogger(BlueprintModuleDescriptorFactory.class);
     private final ModuleFactory moduleFactory;
 
@@ -38,8 +37,7 @@ public class BlueprintModuleDescriptorFactory
     }
 
     @Override
-    public BlueprintModuleDescriptor createModuleDescriptor(BlueprintModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public BlueprintModuleDescriptor createModuleDescriptor(BlueprintModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         DocumentationBeanFactory documentationBeanFactory = new ConnectDocumentationBeanFactory(new LinkBeanBuilder().build());
 
         Element blueprintElement = new DOMElement("blueprint");
@@ -52,12 +50,11 @@ public class BlueprintModuleDescriptorFactory
         blueprintElement.addAttribute("section", "system.create.dialog/content");
         blueprintElement.addAttribute("i18n-name-key", i18nKeyOrName);
         blueprintElement.addAttribute("index-key", bean.getRawKey());
-        blueprintElement.addAttribute("content-template-key",contentTemplateKey);
+        blueprintElement.addAttribute("content-template-key", contentTemplateKey);
         blueprintElement.addAttribute("system", "true");
         blueprintElement.addAttribute("create-result", bean.getCreateResult().toString());
 
-        if(log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(blueprintElement));
         }
 

@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
@@ -15,16 +15,18 @@ import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModu
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<DynamicContentMacroModuleBean, DynamicContentMacroModuleBeanBuilder>
-{
-    @Mock private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    @Mock private MacroModuleContextExtractor macroModuleContextExtractor;
-    @Mock private ConnectUriFactory connectUriFactory;
-    @Mock private MacroContentManager macroContentManager;
+public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<DynamicContentMacroModuleBean, DynamicContentMacroModuleBeanBuilder> {
+    @Mock
+    private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    @Mock
+    private MacroModuleContextExtractor macroModuleContextExtractor;
+    @Mock
+    private ConnectUriFactory connectUriFactory;
+    @Mock
+    private MacroContentManager macroContentManager;
 
     @Override
-    protected XhtmlMacroModuleDescriptor createModuleDescriptorForTest()
-    {
+    protected XhtmlMacroModuleDescriptor createModuleDescriptorForTest() {
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
 
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
@@ -37,8 +39,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
     }
 
     @Override
-    protected DynamicContentMacroModuleBeanBuilder newContentMacroModuleBeanBuilder()
-    {
+    protected DynamicContentMacroModuleBeanBuilder newContentMacroModuleBeanBuilder() {
         return newDynamicContentMacroModuleBean();
     }
 }

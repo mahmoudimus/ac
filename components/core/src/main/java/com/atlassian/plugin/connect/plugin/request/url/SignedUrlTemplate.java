@@ -5,10 +5,8 @@ package com.atlassian.plugin.connect.plugin.request.url;
  * Prior to Signing it validates the users access to any resources identified in the url
  * TODO: implement in ACDEV-498
  */
-public class SignedUrlTemplate extends UrlTemplate
-{
-    public SignedUrlTemplate(String urlTemplateStr)
-    {
+public class SignedUrlTemplate extends UrlTemplate {
+    public SignedUrlTemplate(String urlTemplateStr) {
         super(urlTemplateStr);
     }
 }

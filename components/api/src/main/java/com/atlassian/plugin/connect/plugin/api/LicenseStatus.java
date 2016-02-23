@@ -8,18 +8,15 @@ import java.util.Locale;
  * API for checking a license status of an add-on.
  */
 @PublicApi
-public enum LicenseStatus
-{
+public enum LicenseStatus {
     ACTIVE,
     NONE;
 
-    public String value()
-    {
+    public String value() {
         return toString().toLowerCase(Locale.US);
     }
 
-    public static LicenseStatus fromBoolean(boolean active)
-    {
+    public static LicenseStatus fromBoolean(boolean active) {
         return active ? LicenseStatus.ACTIVE : LicenseStatus.NONE;
     }
 }

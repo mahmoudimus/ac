@@ -12,10 +12,8 @@ import java.util.Collection;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
-public class AddonScopeBuilderForTests
-{
-    public static Matcher<Collection<AddonScope>> buildScopes()
-    {
+public class AddonScopeBuilderForTests {
+    public static Matcher<Collection<AddonScope>> buildScopes() {
         AddonScopeApiPath readRestPaths = new AddonScopeApiPath.RestApiPath(asList(
                 new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/notification.*", singletonList("get"), true),
                 new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/task.*", singletonList("get"), true),

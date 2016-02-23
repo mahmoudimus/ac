@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.jira.report;
 
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.jira.report.ConnectReportModuleDescriptor;
-import com.atlassian.plugin.connect.jira.report.ReportModuleCssTransformer;
 import com.atlassian.plugin.servlet.DownloadableResource;
 import com.atlassian.plugin.webresource.transformer.TransformableResource;
 import com.atlassian.plugin.webresource.transformer.TransformerUrlBuilder;
@@ -21,9 +19,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-@RunWith (MockitoJUnitRunner.class)
-public class ReportModuleCssTransformerTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class ReportModuleCssTransformerTest {
 
     public static final String MD1_KEY = "test_addon1_test-report1";
     public static final String MD2_KEY = "test_addon1_test-report2";
@@ -37,8 +34,7 @@ public class ReportModuleCssTransformerTest
     private ReportModuleCssTransformer reportModuleCssTransformer;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         final List<ConnectReportModuleDescriptor.ModuleDescriptorImpl> moduleDescriptors = ImmutableList.of(
                 createModuleDescriptor(MD1_KEY, MD1_THUMBNAIL),
                 createModuleDescriptor(MD2_KEY, MD2_THUMBNAIL),
@@ -52,16 +48,14 @@ public class ReportModuleCssTransformerTest
     }
 
     @Test
-    public void testMakeUrlBuilder() throws Exception
-    {
+    public void testMakeUrlBuilder() throws Exception {
         final TransformerUrlBuilder transformerUrlBuilder = reportModuleCssTransformer.makeUrlBuilder(null);
 
         MatcherAssert.assertThat(transformerUrlBuilder, Matchers.instanceOf(ReportModuleCssTransformer.ReportModulesUriBuilder.class));
     }
 
     @Test
-    public void testUrlBuilder() throws Exception
-    {
+    public void testUrlBuilder() throws Exception {
         final UrlBuilder urlBuilder = Mockito.mock(UrlBuilder.class);
         final TransformerUrlBuilder transformerUrlBuilder = new ReportModuleCssTransformer.ReportModulesUriBuilder(pluginAccessor);
         transformerUrlBuilder.addToUrl(urlBuilder);
@@ -76,8 +70,7 @@ public class ReportModuleCssTransformerTest
     }
 
     @Test
-    public void testMakeResourceTransformer() throws Exception
-    {
+    public void testMakeResourceTransformer() throws Exception {
         final DownloadableResource downloadableResource = Mockito.mock(DownloadableResource.class);
         final TransformableResource transformableResource = Mockito.mock(TransformableResource.class);
         Mockito.doReturn(downloadableResource).when(transformableResource).nextResource();
@@ -89,8 +82,7 @@ public class ReportModuleCssTransformerTest
     }
 
     @Test
-    public void testResourceTransformerThatGenerateCssClassForFirstPlugin() throws Exception
-    {
+    public void testResourceTransformerThatGenerateCssClassForFirstPlugin() throws Exception {
         final String generatedCss = generateCss();
 
         MatcherAssert.assertThat(generatedCss, Matchers.containsString(MD1_KEY));
@@ -98,8 +90,7 @@ public class ReportModuleCssTransformerTest
     }
 
     @Test
-    public void testResourceTransformerThatGenerateCssClassForSecondPlugin() throws Exception
-    {
+    public void testResourceTransformerThatGenerateCssClassForSecondPlugin() throws Exception {
         final String generatedCss = generateCss();
 
         MatcherAssert.assertThat(generatedCss, Matchers.containsString(MD2_KEY));
@@ -107,8 +98,7 @@ public class ReportModuleCssTransformerTest
     }
 
     @Test
-    public void testResourceTransformerThatNotGenerateCssClassForPluginWithEmptyThumbnailUrl() throws Exception
-    {
+    public void testResourceTransformerThatNotGenerateCssClassForPluginWithEmptyThumbnailUrl() throws Exception {
         final String generatedCss = generateCss();
 
         MatcherAssert.assertThat(generatedCss, Matchers.not(Matchers.containsString(MD3_KEY)));
@@ -120,8 +110,7 @@ public class ReportModuleCssTransformerTest
     }
 
 
-    private ConnectReportModuleDescriptor.ModuleDescriptorImpl createModuleDescriptor(final String descriptorKey, final String thumbnailUrl)
-    {
+    private ConnectReportModuleDescriptor.ModuleDescriptorImpl createModuleDescriptor(final String descriptorKey, final String thumbnailUrl) {
         final ConnectReportModuleDescriptor.ModuleDescriptorImpl moduleDescriptor = Mockito.mock(ConnectReportModuleDescriptor.ModuleDescriptorImpl.class);
         Mockito.doReturn(descriptorKey).when(moduleDescriptor).getKey();
         Mockito.doReturn(thumbnailUrl).when(moduleDescriptor).getThumbnailUrl();

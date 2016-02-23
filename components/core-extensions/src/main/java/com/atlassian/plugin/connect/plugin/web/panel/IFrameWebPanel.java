@@ -22,8 +22,7 @@ import static java.util.Collections.emptyMap;
 /**
  * Web panel that displays in an iframe.
  */
-public class IFrameWebPanel implements WebPanel
-{
+public class IFrameWebPanel implements WebPanel {
     private static final Logger log = LoggerFactory.getLogger(IFrameWebPanel.class);
 
     private final IFrameRenderer iFrameRenderer;
@@ -38,8 +37,7 @@ public class IFrameWebPanel implements WebPanel
             IFrameContext iFrameContext,
             Condition condition,
             ContextMapURLSerializer contextMapURLSerializer,
-            UserManager userManager, UrlVariableSubstitutor urlVariableSubstitutor)
-    {
+            UserManager userManager, UrlVariableSubstitutor urlVariableSubstitutor) {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.userManager = checkNotNull(userManager);
         this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
@@ -49,15 +47,11 @@ public class IFrameWebPanel implements WebPanel
     }
 
     @Override
-    public String getHtml(final Map<String, Object> context)
-    {
+    public String getHtml(final Map<String, Object> context) {
         StringWriter writer = new StringWriter();
-        try
-        {
+        try {
             writeHtml(writer, context);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             writer.write("Unable to render panel: " + e.getMessage());
             log.error("Error rendering panel", e);
         }
@@ -65,23 +59,18 @@ public class IFrameWebPanel implements WebPanel
     }
 
     @Override
-    public void writeHtml(final Writer writer, final Map<String, Object> context) throws IOException
-    {
-        if (condition.shouldDisplay(context))
-        {
+    public void writeHtml(final Writer writer, final Map<String, Object> context) throws IOException {
+        if (condition.shouldDisplay(context)) {
             final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context);
 
             writer.write(iFrameRenderer.render(substituteContext(new WebFragmentContext(context, whiteListedContext)), "", emptyMap(), whiteListedContext));
-        }
-        else
-        {
+        } else {
             writer.write("Unauthorized to view this panel");
             log.error("Unauthorized view of panel");
         }
     }
 
-    private IFrameContext substituteContext(WebFragmentContext context)
-    {
+    private IFrameContext substituteContext(WebFragmentContext context) {
         return new IFrameContextImpl(iFrameContext.getPluginKey(),
                 urlVariableSubstitutor.replace(iFrameContext.getIframePath(), context),
                 iFrameContext.getNamespace(),

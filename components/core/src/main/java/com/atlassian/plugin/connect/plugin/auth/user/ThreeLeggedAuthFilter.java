@@ -44,8 +44,7 @@ import static java.lang.Boolean.getBoolean;
 
 @Component
 @ExportAsService(LifecycleAware.class)
-public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
-{
+public class ThreeLeggedAuthFilter implements Filter, LifecycleAware {
     private final ThreeLeggedAuthService threeLeggedAuthService;
     private final AuthenticationListener authenticationListener;
     private final JwtApplinkFinder jwtApplinkFinder;
@@ -65,8 +64,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
                                  ConnectUserService userService,
                                  AuthenticationListener authenticationListener,
                                  JwtApplinkFinder jwtApplinkFinder,
-                                 I18nResolver i18nResolver)
-    {
+                                 I18nResolver i18nResolver) {
         this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService, "threeLeggedAuthService");
         this.addonAccessor = addonAccessor;
         this.userManager = checkNotNull(userManager, "userManager");
@@ -77,21 +75,17 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException
-    {
+    public void init(FilterConfig filterConfig) throws ServletException {
     }
 
-    private static class InvalidSubjectException extends Exception
-    {
-        public InvalidSubjectException(String username)
-        {
+    private static class InvalidSubjectException extends Exception {
+        public InvalidSubjectException(String username) {
             super(username);
         }
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException
-    {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
@@ -105,95 +99,70 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
 
         String addonKey = getAddonKeyFromRequest(servletRequest);
 
-        if (!StringUtils.isEmpty(addonKey))
-        {
+        if (!StringUtils.isEmpty(addonKey)) {
             final Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(addonKey);
-            if (optionalAddon.isPresent() && isJsonJwtAddon(optionalAddon.get()))
-            {
+            if (optionalAddon.isPresent() && isJsonJwtAddon(optionalAddon.get())) {
                 processAddonRequest(filterChain, request, response, optionalAddon.get());
-            }
-            else
-            {
+            } else {
                 filterChain.doFilter(request, response);
             }
-        }
-        else
-        {
+        } else {
             filterChain.doFilter(request, response);
         }
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         log.debug("Application started.");
         started.set(true);
     }
 
     @Override
-    public void onStop()
-    {
+    public void onStop() {
         started.set(false);
     }
 
-    private String getAddonKeyFromRequest(ServletRequest servletRequest)
-    {
+    private String getAddonKeyFromRequest(ServletRequest servletRequest) {
         Object addonKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
-        String addonKey = addonKeyObject instanceof String ? (String)addonKeyObject : null;
+        String addonKey = addonKeyObject instanceof String ? (String) addonKeyObject : null;
 
         // warn if weird properties are set
-        if (null != addonKeyObject && !(addonKeyObject instanceof String))
-        {
+        if (null != addonKeyObject && !(addonKeyObject instanceof String)) {
             log.warn("The value of the request attribute '{}' should be a string but instead it is a '{}': '{}'. This is a programming error in the code that sets this value.",
                     new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addonKeyObject.getClass().getSimpleName(), addonKeyObject});
         }
         return addonKey;
     }
 
-    private boolean isJsonJwtAddon(ConnectAddonBean addonBean)
-    {
+    private boolean isJsonJwtAddon(ConnectAddonBean addonBean) {
         return addonBean.getAuthentication() != null && addonBean.getAuthentication().getType() == AuthenticationType.JWT;
     }
 
-    private void processAddonRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, ConnectAddonBean addonBean) throws IOException, ServletException
-    {
+    private void processAddonRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, ConnectAddonBean addonBean) throws IOException, ServletException {
         Object subjectObject = request.getAttribute(JwtConstants.HttpRequests.JWT_SUBJECT_ATTRIBUTE_NAME);
         String subject = subjectObject instanceof String ? (String) subjectObject : null;
 
         // an empty-string subject claim would be nonsensical and may indicate a programming error in the add-on
-        if ("".equals(subject))
-        {
+        if ("".equals(subject)) {
             rejectEmptyStringSubject(request, response, addonBean.getKey(), subject);
-        }
-        else
-        {
+        } else {
             // ACDEV-1304: Ensure that any add-on requests have no effect on a session that may already exist.
             HttpSession session = request.getSession(false); // don't create a session if there is none
-            try
-            {
+            try {
                 UserProfile impersonatedUserProfile = null;
-                if (null != subject)
-                {
+                if (null != subject) {
                     impersonatedUserProfile = getUserProfileIfImpersonationAllowed(request, response, subject, addonBean);
                 }
 
-                if (impersonatedUserProfile != null)
-                {
+                if (impersonatedUserProfile != null) {
                     impersonateSubject(filterChain, request, response, impersonatedUserProfile);
-                }
-                else
-                {
+                } else {
                     actAsAddonUser(filterChain, request, response, addonBean.getKey());
                 }
-            }
-            catch (InvalidSubjectException e)
-            {
+            } catch (InvalidSubjectException e) {
                 log.error("The subject '{}' is invalid (see above for details) and this request is being stopped by the {}.", e.getMessage(), ThreeLeggedAuthFilter.class.getSimpleName());
-            }
-            finally
-            {
-                if (session != null)
-                {
+            } finally {
+                if (session != null) {
                     try {
                         session.invalidate();
                     } catch (IllegalStateException e) {
@@ -205,8 +174,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         }
     }
 
-    private void rejectEmptyStringSubject(HttpServletRequest request, HttpServletResponse response, String addonKey, String subject)
-    {
+    private void rejectEmptyStringSubject(HttpServletRequest request, HttpServletResponse response, String addonKey, String subject) {
         String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addonKey, subject);
         log.warn("{} because an empty-string username is nonsensical and may indicate a programming error in the add-on.", externallyVisibleMessage);
         fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_BAD_REQUEST);
@@ -215,36 +183,25 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
     /**
      * @return Return the user profile to impersonate with if allowed, otherwise null
      */
-    private UserProfile getUserProfileIfImpersonationAllowed(HttpServletRequest request, HttpServletResponse response, String subject, ConnectAddonBean addonBean) throws InvalidSubjectException
-    {
-        if (getBoolean(SYS_PROP_ALLOW_IMPERSONATION))
-        {
-            log.info("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addonBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
+    private UserProfile getUserProfileIfImpersonationAllowed(HttpServletRequest request, HttpServletResponse response, String subject, ConnectAddonBean addonBean) throws InvalidSubjectException {
+        if (getBoolean(SYS_PROP_ALLOW_IMPERSONATION)) {
+            log.info("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{addonBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION});
             return getUserProfile(request, response, addonBean.getKey(), subject);
-        }
-        else
-        {
-            if (threeLeggedAuthService.shouldSilentlyIgnoreUserAgencyRequest(subject, addonBean))
-            {
-                if (log.isDebugEnabled())
-                {
+        } else {
+            if (threeLeggedAuthService.shouldSilentlyIgnoreUserAgencyRequest(subject, addonBean)) {
+                if (log.isDebugEnabled()) {
                     log.debug("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
-                            new String[] { subject, request.getRequestURI(), addonBean.getKey(), threeLeggedAuthService.getClass().getSimpleName() });
+                            new String[]{subject, request.getRequestURI(), addonBean.getKey(), threeLeggedAuthService.getClass().getSimpleName()});
                 }
                 return null;
-            }
-            else
-            {
+            } else {
                 final UserProfile userProfile = getUserProfile(request, response, addonBean.getKey(), subject);
 
                 // a valid grant must exist
-                if (threeLeggedAuthService.hasGrant(userProfile.getUserKey(), addonBean))
-                {
+                if (threeLeggedAuthService.hasGrant(userProfile.getUserKey(), addonBean)) {
                     log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addonBean.getKey(), subject);
                     return userProfile;
-                }
-                else
-                {
+                } else {
                     String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addonBean.getKey(), subject);
                     log.debug("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
                     fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_FORBIDDEN);
@@ -254,8 +211,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         }
     }
 
-    private void impersonateSubject(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, UserProfile userProfile) throws IOException, ServletException
-    {
+    private void impersonateSubject(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, UserProfile userProfile) throws IOException, ServletException {
         // Products use the username to set the authentication context.
         SimplePrincipal principal = new SimplePrincipal(userProfile.getUsername());
         final Authenticator.Result authenticationResult = new Authenticator.Result.Success(createMessage("Successful three-legged-auth"), principal);
@@ -263,38 +219,29 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         filterChain.doFilter(request, response);
     }
 
-    private void actAsAddonUser(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, String addonKey) throws IOException, ServletException
-    {
-        try
-        {
+    private void actAsAddonUser(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, String addonKey) throws IOException, ServletException {
+        try {
             final Principal principalFromApplink = getPrincipalFromApplink(addonKey);
             final Authenticator.Result authenticationResult = new Authenticator.Result.Success(createMessage("Successful two-legged-auth"), principalFromApplink);
             authenticationListener.authenticationSuccess(authenticationResult, request, response);
             filterChain.doFilter(request, response);
-        }
-        catch (InvalidSubjectException e)
-        {
+        } catch (InvalidSubjectException e) {
             createAndSendFailure(e, response, HttpServletResponse.SC_UNAUTHORIZED, badCredentialsMessage);
         }
     }
 
     // a null return value means that a failure response has been returned
-    private UserProfile getUserProfile(HttpServletRequest request, HttpServletResponse response, String addonKey, String subject) throws InvalidSubjectException
-    {
+    private UserProfile getUserProfile(HttpServletRequest request, HttpServletResponse response, String addonKey, String subject) throws InvalidSubjectException {
         UserKey userKey = new UserKey(subject);
         UserProfile userProfile = userManager.getUserProfile(userKey);
 
-        if (null == userProfile)
-        {
+        if (null == userProfile) {
             String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addonKey, subject);
             log.warn("{} because we can't find a user with this user key.", externallyVisibleMessage);
             fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_UNAUTHORIZED);
             throw new InvalidSubjectException(subject);
-        }
-        else
-        {
-            if (!userService.isActive(userProfile.getUsername()))
-            {
+        } else {
+            if (!userService.isActive(userProfile.getUsername())) {
                 String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addonKey, subject);
                 log.debug("{} because the crowd service says that this user is inactive.", externallyVisibleMessage);
                 fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_UNAUTHORIZED);
@@ -304,52 +251,39 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         return userProfile;
     }
 
-    private void fail(HttpServletRequest request, HttpServletResponse response, String externallyVisibleMessage, int httpResponseCode)
-    {
+    private void fail(HttpServletRequest request, HttpServletResponse response, String externallyVisibleMessage, int httpResponseCode) {
         sendErrorResponse(response, httpResponseCode, externallyVisibleMessage);
         authenticationListener.authenticationFailure(new Authenticator.Result.Failure(createMessage("")), request, response);
     }
 
     @Override
-    public void destroy()
-    {
+    public void destroy() {
     }
 
-    private Principal getPrincipalFromApplink(String jwtIssuer) throws InvalidSubjectException
-    {
+    private Principal getPrincipalFromApplink(String jwtIssuer) throws InvalidSubjectException {
         Principal userPrincipal = null; // default to being able to see only public resources
 
         ApplicationLink applicationLink = jwtApplinkFinder.find(jwtIssuer);
 
-        if (null == applicationLink)
-        {
+        if (null == applicationLink) {
             log.warn("Found no application link for JWT issuer '{}'. Incoming requests from this issuer will be authenticated as an anonymous request.", jwtIssuer);
-        }
-        else
-        {
+        } else {
             // the AppLinks constant is "user.key", but it is used to store the username. Confusing, but for backwards compatibility we're retaining
             // the constant name
             Object addonUsername = applicationLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
 
-            if (null == addonUsername)
-            {
+            if (null == addonUsername) {
                 log.warn(String.format("Application link '%s' for JWT issuer '%s' has no '%s' property. Incoming requests from this issuer will be authenticated as an anonymous request.",
                         applicationLink.getId(), jwtIssuer, JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
-            }
-            else
-            {
-                if (addonUsername instanceof String)
-                {
+            } else {
+                if (addonUsername instanceof String) {
                     String username = (String) addonUsername;
-                    if (!userService.isActive(username))
-                    {
+                    if (!userService.isActive(username)) {
                         throw new InvalidSubjectException(String.format("The user '%s' is inactive", username));
                     }
 
                     userPrincipal = new SimplePrincipal(username);
-                }
-                else
-                {
+                } else {
                     throw new IllegalStateException(String.format("ApplicationLink '%s' for JWT issuer '%s' has the non-String user key '%s'. The user key must be a String: please correct it by editing the database or, if the issuer is a Connect add-on, by re-installing it.",
                             applicationLink.getId(), jwtIssuer, addonUsername));
                 }
@@ -359,37 +293,28 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         return userPrincipal;
     }
 
-    private static Message createMessage(final String message)
-    {
+    private static Message createMessage(final String message) {
         return new DefaultMessage(message);
     }
 
-    private static Authenticator.Result.Failure createAndSendFailure(Exception e, HttpServletResponse response, int httpResponseCode, String externallyVisibleMessage)
-    {
+    private static Authenticator.Result.Failure createAndSendFailure(Exception e, HttpServletResponse response, int httpResponseCode, String externallyVisibleMessage) {
         log.debug("Failure during JWT authentication: ", e);
         sendErrorResponse(response, httpResponseCode, externallyVisibleMessage);
         return new Authenticator.Result.Failure(createMessage(e.getLocalizedMessage()));
     }
 
-    private static void sendErrorResponse(HttpServletResponse response, int httpResponseCode, String externallyVisibleMessage)
-    {
+    private static void sendErrorResponse(HttpServletResponse response, int httpResponseCode, String externallyVisibleMessage) {
         response.reset();
 
-        try
-        {
+        try {
             response.sendError(httpResponseCode, externallyVisibleMessage);
-        }
-        catch (IOException doubleFacePalm)
-        {
+        } catch (IOException doubleFacePalm) {
             log.error("Encountered IOException while trying to report an authentication failure.", doubleFacePalm);
 
-            try
-            {
+            try {
                 response.reset();
                 response.setStatus(httpResponseCode); // no error message, but hopefully the response code will still be useful
-            }
-            catch (IllegalStateException cannotReset)
-            {
+            } catch (IllegalStateException cannotReset) {
                 // Sigh... I tried.
             }
         }

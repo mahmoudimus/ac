@@ -10,14 +10,14 @@ import static java.util.Optional.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class InlineConditionParserTest
-{
+public class InlineConditionParserTest {
     private final InlineConditionParser parser = new InlineConditionParser();
 
     @Test
     public void variablesWithoutConditionPrefixAreNotParsed() {
         assertThat(parser.parse("has_project_permission(permission=browse)"), equalTo(empty()));
     }
+
     @Test
     public void prefixIsCaseSensistiveAndEndsWithADot() {
         assertThat(parser.parse("conditionhas_project_permission(permission=browse)"), equalTo(empty()));
@@ -73,8 +73,7 @@ public class InlineConditionParserTest
         return new InlineConditionBuilder(name);
     }
 
-    private  static final class InlineConditionBuilder
-    {
+    private static final class InlineConditionBuilder {
         private final String conditionName;
         private final Map<String, String> params = Maps.newHashMap();
 
@@ -82,14 +81,12 @@ public class InlineConditionParserTest
             this.conditionName = conditionName;
         }
 
-        public InlineConditionBuilder withParam(String key, String value)
-        {
+        public InlineConditionBuilder withParam(String key, String value) {
             this.params.put(key, value);
             return this;
         }
 
-        public Optional<InlineCondition> build()
-        {
+        public Optional<InlineCondition> build() {
             return Optional.of(new InlineCondition(conditionName, params));
         }
     }

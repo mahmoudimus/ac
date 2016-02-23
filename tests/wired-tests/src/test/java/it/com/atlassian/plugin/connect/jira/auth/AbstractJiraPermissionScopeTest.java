@@ -31,8 +31,7 @@ import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecy
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public abstract class AbstractJiraPermissionScopeTest
-{
+public abstract class AbstractJiraPermissionScopeTest {
 
     private static final String PROJECT_KEY = "JEDI";
     private static String ADDON_KEY = "project-admin-ADDON"; // Use uppercase characters to detect username vs userkey issues
@@ -60,8 +59,7 @@ public abstract class AbstractJiraPermissionScopeTest
                                            UserManager userManager,
                                            TestPluginInstaller testPluginInstaller,
                                            TestAuthenticator testAuthenticator,
-                                           JiraTestUtil jiraTestUtil)
-    {
+                                           JiraTestUtil jiraTestUtil) {
         this.connectUserService = connectUserService;
         this.permissionManager = permissionManager;
         this.projectService = projectService;
@@ -73,8 +71,7 @@ public abstract class AbstractJiraPermissionScopeTest
     }
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         ConnectAddonBean baseBean = newConnectAddonBean()
                 .withKey(ADDON_KEY)
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(ADDON_KEY))
@@ -111,8 +108,7 @@ public abstract class AbstractJiraPermissionScopeTest
     }
 
     @After
-    public void resetBeans()
-    {
+    public void resetBeans() {
         this.adminAddon = null;
 
         this.projectAdminAddon = null;
@@ -124,144 +120,113 @@ public abstract class AbstractJiraPermissionScopeTest
         this.readAddon = null;
     }
 
-    public ConnectAddonBean getAdminAddon()
-    {
+    public ConnectAddonBean getAdminAddon() {
         return adminAddon;
     }
 
-    public ConnectAddonBean getProjectAdminAddon()
-    {
+    public ConnectAddonBean getProjectAdminAddon() {
         return projectAdminAddon;
     }
 
-    public ConnectAddonBean getDeleteAddon()
-    {
+    public ConnectAddonBean getDeleteAddon() {
         return deleteAddon;
     }
 
-    public ConnectAddonBean getWriteAddon()
-    {
+    public ConnectAddonBean getWriteAddon() {
         return writeAddon;
     }
 
-    public ConnectAddonBean getReadAddon()
-    {
+    public ConnectAddonBean getReadAddon() {
         return readAddon;
     }
 
-    public PermissionManager getPermissionManager()
-    {
+    public PermissionManager getPermissionManager() {
         return permissionManager;
     }
 
-    public ProjectRoleService getProjectRoleService()
-    {
+    public ProjectRoleService getProjectRoleService() {
         return projectRoleService;
     }
 
-    public UserManager getUserManager()
-    {
+    public UserManager getUserManager() {
         return userManager;
     }
 
-    public TestPluginInstaller getTestPluginInstaller()
-    {
+    public TestPluginInstaller getTestPluginInstaller() {
         return testPluginInstaller;
     }
 
-    public TestAuthenticator getTestAuthenticator()
-    {
+    public TestAuthenticator getTestAuthenticator() {
         return testAuthenticator;
     }
 
-    protected void checkHasPermissionForAllProjectsAfterInstall(ConnectAddonBean addon, Permission permission) throws Exception
-    {
+    protected void checkHasPermissionForAllProjectsAfterInstall(ConnectAddonBean addon, Permission permission) throws Exception {
         checkPermissionsForAllProjectsAfterTransition(null, addon, permission, true);
     }
 
-    protected void checkHasNoPermissionForAnyProjectAfterInstall(ConnectAddonBean addon, Permission permission) throws Exception
-    {
+    protected void checkHasNoPermissionForAnyProjectAfterInstall(ConnectAddonBean addon, Permission permission) throws Exception {
         checkPermissionsForAllProjectsAfterTransition(null, addon, permission, false);
     }
 
-    protected void checkHasPermissionForNewProjectAfterInstall(ConnectAddonBean addon, Permission permission) throws Exception
-    {
+    protected void checkHasPermissionForNewProjectAfterInstall(ConnectAddonBean addon, Permission permission) throws Exception {
         checkPermissionForNewProject(null, addon, permission, true);
     }
 
-    protected void checkHasNoPermissionForNewProjectAfterInstall(ConnectAddonBean addon, Permission permission) throws Exception
-    {
+    protected void checkHasNoPermissionForNewProjectAfterInstall(ConnectAddonBean addon, Permission permission) throws Exception {
         checkPermissionForNewProject(null, addon, permission, false);
     }
 
-    protected void checkHasPermissionForAllProjectsAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission) throws Exception
-    {
+    protected void checkHasPermissionForAllProjectsAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission) throws Exception {
         checkPermissionsForAllProjectsAfterTransition(from, to, permission, true);
     }
 
-    protected void checkHasNoPermissionForAnyProjectAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission) throws Exception
-    {
+    protected void checkHasNoPermissionForAnyProjectAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission) throws Exception {
         checkPermissionsForAllProjectsAfterTransition(from, to, permission, false);
     }
 
-    protected void checkHasPermissionForNewProjectAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission) throws Exception
-    {
+    protected void checkHasPermissionForNewProjectAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission) throws Exception {
         checkPermissionForNewProject(from, to, permission, true);
     }
 
-    protected void checkHasNoPermissionForNewProjectAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission) throws Exception
-    {
+    protected void checkHasNoPermissionForNewProjectAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission) throws Exception {
         checkPermissionForNewProject(from, to, permission, false);
     }
 
-    private void checkPermissionsForAllProjectsAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission, boolean permissionMustExist) throws Exception
-    {
+    private void checkPermissionsForAllProjectsAfterTransition(ConnectAddonBean from, ConnectAddonBean to, Permission permission, boolean permissionMustExist) throws Exception {
         Plugin plugin = null;
-        try
-        {
-            if (from != null)
-            {
+        try {
+            if (from != null) {
                 plugin = testPluginInstaller.installAddon(from);
             }
             plugin = testPluginInstaller.installAddon(to);
 
             List<String> projectAdminErrors = permissionsForAllProjects(permission, permissionMustExist, plugin);
             assertTrue(StringUtils.join(projectAdminErrors, '\n'), projectAdminErrors.isEmpty());
-        }
-        finally
-        {
+        } finally {
             uninstallPlugin(plugin);
         }
     }
 
-    protected List<String> permissionsForAllProjects(Permission permission, boolean permissionMustExist, Plugin plugin) throws ConnectAddonInitException
-    {
+    protected List<String> permissionsForAllProjects(Permission permission, boolean permissionMustExist, Plugin plugin) throws ConnectAddonInitException {
         ApplicationUser addonUser = getAddonUser();
         List<Project> allProjects = projectService.getAllProjects(addonUser).getReturnedValue();
         List<String> projectAdminErrors = Lists.newArrayList();
 
-        for (Project project : allProjects)
-        {
+        for (Project project : allProjects) {
             boolean hasPermission = permissionManager.hasPermission(permission.getId(), project, addonUser, false);
-            if (!hasPermission && permissionMustExist)
-            {
+            if (!hasPermission && permissionMustExist) {
                 projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should have '" + permission + "' permission for project " + project.getKey());
-            }
-            else if (hasPermission && !permissionMustExist)
-            {
+            } else if (hasPermission && !permissionMustExist) {
                 projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should not have '" + permission + "' permission for project " + project.getKey());
             }
         }
         return projectAdminErrors;
     }
 
-    private void checkPermissionForNewProject(ConnectAddonBean from, ConnectAddonBean to, Permission permission, boolean permissionMustExist) throws Exception
-    {
+    private void checkPermissionForNewProject(ConnectAddonBean from, ConnectAddonBean to, Permission permission, boolean permissionMustExist) throws Exception {
         Plugin plugin = null;
-        try
-        {
-            if (from != null)
-            {
+        try {
+            if (from != null) {
                 plugin = testPluginInstaller.installAddon(from);
             }
             plugin = testPluginInstaller.installAddon(to);
@@ -271,52 +236,40 @@ public abstract class AbstractJiraPermissionScopeTest
 
             boolean hasPermission = permissionManager.hasPermission(permission.getId(), project, addonUser, false);
 
-            if (permissionMustExist)
-            {
+            if (permissionMustExist) {
                 assertTrue("Add-on user " + addonUser.getName() + " should have '" + permission + "' permission for project " + PROJECT_KEY, hasPermission);
-            }
-            else
-            {
+            } else {
                 assertFalse("Add-on user " + addonUser.getName() + " should not have '" + permission + "'  permission for project " + PROJECT_KEY, hasPermission);
             }
-        }
-        finally
-        {
+        } finally {
             uninstallPlugin(plugin);
         }
     }
 
-    private String getAddonUserName() throws ConnectAddonInitException
-    {
+    private String getAddonUserName() throws ConnectAddonInitException {
         return connectUserService.getOrCreateAddonUserName(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
     }
 
-    protected ApplicationUser getAddonUser() throws ConnectAddonInitException
-    {
+    protected ApplicationUser getAddonUser() throws ConnectAddonInitException {
         String addonUserName = getAddonUserName();
         return userManager.getUserByName(addonUserName);
     }
 
-    protected void uninstallPlugin(Plugin plugin) throws IOException
-    {
-        if (null != plugin)
-        {
+    protected void uninstallPlugin(Plugin plugin) throws IOException {
+        if (null != plugin) {
             testPluginInstaller.uninstallAddon(plugin);
         }
     }
 
-    protected Plugin installPlugin(ConnectAddonBean addon) throws IOException
-    {
+    protected Plugin installPlugin(ConnectAddonBean addon) throws IOException {
         return testPluginInstaller.installAddon(addon);
     }
 
-    protected void disablePlugin(Plugin plugin) throws IOException
-    {
+    protected void disablePlugin(Plugin plugin) throws IOException {
         testPluginInstaller.disableAddon(plugin.getKey());
     }
 
-    protected void enablePlugin(Plugin plugin) throws IOException
-    {
+    protected void enablePlugin(Plugin plugin) throws IOException {
         testPluginInstaller.enableAddon(plugin.getKey());
     }
 }

@@ -17,8 +17,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  * @schemaTitle Dashboard Item
  * @since 1.0
  */
-public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
-{
+public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions {
     /**
      * Description of the dashboard item. This will be displayed for a user in the directory.
      */
@@ -35,7 +34,7 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * * `dashboardItem.viewType` type of the view in which dashboard item is displayed. Default (for dashboard) and directory. This list may be extended
      */
     @Required
-    @StringSchemaAttributes (format = "uri-template")
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     /**
@@ -58,18 +57,17 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
      *        jira.setDashboardItemTitle("Setting title works");
      *     });
      */
-    @CommonSchemaAttributes (defaultValue = "false")
+    @CommonSchemaAttributes(defaultValue = "false")
     private Boolean configurable;
 
     /**
      * URI of the dashboard item thumbnail which is displayed in the directory.
      */
     @Required
-    @StringSchemaAttributes (format = "uri-template")
+    @StringSchemaAttributes(format = "uri-template")
     private String thumbnailUrl;
 
-    public DashboardItemModuleBean()
-    {
+    public DashboardItemModuleBean() {
         this.description = I18nProperty.empty();
         this.url = "";
         this.configurable = false;
@@ -77,33 +75,27 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
 
-    public DashboardItemModuleBean(DashboardItemModuleBeanBuilder builder)
-    {
+    public DashboardItemModuleBean(DashboardItemModuleBeanBuilder builder) {
         super(builder);
     }
 
-    public static DashboardItemModuleBeanBuilder newBuilder()
-    {
+    public static DashboardItemModuleBeanBuilder newBuilder() {
         return new DashboardItemModuleBeanBuilder();
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public Boolean isConfigurable()
-    {
+    public Boolean isConfigurable() {
         return configurable;
     }
 
-    public String getThumbnailUrl()
-    {
+    public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 }

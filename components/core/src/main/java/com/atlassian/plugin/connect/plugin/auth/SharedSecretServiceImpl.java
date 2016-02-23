@@ -5,11 +5,9 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class SharedSecretServiceImpl implements SharedSecretService
-{
+public class SharedSecretServiceImpl implements SharedSecretService {
     @Override
-    public String next()
-    {
+    public String next() {
         return UUID.randomUUID().toString();
     }
 }

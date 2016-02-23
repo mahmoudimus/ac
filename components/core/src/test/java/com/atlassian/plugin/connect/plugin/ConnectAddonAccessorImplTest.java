@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectAddonAccessorImplTest
-{
+public class ConnectAddonAccessorImplTest {
 
     @InjectMocks
     private ConnectAddonAccessorImpl addonAccessor;
@@ -33,8 +31,7 @@ public class ConnectAddonAccessorImplTest
     private ConnectAddonBeanFactory addonBeanFactory;
 
     @Test
-    public void shouldReturnAddonBeans()
-    {
+    public void shouldReturnAddonBeans() {
         String[] jsonDescriptors = new String[]{"foo-json", "bar-json"};
         List<ConnectAddonBean> beans = Lists.newArrayList(
                 mock(ConnectAddonBean.class),
@@ -53,8 +50,7 @@ public class ConnectAddonAccessorImplTest
     }
 
     @Test
-    public void shouldReturnAddonBeanIfRegistryHasDescriptor()
-    {
+    public void shouldReturnAddonBeanIfRegistryHasDescriptor() {
         String addonKey = "foo";
         String jsonDescriptor = "foo-json";
         ConnectAddonBean addonBean = mock(ConnectAddonBean.class);
@@ -66,8 +62,7 @@ public class ConnectAddonAccessorImplTest
     }
 
     @Test
-    public void shouldReturnNoAddonBeanIfRegistryLacksDescriptor()
-    {
+    public void shouldReturnNoAddonBeanIfRegistryLacksDescriptor() {
         String addonKey = "foo";
 
         when(addonRegistry.getDescriptor(addonKey)).thenReturn(null);
@@ -75,8 +70,7 @@ public class ConnectAddonAccessorImplTest
         assertThat(addonAccessor.getAddon(addonKey), equalTo(Optional.empty()));
     }
 
-    private AddonSettings createAddonSettingsForDescriptor(String descriptor)
-    {
+    private AddonSettings createAddonSettingsForDescriptor(String descriptor) {
         AddonSettings settings = new AddonSettings();
         settings.setDescriptor(descriptor);
         return settings;

@@ -23,8 +23,7 @@ import com.google.common.base.Objects;
  * @since 1.0
  */
 @SchemaDefinition("singleCondition")
-public class SingleConditionBean extends BeanWithParams implements ConditionalBean
-{
+public class SingleConditionBean extends BeanWithParams implements ConditionalBean {
 
     /**
      * A string indicating:
@@ -43,65 +42,50 @@ public class SingleConditionBean extends BeanWithParams implements ConditionalBe
     @CommonSchemaAttributes(defaultValue = "false")
     private Boolean invert;
 
-    public SingleConditionBean()
-    {
+    public SingleConditionBean() {
         this.condition = "";
         this.invert = false;
     }
 
-    public SingleConditionBean(SingleConditionBeanBuilder builder)
-    {
+    public SingleConditionBean(SingleConditionBeanBuilder builder) {
         super(builder);
 
-        if (null == condition)
-        {
+        if (null == condition) {
             this.condition = "";
         }
-        if (null == invert)
-        {
+        if (null == invert) {
             this.invert = false;
         }
     }
 
-    public String getCondition()
-    {
+    public String getCondition() {
         return condition;
     }
 
-    public Boolean isInvert()
-    {
+    public Boolean isInvert() {
         return invert;
     }
 
-    public static SingleConditionBeanBuilder newSingleConditionBean()
-    {
+    public static SingleConditionBeanBuilder newSingleConditionBean() {
         return new SingleConditionBeanBuilder();
     }
 
-    public static SingleConditionBeanBuilder newSingleConditionBean(SingleConditionBean defaultBean)
-    {
+    public static SingleConditionBeanBuilder newSingleConditionBean(SingleConditionBean defaultBean) {
         return new SingleConditionBeanBuilder(defaultBean);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hashCode(condition, invert);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == this)
-        {
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
-        }
-        else if (!(obj instanceof SingleConditionBean))
-        {
+        } else if (!(obj instanceof SingleConditionBean)) {
             return false;
-        }
-        else
-        {
+        } else {
             final SingleConditionBean that = (SingleConditionBean) obj;
             return Objects.equal(condition, that.condition) &&
                     Objects.equal(invert, that.invert);

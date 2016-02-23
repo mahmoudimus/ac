@@ -29,8 +29,7 @@ import java.util.Optional;
  */
 @Component
 @ExportAsDevService
-public class ConditionLoadingValidatorImpl implements ConditionLoadingValidator
-{
+public class ConditionLoadingValidatorImpl implements ConditionLoadingValidator {
 
     private ConditionClassAccessor conditionClassAccessor;
     private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
@@ -38,9 +37,8 @@ public class ConditionLoadingValidatorImpl implements ConditionLoadingValidator
 
     @Inject
     public ConditionLoadingValidatorImpl(ConditionClassAccessor conditionClassAccessor,
-            ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-            WebInterfaceManager webInterfaceManager)
-    {
+                                         ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+                                         WebInterfaceManager webInterfaceManager) {
         this.conditionClassAccessor = conditionClassAccessor;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
         this.webInterfaceManager = webInterfaceManager;
@@ -48,52 +46,40 @@ public class ConditionLoadingValidatorImpl implements ConditionLoadingValidator
 
     @Override
     public void validate(Plugin plugin, ShallowConnectAddonBean addon, ConnectModuleMeta<?> moduleMeta,
-            List<? extends BeanWithConditions> beansWithConditions)
-            throws ConnectModuleValidationException
-    {
-        for (BeanWithConditions beanWithConditions : beansWithConditions)
-        {
+                         List<? extends BeanWithConditions> beansWithConditions)
+            throws ConnectModuleValidationException {
+        for (BeanWithConditions beanWithConditions : beansWithConditions) {
             List<ConditionalBean> conditions = beanWithConditions.getConditions();
             List<SingleConditionBean> singleConditions = ConditionUtils.getSingleConditionsRecursively(conditions);
-            for (SingleConditionBean singleCondition : singleConditions)
-            {
+            for (SingleConditionBean singleCondition : singleConditions) {
                 validateCondition(plugin, addon, moduleMeta, singleCondition);
             }
         }
     }
 
     private void validateCondition(Plugin plugin, ShallowConnectAddonBean addon, ConnectModuleMeta<?> moduleMeta, SingleConditionBean singleCondition)
-            throws ConnectModuleValidationException
-    {
+            throws ConnectModuleValidationException {
         Optional<Class<? extends Condition>> optionalConditionClass = conditionClassAccessor.getConditionClassForHostContext(singleCondition);
-        if (optionalConditionClass.isPresent())
-        {
+        if (optionalConditionClass.isPresent()) {
             Class<? extends Condition> conditionClass = optionalConditionClass.get();
             Condition condition = null;
-            try
-            {
+            try {
                 condition = webInterfaceManager.getWebFragmentHelper().loadCondition(conditionClass.getName(), plugin);
-            } catch (ConditionLoadingException e)
-            {
+            } catch (ConditionLoadingException e) {
                 String message = String.format("The condition %s (%s) could not be loaded",
                         singleCondition.getCondition(), conditionClass.getSimpleName());
                 rethrowAsModuleValidationException(e, addon, moduleMeta, message, null);
             }
 
             Map<String, String> parameters = conditionModuleFragmentFactory.getFragmentParameters(addon.getKey(), singleCondition);
-            try
-            {
+            try {
                 condition.init(parameters);
-            }
-            catch (PluginParseException e)
-            {
+            } catch (PluginParseException e) {
                 String message = String.format("Invalid parameters provided for condition %s (%s)",
                         singleCondition.getCondition(), conditionClass.getSimpleName());
                 rethrowAsModuleValidationException(e, addon, moduleMeta, message,
                         "connect.install.error.invalid.condition.parameters", singleCondition.getCondition(), e.getLocalizedMessage());
-            }
-            catch (Throwable e)
-            {
+            } catch (Throwable e) {
                 String message = String.format("An error occurred when initializing condition %s (%s)",
                         singleCondition.getCondition(), conditionClass.getSimpleName());
                 rethrowAsModuleValidationException(e, addon, moduleMeta, message, null);
@@ -102,9 +88,8 @@ public class ConditionLoadingValidatorImpl implements ConditionLoadingValidator
     }
 
     private void rethrowAsModuleValidationException(Throwable cause, ShallowConnectAddonBean addon,
-            ConnectModuleMeta<?> moduleMeta, String message, String i18nKey, Serializable... i18nParameters)
-            throws ConnectModuleValidationException
-    {
+                                                    ConnectModuleMeta<?> moduleMeta, String message, String i18nKey, Serializable... i18nParameters)
+            throws ConnectModuleValidationException {
         ConnectModuleValidationException exception = new ConnectModuleValidationException(
                 addon, moduleMeta, message, i18nKey, i18nParameters);
         exception.initCause(cause);

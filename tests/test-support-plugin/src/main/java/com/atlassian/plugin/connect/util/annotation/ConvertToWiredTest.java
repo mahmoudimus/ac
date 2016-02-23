@@ -7,8 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface ConvertToWiredTest
-{
+public @interface ConvertToWiredTest {
     /**
      * @return the optional reason why the test should be converted
      */

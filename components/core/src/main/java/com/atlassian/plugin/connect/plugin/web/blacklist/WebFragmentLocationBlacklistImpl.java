@@ -12,19 +12,16 @@ import java.util.stream.Collectors;
 
 @Named
 @ExportAsDevService
-public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlacklist
-{
+public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlacklist {
     private final PluginAccessor pluginAccessor;
 
     @Autowired
-    public WebFragmentLocationBlacklistImpl(PluginAccessor pluginAccessor)
-    {
+    public WebFragmentLocationBlacklistImpl(PluginAccessor pluginAccessor) {
         this.pluginAccessor = pluginAccessor;
     }
 
     @Override
-    public Set<String> getBlacklistedWebPanelLocations()
-    {
+    public Set<String> getBlacklistedWebPanelLocations() {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectWebFragmentLocationBlacklistModuleDescriptor.class)
                 .stream()
                 .map(ConnectWebFragmentLocationBlacklistModuleDescriptor::getModule)
@@ -34,8 +31,7 @@ public class WebFragmentLocationBlacklistImpl implements WebFragmentLocationBlac
     }
 
     @Override
-    public Set<String> getBlacklistedWebItemLocations()
-    {
+    public Set<String> getBlacklistedWebItemLocations() {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectWebFragmentLocationBlacklistModuleDescriptor.class)
                 .stream()
                 .map(ConnectWebFragmentLocationBlacklistModuleDescriptor::getModule)

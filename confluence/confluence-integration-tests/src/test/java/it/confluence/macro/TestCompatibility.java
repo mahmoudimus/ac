@@ -1,7 +1,5 @@
 package it.confluence.macro;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.ConfluencePageData;
@@ -10,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,9 +16,9 @@ import org.jsoup.select.Elements;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -30,8 +28,7 @@ import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTes
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static org.junit.Assert.assertEquals;
 
-public class TestCompatibility extends ConfluenceWebDriverTestBase
-{
+public class TestCompatibility extends ConfluenceWebDriverTestBase {
     private static final String STORAGE_FORMAT = "<p>\n" +
             "<ac:structured-macro ac:name=\"map\"><ac:parameter ac:name=\"data\">macro data</ac:parameter></ac:structured-macro>\n" +
             "</p>";
@@ -43,8 +40,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("dynamicContentMacros",
@@ -69,17 +65,14 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void macroIsRendered() throws Exception
-    {
+    public void macroIsRendered() throws Exception {
         login(testUserFactory.basicUser());
         createAndVisitPage(STORAGE_FORMAT);
         RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(MACRO_KEY);
@@ -88,8 +81,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testAliasIsNotPersisted() throws Exception
-    {
+    public void testAliasIsNotPersisted() throws Exception {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
         selectMacroAndSave(editorPage, MACRO_NAME_2);
@@ -102,8 +94,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
         assertEquals("name set correct (not alias)", MACRO_KEY_2, elements.get(0).attr("ac:name"));
     }
 
-    private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
-    {
+    private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault {
         ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()),
                 DEMO.getKey(), "macro page", pageContent);
         product.visit(ConfluenceViewPage.class, pageData.getId());

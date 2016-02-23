@@ -4,8 +4,7 @@ import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
 
 import java.util.Collection;
 
-public interface ScopeService
-{
+public interface ScopeService {
     /**
      * Build the scopes for the current product.
      *

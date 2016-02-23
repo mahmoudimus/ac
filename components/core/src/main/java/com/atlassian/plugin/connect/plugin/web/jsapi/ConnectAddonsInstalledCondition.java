@@ -7,24 +7,20 @@ import com.atlassian.plugin.webresource.condition.UrlReadingCondition;
 /**
  * A {@link UrlReadingCondition} which returns true if there are Connect add-ons currently installed.
  */
-public class ConnectAddonsInstalledCondition extends SimpleUrlReadingCondition
-{
+public class ConnectAddonsInstalledCondition extends SimpleUrlReadingCondition {
     private final ConnectAddonRegistry connectAddonRegistry;
 
-    public ConnectAddonsInstalledCondition(final ConnectAddonRegistry connectAddonRegistry)
-    {
+    public ConnectAddonsInstalledCondition(final ConnectAddonRegistry connectAddonRegistry) {
         this.connectAddonRegistry = connectAddonRegistry;
     }
 
     @Override
-    protected boolean isConditionTrue()
-    {
+    protected boolean isConditionTrue() {
         return connectAddonRegistry.hasAddons();
     }
 
     @Override
-    protected String queryKey()
-    {
+    protected String queryKey() {
         return "hasConnectAddons";
     }
 }

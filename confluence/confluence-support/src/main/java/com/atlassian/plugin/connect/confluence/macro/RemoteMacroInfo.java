@@ -1,18 +1,16 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.net.URI;
-
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.plugin.connect.api.request.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-
+import com.atlassian.plugin.connect.api.request.RequestContextParameterFactory;
 import org.dom4j.Element;
+
+import java.net.URI;
 
 /**
  * Information about the specific macro type
  */
-public class RemoteMacroInfo
-{
+public class RemoteMacroInfo {
     private final Element element;
     private final String pluginKey;
     private final Macro.BodyType bodyType;
@@ -27,8 +25,7 @@ public class RemoteMacroInfo
                            Macro.OutputType outputType,
                            RequestContextParameterFactory requestContextParameterFactory,
                            URI url,
-                           HttpMethod httpMethod)
-    {
+                           HttpMethod httpMethod) {
         this.element = element;
         this.pluginKey = pluginKey;
         this.bodyType = bodyType;
@@ -38,38 +35,31 @@ public class RemoteMacroInfo
         this.httpMethod = httpMethod;
     }
 
-    public Macro.BodyType getBodyType()
-    {
+    public Macro.BodyType getBodyType() {
         return bodyType;
     }
 
-    public Macro.OutputType getOutputType()
-    {
+    public Macro.OutputType getOutputType() {
         return outputType;
     }
 
-    public URI getUrl()
-    {
+    public URI getUrl() {
         return url;
     }
 
-    public String getPluginKey()
-    {
+    public String getPluginKey() {
         return pluginKey;
     }
 
-    public Element getElement()
-    {
+    public Element getElement() {
         return element;
     }
 
-    public RequestContextParameterFactory getRequestContextParameterFactory()
-    {
+    public RequestContextParameterFactory getRequestContextParameterFactory() {
         return requestContextParameterFactory;
     }
 
-    public HttpMethod getHttpMethod()
-    {
+    public HttpMethod getHttpMethod() {
         return httpMethod;
     }
 }
