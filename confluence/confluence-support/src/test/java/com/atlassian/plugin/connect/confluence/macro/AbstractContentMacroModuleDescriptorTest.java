@@ -162,7 +162,8 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
                 hasProperty("name", is("parametername")),
                 hasProperty("type", hasToString("enum")),
                 hasProperty("multiple", is(false)),
-                hasProperty("required", is(true))
+                hasProperty("required", is(true)),
+                hasProperty("hidden", is(false))
         ));
     }
 
