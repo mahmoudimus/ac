@@ -2,8 +2,7 @@ package com.atlassian.plugin.connect.plugin.rest.data;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class RestAddon extends RestLimitedAddon
-{
+public class RestAddon extends RestLimitedAddon {
     @JsonProperty
     private final RestHost host;
 
@@ -18,26 +17,22 @@ public class RestAddon extends RestLimitedAddon
                      @JsonProperty("state") final String state,
                      @JsonProperty("host") final RestHost host,
                      @JsonProperty("license") final RestAddonLicense license,
-                     @JsonProperty("links") final RestRelatedLinks links)
-    {
+                     @JsonProperty("links") final RestRelatedLinks links) {
         super(key, version, state);
         this.host = host;
         this.license = license;
         this.links = links;
     }
 
-    public RestAddonLicense getLicense()
-    {
+    public RestAddonLicense getLicense() {
         return license;
     }
 
-    public RestRelatedLinks getLinks()
-    {
+    public RestRelatedLinks getLinks() {
         return links;
     }
 
-    public RestHost getHost()
-    {
+    public RestHost getHost() {
         return host;
     }
 }

@@ -1,17 +1,16 @@
 package com.atlassian.plugin.connect.testsupport.rest;
 
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -23,14 +22,12 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN_TYPE;
 import static javax.ws.rs.core.Response.ok;
 
 @Path("/")
-public class UserResource
-{
+public class UserResource {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserManager userManager;
 
-    public UserResource(UserManager userManager)
-    {
+    public UserResource(UserManager userManager) {
         this.userManager = userManager;
     }
 
@@ -38,8 +35,7 @@ public class UserResource
     @Produces(TEXT_PLAIN)
     @Path("/user")
     @AnonymousAllowed
-    public Response getUserTextPlain()
-    {
+    public Response getUserTextPlain() {
         final String content = getUsername();
         MediaType contentType = TEXT_PLAIN_TYPE;
         return getUser(content, contentType);
@@ -49,8 +45,7 @@ public class UserResource
     @Produces(APPLICATION_JSON)
     @Path("/user")
     @AnonymousAllowed
-    public Response getUserJson()
-    {
+    public Response getUserJson() {
         return getUser("{\"name\": \"%s\"}", APPLICATION_JSON_TYPE);
     }
 
@@ -58,13 +53,11 @@ public class UserResource
     @Produces(APPLICATION_XML)
     @Path("/user")
     @AnonymousAllowed
-    public Response getUserXml()
-    {
+    public Response getUserXml() {
         return getUser("<user><name>%s</name></user>", APPLICATION_XML_TYPE);
     }
 
-    private Response getUser(String format, MediaType contentType)
-    {
+    private Response getUser(String format, MediaType contentType) {
         final String username = getUsername();
         logger.info("Getting the user '{}' as '{}'", username, contentType);
         return ok(format(format, username), contentType).build();
@@ -73,27 +66,23 @@ public class UserResource
     @GET
     @Produces(TEXT_PLAIN)
     @Path("/unscoped")
-    public Response getUnScopedResource()
-    {
+    public Response getUnScopedResource() {
         return buildErrorResponse();
     }
 
     @GET
     @Produces(TEXT_PLAIN)
     @Path("/unauthorisedscope")
-    public Response getUnauthorisedScopeResource()
-    {
+    public Response getUnauthorisedScopeResource() {
         return buildErrorResponse();
     }
 
-    private String getUsername()
-    {
+    private String getUsername() {
         UserProfile user = userManager.getRemoteUser();
         return user == null ? "anonymous" : user.getUsername();
     }
 
-    private Response buildErrorResponse()
-    {
+    private Response buildErrorResponse() {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("This REST Resource should never be successfully called by a Remotable Plugin").build();
     }
 }

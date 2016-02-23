@@ -77,8 +77,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * @schemaTitle Lifecycle
  */
-public class LifecycleBean extends BaseModuleBean
-{
+public class LifecycleBean extends BaseModuleBean {
     /**
      * When a Connect add-on is installed, a synchronous request is fired to this URL to initiate the installation
      * handshake. In order to successfully complete installation, the add-on must respond with either a `200 OK` or
@@ -113,82 +112,66 @@ public class LifecycleBean extends BaseModuleBean
     @StringSchemaAttributes(format = "uri")
     private String disabled;
 
-    public LifecycleBean()
-    {
+    public LifecycleBean() {
         this.installed = "";
         this.uninstalled = "";
         this.enabled = "";
         this.disabled = "";
     }
 
-    public LifecycleBean(LifecycleBeanBuilder builder)
-    {
+    public LifecycleBean(LifecycleBeanBuilder builder) {
         super(builder);
 
-        if (null == installed)
-        {
+        if (null == installed) {
             this.installed = "";
         }
-        if (null == uninstalled)
-        {
+        if (null == uninstalled) {
             this.uninstalled = "";
         }
-        if (null == enabled)
-        {
+        if (null == enabled) {
             this.enabled = "";
         }
-        if (null == disabled)
-        {
+        if (null == disabled) {
             this.disabled = "";
         }
     }
 
-    public String getInstalled()
-    {
+    public String getInstalled() {
         return installed;
     }
 
-    public String getUninstalled()
-    {
+    public String getUninstalled() {
         return uninstalled;
     }
 
-    public String getEnabled()
-    {
+    public String getEnabled() {
         return enabled;
     }
 
-    public String getDisabled()
-    {
+    public String getDisabled() {
         return disabled;
     }
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return (Strings.isNullOrEmpty(installed) && Strings.isNullOrEmpty(uninstalled) && Strings.isNullOrEmpty(enabled) && Strings.isNullOrEmpty(disabled));
     }
 
-    public static LifecycleBeanBuilder newLifecycleBean()
-    {
+    public static LifecycleBeanBuilder newLifecycleBean() {
         return new LifecycleBeanBuilder();
     }
 
-    public static LifecycleBeanBuilder newLifecycleBean(LifecycleBean defaultBean)
-    {
+    public static LifecycleBeanBuilder newLifecycleBean(LifecycleBean defaultBean) {
         return new LifecycleBeanBuilder(defaultBean);
     }
 
     // don't call super because BaseCapabilityBean has no data
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof LifecycleBean))
-        {
+        if (!(otherObj instanceof LifecycleBean)) {
             return false;
         }
 
@@ -204,8 +187,7 @@ public class LifecycleBean extends BaseModuleBean
 
     // don't call super because BaseCapabilityBean has no data
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(37, 11)
                 .append(installed)
                 .append(uninstalled)

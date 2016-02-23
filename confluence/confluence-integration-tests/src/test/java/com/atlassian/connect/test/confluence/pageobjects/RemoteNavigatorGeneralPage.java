@@ -12,33 +12,29 @@ import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-public class RemoteNavigatorGeneralPage extends ConnectAddonPage implements Page
-{
+public class RemoteNavigatorGeneralPage extends ConnectAddonPage implements Page {
     @Inject
     protected PageBinder pageBinder;
 
     @Inject
     protected PageElementFinder elementFinder;
 
-    public RemoteNavigatorGeneralPage(String addOnKey, String moduleKey)
-    {
+    public RemoteNavigatorGeneralPage(String addOnKey, String moduleKey) {
         super(addOnKey, moduleKey, true);
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
-    public <P extends com.atlassian.pageobjects.Page> P clickToNavigate(final String id, java.lang.Class<P> aPageClass, Object...args) {
+    public <P extends com.atlassian.pageobjects.Page> P clickToNavigate(final String id, java.lang.Class<P> aPageClass, Object... args) {
         open(id);
 
-        return pageBinder.bind(aPageClass,args);
+        return pageBinder.bind(aPageClass, args);
     }
 
-    public void open(final String id)
-    {
+    public void open(final String id) {
         runInFrame(() -> {
             PageElement element = elementFinder.find(By.id(id));
             waitUntilTrue(element.timed().isVisible());

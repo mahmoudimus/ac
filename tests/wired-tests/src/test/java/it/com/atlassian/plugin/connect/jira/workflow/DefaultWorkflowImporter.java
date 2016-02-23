@@ -11,21 +11,17 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 
-public class DefaultWorkflowImporter implements WorkflowImporter
-{
+public class DefaultWorkflowImporter implements WorkflowImporter {
     private WorkflowManager workflowManager;
     private JiraAuthenticationContext jiraAuthenticationContext;
 
-    public DefaultWorkflowImporter(WorkflowManager workflowManager, JiraAuthenticationContext jiraAuthenticationContext)
-    {
+    public DefaultWorkflowImporter(WorkflowManager workflowManager, JiraAuthenticationContext jiraAuthenticationContext) {
         this.workflowManager = workflowManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
 
-    public JiraWorkflow importWorkflow(String name, String resourcePath) throws SAXException, IOException, InvalidWorkflowDescriptorException
-    {
-        if (workflowManager.workflowExists(name))
-        {
+    public JiraWorkflow importWorkflow(String name, String resourcePath) throws SAXException, IOException, InvalidWorkflowDescriptorException {
+        if (workflowManager.workflowExists(name)) {
             return workflowManager.getWorkflow(name);
         }
 

@@ -12,8 +12,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 public class XWorkActionModuleBeanBuilder
-        extends RequiredKeyBeanBuilder<XWorkActionModuleBeanBuilder, XWorkActionModuleBean>
-{
+        extends RequiredKeyBeanBuilder<XWorkActionModuleBeanBuilder, XWorkActionModuleBean> {
     private static final String DEFAULT_VALIDATING_STACK = "validatingStack";
     private static final String VELOCITY_RESULT_TYPE = "velocity";
 
@@ -25,56 +24,47 @@ public class XWorkActionModuleBeanBuilder
     private Map<String, Class<?>> resultTypes = newHashMap();
     private List<XWorkResultBean> resultBeans = newArrayList();
 
-    public XWorkActionModuleBeanBuilder withNamespace(String namespace)
-    {
+    public XWorkActionModuleBeanBuilder withNamespace(String namespace) {
         this.namespace = namespace;
         return this;
     }
 
-    public XWorkActionModuleBeanBuilder withClazz(Class<?> clazz)
-    {
+    public XWorkActionModuleBeanBuilder withClazz(Class<?> clazz) {
         this.clazz = clazz;
         return this;
     }
 
-    public XWorkActionModuleBeanBuilder withParameter(String key, Object value)
-    {
+    public XWorkActionModuleBeanBuilder withParameter(String key, Object value) {
         parameters.put(key, value);
         return this;
     }
 
-    public XWorkActionModuleBeanBuilder withDefaultValidatingInterceptorStack()
-    {
+    public XWorkActionModuleBeanBuilder withDefaultValidatingInterceptorStack() {
         return withInterceptorRef(DEFAULT_VALIDATING_STACK);
     }
 
-    public XWorkActionModuleBeanBuilder withInterceptor(XWorkInterceptorBean interceptorBean)
-    {
+    public XWorkActionModuleBeanBuilder withInterceptor(XWorkInterceptorBean interceptorBean) {
         interceptorsBeans.add(interceptorBean);
         return withInterceptorRef(interceptorBean.getName());
     }
 
-    public XWorkActionModuleBeanBuilder withInterceptorRef(String interceptorRef)
-    {
+    public XWorkActionModuleBeanBuilder withInterceptorRef(String interceptorRef) {
         interceptorRefs.add(interceptorRef);
         return this;
     }
 
-    public XWorkActionModuleBeanBuilder withResult(XWorkResultBean resultBean)
-    {
+    public XWorkActionModuleBeanBuilder withResult(XWorkResultBean resultBean) {
         resultBeans.add(resultBean);
         return this;
     }
 
-    public XWorkActionModuleBeanBuilder withResultType(String name, Class<?> clazz)
-    {
+    public XWorkActionModuleBeanBuilder withResultType(String name, Class<?> clazz) {
         resultTypes.put(name, clazz);
         return this;
     }
 
 
-    public XWorkActionModuleBeanBuilder withVelocityResult(String name, String templateLocation)
-    {
+    public XWorkActionModuleBeanBuilder withVelocityResult(String name, String templateLocation) {
         return withResult(newXWorkResultBean()
                 .withName(name)
                 .withType(VELOCITY_RESULT_TYPE)
@@ -82,8 +72,7 @@ public class XWorkActionModuleBeanBuilder
                 .build());
     }
 
-    public XWorkActionModuleBean build()
-    {
+    public XWorkActionModuleBean build() {
         return new XWorkActionModuleBean(this);
     }
 }

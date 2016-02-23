@@ -16,15 +16,13 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestRequestExperimental extends JiraWebDriverTestBase
-{
+public class TestRequestExperimental extends JiraWebDriverTestBase {
     private static final String PAGE_MODULE_KEY = "remotePluginGeneral";
     private static final String PAGE_NAME = "Request";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         String pageUrl = "/rpg";
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
@@ -40,17 +38,14 @@ public class TestRequestExperimental extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testRequestExperimental() throws Exception
-    {
+    public void testRequestExperimental() throws Exception {
         TestUser user = testUserFactory.basicUser();
         JiraRequestExperimentalTestPage page = loginAndVisit(user,
                 JiraRequestExperimentalTestPage.class, remotePlugin.getAddon().getKey(), PAGE_MODULE_KEY);

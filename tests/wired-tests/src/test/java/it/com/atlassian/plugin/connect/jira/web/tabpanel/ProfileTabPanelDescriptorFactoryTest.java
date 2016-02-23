@@ -17,34 +17,28 @@ import static org.junit.Assert.assertEquals;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ProfileTabPanelDescriptorFactoryTest extends AbstractTabPanelDescriptorFactoryTest
-{
-    public ProfileTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
-    {
+public class ProfileTabPanelDescriptorFactoryTest extends AbstractTabPanelDescriptorFactoryTest {
+    public ProfileTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor) {
         super(descriptorFactory, testPluginInstaller, testAuthenticator, pluginAccessor);
     }
 
     @Override
-    protected String getModuleFieldName()
-    {
+    protected String getModuleFieldName() {
         return new ProfileTabPanelModuleMeta().getDescriptorKey();
     }
 
     @Override
-    protected TabPanelDescriptorHints getDescriptorHints()
-    {
+    protected TabPanelDescriptorHints getDescriptorHints() {
         return ProfileTabPanelModuleProvider.HINTS;
     }
 
     @Test
-    public void createsElementWithCorrectOrder()
-    {
+    public void createsElementWithCorrectOrder() {
         assertEquals(MODULE_WEIGHT, ((ConnectViewProfilePanelModuleDescriptor) getDescriptor()).getOrder());
     }
 
     @Test
-    public void createsElementWithCorrectClass()
-    {
+    public void createsElementWithCorrectClass() {
         assertEquals(getDescriptorHints().getModuleClass().getName(), ((ConnectViewProfilePanelModuleDescriptor) getDescriptor()).getModuleClassName());
     }
 }

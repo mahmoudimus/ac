@@ -20,19 +20,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class ModuleListDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>, JsonSerializer<Map<String, Supplier<List<ModuleBean>>>>
-{
+public abstract class ModuleListDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>, JsonSerializer<Map<String, Supplier<List<ModuleBean>>>> {
 
     protected ShallowConnectAddonBean addon;
 
-    public ModuleListDeserializer(ShallowConnectAddonBean addon)
-    {
+    public ModuleListDeserializer(ShallowConnectAddonBean addon) {
         this.addon = addon;
     }
 
     @Override
-    public Map<String, Supplier<List<ModuleBean>>> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
-    {
+    public Map<String, Supplier<List<ModuleBean>>> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
         return json.getAsJsonObject().entrySet().stream()
                 .map((entry) -> {
                     String descriptorKey = entry.getKey();
@@ -41,19 +38,14 @@ public abstract class ModuleListDeserializer implements JsonDeserializer<Map<Str
     }
 
     @Override
-    public JsonElement serialize(Map<String, Supplier<List<ModuleBean>>> src, Type typeOfSrc, final JsonSerializationContext context)
-    {
+    public JsonElement serialize(Map<String, Supplier<List<ModuleBean>>> src, Type typeOfSrc, final JsonSerializationContext context) {
         JsonObject object = new JsonObject();
-        for (Map.Entry<String, Supplier<List<ModuleBean>>> entry : src.entrySet())
-        {
+        for (Map.Entry<String, Supplier<List<ModuleBean>>> entry : src.entrySet()) {
             List<ModuleBean> moduleBeans = entry.getValue().get();
             JsonElement element;
-            if (multipleModulesAllowed(entry.getKey()))
-            {
+            if (multipleModulesAllowed(entry.getKey())) {
                 element = context.serialize(moduleBeans);
-            }
-            else
-            {
+            } else {
                 element = context.serialize(moduleBeans.get(0));
             }
             object.add(entry.getKey(), element);
@@ -65,24 +57,21 @@ public abstract class ModuleListDeserializer implements JsonDeserializer<Map<Str
 
     protected abstract List<ModuleBean> deserializeModules(String moduleTypeKey, JsonElement modules) throws ConnectModuleValidationException;
 
-    protected void throwUnknownModuleType(String moduleTypeKey) throws ConnectModuleValidationException
-    {
+    protected void throwUnknownModuleType(String moduleTypeKey) throws ConnectModuleValidationException {
         throw new ConnectModuleValidationException(
                 addon,
-                new ConnectModuleMeta(moduleTypeKey, ModuleBean.class) {},
+                new ConnectModuleMeta(moduleTypeKey, ModuleBean.class) {
+                },
                 "No provider found for module type " + moduleTypeKey + " referenced in the descriptor",
                 "connect.install.error.unknown.module",
                 moduleTypeKey);
     }
 
-    private Supplier<List<ModuleBean>> createModuleBeanListSupplier(String moduleTypeKey, JsonElement modules)
-    {
+    private Supplier<List<ModuleBean>> createModuleBeanListSupplier(String moduleTypeKey, JsonElement modules) {
         return Suppliers.memoize(() -> {
-            try
-            {
+            try {
                 return deserializeModules(moduleTypeKey, modules);
-            } catch (ConnectModuleValidationException e)
-            {
+            } catch (ConnectModuleValidationException e) {
                 throw new ConnectModuleValidationRuntimeException(e);
             }
         });

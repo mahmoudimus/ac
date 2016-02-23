@@ -4,18 +4,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 
 import java.util.Map;
 
-public class ConnectApiScopeWhitelist
-{
+public class ConnectApiScopeWhitelist {
 
     private Map<ScopeName, AddonScope> scopes;
 
-    public ConnectApiScopeWhitelist(Map<ScopeName, AddonScope> scopes)
-    {
+    public ConnectApiScopeWhitelist(Map<ScopeName, AddonScope> scopes) {
         this.scopes = scopes;
     }
 
-    public Map<ScopeName, AddonScope> getScopes()
-    {
+    public Map<ScopeName, AddonScope> getScopes() {
         return scopes;
     }
 }

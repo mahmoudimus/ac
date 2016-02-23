@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -17,9 +9,7 @@ import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeApiPathBuilder;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
-
 import com.google.common.collect.Sets;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,15 +17,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
-@RunWith (MockitoJUnitRunner.class)
-public class AddonScopeManagerImplTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class AddonScopeManagerImplTest {
     private static final String PLUGIN_KEY = "a plugin key";
 
     @InjectMocks
@@ -55,8 +51,7 @@ public class AddonScopeManagerImplTest
     private UserKey userKey = new UserKey("a_user_key");
 
     @Before
-    public void beforeEachTest() throws IOException
-    {
+    public void beforeEachTest() throws IOException {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user");
         when(request.getContextPath()).thenReturn("/jira");
         when(request.getMethod()).thenReturn("GET");
@@ -65,22 +60,19 @@ public class AddonScopeManagerImplTest
     }
 
     @Test
-    public void validJsonDescriptorScopeIsInScopeInProdMode()
-    {
+    public void validJsonDescriptorScopeIsInScopeInProdMode() {
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddonBeanWithScopes(ScopeName.READ)));
         assertThat(addonScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(true));
     }
 
     @Test
-    public void invalidJsonDescriptorScopeIsOutOfScope()
-    {
+    public void invalidJsonDescriptorScopeIsOutOfScope() {
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddonBeanWithScopes()));
         assertThat(addonScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(false));
     }
 
     @Test
-    public void regexSuffixIsMatched()
-    {
+    public void regexSuffixIsMatched() {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddonBeanWithScopes(ScopeName.WRITE)));
@@ -88,8 +80,7 @@ public class AddonScopeManagerImplTest
     }
 
     @Test
-    public void regexSuffixIsMatchedAndInsufficientAddonScopesAreRejected()
-    {
+    public void regexSuffixIsMatchedAndInsufficientAddonScopesAreRejected() {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddonBeanWithScopes(ScopeName.READ)));
@@ -97,8 +88,7 @@ public class AddonScopeManagerImplTest
     }
 
     @Test
-    public void regexInfixIsMatched()
-    {
+    public void regexInfixIsMatched() {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddonBeanWithScopes(ScopeName.DELETE)));
@@ -106,8 +96,7 @@ public class AddonScopeManagerImplTest
     }
 
     @Test
-    public void regexInfixIsMatchedAndInsufficientAddonScopesAreRejected()
-    {
+    public void regexInfixIsMatchedAndInsufficientAddonScopesAreRejected() {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddonBeanWithScopes(ScopeName.WRITE)));
@@ -118,8 +107,7 @@ public class AddonScopeManagerImplTest
     // positive test passed result. eg, if "/secure/Dashboard.jspa" suddenly becomes allowed then
     // both tests should fail
     @Test
-    public void checksThatSigningVulnerabilityTestIsNotFalsePositive()
-    {
+    public void checksThatSigningVulnerabilityTestIsNotFalsePositive() {
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
         when(request.getMethod()).thenReturn("GET");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddonBeanWithScopes(ScopeName.READ)));
@@ -127,16 +115,14 @@ public class AddonScopeManagerImplTest
     }
 
     @Test
-    public void signingNotVulnerableToNormalizedUris()
-    {
+    public void signingNotVulnerableToNormalizedUris() {
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
         when(request.getMethod()).thenReturn("GET");
         when(addonAccessor.getAddon(PLUGIN_KEY)).thenReturn(Optional.of(buildAddonBeanWithScopes(ScopeName.READ)));
         assertThat(addonScopeManager.isRequestInApiScope(request, PLUGIN_KEY), is(false));
     }
 
-    private ConnectAddonBean buildAddonBeanWithScopes(ScopeName... scopeNames)
-    {
+    private ConnectAddonBean buildAddonBeanWithScopes(ScopeName... scopeNames) {
         return ConnectAddonBean.newConnectAddonBean()
                 .withKey(PLUGIN_KEY)
                 .withName("Mock add-on " + PLUGIN_KEY)
@@ -145,8 +131,7 @@ public class AddonScopeManagerImplTest
                 .build();
     }
 
-    private Collection<AddonScope> buildTestScopes()
-    {
+    private Collection<AddonScope> buildTestScopes() {
         Set<AddonScope> scopes = new HashSet<>();
         scopes.add(new AddonScope(ScopeName.READ.name(), new AddonScopeApiPathBuilder().withRestPaths(new AddonScopeBean.RestPathBean("api", "api", singletonList("/user"), singletonList("2")), singletonList("get")).build()));
         scopes.add(new AddonScope(ScopeName.WRITE.name(), new AddonScopeApiPathBuilder().withRestPaths(new AddonScopeBean.RestPathBean("api", "api", singletonList("/user/write/.+"), singletonList("2")), singletonList("post")).build()));

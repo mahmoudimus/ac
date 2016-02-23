@@ -9,21 +9,17 @@ import org.springframework.stereotype.Component;
  * Looks up {@link ShallowConnectAddonBeanValidator} implementations from the plugin system.
  */
 @Component
-public class ShallowConnectAddonBeanValidatorService
-{
+public class ShallowConnectAddonBeanValidatorService {
 
     private final ConnectContainerUtil connectContainerUtil;
 
     @Autowired
-    public ShallowConnectAddonBeanValidatorService(ConnectContainerUtil connectContainerUtil)
-    {
+    public ShallowConnectAddonBeanValidatorService(ConnectContainerUtil connectContainerUtil) {
         this.connectContainerUtil = connectContainerUtil;
     }
 
-    public void validate(final ShallowConnectAddonBean descriptor) throws InvalidDescriptorException
-    {
-        for (ShallowConnectAddonBeanValidator validator : connectContainerUtil.getBeansOfType(ShallowConnectAddonBeanValidator.class))
-        {
+    public void validate(final ShallowConnectAddonBean descriptor) throws InvalidDescriptorException {
+        for (ShallowConnectAddonBeanValidator validator : connectContainerUtil.getBeansOfType(ShallowConnectAddonBeanValidator.class)) {
             validator.validate(descriptor);
         }
     }

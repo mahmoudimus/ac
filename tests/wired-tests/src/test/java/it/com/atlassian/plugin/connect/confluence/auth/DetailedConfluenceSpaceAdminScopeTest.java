@@ -1,10 +1,5 @@
 package it.com.atlassian.plugin.connect.confluence.auth;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.SpacePermissionManager;
@@ -34,10 +29,8 @@ import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -46,6 +39,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
@@ -61,10 +59,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Application ("confluence")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class DetailedConfluenceSpaceAdminScopeTest
-{
+@Application("confluence")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class DetailedConfluenceSpaceAdminScopeTest {
     private static final Logger log = LoggerFactory.getLogger(DetailedConfluenceSpaceAdminScopeTest.class);
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
@@ -81,14 +78,13 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private List<Space> createdSpaceList;
 
     public DetailedConfluenceSpaceAdminScopeTest(SpaceManager spaceManager,
-            SpacePermissionManager spacePermissionManager,
-            TestPluginInstaller testPluginInstaller,
-            TestAuthenticator testAuthenticator,
-            JwtApplinkFinder jwtApplinkFinder,
-            ApplicationService applicationService,
-            ApplicationManager applicationManager,
-            CrowdAddonUserProvisioningService crowdAddonUserProvisioningService)
-    {
+                                                 SpacePermissionManager spacePermissionManager,
+                                                 TestPluginInstaller testPluginInstaller,
+                                                 TestAuthenticator testAuthenticator,
+                                                 JwtApplinkFinder jwtApplinkFinder,
+                                                 ApplicationService applicationService,
+                                                 ApplicationManager applicationManager,
+                                                 CrowdAddonUserProvisioningService crowdAddonUserProvisioningService) {
         this.spaceManager = spaceManager;
         this.spacePermissionManager = spacePermissionManager;
         this.testPluginInstaller = testPluginInstaller;
@@ -100,51 +96,43 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     @Before
-    public void setUp() throws IOException
-    {
+    public void setUp() throws IOException {
         installedAddonPlugins = Lists.newArrayList();
         createdSpaceList = Lists.newArrayList();
         testAuthenticator.authenticateUser("admin");
     }
 
     @After
-    public void cleanup() throws IOException
-    {
+    public void cleanup() throws IOException {
         removeSavedSpaces();
 
         installedAddonPlugins.stream()
-            .filter(plugin -> plugin != null)
-            .forEach(plugin -> {
-                try
-                {
-                    testPluginInstaller.uninstallAddon(plugin);
-                }
-                catch (Exception e)
-                {
-                    log.error("Could not uninstall add-on", e);
-                }
-            });
+                .filter(plugin -> plugin != null)
+                .forEach(plugin -> {
+                    try {
+                        testPluginInstaller.uninstallAddon(plugin);
+                    } catch (Exception e) {
+                        log.error("Could not uninstall add-on", e);
+                    }
+                });
     }
 
     @Test
-    public void addonIsMadeAdminOfExistingSpace() throws Exception
-    {
+    public void addonIsMadeAdminOfExistingSpace() throws Exception {
         ConnectAddonBean addonBean = createAddonBean(ScopeName.SPACE_ADMIN).build();
         installConnectAddon(addonBean);
         assertIsSpaceAdminOnAllSpaces(addonBean.getKey());
     }
 
     @Test
-    public void addonIsMadeAdminOfExistingSpaceAfterUpgradeToTopAdmin() throws Exception
-    {
+    public void addonIsMadeAdminOfExistingSpaceAfterUpgradeToTopAdmin() throws Exception {
         ConnectAddonBean addonBean = createAddonBean(ScopeName.ADMIN).build();
         installConnectAddon(addonBean);
         assertIsSpaceAdminOnAllSpaces(addonBean.getKey());
     }
 
     @Test
-    public void addonIsMadeAdminOfExistingSpaceAfterDowngradeFromTopAdmin() throws Exception
-    {
+    public void addonIsMadeAdminOfExistingSpaceAfterDowngradeFromTopAdmin() throws Exception {
         ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.ADMIN);
         String key = addonBeanBuilder.getKey();
 
@@ -153,8 +141,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     @Test
-    public void addonIsMadeAdminOfNewSpaceAfterDowngradeFromTopAdmin() throws Exception
-    {
+    public void addonIsMadeAdminOfNewSpaceAfterDowngradeFromTopAdmin() throws Exception {
         ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.ADMIN);
         String key = addonBeanBuilder.getKey();
 
@@ -164,8 +151,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     @Test
-    public void addonWithSpaceAdminIsMadeAdminOfNewSpace() throws Exception
-    {
+    public void addonWithSpaceAdminIsMadeAdminOfNewSpace() throws Exception {
         ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.SPACE_ADMIN);
         String key = addonBeanBuilder.getKey();
 
@@ -174,8 +160,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     @Test
-    public void isNotSpaceAdminAfterDowngradeFromSpaceAdmin() throws Exception
-    {
+    public void isNotSpaceAdminAfterDowngradeFromSpaceAdmin() throws Exception {
         ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.SPACE_ADMIN);
         String key = addonBeanBuilder.getKey();
 
@@ -185,8 +170,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     @Test
-    public void isNotSpaceAdminAfterDowngradeFromAdmin() throws Exception
-    {
+    public void isNotSpaceAdminAfterDowngradeFromAdmin() throws Exception {
         ConnectAddonBeanBuilder addonBeanBuilder = createAddonBean(ScopeName.ADMIN);
         String key = addonBeanBuilder.getKey();
 
@@ -196,8 +180,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     @Test
-    public void ignoresStaticAddonAddsAllOthersForNewSpaces() throws Exception
-    {
+    public void ignoresStaticAddonAddsAllOthersForNewSpaces() throws Exception {
         ConnectAddonBeanBuilder addonBeanBuilderDynamic1 = createAddonBean(ScopeName.SPACE_ADMIN);
         installConnectAddon(addonBeanBuilderDynamic1.build());
 
@@ -213,8 +196,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     private void installAddonThenChangeScope(ConnectAddonBeanBuilder addonBeanBuilder, ScopeName upgradedScope)
-            throws Exception
-    {
+            throws Exception {
         installConnectAddon(addonBeanBuilder.build());
 
         addonBeanBuilder.withScopes(ImmutableSet.of(upgradedScope));
@@ -222,29 +204,25 @@ public class DetailedConfluenceSpaceAdminScopeTest
         installConnectAddon(addonBeanBuilder.build());
     }
 
-    private void assertIsSpaceAdminOnAllSpaces(String addonKey)
-    {
+    private void assertIsSpaceAdminOnAllSpaces(String addonKey) {
         ConfluenceUser addonUser = getAddonUser(addonKey);
         List<String> permissionErrors = checkIsSpaceAdminOnAllSpaces(addonUser, true);
         assertTrue(StringUtils.join(permissionErrors, '\n'), permissionErrors.isEmpty());
     }
 
-    private List<String> checkIsSpaceAdminOnAllSpaces(ConfluenceUser addonUser, boolean shouldHavePermission)
-    {
+    private List<String> checkIsSpaceAdminOnAllSpaces(ConfluenceUser addonUser, boolean shouldHavePermission) {
         List<Space> allSpaces = spaceManager.getAllSpaces();
 
         List<String> permissionErrors = Lists.newArrayList();
 
-        for (Space space : allSpaces)
-        {
+        for (Space space : allSpaces) {
             permissionErrors.addAll(checkIsSpaceAdminOnSpace(space, addonUser, shouldHavePermission));
         }
 
         return permissionErrors;
     }
 
-    private List<String> checkIsSpaceAdminOnSpace(Space space, ConfluenceUser addonUser, boolean shouldHavePermission)
-    {
+    private List<String> checkIsSpaceAdminOnSpace(Space space, ConfluenceUser addonUser, boolean shouldHavePermission) {
         List<String> permissionErrors = Lists.newArrayList();
         checkHasPermissionOnSpace(permissionErrors, CREATEEDIT_PAGE_PERMISSION, space, addonUser, shouldHavePermission);
         checkHasPermissionOnSpace(permissionErrors, CREATE_ATTACHMENT_PERMISSION, space, addonUser, shouldHavePermission);
@@ -259,25 +237,21 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     private void checkHasPermissionOnSpace(List<String> permissionErrors, String permission, Space space,
-            ConfluenceUser addonUser, boolean shouldHavePermission)
-    {
+                                           ConfluenceUser addonUser, boolean shouldHavePermission) {
         String permissionError = checkHasPermissionOnSpace(permission, space, addonUser, shouldHavePermission);
-        if (permissionError != null)
-        {
+        if (permissionError != null) {
             permissionErrors.add(permissionError);
         }
     }
 
-    private String checkHasPermissionOnSpace(String permission, Space space, ConfluenceUser addonUser, boolean shouldHavePermission)
-    {
+    private String checkHasPermissionOnSpace(String permission, Space space, ConfluenceUser addonUser, boolean shouldHavePermission) {
         /*
          * Confluence caches some security stuff on thread local and due to a bug we need to blast it away before checking permission
          */
         ThreadLocalCache.flush();
 
         boolean hasPermission = spacePermissionManager.hasPermission(permission, space, addonUser);
-        if (hasPermission != shouldHavePermission)
-        {
+        if (hasPermission != shouldHavePermission) {
             return "Add-on user " + addonUser.getName() + " should " + (shouldHavePermission ? "" : "NOT ") + "have "
                     + permission + " permission for space " + space.getKey();
         }
@@ -285,8 +259,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
 
-    private void assertIsSpaceAdminOfNewSpace(String addonKey)
-    {
+    private void assertIsSpaceAdminOfNewSpace(String addonKey) {
         Space space = createSpace();
 
         final ConfluenceUser addonUser = getAddonUser(addonKey);
@@ -297,44 +270,37 @@ public class DetailedConfluenceSpaceAdminScopeTest
     }
 
     private void assertNonReadPermissionsRemoved(String addonKey)
-            throws UserNotFoundException, ApplicationPermissionException, OperationFailedException, GroupNotFoundException, ApplicationNotFoundException
-    {
+            throws UserNotFoundException, ApplicationPermissionException, OperationFailedException, GroupNotFoundException, ApplicationNotFoundException {
         final List<String> permissionErrors = checkIsSpaceAdminOnAllSpaces(getAddonUserRemovedFromGroups(addonKey), false);
         assertEquals(StringUtils.join(permissionErrors, '\n'), true, permissionErrors.isEmpty());
     }
 
-    private ConfluenceUser getAddonUserRemovedFromGroups(String addonKey)
-    {
+    private ConfluenceUser getAddonUserRemovedFromGroups(String addonKey) {
         final ConfluenceUser addonUser = getAddonUser(addonKey);
         final Set<String> groups = new HashSet<>(crowdAddonUserProvisioningService.getDefaultProductGroupsAlwaysExpected());
         groups.addAll(crowdAddonUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected());
-        for (String group : groups)
-        {
+        for (String group : groups) {
             removeUserFromGroup(addonUser.getName(), group);
         }
 
         return addonUser;
     }
 
-    private ConfluenceUser getAddonUser(String addonKey)
-    {
+    private ConfluenceUser getAddonUser(String addonKey) {
         return getUser(getAddonUsername(addonKey));
     }
 
-    private ConfluenceUser getUser(String username)
-    {
+    private ConfluenceUser getUser(String username) {
         return FindUserHelper.getUserByUsername(username);
     }
 
-    private String getAddonUsername(String addonKey)
-    {
+    private String getAddonUsername(String addonKey) {
         checkNotNull(addonKey, "addonKey must not be null");
         ApplicationLink appLink = jwtApplinkFinder.find(addonKey);
         return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
     }
 
-    private ConnectAddonBeanBuilder createAddonBean(ScopeName scope)
-    {
+    private ConnectAddonBeanBuilder createAddonBean(ScopeName scope) {
         String key = "ac-test-" + AddonUtil.randomPluginKey();
         return ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)
@@ -346,8 +312,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
                 .withScopes(ImmutableSet.of(scope));
     }
 
-    private void installConnectAddon(ConnectAddonBean addonBean) throws IOException
-    {
+    private void installConnectAddon(ConnectAddonBean addonBean) throws IOException {
         log.warn("Installing test addon '{}'", addonBean.getKey());
         Plugin installedPlugin = testPluginInstaller.installAddon(addonBean);
         checkNotNull(installedPlugin, "'installedPlugin' should not be null after installation: check the logs for installation messages");
@@ -356,26 +321,20 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
     // Richard Atkins says that the Application is immutable and therefore the instance replaced every time changes occur,
     // and that therefore we should never cache it
-    private com.atlassian.crowd.model.application.Application getApplication() throws ApplicationNotFoundException
-    {
+    private com.atlassian.crowd.model.application.Application getApplication() throws ApplicationNotFoundException {
         return applicationManager.findByName(CROWD_APPLICATION_NAME);
     }
 
-    private void removeUserFromGroup(String userKey, String groupKey)
-    {
-        try
-        {
+    private void removeUserFromGroup(String userKey, String groupKey) {
+        try {
             applicationService.removeUserFromGroup(getApplication(), userKey, groupKey);
             log.info("Removed user '{}' from group '{}'.", userKey, groupKey);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.debug("Failed to removed user from group '" + groupKey + "' . Note user may not have been in group", e);
         }
     }
 
-    private Space createSpace()
-    {
+    private Space createSpace() {
         ConfluenceUser admin = FindUserHelper.getUserByUsername("admin");
 
         Space space = spaceManager.createSpace(RandomStringUtils.randomAlphanumeric(20).toLowerCase(), "Knights of the Old Republic", "It's a trap!", admin);
@@ -383,20 +342,15 @@ public class DetailedConfluenceSpaceAdminScopeTest
         return space;
     }
 
-    private void removeSavedSpaces()
-    {
+    private void removeSavedSpaces() {
         createdSpaceList.forEach(this::removeSpace);
         createdSpaceList.clear();
     }
 
-    private void removeSpace(Space space)
-    {
-        try
-        {
+    private void removeSpace(Space space) {
+        try {
             spaceManager.removeSpace(space);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.error("Could not delete space {}", space.getName(), e);
         }
     }

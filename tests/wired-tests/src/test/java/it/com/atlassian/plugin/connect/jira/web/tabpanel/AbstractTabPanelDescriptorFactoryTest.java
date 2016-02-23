@@ -27,8 +27,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBe
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.junit.Assert.assertEquals;
 
-public abstract class AbstractTabPanelDescriptorFactoryTest
-{
+public abstract class AbstractTabPanelDescriptorFactoryTest {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTabPanelDescriptorFactoryTest.class);
     public static final String PLUGIN_NAME = "Tab Panel Plugin";
 
@@ -45,11 +44,10 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     private ConnectTabPanelModuleBean bean;
     private ModuleDescriptor descriptor;
     private Plugin installedPlugin;
-    
+
     private String pluginKey;
 
-    public AbstractTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
-    {
+    public AbstractTabPanelDescriptorFactoryTest(ConnectTabPanelModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor) {
         this.descriptorFactory = descriptorFactory;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -57,27 +55,21 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     }
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.pluginKey = AddonUtil.randomPluginKey();
         this.bean = createBean();
 
         this.descriptor = descriptorFactory.createModuleDescriptor(createAddonBean(),
                 getConnectPlugin(), bean, getDescriptorHints());
     }
-    
+
     @After
-    public void destroy()
-    {
-        if(null != installedPlugin)
-        {
-            try
-            {
+    public void destroy() {
+        if (null != installedPlugin) {
+            try {
                 testPluginInstaller.uninstallAddon(installedPlugin);
                 installedPlugin = null;
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 LOG.error("Could not uninstall addon", e);
             }
 
@@ -86,8 +78,7 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
 
     protected abstract TabPanelDescriptorHints getDescriptorHints();
 
-    protected ConnectTabPanelModuleBean createBean()
-    {
+    protected ConnectTabPanelModuleBean createBean() {
         return newTabPanelBean()
                 .withName(new I18nProperty(MODULE_NAME, null))
                 .withKey(MODULE_KEY)
@@ -96,25 +87,22 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
                 .build();
     }
 
-    protected ModuleDescriptor getDescriptor()
-    {
+    protected ModuleDescriptor getDescriptor() {
         return descriptor;
     }
-    
-    protected ModuleDescriptor getDescriptorFromInstalledPlugin() throws IOException
-    {
+
+    protected ModuleDescriptor getDescriptorFromInstalledPlugin() throws IOException {
         testAuthenticator.authenticateUser("admin");
 
         ConnectAddonBean addonBean = createAddonBean();
-        
+
         installedPlugin = testPluginInstaller.installAddon(addonBean);
-        
+
         Plugin connectPlugin = getConnectPlugin();
-        return connectPlugin.getModuleDescriptor(addonAndModuleKey(pluginKey,MODULE_KEY));
+        return connectPlugin.getModuleDescriptor(addonAndModuleKey(pluginKey, MODULE_KEY));
     }
 
-    protected ConnectAddonBean createAddonBean()
-    {
+    protected ConnectAddonBean createAddonBean() {
         return newConnectAddonBean()
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(pluginKey))
                 .withKey(pluginKey)
@@ -128,19 +116,16 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
 
     //common tests
     @Test
-    public void createsElementWithCorrectKey()
-    {
-        assertEquals(addonAndModuleKey(pluginKey,MODULE_KEY), descriptor.getKey());
+    public void createsElementWithCorrectKey() {
+        assertEquals(addonAndModuleKey(pluginKey, MODULE_KEY), descriptor.getKey());
     }
 
     @Test
-    public void createsElementWithCorrectName()
-    {
+    public void createsElementWithCorrectName() {
         assertEquals(MODULE_NAME, descriptor.getName());
     }
 
-    protected Plugin getConnectPlugin()
-    {
+    protected Plugin getConnectPlugin() {
         return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
     }
 }

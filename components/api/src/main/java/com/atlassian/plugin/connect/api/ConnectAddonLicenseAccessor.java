@@ -9,8 +9,7 @@ import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
  * @since 1.1.37
  */
 @PublicApi
-public interface ConnectAddonLicenseAccessor
-{
+public interface ConnectAddonLicenseAccessor {
 
     /**
      * Returns the license status of Connect add-on.

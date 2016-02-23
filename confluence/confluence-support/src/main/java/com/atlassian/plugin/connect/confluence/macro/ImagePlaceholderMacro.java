@@ -13,15 +13,13 @@ import com.google.common.base.Preconditions;
 
 import java.util.Map;
 
-public class ImagePlaceholderMacro implements Macro, EditorImagePlaceholder
-{
+public class ImagePlaceholderMacro implements Macro, EditorImagePlaceholder {
     private final Macro delegate;
     private final Uri imageUri;
     private final Dimensions dimensions;
     private final boolean applyChrome;
 
-    public ImagePlaceholderMacro(Macro delegate, Uri imageUri, Dimensions dimensions, boolean applyChrome)
-    {
+    public ImagePlaceholderMacro(Macro delegate, Uri imageUri, Dimensions dimensions, boolean applyChrome) {
         this.delegate = Preconditions.checkNotNull(delegate);
         this.imageUri = imageUri;
         this.dimensions = dimensions;
@@ -29,28 +27,24 @@ public class ImagePlaceholderMacro implements Macro, EditorImagePlaceholder
     }
 
     @Override
-    public ImagePlaceholder getImagePlaceholder(Map<String, String> parameters, ConversionContext context)
-    {
+    public ImagePlaceholder getImagePlaceholder(Map<String, String> parameters, ConversionContext context) {
         UriBuilder uriBuilder = new UriBuilder(imageUri);
         uriBuilder.addQueryParameters(parameters);
         return new DefaultImagePlaceholder(uriBuilder.toString(), dimensions, applyChrome);
     }
 
     @Override
-    public String execute(Map<String, String> parameters, String body, ConversionContext context) throws MacroExecutionException
-    {
+    public String execute(Map<String, String> parameters, String body, ConversionContext context) throws MacroExecutionException {
         return delegate.execute(parameters, body, context);
     }
 
     @Override
-    public BodyType getBodyType()
-    {
+    public BodyType getBodyType() {
         return BodyType.NONE;
     }
 
     @Override
-    public OutputType getOutputType()
-    {
+    public OutputType getOutputType() {
         return delegate.getOutputType();
     }
 }

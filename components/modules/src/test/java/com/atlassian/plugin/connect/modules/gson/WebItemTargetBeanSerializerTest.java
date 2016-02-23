@@ -12,21 +12,19 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class WebItemTargetBeanSerializerTest
-{
+public class WebItemTargetBeanSerializerTest {
 
     private Gson gson = ConnectModulesGsonFactory.getGson();
 
 
     @Test
-    public void dialogTargetRoundtripSerialisationMatches()
-    {
+    public void dialogTargetRoundtripSerialisationMatches() {
         final WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.dialog)
                 .withOptions(DialogOptions.newDialogOptions()
-                                .withHeight("100px")
-                                .withWidth("200%")
-                                .build()
+                        .withHeight("100px")
+                        .withWidth("200%")
+                        .build()
                 )
                 .build();
 
@@ -37,21 +35,20 @@ public class WebItemTargetBeanSerializerTest
     }
 
     @Test
-    public void inlineDialogTargetRoundtripSerialisationMatches()
-    {
+    public void inlineDialogTargetRoundtripSerialisationMatches() {
         final WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.inlineDialog)
                 .withOptions(InlineDialogOptions.newInlineDialogOptions()
-                                .withWidth("200%")
-                                .withCloseOthers(false)
-                                .withIsRelativeToMouse(true)
-                                .withOffsetX("100%")
-                                .withOffsetY("12px")
-                                .withOnHover(true)
-                                .withOnTop(false)
-                                .withPersistent(true)
-                                .withShowDelay(99)
-                                .build()
+                        .withWidth("200%")
+                        .withCloseOthers(false)
+                        .withIsRelativeToMouse(true)
+                        .withOffsetX("100%")
+                        .withOffsetY("12px")
+                        .withOnHover(true)
+                        .withOnTop(false)
+                        .withPersistent(true)
+                        .withShowDelay(99)
+                        .build()
                 )
                 .build();
 
@@ -62,14 +59,12 @@ public class WebItemTargetBeanSerializerTest
     }
 
     @Test(expected = JsonSyntaxException.class)
-    public void rejectsInvalidJson()
-    {
+    public void rejectsInvalidJson() {
         gson.fromJson("bad json", WebItemTargetBean.class);
     }
 
     @Test
-    public void acceptsBooleansAsStrings()
-    {
+    public void acceptsBooleansAsStrings() {
         final WebItemTargetBean webItemTargetBean = gson.fromJson("{\"type\":\"inlinedialog\",\"options\":{\"onHover\":\"true\"}}",
                 WebItemTargetBean.class);
 

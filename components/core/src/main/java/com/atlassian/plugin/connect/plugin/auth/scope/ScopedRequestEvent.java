@@ -1,62 +1,53 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.JsonRpcApiScopeHelper;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RpcEncodedSoapApiScopeHelper;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.XmlRpcApiScopeHelper;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class ScopedRequestEvent
-{
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Optional;
+
+public abstract class ScopedRequestEvent {
     private static String REST_URI_PATH_PREFIX = "rest/";
 
     private static final List<String> XMLRPC_PATHS = ImmutableList.of("/rpc/xmlrpc");
 
     private static final List<String> JSON_RPC_PATHS = ImmutableList.of("/rpc/json-rpc/confluenceservice-v1",
-                                                                        "/rpc/json-rpc/confluenceservice-v2");
+            "/rpc/json-rpc/confluenceservice-v2");
 
     private static final List<String> SOAP_PATHS = ImmutableList.of("/soap/axis/confluenceservice-v2",
-                                                                    "/soap/axis/confluenceservice-v1");
+            "/soap/axis/confluenceservice-v1");
 
     private final String httpMethod;
     private final String httpRequestUri;
     private final String addonKey;
 
-    public ScopedRequestEvent(HttpServletRequest rq, String addonKey)
-    {
+    public ScopedRequestEvent(HttpServletRequest rq, String addonKey) {
         super();
         this.httpMethod = rq.getMethod();
         this.httpRequestUri = toAnalyticsSafePath(rq);
         this.addonKey = addonKey;
     }
 
-    private static boolean isXmlRpcUri(String uri)
-    {
+    private static boolean isXmlRpcUri(String uri) {
         return Iterables.any(XMLRPC_PATHS, uri::endsWith);
     }
 
-    private static boolean isJsonRpcUri(String uri)
-    {
+    private static boolean isJsonRpcUri(String uri) {
         return Iterables.any(JSON_RPC_PATHS, uri::endsWith);
     }
 
-    private static boolean isSoapUri(String uri)
-    {
+    private static boolean isSoapUri(String uri) {
         return Iterables.any(SOAP_PATHS, uri::endsWith);
     }
 
-    private static boolean isJsonRpcLightUri(HttpServletRequest rq)
-    {
+    private static boolean isJsonRpcLightUri(HttpServletRequest rq) {
         String pathInfo = ServletUtils.extractPathInfo(rq);
         return Iterables.any(JSON_RPC_PATHS, pathInfo::startsWith);
     }
@@ -68,38 +59,27 @@ public abstract class ScopedRequestEvent
      * @return a path that is safe to use for analytics
      */
 
-    private static String toAnalyticsSafePath(HttpServletRequest rq)
-    {
+    private static String toAnalyticsSafePath(HttpServletRequest rq) {
 
         String path = StringUtils.removeEnd(ServletUtils.extractPathInfo(rq), "/");
 
-        if (isXmlRpcUri(path))
-        {
+        if (isXmlRpcUri(path)) {
             String method = XmlRpcApiScopeHelper.extractMethod(rq);
             return path + "/" + method;
-        }
-        else if (isJsonRpcUri(path))
-        {
+        } else if (isJsonRpcUri(path)) {
             String method = JsonRpcApiScopeHelper.extractMethod(rq);
             return path + "/" + method;
-        }
-        else if (isSoapUri(path))
-        {
+        } else if (isSoapUri(path)) {
             Optional<Pair<String, String>> maybeMethod = RpcEncodedSoapApiScopeHelper.getMethod(rq);
-            if (!maybeMethod.isPresent())
-            {
+            if (!maybeMethod.isPresent()) {
                 return path;
             }
             // We're ignoring the namespace
             String method = maybeMethod.get().right();
             return path + "/" + method;
-        }
-        else if(isJsonRpcLightUri(rq))
-        {
+        } else if (isJsonRpcLightUri(rq)) {
             return path;
-        }
-        else
-        {
+        } else {
             return trimRestPath(path);
         }
     }
@@ -114,22 +94,18 @@ public abstract class ScopedRequestEvent
      * @param uri
      * @return trimmed URI
      */
-    private static String trimRestPath(String uri)
-    {
+    private static String trimRestPath(String uri) {
         String[] pathElems = StringUtils.substringAfter(uri, REST_URI_PATH_PREFIX).split("/");
         StringBuilder uriBuilder = new StringBuilder();
         int count = 0;
-        for (String elem : pathElems)
-        {
-            if (!isVersionNumber(elem))
-            {
+        for (String elem : pathElems) {
+            if (!isVersionNumber(elem)) {
                 ++count;
             }
             uriBuilder.append(elem.split("\\?")[0]);
             uriBuilder.append("/");
 
-            if (count > 1)
-            {
+            if (count > 1) {
                 break;
             }
         }
@@ -137,38 +113,28 @@ public abstract class ScopedRequestEvent
         return StringUtils.removeEnd(uriBuilder.toString(), "/");
     }
 
-    private static boolean isVersionNumber(String pathElem)
-    {
-        if (pathElem.equals("latest"))
-        {
+    private static boolean isVersionNumber(String pathElem) {
+        if (pathElem.equals("latest")) {
             return true;
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 Double.valueOf(pathElem);
                 return true;
-            }
-            catch (NumberFormatException nfe)
-            {
+            } catch (NumberFormatException nfe) {
                 return false;
             }
         }
     }
 
-    public String getHttpMethod()
-    {
+    public String getHttpMethod() {
         return httpMethod;
     }
 
-    public String getHttpRequestUri()
-    {
+    public String getHttpRequestUri() {
         return httpRequestUri;
     }
 
-    public String getAddonKey()
-    {
+    public String getAddonKey() {
         return addonKey;
     }
 }

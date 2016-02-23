@@ -10,15 +10,13 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraPermissionScopeTransitionNewTest extends AbstractJiraPermissionScopeTest
-{
+public class JiraPermissionScopeTransitionNewTest extends AbstractJiraPermissionScopeTest {
 
     public JiraPermissionScopeTransitionNewTest(ConnectUserService connectUserService,
                                                 PermissionManager permissionManager,
@@ -27,8 +25,7 @@ public class JiraPermissionScopeTransitionNewTest extends AbstractJiraPermission
                                                 UserManager userManager,
                                                 TestPluginInstaller testPluginInstaller,
                                                 TestAuthenticator testAuthenticator,
-                                                JiraTestUtil jiraTestUtil)
-    {
+                                                JiraTestUtil jiraTestUtil) {
         super(connectUserService,
                 permissionManager,
                 projectService,
@@ -40,26 +37,22 @@ public class JiraPermissionScopeTransitionNewTest extends AbstractJiraPermission
     }
 
     @Test
-    public void testAdminToProjectAdminTransitionForNewProjects() throws Exception
-    {
+    public void testAdminToProjectAdminTransitionForNewProjects() throws Exception {
         checkHasPermissionForNewProjectAfterTransition(getAdminAddon(), getProjectAdminAddon(), Permission.PROJECT_ADMIN);
     }
 
     @Test
-    public void testProjectAdminToDeleteTransitionForNewProjects() throws Exception
-    {
+    public void testProjectAdminToDeleteTransitionForNewProjects() throws Exception {
         checkHasPermissionForNewProjectAfterTransition(getProjectAdminAddon(), getDeleteAddon(), Permission.DELETE_ISSUE);
     }
 
     @Test
-    public void testDeleteToWriteTransitionForNewProjects() throws Exception
-    {
+    public void testDeleteToWriteTransitionForNewProjects() throws Exception {
         checkHasPermissionForNewProjectAfterTransition(getDeleteAddon(), getWriteAddon(), Permission.EDIT_ISSUE);
     }
 
     @Test
-    public void testWriteToReadTransitionForNewProjects() throws Exception
-    {
+    public void testWriteToReadTransitionForNewProjects() throws Exception {
         checkHasPermissionForNewProjectAfterTransition(getWriteAddon(), getReadAddon(), Permission.EDIT_ISSUE);
     }
 }

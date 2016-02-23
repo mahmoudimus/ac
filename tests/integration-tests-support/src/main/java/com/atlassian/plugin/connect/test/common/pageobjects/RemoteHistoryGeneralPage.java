@@ -1,20 +1,18 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 /**
  * Page with buttons for executing the javascript history plugin
  */
-public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
-{
+public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
@@ -25,8 +23,7 @@ public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 
@@ -42,8 +39,7 @@ public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
         driver.navigate().back();
     }
 
-    private boolean waitForHistoryChange(final String oldText)
-    {
+    private boolean waitForHistoryChange(final String oldText) {
         driver.waitUntil(webDriver -> !driver.findElement(By.id("log")).getText().equals(oldText));
         return true;
     }
@@ -75,21 +71,22 @@ public class RemoteHistoryGeneralPage extends ConnectAddonPage implements Page
         });
     }
 
-    public String logMessage(){
+    public String logMessage() {
         return getValue("log");
     }
 
-    public void clearLog(){
+    public void clearLog() {
         runInFrame(() -> {
             driver.findElement(By.id("clearlog")).click();
             return null;
         });
     }
 
-    public String logNewUrl(){
+    public String logNewUrl() {
         return runInFrame(() -> driver.findElement(By.className("newurl")).getText());
     }
-    public String logOldUrl(){
+
+    public String logOldUrl() {
         return runInFrame(() -> driver.findElement(By.className("oldurl")).getText());
     }
 }

@@ -9,15 +9,13 @@ import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleMeta;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @JiraComponent
-public class EntityPropertyModuleProvider extends AbstractJiraConnectModuleProvider<EntityPropertyModuleBean>
-{
+public class EntityPropertyModuleProvider extends AbstractJiraConnectModuleProvider<EntityPropertyModuleBean> {
 
     private static final EntityPropertyModuleMeta META = new EntityPropertyModuleMeta();
 
@@ -25,22 +23,19 @@ public class EntityPropertyModuleProvider extends AbstractJiraConnectModuleProvi
 
     @Autowired
     public EntityPropertyModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            ConnectEntityPropertyModuleDescriptorFactory descriptorFactory)
-    {
+                                        ConnectJsonSchemaValidator schemaValidator,
+                                        ConnectEntityPropertyModuleDescriptorFactory descriptorFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.descriptorFactory = descriptorFactory;
     }
 
     @Override
-    public ConnectModuleMeta<EntityPropertyModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<EntityPropertyModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<EntityPropertyModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<EntityPropertyModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()));
     }
 }

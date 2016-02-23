@@ -14,30 +14,26 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKey
 /**
  * ModuleDescriptor for Connect project of a ProjectTabPanel
  */
-public class ConnectProjectTabPanelModuleDescriptor extends ProjectTabPanelModuleDescriptorImpl
-{
+public class ConnectProjectTabPanelModuleDescriptor extends ProjectTabPanelModuleDescriptorImpl {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
 
     public ConnectProjectTabPanelModuleDescriptor(JiraAuthenticationContext jiraAuthenticationContext,
-            ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ModuleContextFilter moduleContextFilter)
-    {
+                                                  ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                                  ModuleContextFilter moduleContextFilter) {
         super(jiraAuthenticationContext, moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.moduleContextFilter = moduleContextFilter;
     }
 
     @Override
-    public ProjectTabPanel getModule()
-    {
+    public ProjectTabPanel getModule() {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameProjectTabPanel(renderStrategy, moduleContextFilter);
     }
 
     @Override
-    public String getModuleClassName()
-    {
+    public String getModuleClassName() {
         return super.getModuleClassName();
     }
 }

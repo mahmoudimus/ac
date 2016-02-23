@@ -15,35 +15,26 @@ import java.util.Optional;
  * Extracts space parameters that can be included in webpanel's iframe url.
  */
 @ConfluenceComponent
-public class SpaceContextMapParameterExtractor implements ContextMapParameterExtractor<Space>
-{
+public class SpaceContextMapParameterExtractor implements ContextMapParameterExtractor<Space> {
     private static final String SPACE_CONTEXT_PARAMETER = "space";
     private static final String ACTION_PARAMETER = "action";
     private SpaceSerializer spaceSerializer;
 
     @Autowired
-    public SpaceContextMapParameterExtractor(SpaceSerializer spaceSerializer)
-    {
+    public SpaceContextMapParameterExtractor(SpaceSerializer spaceSerializer) {
         this.spaceSerializer = spaceSerializer;
     }
 
     @Override
-    public Optional<Space> extract(final Map<String, Object> context)
-    {
-        if (context.containsKey("webInterfaceContext"))
-        {
+    public Optional<Space> extract(final Map<String, Object> context) {
+        if (context.containsKey("webInterfaceContext")) {
             WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get("webInterfaceContext");
-            if (null != webInterfaceContext && null != webInterfaceContext.getSpace())
-            {
+            if (null != webInterfaceContext && null != webInterfaceContext.getSpace()) {
                 return Optional.of(webInterfaceContext.getSpace());
             }
-        }
-        else if (context.containsKey(SPACE_CONTEXT_PARAMETER) && context.get(SPACE_CONTEXT_PARAMETER) instanceof Space)
-        {
+        } else if (context.containsKey(SPACE_CONTEXT_PARAMETER) && context.get(SPACE_CONTEXT_PARAMETER) instanceof Space) {
             return Optional.of((Space) context.get(SPACE_CONTEXT_PARAMETER));
-        }
-        else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction)
-        {
+        } else if (context.containsKey(ACTION_PARAMETER) && context.get(ACTION_PARAMETER) instanceof AbstractPageAwareAction) {
             AbstractPageAwareAction action = (AbstractPageAwareAction) context.get(ACTION_PARAMETER);
             return Optional.ofNullable(action.getSpace());
         }
@@ -51,8 +42,7 @@ public class SpaceContextMapParameterExtractor implements ContextMapParameterExt
     }
 
     @Override
-    public ParameterSerializer<Space> serializer()
-    {
+    public ParameterSerializer<Space> serializer() {
         return spaceSerializer;
     }
 }

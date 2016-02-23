@@ -28,8 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ConfluenceComponent
 public class BlueprintContentTemplateModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, ContentTemplateModuleDescriptor>
-{
+        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, ContentTemplateModuleDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(BlueprintContentTemplateModuleDescriptorFactory.class);
 
@@ -40,8 +39,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
     @Autowired
     public BlueprintContentTemplateModuleDescriptorFactory(ModuleFactory moduleFactory,
                                                            I18NBeanFactory i18nBeanFactory,
-                                                           RequestFactory<?> requestFactory)
-    {
+                                                           RequestFactory<?> requestFactory) {
         this.moduleFactory = moduleFactory;
         this.i18nBeanFactory = i18nBeanFactory;
         this.requestFactory = requestFactory;
@@ -49,8 +47,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
 
 
     @Override
-    public ContentTemplateModuleDescriptor createModuleDescriptor(BlueprintModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public ContentTemplateModuleDescriptor createModuleDescriptor(BlueprintModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         Element contentTemplateElement = new DOMElement("content-template");
         String contentTemplateKey = BlueprintUtils.getContentTemplateKey(addon, bean);
 
@@ -65,35 +62,30 @@ public class BlueprintContentTemplateModuleDescriptorFactory
 
         BlueprintTemplateContextBean blueprintContext = bean.getBlueprintTemplate().getBlueprintContext();
 
-        if (blueprintContext != null)
-        {
+        if (blueprintContext != null) {
             String contextUrl = blueprintContext.getUrl();
-            if (StringUtils.isBlank(contextUrl))
-            {
-                throw new RuntimeException("The connect addon module '" + bean.getKey(addon)  + "' has a blueprint template context url field, but it is blank.");
-            }
-            else
-            {
+            if (StringUtils.isBlank(contextUrl)) {
+                throw new RuntimeException("The connect addon module '" + bean.getKey(addon) + "' has a blueprint template context url field, but it is blank.");
+            } else {
                 Element contextProvider = contentTemplateElement.addElement("context-provider");
                 contextProvider.addAttribute("class", BlueprintContextProvider.class.getName());
                 contextProvider.addElement("param")
-                               .addAttribute("name", BlueprintContextProvider.CONTEXT_URL_KEY)
-                               .addAttribute("value", contextUrl);
+                        .addAttribute("name", BlueprintContextProvider.CONTEXT_URL_KEY)
+                        .addAttribute("value", contextUrl);
                 contextProvider.addElement("param")
-                               .addAttribute("name", BlueprintContextProvider.REMOTE_ADDON_KEY)
-                               .addAttribute("value", addon.getKey());
+                        .addAttribute("name", BlueprintContextProvider.REMOTE_ADDON_KEY)
+                        .addAttribute("value", addon.getKey());
                 contextProvider.addElement("param")
-                               .addAttribute("name", BlueprintContextProvider.REMOTE_VENDOR_NAME)
-                               .addAttribute("value", addon.getVendor().getName());
+                        .addAttribute("name", BlueprintContextProvider.REMOTE_VENDOR_NAME)
+                        .addAttribute("value", addon.getVendor().getName());
                 contextProvider.addElement("param")
-                               .addAttribute("name", BlueprintContextProvider.CONTENT_TEMPLATE_KEY)
-                               //we want the raw key since this is going to be sent to the connect plugin, and they can't decode our full key format
-                               .addAttribute("value", bean.getRawKey());
+                        .addAttribute("name", BlueprintContextProvider.CONTENT_TEMPLATE_KEY)
+                        //we want the raw key since this is going to be sent to the connect plugin, and they can't decode our full key format
+                        .addAttribute("value", bean.getRawKey());
             }
         }
 
-        if (log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(contentTemplateElement));
         }
 
@@ -105,20 +97,14 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         return descriptor;
     }
 
-    private static String createTemplateURL(String baseUrl, String blueprintResource)
-    {
+    private static String createTemplateURL(String baseUrl, String blueprintResource) {
         StringBuilder buffer = new StringBuilder();
         buffer.append(baseUrl);
-        if (!baseUrl.endsWith("/") && !blueprintResource.startsWith("/"))
-        {
+        if (!baseUrl.endsWith("/") && !blueprintResource.startsWith("/")) {
             buffer.append("/").append(blueprintResource);
-        }
-        else if (baseUrl.endsWith("/") && blueprintResource.startsWith("/"))
-        {
+        } else if (baseUrl.endsWith("/") && blueprintResource.startsWith("/")) {
             buffer.append(blueprintResource.substring(1));
-        }
-        else
-        {
+        } else {
             buffer.append(blueprintResource);
         }
         return buffer.toString();

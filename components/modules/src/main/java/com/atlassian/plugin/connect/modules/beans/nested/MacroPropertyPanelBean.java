@@ -3,14 +3,10 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
-import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBeanBuilder;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  *
@@ -51,8 +47,7 @@ import static com.google.common.collect.Lists.newArrayList;
  *
  * @schemaTitle Macro Property Panel
  */
-public class MacroPropertyPanelBean extends BaseModuleBean
-{
+public class MacroPropertyPanelBean extends BaseModuleBean {
     /**
      * The URL to the event handling page in the add-on.
      */
@@ -65,47 +60,38 @@ public class MacroPropertyPanelBean extends BaseModuleBean
      */
     private List<ControlBean> controls;
 
-    public MacroPropertyPanelBean()
-    {
+    public MacroPropertyPanelBean() {
         init();
     }
 
-    public MacroPropertyPanelBean(MacroPropertyPanelBeanBuilder builder)
-    {
+    public MacroPropertyPanelBean(MacroPropertyPanelBeanBuilder builder) {
         super(builder);
         init();
     }
 
-    private void init()
-    {
-        if (null == url)
-        {
+    private void init() {
+        if (null == url) {
             url = "";
         }
 
-        if (null == controls)
-        {
+        if (null == controls) {
             controls = ImmutableList.of();
         }
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public List<ControlBean> getControls()
-    {
+    public List<ControlBean> getControls() {
         return controls;
     }
 
-    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean()
-    {
+    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean() {
         return new MacroPropertyPanelBeanBuilder();
     }
 
-    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean(MacroPropertyPanelBean defaultBean)
-    {
+    public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean(MacroPropertyPanelBean defaultBean) {
         return new MacroPropertyPanelBeanBuilder(defaultBean);
     }
 }

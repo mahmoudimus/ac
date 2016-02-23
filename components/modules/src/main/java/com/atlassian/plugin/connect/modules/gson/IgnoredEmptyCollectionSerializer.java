@@ -8,20 +8,16 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-public class IgnoredEmptyCollectionSerializer implements JsonSerializer<Collection<?>>
-{
+public class IgnoredEmptyCollectionSerializer implements JsonSerializer<Collection<?>> {
 
     @Override
-    public JsonElement serialize(Collection<?> src, Type typeOfSrc, JsonSerializationContext context)
-    {
-        if (null == src || src.isEmpty())
-        {
+    public JsonElement serialize(Collection<?> src, Type typeOfSrc, JsonSerializationContext context) {
+        if (null == src || src.isEmpty()) {
             return null;
         }
 
         JsonArray array = new JsonArray();
-        for (Object entry : src)
-        {
+        for (Object entry : src) {
             array.add(context.serialize(entry));
         }
 

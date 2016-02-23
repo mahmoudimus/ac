@@ -1,39 +1,30 @@
 package com.atlassian.plugin.connect.api.web.iframe;
 
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Optional;
 
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+public class IFrameRenderStrategyUtil {
 
-public class IFrameRenderStrategyUtil
-{
-
-    public static String renderToString(ModuleContextParameters moduleContextParameters, IFrameRenderStrategy iFrameRenderStrategy)
-    {
+    public static String renderToString(ModuleContextParameters moduleContextParameters, IFrameRenderStrategy iFrameRenderStrategy) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try
-        {
+        try {
             iFrameRenderStrategy.render(moduleContextParameters, new OutputStreamWriter(out), Optional.empty());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // no I/O, so no IOException.. right?
             throw new IllegalStateException(e);
         }
         return out.toString();
     }
 
-    public static String renderAccessDeniedToString(IFrameRenderStrategy iFrameRenderStrategy)
-    {
+    public static String renderAccessDeniedToString(IFrameRenderStrategy iFrameRenderStrategy) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try
-        {
+        try {
             iFrameRenderStrategy.renderAccessDenied(new OutputStreamWriter(out));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // no I/O, so no IOException.. right?
             throw new IllegalStateException(e);
         }

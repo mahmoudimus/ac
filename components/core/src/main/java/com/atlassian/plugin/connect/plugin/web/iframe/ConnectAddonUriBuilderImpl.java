@@ -25,8 +25,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  *
  */
 public class ConnectAddonUriBuilderImpl
-        implements ConnectAddonUriBuilder, ConnectAddonUriBuilder.AddonUriBuilder, ConnectAddonUriBuilder.NamespacedUriBuilder, ConnectAddonUriBuilder.TemplatedBuilder
-{
+        implements ConnectAddonUriBuilder, ConnectAddonUriBuilder.AddonUriBuilder, ConnectAddonUriBuilder.NamespacedUriBuilder, ConnectAddonUriBuilder.TemplatedBuilder {
 
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
@@ -42,14 +41,13 @@ public class ConnectAddonUriBuilderImpl
     private String templateUri;
 
     public ConnectAddonUriBuilderImpl(UrlVariableSubstitutor urlVariableSubstitutor,
-            RemotablePluginAccessorFactory pluginAccessorFactory,
-            UserManager userManager,
-            HostApplicationInfo hostApplicationInfo,
-            LicenseRetriever licenseRetriever,
-            LocaleHelper localeHelper,
-            TimeZoneManager timeZoneManager,
-            PluginRetrievalService pluginRetrievalService)
-    {
+                                      RemotablePluginAccessorFactory pluginAccessorFactory,
+                                      UserManager userManager,
+                                      HostApplicationInfo hostApplicationInfo,
+                                      LicenseRetriever licenseRetriever,
+                                      LocaleHelper localeHelper,
+                                      TimeZoneManager timeZoneManager,
+                                      PluginRetrievalService pluginRetrievalService) {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
@@ -61,36 +59,31 @@ public class ConnectAddonUriBuilderImpl
     }
 
     @Override
-    public AddonUriBuilder addon(final String key)
-    {
+    public AddonUriBuilder addon(final String key) {
         addonKey = Preconditions.checkNotNull(key);
         return this;
     }
 
     @Override
-    public NamespacedUriBuilder namespace(final String namespace)
-    {
+    public NamespacedUriBuilder namespace(final String namespace) {
         this.namespace = Preconditions.checkNotNull(namespace);
         return this;
     }
 
     @Override
-    public TemplatedBuilder urlTemplate(final String uri)
-    {
+    public TemplatedBuilder urlTemplate(final String uri) {
         templateUri = Preconditions.checkNotNull(uri);
         return this;
     }
 
     @Override
-    public InitializedBuilder context(final ModuleContextParameters context)
-    {
+    public InitializedBuilder context(final ModuleContextParameters context) {
         String substitutedUrl = urlVariableSubstitutor.replace(templateUri, WebFragmentContext.from(context));
         UriBuilder uriBuilder = new UriBuilder(Uri.parse(substitutedUrl));
         return new InitializedBuilderImpl(addonKey, namespace, uriBuilder);
     }
 
-    private class InitializedBuilderImpl implements InitializedBuilder
-    {
+    private class InitializedBuilderImpl implements InitializedBuilder {
         private final String addonKey;
         private final String namespace;
         private final UriBuilder uriBuilder;
@@ -99,25 +92,21 @@ public class ConnectAddonUriBuilderImpl
         private boolean includeStandardParams = true;
         private Optional<String> uiParameters = Optional.empty();
 
-        private InitializedBuilderImpl(final String addonKey, final String namespace, final UriBuilder uriBuilder)
-        {
+        private InitializedBuilderImpl(final String addonKey, final String namespace, final UriBuilder uriBuilder) {
             this.addonKey = addonKey;
             this.namespace = namespace;
             this.uriBuilder = uriBuilder;
         }
 
         @Override
-        public InitializedBuilder param(final String key, final String value)
-        {
+        public InitializedBuilder param(final String key, final String value) {
             uriBuilder.addQueryParameter(key, value);
             return this;
         }
 
         @Override
-        public InitializedBuilder dialog(boolean isDialog)
-        {
-            if (isDialog)
-            {
+        public InitializedBuilder dialog(boolean isDialog) {
+            if (isDialog) {
                 uriBuilder.addQueryParameter("dialog", "1");
                 uriBuilder.addQueryParameter("simpleDialog", "1"); // TODO(chrisw): Do we still need this on the client?
             }
@@ -125,45 +114,37 @@ public class ConnectAddonUriBuilderImpl
         }
 
         @Override
-        public InitializedBuilder sign(final boolean sign)
-        {
+        public InitializedBuilder sign(final boolean sign) {
             this.sign = sign;
             return this;
         }
 
         @Override
-        public InitializedBuilder includeStandardParams(final boolean includeStandardParams)
-        {
+        public InitializedBuilder includeStandardParams(final boolean includeStandardParams) {
             this.includeStandardParams = includeStandardParams;
             return this;
         }
 
         @Override
-        public InitializedBuilder uiParams(Optional<String> uiParameters)
-        {
+        public InitializedBuilder uiParams(Optional<String> uiParameters) {
             this.uiParameters = uiParameters;
             return this;
         }
 
         @Override
-        public String build()
-        {
-            if (includeStandardParams)
-            {
+        public String build() {
+            if (includeStandardParams) {
                 addStandardIFrameUrlParameters();
             }
 
-            if(uiParameters.isPresent()) {
+            if (uiParameters.isPresent()) {
                 uriBuilder.addQueryParameter("ui-params", uiParameters.get());
             }
 
-            if (sign)
-            {
+            if (sign) {
                 URI uri = uriBuilder.toUri().toJavaUri();
                 return pluginAccessorFactory.get(addonKey).signGetUrl(uri, ImmutableMap.<String, String[]>of());
-            }
-            else
-            {
+            } else {
                 return uriBuilder.toUri().toString();
             }
         }
@@ -171,8 +152,7 @@ public class ConnectAddonUriBuilderImpl
         /**
          * Append query parameters common to all remote iframes.
          */
-        private void addStandardIFrameUrlParameters()
-        {
+        private void addStandardIFrameUrlParameters() {
             UserProfile profile = userManager.getRemoteUser();
 
             String username = nullToEmpty(profile == null ? "" : profile.getUsername());

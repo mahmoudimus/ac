@@ -18,23 +18,20 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ConnectUPMControlHandlerTest
-{
+public class ConnectUPMControlHandlerTest {
 
     private static final String ADDON_KEY = "some-addon-key";
 
     private final PluginControlHandler pluginControlHandler;
     private final ConnectAddonRegistry connectAddonRegistry;
 
-    public ConnectUPMControlHandlerTest(PluginControlHandler pluginControlHandler, ConnectAddonRegistry connectAddonRegistry)
-    {
+    public ConnectUPMControlHandlerTest(PluginControlHandler pluginControlHandler, ConnectAddonRegistry connectAddonRegistry) {
         this.pluginControlHandler = pluginControlHandler;
         this.connectAddonRegistry = connectAddonRegistry;
     }
 
     @Test
-    public void shouldReturnAndUninstallAddonWithInvalidDescriptor() throws JsonProcessingException
-    {
+    public void shouldReturnAndUninstallAddonWithInvalidDescriptor() throws JsonProcessingException {
         storeInstallationWithInvalidDescriptor();
         Plugin plugin = pluginControlHandler.getPlugin(ADDON_KEY);
         assertThat(plugin.getKey(), equalTo(ADDON_KEY));
@@ -49,8 +46,7 @@ public class ConnectUPMControlHandlerTest
      *
      * @throws JsonProcessingException if descriptor serialization fails
      */
-    private void storeInstallationWithInvalidDescriptor() throws JsonProcessingException
-    {
+    private void storeInstallationWithInvalidDescriptor() throws JsonProcessingException {
         AuthenticationType authenticationType = AuthenticationType.NONE;
         ImmutableMap<String, Object> descriptorMap = ImmutableMap.<String, Object>builder()
                 .put("key", ADDON_KEY)

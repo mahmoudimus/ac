@@ -1,7 +1,5 @@
 package it.jira.condition;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
@@ -13,27 +11,25 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
+import java.rmi.RemoteException;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
-{
+public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase {
 
     private static ConnectRunner remotePlugin;
     private EntityPropertyClient issueEntityPropertyClient;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product)
                 .setAuthenticationToNone()
                 .addJWT(ConnectAppServlets.installHandlerServlet())
@@ -55,30 +51,25 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         issueEntityPropertyClient = new EntityPropertyClient(product.environmentData(), "issue");
         login(testUserFactory.admin());
     }
 
     @After
-    public void tearDown()
-    {
+    public void tearDown() {
         login(testUserFactory.admin());
     }
 
     @Test
-    public void webPanelShouldBeVisibleIfIssuePropertyIsSetToTrue() throws RemoteException, JSONException
-    {
+    public void webPanelShouldBeVisibleIfIssuePropertyIsSetToTrue() throws RemoteException, JSONException {
 
         IssueCreateResponse issue = createIssue();
 
@@ -88,8 +79,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     }
 
     @Test
-    public void webPanelShouldNotBeVisibleIfIssuePropertyIsSetToFalse() throws JSONException, RemoteException
-    {
+    public void webPanelShouldNotBeVisibleIfIssuePropertyIsSetToFalse() throws JSONException, RemoteException {
         IssueCreateResponse issue = createIssue();
 
         issueEntityPropertyClient.put(issue.key(), "prop", json("false"));
@@ -98,30 +88,24 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     }
 
     @Test
-    public void webPanelShouldNotBeVisibleIfIssuePropertyIsNotSet() throws JSONException, RemoteException
-    {
+    public void webPanelShouldNotBeVisibleIfIssuePropertyIsNotSet() throws JSONException, RemoteException {
         IssueCreateResponse issue = createIssue();
         assertThat(webPanelIsVisible("issue-property-web-panel", issue), equalTo(false));
     }
 
-    private IssueCreateResponse createIssue() throws RemoteException
-    {
+    private IssueCreateResponse createIssue() throws RemoteException {
         return product.backdoor().issues().createIssue(project.getKey(), "Test issue");
     }
 
-    private boolean webPanelIsVisible(String panelKey, final IssueCreateResponse issue)
-    {
+    private boolean webPanelIsVisible(String panelKey, final IssueCreateResponse issue) {
         product.visit(ViewIssuePageWithAddonFragments.class, issue.key());
         return connectPageOperations.existsWebPanel(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), panelKey));
     }
 
-    private JSONObject json(final String representation)
-    {
-        return new JSONObject()
-        {
+    private JSONObject json(final String representation) {
+        return new JSONObject() {
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return representation;
             }
         };

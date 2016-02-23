@@ -14,8 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
  * @schemaTitle Control
  * @since 1.0
  */
-public class ControlBean extends RequiredKeyBean
-{
+public class ControlBean extends RequiredKeyBean {
     /**
      * The control type, i.e. button, text field
      */
@@ -23,37 +22,30 @@ public class ControlBean extends RequiredKeyBean
     @StringSchemaAttributes(pattern = "^[a-zA-Z0-9-]+$")
     private String type;
 
-    public ControlBean()
-    {
+    public ControlBean() {
         init();
     }
 
-    public ControlBean(ControlBeanBuilder builder)
-    {
+    public ControlBean(ControlBeanBuilder builder) {
         super(builder);
         init();
     }
 
-    private void init()
-    {
-        if (null == type)
-        {
+    private void init() {
+        if (null == type) {
             type = "";
         }
     }
 
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
-    public static ControlBeanBuilder newControlBean()
-    {
+    public static ControlBeanBuilder newControlBean() {
         return new ControlBeanBuilder();
     }
 
-    public static ControlBeanBuilder newControlBean(ControlBean bean)
-    {
+    public static ControlBeanBuilder newControlBean(ControlBean bean) {
         return new ControlBeanBuilder(bean);
     }
 

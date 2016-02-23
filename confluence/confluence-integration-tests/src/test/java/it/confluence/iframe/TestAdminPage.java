@@ -1,7 +1,5 @@
 package it.confluence.iframe;
 
-import java.net.URI;
-
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceAdminPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
@@ -13,14 +11,14 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import java.net.URI;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.pageobjects.elements.query.Queries.forSupplier;
@@ -33,8 +31,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of general page in Confluence
  */
-public class TestAdminPage extends ConfluenceWebDriverTestBase
-{
+public class TestAdminPage extends ConfluenceWebDriverTestBase {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String PAGE_NAME = "My Admin Page";
@@ -46,8 +43,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
@@ -64,17 +60,14 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws Exception
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws Exception {
         loginAndVisit(testUserFactory.admin(), ConfluenceAdminHomePage.class);
 
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, PLUGIN_KEY, PAGE_KEY);
@@ -86,12 +79,11 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
 
         final ConnectAddonEmbeddedTestPage addonContentsPage = adminPage.clickAddonLink();
         waitUntilTrue(forSupplier(new DefaultTimeouts(),
-            () -> "Hello world".equals(addonContentsPage.getValueById("hello-world-message"))));
+                () -> "Hello world".equals(addonContentsPage.getValueById("hello-world-message"))));
     }
 
     @Test
-    public void nonAdminCanNotSeePage()
-    {
+    public void nonAdminCanNotSeePage() {
         login(testUserFactory.basicUser());
         InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
@@ -99,8 +91,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
+    public void pageIsNotAccessibleWithFalseCondition() {
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         // web item should not be displayed

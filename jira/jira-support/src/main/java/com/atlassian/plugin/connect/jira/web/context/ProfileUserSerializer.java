@@ -11,11 +11,9 @@ import java.util.Map;
  * Serializes ProfileUser objects.
  */
 @JiraComponent
-public class ProfileUserSerializer implements ParameterSerializer<ApplicationUser>
-{
+public class ProfileUserSerializer implements ParameterSerializer<ApplicationUser> {
     @Override
-    public Map<String, Object> serialize(ApplicationUser applicationUser)
-    {
+    public Map<String, Object> serialize(ApplicationUser applicationUser) {
         return ImmutableMap.<String, Object>of("profileUser", ImmutableMap.of(
                 "name", applicationUser.getName(),
                 "key", applicationUser.getKey()

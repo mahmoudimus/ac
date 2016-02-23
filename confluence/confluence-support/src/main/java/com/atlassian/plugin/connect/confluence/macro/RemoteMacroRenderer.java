@@ -9,8 +9,7 @@ import java.util.Map;
 /**
  * Render a macro to html.
  */
-public interface RemoteMacroRenderer
-{
+public interface RemoteMacroRenderer {
     /**
      * Render a macro using the dynamic macro rendering logic.  The result will render an iframe for render
      * modes that support it ({@link com.atlassian.confluence.content.render.xhtml.ConversionContext#getOutputType},
@@ -42,5 +41,5 @@ public interface RemoteMacroRenderer
      */
     String executeStatic(String addonKey, String moduleKey, String uriTemplate,
                          Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
-                    throws MacroExecutionException;
+            throws MacroExecutionException;
 }

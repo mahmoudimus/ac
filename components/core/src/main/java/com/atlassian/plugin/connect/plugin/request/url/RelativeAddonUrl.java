@@ -9,16 +9,14 @@ import javax.annotation.Nonnull;
 /**
  * A holder for a URL targeting a local servlet that is registered on behalf of a remote addon.
  */
-public class RelativeAddonUrl
-{
+public class RelativeAddonUrl {
 
     private static String PLUGINS_SERVLET_PREFIX = "/plugins/servlet";
 
     private final String relativeUrl;
     private final String servletDescriptorUrl;
 
-    public RelativeAddonUrl(@Nonnull Uri relativeUri)
-    {
+    public RelativeAddonUrl(@Nonnull Uri relativeUri) {
         this.relativeUrl = PLUGINS_SERVLET_PREFIX + ensureLeadingSlash(relativeUri.toString());
         this.servletDescriptorUrl = ensureLeadingSlash(relativeUri.getPath());
     }
@@ -28,8 +26,7 @@ public class RelativeAddonUrl
      *
      * @param relativeUri the relative URI string
      */
-    public RelativeAddonUrl(@Nonnull String relativeUri)
-    {
+    public RelativeAddonUrl(@Nonnull String relativeUri) {
         String path = Iterables.getFirst(Splitter.on('?').split(relativeUri), relativeUri);
         this.relativeUrl = PLUGINS_SERVLET_PREFIX + ensureLeadingSlash(relativeUri);
         this.servletDescriptorUrl = ensureLeadingSlash(path);
@@ -38,8 +35,7 @@ public class RelativeAddonUrl
     /**
      * @return a URL targeting a local servlet that is registered on behalf of a remote addon.
      */
-    public String getRelativeUri()
-    {
+    public String getRelativeUri() {
         return relativeUrl;
     }
 
@@ -48,36 +44,29 @@ public class RelativeAddonUrl
      *         targeting {@link #getRelativeUri()}. This differs slightly from the result of {@link #getRelativeUri()} as it is
      *         not prefixed by {@link #PLUGINS_SERVLET_PREFIX}, which is added automatically by the plugin system.
      */
-    public String getServletDescriptorUrl()
-    {
+    public String getServletDescriptorUrl() {
         return servletDescriptorUrl;
     }
 
-    private String ensureLeadingSlash(String s)
-    {
+    private String ensureLeadingSlash(String s) {
         return s.startsWith("/") ? s : "/" + s;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         RelativeAddonUrl that = (RelativeAddonUrl) o;
 
-        if (!relativeUrl.equals(that.relativeUrl))
-        {
+        if (!relativeUrl.equals(that.relativeUrl)) {
             return false;
         }
-        if (!servletDescriptorUrl.equals(that.servletDescriptorUrl))
-        {
+        if (!servletDescriptorUrl.equals(that.servletDescriptorUrl)) {
             return false;
         }
 
@@ -85,8 +74,7 @@ public class RelativeAddonUrl
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = relativeUrl.hashCode();
         result = 31 * result + servletDescriptorUrl.hashCode();
         return result;

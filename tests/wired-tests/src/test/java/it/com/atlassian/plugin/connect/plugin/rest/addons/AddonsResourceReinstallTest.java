@@ -29,9 +29,8 @@ import static it.com.atlassian.plugin.connect.plugin.lifecycle.AbstractAddonLife
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-@RunWith (AtlassianPluginsTestRunner.class)
-public class AddonsResourceReinstallTest
-{
+@RunWith(AtlassianPluginsTestRunner.class)
+public class AddonsResourceReinstallTest {
     private static final Logger LOG = LoggerFactory.getLogger(AddonsResourceReinstallTest.class);
 
     private final TestPluginInstaller testPluginInstaller;
@@ -46,8 +45,7 @@ public class AddonsResourceReinstallTest
 
     public AddonsResourceReinstallTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
                                        AddonTestFilterResults testFilterResults, ApplicationProperties applicationProperties,
-                                       DarkFeatureManager darkFeatureManager)
-    {
+                                       DarkFeatureManager darkFeatureManager) {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.testFilterResults = testFilterResults;
@@ -56,20 +54,17 @@ public class AddonsResourceReinstallTest
     }
 
     @BeforeClass
-    public void setUp() throws IOException
-    {
+    public void setUp() throws IOException {
         testAuthenticator.authenticateUser("admin");
     }
 
     @Test
-    public void reinstallJsonAddon() throws IOException
-    {
+    public void reinstallJsonAddon() throws IOException {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
         Plugin plugin = testPluginInstaller.installAddon(createAddonBean());
         String addonKey = plugin.getKey();
 
-        try
-        {
+        try {
             ServletRequestSnapshot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
@@ -97,27 +92,20 @@ public class AddonsResourceReinstallTest
             String reinstallPayload = reinstallRequest.getEntity();
             String reinstallSharedSecret = getSharedSecret(reinstallPayload);
             assertFalse("Shared secret of reinstalled request should not be the same as original shared secret", originalSharedSecret.equals(reinstallSharedSecret));
-        }
-        finally
-        {
-            try
-            {
+        } finally {
+            try {
                 testPluginInstaller.uninstallAddon(plugin);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 LOG.error("Could not uninstall json addon", e);
             }
         }
     }
 
-    private String getSharedSecret(final String installPayload) throws IOException
-    {
+    private String getSharedSecret(final String installPayload) throws IOException {
         return new ObjectMapper().readTree(installPayload).path(SHARED_SECRET_FIELD_NAME).asText();
     }
 
-    private RequestUtil.Response getAddonByKey(String addonKey) throws IOException
-    {
+    private RequestUtil.Response getAddonByKey(String addonKey) throws IOException {
         RequestUtil.Request request = requestUtil.requestBuilder()
                 .setMethod(HttpMethod.GET)
                 .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + addonKey))
@@ -128,8 +116,7 @@ public class AddonsResourceReinstallTest
         return requestUtil.makeRequest(request);
     }
 
-    private ConnectAddonBean createAddonBean() throws IOException
-    {
+    private ConnectAddonBean createAddonBean() throws IOException {
         String key = "ac-test-json-" + AddonUtil.randomPluginKey();
         return ConnectAddonBean.newConnectAddonBean()
                 .withKey(key)

@@ -1,23 +1,19 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.json.marshal.Jsonable;
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ControlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.webresource.api.data.WebResourceDataProvider;
 import com.google.gson.Gson;
 
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,18 +24,15 @@ import static java.util.stream.Collectors.toMap;
  *
  * This data provider is used by property-panel-controls.js to provide controls added via connect to the front end
  */
-public class PropertyPanelControlWebResourceDataProvider implements WebResourceDataProvider
-{
+public class PropertyPanelControlWebResourceDataProvider implements WebResourceDataProvider {
     private final ConnectAddonAccessor addonAccessor;
 
-    public PropertyPanelControlWebResourceDataProvider(ConnectAddonAccessor addonAccessor)
-    {
+    public PropertyPanelControlWebResourceDataProvider(ConnectAddonAccessor addonAccessor) {
         this.addonAccessor = addonAccessor;
     }
 
     @Override
-    public Jsonable get()
-    {
+    public Jsonable get() {
         return writer -> {
             Map<String, Map<String, List<ControlBean>>> beans = addonAccessor.getAllAddons().stream()
                     .collect(toMap(ConnectAddonBean::getKey,
@@ -54,26 +47,23 @@ public class PropertyPanelControlWebResourceDataProvider implements WebResourceD
         };
     }
 
-    private Stream<DynamicContentMacroModuleBean> retrieveMacros(ConnectAddonBean addon)
-    {
+    private Stream<DynamicContentMacroModuleBean> retrieveMacros(ConnectAddonBean addon) {
         return optionalListToStream(addon
                 .getModules()
-                .getValidModuleListOfType(new DynamicContentMacroModuleMeta().getDescriptorKey(), (ex) -> {}))
+                .getValidModuleListOfType(new DynamicContentMacroModuleMeta().getDescriptorKey(), (ex) -> {
+                }))
                 .map(DynamicContentMacroModuleBean.class::cast);
     }
 
-    private Stream<ControlBean> retrievePropertyPanelControls(DynamicContentMacroModuleBean macro)
-    {
+    private Stream<ControlBean> retrievePropertyPanelControls(DynamicContentMacroModuleBean macro) {
         return optionalListToStream(getControls(getPropertyPanel(macro)));
     }
 
-    private Optional<MacroPropertyPanelBean> getPropertyPanel(DynamicContentMacroModuleBean macroBean)
-    {
+    private Optional<MacroPropertyPanelBean> getPropertyPanel(DynamicContentMacroModuleBean macroBean) {
         return Optional.ofNullable(macroBean.getPropertyPanel());
     }
 
-    private Optional<List<ControlBean>> getControls(Optional<MacroPropertyPanelBean> propertyPanelBean)
-    {
+    private Optional<List<ControlBean>> getControls(Optional<MacroPropertyPanelBean> propertyPanelBean) {
         return propertyPanelBean.map(MacroPropertyPanelBean::getControls);
     }
 

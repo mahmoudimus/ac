@@ -1,37 +1,31 @@
 package com.atlassian.plugin.connect.test.common.util;
 
-public class TestUser
-{
+public class TestUser {
     private final String username;
     private final String password;
     private final String displayName;
     private final String email;
 
-    public TestUser(final String username)
-    {
+    public TestUser(final String username) {
         this.username = username;
         this.password = username;
         this.displayName = username;
         this.email = username + "@example.com";
     }
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return displayName;
     }
 
-    public String getEmail()
-    {
+    public String getEmail() {
         return email;
     }
 }

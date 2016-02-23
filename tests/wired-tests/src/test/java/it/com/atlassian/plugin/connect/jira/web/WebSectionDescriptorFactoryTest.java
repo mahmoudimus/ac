@@ -29,20 +29,19 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class WebSectionDescriptorFactoryTest
-{
+public class WebSectionDescriptorFactoryTest {
     public static final String PLUGIN_NAME = "My Plugin™";
     public static final String MODULE_NAME = "My Web Section";
     public static final String MODULE_NAME_KEY = "my.websection";
     public static final String MODULE_KEY = "my-web-section";
     public static final String LOCATION = "com.atlassian.jira.plugin.headernav.left.context";
     public static final int WEIGHT = 50;
-    
+
     private final ConnectWebSectionModuleDescriptorFactory descriptorFactory;
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
     private final PluginAccessor pluginAccessor;
-    
+
     private Plugin installedPlugin;
     private WebSectionModuleBean bean;
     private WebSectionModuleDescriptor descriptor;
@@ -50,8 +49,7 @@ public class WebSectionDescriptorFactoryTest
     private String pluginKey;
     private ConnectAddonBean addonBean;
 
-    public WebSectionDescriptorFactoryTest(ConnectWebSectionModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
-    {
+    public WebSectionDescriptorFactoryTest(ConnectWebSectionModuleDescriptorFactory descriptorFactory, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor) {
         this.descriptorFactory = descriptorFactory;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -59,28 +57,22 @@ public class WebSectionDescriptorFactoryTest
     }
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.pluginKey = AddonUtil.randomPluginKey();
         this.bean = createBean();
         addonBean = createAddonBean();
-        
+
 
         this.descriptor = descriptorFactory.createModuleDescriptor(bean, addonBean, getConnectPlugin());
     }
 
     @After
-    public void destroy()
-    {
-        if(null != installedPlugin)
-        {
-            try
-            {
+    public void destroy() {
+        if (null != installedPlugin) {
+            try {
                 testPluginInstaller.uninstallAddon(installedPlugin);
                 installedPlugin = null;
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 installedPlugin = null;
             }
 
@@ -89,8 +81,7 @@ public class WebSectionDescriptorFactoryTest
         addonBean = null;
     }
 
-    private WebSectionModuleBean createBean()
-    {
+    private WebSectionModuleBean createBean() {
         return newWebSectionBean()
                 .withName(new I18nProperty(MODULE_NAME, MODULE_NAME_KEY))
                 .withKey(MODULE_KEY)
@@ -100,60 +91,52 @@ public class WebSectionDescriptorFactoryTest
                 .build();
     }
 
-    protected WebSectionModuleDescriptor getDescriptorFromInstalledPlugin() throws IOException
-    {
+    protected WebSectionModuleDescriptor getDescriptorFromInstalledPlugin() throws IOException {
         testAuthenticator.authenticateUser("admin");
 
         ConnectAddonBean addonBean = createAddonBean();
 
         installedPlugin = testPluginInstaller.installAddon(addonBean);
 
-        return (WebSectionModuleDescriptor) getConnectPlugin().getModuleDescriptor(addonAndModuleKey(pluginKey,MODULE_KEY));
+        return (WebSectionModuleDescriptor) getConnectPlugin().getModuleDescriptor(addonAndModuleKey(pluginKey, MODULE_KEY));
     }
 
-    protected ConnectAddonBean createAddonBean()
-    {
+    protected ConnectAddonBean createAddonBean() {
         return newConnectAddonBean()
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(pluginKey))
                 .withKey(pluginKey)
                 .withName(PLUGIN_NAME)
                 .withAuthentication(newAuthenticationBean().withType(AuthenticationType.NONE).build())
-                .withModule("webSections",createBean())
+                .withModule("webSections", createBean())
                 .build();
     }
 
     @Test
-    public void keyIsCorrect() throws Exception
-    {
+    public void keyIsCorrect() throws Exception {
         assertThat(descriptor.getKey(), is(addonAndModuleKey(pluginKey, MODULE_KEY)));
     }
 
     @Test
-    public void completeKeyIsCorrect() throws Exception
-    {
-        assertThat(descriptor.getCompleteKey(), is(ConnectPluginInfo.getPluginKey() + ":" + addonAndModuleKey(pluginKey,MODULE_KEY)));
+    public void completeKeyIsCorrect() throws Exception {
+        assertThat(descriptor.getCompleteKey(), is(ConnectPluginInfo.getPluginKey() + ":" + addonAndModuleKey(pluginKey, MODULE_KEY)));
     }
 
     @Test
-    public void locationIsCorrect()
-    {
+    public void locationIsCorrect() {
         assertThat(descriptor.getLocation(), is(LOCATION));
     }
 
     @Test
-    public void weightIsCorrect()
-    {
+    public void weightIsCorrect() {
         assertThat(descriptor.getWeight(), is(50));
     }
 
     @Test
-    public void i18nKeyIsCorrect()
-    {
+    public void i18nKeyIsCorrect() {
         assertThat(descriptor.getI18nNameKey(), is(MODULE_NAME_KEY));
     }
 
-    protected Plugin getConnectPlugin()
-    {
+    protected Plugin getConnectPlugin() {
         return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
     }
 }

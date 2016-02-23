@@ -6,8 +6,7 @@ import com.atlassian.annotations.PublicSpi;
  * Permission check for a single context variable.
  */
 @PublicSpi
-public interface PermissionCheck<User>
-{
+public interface PermissionCheck<User> {
     /**
      * Context parameter names that this check can validate.
      *

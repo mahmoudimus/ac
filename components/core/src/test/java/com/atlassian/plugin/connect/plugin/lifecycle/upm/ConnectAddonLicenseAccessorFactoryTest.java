@@ -14,16 +14,14 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConnectAddonLicenseAccessorFactoryTest
-{
+public class ConnectAddonLicenseAccessorFactoryTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     private ConnectAddonLicenseAccessorFactory migrationFactory = new ConnectAddonLicenseAccessorFactory(mock(LicenseRetriever.class));
 
     @Test
-    public void addonAccessorForMigrationFactoryProducesBeanOnlyForTempo()
-    {
+    public void addonAccessorForMigrationFactoryProducesBeanOnlyForTempo() {
         Bundle bundle = mockBundle(ConnectAddonLicenseAccessorFactory.TEMPO_PLUGIN_KEY);
 
         Object service = migrationFactory.getService(bundle, mock(ServiceRegistration.class));
@@ -32,16 +30,14 @@ public class ConnectAddonLicenseAccessorFactoryTest
     }
 
     @Test
-    public void addonAccessorForMigrationFactoryThrowsExceptionForOtherPlugins()
-    {
+    public void addonAccessorForMigrationFactoryThrowsExceptionForOtherPlugins() {
 
         exception.expect(ConnectAddonLicenseAccessorFactory.UnauthorizedPluginException.class);
 
         migrationFactory.getService(mockBundle("bad-plugin-key"), mock(ServiceRegistration.class));
     }
 
-    private Bundle mockBundle(final String pluginKey)
-    {
+    private Bundle mockBundle(final String pluginKey) {
         Bundle bundle = mock(Bundle.class);
         Hashtable<String, String> headers = new Hashtable<String, String>();
         headers.put(ConnectAddonLicenseAccessorFactory.ATLASSIAN_PLUGIN_KEY, pluginKey);

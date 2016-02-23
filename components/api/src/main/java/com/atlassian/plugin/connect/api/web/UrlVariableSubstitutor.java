@@ -17,8 +17,7 @@ import java.util.Map;
  * given the source String "hi={foo.bar}" and an empty map, {@link UrlVariableSubstitutor#replace(String, WebFragmentContext)}
  * would return "hi="
  */
-public interface UrlVariableSubstitutor
-{
+public interface UrlVariableSubstitutor {
     /**
      * Replaces all variables in the given source with values from the given context.
      * @param source string containing variables

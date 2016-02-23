@@ -11,54 +11,42 @@ import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class ConfluencePageWithRemoteMacro implements Page
-{
+public final class ConfluencePageWithRemoteMacro implements Page {
     private final String pageTitle;
     private final String macroName;
 
     @Inject
     private AtlassianWebDriver driver;
 
-    public ConfluencePageWithRemoteMacro(String title, String macroName)
-    {
+    public ConfluencePageWithRemoteMacro(String title, String macroName) {
         this.pageTitle = checkNotNull(title);
         this.macroName = checkNotNull(macroName);
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return "/display/ds/" + pageTitle;
     }
 
-    public String getText(String className)
-    {
+    public String getText(String className) {
         final By locator = By.className(className);
 
-        if (Check.elementExists(locator, driver))
-        {
+        if (Check.elementExists(locator, driver)) {
             return driver.findElement(locator).getText();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    public boolean macroHasTimedOut()
-    {
-        try
-        {
+    public boolean macroHasTimedOut() {
+        try {
             final WebElement container = driver.findElement(By.className("ap-container"));
 
-            if (container.getAttribute("id").startsWith("ap-" + macroName))
-            {
+            if (container.getAttribute("id").startsWith("ap-" + macroName)) {
                 container.findElement(By.className("ap-load-timeout"));
                 return true;
             }
-        }
-        catch (NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             // do nothing
         }
 

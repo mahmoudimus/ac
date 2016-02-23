@@ -18,66 +18,49 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
-public final class Dom4jUtils
-{
+public final class Dom4jUtils {
 
     private static InputSource EMPTY_INPUT_SOURCE = new InputSource(new ByteArrayInputStream(new byte[0]));
 
     private static final EntityResolver EMPTY_ENTITY_RESOLVER = (publicId, systemId) -> EMPTY_INPUT_SOURCE;
 
-    public static String printNode(Node document)
-    {
+    public static String printNode(Node document) {
         StringWriter writer = new StringWriter();
         XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
-        try
-        {
+        try {
             xmlWriter.write(document);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new IllegalArgumentException("Unable to write node", e);
         }
         return writer.toString();
     }
 
-    public static Document readDocument(ServletRequest request)
-    {
-        try
-        {
+    public static Document readDocument(ServletRequest request) {
+        try {
             return readDocument(request.getInputStream());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // ignore
             return null;
         }
     }
 
-    public static Document readDocument(InputStream in)
-    {
+    public static Document readDocument(InputStream in) {
         SAXReader build = createSecureSaxReader();
-        try
-        {
+        try {
             return build.read(in);
-        }
-        catch (DocumentException e)
-        {
+        } catch (DocumentException e) {
             // don't care why
             return null;
-        }
-        finally
-        {
+        } finally {
             IOUtils.closeQuietly(in);
         }
     }
 
-    private static SAXReader createSecureSaxReader()
-    {
+    private static SAXReader createSecureSaxReader() {
         return createReader(false);
     }
 
-    private static SAXReader createReader(boolean validating)
-    {
+    private static SAXReader createReader(boolean validating) {
         XMLReader xmlReader;
         xmlReader = SecureXmlParserFactory.newXmlReader();
         xmlReader.setEntityResolver(EMPTY_ENTITY_RESOLVER);

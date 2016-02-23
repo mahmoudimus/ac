@@ -45,55 +45,44 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class AddonConditionTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class AddonConditionTest {
     private static final String ADDON_KEY = "myAddonKey";
 
     private static final String URL = "http://foo.com/bar?blah=1";
     private static final String URL_PATH = "/bar";
 
-    private final CustomTypeSafeMatcher<AddonConditionEvent> eventWithCorrectUrl = new CustomTypeSafeMatcher<AddonConditionEvent>("an event with non negative elapsed time")
-    {
+    private final CustomTypeSafeMatcher<AddonConditionEvent> eventWithCorrectUrl = new CustomTypeSafeMatcher<AddonConditionEvent>("an event with non negative elapsed time") {
         @Override
-        public boolean matchesSafely(AddonConditionEvent event)
-        {
+        public boolean matchesSafely(AddonConditionEvent event) {
             return ObjectUtils.equals(event.getUrlPath(), URL_PATH);
         }
     };
 
-    private final CustomTypeSafeMatcher<AddonConditionEvent> eventWithCorrectAddonKey = new CustomTypeSafeMatcher<AddonConditionEvent>("an event with correct addon key")
-    {
+    private final CustomTypeSafeMatcher<AddonConditionEvent> eventWithCorrectAddonKey = new CustomTypeSafeMatcher<AddonConditionEvent>("an event with correct addon key") {
         @Override
-        public boolean matchesSafely(AddonConditionEvent event)
-        {
+        public boolean matchesSafely(AddonConditionEvent event) {
             return ObjectUtils.equals(event.getAddonKey(), ADDON_KEY);
         }
     };
 
-    private final CustomTypeSafeMatcher<AddonConditionFailedEvent> failEventWithExpectedMessage = new CustomTypeSafeMatcher<AddonConditionFailedEvent>("a fail event with expected message")
-    {
+    private final CustomTypeSafeMatcher<AddonConditionFailedEvent> failEventWithExpectedMessage = new CustomTypeSafeMatcher<AddonConditionFailedEvent>("a fail event with expected message") {
         @Override
-        public boolean matchesSafely(AddonConditionFailedEvent event)
-        {
+        public boolean matchesSafely(AddonConditionFailedEvent event) {
             return event.getMessage().equals("oops");
         }
     };
 
-    private final CustomTypeSafeMatcher<AddonConditionFailedEvent> failEventWithExpectedBadJsonMessage = new CustomTypeSafeMatcher<AddonConditionFailedEvent>("a fail event with expected message")
-    {
+    private final CustomTypeSafeMatcher<AddonConditionFailedEvent> failEventWithExpectedBadJsonMessage = new CustomTypeSafeMatcher<AddonConditionFailedEvent>("a fail event with expected message") {
         @Override
-        public boolean matchesSafely(AddonConditionFailedEvent event)
-        {
+        public boolean matchesSafely(AddonConditionFailedEvent event) {
             return event.getMessage().startsWith("Malformed response from addon condition URL:");
         }
     };
 
-    private final CustomTypeSafeMatcher<AddonConditionEvent> eventWithNonNegativeElapsedTime = new CustomTypeSafeMatcher<AddonConditionEvent>("an event with non negative elapsed time")
-    {
+    private final CustomTypeSafeMatcher<AddonConditionEvent> eventWithNonNegativeElapsedTime = new CustomTypeSafeMatcher<AddonConditionEvent>("an event with non negative elapsed time") {
         @Override
-        public boolean matchesSafely(AddonConditionEvent event)
-        {
+        public boolean matchesSafely(AddonConditionEvent event) {
             return event.getElapsedMillisecs() >= 0l;
         }
     };
@@ -134,8 +123,7 @@ public class AddonConditionTest
     private AddonCondition addonCondition;
 
     @Before
-    public void init()
-    {
+    public void init() {
         final ConnectUriFactoryImpl iFrameUriBuilderFactory = new ConnectUriFactoryImpl(
                 new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl(), new InlineConditionVariableSubstitutorFake()),
                 remotablePluginAccessorFactory,
@@ -169,152 +157,129 @@ public class AddonConditionTest
     }
 
     @Test
-    public void publishesInvokeEventOnSuccessfulCallToRemoteCondition()
-    {
+    public void publishesInvokeEventOnSuccessfulCallToRemoteCondition() {
         invokeWhenSuccessfulResponse();
         verify(eventPublisher).publish(any(AddonConditionInvokedEvent.class));
         // not sure why passing any(AddonConditionInvokedEvent.class) is not enough to check type
         verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<AddonConditionEvent>(
-                "an event with correct type")
-        {
+                "an event with correct type") {
             @Override
-            public boolean matchesSafely(AddonConditionEvent event)
-            {
+            public boolean matchesSafely(AddonConditionEvent event) {
                 return event.getClass().equals(AddonConditionInvokedEvent.class);
             }
         }));
     }
 
     @Test
-    public void publishesInvokeEventWithNonNegativeElapsedOnSuccessfulCallToRemoteCondition()
-    {
+    public void publishesInvokeEventWithNonNegativeElapsedOnSuccessfulCallToRemoteCondition() {
         invokeWhenSuccessfulResponse();
         verify(eventPublisher).publish(argThat(eventWithNonNegativeElapsedTime));
     }
 
     @Test
-    public void publishesInvokeEventWithCorrectAddonKeyOnSuccessfulCallToRemoteCondition()
-    {
+    public void publishesInvokeEventWithCorrectAddonKeyOnSuccessfulCallToRemoteCondition() {
         invokeWhenSuccessfulResponse();
         verify(eventPublisher).publish(argThat(eventWithCorrectAddonKey));
     }
 
     @Test
-    public void publishesInvokeEventWithCorrectUrlOnSuccessfulCallToRemoteCondition()
-    {
+    public void publishesInvokeEventWithCorrectUrlOnSuccessfulCallToRemoteCondition() {
         invokeWhenSuccessfulResponse();
         verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
     }
 
     @Test
-    public void publishesFailedEventOnUnsuccessfulCallToRemoteCondition()
-    {
+    public void publishesFailedEventOnUnsuccessfulCallToRemoteCondition() {
         invokeWhenErrorResponse();
         verify(eventPublisher).publish(any(AddonConditionFailedEvent.class));
         verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<AddonConditionEvent>(
-                "an event with correct type")
-        {
+                "an event with correct type") {
             @Override
-            public boolean matchesSafely(AddonConditionEvent event)
-            {
+            public boolean matchesSafely(AddonConditionEvent event) {
                 return event.getClass().equals(AddonConditionFailedEvent.class);
             }
         }));
     }
 
     @Test
-    public void publishesFailedEventWithCorrectMessageOnUnsuccessfulCallToRemoteCondition()
-    {
+    public void publishesFailedEventWithCorrectMessageOnUnsuccessfulCallToRemoteCondition() {
         invokeWhenErrorResponse();
         verify(eventPublisher).publish(argThat(failEventWithExpectedMessage));
     }
 
     @Test
-    public void publishesFailedEventWithNonNegativeElapsedOnUnsuccessfulCallToRemoteCondition()
-    {
+    public void publishesFailedEventWithNonNegativeElapsedOnUnsuccessfulCallToRemoteCondition() {
         invokeWhenErrorResponse();
         verify(eventPublisher).publish(argThat(eventWithNonNegativeElapsedTime));
     }
 
     @Test
-    public void publishesFailedEventWithCorrectAddonKeyOnUnsuccessfulCallToRemoteCondition()
-    {
+    public void publishesFailedEventWithCorrectAddonKeyOnUnsuccessfulCallToRemoteCondition() {
         invokeWhenErrorResponse();
         verify(eventPublisher).publish(argThat(eventWithCorrectAddonKey));
     }
 
     @Test
-    public void publishesFailedEventWithCorrectUrlOnUnsuccessfulCallToRemoteCondition()
-    {
+    public void publishesFailedEventWithCorrectUrlOnUnsuccessfulCallToRemoteCondition() {
         invokeWhenErrorResponse();
         verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
     }
 
     @Test
-    public void publishesFailedEventOnMalformedJsonResponse()
-    {
+    public void publishesFailedEventOnMalformedJsonResponse() {
         invokeWhenMalformedJson();
         verify(eventPublisher).publish(any(AddonConditionFailedEvent.class));
         verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<AddonConditionEvent>(
-                "an event with correct type")
-        {
+                "an event with correct type") {
             @Override
-            public boolean matchesSafely(AddonConditionEvent event)
-            {
+            public boolean matchesSafely(AddonConditionEvent event) {
                 return event.getClass().equals(AddonConditionFailedEvent.class);
             }
         }));
     }
 
     @Test
-    public void publishesFailedEventWithCorrectMessageOnMalformedJsonResponse()
-    {
+    public void publishesFailedEventWithCorrectMessageOnMalformedJsonResponse() {
         invokeWhenMalformedJson();
         verify(eventPublisher).publish(argThat(failEventWithExpectedBadJsonMessage));
     }
 
     @Test
-    public void publishesFailedEventWithNonNegativeElapsedOnMalformedJsonResponse()
-    {
+    public void publishesFailedEventWithNonNegativeElapsedOnMalformedJsonResponse() {
         invokeWhenMalformedJson();
         verify(eventPublisher).publish(argThat(eventWithNonNegativeElapsedTime));
     }
 
     @Test
-    public void publishesFailedEventWithCorrectAddonKeyOnMalformedJsonResponse()
-    {
+    public void publishesFailedEventWithCorrectAddonKeyOnMalformedJsonResponse() {
         invokeWhenMalformedJson();
         verify(eventPublisher).publish(argThat(eventWithCorrectAddonKey));
     }
 
     @Test
-    public void publishesFailedEventWithCorrectUrlOnMalformedJsonResponse()
-    {
+    public void publishesFailedEventWithCorrectUrlOnMalformedJsonResponse() {
         invokeWhenMalformedJson();
         verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
     }
 
-    @SuppressWarnings ("unchecked")
-    private void invokeWhenSuccessfulResponse()
-    {
+    @SuppressWarnings("unchecked")
+    private void invokeWhenSuccessfulResponse() {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
                 any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(Promises.promise("{\"shouldDisplay\": true}"));
 
         invokeCondition();
     }
 
-    @SuppressWarnings ("unchecked")
-    private void invokeWhenMalformedJson()
-    {
+    @SuppressWarnings("unchecked")
+    private void invokeWhenMalformedJson() {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
                 any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(Promises.promise("not json"));
 
         invokeCondition();
     }
 
-    @SuppressWarnings ("unchecked")
-    private void invokeWhenErrorResponse()
-    {
+    @SuppressWarnings("unchecked")
+    private void invokeWhenErrorResponse() {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
                 any(Map.class), any(Map.class), any(InputStream.class))).thenReturn(
                 Promises.rejected(new RuntimeException("oops"), String.class));
@@ -322,8 +287,7 @@ public class AddonConditionTest
         invokeCondition();
     }
 
-    private void invokeCondition()
-    {
+    private void invokeCondition() {
         final Map<String, String> params = new HashMap<String, String>();
         params.put("url", URL);
         params.put(AddonCondition.ADDON_KEY, ADDON_KEY);
@@ -336,27 +300,23 @@ public class AddonConditionTest
 
 }
 
-class TestHostApplicationInfo implements HostApplicationInfo
-{
+class TestHostApplicationInfo implements HostApplicationInfo {
     private final URI url;
     private final String contextPath;
 
-    public TestHostApplicationInfo(String url, String contextPath)
-    {
+    public TestHostApplicationInfo(String url, String contextPath) {
 
         this.url = URI.create(url);
         this.contextPath = contextPath;
     }
 
     @Override
-    public URI getUrl()
-    {
+    public URI getUrl() {
         return url;
     }
 
     @Override
-    public String getContextPath()
-    {
+    public String getContextPath() {
         return contextPath;
     }
 }

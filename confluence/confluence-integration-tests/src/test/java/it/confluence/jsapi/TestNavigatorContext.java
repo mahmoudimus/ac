@@ -27,17 +27,14 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomNam
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static junit.framework.TestCase.assertEquals;
 
-public class TestNavigatorContext extends ConfluenceWebDriverTestBase
-{
+public class TestNavigatorContext extends ConfluenceWebDriverTestBase {
     private static List<Exception> setupFailure = new ArrayList<>();
     private static final String WEB_ITEM_KEY = "ac-navigator-web-item";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
-    {
-        try
-        {
+    public static void startConnectAddOn() throws Exception {
+        try {
             remotePlugin = new ConnectRunner(ConfluenceWebDriverTestBase.product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                     .setAuthenticationToNone()
                     .addModule("webItems",
@@ -53,28 +50,22 @@ public class TestNavigatorContext extends ConfluenceWebDriverTestBase
                     )
                     .addRoute("/nvg-context", ConfluenceAppServlets.navigatorContextServlet())
                     .start();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             setupFailure.add(ex);
         }
 
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddOn() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Before
-    public void setUp() throws Exception
-    {
-        if (!setupFailure.isEmpty())
-        {
+    public void setUp() throws Exception {
+        if (!setupFailure.isEmpty()) {
             throw setupFailure.get(0);
         }
     }
@@ -82,16 +73,14 @@ public class TestNavigatorContext extends ConfluenceWebDriverTestBase
     // Temporary ignore while waiting for CE-289 to be released to Confluence. Kate West-Walker will fix and unignore this soon :)
     @Ignore
     @Test
-    public void testGetCurrentContextOfCreatePage() throws Exception
-    {
+    public void testGetCurrentContextOfCreatePage() throws Exception {
         getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), TestSpace.DEMO);
         RemoteDialog dialog = openDialog();
         assertEquals("unknown", dialog.getIFrameElement("ac-target"));
     }
 
     @Test
-    public void testGetCurrentContextOfEditPage() throws Exception
-    {
+    public void testGetCurrentContextOfEditPage() throws Exception {
         Content page = createPage(randomName("testGetCurrentContextOfEditPage"), "");
         getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
         RemoteDialog dialog = openDialog();
@@ -101,8 +90,7 @@ public class TestNavigatorContext extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testGetCurrentContextOfViewPage() throws Exception
-    {
+    public void testGetCurrentContextOfViewPage() throws Exception {
         Content page = createPage(randomName("testGetCurrentContextOfViewPage"), "");
         getProduct().loginAndView(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
         RemoteDialog dialog = openDialog();
@@ -117,8 +105,7 @@ public class TestNavigatorContext extends ConfluenceWebDriverTestBase
         return product.getPageBinder().bind(RemoteDialog.class);
     }
 
-    private String getModuleKey(String module)
-    {
+    private String getModuleKey(String module) {
         return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), module);
     }
 
