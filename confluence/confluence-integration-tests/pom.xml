@@ -82,7 +82,12 @@
             <version>${atlassian.confluence.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.atlassian.confluence</groupId>
+            <artifactId>confluence-java-api</artifactId>
+            <version>${atlassian.confluence.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
@@ -207,7 +212,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
     </dependencies>
 
     <build>

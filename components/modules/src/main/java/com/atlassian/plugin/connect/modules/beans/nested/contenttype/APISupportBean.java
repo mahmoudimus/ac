@@ -31,7 +31,7 @@ public class APISupportBean extends BaseModuleBean
      * Defines types that this Extensible Content Type can be contained in.
      * {@code global} or/and {@code personal} should be set for a first class space content.
      *
-     * For example: ["global", "page"] indicates a global Space or a Page can be set as the container of
+     * For example: ["global", "blogpost"] indicates a global Space or a BlogPost can be set as the container of
      * this Extensible Content Type.
      */
     @Required
@@ -74,7 +74,6 @@ public class APISupportBean extends BaseModuleBean
 
     private void initialise()
     {
-        supportedContainerTypes = ObjectUtils.defaultIfNull(supportedContainerTypes, Sets.newHashSet());
         supportedContainedTypes = ObjectUtils.defaultIfNull(supportedContainedTypes, Sets.newHashSet());
         indexing = ObjectUtils.defaultIfNull(indexing, new IndexingBean());
     }

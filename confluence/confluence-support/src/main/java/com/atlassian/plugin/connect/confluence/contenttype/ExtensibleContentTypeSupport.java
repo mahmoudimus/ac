@@ -104,7 +104,7 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
 
         if (!newContent.getSpaceRef().exists())
         {
-            resultBuilder.addError("You must specify a space for new extensible content.");
+            return resultBuilder.addError("You must specify a space for new extensible content.").build();
         }
 
         if (container == null || container instanceof Space)
@@ -118,7 +118,6 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
                         contentTypeKey, space.getType().getType()));
             }
         }
-
         else if (container instanceof Content)
         {
             Content containerContent = ((Content) container);
@@ -152,7 +151,6 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport
         {
             return resultBuilder.authorized(true).build();
         }
-
 
         // TODO: Add permission check
         return SimpleValidationResult.VALID;
