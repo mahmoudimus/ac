@@ -11,7 +11,8 @@ AJS.bind("init.rte", function () {
     var macroName = "%%MACRONAME%%";
     var macroUrl = AJS.params.contextPath + "%%URL%%";
 
-    require(["ac/confluence/macro/property-panel-iframe", "confluence/macro-js-overrides"], function(propertyPanelIframeInjector, macroOverrides) {
+    require(["ac/confluence/macro/property-panel-controls", "ac/confluence/macro/property-panel-iframe", "confluence/macro-js-overrides"], function(getControls, propertyPanelIframeInjector, macroOverrides) {
         macroOverrides.assignFunction(macroName, propertyPanelIframeInjector(macroUrl));
+        macroOverrides.assignFunction(macroName, getControls(macroName));
     });
 });
