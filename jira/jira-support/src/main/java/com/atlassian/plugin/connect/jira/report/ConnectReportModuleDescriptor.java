@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.report;
 
-import java.util.Collections;
 import java.util.Map;
 
 import com.atlassian.fugue.Option;

@@ -6,7 +6,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,14 +25,8 @@ public class ParameterCapturingConditionServlet extends HttpServlet
      */
     public static final String PARAMETER_CAPTURE_URL = "/parameterCapture";
 
-    private static final Function<String[],String> HEAD_ARRAY = new Function<String[], String>()
-    {
-        @Override
-        public String apply(@Nullable final String[] input)
-        {
-            return input != null && input.length > 0 ? input[0] : null;
-        }
-    };
+    private static final Function<String[],String> HEAD_ARRAY = input ->
+        input != null && input.length > 0 ? input[0] : null;
 
     private volatile Map<String, String[]> paramsFromLastRequest;
 
@@ -50,7 +43,7 @@ public class ParameterCapturingConditionServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         paramsFromLastRequest = req.getParameterMap();
-        Map<String,String> headers = new HashMap<String,String>();
+        Map<String,String> headers = new HashMap<>();
 
         for (String name: Collections.list((Enumeration<String>)req.getHeaderNames()))
         {
@@ -66,24 +59,10 @@ public class ParameterCapturingConditionServlet extends HttpServlet
 
     public Option<String> getHttpHeaderFromLastRequest(final String name)
     {
-        Predicate<String> equalsIgnoreCase = new Predicate<String>()
-        {
-            @Override
-            public boolean apply(String headerName)
-            {
-                return headerName.equalsIgnoreCase(name);
-            }
-        };
+        Predicate<String> equalsIgnoreCase = headerName -> headerName.equalsIgnoreCase(name);
 
         Option<String> maybeHeaderName = Iterables.findFirst(this.headersFromLastRequest.keySet(), equalsIgnoreCase);
-        return maybeHeaderName.flatMap(new Function<String, Option<String>>()
-        {
-            @Override
-            public Option<String> apply(String headerName)
-            {
-                return Option.option(headersFromLastRequest.get(headerName));
-            }
-        });
+        return maybeHeaderName.flatMap(headerName -> Option.option(headersFromLastRequest.get(headerName)));
     }
 
     public Map<String, String> getParamsFromLastRequest()

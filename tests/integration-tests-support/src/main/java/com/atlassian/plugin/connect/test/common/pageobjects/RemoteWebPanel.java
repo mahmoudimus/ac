@@ -2,10 +2,7 @@ package com.atlassian.plugin.connect.test.common.pageobjects;
 
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
-import com.google.common.base.Function;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 /**
  * A remote web-panel that is expected to contain some test values.
@@ -86,13 +83,6 @@ public class RemoteWebPanel extends AbstractConnectIFrameComponent<RemoteWebPane
 
     public boolean containsHelloWorld()
     {
-        return withinIFrame(new Function<WebDriver, Boolean>()
-        {
-            @Override
-            public Boolean apply(WebDriver frame)
-            {
-                return frame.findElement(By.id("hello-world-message")).isDisplayed();
-            }
-        });
+        return withinIFrame(frame -> frame.findElement(By.id("hello-world-message")).isDisplayed());
     }
 }

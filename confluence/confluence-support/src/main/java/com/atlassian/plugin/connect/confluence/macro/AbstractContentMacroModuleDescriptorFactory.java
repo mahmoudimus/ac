@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
@@ -7,6 +10,7 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringEscapeUtils;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
@@ -14,19 +18,16 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.uri.Uri;
-import com.google.common.base.Function;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.api.util.Dom4jUtils.printNode;
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
@@ -64,14 +65,9 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
 
     private void updateDefaultParameterLabels(List<MacroParameter> macroParameters, List<MacroParameterBean> macroParameterBeans)
     {
-        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, new Function<MacroParameter, String>()
-        {
-            @Override
-            public String apply(MacroParameter parameter)
-            {
-                Preconditions.checkNotNull(parameter, "Implementation error: parameter must never be null");
-                return parameter.getName();
-            }
+        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, parameter -> {
+            Preconditions.checkNotNull(parameter, "Implementation error: parameter must never be null");
+            return parameter.getName();
         });
         for (MacroParameterBean parameterBean : macroParameterBeans)
         {

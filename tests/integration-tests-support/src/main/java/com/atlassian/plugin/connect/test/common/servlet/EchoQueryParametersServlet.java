@@ -21,7 +21,7 @@ import org.apache.http.NameValuePair;
 
 public class EchoQueryParametersServlet extends MustacheServlet
 {
-    private volatile BlockingDeque<NameValuePairs> queryParameters = new LinkedBlockingDeque<NameValuePairs>();
+    private volatile BlockingDeque<NameValuePairs> queryParameters = new LinkedBlockingDeque<>();
 
     public EchoQueryParametersServlet()
     {
@@ -39,11 +39,11 @@ public class EchoQueryParametersServlet extends MustacheServlet
         NameValuePairs parameters = new NameValuePairs(req.getParameterMap());
         queryParameters.push(parameters);
 
-        List<Map<String,String>> nvps = new ArrayList<Map<String, String>>();
+        List<Map<String,String>> nvps = new ArrayList<>();
 
         for (NameValuePair pair : parameters.getNameValuePairs())
         {
-            HashMap<String,String> nvp = new HashMap<String, String>();
+            HashMap<String,String> nvp = new HashMap<>();
 
             nvp.put("name",pair.getName());
             nvp.put("value",pair.getValue());

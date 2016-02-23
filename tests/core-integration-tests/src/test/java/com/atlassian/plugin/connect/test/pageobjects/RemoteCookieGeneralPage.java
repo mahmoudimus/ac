@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import javax.inject.Inject;
+
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
-import org.openqa.selenium.By;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.util.concurrent.Callable;
+import org.openqa.selenium.By;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 

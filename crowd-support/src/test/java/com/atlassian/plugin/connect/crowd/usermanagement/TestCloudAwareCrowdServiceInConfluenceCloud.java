@@ -92,14 +92,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         when(embedded.findUserByName(anyString())).thenReturn(Optional.empty(), (Optional) Optional.of(user));
 
         ScheduledThreadPoolExecutor simulatedCrowdSyncEvent = new ScheduledThreadPoolExecutor(1);
-        simulatedCrowdSyncEvent.schedule(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                cloudAwareCrowdService.handleSync();
-            }
-        }, 1, TimeUnit.SECONDS);
+        simulatedCrowdSyncEvent.schedule(cloudAwareCrowdService::handleSync, 1, TimeUnit.SECONDS);
         cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, ATTRIBUTES);
 
         verify(remote).setAttributesOnUser(ADDON_USER_NAME, ATTRIBUTES);
@@ -124,24 +117,10 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         ScheduledThreadPoolExecutor simulatedCrowdSyncEvent = new ScheduledThreadPoolExecutor(2);
 
         // The first sync event
-        simulatedCrowdSyncEvent.schedule(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                cloudAwareCrowdService.handleSync();
-            }
-        }, 300, TimeUnit.MILLISECONDS);
+        simulatedCrowdSyncEvent.schedule(cloudAwareCrowdService::handleSync, 300, TimeUnit.MILLISECONDS);
 
         // The second sync event
-        simulatedCrowdSyncEvent.schedule(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                cloudAwareCrowdService.handleSync();
-            }
-        }, 600, TimeUnit.MILLISECONDS);
+        simulatedCrowdSyncEvent.schedule(cloudAwareCrowdService::handleSync, 600, TimeUnit.MILLISECONDS);
 
         cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, ATTRIBUTES);
 

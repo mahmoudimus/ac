@@ -17,7 +17,7 @@ import com.atlassian.plugin.connect.test.common.servlet.SignedRequestHandler;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
 
-import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -34,7 +34,6 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.eclipse.jetty.server.Response;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.After;
@@ -42,7 +41,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -363,14 +361,7 @@ public class TestAddonProperties
         connection.setDoOutput(true);
         connection.getOutputStream().write(value.toString().getBytes());
 
-        Option<String> returnedETag = Option.option(connection.getHeaderField("ETag")).map(new Function<String, String>()
-        {
-            @Override
-            public String apply(final String input)
-            {
-                return input;
-            }
-        });
+        Option<String> returnedETag = Option.option(connection.getHeaderField("ETag")).map(Functions.identity());
         return new RequestResponse(connection.getResponseCode(), returnedETag);
     }
 
@@ -414,14 +405,7 @@ public class TestAddonProperties
             protected boolean matchesSafely(final RestAddonPropertiesBean properties)
             {
                 Iterable<RestAddonPropertiesBean.RestAddonPropertyBean> expectedBeans = ImmutableList.copyOf(expected.keys);
-                Iterable<Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean>> transform = Iterables.transform(expectedBeans, new Function<RestAddonPropertiesBean.RestAddonPropertyBean, Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean>>()
-                {
-                    @Override
-                    public Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean> apply(final RestAddonPropertiesBean.RestAddonPropertyBean input)
-                    {
-                        return isEqualToIgnoringBaseUrl(input);
-                    }
-                });
+                Iterable<Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean>> transform = Iterables.transform(expectedBeans, TestAddonProperties.this::isEqualToIgnoringBaseUrl);
 
                 Collection<Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean>> matchers = Lists.newArrayList(transform);
                 return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(Arrays.asList(properties.keys));

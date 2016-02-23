@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -103,15 +104,9 @@ public class ConditionMatchers
         {
             Field conditions = AbstractCompositeCondition.class.getDeclaredField("conditions");
             conditions.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            List<String> list = new ArrayList();
-
-            for(Condition nested : (List<Condition>) conditions.get(condition))
-            {
-                list.add(nested.getClass().getSimpleName());
-            }
-            
-            return list;
+            return ((List<Condition>) conditions.get(condition)).stream()
+                .map(nested -> nested.getClass().getSimpleName())
+                .collect(Collectors.toList());
         }
         catch (NoSuchFieldException e)
         {

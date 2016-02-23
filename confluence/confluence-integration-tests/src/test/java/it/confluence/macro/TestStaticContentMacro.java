@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.Callable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +22,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.EchoContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.EchoQueryParametersServlet;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
@@ -148,16 +146,11 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRenderedForAnonymous() throws Exception
     {
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
-                String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-                assertThat(content, endsWith("Storage Format Content"));
-                return null;
-            }
+        runWithAnonymousUsePermission(() -> {
+            ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
+            String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+            assertThat(content, endsWith("Storage Format Content"));
+            return null;
         });
     }
 
@@ -210,14 +203,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         String commentText = commentBody.getText();
         String[] lines = StringUtils.split(commentText, "\n");
 
-        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), new Predicate<String>()
-        {
-            @Override
-            public boolean apply(String line)
-            {
-                return line.startsWith("cv:");
-            }
-        });
+        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), line -> line.startsWith("cv:"));
 
         String version = maybeVersion.get().replaceFirst("cv:", "").trim();
         assertThat(version, isVersionNumber());
@@ -230,7 +216,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         String body = new MacroStorageFormatBuilder(COUNTER_MACRO_KEY).build();
         String title = randomName(COUNTER_MACRO_KEY);
         Content page = createPage(title, body);
-        String pageId = String.valueOf(page.getId().asLong());
         ConfluencePageWithRemoteMacro pageWithRemoteMacro = loginAndVisit(testUserFactory.basicUser(),
                 ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
         assertThat(getCounter(pageWithRemoteMacro), is(0));

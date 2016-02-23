@@ -54,19 +54,14 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         write.lock();
         try
         {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
-                @Override
-                public Void doInTransaction()
-                {
-                    settings.remove(addonStorageKey(pluginKey));
+            transactionTemplate.execute(() -> {
+                settings.remove(addonStorageKey(pluginKey));
 
-                    Set<String> addonKeys = getAddonKeySet();
-                    addonKeys.remove(pluginKey);
+                Set<String> addonKeys = getAddonKeySet();
+                addonKeys.remove(pluginKey);
 
-                    settings.put(ADDON_LIST_KEY, new ArrayList<>(addonKeys));
-                    return null;
-                }
+                settings.put(ADDON_LIST_KEY, new ArrayList<>(addonKeys));
+                return null;
             });
         }
         finally
@@ -183,23 +178,18 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         write.lock();
         try
         {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
-                @Override
-                public Void doInTransaction()
+            transactionTemplate.execute(() -> {
+                final AddonSettings addonSettings = getAddonSettings(pluginKey);
+                if (addonSettings.getBaseUrl().isEmpty())
                 {
-                    final AddonSettings addonSettings = getAddonSettings(pluginKey);
-                    if (addonSettings.getBaseUrl().isEmpty())
-                    {
-                        log.warn("Cannot update restart state for add-on '{}'. Add-on settings not found", pluginKey);
-                    }
-                    else if (!state.toString().equalsIgnoreCase(addonSettings.getRestartState()))
-                    {
-                        addonSettings.setRestartState(state);
-                        storeAddonSettings(pluginKey, addonSettings);
-                    }
-                    return null;
+                    log.warn("Cannot update restart state for add-on '{}'. Add-on settings not found", pluginKey);
                 }
+                else if (!state.toString().equalsIgnoreCase(addonSettings.getRestartState()))
+                {
+                    addonSettings.setRestartState(state);
+                    storeAddonSettings(pluginKey, addonSettings);
+                }
+                return null;
             });
         }
         finally
@@ -264,20 +254,15 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         write.lock();
         try
         {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
-                @Override
-                public Void doInTransaction()
-                {
-                    settings.put(addonStorageKey(pluginKey), settingsToStore);
+            transactionTemplate.execute(() -> {
+                settings.put(addonStorageKey(pluginKey), settingsToStore);
 
-                    Set<String> addonSet = getAddonKeySet();
-                    if (addonSet.add(pluginKey))
-                    {
-                        settings.put(ADDON_LIST_KEY, new ArrayList<>(addonSet));
-                    }
-                    return null;
+                Set<String> addonSet = getAddonKeySet();
+                if (addonSet.add(pluginKey))
+                {
+                    settings.put(ADDON_LIST_KEY, new ArrayList<>(addonSet));
                 }
+                return null;
             });
         }
         finally

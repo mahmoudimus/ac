@@ -233,14 +233,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     {
         final String moduleKey = getModuleKey(PROJECT_ADMIN_TAB_PANEL_KEY);
         ProjectSummaryPageTab page = product.quickLoginAsAdmin(ProjectSummaryPageTab.class, project.getKey());
-        ProjectConfigTabs.Tab tab = Iterables.find(page.getTabs().getTabs(), new Predicate<ProjectConfigTabs.Tab>()
-        {
-            @Override
-            public boolean apply(@Nullable ProjectConfigTabs.Tab tab)
-            {
-                return moduleKey.equals(tab.getId());
-            }
-        });
+        ProjectConfigTabs.Tab tab = Iterables.find(page.getTabs().getTabs(), currentTab -> moduleKey.equals(currentTab.getId()));
         assertIsEscaped(tab.getName());
     }
 
@@ -282,14 +275,7 @@ public class TestEscaping extends JiraWebDriverTestBase
 
         JiraAddWorkflowTransitionPostFunctionPage workflowTransitionPage = product.quickLoginAsAdmin(
                 JiraAddWorkflowTransitionPostFunctionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION);
-        WorkflowPostFunctionEntry entry = Iterables.find(workflowTransitionPage.getPostFunctions(), new Predicate<WorkflowPostFunctionEntry>()
-        {
-            @Override
-            public boolean apply(@Nullable WorkflowPostFunctionEntry workflowPostFunctionEntry)
-            {
-                return id.equals(workflowPostFunctionEntry.getId());
-            }
-        });
+        WorkflowPostFunctionEntry entry = Iterables.find(workflowTransitionPage.getPostFunctions(), wpfEntry -> id.equals(wpfEntry.getId()));
         assertIsEscaped(entry.getName());
         assertIsEscaped(entry.getDescription());
     }

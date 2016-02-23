@@ -71,22 +71,17 @@ public class RequestUtil
             Map<String, List<String>> headerFields = connection.getHeaderFields();
             StringBuilder output = new StringBuilder();
 
-
-            InputStream response = isResponseSuccessful(responseCode) ? connection.getInputStream() : connection.getErrorStream();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(response, "UTF-8"));
-            try
+            try (
+                InputStream response = isResponseSuccessful(responseCode) ? connection.getInputStream() : connection.getErrorStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(response, "UTF-8"))
+            )
             {
-                for (String line; (line = reader.readLine()) != null;)
+                for (String line; (line = reader.readLine()) != null; )
                 {
                     output.append(line).append('\n');
                 }
             }
-            finally
-            {
-                reader.close();
-                response.close();
-            }
+
             return new Response(responseCode, headerFields, output.toString());
         }
         finally

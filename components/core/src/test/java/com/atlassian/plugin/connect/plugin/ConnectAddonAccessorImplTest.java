@@ -35,9 +35,7 @@ public class ConnectAddonAccessorImplTest
     @Test
     public void shouldReturnAddonBeans()
     {
-        String[] keys = new String[]{"foo", "bar"};
         String[] jsonDescriptors = new String[]{"foo-json", "bar-json"};
-        List<String> keyList = Arrays.asList(keys);
         List<ConnectAddonBean> beans = Lists.newArrayList(
                 mock(ConnectAddonBean.class),
                 mock(ConnectAddonBean.class)

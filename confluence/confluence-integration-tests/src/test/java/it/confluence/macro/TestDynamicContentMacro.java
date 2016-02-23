@@ -1,7 +1,6 @@
 package it.confluence.macro;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -228,17 +227,12 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRenderedForAnonymous() throws Exception
     {
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
-                viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-                RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
-                assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
-                return null;
-            }
+        runWithAnonymousUsePermission(() -> {
+            ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
+            viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+            RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+            assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
+            return null;
         });
     }
 
@@ -253,14 +247,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
 
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                assertThat(extractPDFText(viewPage), containsString("Hello world"));
-                return null;
-            }
+        runWithAnonymousUsePermission(() -> {
+            assertThat(extractPDFText(viewPage), containsString("Hello world"));
+            return null;
         });
     }
 
@@ -275,14 +264,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
 
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                assertThat(extractWordText(viewPage), containsString("Hello world"));
-                return null;
-            }
+        runWithAnonymousUsePermission(() -> {
+            assertThat(extractWordText(viewPage), containsString("Hello world"));
+            return null;
         });
     }
 

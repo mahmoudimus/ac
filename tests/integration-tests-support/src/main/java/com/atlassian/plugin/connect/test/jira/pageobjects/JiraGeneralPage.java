@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePageUtil;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 import org.openqa.selenium.By;
@@ -77,80 +76,48 @@ public final class JiraGeneralPage implements GeneralPage
     public void clickRemotePluginLinkWithoutBinding()
     {
         link.get().fold(
-                new Supplier<Void>()
-                {
-                    @Override
-                    public Void get()
-                    {
-                        throw new IllegalStateException(format("Could not find link '%s'", link()));
-                    }
-                },
-                new Function<PageElement, Void>()
-                {
-                    @Override
-                    public Void apply(PageElement l)
-                    {
-                        l.click();
-                        logger.debug("Link '{}' was found and clicked.", l);
+            () -> {
+                throw new IllegalStateException(format("Could not find link '%s'", link()));
+            },
+            actualLink -> {
+                actualLink.click();
+                logger.debug("Link '{}' was found and clicked.", actualLink);
 
-                        return null;
-                    }
-                }
+                return null;
+            }
         );
     }
 
     public String getRemotePluginLinkHref()
     {
         return link.get().fold(
-                new Supplier<String>()
-                {
-                    @Override
-                    public String get()
-                    {
-                        throw new IllegalStateException(format("Could not find link '%s'", link()));
-                    }
-                },
-                new Function<PageElement, String>()
-                {
-                    @Override
-                    public String apply(PageElement l)
-                    {
-                        return l.getAttribute("href");
-                    }
-                }
+            () -> {
+                throw new IllegalStateException(format("Could not find link '%s'", link()));
+            },
+            actualLink -> actualLink.getAttribute("href")
         );
     }
 
     private boolean expandMoreMenuIfExists()
     {
         return getElement(MORE_MENU).fold(
-                new Supplier<Boolean>()
+            () -> {
+                logger.debug("'More' menu was not found. Nothing to expand.");
+                return false;
+            },
+            moreMenuElement -> {
+                final String cssClass = " " + moreMenuElement.getAttribute("class") + " ";
+                if (!cssClass.contains(" active "))
                 {
-                    @Override
-                    public Boolean get()
-                    {
-                        logger.debug("'More' menu was not found. Nothing to expand.");
-                        return false;
-                    }
-                },
-                new Function<WebElement, Boolean>()
-                {
-                    @Override
-                    public Boolean apply(WebElement moreElement)
-                    {
-                        final String cssClass = " " + moreElement.getAttribute("class") + " ";
-                        if (!cssClass.contains(" active "))
-                        {
-                            logger.debug("'More' menu found and is not active ({}). Expanding as our link might be in there.", cssClass);
-                            moreElement.click();
-                        }
-                        else
-                        {
-                            logger.debug("'More' menu found, already active and expanded ({}).", cssClass);
-                        }
-                        return true;
-                    }
+                    logger.debug("'More' menu found and is not active ({}). Expanding as our link might be in there.", cssClass);
+                    moreMenuElement.click();
                 }
+                else
+                {
+                    logger.debug("'More' menu found, already active and expanded ({}).", cssClass);
+                }
+                return true;
+            }
         );
     }
 

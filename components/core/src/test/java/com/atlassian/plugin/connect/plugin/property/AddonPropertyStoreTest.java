@@ -7,10 +7,9 @@ import java.util.Optional;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.fugue.Iterables;
-
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
-import com.google.common.base.Function;
+
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -137,14 +136,9 @@ public class AddonPropertyStoreTest
     @NonTransactional
     public void testExecuteSetInTransaction() throws Exception
     {
-        store.executeInTransaction(new AddonPropertyStore.TransactionAction<Void>()
-        {
-            @Override
-            public Void call()
-            {
-                store.setPropertyValue("a", "a", quote("a"));
-                return null;
-            }
+        store.executeInTransaction(() -> {
+            store.setPropertyValue("a", "a", quote("a"));
+            return null;
         });
     }
 
@@ -159,14 +153,7 @@ public class AddonPropertyStoreTest
 
         if (Iterables.isEmpty().apply(result) && Iterables.isEmpty().apply(propertyList)) return;
 
-        List<Matcher<? super AddonProperty>> matchers = Lists.transform(propertyList, new Function<AddonProperty, Matcher<? super AddonProperty>>()
-        {
-            @Override
-            public Matcher<AddonProperty> apply(final AddonProperty input)
-            {
-                return isSameProperty(input);
-            }
-        });
+        List<Matcher<? super AddonProperty>> matchers = Lists.transform(propertyList, this::isSameProperty);
         assertThat(result, Matchers.contains(matchers));
     }
 

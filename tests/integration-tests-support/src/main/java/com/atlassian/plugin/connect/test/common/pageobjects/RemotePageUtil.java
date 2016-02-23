@@ -1,26 +1,27 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.webdriver.AtlassianWebDriver;
+
 import com.google.common.base.Function;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Helper methods for retrieving the content from an iframe.
@@ -48,23 +49,9 @@ public class RemotePageUtil
 
     public static String waitForValue(final AtlassianWebDriver driver, final WebElement containerDiv, final String key)
     {
-        runInFrame(driver, containerDiv, new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                driver.waitUntil(new Function<WebDriver, Boolean>()
-                {
-
-                    @Override
-                    public Boolean apply(WebDriver webDriver)
-                    {
-                        WebElement element = webDriver.findElement(By.id(key));
-                        return StringUtils.isNotBlank(element.getText());
-                    }
-                });
-                return null;
-            }
+        runInFrame(driver, containerDiv, () -> {
+            driver.waitUntil(webDriver -> StringUtils.isNotBlank(webDriver.findElement(By.id(key)).getText()));
+            return null;
         });
 
         return getValue(driver, containerDiv, key);
@@ -72,20 +59,12 @@ public class RemotePageUtil
 
     public static String getValue(final AtlassianWebDriver driver, final WebElement containerDiv, final String key)
     {
-        return runInFrame(driver, containerDiv, new Callable<String>()
-        {
-
-            @Override
-            public String call() throws Exception
-            {
-                return driver.findElement(By.id(key)).getText();
-            }
-        });
+        return runInFrame(driver, containerDiv, () -> driver.findElement(By.id(key)).getText());
     }
 
     public static void toIframe(AtlassianWebDriver driver, WebElement containerDiv)
     {
-        WebElement iFrame = null;
+        WebElement iFrame;
 
         try
         {
@@ -143,19 +122,8 @@ public class RemotePageUtil
         }
     }
 
-    private final static Function<List<NameValuePair>, Map<String, String>> FIND_ALL_IN_CONTEXT_FUNCTION = new Function<List<NameValuePair>, Map<String, String>>()
-    {
-        @Override
-        public Map<String, String> apply(final List<NameValuePair> input)
-        {
-            final Map<String, String> result = newHashMap();
-            for (final NameValuePair pair : input)
-            {
-                result.put(pair.getName(), pair.getValue());
-            }
-            return result;
-        }
-    };
+    private final static Function<List<NameValuePair>, Map<String, String>> FIND_ALL_IN_CONTEXT_FUNCTION =
+        input -> input.stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
 
     private static class FindInContextFunction implements Function<List<NameValuePair>, String> {
         private final String key;

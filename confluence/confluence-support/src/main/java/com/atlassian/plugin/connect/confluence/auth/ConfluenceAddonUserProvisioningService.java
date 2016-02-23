@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.confluence.auth;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nullable;
+import java.util.stream.Collectors;
 
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
@@ -29,13 +28,11 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
-import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -129,26 +126,14 @@ public class ConfluenceAddonUserProvisioningService implements CrowdAddonUserPro
 
         try
         {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
-                @Override
-                public Void doInTransaction()
-                {
-                    // We need to run this without permissions checking otherwise our attempt to modify permissions will be permissions-checked,
-                    // and some will be accordingly rejected (particularly if this is running anonymously on a task thread, as is the case
-                    // when the UPM auto-updates Connect add-ons).
-                    // An even less palatable alternative is that we impersonate an arbitrary admin user.
-                    confluencePermissionManager.withExemption(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            provisionAddonUserForScopeInTransaction(username, previousScopes, newScopes);
-                        }
-                    });
+            transactionTemplate.execute(() -> {
+                // We need to run this without permissions checking otherwise our attempt to modify permissions will be permissions-checked,
+                // and some will be accordingly rejected (particularly if this is running anonymously on a task thread, as is the case
+                // when the UPM auto-updates Connect add-ons).
+                // An even less palatable alternative is that we impersonate an arbitrary admin user.
+                confluencePermissionManager.withExemption(() -> provisionAddonUserForScopeInTransaction(username, previousScopes, newScopes));
 
-                    return null;
-                }
+                return null;
             });
         }
         finally
@@ -326,21 +311,12 @@ public class ConfluenceAddonUserProvisioningService implements CrowdAddonUserPro
 
     private void removeAddonUserPermissionFromSpace(String permissionName, Space space, ConfluenceUser confluenceAddonUser)
     {
-        Set<SpacePermission> allSpacePermissionsAssignedToAddonUser = Sets.newHashSet();
-        for (SpacePermission spacePermission : space.getPermissions())
-        {
-            if (spacePermission.isUserPermission() &&
-                    Objects.equal(spacePermission.getUserSubject(), confluenceAddonUser) &&
-                    StringUtils.equals(spacePermission.getType(), permissionName))
-            {
-                allSpacePermissionsAssignedToAddonUser.add(spacePermission);
-            }
-        }
-
-        for (SpacePermission spacePermission : allSpacePermissionsAssignedToAddonUser)
-        {
-            spacePermissionManager.removePermission(spacePermission);
-        }
+        space.getPermissions().stream()
+            .filter(spacePermission -> spacePermission.isUserPermission() &&
+                Objects.equal(spacePermission.getUserSubject(), confluenceAddonUser) &&
+                StringUtils.equals(spacePermission.getType(), permissionName))
+            .collect(Collectors.toSet())
+            .forEach(spacePermissionManager::removePermission);
     }
 
     @EventListener
@@ -370,14 +346,9 @@ public class ConfluenceAddonUserProvisioningService implements CrowdAddonUserPro
 
     private Iterable<ConnectAddonBean> fetchAddonsWithSpaceAdminScope()
     {
-        return filter(connectAddonAccessor.getAllAddons(), new Predicate<ConnectAddonBean>()
-        {
-            @Override
-            public boolean apply(@Nullable ConnectAddonBean addon)
-            {
-                final Set<ScopeName> normalizedScopes = ScopeUtil.normalize(addon.getScopes());
-                return (normalizedScopes.contains(ScopeName.SPACE_ADMIN) && !normalizedScopes.contains(ScopeName.ADMIN));
-            }
+        return filter(connectAddonAccessor.getAllAddons(), addon -> {
+            final Set<ScopeName> normalizedScopes = ScopeUtil.normalize(addon.getScopes());
+            return normalizedScopes.contains(ScopeName.SPACE_ADMIN) && !normalizedScopes.contains(ScopeName.ADMIN);
         });
     }
 

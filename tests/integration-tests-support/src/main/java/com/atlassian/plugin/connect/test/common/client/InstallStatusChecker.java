@@ -36,21 +36,16 @@ public class InstallStatusChecker
 
     public void run(final String defaultUsername, final String defaultPassword) throws Exception
     {
-        Callable<Boolean> statusChecker = new Callable<Boolean>()
-        {
-            @Override
-            public Boolean call() throws Exception
+        Callable<Boolean> statusChecker = () -> {
+            HttpGet statusGet = new HttpGet(statusUrl);
+            ResponseHandler<String> statusHandler = new BasicResponseHandler();
+            String response = userRequestSender.sendRequestAsUser(statusGet, statusHandler, defaultUsername, defaultPassword);
+            if (null != response && StringUtils.isNotBlank(response) && response.startsWith("{") && response.endsWith("}"))
             {
-                HttpGet statusGet = new HttpGet(statusUrl);
-                ResponseHandler<String> statusHandler = new BasicResponseHandler();
-                String response = userRequestSender.sendRequestAsUser(statusGet, statusHandler, defaultUsername, defaultPassword);
-                if (null != response && StringUtils.isNotBlank(response) && response.startsWith("{") && response.endsWith("}"))
-                {
-                    JSON json = JSON.parse(response);
-                    return (null != json.get("enabled"));
-                }
-                return false;
+                JSON json = JSON.parse(response);
+                return (null != json.get("enabled"));
             }
+            return false;
         };
 
         ScheduledFuture<Boolean> statusCheck = scheduledExecutor.schedule(statusChecker, period, TimeUnit.MILLISECONDS);

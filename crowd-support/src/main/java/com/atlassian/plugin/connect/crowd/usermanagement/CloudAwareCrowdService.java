@@ -1,5 +1,15 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TransferQueue;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -10,27 +20,19 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.group.Group;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
-import com.atlassian.plugin.connect.spi.HostProperties;
-import com.atlassian.plugin.connect.spi.FeatureManager;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
+import com.atlassian.plugin.connect.spi.FeatureManager;
+import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+
 import com.google.common.annotations.VisibleForTesting;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TransferQueue;
 
 /**
  * This implementation seeks to encapsulate workarounds for:
@@ -48,7 +50,7 @@ import java.util.concurrent.TransferQueue;
 public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddonUserGroupProvisioningService, ConnectCrowdSyncService
 {
     private long syncTimeout = 10;
-    private HostProperties hostProperties;
+    private final HostProperties hostProperties;
     private final FeatureManager featureManager;
     private final ConnectCrowdBase remote;
     private final ConnectCrowdBase embedded;

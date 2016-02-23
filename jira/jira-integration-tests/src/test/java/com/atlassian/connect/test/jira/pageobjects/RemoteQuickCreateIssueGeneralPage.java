@@ -34,14 +34,9 @@ public class RemoteQuickCreateIssueGeneralPage extends ConnectAddonPage implemen
 
     public void launchQuickCreate()
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                driver.findElement(By.id("dialog")).click();
-                return null;
-            }
+        runInFrame(() -> {
+            driver.findElement(By.id("dialog")).click();
+            return null;
         });
 
     }

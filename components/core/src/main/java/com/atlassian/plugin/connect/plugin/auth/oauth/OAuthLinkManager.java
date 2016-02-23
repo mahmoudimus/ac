@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -157,14 +158,9 @@ public class OAuthLinkManager
         }
         else
         {
-            return newArrayList(Maps.transformValues(originalParams, new Function<List<String>, String>()
-            {
-                @Override
-                public String apply(List<String> strings)
-                {
-                    // TODO: Doesn't handle multiple values with the same param name
-                    return strings.get(0);
-                }
+            return newArrayList(Maps.transformValues(originalParams, strings -> {
+                // TODO: Doesn't handle multiple values with the same param name
+                return strings.get(0);
             }).entrySet());
         }
     }
@@ -216,11 +212,9 @@ public class OAuthLinkManager
         final List<com.atlassian.oauth.Request.Parameter> parameters = new ArrayList<Request.Parameter>();
         for (final String parameterName : reqParameters.keySet())
         {
-            final List<String> values = reqParameters.get(parameterName);
-            for (final String value : values)
-            {
-                parameters.add(new com.atlassian.oauth.Request.Parameter(parameterName, value));
-            }
+            reqParameters.get(parameterName).stream()
+                .map(value -> new Request.Parameter(parameterName, value))
+                .forEach(parameters::add);
         }
         return parameters;
     }

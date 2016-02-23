@@ -23,13 +23,6 @@ public class JiraAddWorkflowTransitionPostFunctionPage extends AddWorkflowTransi
     public List<WorkflowPostFunctionEntry> getPostFunctions()
     {
         List<PageElement> postFunctions = descriptorsTable.find(By.tagName("tbody")).findAll(By.tagName("tr"));
-        return Lists.transform(postFunctions, new Function<PageElement, WorkflowPostFunctionEntry>()
-        {
-            @Override
-            public WorkflowPostFunctionEntry apply(@Nullable PageElement pageElement)
-            {
-                return new WorkflowPostFunctionEntry(pageElement);
-            }
-        });
+        return Lists.transform(postFunctions, WorkflowPostFunctionEntry::new);
     }
 }

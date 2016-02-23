@@ -34,14 +34,7 @@ public class AttachmentEventMapper extends ConfluenceEventMapper
         builder.putAll(super.toMap(e));
         builder.put("attachedTo", contentEntityObjectToMap(event.getContent()));
 
-        Function<Attachment, Map<String, Object>> f = new Function<Attachment, Map<String, Object>>()
-        {
-            @Override
-            public Map<String, Object> apply(Attachment attachment)
-            {
-                return attachmentToMap(attachment);
-            }
-        };
+        Function<Attachment, Map<String, Object>> f = this::attachmentToMap;
         builder.put("attachments", Lists.transform(event.getAttachments(),  f));
         return builder.build();
     }

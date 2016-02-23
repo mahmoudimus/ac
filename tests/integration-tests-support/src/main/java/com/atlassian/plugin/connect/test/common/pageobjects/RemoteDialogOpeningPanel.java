@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import java.util.concurrent.Callable;
-
 import javax.inject.Inject;
 
 import com.atlassian.pageobjects.PageBinder;
@@ -63,16 +61,11 @@ public class RemoteDialogOpeningPanel extends AbstractConnectIFrameComponent<Rem
 
     private void open(final String id)
     {
-        runInFrame(driver, containerDiv, new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                PageElement element = elementFinder.find(By.id(id));
-                waitUntilTrue(element.timed().isVisible());
-                element.click();
-                return null;
-            }
+        runInFrame(driver, containerDiv, () -> {
+            PageElement element = elementFinder.find(By.id(id));
+            waitUntilTrue(element.timed().isVisible());
+            element.click();
+            return null;
         });
     }
 

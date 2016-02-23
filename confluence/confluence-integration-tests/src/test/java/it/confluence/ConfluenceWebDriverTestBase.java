@@ -1,5 +1,9 @@
 package it.confluence;
 
+import java.util.concurrent.Callable;
+
+import javax.annotation.Nullable;
+
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
@@ -38,8 +42,10 @@ import com.atlassian.testutils.annotations.Retry;
 import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterfaceException;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -47,9 +53,6 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import java.util.concurrent.Callable;
 
 import static com.atlassian.confluence.api.model.content.ContentRepresentation.STORAGE;
 import static com.atlassian.confluence.api.model.content.ContentType.PAGE;
@@ -232,27 +235,17 @@ public class ConfluenceWebDriverTestBase
 
     protected Runnable macroDialogSubmitter(final String moduleKey)
     {
-        return new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                RemotePluginDialog dialog = confluencePageOperations.findDialog(moduleKey);
-                dialog.submitAndWaitUntilHidden();
-            }
+        return () -> {
+            RemotePluginDialog dialog = confluencePageOperations.findDialog(moduleKey);
+            dialog.submitAndWaitUntilHidden();
         };
     }
 
     protected Runnable macroDialogCanceller(final String moduleKey)
     {
-        return new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                RemotePluginDialog dialog = confluencePageOperations.findDialog(moduleKey);
-                dialog.cancelAndWaitUntilHidden();
-            }
+        return () -> {
+            RemotePluginDialog dialog = confluencePageOperations.findDialog(moduleKey);
+            dialog.cancelAndWaitUntilHidden();
         };
     }
 

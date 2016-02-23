@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeLoadJsonFileHelper;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.Is;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,7 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeLoadJsonFileHelper;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.Is;
+import org.junit.Test;
+
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 
 @ConvertToWiredTest
@@ -39,7 +41,7 @@ public class StaticAddonScopesTest
     @Test (expected = IllegalArgumentException.class)
     public void dereferencingANullScopeReferenceResultsInException() throws IOException
     {
-        StaticAddonScopes.dereference(getTestScopes(), asList((ScopeName) null));
+        StaticAddonScopes.dereference(getTestScopes(), singletonList((ScopeName) null));
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -53,7 +55,7 @@ public class StaticAddonScopesTest
     {
         List<AddonScope> scopes = new ArrayList<>(getTestScopes());
         scopes.addAll(getTestScopes());
-        StaticAddonScopes.dereference(scopes, asList(ScopeName.READ));
+        StaticAddonScopes.dereference(scopes, singletonList(ScopeName.READ));
     }
 
     private Collection<AddonScope> getTestScopes() throws IOException

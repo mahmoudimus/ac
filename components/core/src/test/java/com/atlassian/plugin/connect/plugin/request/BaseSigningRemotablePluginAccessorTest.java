@@ -90,11 +90,7 @@ public abstract class BaseSigningRemotablePluginAccessorTest
         {
             when(promise.get()).thenReturn(promisedHttpResponse);
         }
-        catch (InterruptedException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (ExecutionException e)
+        catch (InterruptedException | ExecutionException e)
         {
             throw new RuntimeException(e);
         }

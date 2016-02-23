@@ -26,15 +26,10 @@ public class TestJiraWebHooks2 extends JiraTestBase
     @Test
     public void testWebHookOnIssueCreated() throws Exception
     {
-        runInJsonRunner(baseUrl, "issue_created", JIRA_ISSUE_CREATED, new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                product.backdoor().issues().createIssue(project.getKey(), "As Filip I want JIRA WebHooks to really work.");
-                WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body, JIRA_ISSUE_CREATED);
-            }
+        runInJsonRunner(baseUrl, "issue_created", JIRA_ISSUE_CREATED, waiter -> {
+            product.backdoor().issues().createIssue(project.getKey(), "As Filip I want JIRA WebHooks to really work.");
+            WebHookBody body = waiter.waitForHook();
+            assertWebHookDidFire(body, JIRA_ISSUE_CREATED);
         });
     }
 
@@ -48,33 +43,23 @@ public class TestJiraWebHooks2 extends JiraTestBase
     @Test
     public void testWebHookOnIssueUpdated() throws Exception
     {
-        runInJsonRunner(baseUrl, "issue_updated", JIRA_ISSUE_UPDATED, new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "As Filip I want JIRA WebHooks listeners to get issue updates");
-                product.backdoor().issues().setSummary(issue.key, "As Filip I want JIRA WebHooks listeners to get all issue updates");
-                WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
-            }
+        runInJsonRunner(baseUrl, "issue_updated", JIRA_ISSUE_UPDATED, waiter -> {
+            IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "As Filip I want JIRA WebHooks listeners to get issue updates");
+            product.backdoor().issues().setSummary(issue.key, "As Filip I want JIRA WebHooks listeners to get all issue updates");
+            WebHookBody body = waiter.waitForHook();
+            assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
         });
     }
 
     @Test
     public void testWebHookOnIssueTransitioned() throws Exception
     {
-        runInJsonRunner(baseUrl, "issue_transitioned", "jira:issue_updated", new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "As Filip I want JIRA WebHooks listeners to get issue transition");
-                int transitionId = product.backdoor().issues().getIssue(issue.key, Issue.Expand.transitions).transitions.get(0).id;
-                product.backdoor().issues().transitionIssue(issue.key, transitionId);
-                WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
-            }
+        runInJsonRunner(baseUrl, "issue_transitioned", "jira:issue_updated", waiter -> {
+            IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "As Filip I want JIRA WebHooks listeners to get issue transition");
+            int transitionId = product.backdoor().issues().getIssue(issue.key, Issue.Expand.transitions).transitions.get(0).id;
+            product.backdoor().issues().transitionIssue(issue.key, transitionId);
+            WebHookBody body = waiter.waitForHook();
+            assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
         });
     }
 

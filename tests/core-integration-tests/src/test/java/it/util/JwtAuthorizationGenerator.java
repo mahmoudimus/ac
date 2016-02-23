@@ -24,7 +24,6 @@ import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang.StringUtils;
@@ -78,15 +77,7 @@ public class JwtAuthorizationGenerator
                            Optional<String> userId, String issuer, String sharedSecret)
             throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
     {
-
-        Map<String, String[]> paramsAsArrays = Maps.transformValues(parameters, new Function<List<String>, String[]>()
-        {
-            @Override
-            public String[] apply(List<String> input)
-            {
-                return checkNotNull(input).toArray(new String[input.size()]);
-            }
-        });
+        Map<String, String[]> paramsAsArrays = Maps.transformValues(parameters, input -> checkNotNull(input).toArray(new String[input.size()]));
         return encodeJwt(httpMethod, url, paramsAsArrays, userId.orElse(null), issuer, sharedSecret);
     }
 
@@ -119,11 +110,7 @@ public class JwtAuthorizationGenerator
 
             JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, canonicalHttpUriRequest);
         }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (NoSuchAlgorithmException e)
+        catch (UnsupportedEncodingException | NoSuchAlgorithmException e)
         {
             throw new RuntimeException(e);
         }
@@ -150,7 +137,7 @@ public class JwtAuthorizationGenerator
             return Collections.emptyMap();
         }
 
-        Map<String, String[]> queryParams = new HashMap<String, String[]>();
+        Map<String, String[]> queryParams = new HashMap<>();
 
         CharArrayBuffer buffer = new CharArrayBuffer(query.length());
         buffer.append(query);

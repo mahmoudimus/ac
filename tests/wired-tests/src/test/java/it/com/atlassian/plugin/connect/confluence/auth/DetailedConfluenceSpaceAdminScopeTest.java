@@ -112,10 +112,9 @@ public class DetailedConfluenceSpaceAdminScopeTest
     {
         removeSavedSpaces();
 
-        for (Plugin plugin : installedAddonPlugins)
-        {
-            if (plugin != null)
-            {
+        installedAddonPlugins.stream()
+            .filter(plugin -> plugin != null)
+            .forEach(plugin -> {
                 try
                 {
                     testPluginInstaller.uninstallAddon(plugin);
@@ -124,8 +123,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
                 {
                     log.error("Could not uninstall add-on", e);
                 }
-            }
-        }
+            });
     }
 
     @Test
@@ -387,10 +385,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
     private void removeSavedSpaces()
     {
-        for (Space space : createdSpaceList)
-        {
-            removeSpace(space);
-        }
+        createdSpaceList.forEach(this::removeSpace);
         createdSpaceList.clear();
     }
 

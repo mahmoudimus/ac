@@ -33,14 +33,7 @@ public class ReportModuleCssTransformer implements WebResourceTransformerFactory
     @Override
     public UrlReadingWebResourceTransformer makeResourceTransformer(final TransformerParameters transformerParameters)
     {
-        return new UrlReadingWebResourceTransformer()
-        {
-            @Override
-            public DownloadableResource transform(final TransformableResource transformableResource, final QueryParams queryParams)
-            {
-                return new ThumbnailCssClassesGenerator(transformableResource.nextResource(), pluginAccessor);
-            }
-        };
+        return (transformableResource, queryParams) -> new ThumbnailCssClassesGenerator(transformableResource.nextResource(), pluginAccessor);
     }
 
     static class ReportModulesUriBuilder implements TransformerUrlBuilder
@@ -81,19 +74,16 @@ public class ReportModuleCssTransformer implements WebResourceTransformerFactory
                     pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectReportModuleDescriptor.ModuleDescriptorImpl.class);
 
             final StringBuilder stringBuilder = new StringBuilder();
-            for (ConnectReportModuleDescriptor.ModuleDescriptorImpl moduleDescriptor : moduleDescriptorsByClass)
-            {
-                if (StringUtil.isNotBlank(moduleDescriptor.getThumbnailUrl()))
-                {
-                    stringBuilder
-                            .append(".")
-                            .append(ConnectReportModuleDescriptor.getThumbnailCssClass(moduleDescriptor.getKey()))
-                            .append(":before ")
-                            .append("{ background-image: url('")
-                            .append(moduleDescriptor.getThumbnailUrl())
-                            .append("') !important }\n");
-                }
-            }
+            moduleDescriptorsByClass.stream()
+                .filter(moduleDescriptor -> StringUtil.isNotBlank(moduleDescriptor.getThumbnailUrl()))
+                .forEach(moduleDescriptor -> stringBuilder
+                    .append(".")
+                    .append(ConnectReportModuleDescriptor.getThumbnailCssClass(moduleDescriptor.getKey()))
+                    .append(":before ")
+                    .append("{ background-image: url('")
+                    .append(moduleDescriptor.getThumbnailUrl())
+                    .append("') !important }\n")
+                );
             return stringBuilder.toString();
         }
     }

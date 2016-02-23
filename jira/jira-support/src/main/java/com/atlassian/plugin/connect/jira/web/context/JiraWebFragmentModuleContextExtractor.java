@@ -197,13 +197,9 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                     @Override
                     public void addToContext(final JiraModuleContextParameters moduleContext, final Map<Object, Object> value)
                     {
-                        for (Map.Entry<Object, Object> entry : value.entrySet())
-                        {
-                            if (entry.getKey() instanceof String && entry.getValue() instanceof String)
-                            {
-                                moduleContext.put((String) entry.getKey(), (String) entry.getValue());
-                            }
-                        }
+                        value.entrySet().stream()
+                            .filter(entry -> entry.getKey() instanceof String && entry.getValue() instanceof String)
+                            .forEach(entry -> moduleContext.put((String) entry.getKey(), (String) entry.getValue()));
                     }
                 },
                 new ParameterExtractor<Map<Object, Object>>()

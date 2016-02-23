@@ -22,7 +22,7 @@ public class ConnectAsserts
 
     private static Map<String, String> getQueryStringAsMap(String query)
     {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         if (Strings.isNullOrEmpty(query))
         {
             return map;

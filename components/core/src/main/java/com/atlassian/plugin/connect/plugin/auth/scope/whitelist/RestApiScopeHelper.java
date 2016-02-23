@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
@@ -126,10 +127,9 @@ public final class RestApiScopeHelper
                 }
                 else
                 {
-                    for (String version : versions)
-                    {
-                        infos.add(new ApiResourceInfo("/rest/" + name + "/" + version + basePath, method.toUpperCase(Locale.US)));
-                    }
+                    versions.stream()
+                        .map(version -> new ApiResourceInfo("/rest/" + name + "/" + version + basePath, method.toUpperCase(Locale.US)))
+                        .forEach(infos::add);
                 }
             }
             return infos;

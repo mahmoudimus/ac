@@ -1,19 +1,19 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
+import com.google.common.collect.Maps;
 
 public final class PageMacro extends AbstractRemoteMacro
 {
@@ -79,15 +79,7 @@ public final class PageMacro extends AbstractRemoteMacro
 
     private Map<String, String[]> convertParams(Map<String, String> parameters)
     {
-        return Maps.transformValues(parameters, new Function<String, String[]>()
-        {
-
-            @Override
-            public String[] apply(String from)
-            {
-                return new String[]{from};
-            }
-        });
+        return Maps.transformValues(parameters, from -> new String[]{from});
     }
 
 }

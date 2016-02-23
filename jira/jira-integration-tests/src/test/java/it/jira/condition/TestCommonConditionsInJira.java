@@ -25,15 +25,11 @@ import static org.junit.Assert.assertTrue;
 
 public class TestCommonConditionsInJira extends JiraWebDriverTestBase
 {
-
     private static ConnectRunner runner;
 
     private static String onlyBettyWebItem;
     private static String bettyAndBarneyWebitem;
     private static final String ADMIN_RIGHTS_WEBITEM = "admin-rights";
-
-    private static String onlyBettyConditionUrl;
-    private static String onlyBarneyConditionUrl;
 
     private static TestUser betty;
     private static TestUser barney;
@@ -46,8 +42,8 @@ public class TestCommonConditionsInJira extends JiraWebDriverTestBase
 
         onlyBettyWebItem = "only-" + betty.getDisplayName();
         bettyAndBarneyWebitem = betty.getDisplayName() + "-and-" + barney.getDisplayName();
-        onlyBettyConditionUrl = "/only" + betty.getDisplayName() + "Condition";
-        onlyBarneyConditionUrl = "/only" + barney.getDisplayName() + "Condition";
+        String onlyBettyConditionUrl = "/only" + betty.getDisplayName() + "Condition";
+        String onlyBarneyConditionUrl = "/only" + barney.getDisplayName() + "Condition";
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()

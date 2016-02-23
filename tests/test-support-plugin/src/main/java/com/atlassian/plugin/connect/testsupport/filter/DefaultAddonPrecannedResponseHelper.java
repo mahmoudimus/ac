@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
-import com.atlassian.fugue.Option;
-
 public class DefaultAddonPrecannedResponseHelper implements AddonPrecannedResponseHelper
 {
     private final Queue<PrecannedResponse> precannedResponseQueue = new LinkedList<PrecannedResponse>();

@@ -36,15 +36,10 @@ public class ConfluenceTestUtil
 
     public Page createPage()
     {
-        PageProvider pageProvider = new PageProvider()
-        {
-            @Override
-            public Page getPage()
-            {
-                Page page = new Page();
-                page.setSpace(createSpace());
-                return page;
-            }
+        PageProvider pageProvider = () -> {
+            Page page = new Page();
+            page.setSpace(createSpace());
+            return page;
         };
 
         SimpleContentPermissionProvider permissions = new SimpleContentPermissionProvider();

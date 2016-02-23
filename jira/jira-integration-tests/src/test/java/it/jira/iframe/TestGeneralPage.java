@@ -54,7 +54,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
     private static String addonKey;
     private String awesomePageModuleKey;
-    private String contextPageModuleKey;
 
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
@@ -100,7 +99,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     public void beforeEachTest()
     {
         this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
-        this.contextPageModuleKey = addonAndModuleKey(addonKey,KEY_MY_CONTEXT_PAGE);
     }
 
     @Test

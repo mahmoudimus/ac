@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.test.common.servlet;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -74,7 +73,7 @@ public class ConnectRunner
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
     private final List<ConnectModuleMeta> moduleMetas = new ArrayList<>();
-    private final Set<ScopeName> scopes = new HashSet<ScopeName>();
+    private final Set<ScopeName> scopes = new HashSet<>();
 
     private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
@@ -294,26 +293,16 @@ public class ConnectRunner
 
     private SignedRequestHandler createJwtSignedRequestHandler(final InstallHandlerServlet installHandlerServlet)
     {
-        return new SignedRequestHandler()
-        {
-
-            @Override
-            public void sign(URI uri, String method, String username, HttpURLConnection connection)
+        return (uri, method, username, connection) -> {
+            try
             {
-                try
-                {
-                    final String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
-                    final String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.valueOf(method), uri, addonBuilder.getKey(), sharedSecret, productBaseUrl, null);
-                    connection.setRequestProperty("Authorization", "JWT " + jwt);
-                }
-                catch (UnsupportedEncodingException e)
-                {
-                    throw new RuntimeException(e);
-                }
-                catch (NoSuchAlgorithmException e)
-                {
-                    throw new RuntimeException(e);
-                }
+                final String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
+                final String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.valueOf(method), uri, addonBuilder.getKey(), sharedSecret, productBaseUrl, null);
+                connection.setRequestProperty("Authorization", "JWT " + jwt);
+            }
+            catch (UnsupportedEncodingException | NoSuchAlgorithmException e)
+            {
+                throw new RuntimeException(e);
             }
         };
     }

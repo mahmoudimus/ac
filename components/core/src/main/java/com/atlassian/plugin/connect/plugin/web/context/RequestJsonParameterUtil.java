@@ -1,24 +1,23 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import com.google.common.base.Function;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -72,13 +71,9 @@ public class RequestJsonParameterUtil
 
     private void checkSameParams(Map<String, String[]> mutableParams, Map<String, String[]> contextParams)
     {
-        for (String key : contextParams.keySet())
-        {
-            if (mutableParams.containsKey(key))
-            {
-                log.warn("same parameter key ({}) found in both url query and context json. Value from URL query will be overridden", key);
-            }
-        }
+        contextParams.keySet().stream()
+            .filter(mutableParams::containsKey)
+            .forEach(key -> log.warn("same parameter key ({}) found in both url query and context json. Value from URL query will be overridden", key));
     }
 
     private Map<String, String[]> transformToPathForm(Map<String, Object> nestedMapsParams)
@@ -107,17 +102,12 @@ public class RequestJsonParameterUtil
             Iterable<Pair<List<String>, String[]>> pairs = transformNestedValue(entry.getValue());
             // prepend our key to list of path components
             final Iterable<Pair<List<String>, String[]>> result =
-                    Iterables.transform(pairs, new Function<Pair<List<String>, String[]>, Pair<List<String>, String[]>>()
-                    {
-                        @Override
-                        public Pair<List<String>, String[]> apply(@Nullable Pair<List<String>, String[]> pair)
-                        {
-                            checkNotNull(pair);
-                            final ImmutableList.Builder<String> builder = ImmutableList.builder();
-                            builder.add(ObjectUtils.toString(entry.getKey()));
-                            builder.addAll(pair.getLeft());
-                            return Pair.of((List<String>) builder.build(), pair.getValue());
-                        }
+                    Iterables.transform(pairs, pair -> {
+                        checkNotNull(pair);
+                        final ImmutableList.Builder<String> builder = ImmutableList.builder();
+                        builder.add(ObjectUtils.toString(entry.getKey()));
+                        builder.addAll(pair.getLeft());
+                        return Pair.of((List<String>) builder.build(), pair.getValue());
                     });
 
             resultBuilder.addAll(result);
@@ -166,14 +156,7 @@ public class RequestJsonParameterUtil
 
     private String[] iterableToStringArray(Iterable<?> iterable)
     {
-        final Iterable<String> strings = Iterables.transform(iterable, new Function<Object, String>()
-        {
-            @Override
-            public String apply(@Nullable Object input)
-            {
-                return input == null ? "" : input.toString();
-            }
-        });
+        final Iterable<String> strings = Iterables.transform(iterable, input -> input == null ? "" : input.toString());
         return Iterables.toArray(strings, String.class);
     }
 

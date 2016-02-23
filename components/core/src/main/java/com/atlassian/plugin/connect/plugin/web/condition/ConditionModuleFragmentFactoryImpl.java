@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
@@ -51,12 +50,7 @@ public class ConditionModuleFragmentFactoryImpl implements ConditionModuleFragme
         DOMElement element = new DOMElement("conditions");
         element.addAttribute(TYPE_KEY, "AND");
 
-        List<DOMElement> conditions = processConditionBeans(addonKey, beans);
-
-        for (DOMElement condition : conditions)
-        {
-            element.add(condition);
-        }
+        processConditionBeans(addonKey, beans).forEach(element::add);
 
         for (Class<? extends Condition> conditionClass : additionalStaticConditions)
         {

@@ -16,8 +16,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 
-import com.google.common.base.Supplier;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -101,14 +99,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
                 addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
         );
 
-        waitUntilTrue(forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
-        {
-            @Override
-            public Boolean get()
-            {
-                return addonContentsPage.containsHelloWorld();
-            }
-        }));
+        waitUntilTrue(forSupplier(new DefaultTimeouts(), addonContentsPage::containsHelloWorld));
     }
 
     public Space makeSpace(String key, String name, boolean docTheme)

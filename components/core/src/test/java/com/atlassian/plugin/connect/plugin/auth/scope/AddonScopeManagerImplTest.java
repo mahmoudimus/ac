@@ -1,5 +1,13 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -9,7 +17,9 @@ import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeApiPathBuilder;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
+
 import com.google.common.collect.Sets;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,14 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
@@ -145,9 +148,9 @@ public class AddonScopeManagerImplTest
     private Collection<AddonScope> buildTestScopes()
     {
         Set<AddonScope> scopes = new HashSet<>();
-        scopes.add(new AddonScope(ScopeName.READ.name(), new AddonScopeApiPathBuilder().withRestPaths(new AddonScopeBean.RestPathBean("api", "api", asList("/user"), asList("2")), asList("get")).build()));
-        scopes.add(new AddonScope(ScopeName.WRITE.name(), new AddonScopeApiPathBuilder().withRestPaths(new AddonScopeBean.RestPathBean("api", "api", asList("/user/write/.+"), asList("2")), asList("post")).build()));
-        scopes.add(new AddonScope(ScopeName.DELETE.name(), new AddonScopeApiPathBuilder().withRestPaths(new AddonScopeBean.RestPathBean("api", "api", asList("/user/.+/delete"), asList("2")), asList("delete")).build()));
+        scopes.add(new AddonScope(ScopeName.READ.name(), new AddonScopeApiPathBuilder().withRestPaths(new AddonScopeBean.RestPathBean("api", "api", singletonList("/user"), singletonList("2")), singletonList("get")).build()));
+        scopes.add(new AddonScope(ScopeName.WRITE.name(), new AddonScopeApiPathBuilder().withRestPaths(new AddonScopeBean.RestPathBean("api", "api", singletonList("/user/write/.+"), singletonList("2")), singletonList("post")).build()));
+        scopes.add(new AddonScope(ScopeName.DELETE.name(), new AddonScopeApiPathBuilder().withRestPaths(new AddonScopeBean.RestPathBean("api", "api", singletonList("/user/.+/delete"), singletonList("2")), singletonList("delete")).build()));
         return scopes;
     }
 }

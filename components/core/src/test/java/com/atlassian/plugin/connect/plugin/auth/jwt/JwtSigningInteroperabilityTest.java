@@ -235,14 +235,9 @@ public class JwtSigningInteroperabilityTest
         String filePath = System.getProperty("jwtinteroptest.file");
         if (null != filePath)
         {
-            OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8");
-            try
+            try (OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"))
             {
                 tests.toJSON(fileWriter);
-            }
-            finally
-            {
-                fileWriter.close();
             }
         }
     }

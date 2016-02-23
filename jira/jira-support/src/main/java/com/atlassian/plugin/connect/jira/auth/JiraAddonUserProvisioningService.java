@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -143,10 +144,9 @@ public class JiraAddonUserProvisioningService implements CrowdAddonUserProvision
         {
             for (ApplicationRole applicationRole : applicationRoles)
             {
-                for (Group group : applicationRole.getDefaultGroups())
-                {
-                    groupSet.add(group.getName());
-                }
+                groupSet.addAll(applicationRole.getDefaultGroups().stream()
+                    .map(Group::getName)
+                    .collect(Collectors.toList()));
             }
         }
 
@@ -163,14 +163,9 @@ public class JiraAddonUserProvisioningService implements CrowdAddonUserProvision
         // Subvert permission checking while provisioning add-on users. This can be invoked on a thread with no
         // authentication context (for example, the auto-update task thread run scheduled by the UPM) so permission
         // checks would fail.
-        transactionTemplate.execute(SubvertedPermissionsTransactionTemplate.subvertPermissions(new TransactionCallback<Void>()
-        {
-            @Override
-            public Void doInTransaction()
-            {
-                provisionAddonUserForScopesInTransaction(username, previousScopes, newScopes);
-                return null;
-            }
+        transactionTemplate.execute(SubvertedPermissionsTransactionTemplate.subvertPermissions(() -> {
+            provisionAddonUserForScopesInTransaction(username, previousScopes, newScopes);
+            return null;
         }));
     }
 
@@ -313,14 +308,8 @@ public class JiraAddonUserProvisioningService implements CrowdAddonUserProvision
     private boolean groupHasAdminPermission(final String groupKey)
     {
         checkNotNull(groupKey);
-        return any(jiraPermissionManager.getGroupsWithPermission(ADMIN_PERMISSION), new Predicate<Group>()
-        {
-            @Override
-            public boolean apply(@Nullable Group group)
-            {
-                return null != group && groupKey.equals(group.getName());
-            }
-        });
+        return any(jiraPermissionManager.getGroupsWithPermission(ADMIN_PERMISSION),
+            group -> null != group && groupKey.equals(group.getName()));
     }
 
     private void updateProjectPermissions(ApplicationUser addonUser) throws ConnectAddonInitException

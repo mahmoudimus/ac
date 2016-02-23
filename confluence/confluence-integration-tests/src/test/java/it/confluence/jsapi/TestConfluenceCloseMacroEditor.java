@@ -52,16 +52,9 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
     public void shouldCloseMacroEditorWhenInsertingMacroOnNewPage()
     {
         CreatePage createPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
-        selectMacro(createPage, editorMacroModuleBean.getName().getRawValue(), new Runnable()
-        {
-
-            @Override
-            public void run()
-            {
-                RemoteMacroEditorDialog remoteMacroEditor = confluencePageOperations.findDialog(
-                        editorMacroModuleBean.getRawKey(), RemoteMacroEditorDialog.class);
-                remoteMacroEditor.closeMacroEditorAndWaitUntilHidden();
-            }
+        selectMacro(createPage, editorMacroModuleBean.getName().getRawValue(), () -> {
+            RemoteMacroEditorDialog remoteMacroEditor = confluencePageOperations.findDialog(editorMacroModuleBean.getRawKey(), RemoteMacroEditorDialog.class);
+            remoteMacroEditor.closeMacroEditorAndWaitUntilHidden();
         });
         createPage.cancel();
     }

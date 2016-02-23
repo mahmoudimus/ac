@@ -217,13 +217,6 @@ public class TestEntityProperty extends JiraTestBase
     private static void assertHasIssues(SearchResult searchResult, List<String> issueKeys)
     {
         assertThat(searchResult.issues, Matchers.hasSize(issueKeys.size()));
-        assertThat(Lists.transform(searchResult.issues, new Function<Issue, String>()
-        {
-            @Override
-            public String apply(final Issue issue)
-            {
-                return issue.key;
-            }
-        }), Matchers.<String>hasItem(Matchers.isOneOf(issueKeys.toArray())));
+        assertThat(Lists.transform(searchResult.issues, issue -> issue.key), Matchers.<String>hasItem(Matchers.isOneOf(issueKeys.toArray())));
     }
 }
