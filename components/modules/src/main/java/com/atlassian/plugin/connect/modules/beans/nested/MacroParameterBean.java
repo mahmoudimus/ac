@@ -93,7 +93,14 @@ public class MacroParameterBean extends BaseModuleBean {
      */
     private List<String> aliases;
 
-    public MacroParameterBean() {
+    /**
+     * Determines if the parameter will be displayed in the macro editor.
+     */
+    @CommonSchemaAttributes(defaultValue = "false")
+    private Boolean hidden;
+
+    public MacroParameterBean()
+    {
         init();
     }
 
@@ -126,6 +133,10 @@ public class MacroParameterBean extends BaseModuleBean {
         }
         if (null == aliases) {
             aliases = ImmutableList.of();
+        }
+        if (null == hidden)
+        {
+            hidden = false;
         }
     }
 
@@ -175,6 +186,10 @@ public class MacroParameterBean extends BaseModuleBean {
 
     public List<String> getAliases() {
         return aliases;
+    }
+
+    public Boolean isHidden() {
+        return hidden;
     }
 
     public static MacroParameterBeanBuilder newMacroParameterBean() {

@@ -16,6 +16,7 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
     private String defaultValue;
     private List<String> values;
     private List<String> aliases;
+    private Boolean hidden;
 
     public MacroParameterBeanBuilder() {
     }
@@ -30,6 +31,7 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
         this.defaultValue = defaultBean.getDefaultValue();
         this.values = defaultBean.getValues();
         this.aliases = defaultBean.getAliases();
+        this.hidden = defaultBean.isHidden();
     }
 
     public MacroParameterBeanBuilder withIdentifier(String identifier) {
@@ -74,6 +76,11 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
 
     public MacroParameterBeanBuilder withAliases(String... aliases) {
         this.aliases = Lists.newArrayList(aliases);
+        return this;
+    }
+
+    public MacroParameterBeanBuilder withHidden(Boolean hidden) {
+        this.hidden = hidden;
         return this;
     }
 
