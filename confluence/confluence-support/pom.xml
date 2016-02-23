@@ -68,11 +68,6 @@
         </dependency>
 
         <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.httpclient</groupId>
             <artifactId>atlassian-httpclient-api</artifactId>
             <scope>provided</scope>

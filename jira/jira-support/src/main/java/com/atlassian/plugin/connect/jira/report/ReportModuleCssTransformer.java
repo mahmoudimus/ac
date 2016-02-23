@@ -1,6 +1,4 @@
 package com.atlassian.plugin.connect.jira.report;
-
-import com.atlassian.json.schema.util.StringUtil;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.servlet.DownloadableResource;
 import com.atlassian.plugin.webresource.transformer.CharSequenceDownloadableResource;
@@ -13,7 +11,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.List;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 public class ReportModuleCssTransformer implements WebResourceTransformerFactory {
+
     private final PluginAccessor pluginAccessor;
 
     public ReportModuleCssTransformer(final PluginAccessor pluginAccessor) {
@@ -65,7 +66,7 @@ public class ReportModuleCssTransformer implements WebResourceTransformerFactory
 
             final StringBuilder stringBuilder = new StringBuilder();
             moduleDescriptorsByClass.stream()
-                    .filter(moduleDescriptor -> StringUtil.isNotBlank(moduleDescriptor.getThumbnailUrl()))
+                    .filter(moduleDescriptor -> !isNullOrEmpty(moduleDescriptor.getThumbnailUrl()))
                     .forEach(moduleDescriptor -> stringBuilder
                             .append(".")
                             .append(ConnectReportModuleDescriptor.getThumbnailCssClass(moduleDescriptor.getKey()))

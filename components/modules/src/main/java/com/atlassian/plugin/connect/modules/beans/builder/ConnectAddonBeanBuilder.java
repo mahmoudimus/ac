@@ -7,12 +7,10 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -155,12 +153,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     }
 
     private static HashSet<String> transformScopeNamesToStrings(Set<ScopeName> scopeNames) {
-        return new HashSet<String>(transform(scopeNames, new Function<ScopeName, String>() {
-            @Override
-            public String apply(@Nullable ScopeName scopeName) {
-                return null == scopeName ? null : scopeName.name();
-            }
-        }));
+        return new HashSet<String>(transform(scopeNames, scopeName -> null == scopeName ? null : scopeName.name()));
     }
 
     private void addBeanReflectivelyByType(String fieldName, Map<String, List<JsonObject>> capabilities, ModuleBean bean) {

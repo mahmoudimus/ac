@@ -19,10 +19,10 @@ var genSrcPrefix = buildDir + "/gensrc";
 var srcFiles = ["public", "package.json"];
 
 var watchedSchemaFiles = [
-    '../plugin/target/classes/schema/shallow-schema.json',
-    '../plugin/target/classes/schema/common-schema.json',
-    '../plugin/target/classes/schema/jira-schema.json',
-    '../plugin/target/classes/schema/confluence-schema.json'
+    '../components/modules/target/classes/schema/shallow-schema.json',
+    '../components/modules/target/classes/schema/common-schema.json',
+    '../components/modules/target/classes/schema/jira-schema.json',
+    '../components/modules/target/classes/schema/confluence-schema.json'
 ];
 var shallowSchemaPath =       'target/schema/deref-shallow-schema.json';
 var commonSchemaPath =       'target/schema/deref-common-schema.json';

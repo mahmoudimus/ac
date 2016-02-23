@@ -36,11 +36,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-webfragment</artifactId>
         </dependency>

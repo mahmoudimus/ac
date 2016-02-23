@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira;
+package com.atlassian.plugin.connect.modules.schema;
 
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
