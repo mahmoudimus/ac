@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 

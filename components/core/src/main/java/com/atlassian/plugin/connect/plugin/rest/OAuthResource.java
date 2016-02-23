@@ -1,17 +1,16 @@
 package com.atlassian.plugin.connect.plugin.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import static com.google.common.base.Strings.nullToEmpty;
 

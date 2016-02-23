@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.jira.web;
 
-import java.util.HashMap;
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
@@ -28,9 +25,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;

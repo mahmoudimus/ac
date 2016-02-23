@@ -5,9 +5,6 @@ import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

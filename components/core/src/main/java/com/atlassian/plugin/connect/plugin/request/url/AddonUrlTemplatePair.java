@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.request.url;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 

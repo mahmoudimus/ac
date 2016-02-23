@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
-import java.util.Collections;
-
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

@@ -1,16 +1,13 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
-import java.util.concurrent.Callable;
-
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonPage;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import javax.inject.Inject;
 
 /**
  * Page with buttons for executing the javascript jira quick issue create

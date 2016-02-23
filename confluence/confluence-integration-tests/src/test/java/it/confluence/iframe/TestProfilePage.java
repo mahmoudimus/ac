@@ -1,10 +1,5 @@
 package it.confluence.iframe;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
@@ -17,12 +12,15 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParameters;

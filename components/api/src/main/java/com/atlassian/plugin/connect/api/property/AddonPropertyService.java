@@ -1,15 +1,15 @@
 package com.atlassian.plugin.connect.api.property;
 
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
 import com.atlassian.annotations.PublicApi;
 import com.atlassian.fugue.Either;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import java.util.Optional;
 
 /**
  * This service is used to add, remove, list and update add-on properties.

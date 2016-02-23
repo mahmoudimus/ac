@@ -1,9 +1,5 @@
 package it.jira;
 
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.connect.test.jira.pageobjects.IssueNavigatorViewsMenu;
 import com.atlassian.connect.test.jira.pageobjects.JiraAdminPage;
 import com.atlassian.connect.test.jira.pageobjects.JiraAdvancedSearchPage;
@@ -29,14 +25,13 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;

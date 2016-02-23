@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.api.web.iframe;
 
-import java.util.Optional;
-
-import javax.annotation.concurrent.NotThreadSafe;
-
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+
+import javax.annotation.concurrent.NotThreadSafe;
+import java.util.Optional;
 
 /**
  * Builds URIs that target connect add-on.

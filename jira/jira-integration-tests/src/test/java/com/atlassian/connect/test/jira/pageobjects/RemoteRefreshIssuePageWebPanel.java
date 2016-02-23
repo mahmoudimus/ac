@@ -1,13 +1,12 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.jira.pageobjects.util.TraceContext;
 import com.atlassian.jira.pageobjects.util.Tracer;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import javax.inject.Inject;
 
 /**
  * A remote web panel containing a button to call the JavaScript API method jira.refreshIssuePage().

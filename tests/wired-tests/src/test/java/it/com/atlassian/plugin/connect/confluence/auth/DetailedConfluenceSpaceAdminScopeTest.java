@@ -1,10 +1,5 @@
 package it.com.atlassian.plugin.connect.confluence.auth;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.security.SpacePermissionManager;
@@ -34,10 +29,8 @@ import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -46,6 +39,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;

@@ -1,9 +1,9 @@
 package it.com.atlassian.plugin.connect.jira.search;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;

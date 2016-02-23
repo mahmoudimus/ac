@@ -1,10 +1,5 @@
 package it.confluence.item;
 
-import java.net.MalformedURLException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.elasticsearch.shaded.google.common.base.Joiner;
@@ -28,6 +23,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

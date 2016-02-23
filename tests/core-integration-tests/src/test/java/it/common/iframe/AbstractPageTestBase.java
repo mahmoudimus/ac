@@ -1,9 +1,5 @@
 package it.common.iframe;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.util.Optional;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
@@ -14,13 +10,15 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.common.MultiProductWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 
-import it.common.MultiProductWebDriverTestBase;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;

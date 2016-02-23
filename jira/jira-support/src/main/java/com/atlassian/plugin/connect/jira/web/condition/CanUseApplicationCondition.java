@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.jira.web.condition;
 
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.fugue.Either;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
@@ -10,6 +7,9 @@ import com.atlassian.jira.application.ApplicationKeys;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
+
+import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.String.format;
 

@@ -9,9 +9,9 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.ConditionElementParser;
 import org.dom4j.dom.DOMElement;
 
-import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.List;
 
 import static com.atlassian.plugin.web.baseconditions.AbstractConditionElementParser.CompositeType;
 

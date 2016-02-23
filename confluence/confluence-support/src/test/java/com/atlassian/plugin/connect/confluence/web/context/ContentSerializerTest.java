@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.confluence.web.context;
 
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
-import com.atlassian.plugin.connect.confluence.web.context.ContentSerializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

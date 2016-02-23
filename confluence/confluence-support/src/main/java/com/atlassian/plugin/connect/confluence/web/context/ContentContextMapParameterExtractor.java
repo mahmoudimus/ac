@@ -7,7 +7,6 @@ import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

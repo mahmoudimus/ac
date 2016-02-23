@@ -1,19 +1,12 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Optional;
-
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.api.web.condition.ConnectConditionContext;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
@@ -24,6 +17,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.IOException;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.plugin.property.AddonEntityPropertyEqualToCondition.getValueForPath;
 import static org.junit.Assert.assertEquals;

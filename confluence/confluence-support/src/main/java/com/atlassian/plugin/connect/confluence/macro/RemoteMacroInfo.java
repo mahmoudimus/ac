@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.net.URI;
-
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.plugin.connect.api.request.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-
+import com.atlassian.plugin.connect.api.request.RequestContextParameterFactory;
 import org.dom4j.Element;
+
+import java.net.URI;
 
 /**
  * Information about the specific macro type

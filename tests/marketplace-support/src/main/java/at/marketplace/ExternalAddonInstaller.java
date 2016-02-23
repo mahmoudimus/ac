@@ -1,18 +1,13 @@
 package at.marketplace;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
-
+import at.marketplace.ConnectAddonRepresentation.Highlight;
+import cc.plural.jsonij.JPath;
+import cc.plural.jsonij.Value;
+import cc.plural.jsonij.parser.ParserException;
 import com.atlassian.plugin.connect.test.common.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.util.concurrent.ResettableLazyReference;
-
 import com.google.common.base.Function;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -32,10 +27,12 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.marketplace.ConnectAddonRepresentation.Highlight;
-import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.Value;
-import cc.plural.jsonij.parser.ParserException;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;

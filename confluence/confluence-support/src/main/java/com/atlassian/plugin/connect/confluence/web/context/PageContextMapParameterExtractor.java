@@ -3,14 +3,13 @@ package com.atlassian.plugin.connect.confluence.web.context;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
-import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.connect.spi.web.context.ContextMapParameterExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Extracts page parameters that can be included in webpanel's iframe url.

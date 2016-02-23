@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import com.atlassian.crowd.model.user.User;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Collections;
 import java.util.Set;
-
-import com.atlassian.crowd.model.user.User;
-
-import com.google.common.collect.ImmutableMap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

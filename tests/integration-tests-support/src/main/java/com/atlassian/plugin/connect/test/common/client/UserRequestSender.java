@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.test.common.client;
 
-import java.net.URI;
-
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.auth.AuthScope;
@@ -14,6 +12,8 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
+
+import java.net.URI;
 
 public class UserRequestSender {
     private final String baseUrl;

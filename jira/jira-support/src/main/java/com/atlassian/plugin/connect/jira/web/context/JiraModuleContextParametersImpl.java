@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
-import java.util.Map;
-
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
+
+import java.util.Map;
 
 /**
  *

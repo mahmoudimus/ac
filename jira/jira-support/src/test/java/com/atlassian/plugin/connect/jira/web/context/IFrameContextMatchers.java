@@ -4,7 +4,10 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class IFrameContextMatchers {

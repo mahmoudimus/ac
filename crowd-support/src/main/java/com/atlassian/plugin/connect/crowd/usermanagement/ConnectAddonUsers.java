@@ -1,18 +1,16 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import com.google.common.base.Predicate;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.atlassian.crowd.search.EntityDescriptor.group;
 import static com.atlassian.crowd.search.EntityDescriptor.user;

@@ -1,9 +1,7 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.atlassian.sal.api.user.UserManager;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,10 +12,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.sal.api.user.UserManager;
-
-import org.apache.commons.lang3.StringUtils;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A ServletFilter that can act as a remote addon inside of a wired test.

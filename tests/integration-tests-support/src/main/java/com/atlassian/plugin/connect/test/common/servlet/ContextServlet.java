@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
-import java.io.IOException;
-import java.util.Map;
+import org.apache.commons.lang.NotImplementedException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.NotImplementedException;
+import java.io.IOException;
+import java.util.Map;
 
 public abstract class ContextServlet {
     public void doGet(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {

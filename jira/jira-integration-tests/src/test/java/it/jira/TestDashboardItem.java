@@ -1,9 +1,5 @@
 package it.jira;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import com.atlassian.jira.pageobjects.gadgets.GadgetContainer;
 import com.atlassian.jira.pageobjects.pages.AddDashboardPage;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
@@ -18,10 +14,13 @@ import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbedded
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
+import it.com.atlassian.gadgets.pages.AddGadgetDialog;
+import it.com.atlassian.gadgets.pages.Gadget;
+import it.com.atlassian.gadgets.pages.GadgetMenu;
+import it.jira.servlet.JiraAppServlets;
+import it.jira.servlet.condition.DashboardItemConditionServlet;
 import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
@@ -32,11 +31,8 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import it.com.atlassian.gadgets.pages.AddGadgetDialog;
-import it.com.atlassian.gadgets.pages.Gadget;
-import it.com.atlassian.gadgets.pages.GadgetMenu;
-import it.jira.servlet.JiraAppServlets;
-import it.jira.servlet.condition.DashboardItemConditionServlet;
+import javax.inject.Inject;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.google.common.collect.Iterables.getOnlyElement;

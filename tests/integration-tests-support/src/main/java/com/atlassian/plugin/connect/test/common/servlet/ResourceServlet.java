@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 public class ResourceServlet extends ContextServlet {
     private final String resourcePath;

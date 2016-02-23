@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationBlacklist;
@@ -22,6 +18,10 @@ import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.atlassian.plugin.connect.api.web.redirect.RedirectData.AccessDeniedTemplateType.IFRAME;
 

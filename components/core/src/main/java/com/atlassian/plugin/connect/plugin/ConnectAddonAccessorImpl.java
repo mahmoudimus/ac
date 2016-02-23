@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.lifecycle.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;

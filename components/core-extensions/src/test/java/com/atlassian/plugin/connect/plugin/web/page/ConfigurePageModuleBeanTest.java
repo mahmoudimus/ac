@@ -1,16 +1,14 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
-import java.io.IOException;
-
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
-
 import com.google.gson.Gson;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;

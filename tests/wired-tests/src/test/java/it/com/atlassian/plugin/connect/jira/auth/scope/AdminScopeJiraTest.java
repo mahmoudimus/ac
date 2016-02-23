@@ -1,9 +1,9 @@
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
 import com.atlassian.jwt.writer.JwtWriterFactory;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;

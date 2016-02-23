@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.spi.module;
 
 import com.atlassian.annotations.PublicApi;
 import com.atlassian.annotations.PublicSpi;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

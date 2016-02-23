@@ -1,4 +1,3 @@
-
 package it.jira.iframe;
 
 import com.atlassian.connect.test.jira.pageobjects.JiraProjectAdministrationPage;

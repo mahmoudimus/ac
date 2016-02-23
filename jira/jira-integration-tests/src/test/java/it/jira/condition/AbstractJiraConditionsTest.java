@@ -1,7 +1,5 @@
 package it.jira.condition;
 
-import java.util.List;
-
 import com.atlassian.jira.permission.GlobalPermissionKey;
 import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
@@ -12,6 +10,8 @@ import com.atlassian.jira.testkit.client.restclient.WatchersClient;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.google.common.collect.ImmutableList;
 import it.jira.JiraWebDriverTestBase;
+
+import java.util.List;
 
 import static it.jira.condition.TestedCondition.condition;
 

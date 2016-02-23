@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.jira.report;
 
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.jira.AbstractJiraConnectModuleProvider;
@@ -11,10 +9,10 @@ import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleMeta;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import com.google.common.collect.Lists;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @since 1.2

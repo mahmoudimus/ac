@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.confluence.webhook;
 
-import java.util.Map;
-
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 public class PageEventMapper extends ConfluenceEventMapper {
     public PageEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {

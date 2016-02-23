@@ -6,7 +6,6 @@ import com.atlassian.confluence.it.usermanagement.DefaultDirectoryConfiguration;
 import com.atlassian.confluence.it.usermanagement.DefaultUserManagementHelper;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.common.helptips.HelpTipApiClient;
-
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 

@@ -1,7 +1,5 @@
 package it.confluence.iframe;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceUserProfilePage;
@@ -13,16 +11,16 @@ import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-
-import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;

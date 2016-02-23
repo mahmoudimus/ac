@@ -1,16 +1,14 @@
 package it.jira.jsapi;
 
-import java.io.IOException;
-import java.util.Map;
+import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
+import com.atlassian.plugin.connect.test.common.servlet.HttpUtils;
+import com.google.common.collect.ImmutableMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
-import com.atlassian.plugin.connect.test.common.servlet.HttpUtils;
-
-import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.util.Map;
 
 public final class XdmEventsPanelServlet extends ContextServlet {
     private final String id;

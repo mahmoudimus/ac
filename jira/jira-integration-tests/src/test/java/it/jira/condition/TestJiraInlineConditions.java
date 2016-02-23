@@ -1,8 +1,5 @@
 package it.jira.condition;
 
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.elasticsearch.shaded.google.common.base.Joiner;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
@@ -24,6 +21,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;

@@ -1,11 +1,9 @@
 package at.jira;
 
-import java.rmi.RemoteException;
-import java.util.Optional;
-
+import at.marketplace.ExternalAddonInstaller;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.testutils.annotations.Retry;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -14,8 +12,8 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.marketplace.ExternalAddonInstaller;
-import it.jira.JiraWebDriverTestBase;
+import java.rmi.RemoteException;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 import static com.atlassian.test.ondemand.data.JiraData.Projects.EntityLinkedProject.Issues.ISSUE_WITH_WIKI_LINK;

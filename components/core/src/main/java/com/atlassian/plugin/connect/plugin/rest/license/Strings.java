@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.rest.license;
 
 import com.atlassian.upm.api.util.Option;
-
 import org.apache.commons.lang.StringUtils;
 
 import static com.atlassian.upm.api.util.Option.none;

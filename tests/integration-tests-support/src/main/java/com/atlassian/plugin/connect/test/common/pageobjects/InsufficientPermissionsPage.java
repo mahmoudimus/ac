@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
 
 public class InsufficientPermissionsPage implements Page {
     @Inject

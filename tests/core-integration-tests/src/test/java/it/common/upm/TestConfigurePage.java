@@ -1,13 +1,12 @@
 package it.common.upm;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 import com.atlassian.plugin.connect.modules.beans.ConfigurePageModuleMeta;
 import com.atlassian.upm.pageobjects.PluginManager;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 

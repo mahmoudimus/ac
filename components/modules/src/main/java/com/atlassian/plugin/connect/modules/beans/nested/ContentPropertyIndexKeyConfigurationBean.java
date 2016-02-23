@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import java.util.List;
-
 import com.atlassian.json.schema.annotation.Required;
+
+import java.util.List;
 
 /**
  * A Content Property Index Key Configuration defines which values from your JSON content property

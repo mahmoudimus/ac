@@ -3,9 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.condition;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

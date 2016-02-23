@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.event.directory.RemoteDirectorySynchronisedEvent;
 import com.atlassian.event.api.EventListener;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

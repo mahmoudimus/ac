@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.test.common.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Set;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,6 +11,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Set;
 
 /**
  * A helper class for downloading data from a URL, using the cookies from the current WebDriver session.

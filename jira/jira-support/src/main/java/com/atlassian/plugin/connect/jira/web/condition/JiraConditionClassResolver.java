@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.jira.web.condition;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-
 import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition;
 import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 

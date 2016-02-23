@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -22,9 +18,12 @@ import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class RemoteCrowd extends ConnectCrowdBase {
     private static final Logger log = LoggerFactory.getLogger(RemoteCrowd.class);

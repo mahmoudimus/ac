@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.apache.http.HttpStatus;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-
-import org.apache.http.HttpStatus;
+import java.io.CharArrayWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 
 class RedirectingHttpServletResponseWrapper extends HttpServletResponseWrapper {

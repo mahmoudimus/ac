@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.test.client;
 
+import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import com.google.common.base.Preconditions;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-
-import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
-import com.google.common.base.Preconditions;
 
 public class AddonPropertyClient {
     private final String baseUrl;

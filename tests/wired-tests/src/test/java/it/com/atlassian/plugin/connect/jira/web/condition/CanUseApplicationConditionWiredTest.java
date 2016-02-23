@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.jira.web.condition;
 
-import java.util.Collections;
-
 import com.atlassian.jira.bc.user.search.UserSearchParams;
 import com.atlassian.jira.bc.user.search.UserSearchService;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -15,12 +13,12 @@ import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

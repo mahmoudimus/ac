@@ -1,7 +1,5 @@
 package it.common;
 
-import java.util.UUID;
-
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.pageobjects.page.HomePage;
@@ -13,7 +11,6 @@ import com.atlassian.plugin.connect.test.client.AddonPropertyClient;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
@@ -21,6 +18,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.UUID;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;

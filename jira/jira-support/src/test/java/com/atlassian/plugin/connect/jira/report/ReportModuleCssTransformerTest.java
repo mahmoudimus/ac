@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.jira.report;
 
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.jira.report.ConnectReportModuleDescriptor;
-import com.atlassian.plugin.connect.jira.report.ReportModuleCssTransformer;
 import com.atlassian.plugin.servlet.DownloadableResource;
 import com.atlassian.plugin.webresource.transformer.TransformableResource;
 import com.atlassian.plugin.webresource.transformer.TransformerUrlBuilder;

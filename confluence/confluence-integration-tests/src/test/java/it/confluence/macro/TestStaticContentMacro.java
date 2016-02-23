@@ -1,15 +1,5 @@
 package it.confluence.macro;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluencePageWithRemoteMacro;
@@ -21,16 +11,22 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.EchoContextServlet;
 import com.atlassian.plugin.connect.test.common.servlet.EchoQueryParametersServlet;
-
 import com.google.common.collect.Lists;
-
+import it.confluence.MacroStorageFormatBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import it.confluence.MacroStorageFormatBuilder;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;

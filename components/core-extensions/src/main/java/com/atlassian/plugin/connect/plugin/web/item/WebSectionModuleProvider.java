@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
@@ -14,9 +11,11 @@ import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleMeta;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class WebSectionModuleProvider extends AbstractConnectCoreModuleProvider<WebSectionModuleBean> {

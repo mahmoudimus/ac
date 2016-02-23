@@ -1,8 +1,5 @@
 package it.confluence;
 
-import java.net.MalformedURLException;
-import java.util.Optional;
-
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
@@ -20,7 +17,6 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,8 +25,10 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;

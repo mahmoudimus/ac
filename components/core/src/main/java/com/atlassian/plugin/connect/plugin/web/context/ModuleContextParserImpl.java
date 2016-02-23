@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
@@ -13,6 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *

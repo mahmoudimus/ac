@@ -1,14 +1,12 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
-import java.io.IOException;
-
 import com.atlassian.fugue.Either;
-
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
+
+import java.io.IOException;
 
 public class RestAddonPropertyValueSerializer extends JsonSerializer<Either<String, JsonNode>> {
     @Override

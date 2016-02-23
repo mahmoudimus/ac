@@ -2,23 +2,20 @@ package com.atlassian.plugin.connect.plugin.web.context;
 
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
-import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 

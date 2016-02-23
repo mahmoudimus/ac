@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
@@ -17,14 +9,18 @@ import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.request.BaseSigningRemotablePluginAccessorTest;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-
 import com.google.common.collect.Maps;
-
+import net.oauth.OAuth;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import net.oauth.OAuth;
+import java.net.URI;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.is;

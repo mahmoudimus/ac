@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
-import java.util.Collections;
-
 import com.atlassian.confluence.core.ContentEntityManager;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.BlogPost;
@@ -14,8 +12,8 @@ import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.user.User;
@@ -24,6 +22,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.not;

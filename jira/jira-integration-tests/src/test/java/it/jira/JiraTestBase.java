@@ -1,15 +1,14 @@
 package it.jira;
 
-import java.rmi.RemoteException;
-import java.util.Locale;
-
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.plugin.connect.test.jira.product.JiraTestedProductAccessor;
+import it.jira.project.TestProject;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import it.jira.project.TestProject;
+import java.rmi.RemoteException;
+import java.util.Locale;
 
 public class JiraTestBase {
 

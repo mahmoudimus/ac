@@ -1,28 +1,25 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
-import java.io.IOException;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import cc.plural.jsonij.JPath;
+import cc.plural.jsonij.JSON;
+import cc.plural.jsonij.Value;
+import cc.plural.jsonij.parser.ParserException;
+import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.JSON;
-import cc.plural.jsonij.Value;
-import cc.plural.jsonij.parser.ParserException;
+import java.io.IOException;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
 import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomWebItemBean;

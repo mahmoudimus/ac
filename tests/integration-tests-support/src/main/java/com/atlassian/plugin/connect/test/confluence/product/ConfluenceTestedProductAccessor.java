@@ -1,20 +1,19 @@
 package com.atlassian.plugin.connect.test.confluence.product;
 
 import com.atlassian.confluence.it.User;
-import com.atlassian.plugin.connect.test.confluence.pageobjects.FixedConfluenceTestedProduct;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.GeneralPage;
-import com.atlassian.plugin.connect.test.confluence.pageobjects.ConfluenceGeneralPage;
-import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
-
-import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.confluence.pageobjects.ConfluenceGeneralPage;
+import com.atlassian.plugin.connect.test.confluence.pageobjects.FixedConfluenceTestedProduct;
+import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
+import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
+import com.atlassian.webdriver.pageobjects.WebDriverTester;
 
 public class ConfluenceTestedProductAccessor implements TestedProductAccessor {
     private final FixedConfluenceTestedProduct product;

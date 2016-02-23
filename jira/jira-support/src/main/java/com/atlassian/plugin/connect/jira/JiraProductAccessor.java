@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.jira;
 
-import java.util.Optional;
-
 import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.jira.bc.license.JiraLicenseService;
 import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
 
 @JiraComponent
 public final class JiraProductAccessor implements ProductAccessor {

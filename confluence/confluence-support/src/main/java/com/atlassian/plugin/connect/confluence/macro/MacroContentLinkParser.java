@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;

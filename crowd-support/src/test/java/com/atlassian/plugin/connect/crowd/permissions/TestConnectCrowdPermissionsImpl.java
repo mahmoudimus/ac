@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
 import com.atlassian.plugin.connect.spi.FeatureManager;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

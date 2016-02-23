@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.spi;
 
-import java.util.Optional;
-
 import com.atlassian.extras.api.ProductLicense;
+
+import java.util.Optional;
 
 /**
  * Product-specific accessors

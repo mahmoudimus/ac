@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.web.condition;
 
-import java.util.Map;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
@@ -14,12 +12,12 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static java.util.Collections.singletonList;

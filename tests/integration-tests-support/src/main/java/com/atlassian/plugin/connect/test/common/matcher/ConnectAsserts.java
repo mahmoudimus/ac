@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.test.common.matcher;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.pageobjects.AbstractConnectIFrameComponent;
-
+import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-
 import org.hamcrest.collection.IsMapContaining;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isLocale;
 import static com.atlassian.plugin.connect.test.common.matcher.ParamMatchers.isTimeZone;

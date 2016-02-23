@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
-import java.util.Map;
-
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Map;
 
 /**
  *

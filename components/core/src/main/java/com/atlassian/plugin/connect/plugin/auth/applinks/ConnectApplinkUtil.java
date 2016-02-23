@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.auth.applinks;
 
-import java.util.Optional;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public final class ConnectApplinkUtil {
 

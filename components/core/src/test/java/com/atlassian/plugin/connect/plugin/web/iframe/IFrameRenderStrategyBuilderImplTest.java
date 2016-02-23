@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
+import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
-import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameContext;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameParams;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
+import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
+import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.sal.api.timezone.TimeZoneManager;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;

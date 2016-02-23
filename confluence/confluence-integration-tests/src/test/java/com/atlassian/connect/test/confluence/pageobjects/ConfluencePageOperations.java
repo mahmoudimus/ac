@@ -4,9 +4,7 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemotePluginDialog;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import com.google.inject.Inject;
-
 import org.openqa.selenium.By;
 
 public class ConfluencePageOperations extends ConnectPageOperations {

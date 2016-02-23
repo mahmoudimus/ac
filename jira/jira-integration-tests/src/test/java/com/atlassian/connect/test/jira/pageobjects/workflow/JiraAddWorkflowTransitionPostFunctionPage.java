@@ -3,11 +3,9 @@ package com.atlassian.connect.test.jira.pageobjects.workflow;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
 import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.openqa.selenium.By;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class JiraAddWorkflowTransitionPostFunctionPage extends AddWorkflowTransitionPostFunctionPage {

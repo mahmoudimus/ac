@@ -1,7 +1,5 @@
 package it.confluence.iframe;
 
-import java.util.Optional;
-
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.SpacePermission;
 import com.atlassian.confluence.it.admin.BundledTheme;
@@ -15,13 +13,13 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import java.util.Optional;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.pageobjects.elements.query.Queries.forSupplier;

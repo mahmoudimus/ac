@@ -1,10 +1,5 @@
 package it.common;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
 import com.atlassian.jwt.exception.JwtUnknownIssuerException;
@@ -21,6 +16,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.containsString;

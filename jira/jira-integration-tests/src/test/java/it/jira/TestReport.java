@@ -1,7 +1,5 @@
 package it.jira;
 
-import java.util.Map;
-
 import com.atlassian.jira.projects.pageobjects.webdriver.page.ReportsPage;
 import com.atlassian.plugin.connect.modules.beans.ReportCategory;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
@@ -10,10 +8,11 @@ import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbedded
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;

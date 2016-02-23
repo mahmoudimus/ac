@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.web.HostApplicationInfo;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Autowired;

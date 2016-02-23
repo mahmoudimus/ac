@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.test.jira.util;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.plugin.connect.test.common.helptips.HelpTipApiClient;
-
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 /**

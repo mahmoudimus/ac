@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.modules.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 public class ContentPropertyModuleBeanBuilder
         extends RequiredKeyBeanBuilder<ContentPropertyModuleBeanBuilder, ContentPropertyModuleBean> {

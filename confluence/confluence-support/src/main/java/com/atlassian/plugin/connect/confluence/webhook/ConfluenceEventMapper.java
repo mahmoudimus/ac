@@ -17,10 +17,10 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-
 import java.util.Map;
+
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public class ConfluenceEventMapper {
     private final UserManager userManager;

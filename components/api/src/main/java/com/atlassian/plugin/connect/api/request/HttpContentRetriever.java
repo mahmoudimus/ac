@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.api.request;
 
+import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.util.concurrent.Promise;
+import org.apache.http.entity.ContentType;
+
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-
-import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
-import com.atlassian.util.concurrent.Promise;
-
-import org.apache.http.entity.ContentType;
 
 /**
  * Retrieves and caches http content.

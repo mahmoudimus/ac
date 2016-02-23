@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
-
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.junit.Before;

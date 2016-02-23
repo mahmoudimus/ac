@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.util.List;
-
 import com.atlassian.confluence.macro.browser.beans.MacroIcon;
 import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
@@ -19,13 +17,14 @@ import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.spring.container.ContainerContext;
 import com.atlassian.spring.container.ContainerManager;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;

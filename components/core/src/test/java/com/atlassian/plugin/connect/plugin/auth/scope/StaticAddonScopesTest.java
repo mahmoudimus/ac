@@ -1,5 +1,13 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
+import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeLoadJsonFileHelper;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.Is;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -8,15 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
-import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeLoadJsonFileHelper;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.Is;
-import org.junit.Test;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;

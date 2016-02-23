@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.web.context.condition.InlineConditionVariableSubstitutor;
 import org.apache.commons.lang3.StringUtils;

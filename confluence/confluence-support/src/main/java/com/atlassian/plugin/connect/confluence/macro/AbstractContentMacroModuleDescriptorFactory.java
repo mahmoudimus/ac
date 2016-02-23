@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
@@ -20,14 +17,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.uri.Uri;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.api.util.Dom4jUtils.printNode;
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;

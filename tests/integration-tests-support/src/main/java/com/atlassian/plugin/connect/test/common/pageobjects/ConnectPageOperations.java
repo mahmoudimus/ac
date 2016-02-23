@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
@@ -10,11 +7,12 @@ import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
-
 import com.google.inject.Inject;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Iterables.size;
 

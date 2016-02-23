@@ -4,9 +4,7 @@ import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.plugin.connect.crowd.spi.CrowdAddonUserProvisioningService;
 import com.atlassian.plugin.connect.spi.HostProperties;
-
 import com.google.common.collect.Sets;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

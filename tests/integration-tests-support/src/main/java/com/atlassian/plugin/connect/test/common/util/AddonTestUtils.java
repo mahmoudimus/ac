@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.test.common.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
@@ -19,13 +11,19 @@ import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 

@@ -8,10 +8,8 @@ import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.plugin.connect.test.jira.product.JiraTestedProductAccessor;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import javax.inject.Inject;
-import java.util.concurrent.Callable;
 
 /**
  * Page with a date picker control

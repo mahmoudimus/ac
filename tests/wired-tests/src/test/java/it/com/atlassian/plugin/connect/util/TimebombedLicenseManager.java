@@ -1,11 +1,10 @@
 package it.com.atlassian.plugin.connect.util;
 
+import com.atlassian.sal.api.license.LicenseHandler;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import com.atlassian.sal.api.license.LicenseHandler;
-
-import org.apache.commons.io.IOUtils;
 
 public class TimebombedLicenseManager {
     public static final int LICENSED_ADDON_KEY_COUNT = 100;

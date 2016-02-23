@@ -1,18 +1,11 @@
 package com.atlassian.plugin.connect.jira.search;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
-
 import com.atlassian.jira.exception.DataAccessException;
-import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchRequest;
 import com.atlassian.jira.issue.views.SingleIssueWriter;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.issue.views.util.SearchRequestViewUtils;
-import com.atlassian.jira.plugin.issueview.AbstractIssueView;
 import com.atlassian.jira.plugin.searchrequestview.RequestHeaders;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestParams;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
@@ -25,6 +18,11 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
 
 import static java.util.Collections.emptyMap;
 

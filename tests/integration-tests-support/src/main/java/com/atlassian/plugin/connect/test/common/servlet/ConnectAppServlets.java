@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
-import javax.servlet.http.HttpServlet;
-
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
-
 import com.google.common.collect.Lists;
+
+import javax.servlet.http.HttpServlet;
 
 /**
  * Utility methods for creating test servlets suitable for serving Connect iframes.

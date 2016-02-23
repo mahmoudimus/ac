@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.test.confluence.util;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.common.helptips.HelpTipApiClient;
-
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 /**

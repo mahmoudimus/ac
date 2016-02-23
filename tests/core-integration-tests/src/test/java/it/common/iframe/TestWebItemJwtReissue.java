@@ -1,13 +1,5 @@
 package it.common.iframe;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.core.reader.JwtIssuerValidator;
@@ -31,14 +23,20 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.common.MultiProductWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import it.common.MultiProductWebDriverTestBase;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;

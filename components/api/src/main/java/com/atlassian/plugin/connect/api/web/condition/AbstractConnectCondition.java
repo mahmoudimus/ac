@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.api.web.condition;
 
 
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
+
+import java.util.Map;
+import java.util.Optional;
 
 @ConnectCondition
 public abstract class AbstractConnectCondition implements Condition {

@@ -1,18 +1,17 @@
 package com.atlassian.plugin.connect.test.common.client;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
+import cc.plural.jsonij.JSON;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 
-import cc.plural.jsonij.JSON;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Checks the add-on installation status in regular intervals (avoids busy polling)

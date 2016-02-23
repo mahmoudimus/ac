@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
@@ -25,6 +22,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFilter.COMPONENT_ID;
 import static com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFilter.ISSUE_ID;

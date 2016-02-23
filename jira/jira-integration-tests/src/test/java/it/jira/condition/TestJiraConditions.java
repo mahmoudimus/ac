@@ -1,7 +1,5 @@
 package it.jira.condition;
 
-import java.util.List;
-
 import com.atlassian.jira.pageobjects.pages.viewissue.IssueMenu;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.plugin.connect.jira.web.condition.JiraConditionClassResolver;
@@ -17,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;

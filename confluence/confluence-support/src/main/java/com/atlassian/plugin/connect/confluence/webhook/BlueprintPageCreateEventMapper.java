@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.confluence.webhook;
 
-import java.util.Map;
-
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.plugins.createcontent.api.events.BlueprintPageCreateEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 public class BlueprintPageCreateEventMapper extends ConfluenceEventMapper {
     public BlueprintPageCreateEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {

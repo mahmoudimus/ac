@@ -1,11 +1,11 @@
 package it.confluence.item;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.confluence.security.SpacePermission;
 import com.google.common.collect.ImmutableMap;
 import it.confluence.ConfluenceWebDriverTestBase;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 

@@ -1,13 +1,5 @@
 package it.jira.item;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.ws.rs.core.UriBuilder;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
@@ -21,7 +13,7 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.JiraWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -30,7 +22,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;

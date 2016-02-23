@@ -1,13 +1,22 @@
 package it.confluence;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.confluence.rest.client.*;
+import com.atlassian.confluence.rest.client.RemoteCQLSearchService;
+import com.atlassian.confluence.rest.client.RemoteCQLSearchServiceImpl;
+import com.atlassian.confluence.rest.client.RemoteContentPropertyService;
+import com.atlassian.confluence.rest.client.RemoteContentPropertyServiceImpl;
+import com.atlassian.confluence.rest.client.RemoteContentService;
+import com.atlassian.confluence.rest.client.RemoteContentServiceImpl;
+import com.atlassian.confluence.rest.client.RemoteLongTaskService;
+import com.atlassian.confluence.rest.client.RemoteSpaceService;
+import com.atlassian.confluence.rest.client.RemoteSpaceServiceImpl;
+import com.atlassian.confluence.rest.client.RestClientFactory;
 import com.atlassian.confluence.rest.client.authentication.AuthenticatedWebResourceProvider;
 import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
-import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 import java.util.concurrent.Executors;
 

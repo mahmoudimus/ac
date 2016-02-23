@@ -1,22 +1,20 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.connect.spi.FeatureManager;
-
+import com.atlassian.plugin.connect.spi.HostProperties;
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mock;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.crowd.usermanagement.CrowdServiceLocatorMocks.mockCrowdServiceLocator;
 import static com.google.common.collect.Sets.newHashSet;

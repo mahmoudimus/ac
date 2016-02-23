@@ -6,6 +6,7 @@ import com.atlassian.gadgets.plugins.DashboardItemModule.Author;
 import com.atlassian.gadgets.plugins.DashboardItemModule.DirectoryDefinition;
 import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionElementParserFactory;
@@ -16,7 +17,6 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFa
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;

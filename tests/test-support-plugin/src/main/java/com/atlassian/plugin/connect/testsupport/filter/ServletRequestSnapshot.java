@@ -1,18 +1,16 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
+import com.atlassian.jwt.JwtConstants;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import org.apache.commons.io.IOUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.atlassian.jwt.JwtConstants;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-
-import org.apache.commons.io.IOUtils;
 
 public class ServletRequestSnapshot {
     private final String contextPath;

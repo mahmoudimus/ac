@@ -1,7 +1,6 @@
 package at.marketplace;
 
 import com.google.common.collect.ImmutableList;
-
 import org.apache.commons.lang3.Validate;
 
 import static com.google.common.base.Preconditions.checkNotNull;

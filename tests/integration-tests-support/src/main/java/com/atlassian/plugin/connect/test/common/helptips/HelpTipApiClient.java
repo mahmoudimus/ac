@@ -3,9 +3,7 @@ package com.atlassian.plugin.connect.test.common.helptips;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.common.client.UserRequestSender;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;

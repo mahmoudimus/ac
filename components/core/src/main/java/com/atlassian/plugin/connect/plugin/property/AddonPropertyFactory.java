@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import java.util.Optional;
-
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.codehaus.jackson.JsonNode;
+
+import java.util.Optional;
 
 public class AddonPropertyFactory {
 

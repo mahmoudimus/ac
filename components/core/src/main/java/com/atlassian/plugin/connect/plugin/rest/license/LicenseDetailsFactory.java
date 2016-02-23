@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.rest.license;
 
 import com.atlassian.upm.api.license.entity.Contact;
 import com.atlassian.upm.api.license.entity.PluginLicense;
-
 import org.joda.time.DateTime;
 
 import java.util.Date;

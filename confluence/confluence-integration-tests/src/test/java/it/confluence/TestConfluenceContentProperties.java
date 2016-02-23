@@ -1,8 +1,5 @@
 package it.confluence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.atlassian.confluence.api.model.JsonString;
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
@@ -25,10 +22,8 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.After;
@@ -37,6 +32,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.UISupportModuleBean.newUISupportModuleBean;

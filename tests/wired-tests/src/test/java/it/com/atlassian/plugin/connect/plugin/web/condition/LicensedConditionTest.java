@@ -1,8 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.web.condition;
 
-import java.io.IOException;
-import java.util.Collections;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -19,10 +16,9 @@ import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-
+import it.com.atlassian.plugin.connect.util.TimebombedLicenseManager;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -31,7 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.util.TimebombedLicenseManager;
+import java.io.IOException;
+import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;

@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
-import java.net.MalformedURLException;
-
 import org.junit.Test;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.plugin.connect.plugin.web.redirect.RedirectOnNotFoundFilter.createRedirectUrl;
 import static org.hamcrest.Matchers.is;

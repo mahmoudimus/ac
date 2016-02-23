@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
-
 import org.junit.Test;
 
 import static com.atlassian.fugue.Option.some;

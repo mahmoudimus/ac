@@ -1,4 +1,3 @@
-
 package it.confluence.iframe;
 
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;

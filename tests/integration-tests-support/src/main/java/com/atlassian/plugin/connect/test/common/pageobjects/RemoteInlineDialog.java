@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.test.common.pageobjects;
 
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.utils.element.ElementConditions;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;

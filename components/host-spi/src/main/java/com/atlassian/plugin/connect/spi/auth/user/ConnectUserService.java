@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.spi.auth.user;
 
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+
+import javax.annotation.Nonnull;
+import java.util.Set;
 
 /**
  * Provided by the host application to allow connect to manage add-on users and check whether impersonated users

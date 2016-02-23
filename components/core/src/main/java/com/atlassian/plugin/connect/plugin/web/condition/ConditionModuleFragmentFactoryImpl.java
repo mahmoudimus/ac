@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.api.web.condition.ConnectCondition;
@@ -14,12 +8,17 @@ import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.web.Condition;
-
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 

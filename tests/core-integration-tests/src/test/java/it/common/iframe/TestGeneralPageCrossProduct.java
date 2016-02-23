@@ -14,12 +14,10 @@ import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameC
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.pageobjects.AccessDeniedIFramePage;
-
+import it.common.MultiProductWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.common.MultiProductWebDriverTestBase;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;

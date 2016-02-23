@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
-import com.atlassian.plugin.connect.plugin.request.AddonKeyExtractorImpl;
 import com.atlassian.plugin.connect.plugin.JsonConnectAddonIdentifierService;
+import com.atlassian.plugin.connect.plugin.request.AddonKeyExtractorImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.util;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

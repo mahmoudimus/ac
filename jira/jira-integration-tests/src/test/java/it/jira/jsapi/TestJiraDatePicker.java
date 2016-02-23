@@ -1,21 +1,18 @@
 package it.jira.jsapi;
 
 import com.atlassian.connect.test.jira.pageobjects.RemoteDatePickerGeneralPage;
-import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.pageobjects.components.CalendarPopup;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.JiraWebDriverTestBase;
+import it.jira.servlet.JiraAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-
-import it.jira.JiraWebDriverTestBase;
-import it.jira.servlet.JiraAppServlets;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,7 +20,6 @@ import java.util.Date;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**

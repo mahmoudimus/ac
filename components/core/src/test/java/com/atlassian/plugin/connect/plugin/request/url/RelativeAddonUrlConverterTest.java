@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.request.url;
 
-import com.atlassian.plugin.connect.plugin.request.url.RelativeAddonUrl;
-import com.atlassian.plugin.connect.plugin.request.url.RelativeAddonUrlConverter;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

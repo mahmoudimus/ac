@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.jira.report;
 
-import java.io.StringWriter;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.jira.plugin.report.Report;
 import com.atlassian.jira.plugin.report.ReportModuleDescriptor;
 import com.atlassian.jira.web.action.ProjectActionSupport;
@@ -11,6 +7,10 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParametersImpl;
+
+import java.io.StringWriter;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @since 1.2

@@ -1,9 +1,5 @@
 package it.jira.iframe;
 
-import java.rmi.RemoteException;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.connect.test.jira.pageobjects.InsufficientPermissionsViewProfileTab;
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProfilePage;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
@@ -15,14 +11,16 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.jira.JiraWebDriverTestBase;
+import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;

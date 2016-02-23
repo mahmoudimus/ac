@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.api.request;
 
+import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
+import com.atlassian.util.concurrent.Promise;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
-
-import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
-import com.atlassian.util.concurrent.Promise;
 
 /**
  * Abstracts interactions with the remote plugin

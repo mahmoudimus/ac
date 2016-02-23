@@ -6,10 +6,11 @@ import com.atlassian.jwt.core.reader.JwtClaimEqualityVerifier;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.core.reader.JwtIssuerValidator;
 import com.atlassian.jwt.core.reader.NimbusJwtReaderFactory;
-import com.atlassian.jwt.exception.*;
-
+import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
+import com.atlassian.jwt.exception.JwtParseException;
+import com.atlassian.jwt.exception.JwtUnknownIssuerException;
+import com.atlassian.jwt.exception.JwtVerificationException;
 import com.google.common.collect.Maps;
-
 import org.apache.commons.lang3.StringUtils;
 
 public class JwtTestVerifier {

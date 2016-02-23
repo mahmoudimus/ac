@@ -6,12 +6,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteXdmEventPanel;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.test.common.servlet.ConnectRunner.newServlet;

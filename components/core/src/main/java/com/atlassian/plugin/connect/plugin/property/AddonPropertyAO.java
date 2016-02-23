@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-
 import net.java.ao.Entity;
 import net.java.ao.schema.Indexed;
 import net.java.ao.schema.NotNull;

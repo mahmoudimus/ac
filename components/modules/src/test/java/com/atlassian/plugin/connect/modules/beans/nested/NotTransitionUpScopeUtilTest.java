@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil.isTransitionDownToReadOrLess;
+import java.util.Collection;
+
 import static com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil.isTransitionUpFromReadOrLess;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

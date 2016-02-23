@@ -1,7 +1,4 @@
-
 package it.jira.iframe;
-
-import java.rmi.RemoteException;
 
 import com.atlassian.connect.test.jira.pageobjects.JiraProjectAdministrationPage;
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProfilePage;
@@ -15,14 +12,14 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import it.jira.JiraWebDriverTestBase;
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyIframeURLHasVersionNumber;

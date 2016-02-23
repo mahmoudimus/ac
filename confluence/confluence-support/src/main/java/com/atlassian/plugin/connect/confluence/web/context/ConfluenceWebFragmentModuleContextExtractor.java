@@ -1,12 +1,5 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.confluence.core.ConfluenceActionSupport;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
@@ -27,6 +20,13 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  *

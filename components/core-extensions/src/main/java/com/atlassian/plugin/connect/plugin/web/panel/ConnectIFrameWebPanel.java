@@ -1,17 +1,17 @@
 package com.atlassian.plugin.connect.plugin.web.panel;
 
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
+import com.atlassian.plugin.web.model.WebPanel;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Map;
 import java.util.Optional;
-
-import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
-import com.atlassian.plugin.web.model.WebPanel;
 
 /**
  *

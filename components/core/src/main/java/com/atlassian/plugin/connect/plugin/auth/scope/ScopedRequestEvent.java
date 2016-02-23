@@ -1,20 +1,17 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.JsonRpcApiScopeHelper;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.RpcEncodedSoapApiScopeHelper;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.XmlRpcApiScopeHelper;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
 import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Optional;
 
 public abstract class ScopedRequestEvent {
     private static String REST_URI_PATH_PREFIX = "rest/";

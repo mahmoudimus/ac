@@ -1,20 +1,17 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
 import com.atlassian.jwt.writer.JwtClaimWriter;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nonnull;
+import java.util.Map;
 
 /**
  * JWT claim provider that injects a "sub" claim and a context user claim when tokens are generated

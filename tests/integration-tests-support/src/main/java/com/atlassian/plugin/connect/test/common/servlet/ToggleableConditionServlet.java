@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
+import org.junit.rules.TestRule;
+import org.junit.runners.model.Statement;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-
-import org.junit.rules.TestRule;
-import org.junit.runners.model.Statement;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 

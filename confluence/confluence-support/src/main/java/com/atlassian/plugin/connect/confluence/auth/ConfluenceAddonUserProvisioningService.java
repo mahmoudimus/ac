@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.confluence.auth;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
 import com.atlassian.confluence.security.PermissionManager;
@@ -31,16 +26,18 @@ import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;

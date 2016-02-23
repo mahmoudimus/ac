@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
-
 import com.google.common.collect.Lists;
-
+import net.java.ao.EntityManager;
+import net.java.ao.test.jdbc.Data;
+import net.java.ao.test.jdbc.DatabaseUpdater;
+import net.java.ao.test.jdbc.NonTransactional;
+import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
@@ -23,11 +21,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import net.java.ao.EntityManager;
-import net.java.ao.test.jdbc.Data;
-import net.java.ao.test.jdbc.DatabaseUpdater;
-import net.java.ao.test.jdbc.NonTransactional;
-import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.PutResult;

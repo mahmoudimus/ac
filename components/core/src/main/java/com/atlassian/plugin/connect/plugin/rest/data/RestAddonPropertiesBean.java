@@ -1,10 +1,9 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
-import java.util.List;
-
 import com.google.common.collect.Iterables;
-
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.util.List;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 

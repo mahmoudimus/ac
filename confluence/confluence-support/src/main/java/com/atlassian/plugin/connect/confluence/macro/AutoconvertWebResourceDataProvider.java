@@ -1,16 +1,15 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.json.marshal.Jsonable;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.webresource.api.data.WebResourceDataProvider;
-
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link com.atlassian.webresource.api.data.WebResourceDataProvider} that defines all autoconvert definitions.

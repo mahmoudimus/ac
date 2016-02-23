@@ -5,14 +5,12 @@ import com.atlassian.connect.test.confluence.pageobjects.RemoteMacroEditorDialog
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.macro.AbstractContentMacroTest;
 import it.confluence.servlet.ConfluenceAppServlets;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;

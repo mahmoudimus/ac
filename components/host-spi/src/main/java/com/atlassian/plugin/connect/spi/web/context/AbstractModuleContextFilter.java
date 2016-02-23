@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.spi.web.context;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Options;
 import com.atlassian.plugin.PluginAccessor;
@@ -11,7 +8,6 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -19,9 +15,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;

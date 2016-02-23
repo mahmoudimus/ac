@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 
 public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectCorePageModuleProvider {

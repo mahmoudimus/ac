@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.api.web.iframe;
 
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Optional;
-
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 
 public class IFrameRenderStrategyUtil {
 

@@ -1,14 +1,5 @@
 package it.common.item;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
-import javax.ws.rs.core.UriBuilder;
-
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.core.reader.JwtIssuerValidator;
@@ -27,9 +18,8 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
 import com.google.common.collect.ImmutableMap;
-
+import it.common.MultiProductWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
@@ -39,7 +29,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.common.MultiProductWebDriverTestBase;
+import javax.annotation.Nonnull;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;

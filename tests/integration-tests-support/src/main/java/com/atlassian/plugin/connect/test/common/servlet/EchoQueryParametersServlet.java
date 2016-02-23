@@ -1,5 +1,12 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
+import com.atlassian.plugin.connect.test.common.util.NameValuePairs;
+import com.google.common.collect.ImmutableMap;
+import org.apache.http.NameValuePair;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,16 +15,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.test.common.util.NameValuePairs;
-
-import com.google.common.collect.ImmutableMap;
-
-import org.apache.http.NameValuePair;
 
 public class EchoQueryParametersServlet extends MustacheServlet {
     private volatile BlockingDeque<NameValuePairs> queryParameters = new LinkedBlockingDeque<>();

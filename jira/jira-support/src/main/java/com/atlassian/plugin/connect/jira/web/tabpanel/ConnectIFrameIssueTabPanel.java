@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.jira.web.tabpanel;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
@@ -19,6 +16,9 @@ import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_HELPER;
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USERNAME;

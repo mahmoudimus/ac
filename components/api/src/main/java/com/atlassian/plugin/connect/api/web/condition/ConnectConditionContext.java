@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.api.web.condition;
 
-import java.util.Map;
-import java.util.Optional;
+import com.google.common.collect.Maps;
 
 import javax.annotation.Nullable;
-
-import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 

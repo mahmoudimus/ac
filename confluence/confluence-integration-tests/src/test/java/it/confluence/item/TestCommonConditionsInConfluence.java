@@ -1,8 +1,5 @@
 package it.confluence.item;
 
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
@@ -16,12 +13,13 @@ import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameC
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

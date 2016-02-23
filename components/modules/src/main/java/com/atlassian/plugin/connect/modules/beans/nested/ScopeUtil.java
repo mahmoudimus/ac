@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
+import com.google.common.collect.Sets;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class ScopeUtil {
     /**

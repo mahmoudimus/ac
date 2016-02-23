@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.List;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
@@ -9,7 +7,6 @@ import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -18,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+
+import java.util.List;
 
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static java.util.Arrays.asList;

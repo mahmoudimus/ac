@@ -1,15 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
@@ -20,13 +10,19 @@ import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.web.iframe.IFrameRenderStrategyBuilderImpl;
 import com.atlassian.plugin.connect.plugin.web.iframe.ModuleUiParamParser;
 import com.atlassian.templaterenderer.TemplateRenderer;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**

@@ -4,9 +4,6 @@ package it.jira;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.Issue;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
-
 import org.hamcrest.Matchers;
 import org.junit.Test;
 

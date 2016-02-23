@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.JwtService;
@@ -27,14 +19,20 @@ import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Supplier;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;

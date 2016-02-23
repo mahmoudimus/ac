@@ -1,6 +1,11 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.json.schema.annotation.*;
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
+import com.atlassian.json.schema.annotation.FieldDocOverride;
+import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.google.common.base.Objects;

@@ -1,5 +1,16 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
+import com.atlassian.jwt.Jwt;
+import com.atlassian.jwt.core.JwtUtil;
+import com.atlassian.jwt.exception.JwtUnknownIssuerException;
+import com.atlassian.jwt.reader.JwtClaimVerifier;
+import com.atlassian.jwt.reader.JwtReader;
+import com.atlassian.jwt.reader.JwtReaderFactory;
+import com.atlassian.sal.api.user.UserManager;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -7,17 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
-import com.atlassian.jwt.Jwt;
-import com.atlassian.jwt.core.JwtUtil;
-import com.atlassian.jwt.exception.JwtUnknownIssuerException;
-import com.atlassian.jwt.reader.JwtClaimVerifier;
-import com.atlassian.jwt.reader.JwtReader;
-import com.atlassian.jwt.reader.JwtReaderFactory;
 //import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.sal.api.user.UserManager;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Record incoming requests that are from "me" as part of add-on wired tests.

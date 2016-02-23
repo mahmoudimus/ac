@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.api.property;
 
-import java.util.Iterator;
-
 import com.atlassian.annotations.PublicApi;
 import com.google.common.collect.Iterables;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import java.util.Iterator;
 
 /**
  * This class represents an add-on property iterable which consist of a key and a value.

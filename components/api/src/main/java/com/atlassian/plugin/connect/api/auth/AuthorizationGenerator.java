@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.api.auth;
 
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
-
-import com.atlassian.plugin.connect.api.request.HttpMethod;
 
 /**
  * Generates an authorization http header value

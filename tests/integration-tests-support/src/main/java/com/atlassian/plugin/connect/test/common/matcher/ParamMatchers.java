@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.test.common.matcher;
 
-import java.util.TimeZone;
-
 import org.hamcrest.Matcher;
+
+import java.util.TimeZone;
 
 import static com.atlassian.plugin.connect.test.common.matcher.MatchesPattern.matchesPattern;
 import static org.hamcrest.Matchers.isIn;

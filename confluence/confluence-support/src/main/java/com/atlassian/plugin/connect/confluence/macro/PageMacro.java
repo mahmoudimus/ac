@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
@@ -12,8 +8,11 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameContextImpl;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.collect.Maps;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 public final class PageMacro extends AbstractRemoteMacro {
     private final UserManager userManager;

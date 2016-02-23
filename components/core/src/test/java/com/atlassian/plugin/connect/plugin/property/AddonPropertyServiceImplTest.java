@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import java.util.Collections;
-import java.util.Optional;
-
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
@@ -13,9 +10,7 @@ import com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.PutResult
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import com.google.common.base.Function;
-
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.junit.Before;
@@ -24,6 +19,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.api.property.AddonPropertyService.OperationStatus;
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl.OperationStatusImpl;

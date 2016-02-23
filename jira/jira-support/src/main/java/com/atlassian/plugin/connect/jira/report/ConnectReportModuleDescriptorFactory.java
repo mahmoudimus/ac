@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.jira.report;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
@@ -9,7 +10,6 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFa
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;

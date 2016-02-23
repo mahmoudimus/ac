@@ -10,8 +10,6 @@ import com.atlassian.json.marshal.Jsonable;
 import com.atlassian.webresource.api.data.WebResourceDataProvider;
 import com.google.common.collect.ImmutableMap;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Calendar;
 
 public class DatePickerDataProvider implements WebResourceDataProvider {

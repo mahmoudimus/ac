@@ -4,9 +4,9 @@ import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.runner.RunWith;
 
 @Application("confluence")

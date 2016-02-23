@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 /**
  * Page with buttons for executing the javascript history plugin

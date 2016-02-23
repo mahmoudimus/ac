@@ -1,16 +1,10 @@
 package com.atlassian.plugin.connect.jira.workflow;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.atlassian.plugin.connect.jira.webhook.JiraRestBeanMarshaler;
-
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.StoreException;
 import com.opensymphony.workflow.WorkflowException;
@@ -19,8 +13,10 @@ import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.spi.Step;
 import com.opensymphony.workflow.spi.WorkflowEntry;
 import com.opensymphony.workflow.spi.WorkflowStore;
-
 import org.json.JSONObject;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

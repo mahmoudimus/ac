@@ -1,21 +1,19 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectData;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.lifecycle.event.ConnectAddonDisabledEvent;
-
 import com.google.common.collect.Maps;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 

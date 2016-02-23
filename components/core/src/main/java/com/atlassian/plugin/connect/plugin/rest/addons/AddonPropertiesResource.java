@@ -1,25 +1,8 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
-import java.io.IOException;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-
 import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
-import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
@@ -33,8 +16,22 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * REST endpoint for add-on properties

@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.jira.auth;
 
-import java.util.Collections;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
@@ -19,18 +16,20 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserGroupProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
+import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.MatcherAssert.assertThat;

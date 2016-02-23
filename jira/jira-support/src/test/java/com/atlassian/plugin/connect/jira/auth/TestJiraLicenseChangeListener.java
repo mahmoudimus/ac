@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.jira.auth;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.UserNotFoundException;
@@ -17,12 +12,14 @@ import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.jira.license.MockLicensedApplications;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserGroupProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUsers;
-
 import com.google.common.collect.ImmutableSet;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;

@@ -1,22 +1,20 @@
 package com.atlassian.plugin.connect.crowd.healthcheck;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.healthcheck.core.HealthStatus;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.Constants;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
-
 import com.google.common.collect.Sets;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;

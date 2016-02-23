@@ -2,11 +2,11 @@ package com.atlassian.plugin.connect.plugin;
 
 
 import com.atlassian.plugin.connect.api.ConnectAddonController;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonEnableException;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

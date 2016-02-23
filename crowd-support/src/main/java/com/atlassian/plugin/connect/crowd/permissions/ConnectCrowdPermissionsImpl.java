@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.crowd.permissions;
 
 import com.atlassian.plugin.connect.spi.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.NO_REMOTE_GRANT_NEEDED;

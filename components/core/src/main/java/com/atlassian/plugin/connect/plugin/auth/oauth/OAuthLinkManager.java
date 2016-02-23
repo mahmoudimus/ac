@@ -10,7 +10,6 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
@@ -33,7 +32,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.confluence.web;
 
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
@@ -12,7 +13,6 @@ import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.connect.spi.lifecycle.AbstractConnectPageModuleProvider;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.springframework.beans.factory.annotation.Autowired;

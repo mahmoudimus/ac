@@ -1,19 +1,16 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-
-import com.google.common.collect.ImmutableMap;
-
-import org.apache.commons.io.IOUtils;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;

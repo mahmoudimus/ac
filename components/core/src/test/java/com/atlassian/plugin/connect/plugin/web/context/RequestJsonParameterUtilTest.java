@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.atlassian.plugin.connect.plugin.web.context.InvalidContextParameterException;
-import com.atlassian.plugin.connect.plugin.web.context.RequestJsonParameterUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.web.context.RequestJsonParameterUtil.CONTEXT_PARAMETER_KEY;
 import static org.hamcrest.Matchers.hasEntry;

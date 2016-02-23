@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.rest;
 
+import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
-import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Ensures permission denied exceptions come back in a nice for for rest

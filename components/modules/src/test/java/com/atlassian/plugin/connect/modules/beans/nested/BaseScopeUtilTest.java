@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
@@ -14,6 +8,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class BaseScopeUtilTest {
     private static final Logger log = LoggerFactory.getLogger(BaseScopeUtilTest.class);

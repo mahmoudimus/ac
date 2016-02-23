@@ -1,19 +1,17 @@
 package com.atlassian.connect.test.confluence.pageobjects;
 
-import java.net.MalformedURLException;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
 import org.apache.commons.codec.binary.Base64;
-
 import redstone.xmlrpc.XmlRpcArray;
 import redstone.xmlrpc.XmlRpcClient;
 import redstone.xmlrpc.XmlRpcFault;
 import redstone.xmlrpc.XmlRpcStruct;
+
+import java.net.MalformedURLException;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

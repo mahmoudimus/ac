@@ -1,18 +1,17 @@
 package com.atlassian.plugin.connect.plugin.request;
 
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
-import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;

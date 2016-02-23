@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
 import com.atlassian.oauth.util.Check;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-
 import net.oauth.OAuth;
 import net.oauth.OAuthMessage;
 

@@ -1,14 +1,12 @@
 package at.confluence;
 
-import java.util.Optional;
-
+import at.marketplace.ExternalAddonInstaller;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -18,7 +16,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.marketplace.ExternalAddonInstaller;
+import java.util.Optional;
 
 import static com.atlassian.confluence.it.User.SYS_ADMIN;
 import static com.atlassian.confluence.it.rpc.ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP;

@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import com.atlassian.plugin.connect.plugin.request.PathBuilder;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;

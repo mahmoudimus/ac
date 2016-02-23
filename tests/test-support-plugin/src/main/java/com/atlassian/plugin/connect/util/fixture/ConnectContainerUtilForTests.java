@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.util.fixture;
 
+import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Map;
-
-import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;

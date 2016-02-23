@@ -1,13 +1,11 @@
 package it.com.atlassian.plugin.connect.confluence.blueprint;
 
-import java.util.List;
-
 import com.atlassian.confluence.plugins.createcontent.extensions.BlueprintModuleDescriptor;
 import com.atlassian.confluence.plugins.createcontent.extensions.ContentTemplateModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider;
+import com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -22,10 +20,11 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;

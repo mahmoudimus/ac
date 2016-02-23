@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.confluence.macro.rest;
 
-import java.util.Optional;
+import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
+import com.atlassian.plugin.connect.confluence.macro.MacroContentManager;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -8,10 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
-import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
-import com.atlassian.plugin.connect.confluence.macro.MacroContentManager;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import java.util.Optional;
 
 @Path("/macro")
 @AnonymousAllowed

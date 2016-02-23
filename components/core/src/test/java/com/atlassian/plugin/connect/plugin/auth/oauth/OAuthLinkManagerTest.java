@@ -1,19 +1,14 @@
 package com.atlassian.plugin.connect.plugin.auth.oauth;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
+import net.oauth.OAuthMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import net.oauth.OAuthMessage;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

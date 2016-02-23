@@ -1,7 +1,7 @@
 package it.jira.jsapi;
 
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.connect.test.jira.pageobjects.RemoteNavigatorGeneralPage;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import it.jira.JiraWebDriverTestBase;

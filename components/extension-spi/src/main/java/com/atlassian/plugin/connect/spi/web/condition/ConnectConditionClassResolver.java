@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.spi.web.condition;
 
+import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.web.Condition;
+import com.google.common.annotations.VisibleForTesting;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.function.Predicate;
-
-import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.web.Condition;
-import com.google.common.annotations.VisibleForTesting;
 
 /**
  * A plugin module descriptor interface for providers of conditions for Atlassian Connect.

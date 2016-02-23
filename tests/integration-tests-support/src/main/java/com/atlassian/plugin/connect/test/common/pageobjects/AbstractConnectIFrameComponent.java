@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
@@ -10,13 +8,13 @@ import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
-
 import com.google.common.base.Function;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
+
+import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 

@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * A parser for UI specific request parameters.

@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
-import java.net.HttpCookie;
-import java.util.Optional;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkRequest;
 import com.atlassian.applinks.api.ApplicationLinkService;
@@ -20,10 +17,11 @@ import com.atlassian.plugin.connect.crowd.usermanagement.CrowdClientProvider;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
-
 import com.google.common.collect.Iterables;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.net.HttpCookie;
+import java.util.Optional;
 
 @JiraComponent
 public class ConnectCrowdSysadminHttpClientImpl

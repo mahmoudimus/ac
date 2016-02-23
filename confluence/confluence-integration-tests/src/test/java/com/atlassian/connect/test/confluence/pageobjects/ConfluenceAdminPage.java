@@ -1,7 +1,5 @@
 package com.atlassian.connect.test.confluence.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
@@ -9,9 +7,9 @@ import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.pageobjects.AdminPage;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
-import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
 
 /**
  *

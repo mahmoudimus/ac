@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem.ItemMatchingMode;
+
+import javax.inject.Inject;
+import java.util.Optional;
 
 /**
  * Represents any type of addon that has a link (web item) and content (servlet) Includes the tab panels and pages

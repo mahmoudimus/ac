@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.descriptor.ShallowConnectAddonBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.plugin.descriptor.ShallowConnectAddonBeanValidator;
 
 import javax.inject.Named;
 

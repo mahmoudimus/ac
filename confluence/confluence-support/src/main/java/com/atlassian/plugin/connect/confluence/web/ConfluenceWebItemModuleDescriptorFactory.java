@@ -2,11 +2,11 @@ package com.atlassian.plugin.connect.confluence.web;
 
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
+import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.web.RemoteWebLink;
+import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
-import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.api.web.RemoteWebLink;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;

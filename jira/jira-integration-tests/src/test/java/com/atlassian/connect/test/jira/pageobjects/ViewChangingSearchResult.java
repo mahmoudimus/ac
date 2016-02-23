@@ -1,12 +1,10 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+
+import javax.inject.Inject;
 
 public class ViewChangingSearchResult {
 

@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.jira.web.condition;
 
-import java.util.Map;
-
 import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -12,6 +10,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertFalse;

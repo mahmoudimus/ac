@@ -1,15 +1,13 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import com.atlassian.jira.projects.pageobjects.webdriver.page.SummaryPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
-
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
+import java.util.Optional;
 
 /**
  * View project page.

@@ -1,7 +1,5 @@
 package it.confluence.iframe;
 
-import java.net.URI;
-
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceAdminPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConnectConfluenceAdminHomePage;
@@ -13,14 +11,14 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import java.net.URI;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.pageobjects.elements.query.Queries.forSupplier;

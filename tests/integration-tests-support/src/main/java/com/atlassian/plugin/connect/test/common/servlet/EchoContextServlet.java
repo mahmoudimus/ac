@@ -1,17 +1,16 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
+import com.google.common.collect.Maps;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.Maps;
 
 public class EchoContextServlet extends ContextServlet {
     private volatile BlockingDeque<Map<String, Object>> contexts = new LinkedBlockingDeque<>();

@@ -1,19 +1,18 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.util.KeysFromPathMatcher;
 import com.atlassian.plugin.connect.plugin.util.KeysFromPathMatcher.AddOnKeyAndModuleKey;
 import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry.JSON_CLASSIFIER;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;

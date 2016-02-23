@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-
-import javax.ws.rs.core.Response;
-
 import com.atlassian.extras.api.Contact;
 import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
@@ -30,15 +24,18 @@ import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.api.license.entity.LicenseType;
 import com.atlassian.upm.api.license.entity.PluginLicense;
-
 import com.google.common.collect.Lists;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;

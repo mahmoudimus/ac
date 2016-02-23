@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.webdriver.utils.element.ElementConditions;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+
+import javax.inject.Inject;
 
 public abstract class AbstractRemoteDialog<C extends AbstractRemoteDialog> extends AbstractConnectIFrameComponent<C> {
 

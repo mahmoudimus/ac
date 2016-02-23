@@ -1,7 +1,5 @@
 package it.jira.jsapi;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.connect.test.jira.pageobjects.RemoteRefreshIssuePageWebPanel;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.jira.pageobjects.util.Tracer;
@@ -9,14 +7,14 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
+import it.jira.JiraWebDriverTestBase;
+import it.jira.servlet.JiraAppServlets;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
-import it.jira.servlet.JiraAppServlets;
+import java.rmi.RemoteException;
 
 /**
  * Integration tests for the JavaScript API method jira.refreshIssuePage().

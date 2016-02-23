@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.testsupport;
 
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.license.LicenseHandler;
-
 import org.springframework.beans.factory.InitializingBean;
 
 public class LicenseUpdater implements InitializingBean {

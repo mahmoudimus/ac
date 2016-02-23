@@ -5,7 +5,6 @@ import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent

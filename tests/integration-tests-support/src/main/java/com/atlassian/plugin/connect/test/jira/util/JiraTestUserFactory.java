@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.test.jira.util;
 
-import java.util.List;
-
 import com.atlassian.jira.functest.framework.backdoor.Backdoor;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.plugin.connect.test.common.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
+
+import java.util.List;
 
 public class JiraTestUserFactory extends ConnectTestUserFactory {
 

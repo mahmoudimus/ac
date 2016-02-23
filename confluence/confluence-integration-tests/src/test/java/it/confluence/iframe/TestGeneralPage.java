@@ -1,8 +1,5 @@
 package it.confluence.iframe;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -13,7 +10,7 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.plugin.connect.test.confluence.pageobjects.ConfluenceGeneralPage;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,7 +18,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import java.net.URI;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;

@@ -1,20 +1,16 @@
 package com.atlassian.plugin.connect.api.web;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.UriBuilder;
-
 import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
-import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.addon;
 import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.page;

@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
-import java.io.IOException;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.util.Map;
 
 public final class CustomMessageServlet extends ContextServlet {
     private final String message;

@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.confluence.webhook;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.event.events.search.SearchPerformedEvent;
 import com.atlassian.confluence.search.service.SpaceCategoryEnum;
@@ -14,10 +9,14 @@ import com.atlassian.confluence.search.v2.query.SpaceCategoryQuery;
 import com.atlassian.confluence.search.v2.query.TextFieldQuery;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SearchPerformedEventMapper extends ConfluenceEventMapper {
     private static final String QUERY = "query";

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
-
 import org.openqa.selenium.By;
 
 /**

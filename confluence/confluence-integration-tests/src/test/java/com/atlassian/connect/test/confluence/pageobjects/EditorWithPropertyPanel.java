@@ -12,7 +12,8 @@ public class EditorWithPropertyPanel extends EditorContent {
      * @param macroName
      * @return The open property panel.
      */
-    public MacroPropertyPanelWithIframe openPropertyPanel(final String macroName) {
+
+    public ExtensibleMacroPropertyPanel openPropertyPanel(final String macroName) {
         execute.onTinyMceIFrame(() -> {
             PageElement inlineMacro = page.find(By.cssSelector(".editor-inline-macro[data-macro-name=\"" + macroName
                     + "\"]"));
@@ -33,6 +34,6 @@ public class EditorWithPropertyPanel extends EditorContent {
             //Iframe not found.
         }
 
-        return binder.bind(MacroPropertyPanelWithIframe.class);
+        return binder.bind(ExtensibleMacroPropertyPanel.class);
     }
 }

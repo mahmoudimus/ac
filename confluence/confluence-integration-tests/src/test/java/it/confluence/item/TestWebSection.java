@@ -1,7 +1,5 @@
 package it.confluence.item;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.confluence.pageobjects.component.menu.ConfluenceMenuItem;
 import com.atlassian.confluence.pageobjects.component.menu.ToolsMenu;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
@@ -9,14 +7,14 @@ import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.Confluenc
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
-
-import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

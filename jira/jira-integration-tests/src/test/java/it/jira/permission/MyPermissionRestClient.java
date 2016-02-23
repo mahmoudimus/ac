@@ -5,12 +5,12 @@ import com.atlassian.pageobjects.TestedProduct;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import javax.ws.rs.core.UriBuilder;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Map;
-import javax.ws.rs.core.UriBuilder;
 
 public class MyPermissionRestClient {
     private final URI resourcePath;

@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
+import com.atlassian.plugin.connect.plugin.web.context.condition.InlineConditionVariableSubstitutor;
+
 import java.util.Map;
 import java.util.Optional;
-
-import com.atlassian.plugin.connect.plugin.web.context.condition.InlineConditionVariableSubstitutor;
 
 public class InlineConditionVariableSubstitutorFake implements InlineConditionVariableSubstitutor {
     @Override

@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
@@ -13,15 +10,16 @@ import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResol
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.module.ModuleFactory;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.util.matcher.UnitTestMatchers.predicateThatWillMatch;
 import static org.hamcrest.Matchers.equalTo;

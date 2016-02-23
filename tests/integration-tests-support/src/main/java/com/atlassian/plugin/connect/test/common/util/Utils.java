@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.test.common.util;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.net.ServerSocket;
-
-import org.apache.commons.io.IOUtils;
 
 /**
  *

@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import java.io.IOException;
-import java.util.Optional;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * This class contains common JSON methods.

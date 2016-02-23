@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
+import com.atlassian.json.schema.annotation.SchemaDefinition;
+
 import java.util.Collection;
 import java.util.Collections;
-
-import com.atlassian.json.schema.annotation.SchemaDefinition;
 
 @SchemaDefinition("addonScope")
 public class AddonScopeBean {

@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.util.fixture;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
@@ -11,6 +7,10 @@ import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
 
 public class RemotablePluginAccessorForTests implements RemotablePluginAccessor {
 

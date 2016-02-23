@@ -1,8 +1,8 @@
 package it.com.atlassian.plugin.connect.confluence.auth;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;

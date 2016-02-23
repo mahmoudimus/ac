@@ -20,9 +20,7 @@ import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.connect.spi.module.PermissionChecks;
 import com.atlassian.plugin.connect.spi.web.context.AbstractModuleContextFilter;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import com.google.common.collect.ImmutableList;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent

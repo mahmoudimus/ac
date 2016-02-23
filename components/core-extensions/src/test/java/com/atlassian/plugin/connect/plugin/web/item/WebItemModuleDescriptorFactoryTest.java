@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -7,7 +8,6 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
@@ -20,9 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;

@@ -1,8 +1,5 @@
 package it.jira.jsapi;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.connect.test.jira.pageobjects.RemoteQuickCreateIssueGeneralPage;
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
@@ -11,15 +8,16 @@ import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.JiraWebDriverTestBase;
+import it.jira.servlet.JiraAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.jira.JiraWebDriverTestBase;
-import it.jira.servlet.JiraAppServlets;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;

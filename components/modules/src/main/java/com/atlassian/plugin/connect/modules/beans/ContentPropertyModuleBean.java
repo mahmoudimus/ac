@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
+
+import java.util.List;
 
 /**
  * Content properties are one of the forms of persistence available for Confluence Connect add-ons, allowing you

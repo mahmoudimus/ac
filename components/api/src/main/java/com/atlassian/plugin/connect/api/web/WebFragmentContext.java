@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.api.web;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+
+import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 

@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.product.TestedProductAccessor;
-
 import org.junit.Before;
 import org.junit.Test;
 

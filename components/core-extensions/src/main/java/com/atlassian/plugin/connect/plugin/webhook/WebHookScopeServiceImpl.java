@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.webhook;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-
 import org.springframework.stereotype.Component;
 
 @Component

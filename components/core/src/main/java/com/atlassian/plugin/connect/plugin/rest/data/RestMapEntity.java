@@ -6,7 +6,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class RestMapEntity extends LinkedHashMap<String, Object> {
     protected static <F, T> List<T> transform(Iterable<F> values, Function<F, T> transformer) {

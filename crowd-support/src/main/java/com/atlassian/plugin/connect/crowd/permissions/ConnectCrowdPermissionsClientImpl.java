@@ -9,9 +9,7 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;

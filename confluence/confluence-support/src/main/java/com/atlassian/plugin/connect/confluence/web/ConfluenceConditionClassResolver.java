@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.confluence.web;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.api.web.condition.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 

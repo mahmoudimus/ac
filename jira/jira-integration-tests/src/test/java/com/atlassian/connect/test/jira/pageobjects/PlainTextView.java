@@ -1,11 +1,10 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
 
 public class PlainTextView {
     @Inject

@@ -1,13 +1,5 @@
 package it.confluence.item;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.ws.rs.core.UriBuilder;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
@@ -22,7 +14,7 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -31,7 +23,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

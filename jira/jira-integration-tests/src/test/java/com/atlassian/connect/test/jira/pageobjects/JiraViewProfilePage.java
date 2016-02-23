@@ -6,11 +6,7 @@ import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
-
-import com.google.common.base.Function;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 /**
  * An user ViewProfile page that is expected to have a panel provided by a remote plugin.

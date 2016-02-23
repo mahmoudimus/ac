@@ -1,7 +1,5 @@
 package it.jira.condition;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.connect.test.jira.pageobjects.ViewIssuePageWithAddonFragments;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
@@ -13,14 +11,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
+import java.rmi.RemoteException;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

@@ -1,7 +1,5 @@
 package it.confluence.macro;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.ConfluencePageData;
@@ -10,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,9 +16,9 @@ import org.jsoup.select.Elements;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;

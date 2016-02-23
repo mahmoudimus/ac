@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.api.web.condition.AbstractConnectCondition;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
+
+import java.util.Map;
 
 public class IsLicensedCondition extends AbstractConnectCondition {
     private final RemotePluginLicenseService remotePluginLicenseService;

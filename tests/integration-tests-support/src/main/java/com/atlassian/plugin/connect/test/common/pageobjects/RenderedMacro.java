@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.test.common.pageobjects;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 

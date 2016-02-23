@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.plugin.rest.data;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * An optionally-named link relating to an entity.

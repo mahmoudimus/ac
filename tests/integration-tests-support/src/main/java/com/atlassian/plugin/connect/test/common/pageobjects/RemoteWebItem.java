@@ -1,18 +1,16 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.webdriver.utils.by.ByJquery;
-
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.util.Optional;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 

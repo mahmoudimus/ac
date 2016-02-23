@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.ResponsePromise;
@@ -17,10 +11,8 @@ import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.features.DarkFeatureManager;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.entity.ContentType;
@@ -29,6 +21,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;

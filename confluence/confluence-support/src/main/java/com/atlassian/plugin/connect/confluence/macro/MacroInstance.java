@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.confluence.macro;
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.spaces.Spaced;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.api.request.RequestContextParameters;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.renderer.v2.macro.Macro;
 import org.apache.commons.lang.StringUtils;
 

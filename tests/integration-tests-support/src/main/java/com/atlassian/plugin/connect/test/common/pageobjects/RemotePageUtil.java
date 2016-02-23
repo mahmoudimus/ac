@@ -1,18 +1,8 @@
 package com.atlassian.plugin.connect.test.common.pageobjects;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import com.google.common.base.Function;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -22,6 +12,13 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * Helper methods for retrieving the content from an iframe.

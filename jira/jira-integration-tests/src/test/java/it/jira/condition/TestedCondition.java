@@ -1,11 +1,11 @@
 package it.jira.condition;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 
 public final class TestedCondition {
     private final String name;

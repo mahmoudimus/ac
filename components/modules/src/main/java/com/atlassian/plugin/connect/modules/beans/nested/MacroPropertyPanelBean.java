@@ -3,8 +3,10 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
-import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroPropertyPanelBeanBuilder;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 /**
  *
@@ -53,6 +55,11 @@ public class MacroPropertyPanelBean extends BaseModuleBean {
     @StringSchemaAttributes(format = "uri-template")
     private String url;
 
+    /**
+     * List of controls which will be added to the macro property panel
+     */
+    private List<ControlBean> controls;
+
     public MacroPropertyPanelBean() {
         init();
     }
@@ -66,10 +73,18 @@ public class MacroPropertyPanelBean extends BaseModuleBean {
         if (null == url) {
             url = "";
         }
+
+        if (null == controls) {
+            controls = ImmutableList.of();
+        }
     }
 
     public String getUrl() {
         return url;
+    }
+
+    public List<ControlBean> getControls() {
+        return controls;
     }
 
     public static MacroPropertyPanelBeanBuilder newMacroPropertyPanelBean() {

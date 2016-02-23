@@ -1,9 +1,9 @@
 package at.marketplace;
 
-import java.io.IOException;
-
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
 
 public class AcceptanceTestMarketplaceException extends RuntimeException {
     public AcceptanceTestMarketplaceException(String message, CloseableHttpResponse response)

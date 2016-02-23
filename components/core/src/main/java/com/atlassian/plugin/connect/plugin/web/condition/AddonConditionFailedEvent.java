@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.condition;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.atlassian.analytics.api.annotations.EventName;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Fired when a failure has occured invoking a Connect add-on RemoteCondition

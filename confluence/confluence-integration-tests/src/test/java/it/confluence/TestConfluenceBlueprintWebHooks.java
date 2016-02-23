@@ -4,7 +4,6 @@ import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

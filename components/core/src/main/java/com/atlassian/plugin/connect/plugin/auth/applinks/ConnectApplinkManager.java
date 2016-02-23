@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.plugin.auth.applinks;
 
-import java.net.URI;
-import java.util.Optional;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+
+import java.net.URI;
+import java.util.Optional;
 
 /**
  * A helper component for creating applinks for add ons.

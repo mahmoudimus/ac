@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.modules.gson;
 
-import java.lang.reflect.Type;
-
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
@@ -13,6 +11,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import java.lang.reflect.Type;
 
 public class WebItemTargetBeanSerializer implements JsonDeserializer<WebItemTargetBean> {
     @Override

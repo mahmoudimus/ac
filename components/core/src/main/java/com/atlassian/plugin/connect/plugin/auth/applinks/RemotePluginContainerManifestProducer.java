@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.applinks;
 
-import java.net.URI;
-import java.util.Set;
-
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.auth.AuthenticationProvider;
 import com.atlassian.applinks.api.auth.types.OAuthAuthenticationProvider;
@@ -12,10 +9,11 @@ import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.manifest.ApplicationStatus;
 import com.atlassian.applinks.spi.manifest.ManifestNotFoundException;
 import com.atlassian.applinks.spi.manifest.ManifestProducer;
-
 import com.google.common.collect.ImmutableSet;
-
 import org.osgi.framework.Version;
+
+import java.net.URI;
+import java.util.Set;
 
 /**
  * Manifest for a remote plugin

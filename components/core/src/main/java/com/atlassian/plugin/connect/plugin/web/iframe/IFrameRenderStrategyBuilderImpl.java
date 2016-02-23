@@ -1,31 +1,29 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.plugin.connect.api.web.ModuleTemplate;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilder;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.PermissionDeniedException;
 import com.atlassian.plugin.connect.plugin.web.condition.ConnectConditionFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.templaterenderer.TemplateRenderer;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

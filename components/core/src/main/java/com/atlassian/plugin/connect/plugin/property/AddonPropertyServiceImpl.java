@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import java.util.Map;
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
@@ -22,6 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyStore.PutResult;

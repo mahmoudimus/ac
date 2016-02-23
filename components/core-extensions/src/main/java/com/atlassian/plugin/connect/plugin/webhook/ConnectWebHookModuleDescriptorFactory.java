@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.webhook;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;

@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.jira.web;
 
-import java.util.Map;
-
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider;
@@ -10,14 +8,13 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import com.google.common.collect.ImmutableMap;
-
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
+import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
-import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;

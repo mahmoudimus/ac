@@ -1,12 +1,12 @@
 package at.jira;
 
-import java.rmi.RemoteException;
-
+import at.marketplace.ConnectAddonRepresentation;
+import at.marketplace.ExternalAddonInstaller;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage.Scope;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.testutils.annotations.Retry;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +14,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.marketplace.ConnectAddonRepresentation;
-import at.marketplace.ExternalAddonInstaller;
-import it.jira.JiraWebDriverTestBase;
+import java.rmi.RemoteException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

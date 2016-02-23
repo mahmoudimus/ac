@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.report.ListProcessingReport;
 import com.google.common.collect.Iterables;

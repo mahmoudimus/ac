@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -12,20 +8,22 @@ import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.connect.crowd.spi.CrowdAddonUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.HostProperties;
 import com.atlassian.plugin.connect.spi.auth.user.ConnectUserService;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonDisableException;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nonnull;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.Constants;
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.buildConnectAddonUserAttribute;

@@ -1,7 +1,16 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.*;
+import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 

@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessorFactory;
-
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

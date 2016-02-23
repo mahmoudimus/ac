@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.modules.util;
 
+import com.google.common.base.Strings;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.base.Strings;
 
 /**
  * Class used to sanitize strings by removing ${} and just leaving the variable names.

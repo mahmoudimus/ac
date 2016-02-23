@@ -4,9 +4,6 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Maps.newHashMap;
-
 public class WebItemTargetBeanBuilder extends BaseModuleBeanBuilder<WebItemTargetBeanBuilder, WebItemTargetBean> {
     private WebItemTargetType type;
     private WebItemTargetOptions options;

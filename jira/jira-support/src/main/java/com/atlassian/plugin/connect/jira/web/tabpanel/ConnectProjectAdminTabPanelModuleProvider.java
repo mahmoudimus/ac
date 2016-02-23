@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.jira.web.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.condition.ConditionLoadingValidator;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
@@ -17,7 +18,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelMod
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;

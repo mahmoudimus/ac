@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.auth.scope;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -17,15 +9,20 @@ import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeApiPathBuilder;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
-
 import com.google.common.collect.Sets;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;

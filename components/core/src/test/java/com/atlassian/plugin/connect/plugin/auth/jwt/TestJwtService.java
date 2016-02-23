@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
 import com.atlassian.jwt.Jwt;
-import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.jwt.JwtService;
+import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.jwt.applinks.exception.NotAJwtPeerException;
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
@@ -13,9 +13,8 @@ import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 
-import java.util.Map;
-
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 public class TestJwtService implements JwtService {
     private JwtWriterFactory jwtWriterFactory;

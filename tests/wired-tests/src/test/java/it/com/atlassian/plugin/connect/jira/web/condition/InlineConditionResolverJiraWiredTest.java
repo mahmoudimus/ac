@@ -1,13 +1,5 @@
 package it.com.atlassian.plugin.connect.jira.web.condition;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.fugue.Pair;
 import com.atlassian.jira.bc.issue.properties.IssuePropertyService;
 import com.atlassian.jira.bc.issue.vote.VoteService;
@@ -29,16 +21,20 @@ import com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtr
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.atlassian.fugue.Pair.pair;
 import static java.util.Collections.emptyMap;

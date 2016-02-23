@@ -1,16 +1,14 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
 import com.atlassian.confluence.core.ContentEntityObject;
-
-import java.util.Optional;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;

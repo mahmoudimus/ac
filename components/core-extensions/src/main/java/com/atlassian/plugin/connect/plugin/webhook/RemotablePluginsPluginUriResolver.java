@@ -1,16 +1,14 @@
 package com.atlassian.plugin.connect.plugin.webhook;
 
-import java.net.URI;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.PluginUriResolver;
-
 import com.google.common.base.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

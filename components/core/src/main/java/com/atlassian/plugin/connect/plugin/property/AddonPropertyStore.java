@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import java.util.Arrays;
-import java.util.Optional;
-import javax.annotation.Nonnull;
-
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
@@ -13,6 +9,10 @@ import net.java.ao.DBParam;
 import net.java.ao.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

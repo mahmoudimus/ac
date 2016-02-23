@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.spi.web.context;
 
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @since 1.0

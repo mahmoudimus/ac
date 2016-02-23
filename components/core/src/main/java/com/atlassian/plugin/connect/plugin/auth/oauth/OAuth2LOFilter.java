@@ -13,14 +13,23 @@ import net.oauth.server.HttpRequestMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 
-import static net.oauth.OAuth.*;
+import static net.oauth.OAuth.OAUTH_CONSUMER_KEY;
+import static net.oauth.OAuth.OAUTH_NONCE;
+import static net.oauth.OAuth.OAUTH_SIGNATURE;
+import static net.oauth.OAuth.OAUTH_SIGNATURE_METHOD;
+import static net.oauth.OAuth.OAUTH_TIMESTAMP;
 
 public class OAuth2LOFilter implements Filter {
     public static final String USER_ID = "user_id";

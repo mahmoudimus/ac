@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.confluence;
 
-import java.util.Optional;
-
 import com.atlassian.confluence.license.LicenseService;
 import com.atlassian.extras.api.AtlassianLicense;
 import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
 
 /**
  *

@@ -1,10 +1,10 @@
 package com.atlassian.connect.test.jira.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebPanel;
+
+import javax.inject.Inject;
 
 /**
  * Describes a project administration page.
