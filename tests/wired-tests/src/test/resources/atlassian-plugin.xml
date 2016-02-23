@@ -45,6 +45,7 @@
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.web.item.WebItemModuleProvider" />
     <component-import key="blueprintModuleProvider" application="confluence" interface="com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProvider" />
+    <component-import key="confluenceThemeModuleProvider" application="confluence" interface="com.atlassian.plugin.connect.confluence.theme.ConfluenceThemeModuleProvider" />
     <component-import key="workflowPostFunctionModuleProvider" application="jira" interface="com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionModuleProvider" />
 
     <!-- CONNECT DESCRIPTOR FACTORIES -->
