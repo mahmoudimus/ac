@@ -313,27 +313,22 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     }
 
     @Test
-    public void testHiddenParameter() throws Exception
-    {
+    public void testHiddenParameter() throws Exception {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(ModuleKeyUtils.randomName("Parameter Page"));
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, HIDDEN_PARAMETER_MACRO_NAME);
 
-        try
-        {
+        try {
             WebElement paramContainerDiv = confluencePageOperations.findElement(By.id("macro-param-div-" + HIDDEN_PARAM_ID));
             Assert.assertThat(paramContainerDiv.getAttribute("style"), CoreMatchers.is("display: none;"));
-        }
-        finally
-        {
+        } finally {
             macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
             cancelEditor(editorPage);
         }
     }
 
     @Test
-    public void testFeaturedMacro() throws Exception
-    {
+    public void testFeaturedMacro() throws Exception {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editorPage);
