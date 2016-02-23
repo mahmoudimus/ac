@@ -79,6 +79,9 @@
                 <artifactId>maven-jira-plugin</artifactId>
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <skipManifestValidation>true</skipManifestValidation>
+                </configuration>
             </plugin>
 
             <plugin>
