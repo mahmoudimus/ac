@@ -70,7 +70,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_KEY = "custom-title-macro";
     private static final String CUSTOM_TITLE = "Custom Title";
 
-    protected static final String HIDDEN_MACRO_NAME = "Hidden Macro";
+    protected static final String HIDDEN_MACRO_NAME = "Hidden Macro - Not Visible In Browser";
     protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
 
     @BeforeClass
