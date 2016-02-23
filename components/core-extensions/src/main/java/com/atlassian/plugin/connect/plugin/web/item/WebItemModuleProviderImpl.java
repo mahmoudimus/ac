@@ -29,11 +29,13 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -215,13 +217,21 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
             else
             {
                 CompositeConditionBean compositeCondition = (CompositeConditionBean) condition;
-                List<ConditionalBean> filteredNestedConditions = filterSingleConditionsRecursively(
-                        compositeCondition.getConditions(), filterPredicate);
-                if (!filteredNestedConditions.isEmpty())
-                {
-                    filteredConditions.add(CompositeConditionBean.newCompositeConditionBean(compositeCondition)
-                            .withConditions(filteredNestedConditions)
-                            .build());
+                List<ConditionalBean> filteredNestedConditions = filterSingleConditionsRecursively(compositeCondition.getConditions(), filterPredicate);
+                switch(compositeCondition.getType()) {
+                    case AND:
+                        if (!filteredNestedConditions.isEmpty())
+                        {
+                            filteredConditions.add(CompositeConditionBean.newCompositeConditionBean(compositeCondition)
+                                .withConditions(filteredNestedConditions)
+                                .build());
+                        }
+                        break;
+                    case OR:
+                        if(filteredNestedConditions.size() == compositeCondition.getConditions().size()) {
+                            filteredConditions.add(compositeCondition);
+                        }
+                        break;
                 }
             }
         }
