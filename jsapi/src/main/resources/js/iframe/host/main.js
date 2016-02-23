@@ -2,9 +2,11 @@
 * confluence and jira both break amd (by removing define.amd)
 */
 _AP.addonAttemptCounter = {};
-
-define('ac/create', ['ac/jira'], function(jira){
-  connectHost.defineModule("jira", jira);
+var deps = (window.JIRA) ? ['ac/jira'] : [];
+define('ac/create', deps, function(productSpecific){
+  if(window.JIRA){
+    connectHost.defineModule("jira", productSpecific);
+  }
   connectHost.defineModule("cookie", connectHostCookie);
   connectHost.defineModule("history", connectHostHistory);
   connectHost.defineModule(connectHostRequest);
