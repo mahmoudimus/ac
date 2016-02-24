@@ -20,20 +20,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-modules</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -45,10 +35,6 @@
             <groupId>com.atlassian.applinks</groupId>
             <artifactId>applinks-spi</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jwt</groupId>
-            <artifactId>jwt-api</artifactId>
         </dependency>
 
         <dependency>
@@ -63,7 +49,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.fugue</groupId>
+            <groupId>com.atlassian.fugue</groupId>    <!-- Compiles ok without this, must check if it is used in module -->
             <artifactId>fugue</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -83,58 +69,50 @@
         </dependency>
 
         <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
+            <groupId>com.googlecode.json-simple</groupId>  <!-- Compiles ok without this, must check if it is used in module -->
             <artifactId>json-simple</artifactId>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>${dom4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.annotations</groupId>
+            <artifactId>atlassian-annotations</artifactId>
+            <version>${atlassian.annotations.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.extras</groupId>
+            <artifactId>atlassian-extras</artifactId>
+            <version>${atlassian.extras.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-schema</artifactId>
+            <artifactId>atlassian-plugins-webfragment-api</artifactId>
+            <version>${atlassian.webfragments.api.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.templaterenderer</groupId>
-            <artifactId>atlassian-template-renderer-api</artifactId>
-            <version>${atlassian.templaterenderer.version}</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.security</groupId>
-            <artifactId>atlassian-secure-random</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
-
     </dependencies>
 </project>

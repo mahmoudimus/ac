@@ -30,7 +30,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>${project.groupId}</groupId>       <!-- Fails the tests if not in the pom? -->
             <artifactId>atlassian-connect-modules</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -48,23 +48,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.jwt</groupId>
-            <artifactId>jwt-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jwt</groupId>
-            <artifactId>jwt-applinks</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.httpclient</groupId>
             <artifactId>atlassian-httpclient-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -73,11 +58,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.atlassian.extras</groupId>
-            <artifactId>atlassian-extras-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-core</artifactId>
@@ -99,42 +79,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-servlet</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.applinks</groupId>
-            <artifactId>applinks-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.applinks</groupId>
-            <artifactId>applinks-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.analytics</groupId>
-            <artifactId>analytics-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.templaterenderer</groupId>
-            <artifactId>atlassian-template-renderer-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <artifactId>soy-template-renderer-api</artifactId>
-            <groupId>com.atlassian.soy</groupId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -144,31 +95,11 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.upm</groupId>
-            <artifactId>upm-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.upm</groupId>
             <artifactId>licensing-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.oauth</groupId>
-            <artifactId>atlassian-oauth-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.oauth</groupId>
-            <artifactId>atlassian-oauth-service-provider-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.oauth</groupId>
-            <artifactId>atlassian-oauth-consumer-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.osgi</groupId>
+            <groupId>com.atlassian.osgi</groupId>   <!-- Compiles ok without this, must check if it is used in module -->
             <artifactId>atlassian-osgi</artifactId>
             <exclusions>
                 <exclusion>
@@ -177,25 +108,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugins.rest</groupId>
-            <artifactId>atlassian-rest-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.healthcheck</groupId>
-            <artifactId>atlassian-healthcheck</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.activeobjects</groupId>
-            <artifactId>activeobjects-plugin</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.crowd</groupId>
-            <artifactId>embedded-crowd-api</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>javax.inject</groupId>
@@ -203,29 +115,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.oauth.core</groupId>
+            <groupId>net.oauth.core</groupId>   <!-- Compiles ok without this, must check if it is used in module -->
             <artifactId>oauth</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.oauth.core</groupId>
+            <groupId>net.oauth.core</groupId>   <!-- Compiles ok without this, must check if it is used in module -->
             <artifactId>oauth-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.fge</groupId>
-            <artifactId>msg-simple</artifactId>
-            <version>1.1.2-atlassian</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>external.atlassian.json</groupId>
@@ -233,7 +128,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.fge</groupId>
+            <groupId>com.github.fge</groupId>       <!-- Fails the tests if not in the pom? -->
             <artifactId>json-schema-validator</artifactId>
             <scope>provided</scope>
             <exclusions>
@@ -276,32 +171,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.skyscreamer</groupId>
+            <groupId>org.skyscreamer</groupId> <!-- Fails the tests if not in the pom? -->
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.activeobjects</groupId>
-            <artifactId>activeobjects-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.security</groupId>
-            <artifactId>atlassian-secure-xml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
         </dependency>
 
         <!-- EXTRAS -->
         <dependency>
-            <groupId>com.atlassian.core</groupId>
+            <groupId>com.atlassian.core</groupId> <!-- TODO Remove version -->
             <artifactId>atlassian-core</artifactId>
             <version>5.0.3</version>
             <scope>provided</scope>
@@ -309,12 +186,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.4.1</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
