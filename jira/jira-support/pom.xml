@@ -49,13 +49,6 @@
         </dependency>
 
         <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
-            <version>${schema.generator.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-provider-spi</artifactId>
             <scope>provided</scope>
