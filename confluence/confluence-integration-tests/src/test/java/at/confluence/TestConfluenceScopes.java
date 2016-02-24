@@ -2,6 +2,7 @@ package at.confluence;
 
 import at.marketplace.ConnectAddonRepresentation;
 import at.marketplace.ExternalAddonInstaller;
+import com.atlassian.plugin.connect.test.common.at.AcceptanceTestHelper;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage.Scope;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
@@ -34,28 +35,20 @@ public class TestConfluenceScopes extends ConfluenceAcceptanceTestBase {
     public static final String SCOPE_TESTER_DESCRIPTOR_URL = "https://ac-acceptance-test-scope-checker.app.dev.atlassian.io/atlassian-connect.json";
     private ExternalAddonInstaller externalAddonInstaller;
     private ConnectAddonRepresentation addon;
+    private AcceptanceTestHelper acceptanceTestHelper;
 
     @Before
     public void installAddon() throws Exception {
-        addon = ConnectAddonRepresentation.builder()
-                .withDescriptorUrl(SCOPE_TESTER_DESCRIPTOR_URL)
-                .withName("Atlassian Connect Scope Tester add-on")
-                .withSummary("Tries to make calls for various scopes and then reports on the results")
-                .withTagline("360 no scope")
-                .build();
 
-        externalAddonInstaller = new ExternalAddonInstaller(
-                product.getProductInstance().getBaseUrl(),
-                ADMIN,
-                addon);
+        acceptanceTestHelper = new AcceptanceTestHelper(ADMIN, SCOPE_TESTER_DESCRIPTOR_URL, product);
 
         log.info("Installing add-on in preparation for running a test in " + getClass().getName());
-        externalAddonInstaller.install();
+        acceptanceTestHelper.installAddon();
     }
 
     @Test
     public void testAdminScopeIsAuthorised() throws RemoteException {
-        ScopesTestPage scopesTestPage = login(ADMIN, ScopesTestPage.class, externalAddonInstaller.getAddonKey());
+        ScopesTestPage scopesTestPage = login(ADMIN, ScopesTestPage.class, acceptanceTestHelper.getAddonKey());
         String adminResponseCode = scopesTestPage.getCodeForScope(Scope.ADMIN);
         assertThat("Admin-scoped request succeeded", adminResponseCode, is("200"));
     }
@@ -63,8 +56,7 @@ public class TestConfluenceScopes extends ConfluenceAcceptanceTestBase {
     @After
     public void uninstallAddon() throws Exception {
         log.info("Cleaning up after running a test in " + getClass().getName());
-        externalAddonInstaller.uninstall();
-
+        acceptanceTestHelper.uninstallAddon();
     }
 
 }
