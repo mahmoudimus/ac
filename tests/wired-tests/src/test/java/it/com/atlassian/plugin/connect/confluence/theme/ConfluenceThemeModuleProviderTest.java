@@ -5,7 +5,6 @@ import com.atlassian.confluence.themes.ThemedDecorator;
 import com.atlassian.confluence.themes.VelocityResultOverride;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme;
 import com.atlassian.plugin.connect.confluence.theme.ConfluenceThemeModuleProvider;
 import com.atlassian.plugin.connect.confluence.theme.NavigationTargetOverrideInfo;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -91,7 +90,9 @@ public class ConfluenceThemeModuleProviderTest {
             ModuleDescriptor last = descriptors.get(descriptors.size() - 1);
             assertThat("incorrect type of module descriptor :" + last.getClass().getName(), last, instanceOf(ThemeModuleDescriptor.class));
             ThemeModuleDescriptor themeDescriptor = (ThemeModuleDescriptor) last;
-            assertThat(themeDescriptor.getBodyClass(), is(ConfluenceRemoteAddonTheme.class.getName()));
+
+            themeDescriptor.enabled(); //need to enable before the theme class can be obtained for assertion
+            assertThat(themeDescriptor.getModuleClass().getName(), is("com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme"));
 
             List<ResourceDescriptor> themeResourceDescriptors = themeDescriptor.getResourceDescriptors();
             assertThat("should only have 1 resource descriptor", themeResourceDescriptors.size(), is(1));
