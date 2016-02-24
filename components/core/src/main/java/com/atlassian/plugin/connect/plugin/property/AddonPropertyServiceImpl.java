@@ -40,7 +40,7 @@ public class AddonPropertyServiceImpl implements AddonPropertyService
         MAXIMUM_PROPERTIES_EXCEEDED(HttpStatus.SC_CONFLICT, "connect.rest.add_on_properties.maximum_properties_exceeded", String.valueOf(MAX_PROPERTIES_PER_ADD_ON)),
         PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "connect.rest.add_on_properties.property_not_found"),
         INVALID_PROPERTY_VALUE(HttpStatus.SC_BAD_REQUEST, "connect.rest.add_on_properties.invalid_property_value"),
-        NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "connect.rest.add_on_properties.not_authenticated"),
+        NOT_AUTHORIZED(HttpStatus.SC_FORBIDDEN, "connect.rest.add_on_properties.not_authorized"),
         PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null),
         ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_NOT_FOUND, "connect.rest.add_on_properties.add_on_not_found_or_access_to_other_data_forbidden"),
         PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "connect.rest.add_on_properties.property_modified");
@@ -229,7 +229,7 @@ public class AddonPropertyServiceImpl implements AddonPropertyService
     {
         if (!hasAccessToData(auth, addonKey))
         {
-            return Optional.of(OperationStatusImpl.NOT_AUTHENTICATED);
+            return Optional.of(OperationStatusImpl.NOT_AUTHORIZED);
         }
         if (propertyKey.length() > AddonPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
         {
@@ -282,7 +282,7 @@ public class AddonPropertyServiceImpl implements AddonPropertyService
     {
         if (!hasAccessToData(auth, addonKey))
         {
-            return ValidationResult.fromError(OperationStatusImpl.NOT_AUTHENTICATED);
+            return ValidationResult.fromError(OperationStatusImpl.NOT_AUTHORIZED);
         }
         if (!connectAddonRegistry.hasAddonWithKey(addonKey))
         {

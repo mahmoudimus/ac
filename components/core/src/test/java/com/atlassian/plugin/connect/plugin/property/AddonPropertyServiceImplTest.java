@@ -226,7 +226,7 @@ public class AddonPropertyServiceImplTest
     {
         AddonPropertyService.GetServiceResult result = service.getPropertyValue(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey());
         result.fold(mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
+        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHORIZED);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class AddonPropertyServiceImplTest
     {
         PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
         foldableServiceResult.fold(null, mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
+        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHORIZED);
     }
 
     @Test
@@ -242,7 +242,7 @@ public class AddonPropertyServiceImplTest
     {
         DeleteServiceResult<Void> foldableServiceResult = service.deletePropertyValueIfConditionSatisfied(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey(), alwaysTrue());
         foldableServiceResult.fold(null, mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
+        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHORIZED);
     }
 
     @Test
@@ -250,7 +250,7 @@ public class AddonPropertyServiceImplTest
     {
         AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey);
         result.fold(mockFunction, null);
-        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHENTICATED);
+        verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHORIZED);
     }
 
     @Test

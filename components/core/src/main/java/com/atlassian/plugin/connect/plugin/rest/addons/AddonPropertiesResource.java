@@ -66,6 +66,8 @@ public class AddonPropertiesResource
      *      A list of property keys with links to themselves.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.403.doc
+     *      Request for data the authenticated user or add-on does not have permissions to access, e.g. accessing other add-ons properties
      * @response.representation.404.doc
      *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
      */
@@ -110,6 +112,8 @@ public class AddonPropertiesResource
      *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.403.doc
+     *      Request for data the authenticated user or add-on does not have permissions to access, e.g. accessing other add-ons properties
      * @response.representation.404.doc
      *      Request to get a property that does not exist.
      * @response.representation.404.doc
@@ -159,6 +163,8 @@ public class AddonPropertiesResource
      *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.403.doc
+     *      Request for data the authenticated user or add-on does not have permissions to access, e.g. accessing other add-ons properties
      * @response.representation.404.doc
      *      Request to get a property that does not exist.
      * @response.representation.404.doc
@@ -203,6 +209,8 @@ public class AddonPropertiesResource
      *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.403.doc
+     *      Request for data the authenticated user or add-on does not have permissions to access, e.g. accessing other add-ons properties
      * @response.representation.404.doc
      *      Request to get a property that does not exist.
      * @response.representation.404.doc
