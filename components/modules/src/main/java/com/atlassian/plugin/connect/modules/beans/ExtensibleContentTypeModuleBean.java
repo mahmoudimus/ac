@@ -29,7 +29,7 @@ import org.apache.commons.lang3.ObjectUtils;
  *
  * <h3>Create an Extensible Content Type via Confluence REST API</h3>
  *
- * The above module snippet defined an Extensible Content Type "YOUR_ADD_ON_KEY:extensible-content-type-identifier".
+ * The above module snippet defined an Extensible Content Type "myExtensibleContentType".
  * You can create a new piece of Content with this type by posting the following JSON to Confluence <code>/rest/api/content</code> endpoint.
  *
  * <pre><code>

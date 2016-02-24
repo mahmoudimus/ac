@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.junit.After;
 import org.junit.AfterClass;
 
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -85,12 +86,13 @@ public abstract class AbstractExtensibleContentTypeTest extends ConfluenceWebDri
                 .start();
     }
 
-    @AfterClass
-    public static void stopConnectAddon() throws Exception
+    @After
+    public void stopConnectAddon() throws Exception
     {
         if (remotePlugin != null)
         {
             remotePlugin.stopAndUninstall();
+            remotePlugin = null;
         }
     }
 

@@ -68,8 +68,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory
         descriptionElement.addText("Support for Extensible Content Type " + completeContentTypeKey);
 
         Element contentTypeElement = new DOMElement("content-type");
-        contentTypeElement.addAttribute("key", completeContentTypeKey);
-        contentTypeElement.addAttribute("name", completeContentTypeKey);
+        contentTypeElement.addAttribute("key", contentTypeKey);
+        contentTypeElement.addAttribute("name", contentTypeKey);
         contentTypeElement.addAttribute("class", ExtensibleContentType.class.getName());
         contentTypeElement.add(descriptionElement);
 

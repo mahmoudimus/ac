@@ -40,15 +40,15 @@ public class ContentPropertyExtractorModuleDescriptorFactory
     @Override
     public ContentPropertyExtractorModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
-        String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
+        String completeContentTypeKey = ExtensibleContentTypeUtils.getCompleteContentType(addon, bean);
         String extractorKey = ExtensibleContentTypeUtils.getExtractorKey(addon, bean);
         String contentPropertyKey = bean.getApiSupport().getIndexing().getContentPropertyBody();
 
         Element descriptionElement = new DOMElement("description");
-        descriptionElement.addText(String.format("Indexes content property %s for Extensible Content Type %s", contentPropertyKey, contentTypeKey));
+        descriptionElement.addText(String.format("Indexes content property %s for Extensible Content Type %s", contentPropertyKey, completeContentTypeKey));
 
         Element extractorElement = new DOMElement("extractor");
-        extractorElement.addAttribute("name", "Content Property Extractor for Extensible Content Type " + contentTypeKey);
+        extractorElement.addAttribute("name", "Content Property Extractor for Extensible Content Type " + completeContentTypeKey);
         extractorElement.addAttribute("key", extractorKey);
         extractorElement.addAttribute("class", ContentPropertyExtractor.class.getName());
         extractorElement.addAttribute("requires-latest-version", "true");
