@@ -35,7 +35,6 @@ public class ExtensibleContentType extends BaseCustomContentType {
     public ExtensibleContentType(
             String contentTypeKey,
             ExtensibleContentTypeModuleBean bean,
-            ContentTypeMapper contentTypeMapper,
             CustomContentManager customContentManager,
             PermissionManager permissionManager,
             PaginationService paginationService,
@@ -53,7 +52,7 @@ public class ExtensibleContentType extends BaseCustomContentType {
         this.permissionDelegate = new PermissionDelegate(permissionManager);
         this.paginationService = paginationService;
         this.contentService = contentService;
-        this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
+        this.contentEntityAdapter = new ExtensibleContentEntityAdapter();
         this.contentUiSupport = new ExtensibleContentTypeUISupport(contentTypeName, bean);
         this.customContentApiSupportParams = customContentApiSupportParams;
 

@@ -10,9 +10,7 @@ import com.atlassian.confluence.rest.api.model.ExpansionsParser;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Lists;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Sets;
 import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.collect.Iterables;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -23,21 +21,18 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.fail;
 
-public class TestExtensibleContentType extends AbstractExtensibleContentTypeTest
-{
+public class TestExtensibleContentType extends AbstractExtensibleContentTypeTest {
     private final String CONTENT_TITLE = "Test Extensible Type Title";
 
     @Test
-    public void testCanInstallExtensibleContentType() throws Exception
-    {
+    public void testCanInstallExtensibleContentType() throws Exception {
         startConnectAddon(createSimpleBean(TYPE_KEY_1, TYPE_NAME_1));
 
         checkExtensibleContentType(TYPE_KEY_1, TYPE_NAME_1);
     }
 
     @Test
-    public void testCanCreateExtensibleContentType() throws Exception
-    {
+    public void testCanCreateExtensibleContentType() throws Exception {
         startConnectAddon(createSimpleBean(TYPE_KEY_1, TYPE_NAME_1));
 
         Content content = createContent(buildContent(contentType1, null, CONTENT_TITLE));
@@ -48,8 +43,7 @@ public class TestExtensibleContentType extends AbstractExtensibleContentTypeTest
     }
 
     @Test
-    public void testCanRestrictContainerType() throws Exception
-    {
+    public void testCanRestrictContainerType() throws Exception {
         startConnectAddon(createBeanWithRestriction(TYPE_KEY_1, TYPE_NAME_1, Sets.newHashSet("blogpost"), Sets.newHashSet()));
 
         Content blog = createContainerContent(ContentType.BLOG_POST);
@@ -62,13 +56,10 @@ public class TestExtensibleContentType extends AbstractExtensibleContentTypeTest
         assertThat(createdContent1.getVersion().getNumber(), is(1));
 
         // Should not allow to create under page
-        try
-        {
+        try {
             createContent(buildContent(contentType1, page, CONTENT_TITLE));
             fail("Should not allow to create under page");
-        }
-        catch (ServiceException e)
-        {
+        } catch (ServiceException e) {
             // Expected
             ValidationResult result = e.getOptionalValidationResult().getOrNull();
             assertThat(result, notNullValue());
@@ -80,11 +71,10 @@ public class TestExtensibleContentType extends AbstractExtensibleContentTypeTest
 
     @Test
     @Ignore("unimplemented")
-    public void testCanRestrictContainedType() throws Exception
-    {
+    public void testCanRestrictContainedType() throws Exception {
         startConnectAddon(
-            createBeanWithRestriction(TYPE_KEY_1, TYPE_NAME_1, Sets.newHashSet("global"), Sets.newHashSet(getCompleteContentTypeKey(TYPE_KEY_2))),
-            createBeanWithRestriction(TYPE_KEY_2, TYPE_NAME_2, Sets.newHashSet("global", getCompleteContentTypeKey(TYPE_KEY_1)), Sets.newHashSet())
+                createBeanWithRestriction(TYPE_KEY_1, TYPE_NAME_1, Sets.newHashSet("global"), Sets.newHashSet(getCompleteContentTypeKey(TYPE_KEY_2))),
+                createBeanWithRestriction(TYPE_KEY_2, TYPE_NAME_2, Sets.newHashSet("global", getCompleteContentTypeKey(TYPE_KEY_1)), Sets.newHashSet())
         );
 
         Content content1 = createContent(buildContent(contentType1, null, CONTENT_TITLE));

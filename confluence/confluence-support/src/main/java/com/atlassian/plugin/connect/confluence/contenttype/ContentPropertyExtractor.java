@@ -44,7 +44,7 @@ public class ContentPropertyExtractor implements Extractor {
             /**
              * ContentPropertyService checks current user permission via AuthenticatedUserThreadLocal.get()
              * However such information is not exists in the indexing thread.
-             * So we use systadmin here to ensure this content property gets indexed.
+             * So we use sysadmin here to ensure this content property gets indexed.
              */
             AuthenticatedUserImpersonator.REQUEST_AGNOSTIC.asUser(() ->
                     addContentPropertyToSearchableText(searchable, defaultSearchableText), getAdminUser());

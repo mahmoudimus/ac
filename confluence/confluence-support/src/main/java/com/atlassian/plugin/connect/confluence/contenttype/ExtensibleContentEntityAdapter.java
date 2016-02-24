@@ -8,12 +8,6 @@ import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.fugue.Option;
 
 public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent {
-    private final ContentTypeMapper mapper;
-
-    public ExtensibleContentEntityAdapter(ContentTypeMapper mapper) {
-        this.mapper = mapper;
-    }
-
     @Override
     public Option<String> getUrlPath(final CustomContentEntityObject pluginContentEntityObject) {
         return Option.some("/rest/api/content/" + pluginContentEntityObject.getId());

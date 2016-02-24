@@ -27,7 +27,6 @@ public class ExtensibleContentTypeModuleDescriptorFactory
     private static final Logger log = LoggerFactory.getLogger(ExtensibleContentTypeModuleDescriptorFactory.class);
 
     private final ModuleFactory moduleFactory;
-    private final ContentTypeMapper contentTypeMapper;
     private final CustomContentManager customContentManager;
     private final PermissionManager permissionManager;
     private final PaginationService paginationService;
@@ -38,7 +37,6 @@ public class ExtensibleContentTypeModuleDescriptorFactory
     @Autowired
     public ExtensibleContentTypeModuleDescriptorFactory(
             ModuleFactory moduleFactory,
-            ContentTypeMapper contentTypeMapper,
             CustomContentManager customContentManager,
             PermissionManager permissionManager,
             PaginationService paginationService,
@@ -46,7 +44,6 @@ public class ExtensibleContentTypeModuleDescriptorFactory
             ApiSupportProvider apiSupportProvider,
             CustomContentApiSupportParams customContentApiSupportParams) {
         this.moduleFactory = moduleFactory;
-        this.contentTypeMapper = contentTypeMapper;
         this.customContentApiSupportParams = customContentApiSupportParams;
         this.customContentManager = customContentManager;
         this.permissionManager = permissionManager;
@@ -58,10 +55,9 @@ public class ExtensibleContentTypeModuleDescriptorFactory
     @Override
     public ContentTypeModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
-        String completeContentTypeKey = ExtensibleContentTypeUtils.getCompleteContentType(addon, bean);
 
         Element descriptionElement = new DOMElement("description");
-        descriptionElement.addText("Support for Extensible Content Type " + completeContentTypeKey);
+        descriptionElement.addText("Support for Extensible Content Type " + contentTypeKey);
 
         Element contentTypeElement = new DOMElement("content-type");
         contentTypeElement.addAttribute("key", contentTypeKey);
@@ -78,7 +74,6 @@ public class ExtensibleContentTypeModuleDescriptorFactory
                         contentTypeKey,
                         bean,
                         moduleFactory,
-                        contentTypeMapper,
                         customContentManager,
                         permissionManager,
                         paginationService,

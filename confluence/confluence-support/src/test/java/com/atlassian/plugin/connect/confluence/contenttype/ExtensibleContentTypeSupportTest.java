@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
-import java.util.Set;
-
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.Space;
@@ -13,15 +11,16 @@ import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Sets;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
-import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
-
+import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Set;
 
 import static com.atlassian.confluence.api.model.content.ContentType.COMMENT;
 import static com.atlassian.confluence.api.model.content.ContentType.PAGE;
@@ -31,15 +30,27 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExtensibleContentTypeSupportTest
-{
-    @Rule public ExpectedException exceptions = ExpectedException.none();
-    @Mock private CustomContentApiSupportParams customContentApiSupportParams;
-    @Mock private CustomContentManager customContentManager;
-    @Mock private PermissionDelegate permissionDelegate;
-    @Mock private PaginationService paginationService;
-    @Mock private ContentService contentService;
-    @Mock private ApiSupportProvider apiSupportProvider;
+public class ExtensibleContentTypeSupportTest {
+    @Rule
+    public ExpectedException exceptions = ExpectedException.none();
+
+    @Mock
+    private CustomContentApiSupportParams customContentApiSupportParams;
+
+    @Mock
+    private CustomContentManager customContentManager;
+
+    @Mock
+    private PermissionDelegate permissionDelegate;
+
+    @Mock
+    private PaginationService paginationService;
+
+    @Mock
+    private ContentService contentService;
+
+    @Mock
+    private ApiSupportProvider apiSupportProvider;
 
     @Test
     public void shouldRestrictSpaceAsContainer() {

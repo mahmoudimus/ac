@@ -16,7 +16,6 @@ import com.atlassian.plugin.module.ModuleFactory;
 public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDescriptor {
     private final String contentTypeKey;
     private final ExtensibleContentTypeModuleBean bean;
-    private final ContentTypeMapper contentTypeMapper;
     private final CustomContentManager customContentManager;
     private final PermissionManager permissionManager;
     private final ApiSupportProvider apiSupportProvider;
@@ -28,7 +27,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
             String contentTypeKey,
             ExtensibleContentTypeModuleBean bean,
             ModuleFactory moduleFactory,
-            ContentTypeMapper contentTypeMapper,
             CustomContentManager customContentManager,
             PermissionManager permissionManager,
             PaginationService paginationService,
@@ -39,7 +37,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
         this.bean = bean;
 
         this.contentTypeKey = contentTypeKey;
-        this.contentTypeMapper = contentTypeMapper;
         this.customContentManager = customContentManager;
         this.permissionManager = permissionManager;
         this.paginationService = paginationService;
@@ -62,7 +59,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
         return new ExtensibleContentType(
                 contentTypeKey,
                 bean,
-                contentTypeMapper,
                 customContentManager,
                 permissionManager,
                 paginationService,
