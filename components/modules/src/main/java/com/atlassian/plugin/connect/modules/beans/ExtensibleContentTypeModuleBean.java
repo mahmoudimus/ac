@@ -17,7 +17,7 @@ import org.apache.commons.lang3.ObjectUtils;
  * <h3>Extensible Content Type</h3>
  *
  * Extensible Content Type allows Connect add-on developer to declare customized content type which behavior like
- * existing built in content types: Page, Blog, Comment, etc.
+ * existing built in content types: Page, BlogPost, Comment, etc.
  *
  * An Extensible Content Type can:
  * <ul>
@@ -26,13 +26,33 @@ import org.apache.commons.lang3.ObjectUtils;
  *     <li>Have full screen viewer or dialog as the view component.</li>
  * </ul>
  *
+ *
  * <h3>Create an Extensible Content Type via Confluence REST API</h3>
  *
+ * The above module snippet defined an Extensible Content Type "YOUR_ADD_ON_KEY:extensible-content-type-identifier".
+ * You can create a new piece of Content with this type by posting the following JSON to Confluence <code>/rest/api/content</code> endpoint.
+ *
+ * <pre><code>
+ * {
+ *     "type":"YOUR_ADD_ON_KEY:extensible-content-type-identifier",
+ *     "title":"My content",
+ *     "space":{
+ *         "key":"ds"
+ *     },
+ *     "body":{
+ *         "storage":{
+ *             "value":"<p>This is my content body</p>",
+ *             "representation":"storage"
+ *         }
+ *     }
+ * }
+ * </pre></code>
  *
  * @since 1.1.77
  */
 public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
 {
+
     /**
      * Declares information related for rendering the content in the UI.
      */

@@ -132,6 +132,7 @@ public class ConnectJsonExamples {
     public static final String EXTENSIBLE_CONTENT_TYPE_EXAMPLE = createExtensibleContentTypeExample();
     public static final String EXTENSIBLE_CONTENT_TYPE_INDEXING_EXAMPLE = createExtensibleContentTypeIndexingExample();
 
+
     public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
 
     public static final String RENDER_MODE_EXAMPLE_WORD = createRenderModesExampleWord();
