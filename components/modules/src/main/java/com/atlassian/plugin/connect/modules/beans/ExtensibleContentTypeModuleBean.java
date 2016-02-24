@@ -41,7 +41,7 @@ import org.apache.commons.lang3.ObjectUtils;
  *     },
  *     "body":{
  *         "storage":{
- *             "value":"<p>This is my content body</p>",
+ *             "value":"This is my content body",
  *             "representation":"storage"
  *         }
  *     }

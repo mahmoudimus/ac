@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.confluence;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
 import com.atlassian.confluence.api.service.content.ContentPropertyService;
+import com.atlassian.confluence.api.service.content.ContentService;
+import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
@@ -72,6 +74,8 @@ public class ConfluenceImports {
             @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams,
             @ConfluenceImport ModuleFactory moduleFactory,
             @ConfluenceImport ContentPropertyService contentPropertyService,
-            @ConfluenceImport CustomContentManager customContentManager) {
+            @ConfluenceImport CustomContentManager customContentManager,
+            @ConfluenceImport PaginationService paginationService,
+            @ConfluenceImport ContentService contentService) {
     }
 }

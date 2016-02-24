@@ -1,9 +1,16 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.user.User;
 
 public class PermissionDelegate implements com.atlassian.confluence.security.PermissionDelegate
 {
+    private final PermissionManager permissionManager;
+
+    public PermissionDelegate(PermissionManager permissionManager) {
+        this.permissionManager = permissionManager;
+    }
+
     @Override
     public boolean canView(User user, Object o)
     {

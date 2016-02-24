@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.confluence.contenttype;
 import java.util.Set;
 
 import com.atlassian.confluence.api.model.content.ContentType;
+import com.atlassian.confluence.api.service.content.ContentService;
+import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.ContentEntityAdapter;
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.content.CustomContentManager;
@@ -21,10 +23,11 @@ public class ExtensibleContentType extends BaseCustomContentType
     private final String contentTypeName;
     private final ExtensibleContentTypeModuleBean bean;
     private final CustomContentManager customContentManager;
-    private final PermissionManager permissionManager;
-    private final ApiSupportProvider apiSupportProvider;
     private final ContentEntityAdapter contentEntityAdapter;
-    private final com.atlassian.confluence.security.PermissionDelegate permissionDelegate;
+    private final PaginationService paginationService;
+    private final ContentService contentService;
+    private final PermissionDelegate permissionDelegate;
+    private final ApiSupportProvider apiSupportProvider;
     private final ContentUiSupport contentUiSupport;
     private final CustomContentApiSupportParams customContentApiSupportParams;
     private final Set<String> supportedContainerTypes;
@@ -36,6 +39,8 @@ public class ExtensibleContentType extends BaseCustomContentType
             ContentTypeMapper contentTypeMapper,
             CustomContentManager customContentManager,
             PermissionManager permissionManager,
+            PaginationService paginationService,
+            ContentService contentService,
             ApiSupportProvider apiSupportProvider,
             CustomContentApiSupportParams customContentApiSupportParams)
     {
@@ -46,9 +51,10 @@ public class ExtensibleContentType extends BaseCustomContentType
         this.contentTypeName = bean.getName().getI18nOrValue();
 
         this.customContentManager = customContentManager;
-        this.permissionManager = permissionManager;
         this.apiSupportProvider = apiSupportProvider;
-        this.permissionDelegate = new PermissionDelegate();
+        this.permissionDelegate = new PermissionDelegate(permissionManager);
+        this.paginationService = paginationService;
+        this.contentService = contentService;
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
         this.contentUiSupport = new ExtensibleContentTypeUISupport(contentTypeName, bean);
         this.customContentApiSupportParams = customContentApiSupportParams;
@@ -64,9 +70,9 @@ public class ExtensibleContentType extends BaseCustomContentType
     }
 
     @Override
-    public com.atlassian.confluence.security.PermissionDelegate getPermissionDelegate()
+    public PermissionDelegate getPermissionDelegate()
     {
-        return permissionDelegate;
+        return getPermissionDelegate();
     }
 
     @Override
@@ -84,7 +90,9 @@ public class ExtensibleContentType extends BaseCustomContentType
                 supportedContainedTypes,
                 customContentApiSupportParams,
                 customContentManager,
-                permissionManager,
+                paginationService,
+                contentService,
+                permissionDelegate,
                 apiSupportProvider);
     }
 }

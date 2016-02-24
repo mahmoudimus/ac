@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
+import com.atlassian.confluence.api.service.content.ContentService;
+import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.ContentTypeModuleDescriptor;
 import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
@@ -30,6 +32,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory
     private final ContentTypeMapper contentTypeMapper;
     private final CustomContentManager customContentManager;
     private final PermissionManager permissionManager;
+    private final PaginationService paginationService;
+    private final ContentService contentService;
     private final ApiSupportProvider apiSupportProvider;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
@@ -39,6 +43,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory
             ContentTypeMapper contentTypeMapper,
             CustomContentManager customContentManager,
             PermissionManager permissionManager,
+            PaginationService paginationService,
+            ContentService contentService,
             ApiSupportProvider apiSupportProvider,
             CustomContentApiSupportParams customContentApiSupportParams)
     {
@@ -47,6 +53,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory
         this.customContentApiSupportParams = customContentApiSupportParams;
         this.customContentManager = customContentManager;
         this.permissionManager = permissionManager;
+        this.paginationService = paginationService;
+        this.contentService = contentService;
         this.apiSupportProvider = apiSupportProvider;
     }
 
@@ -77,6 +85,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory
                         contentTypeMapper,
                         customContentManager,
                         permissionManager,
+                        paginationService,
+                        contentService,
                         apiSupportProvider,
                         customContentApiSupportParams);
         descriptor.init(plugin, contentTypeElement);

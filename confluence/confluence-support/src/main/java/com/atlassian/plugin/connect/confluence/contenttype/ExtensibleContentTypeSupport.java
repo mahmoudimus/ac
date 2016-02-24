@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
+import com.atlassian.confluence.api.impl.service.content.typebinding.TreeSorter;
 import com.atlassian.confluence.api.model.Depth;
 import com.atlassian.confluence.api.model.Expansions;
 import com.atlassian.confluence.api.model.content.Container;
@@ -12,6 +13,8 @@ import com.atlassian.confluence.api.model.pagination.PageResponseImpl;
 import com.atlassian.confluence.api.model.pagination.PaginationBatch;
 import com.atlassian.confluence.api.model.validation.SimpleValidationResult;
 import com.atlassian.confluence.api.model.validation.ValidationResult;
+import com.atlassian.confluence.api.service.content.ContentService;
+import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
@@ -19,15 +22,18 @@ import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.apisupport.CustomContentTypeApiSupport;
 import com.atlassian.confluence.core.ContentEntityObject;
+import com.atlassian.confluence.internal.pagination.SubListResponse;
 import com.atlassian.confluence.pages.ContentConvertible;
-import com.atlassian.confluence.security.Permission;
-import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Lists;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -35,10 +41,12 @@ import java.util.Set;
 public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
     private final ContentType contentTypeKey;
     private final CustomContentManager customContentManager;
+    private final PaginationService paginationService;
+    private final ContentService contentService;
+    private final PermissionDelegate permissionDelegate;
     private final ApiSupportProvider apiSupportProvider;
     private final Set<String> supportedContainerTypes;
     private final Set<String> supportedContainedTypes;
-    private final PermissionManager permissionManager;
 
     public ExtensibleContentTypeSupport(
             String contentTypeKey,
@@ -46,14 +54,17 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
             Set<String> supportedContainedTypes,
             CustomContentApiSupportParams params,
             CustomContentManager customContentManager,
-            PermissionManager permissionManager,
+            PaginationService paginationService,
+            ContentService contentService,
+            PermissionDelegate permissionDelegate,
             ApiSupportProvider apiSupportProvider) {
+        
         super(params);
-
         this.contentTypeKey = ContentType.valueOf(contentTypeKey);
-
         this.customContentManager = customContentManager;
-        this.permissionManager = permissionManager;
+        this.paginationService = paginationService;
+        this.contentService = contentService;
+        this.permissionDelegate = permissionDelegate;
         this.apiSupportProvider = apiSupportProvider;
         this.supportedContainerTypes = supportedContainerTypes;
         this.supportedContainedTypes = supportedContainedTypes;
@@ -99,31 +110,82 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
             Predicate<? super ContentEntityObject> predicate) {
 
         // Check if current user can view
-        if (!permissionManager.hasPermission(AuthenticatedUserThreadLocal.get(), Permission.VIEW, parentCEO)) {
+        if (!permissionDelegate.canView(AuthenticatedUserThreadLocal.get(), parentCEO)) {
             return PageResponseImpl.empty(false);
         }
 
         PaginationBatch<CustomContentEntityObject> fetchPage;
+        String handledType = getHandledType().getType();
+
         if (parentCEO instanceof CustomContentEntityObject) {
+            // Get children for Extensible Content Type
             CustomContentEntityObject parentCCEO = (CustomContentEntityObject) parentCEO;
-            String handledType = getHandledType().getType();
 
-            long count = customContentManager.countChildrenOfType(parentCCEO, handledType);
-            List<CustomContentEntityObject> children = Lists.newLinkedList();
-            Iterator<CustomContentEntityObject> childrenIterator = customContentManager.findChildrenOfType(
-                    parentCCEO,
-                    handledType,
-                    limitedRequest.getStart(),
-                    limitedRequest.getLimit(),
-                    CustomContentManager.SortField.CREATED,
-                    CustomContentManager.SortOrder.DESC);
-            Iterators.addAll(children, childrenIterator);
+            fetchPage = nextRequest -> {
+                List<CustomContentEntityObject> children = Lists.newLinkedList();
 
+                // Get all children count
+                long count = customContentManager.countChildrenOfType(parentCCEO, handledType);
 
-            // TODO: Need convert CustomContentEntityObject to Content
+                // Get children subset according to nextRequest
+                Iterator<CustomContentEntityObject> childrenIterator = customContentManager.findChildrenOfType(
+                        parentCCEO,
+                        handledType,
+                        nextRequest.getStart(),
+                        nextRequest.getLimit(),
+                        CustomContentManager.SortField.CREATED,
+                        CustomContentManager.SortOrder.DESC);
+                Iterators.addAll(children, childrenIterator);
+
+                // Check if has next batch
+                boolean hasNext = nextRequest.getStart() + nextRequest.getLimit() < count;
+                return PageResponseImpl.from(children, hasNext).build();
+            };
+        } else {
+            // Get Extensible Content Type children for other type
+            fetchPage = nextRequest -> {
+                List<CustomContentEntityObject> children = Lists.newLinkedList();
+                Iterator<CustomContentEntityObject> childrenIterator = customContentManager.findAllContainedOfType(parentCEO.getContentId().asLong(), handledType);
+                Iterators.addAll(children, childrenIterator);
+
+                if (depth == Depth.ALL) {
+                    // Traverse all the descendants
+                    return getAllDescendants(children, nextRequest, predicate);
+                } else {
+                    return SubListResponse.from(filterCustomContentEntityObjects(children, predicate), nextRequest);
+                }
+            };
         }
 
-        return PageResponseImpl.empty(false);
+        Function<ContentEntityObject, Content> modelConverter =  entity ->
+                contentService.find(expansions.toArray()).withId(entity.getContentId()).fetchOneOrNull();
+
+        return paginationService.doPaginationRequest(limitedRequest, fetchPage, modelConverter);
+    }
+
+    private static final Function<CustomContentEntityObject, List<CustomContentEntityObject>> ANCESTORS_GETTER = input -> {
+        List<CustomContentEntityObject> ancestors = Lists.newArrayList();
+        while (input.getParent() != null) {
+            ancestors.add(0, input.getParent());
+            input = input.getParent();
+        }
+        return ancestors;
+    };
+
+    private PageResponse<CustomContentEntityObject> getAllDescendants(List<CustomContentEntityObject> allChildren, LimitedRequest nextRequest, Predicate predicate) {
+        List<CustomContentEntityObject> creationDateSortedComments = filterCustomContentEntityObjects(allChildren, predicate);
+
+        Comparator<CustomContentEntityObject> commentComparator = (o1, o2) -> o1.getContentId().compareTo(o2.getContentId());
+        List<CustomContentEntityObject> treeSortedCCEOs = TreeSorter.depthFirstPreOrderSort(creationDateSortedComments, ANCESTORS_GETTER, commentComparator);
+
+        return SubListResponse.from(treeSortedCCEOs, nextRequest);
+    }
+
+    private List<CustomContentEntityObject> filterCustomContentEntityObjects(List<CustomContentEntityObject> customContentEntityObjects, Predicate predicate) {
+        if (predicate == null) {
+            return customContentEntityObjects;
+        }
+        return ImmutableList.copyOf(Iterables.filter(customContentEntityObjects, predicate));
     }
 
     @Override

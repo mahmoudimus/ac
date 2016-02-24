@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
+import com.atlassian.confluence.api.service.content.ContentService;
+import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.ContentType;
 import com.atlassian.confluence.content.ContentTypeModuleDescriptor;
 import com.atlassian.confluence.content.CustomContentManager;
@@ -20,6 +22,8 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
     private final PermissionManager permissionManager;
     private final ApiSupportProvider apiSupportProvider;
     private final CustomContentApiSupportParams customContentApiSupportParams;
+    private final PaginationService paginationService;
+    private final ContentService contentService;
 
     public ExtensibleContentTypeModuleDescriptor(
             String contentTypeKey,
@@ -28,6 +32,8 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
             ContentTypeMapper contentTypeMapper,
             CustomContentManager customContentManager,
             PermissionManager permissionManager,
+            PaginationService paginationService,
+            ContentService contentService,
             ApiSupportProvider apiSupportProvider,
             CustomContentApiSupportParams customContentApiSupportParams)
     {
@@ -38,6 +44,8 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
         this.contentTypeMapper = contentTypeMapper;
         this.customContentManager = customContentManager;
         this.permissionManager = permissionManager;
+        this.paginationService = paginationService;
+        this.contentService = contentService;
         this.apiSupportProvider = apiSupportProvider;
         this.customContentApiSupportParams = customContentApiSupportParams;
     }
@@ -64,6 +72,8 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
                 contentTypeMapper,
                 customContentManager,
                 permissionManager,
+                paginationService,
+                contentService,
                 apiSupportProvider,
                 customContentApiSupportParams);
     }

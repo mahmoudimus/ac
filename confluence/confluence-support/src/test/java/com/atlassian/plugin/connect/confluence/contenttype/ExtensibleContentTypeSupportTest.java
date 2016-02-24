@@ -5,17 +5,17 @@ import java.util.Set;
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.Space;
+import com.atlassian.confluence.api.service.content.ContentService;
+import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
-import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Sets;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -36,7 +36,9 @@ public class ExtensibleContentTypeSupportTest
     @Rule public ExpectedException exceptions = ExpectedException.none();
     @Mock private CustomContentApiSupportParams customContentApiSupportParams;
     @Mock private CustomContentManager customContentManager;
-    @Mock private PermissionManager permissionManager;
+    @Mock private PermissionDelegate permissionDelegate;
+    @Mock private PaginationService paginationService;
+    @Mock private ContentService contentService;
     @Mock private ApiSupportProvider apiSupportProvider;
 
     @Test
@@ -99,7 +101,9 @@ public class ExtensibleContentTypeSupportTest
                 bean.getApiSupport().getSupportedContainedTypes(),
                 customContentApiSupportParams,
                 customContentManager,
-                permissionManager,
+                paginationService,
+                contentService,
+                permissionDelegate,
                 apiSupportProvider);
     }
 
