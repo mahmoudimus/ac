@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -18,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
 public class ContentPropertyExtractorModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentPropertyExtractorModuleDescriptor>
-{
+        implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentPropertyExtractorModuleDescriptor> {
     private static final Logger log = LoggerFactory.getLogger(ContentPropertyExtractorModuleDescriptorFactory.class);
 
     private final ModuleFactory moduleFactory;
@@ -30,16 +28,14 @@ public class ContentPropertyExtractorModuleDescriptorFactory
     public ContentPropertyExtractorModuleDescriptorFactory(
             ModuleFactory moduleFactory,
             ConfluenceFeatureManager confluenceFeatureManager,
-            ContentPropertyService contentPropertyService)
-    {
+            ContentPropertyService contentPropertyService) {
         this.moduleFactory = moduleFactory;
         this.confluenceFeatureManager = confluenceFeatureManager;
         this.contentPropertyService = contentPropertyService;
     }
 
     @Override
-    public ContentPropertyExtractorModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public ContentPropertyExtractorModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         String completeContentTypeKey = ExtensibleContentTypeUtils.getCompleteContentType(addon, bean);
         String extractorKey = ExtensibleContentTypeUtils.getExtractorKey(addon, bean);
         String contentPropertyKey = bean.getApiSupport().getIndexing().getContentPropertyBody();
@@ -55,8 +51,7 @@ public class ContentPropertyExtractorModuleDescriptorFactory
         extractorElement.addAttribute("priority", "800");
         extractorElement.add(descriptionElement);
 
-        if (ContentPropertyExtractorModuleDescriptorFactory.log.isDebugEnabled())
-        {
+        if (ContentPropertyExtractorModuleDescriptorFactory.log.isDebugEnabled()) {
             ContentPropertyExtractorModuleDescriptorFactory.log.debug(Dom4jUtils.printNode(extractorElement));
         }
 

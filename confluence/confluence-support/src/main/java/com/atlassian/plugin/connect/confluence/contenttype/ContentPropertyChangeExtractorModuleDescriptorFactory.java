@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -18,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
 public class ContentPropertyChangeExtractorModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentPropertyExtractorModuleDescriptor>
-{
+        implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentPropertyExtractorModuleDescriptor> {
     private static final Logger log = LoggerFactory.getLogger(ContentPropertyChangeExtractorModuleDescriptorFactory.class);
 
     private final ModuleFactory moduleFactory;
@@ -30,16 +28,14 @@ public class ContentPropertyChangeExtractorModuleDescriptorFactory
     public ContentPropertyChangeExtractorModuleDescriptorFactory(
             ModuleFactory moduleFactory,
             ConfluenceFeatureManager confluenceFeatureManager,
-            ContentPropertyService contentPropertyService)
-    {
+            ContentPropertyService contentPropertyService) {
         this.moduleFactory = moduleFactory;
         this.confluenceFeatureManager = confluenceFeatureManager;
         this.contentPropertyService = contentPropertyService;
     }
 
     @Override
-    public ContentPropertyExtractorModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public ContentPropertyExtractorModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         String completeContentTypeKey = ExtensibleContentTypeUtils.getCompleteContentType(addon, bean);
         String extractorKey = ExtensibleContentTypeUtils.getChangeExtractorKey(addon, bean);
         String contentPropertyKey = bean.getApiSupport().getIndexing().getContentPropertyBody();
@@ -51,8 +47,7 @@ public class ContentPropertyChangeExtractorModuleDescriptorFactory
         changeExtractorElement.addAttribute("requires-latest-version", "true");
         changeExtractorElement.addAttribute("priority", "800");
 
-        if (ContentPropertyChangeExtractorModuleDescriptorFactory.log.isDebugEnabled())
-        {
+        if (ContentPropertyChangeExtractorModuleDescriptorFactory.log.isDebugEnabled()) {
             ContentPropertyChangeExtractorModuleDescriptorFactory.log.debug(Dom4jUtils.printNode(changeExtractorElement));
         }
 

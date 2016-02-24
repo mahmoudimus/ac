@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.confluence.contenttype;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.user.User;
 
-public class PermissionDelegate implements com.atlassian.confluence.security.PermissionDelegate
-{
+public class PermissionDelegate implements com.atlassian.confluence.security.PermissionDelegate {
     private final PermissionManager permissionManager;
 
     public PermissionDelegate(PermissionManager permissionManager) {
@@ -12,56 +11,47 @@ public class PermissionDelegate implements com.atlassian.confluence.security.Per
     }
 
     @Override
-    public boolean canView(User user, Object o)
-    {
+    public boolean canView(User user, Object o) {
         return true;
     }
 
     @Override
-    public boolean canView(User user)
-    {
+    public boolean canView(User user) {
         return true;
     }
 
     @Override
-    public boolean canEdit(User user, Object o)
-    {
+    public boolean canEdit(User user, Object o) {
         return true;
     }
 
     @Override
-    public boolean canSetPermissions(User user, Object o)
-    {
+    public boolean canSetPermissions(User user, Object o) {
         return true;
     }
 
     @Override
-    public boolean canRemove(User user, Object o)
-    {
+    public boolean canRemove(User user, Object o) {
         return true;
     }
 
     @Override
-    public boolean canExport(User user, Object o)
-    {
+    public boolean canExport(User user, Object o) {
         return true;
     }
 
     @Override
-    public boolean canAdminister(User user, Object o)
-    {
+    public boolean canAdminister(User user, Object o) {
         return true;
     }
 
     @Override
-    public boolean canCreate(User user, Object o)
-    {
+    public boolean canCreate(User user, Object o) {
         return true;
     }
 
     @Override
-    public boolean canCreateInTarget(User user, Class aClass)
-    {
+    public boolean canCreateInTarget(User user, Class aClass) {
         return true;
     }
 }

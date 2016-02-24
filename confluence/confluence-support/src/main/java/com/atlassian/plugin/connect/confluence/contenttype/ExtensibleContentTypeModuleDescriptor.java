@@ -13,8 +13,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 
-public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDescriptor
-{
+public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDescriptor {
     private final String contentTypeKey;
     private final ExtensibleContentTypeModuleBean bean;
     private final ContentTypeMapper contentTypeMapper;
@@ -35,8 +34,7 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
             PaginationService paginationService,
             ContentService contentService,
             ApiSupportProvider apiSupportProvider,
-            CustomContentApiSupportParams customContentApiSupportParams)
-    {
+            CustomContentApiSupportParams customContentApiSupportParams) {
         super(moduleFactory, apiSupportProvider);
         this.bean = bean;
 
@@ -51,21 +49,16 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
     }
 
     @Override
-    protected void loadClass(Plugin plugin, String clazz) throws PluginParseException
-    {
-        try
-        {
+    protected void loadClass(Plugin plugin, String clazz) throws PluginParseException {
+        try {
             this.moduleClass = plugin.loadClass(clazz, null);
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             throw new PluginParseException("cannot load component class", e);
         }
     }
 
     @Override
-    public ContentType createModule()
-    {
+    public ContentType createModule() {
         return new ExtensibleContentType(
                 contentTypeKey,
                 bean,
@@ -79,8 +72,7 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
     }
 
     @Override
-    public String getCompleteKey()
-    {
+    public String getCompleteKey() {
         return contentTypeKey;
     }
 }

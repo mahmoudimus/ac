@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
-import java.util.Set;
-
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.service.content.ContentService;
 import com.atlassian.confluence.api.service.pagination.PaginationService;
@@ -16,9 +14,10 @@ import com.atlassian.confluence.content.ui.ContentUiSupport;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 
+import java.util.Set;
 
-public class ExtensibleContentType extends BaseCustomContentType
-{
+
+public class ExtensibleContentType extends BaseCustomContentType {
     private final String contentTypeKey;
     private final String contentTypeName;
     private final ExtensibleContentTypeModuleBean bean;
@@ -42,8 +41,7 @@ public class ExtensibleContentType extends BaseCustomContentType
             PaginationService paginationService,
             ContentService contentService,
             ApiSupportProvider apiSupportProvider,
-            CustomContentApiSupportParams customContentApiSupportParams)
-    {
+            CustomContentApiSupportParams customContentApiSupportParams) {
         super(ContentType.valueOf(contentTypeKey), apiSupportProvider);
 
         this.bean = bean;
@@ -64,26 +62,22 @@ public class ExtensibleContentType extends BaseCustomContentType
     }
 
     @Override
-    public ContentEntityAdapter getContentAdapter()
-    {
+    public ContentEntityAdapter getContentAdapter() {
         return contentEntityAdapter;
     }
 
     @Override
-    public PermissionDelegate getPermissionDelegate()
-    {
+    public PermissionDelegate getPermissionDelegate() {
         return permissionDelegate;
     }
 
     @Override
-    public ContentUiSupport getContentUiSupport()
-    {
+    public ContentUiSupport getContentUiSupport() {
         return contentUiSupport;
     }
 
     @Override
-    public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport()
-    {
+    public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport() {
         return new ExtensibleContentTypeSupport(
                 contentTypeKey,
                 supportedContainerTypes,

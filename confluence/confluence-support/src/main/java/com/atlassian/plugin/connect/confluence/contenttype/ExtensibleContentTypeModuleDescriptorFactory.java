@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -24,8 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
 public class ExtensibleContentTypeModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentTypeModuleDescriptor>
-{
+        implements ConnectModuleDescriptorFactory<ExtensibleContentTypeModuleBean, ContentTypeModuleDescriptor> {
     private static final Logger log = LoggerFactory.getLogger(ExtensibleContentTypeModuleDescriptorFactory.class);
 
     private final ModuleFactory moduleFactory;
@@ -46,8 +44,7 @@ public class ExtensibleContentTypeModuleDescriptorFactory
             PaginationService paginationService,
             ContentService contentService,
             ApiSupportProvider apiSupportProvider,
-            CustomContentApiSupportParams customContentApiSupportParams)
-    {
+            CustomContentApiSupportParams customContentApiSupportParams) {
         this.moduleFactory = moduleFactory;
         this.contentTypeMapper = contentTypeMapper;
         this.customContentApiSupportParams = customContentApiSupportParams;
@@ -59,8 +56,7 @@ public class ExtensibleContentTypeModuleDescriptorFactory
     }
 
     @Override
-    public ContentTypeModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public ContentTypeModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
         String completeContentTypeKey = ExtensibleContentTypeUtils.getCompleteContentType(addon, bean);
 
@@ -73,8 +69,7 @@ public class ExtensibleContentTypeModuleDescriptorFactory
         contentTypeElement.addAttribute("class", ExtensibleContentType.class.getName());
         contentTypeElement.add(descriptionElement);
 
-        if (log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(contentTypeElement));
         }
 

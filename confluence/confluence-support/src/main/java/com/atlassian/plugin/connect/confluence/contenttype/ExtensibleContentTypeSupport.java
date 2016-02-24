@@ -58,7 +58,7 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
             ContentService contentService,
             PermissionDelegate permissionDelegate,
             ApiSupportProvider apiSupportProvider) {
-        
+
         super(params);
         this.contentTypeKey = ContentType.valueOf(contentTypeKey);
         this.customContentManager = customContentManager;
@@ -157,7 +157,7 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
             };
         }
 
-        Function<ContentEntityObject, Content> modelConverter =  entity ->
+        Function<ContentEntityObject, Content> modelConverter = entity ->
                 contentService.find(expansions.toArray()).withId(entity.getContentId()).fetchOneOrNull();
 
         return paginationService.doPaginationRequest(limitedRequest, fetchPage, modelConverter);

@@ -7,54 +7,45 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.fugue.Option;
 
-public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent
-{
+public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent {
     private final ContentTypeMapper mapper;
 
-    public ExtensibleContentEntityAdapter(ContentTypeMapper mapper)
-    {
+    public ExtensibleContentEntityAdapter(ContentTypeMapper mapper) {
         this.mapper = mapper;
     }
 
     @Override
-    public Option<String> getUrlPath(final CustomContentEntityObject pluginContentEntityObject)
-    {
+    public Option<String> getUrlPath(final CustomContentEntityObject pluginContentEntityObject) {
         return Option.some("/rest/api/content/" + pluginContentEntityObject.getId());
     }
 
     @Override
-    public Option<String> getDisplayTitle(final CustomContentEntityObject pluginContentEntityObject)
-    {
+    public Option<String> getDisplayTitle(final CustomContentEntityObject pluginContentEntityObject) {
         return Option.none();
     }
 
     @Override
-    public Option<String> getNameForComparison(final CustomContentEntityObject pluginContentEntityObject)
-    {
+    public Option<String> getNameForComparison(final CustomContentEntityObject pluginContentEntityObject) {
         return Option.none();
     }
 
     @Override
-    public Option<String> getAttachmentsUrlPath(final CustomContentEntityObject pluginContentEntityObject)
-    {
+    public Option<String> getAttachmentsUrlPath(final CustomContentEntityObject pluginContentEntityObject) {
         return Option.none();
     }
 
     @Override
-    public Option<String> getAttachmentUrlPath(final CustomContentEntityObject pluginContentEntityObject, final Attachment attachment)
-    {
+    public Option<String> getAttachmentUrlPath(final CustomContentEntityObject pluginContentEntityObject, final Attachment attachment) {
         return Option.none();
     }
 
     @Override
-    public BodyType getDefaultBodyType(final CustomContentEntityObject pluginContentEntityObject)
-    {
+    public BodyType getDefaultBodyType(final CustomContentEntityObject pluginContentEntityObject) {
         return BodyType.XHTML;
     }
 
     @Override
-    public Option<String> getExcerpt(final CustomContentEntityObject pluginContentEntityObject)
-    {
+    public Option<String> getExcerpt(final CustomContentEntityObject pluginContentEntityObject) {
         return Option.none();
     }
 
@@ -69,8 +60,7 @@ public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent
     }
 
     @Override
-    public boolean isIndexable(final CustomContentEntityObject pluginContentEntityObject, final boolean isDefaultIndexable)
-    {
+    public boolean isIndexable(final CustomContentEntityObject pluginContentEntityObject, final boolean isDefaultIndexable) {
         return pluginContentEntityObject.isLatestVersion() && pluginContentEntityObject.isCurrent();
     }
 }

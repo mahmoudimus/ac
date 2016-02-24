@@ -6,8 +6,7 @@ import com.atlassian.confluence.plugin.descriptor.ExtractorModuleDescriptor;
 import com.atlassian.plugin.connect.confluence.ConfluenceFeatureManager;
 import com.atlassian.plugin.module.ModuleFactory;
 
-public class ContentPropertyExtractorModuleDescriptor extends ExtractorModuleDescriptor
-{
+public class ContentPropertyExtractorModuleDescriptor extends ExtractorModuleDescriptor {
     private final ConfluenceFeatureManager confluenceFeatureManager;
     private final ContentPropertyService contentPropertyService;
     private final String contentPropertyKey;
@@ -16,8 +15,7 @@ public class ContentPropertyExtractorModuleDescriptor extends ExtractorModuleDes
             ModuleFactory moduleFactory,
             ConfluenceFeatureManager confluenceFeatureManager,
             ContentPropertyService contentPropertyService,
-            String contentPropertyKey)
-    {
+            String contentPropertyKey) {
         super(moduleFactory);
 
         this.confluenceFeatureManager = confluenceFeatureManager;
@@ -26,8 +24,7 @@ public class ContentPropertyExtractorModuleDescriptor extends ExtractorModuleDes
     }
 
     @Override
-    public Extractor createModule()
-    {
+    public Extractor createModule() {
         return new ContentPropertyExtractor(confluenceFeatureManager, contentPropertyService, contentPropertyKey);
     }
 }

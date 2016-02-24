@@ -11,16 +11,13 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.confluence.ConfluenceFeatureManager;
-
 import com.google.common.base.Strings;
-
 import org.apache.lucene.document.Document;
 
 /**
  * Extracts content property specified in the descriptor and append to the default searchable text
  */
-public class ContentPropertyExtractor implements Extractor
-{
+public class ContentPropertyExtractor implements Extractor {
     public static final String SYSADMIN = "sysadmin";
     public static final String ADMIN = "admin";
 
@@ -31,23 +28,19 @@ public class ContentPropertyExtractor implements Extractor
     public ContentPropertyExtractor(
             ConfluenceFeatureManager confluenceFeatureManager,
             ContentPropertyService contentPropertyService,
-            String contentPropertyKey)
-    {
+            String contentPropertyKey) {
         this.confluenceFeatureManager = confluenceFeatureManager;
         this.contentPropertyService = contentPropertyService;
         this.contentPropertyKey = contentPropertyKey;
     }
 
     @Override
-    public void addFields(Document document, StringBuffer defaultSearchableText, Searchable searchable)
-    {
-        if (Strings.isNullOrEmpty(contentPropertyKey))
-        {
+    public void addFields(Document document, StringBuffer defaultSearchableText, Searchable searchable) {
+        if (Strings.isNullOrEmpty(contentPropertyKey)) {
             return;
         }
 
-        if (searchable instanceof CustomContentEntityObject)
-        {
+        if (searchable instanceof CustomContentEntityObject) {
             /**
              * ContentPropertyService checks current user permission via AuthenticatedUserThreadLocal.get()
              * However such information is not exists in the indexing thread.
@@ -69,12 +62,10 @@ public class ContentPropertyExtractor implements Extractor
 
         JsonContentProperty jsonContentProperty = jsonProperty.getOrNull();
 
-        if (jsonContentProperty != null)
-        {
+        if (jsonContentProperty != null) {
             String value = jsonContentProperty.getValue().getValue();
 
-            if (!Strings.isNullOrEmpty(value))
-            {
+            if (!Strings.isNullOrEmpty(value)) {
                 defaultSearchableText.append(" ").append(jsonContentProperty.getValue().getValue());
             }
         }
