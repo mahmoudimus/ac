@@ -34,7 +34,7 @@ import org.apache.commons.lang3.ObjectUtils;
  *
  * <pre><code>
  * {
- *     "type":"YOUR_ADD_ON_KEY:extensible-content-type-identifier",
+ *     "type":"myExtensibleContentType",
  *     "title":"My content",
  *     "space":{
  *         "key":"ds"

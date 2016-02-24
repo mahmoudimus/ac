@@ -72,7 +72,7 @@ public class ExtensibleContentType extends BaseCustomContentType
     @Override
     public PermissionDelegate getPermissionDelegate()
     {
-        return getPermissionDelegate();
+        return permissionDelegate;
     }
 
     @Override

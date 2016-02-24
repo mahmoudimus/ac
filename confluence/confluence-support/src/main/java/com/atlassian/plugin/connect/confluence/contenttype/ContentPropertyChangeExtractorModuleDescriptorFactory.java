@@ -41,11 +41,12 @@ public class ContentPropertyChangeExtractorModuleDescriptorFactory
     public ContentPropertyExtractorModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin)
     {
         String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
+        String extractorKey = ExtensibleContentTypeUtils.getChangeExtractorKey(addon, bean);
         String contentPropertyKey = bean.getApiSupport().getIndexing().getContentPropertyBody();
 
         Element changeExtractorElement = new DOMElement("change-extractor");
         changeExtractorElement.addAttribute("name", "Content Property Change Extractor for Extensible Content Type " + contentTypeKey);
-        changeExtractorElement.addAttribute("key", "extensibleContentTypeChangeExtractor-" + contentTypeKey);
+        changeExtractorElement.addAttribute("key", extractorKey);
         changeExtractorElement.addAttribute("class", ContentPropertyExtractor.class.getName());
         changeExtractorElement.addAttribute("requires-latest-version", "true");
         changeExtractorElement.addAttribute("priority", "800");

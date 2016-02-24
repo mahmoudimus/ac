@@ -25,13 +25,13 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.internal.pagination.SubListResponse;
 import com.atlassian.confluence.pages.ContentConvertible;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
-import com.atlassian.elasticsearch.shaded.google.common.collect.Lists;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 import java.util.Comparator;
 import java.util.Iterator;

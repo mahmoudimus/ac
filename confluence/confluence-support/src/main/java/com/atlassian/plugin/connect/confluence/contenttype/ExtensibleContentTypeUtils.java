@@ -7,11 +7,21 @@ public class ExtensibleContentTypeUtils
 {
     public static String getContentType(ConnectAddonBean addon, RequiredKeyBean bean)
     {
+        return bean.getRawKey();
+    }
+
+    public static String getCompleteContentType(ConnectAddonBean addon, RequiredKeyBean bean)
+    {
         return addon.getKey() + ":" + bean.getRawKey();
     }
 
     public static String getExtractorKey(ConnectAddonBean addon, RequiredKeyBean bean)
     {
-        return addon.getKey() + "-" + bean.getRawKey();
+        return "extensibleContentTypeExtractor-" + addon.getKey() + "-" + bean.getRawKey();
+    }
+
+    public static String getChangeExtractorKey(ConnectAddonBean addon, RequiredKeyBean bean)
+    {
+        return "extensibleContentTypeChangeExtractor-" + addon.getKey() + "-" + bean.getRawKey();
     }
 }

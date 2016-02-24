@@ -36,9 +36,9 @@ import static org.hamcrest.core.Is.is;
 public abstract class AbstractExtensibleContentTypeTest extends ConfluenceWebDriverTestBase
 {
     protected final String CONTAINER_TITLE = "Test Extensible Type Container";
-    protected final String TYPE_KEY_1 = "test-extensible-type-1";
+    protected final String TYPE_KEY_1 = "testExtensibleType1";
     protected final String TYPE_NAME_1 = "Test Extensible Type 1";
-    protected final String TYPE_KEY_2 = "test-extensible-type-2";
+    protected final String TYPE_KEY_2 = "testExtensibleType2";
     protected final String TYPE_NAME_2 = "Test Extensible Type 2";
 
     protected static ConnectRunner remotePlugin;
