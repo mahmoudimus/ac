@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.testsupport.util.matcher;
+package com.atlassian.plugin.connect.test.matcher;
 
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AbstractCompositeCondition;

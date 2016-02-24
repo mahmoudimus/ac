@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import org.hamcrest.Description;

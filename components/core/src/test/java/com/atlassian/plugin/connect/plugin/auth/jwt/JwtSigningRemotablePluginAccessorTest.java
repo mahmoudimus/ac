@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.auth.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.request.BaseSigningRemotablePluginAccessorTest;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
