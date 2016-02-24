@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
 import com.atlassian.confluence.content.ContentTypeModuleDescriptor;
+import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
@@ -26,6 +28,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory
 
     private final ModuleFactory moduleFactory;
     private final ContentTypeMapper contentTypeMapper;
+    private final CustomContentManager customContentManager;
+    private final PermissionManager permissionManager;
     private final ApiSupportProvider apiSupportProvider;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
@@ -33,12 +37,16 @@ public class ExtensibleContentTypeModuleDescriptorFactory
     public ExtensibleContentTypeModuleDescriptorFactory(
             ModuleFactory moduleFactory,
             ContentTypeMapper contentTypeMapper,
+            CustomContentManager customContentManager,
+            PermissionManager permissionManager,
             ApiSupportProvider apiSupportProvider,
             CustomContentApiSupportParams customContentApiSupportParams)
     {
         this.moduleFactory = moduleFactory;
         this.contentTypeMapper = contentTypeMapper;
         this.customContentApiSupportParams = customContentApiSupportParams;
+        this.customContentManager = customContentManager;
+        this.permissionManager = permissionManager;
         this.apiSupportProvider = apiSupportProvider;
     }
 
@@ -67,6 +75,8 @@ public class ExtensibleContentTypeModuleDescriptorFactory
                         bean,
                         moduleFactory,
                         contentTypeMapper,
+                        customContentManager,
+                        permissionManager,
                         apiSupportProvider,
                         customContentApiSupportParams);
         descriptor.init(plugin, contentTypeElement);

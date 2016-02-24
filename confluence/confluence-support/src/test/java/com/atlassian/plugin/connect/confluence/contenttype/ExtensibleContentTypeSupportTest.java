@@ -5,9 +5,11 @@ import java.util.Set;
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.Space;
+import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Sets;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
@@ -31,8 +33,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ExtensibleContentTypeSupportTest
 {
-    @Rule private ExpectedException exceptions = ExpectedException.none();
+    @Rule public ExpectedException exceptions = ExpectedException.none();
     @Mock private CustomContentApiSupportParams customContentApiSupportParams;
+    @Mock private CustomContentManager customContentManager;
+    @Mock private PermissionManager permissionManager;
     @Mock private ApiSupportProvider apiSupportProvider;
 
     @Test
@@ -94,6 +98,8 @@ public class ExtensibleContentTypeSupportTest
                 bean.getApiSupport().getSupportedContainerTypes(),
                 bean.getApiSupport().getSupportedContainedTypes(),
                 customContentApiSupportParams,
+                customContentManager,
+                permissionManager,
                 apiSupportProvider);
     }
 
