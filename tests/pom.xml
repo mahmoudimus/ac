@@ -22,7 +22,6 @@
     <modules>
         <module>test-support-plugin</module>
         <module>unit-test-support</module>
-        <module>marketplace-support</module>
         <module>integration-tests-support</module>
     </modules>
 
