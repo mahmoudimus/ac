@@ -296,14 +296,18 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     }
 
     @Test
-    public void testParameterLabel() throws Exception {
+    public void testParameterAndLabelIsVisible() throws Exception {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(ModuleKeyUtils.randomName("Parameter Page"));
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
         try {
-            Assert.assertTrue(macroBrowserAndEditor.macroForm.getField(SINGLE_PARAM_ID).isVisible());
+            // Check the parameter container div is visible.
+            WebElement paramContainerDiv = confluencePageOperations.findElement(By.id("macro-param-div-" + SINGLE_PARAM_ID));
+            Assert.assertThat(paramContainerDiv.getAttribute("style"), CoreMatchers.not(CoreMatchers.containsString("display: none;")));
 
+            // Check the label is visible and contains the correcct text
+            Assert.assertTrue(macroBrowserAndEditor.macroForm.getField(SINGLE_PARAM_ID).isVisible());
             WebElement label = confluencePageOperations.findLabel("macro-param-" + SINGLE_PARAM_ID);
             Assert.assertThat(label.getText(), CoreMatchers.is(SINGLE_PARAM_NAME));
         } finally {
@@ -321,21 +325,6 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         try {
             WebElement paramContainerDiv = confluencePageOperations.findElement(By.id("macro-param-div-" + HIDDEN_PARAM_ID));
             Assert.assertThat(paramContainerDiv.getAttribute("style"), CoreMatchers.is("display: none;"));
-        } finally {
-            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
-            cancelEditor(editorPage);
-        }
-    }
-
-    @Test
-    public void testParameterNotHidden() throws Exception {
-        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
-        editorPage.setTitle(ModuleKeyUtils.randomName("Parameter Page"));
-        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
-
-        try {
-            WebElement paramContainerDiv = confluencePageOperations.findElement(By.id("macro-param-div-" + SINGLE_PARAM_ID));
-            Assert.assertThat(paramContainerDiv.getAttribute("style"), CoreMatchers.not(CoreMatchers.containsString("display: none;")));
         } finally {
             macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
             cancelEditor(editorPage);
