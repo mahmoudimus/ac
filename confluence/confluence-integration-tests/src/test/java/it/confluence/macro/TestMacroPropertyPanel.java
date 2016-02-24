@@ -139,6 +139,7 @@ public class TestMacroPropertyPanel extends ConfluenceWebDriverTestBase {
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
         editor.openPropertyPanel(PROPERTY_PANEL_MACRO_KEY);
 
+        logger.info(product.getTester().getDriver().getPageSource());
         editorPage.save();
 
         RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(PROPERTY_PANEL_MACRO_KEY);

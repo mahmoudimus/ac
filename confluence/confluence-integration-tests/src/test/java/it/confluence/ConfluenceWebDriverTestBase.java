@@ -71,7 +71,7 @@ public class ConfluenceWebDriverTestBase {
     protected static ConnectTestUserFactory testUserFactory;
     protected static ConfluencePageOperations confluencePageOperations = new ConfluencePageOperations(
             product.getPageBinder(), product.getTester().getDriver());
-    private final Logger logger = LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class);
+    protected final Logger logger = LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class);
 
     private boolean hasBeenFocused;
 
