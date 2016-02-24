@@ -61,6 +61,22 @@
                     <extensions>true</extensions>
                 </plugin>
                 <plugin>
+                    <groupId>com.atlassian.plugin</groupId>
+                    <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+                    <version>${atlassian.spring.scanner.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>atlassian-spring-scanner</goal>
+                            </goals>
+                            <phase>process-classes</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <includeExclude>-com.atlassian.plugin.spring.scanner.annotation.*</includeExclude>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
