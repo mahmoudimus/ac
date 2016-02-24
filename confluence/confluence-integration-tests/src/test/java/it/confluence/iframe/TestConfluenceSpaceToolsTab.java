@@ -94,6 +94,22 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase {
         waitUntilTrue(forSupplier(new DefaultTimeouts(), addonContentsPage::containsHelloWorld));
     }
 
+    @Test
+    public void spaceToolsShowsConnectTabForNonAdmin() {
+        Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceToolsShowsConnectTab", false);
+
+        loginAndVisit(testUserFactory.basicUser(), ViewSpaceSummaryPage.class, space);
+
+        LinkedRemoteContent addonPage = confluencePageOperations.findRemoteLinkedContent(LINK_TEXT, "AC Space Tab", Optional.<String>empty(), addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY));
+
+        final RemoteWebPanel addonContentsPage = addonPage.click(
+                RemoteWebPanel.class,
+                addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
+        );
+
+        waitUntilTrue(forSupplier(new DefaultTimeouts(), addonContentsPage::containsHelloWorld));
+    }
+
     public Space makeSpace(String key, String name, boolean docTheme) {
         Space space = new Space(key, name);
         rpc.createSpace(space);
