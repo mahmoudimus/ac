@@ -172,6 +172,10 @@
     <connect-web-fragment-location-blacklist name="Blacklisted locations for JIRA" key="jira-web-fragment-blacklist">
         <web-panel-locations>
             <location>atl.header.after.scripts</location>
+            <location>atl.header</location>
+            <location>jira-banner</location>
+            <location>com.atlassian.jira.plugin.headernav.left.context</location>
+            <location>com.atlassian.jira.plugin.headernav.right.context</location>
         </web-panel-locations>
     </connect-web-fragment-location-blacklist>
 
