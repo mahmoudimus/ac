@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.77-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -25,12 +25,6 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -774,139 +768,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- this MUST run after compilation -->
-            <plugin>
-                <groupId>external.atlassian.json</groupId>
-                <artifactId>json-schemagen-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>schema-support</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-support-docs</goal>
-                        </goals>
-                        <configuration>
-                            <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
-                            <sourcepath>../components/modules/src/main/java</sourcepath>
-                            <debug>${debugSchemaGen}</debug>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>common-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.plugin.CommonModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jira-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.jira.JiraModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>confluence-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.confluence.ConfluenceModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>shallow-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-schema-support-docs-exist</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireFilesExist>
-                                    <files>
-                                        <file>${project.build.directory}/jsonSchemaInterfaces.json</file>
-                                        <file>${project.build.directory}/jsonSchemaDocs.json</file>
-                                    </files>
-                                    <message>The goal json-schemagen-maven-plugin:generate-support-docs did not produce the expected files</message>
-                                </requireFilesExist>
-                            </rules>
-                            <fail>true</fail>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- we need to use this instead of built-in javac processing so we can process multiple source roots -->
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <version>2.2.4</version>
-                <executions>
-                    <execution>
-                        <id>process</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <additionalSourceDirectories>
-                        <additionalSourceDirectory>../components/modules/src/main/java/</additionalSourceDirectory>
-                        <additionalSourceDirectory>../components/spi/src/main/java/</additionalSourceDirectory>
-                    </additionalSourceDirectories>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <compilerArgument>-proc:none</compilerArgument>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -918,7 +779,6 @@
         <toolbox.version>2.0.12</toolbox.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
-        <debugSchemaGen>false</debugSchemaGen>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9
