@@ -47,16 +47,14 @@ public class ContentPropertyExtractor implements Extractor {
              * So we use sysadmin here to ensure this content property gets indexed.
              */
             AuthenticatedUserImpersonator.REQUEST_AGNOSTIC.asUser(() ->
-                    addContentPropertyToSearchableText(searchable, defaultSearchableText), getAdminUser());
+                    addContentPropertyToSearchableText((CustomContentEntityObject) searchable, defaultSearchableText), getAdminUser());
         }
     }
 
-    public Object addContentPropertyToSearchableText(Searchable searchable, StringBuffer defaultSearchableText) {
-        CustomContentEntityObject ceo = (CustomContentEntityObject) searchable;
-
+    public Object addContentPropertyToSearchableText(CustomContentEntityObject searchable, StringBuffer defaultSearchableText) {
         Option<JsonContentProperty> jsonProperty = contentPropertyService
                 .find(ExpansionsParser.parse(""))
-                .withContentId(ceo.getContentId())
+                .withContentId(searchable.getContentId())
                 .withPropertyKey(contentPropertyKey)
                 .fetchOne();
 

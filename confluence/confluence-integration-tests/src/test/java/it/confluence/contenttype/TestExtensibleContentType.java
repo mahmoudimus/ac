@@ -70,7 +70,7 @@ public class TestExtensibleContentType extends AbstractExtensibleContentTypeTest
     }
 
     @Test
-    @Ignore("unimplemented")
+    @Ignore("Blocked by expansion not support dash/colon character. Will address later")
     public void testCanRestrictContainedType() throws Exception {
         startConnectAddon(
                 createBeanWithRestriction(TYPE_KEY_1, TYPE_NAME_1, Sets.newHashSet("global"), Sets.newHashSet(getCompleteContentTypeKey(TYPE_KEY_2))),
