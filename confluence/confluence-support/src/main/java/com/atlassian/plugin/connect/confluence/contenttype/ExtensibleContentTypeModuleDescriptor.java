@@ -16,9 +16,7 @@ import com.atlassian.plugin.module.ModuleFactory;
 public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDescriptor {
     private final String contentTypeKey;
     private final ExtensibleContentTypeModuleBean bean;
-    private final CustomContentManager customContentManager;
     private final PermissionManager permissionManager;
-    private final ApiSupportProvider apiSupportProvider;
     private final CustomContentApiSupportParams customContentApiSupportParams;
     private final PaginationService paginationService;
     private final ContentService contentService;
@@ -27,21 +25,18 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
             String contentTypeKey,
             ExtensibleContentTypeModuleBean bean,
             ModuleFactory moduleFactory,
-            CustomContentManager customContentManager,
             PermissionManager permissionManager,
             PaginationService paginationService,
             ContentService contentService,
-            ApiSupportProvider apiSupportProvider,
             CustomContentApiSupportParams customContentApiSupportParams) {
-        super(moduleFactory, apiSupportProvider);
+
+        super(moduleFactory, customContentApiSupportParams.getProvider());
         this.bean = bean;
 
         this.contentTypeKey = contentTypeKey;
-        this.customContentManager = customContentManager;
         this.permissionManager = permissionManager;
         this.paginationService = paginationService;
         this.contentService = contentService;
-        this.apiSupportProvider = apiSupportProvider;
         this.customContentApiSupportParams = customContentApiSupportParams;
     }
 
@@ -59,11 +54,9 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
         return new ExtensibleContentType(
                 contentTypeKey,
                 bean,
-                customContentManager,
                 permissionManager,
                 paginationService,
                 contentService,
-                apiSupportProvider,
                 customContentApiSupportParams);
     }
 

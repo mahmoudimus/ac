@@ -111,11 +111,9 @@ public class ExtensibleContentTypeSupportTest {
                 bean.getApiSupport().getSupportedContainerTypes(),
                 bean.getApiSupport().getSupportedContainedTypes(),
                 customContentApiSupportParams,
-                customContentManager,
                 paginationService,
                 contentService,
-                permissionDelegate,
-                apiSupportProvider);
+                permissionDelegate);
     }
 
     private ExtensibleContentTypeModuleBean buildBean(Set<String> supportedContainer, Set<String> supportedContained) {

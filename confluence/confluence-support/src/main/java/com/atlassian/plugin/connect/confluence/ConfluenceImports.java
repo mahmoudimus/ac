@@ -70,11 +70,9 @@ public class ConfluenceImports {
             @ConfluenceImport FavouriteManager favouriteManager,
             @ConfluenceImport NotificationManager notificationManager,
             @ConfluenceImport ContentBodyConversionService converter,
-            @ConfluenceImport ApiSupportProvider apiSupportProvider,
             @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams,
             @ConfluenceImport ModuleFactory moduleFactory,
             @ConfluenceImport ContentPropertyService contentPropertyService,
-            @ConfluenceImport CustomContentManager customContentManager,
             @ConfluenceImport PaginationService paginationService,
             @ConfluenceImport ContentService contentService) {
     }

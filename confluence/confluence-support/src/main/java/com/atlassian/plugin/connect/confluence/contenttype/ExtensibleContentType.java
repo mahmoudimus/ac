@@ -20,13 +20,10 @@ import java.util.Set;
 public class ExtensibleContentType extends BaseCustomContentType {
     private final String contentTypeKey;
     private final String contentTypeName;
-    private final ExtensibleContentTypeModuleBean bean;
-    private final CustomContentManager customContentManager;
     private final ContentEntityAdapter contentEntityAdapter;
     private final PaginationService paginationService;
     private final ContentService contentService;
     private final PermissionDelegate permissionDelegate;
-    private final ApiSupportProvider apiSupportProvider;
     private final ContentUiSupport contentUiSupport;
     private final CustomContentApiSupportParams customContentApiSupportParams;
     private final Set<String> supportedContainerTypes;
@@ -35,20 +32,16 @@ public class ExtensibleContentType extends BaseCustomContentType {
     public ExtensibleContentType(
             String contentTypeKey,
             ExtensibleContentTypeModuleBean bean,
-            CustomContentManager customContentManager,
             PermissionManager permissionManager,
             PaginationService paginationService,
             ContentService contentService,
-            ApiSupportProvider apiSupportProvider,
             CustomContentApiSupportParams customContentApiSupportParams) {
-        super(ContentType.valueOf(contentTypeKey), apiSupportProvider);
 
-        this.bean = bean;
+        super(ContentType.valueOf(contentTypeKey), customContentApiSupportParams.getProvider());
+
         this.contentTypeKey = contentTypeKey;
         this.contentTypeName = bean.getName().getI18nOrValue();
 
-        this.customContentManager = customContentManager;
-        this.apiSupportProvider = apiSupportProvider;
         this.permissionDelegate = new PermissionDelegate(permissionManager);
         this.paginationService = paginationService;
         this.contentService = contentService;
@@ -58,6 +51,18 @@ public class ExtensibleContentType extends BaseCustomContentType {
 
         this.supportedContainerTypes = bean.getApiSupport().getSupportedContainerTypes();
         this.supportedContainedTypes = bean.getApiSupport().getSupportedContainedTypes();
+    }
+
+    public String getContentTypeKey() {
+        return contentTypeKey;
+    }
+
+    public Set<String> getSupportedContainerTypes() {
+        return supportedContainerTypes;
+    }
+
+    public Set<String> getSupportedContainedTypes() {
+        return supportedContainedTypes;
     }
 
     @Override
@@ -78,14 +83,9 @@ public class ExtensibleContentType extends BaseCustomContentType {
     @Override
     public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport() {
         return new ExtensibleContentTypeSupport(
-                contentTypeKey,
-                supportedContainerTypes,
-                supportedContainedTypes,
+                this,
                 customContentApiSupportParams,
-                customContentManager,
                 paginationService,
-                contentService,
-                permissionDelegate,
-                apiSupportProvider);
+                contentService);
     }
 }

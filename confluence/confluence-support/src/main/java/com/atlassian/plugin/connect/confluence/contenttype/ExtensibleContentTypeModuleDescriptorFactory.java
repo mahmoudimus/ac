@@ -27,29 +27,23 @@ public class ExtensibleContentTypeModuleDescriptorFactory
     private static final Logger log = LoggerFactory.getLogger(ExtensibleContentTypeModuleDescriptorFactory.class);
 
     private final ModuleFactory moduleFactory;
-    private final CustomContentManager customContentManager;
     private final PermissionManager permissionManager;
     private final PaginationService paginationService;
     private final ContentService contentService;
-    private final ApiSupportProvider apiSupportProvider;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
     @Autowired
     public ExtensibleContentTypeModuleDescriptorFactory(
             ModuleFactory moduleFactory,
-            CustomContentManager customContentManager,
             PermissionManager permissionManager,
             PaginationService paginationService,
             ContentService contentService,
-            ApiSupportProvider apiSupportProvider,
             CustomContentApiSupportParams customContentApiSupportParams) {
         this.moduleFactory = moduleFactory;
         this.customContentApiSupportParams = customContentApiSupportParams;
-        this.customContentManager = customContentManager;
         this.permissionManager = permissionManager;
         this.paginationService = paginationService;
         this.contentService = contentService;
-        this.apiSupportProvider = apiSupportProvider;
     }
 
     @Override
@@ -74,11 +68,9 @@ public class ExtensibleContentTypeModuleDescriptorFactory
                         contentTypeKey,
                         bean,
                         moduleFactory,
-                        customContentManager,
                         permissionManager,
                         paginationService,
                         contentService,
-                        apiSupportProvider,
                         customContentApiSupportParams);
         descriptor.init(plugin, contentTypeElement);
         return descriptor;

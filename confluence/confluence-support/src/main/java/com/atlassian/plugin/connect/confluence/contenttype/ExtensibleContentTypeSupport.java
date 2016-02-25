@@ -49,25 +49,22 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
     private final Set<String> supportedContainedTypes;
 
     public ExtensibleContentTypeSupport(
-            String contentTypeKey,
-            Set<String> supportedContainerTypes,
-            Set<String> supportedContainedTypes,
-            CustomContentApiSupportParams params,
-            CustomContentManager customContentManager,
+            ExtensibleContentType extensibleContentType,
+            CustomContentApiSupportParams customContentApiSupportParams,
             PaginationService paginationService,
-            ContentService contentService,
-            PermissionDelegate permissionDelegate,
-            ApiSupportProvider apiSupportProvider) {
+            ContentService contentService) {
 
-        super(params);
-        this.contentTypeKey = ContentType.valueOf(contentTypeKey);
-        this.customContentManager = customContentManager;
+        super(customContentApiSupportParams);
+
+        this.contentTypeKey = ContentType.valueOf(extensibleContentType.getContentTypeKey());
         this.paginationService = paginationService;
         this.contentService = contentService;
-        this.permissionDelegate = permissionDelegate;
-        this.apiSupportProvider = apiSupportProvider;
-        this.supportedContainerTypes = supportedContainerTypes;
-        this.supportedContainedTypes = supportedContainedTypes;
+        this.permissionDelegate = extensibleContentType.getPermissionDelegate();
+        this.supportedContainerTypes = extensibleContentType.getSupportedContainerTypes();
+        this.supportedContainedTypes = extensibleContentType.getSupportedContainedTypes();
+
+        this.customContentManager = customContentApiSupportParams.getCustomContentManager();
+        this.apiSupportProvider = customContentApiSupportParams.getProvider();
     }
 
     @Override
