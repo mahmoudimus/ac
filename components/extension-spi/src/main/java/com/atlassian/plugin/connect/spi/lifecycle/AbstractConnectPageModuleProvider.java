@@ -65,8 +65,8 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon) {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon) {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
         for (ConnectPageModuleBean bean : modules) {
             if (hasWebItem()) {
                 // create a web item targeting the iframe page

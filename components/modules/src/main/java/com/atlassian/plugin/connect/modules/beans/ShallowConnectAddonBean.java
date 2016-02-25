@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -178,7 +179,7 @@ public class ShallowConnectAddonBean extends BaseModuleBean {
     }
 
     public ShallowConnectAddonBean(ConnectAddonBeanBuilder builder) {
-        super(builder);
+        copyFieldsByNameAndType(builder, this);
 
         if (null == key) {
             this.key = "";

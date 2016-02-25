@@ -17,6 +17,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -111,7 +112,7 @@ public class MacroContentLinkParserTest {
     }
 
     private String parseMacroAndSignUrl(String macroBody, Map<String, String[]> macroParams) {
-        when(remotablePluginAccessor.signGetUrl(any(URI.class), any(Map.class))).thenReturn(SIGNED_URL);
+        when(remotablePluginAccessor.signGetUrl(any(URI.class), anyMapOf(String.class, String[].class))).thenReturn(SIGNED_URL);
         return macroContentLinkParser.parse(remotablePluginAccessor, macroBody, macroParams);
     }
 

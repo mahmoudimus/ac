@@ -141,6 +141,7 @@ public class SameDeepPropertyValuesAs<T> extends TypeSafeDiagnosingMatcher<T> {
             this.matcher = createMatcher(readProperty(readMethod, expectedObject));
         }
 
+        @SuppressWarnings("unchecked")
         private static Matcher createMatcher(Object object) {
             if (null == object) {
                 return equalTo(object);
@@ -177,12 +178,13 @@ public class SameDeepPropertyValuesAs<T> extends TypeSafeDiagnosingMatcher<T> {
             return matchers;
         }
 
+        @SuppressWarnings("unchecked")
         private static List<Matcher> createMapMatchers(Map<Object, Object> map) {
             List<Matcher> matchers = new ArrayList<Matcher>(map.size());
             for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                Matcher keyMatcher = createMatcher(entry.getKey());
-                Matcher valueMatcher = createMatcher(entry.getValue());
-                Matcher entryMatcher = hasEntry(keyMatcher, valueMatcher);
+                Matcher<Object> keyMatcher = createMatcher(entry.getKey());
+                Matcher<Object> valueMatcher = createMatcher(entry.getValue());
+                Matcher entryMatcher =  hasEntry(keyMatcher, valueMatcher);
                 matchers.add(entryMatcher);
             }
             return matchers;

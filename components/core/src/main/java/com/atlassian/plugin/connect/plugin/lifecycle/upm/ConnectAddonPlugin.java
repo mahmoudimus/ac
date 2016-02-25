@@ -15,7 +15,7 @@ public class ConnectAddonPlugin extends AbstractPlugin {
 
     public ConnectAddonPlugin() {
         this.pluginState = PluginState.DISABLED;
-        this.moduleDescriptors = Collections.EMPTY_LIST;
+        this.moduleDescriptors = Collections.emptyList();
     }
 
     public ConnectAddonPlugin(Collection<ModuleDescriptor<?>> moduleDescriptors) {

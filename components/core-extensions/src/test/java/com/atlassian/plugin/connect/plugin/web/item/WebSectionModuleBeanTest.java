@@ -52,6 +52,7 @@ public class WebSectionModuleBeanTest {
         List<WebSectionModuleBean> beans = new ArrayList<>(Arrays.asList(webSectionBean, hiddenSpoonSection, falafelSection));
 
         String json = readTestFile("funkyWebSectionTest.json");
+        @SuppressWarnings("unchecked")
         List<WebSectionModuleBean> deserializedBeans = gson.fromJson(json, List.class);
         assertThat(deserializedBeans, sameDeepPropertyValuesAs(beans));
     }

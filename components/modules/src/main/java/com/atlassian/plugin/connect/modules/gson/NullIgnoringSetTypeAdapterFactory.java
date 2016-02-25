@@ -27,8 +27,12 @@ public class NullIgnoringSetTypeAdapterFactory implements TypeAdapterFactory {
         Type nestedType = ((ParameterizedType) type).getActualTypeArguments()[0];
         TypeAdapter nestedTypeAdapter = gson.getAdapter(TypeToken.get(nestedType));
 
-        return (TypeAdapter<T>) new NullIgnoringSetTypeAdapter<T>(nestedTypeAdapter).nullSafe();
+        return createAdapter(nestedTypeAdapter);
+    }
 
+    @SuppressWarnings("unchecked")
+    private <T> TypeAdapter<T> createAdapter(TypeAdapter nestedTypeAdapter) {
+        return new NullIgnoringSetTypeAdapter<>(nestedTypeAdapter).nullSafe();
     }
 
     private class NullIgnoringSetTypeAdapter<I> extends TypeAdapter<Set<I>> {

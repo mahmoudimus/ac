@@ -1,15 +1,15 @@
 package com.atlassian.plugin.connect.plugin.web.context.condition;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.web.condition.PluggableConditionClassAccessor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.web.Condition;
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -60,6 +60,7 @@ public class InlineConditionResolverTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void emptyIsReturnedIfConditionCannotBeCreatedFromClass() {
         when(conditionClassAccessor.getConditionClassForInline(any(SingleConditionBean.class))).thenReturn(Optional.of(Condition.class));
         when(hostContainer.create(Condition.class)).thenThrow(RuntimeException.class);

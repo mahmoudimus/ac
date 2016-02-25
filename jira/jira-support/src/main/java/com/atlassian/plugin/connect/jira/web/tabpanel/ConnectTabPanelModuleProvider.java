@@ -46,8 +46,8 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectM
         return tabPanels;
     }
 
-    protected List<ModuleDescriptor> provideModules(ConnectAddonBean addonBean, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints) {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+    protected List<ModuleDescriptor<?>> provideModules(ConnectAddonBean addonBean, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints) {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
         for (ConnectTabPanelModuleBean bean : beans) {
             descriptors.add(descriptorFactory.createModuleDescriptor(addonBean,
                     pluginRetrievalService.getPlugin(), bean, hints));

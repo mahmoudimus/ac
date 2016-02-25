@@ -75,6 +75,7 @@ public class DynamicDescriptorRegistrationImpl implements DynamicDescriptorRegis
                 ImmutableList.Builder<ModuleDescriptor<?>> listBuilder = ImmutableList.builder();
 
                 for (ServiceRegistration reg : registrations) {
+                    @SuppressWarnings("unchecked")
                     ModuleDescriptor descriptor = (ModuleDescriptor) bundleContext.getService(reg.getReference());
 
                     if (null != descriptor) {

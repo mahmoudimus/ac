@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 /**
  * @since 1.0
  */
+@SuppressWarnings("unchecked")
 public class RequiredKeyBeanBuilder<T extends RequiredKeyBeanBuilder, B extends RequiredKeyBean> extends NamedBeanBuilder<T, B> {
     private String key;
     private boolean useKeyAsIs = false;
