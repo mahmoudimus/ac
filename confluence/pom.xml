@@ -14,21 +14,6 @@
     <modules>
         <module>confluence-reference-plugin</module>
         <module>confluence-support</module>
+	<module>confluence-integration-tests</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>it</id>
-            <modules>
-                <module>confluence-integration-tests</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>freezer-release-profile</id>
-            <modules>
-                <module>confluence-integration-tests</module>
-            </modules>
-        </profile>
-    </profiles>
-
 </project>
