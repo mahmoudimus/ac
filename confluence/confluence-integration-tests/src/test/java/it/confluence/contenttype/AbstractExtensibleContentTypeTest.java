@@ -66,7 +66,7 @@ public abstract class AbstractExtensibleContentTypeTest extends ConfluenceWebDri
                 .build();
     }
 
-    public ExtensibleContentTypeModuleBean createBeanWithContentPropertyIndexingSupport(String typeKey, String typeName, String contentPropertyKey) {
+    public ExtensibleContentTypeModuleBean createBeanWithContentPropertyIndexingSupport(String typeKey, String typeName, boolean indexingEnabled, String contentPropertyKey) {
         return new ExtensibleContentTypeModuleBeanBuilder()
                 .withKey(typeKey)
                 .withName(new I18nProperty(typeName, ""))
@@ -77,7 +77,7 @@ public abstract class AbstractExtensibleContentTypeTest extends ConfluenceWebDri
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(Sets.newHashSet("global"))
                         .withSupportedContainedTypes(Sets.newHashSet())
-                        .withIndexing(new IndexingBean(true, contentPropertyKey))
+                        .withIndexing(new IndexingBean(indexingEnabled, contentPropertyKey))
                         .build())
                 .build();
     }

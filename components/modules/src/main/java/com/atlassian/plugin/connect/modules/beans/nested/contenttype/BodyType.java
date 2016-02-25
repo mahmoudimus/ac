@@ -26,14 +26,9 @@ public enum BodyType
     WIKI("wiki"),
 
     /**
-     * If this Extensible Content Type will have JSON as the content body.
+     * If this Extensible Content Type will have any format other than <code>storage</code> or <code>wiki</code> as the content body. For example: images, achieve, etc.
      */
-    JSON("json"),
-
-    /**
-     * If this Extensible Content Type will have binary format as the content body. For example: images, achieve, etc.
-     */
-    BINARY("binary");
+    RAW("raw");
 
     private final String value;
 

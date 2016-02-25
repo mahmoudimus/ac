@@ -6,8 +6,28 @@ import com.atlassian.confluence.core.BodyType;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 
 public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent {
+    private final boolean indexingEnabled;
+    private final BodyType bodyType;
+
+    public ExtensibleContentEntityAdapter(ExtensibleContentTypeModuleBean bean) {
+        this.indexingEnabled = bean.getApiSupport().getIndexing().isEnabled();
+
+        switch (bean.getApiSupport().getBodyType()) {
+            case WIKI:
+                this.bodyType = BodyType.WIKI;
+                break;
+            case RAW:
+                this.bodyType = BodyType.RAW;
+                break;
+            default:
+                this.bodyType = BodyType.XHTML;
+                break;
+        }
+    }
+
     @Override
     public Option<String> getUrlPath(final CustomContentEntityObject pluginContentEntityObject) {
         return Option.some("/rest/api/content/" + pluginContentEntityObject.getId());
@@ -35,7 +55,7 @@ public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent {
 
     @Override
     public BodyType getDefaultBodyType(final CustomContentEntityObject pluginContentEntityObject) {
-        return BodyType.XHTML;
+        return bodyType;
     }
 
     @Override
@@ -55,6 +75,6 @@ public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent {
 
     @Override
     public boolean isIndexable(final CustomContentEntityObject pluginContentEntityObject, final boolean isDefaultIndexable) {
-        return pluginContentEntityObject.isLatestVersion() && pluginContentEntityObject.isCurrent();
+        return indexingEnabled && pluginContentEntityObject.isLatestVersion() && pluginContentEntityObject.isCurrent();
     }
 }

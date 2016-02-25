@@ -76,6 +76,7 @@ public class APISupportBean extends BaseModuleBean
     {
         supportedContainedTypes = ObjectUtils.defaultIfNull(supportedContainedTypes, Sets.newHashSet());
         indexing = ObjectUtils.defaultIfNull(indexing, new IndexingBean());
+        bodyType = ObjectUtils.defaultIfNull(bodyType, BodyType.STORAGE);
     }
 
     public BodyType getBodyType()
