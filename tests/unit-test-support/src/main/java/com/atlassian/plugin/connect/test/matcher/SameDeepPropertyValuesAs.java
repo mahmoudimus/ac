@@ -28,7 +28,7 @@
  DAMAGE.
  */
 
-package com.atlassian.plugin.connect.testsupport.util.matcher;
+package com.atlassian.plugin.connect.test.matcher;
 
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;

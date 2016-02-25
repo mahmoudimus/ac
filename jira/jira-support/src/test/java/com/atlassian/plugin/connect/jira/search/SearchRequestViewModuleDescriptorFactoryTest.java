@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.sal.api.ApplicationProperties;

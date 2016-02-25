@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.request;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

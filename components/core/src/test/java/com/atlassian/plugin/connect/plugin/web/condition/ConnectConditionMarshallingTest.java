@@ -14,7 +14,7 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.contains;

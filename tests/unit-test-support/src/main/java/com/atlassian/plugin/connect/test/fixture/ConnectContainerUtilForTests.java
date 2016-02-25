@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.util.fixture;
+package com.atlassian.plugin.connect.test.fixture;
 
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.google.common.base.Preconditions;

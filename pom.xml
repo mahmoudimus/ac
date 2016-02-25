@@ -48,6 +48,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefire.version}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <org.slf4j.simpleLogger.defaultLogLevel>ERROR</org.slf4j.simpleLogger.defaultLogLevel>
+                        </systemPropertyVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -59,6 +64,22 @@
                     <artifactId>maven-amps-plugin</artifactId>
                     <version>${amps.version}</version>
                     <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>com.atlassian.plugin</groupId>
+                    <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+                    <version>${atlassian.spring.scanner.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>atlassian-spring-scanner</goal>
+                            </goals>
+                            <phase>process-classes</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <includeExclude>-com.atlassian.plugin.spring.scanner.annotation.*</includeExclude>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -292,6 +313,13 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
@@ -907,7 +935,7 @@
         <log4j.version>1.2.16</log4j.version>
         <mockito.version>1.9.0</mockito.version>
         <oauth.core.version>20090531</oauth.core.version>
-        <slf4j.version>1.6.4</slf4j.version>
+        <slf4j.version>1.7.5</slf4j.version>
         <spring.version>2.5.6</spring.version>
         <webdriver.browser>firefox</webdriver.browser>
         <plugin.testrunner.version>2.0.0</plugin.testrunner.version>

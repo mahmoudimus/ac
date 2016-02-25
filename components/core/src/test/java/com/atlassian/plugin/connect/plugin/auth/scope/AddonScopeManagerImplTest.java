@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.AddonScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeApiPathBuilder;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.collect.Sets;
 import org.junit.Before;
