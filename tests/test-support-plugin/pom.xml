@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.74-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -50,6 +50,10 @@
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-core</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webfragment</artifactId>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins.rest</groupId>
@@ -109,13 +113,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-api</artifactId>
-            <version>${atlassian.jira.version}</version>
             <scope>provided</scope>
         </dependency>
 

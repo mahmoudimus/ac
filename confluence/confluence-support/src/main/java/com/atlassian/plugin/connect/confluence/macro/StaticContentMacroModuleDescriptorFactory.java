@@ -11,32 +11,26 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
-public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<StaticContentMacroModuleBean>
-{
+public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<StaticContentMacroModuleBean> {
     private final RemoteMacroRenderer remoteMacroRenderer;
 
     @Autowired
     public StaticContentMacroModuleDescriptorFactory(AbsoluteAddonUrlConverter urlConverter,
-                                                     RemoteMacroRenderer remoteMacroRenderer)
-    {
+                                                     RemoteMacroRenderer remoteMacroRenderer) {
         super(urlConverter);
         this.remoteMacroRenderer = remoteMacroRenderer;
     }
 
-    protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final StaticContentMacroModuleBean bean)
-    {
-        return new ModuleFactory()
-        {
+    protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final StaticContentMacroModuleBean bean) {
+        return new ModuleFactory() {
             @Override
-            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
-            {
+            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException {
                 StaticContentMacro macro = new StaticContentMacro(
                         addon.getKey(), bean.getRawKey(), bean.getUrl(),
                         MacroEnumMapper.map(bean.getBodyType()), MacroEnumMapper.map(bean.getOutputType()),
                         remoteMacroRenderer);
 
-                if (bean.hasImagePlaceholder())
-                {
+                if (bean.hasImagePlaceholder()) {
                     return (T) decorateWithImagePlaceHolder(addon, macro, bean.getImagePlaceholder());
                 }
                 return (T) macro;

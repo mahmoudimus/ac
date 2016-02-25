@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.crowd.permissions;
 /**
  * A component for adding permissions remotely via the Horde unified user management interface
  */
-public interface ConnectCrowdPermissions
-{
+public interface ConnectCrowdPermissions {
     /**
      * Grant administer permissions to the group named, via Horde's unified user management
      *
@@ -17,8 +16,7 @@ public interface ConnectCrowdPermissions
      */
     GrantResult giveAdminPermission(String groupName, String productId, String applicationId);
 
-    enum GrantResult
-    {
+    enum GrantResult {
         NO_REMOTE_GRANT_NEEDED,
         REMOTE_GRANT_FAILED,
         REMOTE_GRANT_SUCCEEDED

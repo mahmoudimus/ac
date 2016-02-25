@@ -15,8 +15,7 @@ import java.util.Map;
  * </p>
  */
 @PublicSpi
-public interface ContextParametersExtractor
-{
+public interface ContextParametersExtractor {
     /**
      * Extracts parameters from the rendering context so that they can be used by Connect add-ons.
      *

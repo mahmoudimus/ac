@@ -1,18 +1,13 @@
 package at.marketplace;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
-
+import at.marketplace.ConnectAddonRepresentation.Highlight;
+import cc.plural.jsonij.JPath;
+import cc.plural.jsonij.Value;
+import cc.plural.jsonij.parser.ParserException;
 import com.atlassian.plugin.connect.test.common.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.util.concurrent.ResettableLazyReference;
-
 import com.google.common.base.Function;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -32,10 +27,12 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.marketplace.ConnectAddonRepresentation.Highlight;
-import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.Value;
-import cc.plural.jsonij.parser.ParserException;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -43,8 +40,7 @@ import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public class ExternalAddonInstaller
-{
+public class ExternalAddonInstaller {
     public static final String ADDONS_REST_PATH = "/rest/2.0-beta/addons/";
     public static final String VENDORS_REST_PATH = "/rest/2.0-beta/vendors/";
     private static final String IMAGE_REST_PATH = "/rest/2.0-beta/assets/image/";
@@ -76,19 +72,16 @@ public class ExternalAddonInstaller
     private String thumbnailAsset;
     private String descriptorUrl;
 
-    private enum ImageType
-    {
+    private enum ImageType {
         THUMBNAIL,
         FULL_SIZE
     }
 
-    public ExternalAddonInstaller(String productBaseUrl, TestUser user)
-    {
+    public ExternalAddonInstaller(String productBaseUrl, TestUser user) {
         this(productBaseUrl, user, DEFAULT_ADDON);
     }
 
-    public ExternalAddonInstaller(String productBaseUrl, TestUser user, ConnectAddonRepresentation addon)
-    {
+    public ExternalAddonInstaller(String productBaseUrl, TestUser user, ConnectAddonRepresentation addon) {
         this.addon = mergeWithDefault(addon);
         this.productBaseUrl = productBaseUrl;
         connectClient = new AtlassianConnectRestClient(
@@ -96,8 +89,7 @@ public class ExternalAddonInstaller
         mpacUrl = MarketplaceSettings.baseUrl();
     }
 
-    private ConnectAddonRepresentation mergeWithDefault(ConnectAddonRepresentation addon)
-    {
+    private ConnectAddonRepresentation mergeWithDefault(ConnectAddonRepresentation addon) {
         Iterator<Highlight> highlights = defaultIfNull(
                 addon.getHighlights(),
                 DEFAULT_ADDON.getHighlights()
@@ -117,109 +109,82 @@ public class ExternalAddonInstaller
                 .build();
     }
 
-    public void install()
-    {
+    public void install() {
         assertVendorExists();
         ensurePublicAddonExists();
-        try
-        {
+        try {
             log.info("Installing add-on on instance {}", productBaseUrl);
             connectClient.install(descriptorUrl);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new RuntimeException("There was error while installing our add-on on the instance.", e);
         }
     }
 
-    public String getAddonKey()
-    {
+    public String getAddonKey() {
         return addonKey.get();
     }
 
-    private ResettableLazyReference<String> addonKey = new ResettableLazyReference<String>()
-    {
+    private ResettableLazyReference<String> addonKey = new ResettableLazyReference<String>() {
         @Override
-        protected String create() throws Exception
-        {
-            try
-            {
+        protected String create() throws Exception {
+            try {
                 String addonKey = transformResponse(new HttpGet(addon.getDescriptorUrl()), new HashSet<>(singletonList(200)),
                         "Error while downloading descriptor from " + addon.getDescriptorUrl(),
                         response -> {
-                            try
-                            {
+                            try {
                                 return JPath.evaluate(EntityUtils.toString(response.getEntity()), "key").getString();
-                            }
-                            catch (ParserException | IOException e)
-                            {
+                            } catch (ParserException | IOException e) {
                                 throw new RuntimeException(e);
                             }
                         }, false
                 );
 
-                if (isBlank(addonKey))
-                {
+                if (isBlank(addonKey)) {
                     throw new IllegalStateException("Could not find key in downloaded descriptor");
                 }
 
                 return addonKey;
 
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     };
 
-    private void assertVendorExists()
-    {
-        try
-        {
-            if (!vendorExists(addon.getVendorId()))
-            {
+    private void assertVendorExists() {
+        try {
+            if (!vendorExists(addon.getVendorId())) {
                 throw new RuntimeException("The required add-on vendor (ID: " + addon.getVendorId() + ") could not be found on marketplace staging.");
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException("Error while checking for existence of Atlassian Labs ID", e);
         }
     }
 
-    private void ensurePublicAddonExists()
-    {
-        try
-        {
-            if (!addonExists())
-            {
+    private void ensurePublicAddonExists() {
+        try {
+            if (!addonExists()) {
                 screenshotAsset = createScreenshotAsset(ImageType.FULL_SIZE);
                 thumbnailAsset = createScreenshotAsset(ImageType.THUMBNAIL);
                 submitAddonToMarketplace();
             }
 
             Optional<String> descriptorUrlOption = getDescriptorUrl();
-            if (!descriptorUrlOption.isPresent())
-            {
+            if (!descriptorUrlOption.isPresent()) {
                 descriptorUrlOption = getDescriptorUrl();
-                if (!descriptorUrlOption.isPresent())
-                {
+                if (!descriptorUrlOption.isPresent()) {
                     throw new IllegalStateException("Unable to retrieve descriptor url after registering add-on on marketplace");
                 }
             }
 
             descriptorUrl = descriptorUrlOption.get();
             log.info("Using descriptor at location {}", descriptorUrl);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String createScreenshotAsset(ImageType imageType) throws IOException
-    {
+    private String createScreenshotAsset(ImageType imageType) throws IOException {
         byte[] screenshotByteArray = toByteArray(
                 getClass().getClassLoader().getResourceAsStream("marketplace/screenshot.png"));
 
@@ -237,39 +202,30 @@ public class ExternalAddonInstaller
         {
             return transformResponse(screenshotPost, new HashSet<>(singletonList(200)), "Could not create screenshots for the add-on", response ->
             {
-                try
-                {
+                try {
                     String entity = EntityUtils.toString(response.getEntity());
                     return JPath.evaluate(entity, "_links/image").toString();
-                }
-                catch (IOException | ParserException e)
-                {
+                } catch (IOException | ParserException e) {
                     throw new RuntimeException(e);
                 }
             }, false);
         }
     }
 
-    public void uninstall()
-    {
-        try
-        {
+    public void uninstall() {
+        try {
             connectClient.uninstall(addonKey.get());
-        }
-        catch (Exception ignored)
-        { /* Push on if possible */ }
+        } catch (Exception ignored) { /* Push on if possible */ }
     }
 
-    private void submitAddonToMarketplace() throws IOException
-    {
+    private void submitAddonToMarketplace() throws IOException {
         HttpPost addonPost = new HttpPost(mpacUrl + ADDONS_REST_PATH);
         addonPost.setEntity(addonDetails());
         log.info("Registering our test add-on \"{}\" on the marketplace...", addonKey.get());
         makeRequest(addonPost, new HashSet<>(asList(200, 204)), "Could not register add-on on the marketplace");
     }
 
-    private boolean addonExists() throws IOException
-    {
+    private boolean addonExists() throws IOException {
         HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addonKey.get());
         get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Checking whether the test add-on already exists on the marketplace");
@@ -283,8 +239,7 @@ public class ExternalAddonInstaller
         return addonFound;
     }
 
-    private Optional<String> getDescriptorUrl() throws IOException
-    {
+    private Optional<String> getDescriptorUrl() throws IOException {
         HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addonKey.get() + "/versions/latest");
         get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Getting descriptor url for add-on {}", addonKey.get());
@@ -295,26 +250,21 @@ public class ExternalAddonInstaller
                 "Error trying to retrieve descriptor href for add-on",
                 response ->
                 {
-                    if (response.getStatusLine().getStatusCode() != 200)
-                    {
+                    if (response.getStatusLine().getStatusCode() != 200) {
                         return null;
                     }
 
-                    try
-                    {
+                    try {
                         String entity = EntityUtils.toString(response.getEntity());
                         Value hrefValue = JPath.evaluate(entity, "_embedded/artifact/_links/binary/href");
                         return (hrefValue == null) ? null : hrefValue.getString();
-                    }
-                    catch (ParserException | IOException e)
-                    {
+                    } catch (ParserException | IOException e) {
                         throw new RuntimeException("Error parsing out existing descriptor url", e);
                     }
                 }, true));
     }
 
-    private boolean vendorExists(String vendorId) throws IOException
-    {
+    private boolean vendorExists(String vendorId) throws IOException {
         HttpGet get = new HttpGet(mpacUrl + VENDORS_REST_PATH + vendorId);
         get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Checking whether vendor with ID {} exists", vendorId);
@@ -328,15 +278,13 @@ public class ExternalAddonInstaller
     }
 
     private void makeRequest(HttpUriRequest request, Set<Integer> acceptableCodes, String errorMessage)
-            throws IOException
-    {
+            throws IOException {
         transformResponse(request, acceptableCodes, errorMessage, null, true);
     }
 
     private <T> T transformResponse(HttpUriRequest request, Set<Integer> acceptableCodes,
-            String errorMessage, Function<CloseableHttpResponse, T> transformer, boolean forceJson)
-            throws IOException
-    {
+                                    String errorMessage, Function<CloseableHttpResponse, T> transformer, boolean forceJson)
+            throws IOException {
         CloseableHttpResponse response = null;
         T result = null;
         try (CloseableHttpClient client = HttpClients.custom()
@@ -346,37 +294,29 @@ public class ExternalAddonInstaller
                         .setConnectTimeout(TIMEOUT_MS)
                         .setConnectionRequestTimeout(TIMEOUT_MS)
                         .build())
-                .build())
-        {
-            if (forceJson)
-            {
+                .build()) {
+            if (forceJson) {
                 request.addHeader("Content-Type", "application/json");
             }
             request.addHeader("Cache-Control", "no-cache");
             response = client.execute(request);
-            if (!acceptableCodes.isEmpty() && !acceptableCodes.contains(response.getStatusLine().getStatusCode()))
-            {
+            if (!acceptableCodes.isEmpty() && !acceptableCodes.contains(response.getStatusLine().getStatusCode())) {
                 throw new AcceptanceTestMarketplaceException(
                         errorMessage,
                         response);
             }
-            if (transformer != null)
-            {
+            if (transformer != null) {
                 result = transformer.apply(response);
             }
-        }
-        finally
-        {
-            if (response != null)
-            {
+        } finally {
+            if (response != null) {
                 response.close();
             }
         }
         return result;
     }
 
-    private StringEntity addonDetails() throws IOException
-    {
+    private StringEntity addonDetails() throws IOException {
         String addonEntity = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("marketplace/addon.json"));
         addonEntity = (StringUtils.replace(addonEntity, "<%=vendor id goes here=>", addon.getVendorId()));
         addonEntity = StringUtils.replace(addonEntity, "<%=key goes here=>", addonKey.get());
@@ -386,8 +326,7 @@ public class ExternalAddonInstaller
         addonEntity = StringUtils.replace(addonEntity, "<%=screenshot asset goes here=>", screenshotAsset);
         addonEntity = StringUtils.replace(addonEntity, "<%=thumbnail asset goes here=>", thumbnailAsset);
         int highlightNumber = 0;
-        for (Highlight highlight : addon.getHighlights())
-        {
+        for (Highlight highlight : addon.getHighlights()) {
             highlightNumber++;
             addonEntity = StringUtils.replace(addonEntity, "<%= highlight title " + highlightNumber + " goes here =>", highlight.getTitle());
             addonEntity = StringUtils.replace(addonEntity, "<%= highlight body " + highlightNumber + " goes here =>", highlight.getBody());

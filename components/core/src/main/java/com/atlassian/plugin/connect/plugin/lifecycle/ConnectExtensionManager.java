@@ -7,6 +7,7 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
+import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanModuleValidatorService;
 import com.atlassian.vcache.RequestCache;
 import com.atlassian.vcache.VCacheFactory;
 import com.google.common.collect.ImmutableList;
@@ -20,8 +21,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -34,8 +33,7 @@ import static com.atlassian.plugin.connect.plugin.lifecycle.BeanToModuleRegistra
  */
 @Named
 @ParametersAreNonnullByDefault
-class ConnectExtensionManager implements ConnectExtensionProvider
-{
+class ConnectExtensionManager implements ConnectExtensionProvider {
     private static final Logger log = LoggerFactory.getLogger(ConnectExtensionManager.class);
     public static final String MODULE_DESCRIPTOR_CACHE_NAME = ConnectExtensionManager.class.getName() + ".moduleDescriptors";
 
@@ -43,11 +41,12 @@ class ConnectExtensionManager implements ConnectExtensionProvider
     private final EventPublisher eventPublisher;
     private final PluginAccessor pluginAccessor;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
+    private final ConnectAddonBeanModuleValidatorService connectAddonBeanModuleValidatorService;
     private final ConnectAddonRegistry connectAddonRegistry;
 
     /**
      * Cache the map class -> module descriptors from Connect Addons which are instances of that class.
-     *
+     * <p>
      * The value at key SomeClass.class is in fact an instance of List<SomeClass>.
      */
     private final RequestCache<Class<?>, List<?>> moduleDescriptorCache;
@@ -58,31 +57,27 @@ class ConnectExtensionManager implements ConnectExtensionProvider
     private ServiceRegistration<?> serviceRegistration;
 
     @Inject
-    ConnectExtensionManager(
-            final BundleContext bundleContext,
-            final EventPublisher eventPublisher,
-            final PluginAccessor pluginAccessor,
-            final VCacheFactory vcacheFactory,
-            final ConnectAddonBeanFactory connectAddonBeanFactory,
-            final ConnectAddonRegistry connectAddonRegistry)
-    {
+    ConnectExtensionManager(final BundleContext bundleContext,
+                            final EventPublisher eventPublisher,
+                            final PluginAccessor pluginAccessor,
+                            final VCacheFactory vcacheFactory,
+                            final ConnectAddonBeanFactory connectAddonBeanFactory,
+                            final ConnectAddonBeanModuleValidatorService connectAddonBeanModuleValidatorService,
+                            final ConnectAddonRegistry connectAddonRegistry) {
         this.bundleContext = bundleContext;
         this.eventPublisher = eventPublisher;
         this.pluginAccessor = pluginAccessor;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
+        this.connectAddonBeanModuleValidatorService = connectAddonBeanModuleValidatorService;
         this.connectAddonRegistry = connectAddonRegistry;
         this.moduleDescriptorCache = vcacheFactory.getRequestCache(MODULE_DESCRIPTOR_CACHE_NAME);
     }
 
-    Map<Class, Integer> statistics = new ConcurrentHashMap<>();
-
     @Nonnull
     @Override
     public <E> ExtensionTag.Tagged<Iterable<E>> getExtensionsByClass(
-            final Class<E> extensionClass, final Predicate<ExtensionTag> cached)
-    {
-        if (extensionClass.equals(ConnectModuleProviderModuleDescriptor.class))
-        {
+            final Class<E> extensionClass, final Predicate<ExtensionTag> cached) {
+        if (extensionClass.equals(ConnectModuleProviderModuleDescriptor.class)) {
             // Connect Addons can't (currently) publish connect addon points themselves, so there can't be any
             // of these, and it breaks a recursion cycle because code in getDescriptorsForBeans. We can't just
             // pull our query out of there and push it up in the lifecycle, because other code which is more
@@ -90,9 +85,7 @@ class ConnectExtensionManager implements ConnectExtensionProvider
             // Longer term we'll probably filter a lot of connect impossible things here or be smart in other ways,
             // so this hack is ok for now.
             return new ExtensionTag.Tagged<>(ImmutableList.of());
-        }
-        else
-        {
+        } else {
             // This logic is about populating the moduleDescriptorCache. We initially populate the Object.class entry,
             // since that is, by definition, every module descriptor from any Connect Addon, since everything is an
             // instance of Object. We can then populate any entry by filtering that list down.
@@ -105,20 +98,20 @@ class ConnectExtensionManager implements ConnectExtensionProvider
                     // Populate the descriptors that subclass Object, that is, everything, by parsing all json
                     // descriptors for all enabled addons and creating descriptors from the parsed json.
 
-                    @SuppressWarnings ("UnnecessaryLocalVariable")
+                    @SuppressWarnings("UnnecessaryLocalVariable")
                     // Go via an explicit List<Object> so the compiler verifies the invariant for moduleDescriptorCache,
                     // namely that the entry this supplier returns for for Object.class is a List<Object>
                     final List<Object> objectList = connectAddonRegistry.getAllAddonKeys().stream()
                             .filter(key -> PluginState.ENABLED.equals(connectAddonRegistry.getRestartState(key)))
                             .map(key -> connectAddonBeanFactory.fromJson(connectAddonRegistry.getDescriptor(key)))
-                            .flatMap(bean -> getDescriptorsForBeans(eventPublisher, pluginAccessor, bean).stream())
+                            .flatMap(bean -> getDescriptorsForBeans(connectAddonBeanModuleValidatorService, eventPublisher, pluginAccessor, bean).stream())
                             .collect(Collectors.toList());
                     return objectList;
                 });
-                @SuppressWarnings ("unchecked")
+                @SuppressWarnings("unchecked")
                 // The cache entry for Class<Object> is a List<Object>, so this cast is safe.
                 final List<Object> allModuleDescriptors = (List<Object>) allModuleDescriptorsUntyped;
-                @SuppressWarnings ("UnnecessaryLocalVariable")
+                @SuppressWarnings("UnnecessaryLocalVariable")
                 // As above, go via explicit List<E> to verify the invariant for moduleDescriptorCache.
                 final List<E> extensionList = (allModuleDescriptors).stream()
                         .filter(extensionClass::isInstance)
@@ -126,33 +119,25 @@ class ConnectExtensionManager implements ConnectExtensionProvider
                         .collect(Collectors.toList());
                 return extensionList;
             });
-            @SuppressWarnings ("unchecked")
+            @SuppressWarnings("unchecked")
             // The cache entry for Class<E> is a List<E>, so this cast is safe.
             final List<E> extensions = (List<E>) extensionsUntyped;
             return new ExtensionTag.Tagged<>(extensions);
         }
     }
 
-    public void start()
-    {
-        if (null != serviceRegistration)
-        {
+    public void start() {
+        if (null != serviceRegistration) {
             log.warn("Subsequent start() of ConnectExtensionManager ignored");
-        }
-        else
-        {
+        } else {
             serviceRegistration = bundleContext.registerService(ConnectExtensionProvider.class.getName(), this, null);
         }
     }
 
-    public void stop()
-    {
-        if (null == serviceRegistration)
-        {
+    public void stop() {
+        if (null == serviceRegistration) {
             log.warn("Request to stop() unstarted ConnectExtensionManager ignored");
-        }
-        else
-        {
+        } else {
             serviceRegistration.unregister();
         }
     }

@@ -18,45 +18,34 @@ import java.util.Map;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ScopeTestDataMatcherFactory
-{
+public class ScopeTestDataMatcherFactory {
     final Map<ScopeName, Plugin> installedAddons;
 
-    public ScopeTestDataMatcherFactory(final Map<ScopeName, Plugin> installedAddons)
-    {
+    public ScopeTestDataMatcherFactory(final Map<ScopeName, Plugin> installedAddons) {
         this.installedAddons = installedAddons;
     }
 
-    public Iterable<Matcher<? super AddonScopeManager>> toScopeTestDataMatchers(Iterable<ScopeTestData> scopeTestData)
-    {
+    public Iterable<Matcher<? super AddonScopeManager>> toScopeTestDataMatchers(Iterable<ScopeTestData> scopeTestData) {
         return Iterables.transform(scopeTestData, this::performsCorrectActionForScope);
     }
 
-    public Matcher<? super AddonScopeManager> performsCorrectActionForScope(final ScopeTestData data)
-    {
-        return new TypeSafeMatcher<AddonScopeManager>()
-        {
+    public Matcher<? super AddonScopeManager> performsCorrectActionForScope(final ScopeTestData data) {
+        return new TypeSafeMatcher<AddonScopeManager>() {
             @Override
-            protected boolean matchesSafely(final AddonScopeManager scopeManager)
-            {
-                try
-                {
+            protected boolean matchesSafely(final AddonScopeManager scopeManager) {
+                try {
                     return scopeManager.isRequestInApiScope(setupRequest(data), installedAddons.get(data.scope).getKey()) == data.expectedOutcome;
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     return false;
                 }
             }
 
             @Override
-            public void describeTo(final Description description)
-            {
+            public void describeTo(final Description description) {
                 description.appendValue(data.expectedOutcome).appendText("for").appendValue(data);
             }
 
-            private HttpServletRequest setupRequest(final ScopeTestData data) throws IOException
-            {
+            private HttpServletRequest setupRequest(final ScopeTestData data) throws IOException {
                 HttpServletRequest request = mock(HttpServletRequest.class);
                 when(request.getContextPath()).thenReturn(data.contextPath);
                 when(request.getRequestURI()).thenReturn(data.path);
@@ -67,18 +56,16 @@ public class ScopeTestDataMatcherFactory
 
         };
     }
-    private static class ServletStringInputStream extends ServletInputStream
-    {
+
+    private static class ServletStringInputStream extends ServletInputStream {
         private final InputStream delegate;
 
-        public ServletStringInputStream(String content) throws IOException
-        {
+        public ServletStringInputStream(String content) throws IOException {
             this.delegate = IOUtils.toInputStream(content, "UTF-8");
         }
 
         @Override
-        public int read() throws IOException
-        {
+        public int read() throws IOException {
             return delegate.read();
         }
     }

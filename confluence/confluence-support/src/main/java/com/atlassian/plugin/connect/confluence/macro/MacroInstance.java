@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.confluence.macro;
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.spaces.Spaced;
+import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.request.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.api.request.RequestContextParameters;
-import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.renderer.v2.macro.Macro;
 import org.apache.commons.lang.StringUtils;
 
@@ -21,23 +21,21 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 
 /*!-constructor and getters */
-public class MacroInstance
-{
+public class MacroInstance {
     final ConversionContext conversionContext;
     final URI path;
     final HttpMethod method;
     final RemotablePluginAccessor remotablePluginAccessor;
     final String body;
-    final Map<String,String> parameters;
+    final Map<String, String> parameters;
     final Map<String, String> allContextParameters;
     final RequestContextParameterFactory requestContextParameterFactory;
 
     public MacroInstance(ConversionContext conversionContext, URI path, HttpMethod httpMethod, String body,
-            Map<String, String> parameters,
-            RequestContextParameterFactory requestContextParameterFactory,
-            RemotablePluginAccessor remotablePluginAccessor
-    )
-    {
+                         Map<String, String> parameters,
+                         RequestContextParameterFactory requestContextParameterFactory,
+                         RemotablePluginAccessor remotablePluginAccessor
+    ) {
         this.conversionContext = conversionContext;
         this.path = path;
         this.method = httpMethod;
@@ -48,13 +46,11 @@ public class MacroInstance
         this.requestContextParameterFactory = requestContextParameterFactory;
     }
 
-    public ContentEntityObject getEntity()
-    {
+    public ContentEntityObject getEntity() {
         return conversionContext.getEntity();
     }
 
-    public URI getPath()
-    {
+    public URI getPath() {
         return path;
     }
 
@@ -67,10 +63,9 @@ public class MacroInstance
     to pass along macro instance information as well as give the context in which the macro was
     rendered.
     */
-    public Map<String, String> getUrlParameters(String userId, String userKey)
-    {
+    public Map<String, String> getUrlParameters(String userId, String userKey) {
         RequestContextParameters requestContextParameters = createRequestContextParameters(userId, userKey);
-        Map<String,String> params = newHashMap(requestContextParameters.getQueryParameters());
+        Map<String, String> params = newHashMap(requestContextParameters.getQueryParameters());
 
         /*!
         ### Macro Instance Parameters
@@ -92,9 +87,8 @@ public class MacroInstance
         return params;
     }
 
-    private Map<String,String> getAllContextParameters()
-    {
-        Map<String,String> params = newHashMap();
+    private Map<String, String> getAllContextParameters() {
+        Map<String, String> params = newHashMap();
 
         params.put("output_type", conversionContext.getOutputType());
 
@@ -105,8 +99,7 @@ public class MacroInstance
         String pageType = "";
         String spaceKey = "";
 
-        if (entity != null)
-        {
+        if (entity != null) {
             pageId = entity.getIdAsString();
             pageTitle = StringUtils.defaultString(entity.getTitle());
             pageType = entity.getType();
@@ -143,8 +136,7 @@ public class MacroInstance
      key.  If an app needs to know when they change, the app must register a web hook and update
      that information itself.
      */
-    public String getHashKey()
-    {
+    public String getHashKey() {
         String entityId = conversionContext.getEntity() != null ? conversionContext.getEntity().getIdAsString() :
                 "";
         StringBuilder sb = new StringBuilder();
@@ -157,8 +149,7 @@ public class MacroInstance
         return String.valueOf(sb.toString().hashCode());
     }
 
-    private RequestContextParameters createRequestContextParameters(String userId, String userKey)
-    {
+    private RequestContextParameters createRequestContextParameters(String userId, String userKey) {
         return requestContextParameterFactory.create(userId, userKey, getAllContextParameters());
     }
 }

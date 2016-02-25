@@ -14,17 +14,14 @@ import java.util.Collection;
  * This test checks that the whitelist provided by the reference plugin is properly loaded.
  */
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ConnectApiScopeWhitelistProviderTest extends ScopeManagerTest
-{
+public class ConnectApiScopeWhitelistProviderTest extends ScopeManagerTest {
 
     public ConnectApiScopeWhitelistProviderTest(AddonScopeManager scopeManager,
-            ScopeTestHelper scopeTestHelper)
-    {
+                                                ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
 
-    private static Collection<ScopeTestData> testData()
-    {
+    private static Collection<ScopeTestData> testData() {
         return Lists.newArrayList(
                 new ScopeTestData(ScopeName.READ, HttpMethod.GET, "/rest/test-api/latest/test-path", "", true, "")
         );

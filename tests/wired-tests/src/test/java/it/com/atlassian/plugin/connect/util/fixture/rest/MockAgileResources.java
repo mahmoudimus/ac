@@ -10,24 +10,21 @@ import javax.ws.rs.core.Response;
 /**
  * This class provides mock resources for testing JIRA Agile Scopes.
  */
-@Path ("/")
-@Produces (MediaType.APPLICATION_JSON)
+@Path("/")
+@Produces(MediaType.APPLICATION_JSON)
 public class MockAgileResources {
 
-    @Path ("rapidview")
+    @Path("rapidview")
     @GET
-    public Response rapidview()
-    {
+    public Response rapidview() {
         return Response.ok().build();
     }
 
-    @Path ("api/rank/before")
+    @Path("api/rank/before")
     @PUT
-    public Response rankBefore()
-    {
+    public Response rankBefore() {
         return Response.ok().build();
     }
-
 
 
 }

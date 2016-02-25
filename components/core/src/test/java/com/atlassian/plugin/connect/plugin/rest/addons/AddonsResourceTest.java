@@ -3,9 +3,9 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.lifecycle.upm.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.connect.spi.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.ws.rs.core.Response;
-
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -24,8 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddonsResourceTest
-{
+public class AddonsResourceTest {
 
     @InjectMocks
     private AddonsResource resource;
@@ -58,8 +56,7 @@ public class AddonsResourceTest
     private ProductAccessor productAccessor;
 
     @Test
-    public void shouldReturnNotFoundWhenRequestingInvalidAddon()
-    {
+    public void shouldReturnNotFoundWhenRequestingInvalidAddon() {
         String key = "invalid-key";
 
         when(addonAccessor.getAddon(key)).thenReturn(Optional.empty());

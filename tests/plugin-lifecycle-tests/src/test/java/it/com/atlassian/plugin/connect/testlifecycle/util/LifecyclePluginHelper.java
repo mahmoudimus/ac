@@ -16,8 +16,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
-public class LifecyclePluginHelper
-{
+public class LifecyclePluginHelper {
 
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
@@ -26,71 +25,57 @@ public class LifecyclePluginHelper
     private Map<String, File> jarDependencies = Maps.newConcurrentMap();
 
     public LifecyclePluginHelper(PluginController pluginController,
-            PluginAccessor pluginAccessor,
-            PluginRetrievalService pluginRetrievalService)
-    {
+                                 PluginAccessor pluginAccessor,
+                                 PluginRetrievalService pluginRetrievalService) {
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
         this.pluginRetrievalService = pluginRetrievalService;
     }
 
-    public Plugin installConnectPlugin() throws IOException, URISyntaxException
-    {
+    public Plugin installConnectPlugin() throws IOException, URISyntaxException {
         return installPlugin(getConnectPluginJarFilename());
     }
 
-    public Plugin installGeneralReferencePlugin() throws IOException, URISyntaxException
-    {
+    public Plugin installGeneralReferencePlugin() throws IOException, URISyntaxException {
         return installPlugin(getGeneralReferencePluginJarFilename());
     }
 
-    private Plugin installPlugin(String jarFilename) throws IOException, URISyntaxException
-    {
+    private Plugin installPlugin(String jarFilename) throws IOException, URISyntaxException {
         File jarFile = getJarFile(jarFilename);
         PluginArtifact artifact = pluginArtifactFactory.create(jarFile.toURI());
         String pluginKey = pluginController.installPlugins(artifact).iterator().next();
         return pluginAccessor.getPlugin(pluginKey);
     }
 
-    private String getConnectPluginJarFilename() throws IOException
-    {
+    private String getConnectPluginJarFilename() throws IOException {
         return getPluginDependencyFilename("atlassian-connect-plugin");
     }
 
-    private String getGeneralReferencePluginJarFilename() throws IOException
-    {
+    private String getGeneralReferencePluginJarFilename() throws IOException {
         return getPluginDependencyFilename("atlassian-connect-reference-plugin");
     }
 
-    private String getPluginDependencyFilename(String artifactId) throws IOException
-    {
+    private String getPluginDependencyFilename(String artifactId) throws IOException {
         return String.format("/%s-%s.jar", artifactId, getPluginVersion());
     }
 
-    private File getJarFile(String jarFilename)
-    {
-        return jarDependencies.computeIfAbsent(jarFilename, new java.util.function.Function<String, File>()
-        {
+    private File getJarFile(String jarFilename) {
+        return jarDependencies.computeIfAbsent(jarFilename, new java.util.function.Function<String, File>() {
             @Override
-            public File apply(String filename)
-            {
-                try
-                {
+            public File apply(String filename) {
+                try {
                     File tempFile = File.createTempFile(filename, ".jar");
                     URL jarResource = getClass().getResource("/" + filename);
                     FileUtils.copyURLToFile(jarResource, tempFile);
                     return tempFile;
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         });
     }
 
-    private String getPluginVersion()
-    {
+    private String getPluginVersion() {
         return pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
     }
 }

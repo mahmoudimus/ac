@@ -9,11 +9,9 @@ import org.springframework.stereotype.Component;
 
 @ModuleType(ListableModuleDescriptorFactory.class)
 @Component
-public class ConnectWebFragmentLocationBlacklistModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectWebFragmentLocationBlacklistModuleDescriptor>
-{
+public class ConnectWebFragmentLocationBlacklistModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectWebFragmentLocationBlacklistModuleDescriptor> {
     @Autowired
-    public ConnectWebFragmentLocationBlacklistModuleDescriptorFactory(HostContainer hostContainer)
-    {
+    public ConnectWebFragmentLocationBlacklistModuleDescriptorFactory(HostContainer hostContainer) {
         super(hostContainer, "connect-web-fragment-location-blacklist", ConnectWebFragmentLocationBlacklistModuleDescriptor.class);
     }
 }

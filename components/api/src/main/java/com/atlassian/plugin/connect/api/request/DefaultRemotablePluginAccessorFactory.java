@@ -5,8 +5,7 @@ import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import org.springframework.beans.factory.DisposableBean;
 
-public interface DefaultRemotablePluginAccessorFactory extends RemotablePluginAccessorFactory, DisposableBean
-{
+public interface DefaultRemotablePluginAccessorFactory extends RemotablePluginAccessorFactory, DisposableBean {
 
     void onApplicationLinkCreated(ApplicationLinkAddedEvent event);
 

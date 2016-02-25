@@ -1,17 +1,16 @@
 package com.atlassian.plugin.connect.api.request;
 
 import com.atlassian.plugin.connect.api.auth.AuthorizationGenerator;
-import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 
 /**
  * Abstracts interactions with the remote plugin
  */
-public interface RemotablePluginAccessor
-{
+public interface RemotablePluginAccessor {
     String getKey();
 
     /**
@@ -27,7 +26,7 @@ public interface RemotablePluginAccessor
 
     String createGetUrl(URI targetPath, Map<String, String[]> params);
 
-    Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers);
+    Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers, InputStream body);
 
     AuthorizationGenerator getAuthorizationGenerator();
 

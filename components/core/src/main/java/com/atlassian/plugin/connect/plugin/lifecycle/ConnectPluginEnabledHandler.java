@@ -14,8 +14,7 @@ import javax.inject.Named;
 
 @Named
 @ExportAsService(LifecycleAware.class)
-public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
-{
+public class ConnectPluginEnabledHandler extends AbstractInitializingComponent {
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonManager.class);
 
     private final ConnectAddonRegistry addonRegistry;
@@ -24,9 +23,8 @@ public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
 
     @Inject
     public ConnectPluginEnabledHandler(final ConnectAddonRegistry addonRegistry,
-            final ConnectAddonManager addonManager, final EventPublisher eventPublisher,
-            final ConnectExtensionManager extensionManager)
-    {
+                                       final ConnectAddonManager addonManager, final EventPublisher eventPublisher,
+                                       final ConnectExtensionManager extensionManager) {
         super(eventPublisher);
         this.addonRegistry = addonRegistry;
         this.addonManager = addonManager;
@@ -34,26 +32,19 @@ public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
     }
 
     @Override
-    protected void finalInit()
-    {
-        if (addonManager.isVertigo())
-        {
+    protected void finalInit() {
+        if (addonManager.isVertigo()) {
             extensionManager.start();
         }
         enableAddons();
     }
 
-    private void enableAddons()
-    {
+    private void enableAddons() {
         //enable all the addons if needed
-        for (String addonKey : addonRegistry.getAddonKeysToEnableOnRestart())
-        {
-            try
-            {
+        for (String addonKey : addonRegistry.getAddonKeysToEnableOnRestart()) {
+            try {
                 addonManager.enableConnectAddon(addonKey);
-            }
-            catch (ConnectAddonEnableException e)
-            {
+            } catch (ConnectAddonEnableException e) {
                 log.error("Could not enable add-on " + e.getAddonKey() + " during enablement of the Connect plugin: " + e.getMessage(), e);
             }
         }

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.confluence;
 
 import com.atlassian.bandana.BandanaManager;
+import com.atlassian.confluence.api.service.content.ContentBodyConversionService;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.core.ContentEntityManager;
 import com.atlassian.confluence.core.ContentPermissionManager;
@@ -33,10 +34,9 @@ import javax.inject.Inject;
  * This class does nothing but is here to centralize the Confluence component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
-@SuppressWarnings ("ALL")
+@SuppressWarnings("ALL")
 @Scanned
-public class ConfluenceImports
-{
+public class ConfluenceImports {
     @Inject
     public ConfluenceImports(
             @ConfluenceImport BandanaManager bandanaManager,
@@ -45,7 +45,7 @@ public class ConfluenceImports
             @ConfluenceImport LicenseService licenseService,
             @ConfluenceImport MultiQueueTaskManager multiQueueTaskManager,
             @ConfluenceImport PageManager pageManager,
-            @ConfluenceImport ("confluencePermissionManager") PermissionManager permissionManager,
+            @ConfluenceImport("confluencePermissionManager") PermissionManager permissionManager,
             @ConfluenceImport SettingsManager settingsManager,
             @ConfluenceImport SpaceManager spaceManager,
             @ConfluenceImport SpacePermissionManager spacePermissionManager,
@@ -61,7 +61,7 @@ public class ConfluenceImports
             @ConfluenceImport ContentPermissionManager contentPermissionManager,
             @ConfluenceImport PageTemplateManager pageTemplateManager,
             @ConfluenceImport FavouriteManager favouriteManager,
-            @ConfluenceImport NotificationManager notificationManager)
-    {
+            @ConfluenceImport NotificationManager notificationManager,
+            @ConfluenceImport ContentBodyConversionService converter) {
     }
 }

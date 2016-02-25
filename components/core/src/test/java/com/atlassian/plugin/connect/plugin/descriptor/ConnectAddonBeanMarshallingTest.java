@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,10 +41,10 @@ import static org.junit.Assert.assertNotNull;
  * This is the only place where we should actually have to test the marshalling as the adapter factory handles everything.
  * This is also the only class that should be using hard-coded json strings.
  */
-public class ConnectAddonBeanMarshallingTest
-{
+public class ConnectAddonBeanMarshallingTest {
 
-    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
+    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {
+    }.getType();
 
     /**
      * Just verifies the basic marshalling of the core properties for the top-level add on bean
@@ -52,8 +52,7 @@ public class ConnectAddonBeanMarshallingTest
      * @throws Exception
      */
     @Test
-    public void verifyAddonValues() throws Exception
-    {
+    public void verifyAddonValues() throws Exception {
         String json = readAddonTestFile("addonNoCapabilities.json");
 
         Gson gson = ConnectModulesGsonFactory.getGson();
@@ -75,13 +74,13 @@ public class ConnectAddonBeanMarshallingTest
      * @throws Exception
      */
     @Test
-    public void verifyCompositeCondition() throws Exception
-    {
+    public void verifyCompositeCondition() throws Exception {
         String json = readAddonTestFile("addonNoCapabilitiesCompositeCondition.json");
 
         ConnectAddonBean addon = deserializeAddonWithModules(json);
 
-        List<ModuleBean> moduleList = addon.getModules().getValidModuleListOfType("webItems", (e) -> {}).get();
+        List<ModuleBean> moduleList = addon.getModules().getValidModuleListOfType("webItems", (e) -> {
+        }).get();
         assertThat(moduleList, contains(hasProperty("conditions", contains(
                 both(instanceOf(CompositeConditionBean.class)).and(hasProperty("conditions", contains(
                         both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("can_attach_file_to_issue"))),
@@ -97,8 +96,7 @@ public class ConnectAddonBeanMarshallingTest
      * @throws Exception
      */
     @Test
-    public void verifyExtraValuesAreIgnored() throws Exception
-    {
+    public void verifyExtraValuesAreIgnored() throws Exception {
         String json = readAddonTestFile("addonExtraValue.json");
 
         Gson gson = ConnectModulesGsonFactory.getGson();
@@ -120,8 +118,7 @@ public class ConnectAddonBeanMarshallingTest
      * @throws Exception
      */
     @Test
-    public void noCapabilitiesReturnsEmptyList() throws Exception
-    {
+    public void noCapabilitiesReturnsEmptyList() throws Exception {
         String json = readAddonTestFile("addonNoCapabilities.json");
 
         Gson gson = ConnectModulesGsonFactory.getGson();
@@ -136,8 +133,7 @@ public class ConnectAddonBeanMarshallingTest
      * @throws Exception
      */
     @Test
-    public void singleModule() throws Exception
-    {
+    public void singleModule() throws Exception {
         String json = readAddonTestFile("addonSingleCapability.json");
 
         ConnectAddonBean addon = deserializeAddonWithModules(json);
@@ -158,21 +154,20 @@ public class ConnectAddonBeanMarshallingTest
      * @throws Exception
      */
     @Test
-    public void multiCapabilities() throws Exception
-    {
+    public void multiCapabilities() throws Exception {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
         ConnectAddonBean addon = deserializeAddonWithModules(json);
-        List<ModuleBean> moduleList = addon.getModules().getValidModuleListOfType("webItems", (e) -> {}).get();
+        List<ModuleBean> moduleList = addon.getModules().getValidModuleListOfType("webItems", (e) -> {
+        }).get();
 
         assertEquals(2, moduleList.size());
-        assertEquals("a web item", ((WebItemModuleBean)moduleList.get(0)).getName().getValue());
-        assertEquals("another web item", ((WebItemModuleBean)moduleList.get(1)).getName().getValue());
+        assertEquals("a web item", ((WebItemModuleBean) moduleList.get(0)).getName().getValue());
+        assertEquals("another web item", ((WebItemModuleBean) moduleList.get(1)).getName().getValue());
         assertEquals("http://www.example.com", addon.getBaseUrl());
     }
 
     @Test
-    public void noScopes() throws IOException
-    {
+    public void noScopes() throws IOException {
         String json = readAddonTestFile("addonNoCapabilities.json");
         Gson gson = ConnectModulesGsonFactory.getGsonBuilder().create();
         ConnectAddonBean addon = gson.fromJson(json, ConnectAddonBean.class);
@@ -180,32 +175,28 @@ public class ConnectAddonBeanMarshallingTest
     }
 
     @Test
-    public void singleScope() throws IOException
-    {
+    public void singleScope() throws IOException {
         String json = readAddonTestFile("singleScope.json");
         ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addon.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ)));
     }
 
     @Test
-    public void multipleScopes() throws IOException
-    {
+    public void multipleScopes() throws IOException {
         String json = readAddonTestFile("multipleScopes.json");
         ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addon.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ, ScopeName.WRITE)));
     }
 
     @Test
-    public void badScopeName() throws IOException
-    {
+    public void badScopeName() throws IOException {
         Set<ScopeName> emptySet = newHashSet();
         String json = readAddonTestFile("badScopeName.json");
         ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addon.getScopes(), is(emptySet));
     }
 
-    private ConnectAddonBean deserializeAddonWithModules(String json)
-    {
+    private ConnectAddonBean deserializeAddonWithModules(String json) {
         JsonElement element = new JsonParser().parse(json);
         ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJson(element);
 
@@ -214,8 +205,7 @@ public class ConnectAddonBeanMarshallingTest
         return gson.fromJson(json, ConnectAddonBean.class);
     }
 
-    private ModuleListDeserializer createDeserializer(ShallowConnectAddonBean descriptor)
-    {
+    private ModuleListDeserializer createDeserializer(ShallowConnectAddonBean descriptor) {
         return new StaticModuleListDeserializer(descriptor, new WebItemModuleMeta());
     }
 }

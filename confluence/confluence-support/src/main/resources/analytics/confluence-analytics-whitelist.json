@@ -1,0 +1,25 @@
+{
+  "confluence.blueprint.context.request.success" : [
+    "addonKey",
+    "moduleKey",
+    "url",
+    "timeTakenMillis"
+  ],
+  "confluence.blueprint.context.request.fail" : [
+    "addonKey",
+    "moduleKey",
+    "url",
+    "failureType"
+  ],
+  "confluence.blueprint.context.response.parse.fail" : [
+    "addonKey",
+    "moduleKey",
+    "url"
+  ],
+  "confluence.blueprint.context.response.parse.success" : [
+    "addonKey",
+    "moduleKey",
+    "url",
+    "timeTakenMillis"
+  ]
+}

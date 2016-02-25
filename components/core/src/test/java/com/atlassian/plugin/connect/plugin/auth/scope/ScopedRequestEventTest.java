@@ -14,21 +14,18 @@ import java.io.InputStream;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class ScopedRequestEventTest
-{
+public class ScopedRequestEventTest {
     @Mock
     private HttpServletRequest rq;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.rq = Mockito.mock(HttpServletRequest.class);
     }
 
 
     @Test
-    public void testJIRARestUrlsShouldBeTrimmed()
-    {
+    public void testJIRARestUrlsShouldBeTrimmed() {
         String url = "/rest/api/2/user/avatar/1938378";
         String expected = "api/2/user";
         when(rq.getMethod()).thenReturn("GET");
@@ -39,8 +36,7 @@ public class ScopedRequestEventTest
     }
 
     @Test
-    public void testConfluenceRestUrlsShouldBeTrimmed()
-    {
+    public void testConfluenceRestUrlsShouldBeTrimmed() {
         String url = "/confluence/rest/api/content/1384754";
         String expected = "api/content";
         when(rq.getMethod()).thenReturn("GET");
@@ -51,8 +47,7 @@ public class ScopedRequestEventTest
     }
 
     @Test
-    public void testACRestUrlsShouldBeTrimmed()
-    {
+    public void testACRestUrlsShouldBeTrimmed() {
         String url = "/confluence/atlassian-connect/rest/api/foobar/secret";
         String expected = "api/foobar";
         when(rq.getMethod()).thenReturn("GET");
@@ -63,8 +58,7 @@ public class ScopedRequestEventTest
     }
 
     @Test
-    public void testACRestUrlsWithQueryParametersShouldBeTrimmed()
-    {
+    public void testACRestUrlsWithQueryParametersShouldBeTrimmed() {
         String url = "/confluence/atlassian-connect/rest/api/foobar?baz=blah&secret=pyramid";
         String expected = "api/foobar";
         when(rq.getMethod()).thenReturn("GET");
@@ -75,8 +69,7 @@ public class ScopedRequestEventTest
     }
 
     @Test
-    public void JIRARestURLWithNumericVersionShouldBeTrimmed() throws IOException
-    {
+    public void JIRARestURLWithNumericVersionShouldBeTrimmed() throws IOException {
         String url = "/rest/api/2/attachment/1384754";
         String expected = "api/2/attachment";
         when(rq.getMethod()).thenReturn("GET");
@@ -85,9 +78,9 @@ public class ScopedRequestEventTest
         ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
+
     @Test
-    public void JIRARestURLWithDecimalNumericVersionShouldBeTrimmed() throws IOException
-    {
+    public void JIRARestURLWithDecimalNumericVersionShouldBeTrimmed() throws IOException {
         String url = "/rest/api/2.0/attachment/1384754";
         String expected = "api/2.0/attachment";
         when(rq.getMethod()).thenReturn("GET");
@@ -96,9 +89,9 @@ public class ScopedRequestEventTest
         ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
+
     @Test
-    public void JIRARestURLWithLatestShouldBeTrimmed() throws IOException
-    {
+    public void JIRARestURLWithLatestShouldBeTrimmed() throws IOException {
         String url = "/rest/api/latest/attachment/1384754";
         String expected = "api/latest/attachment";
         when(rq.getMethod()).thenReturn("GET");
@@ -110,8 +103,7 @@ public class ScopedRequestEventTest
 
 
     @Test
-    public void testConfluenceJsonRpcUrlsShouldIncludeMethod() throws IOException
-    {
+    public void testConfluenceJsonRpcUrlsShouldIncludeMethod() throws IOException {
         String url = "/confluence/rpc/json-rpc/confluenceservice-v2";
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
@@ -122,8 +114,7 @@ public class ScopedRequestEventTest
     }
 
     @Test
-    public void testConfluenceJsonRpcLightUrlsShouldIncludeMethod() throws IOException
-    {
+    public void testConfluenceJsonRpcLightUrlsShouldIncludeMethod() throws IOException {
         String url = "/confluence/rpc/json-rpc/confluenceservice-v2/methodName";
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
@@ -134,8 +125,7 @@ public class ScopedRequestEventTest
     }
 
     @Test
-    public void testConfluenceXmlRpcUrlsShouldIncludeMethod() throws IOException
-    {
+    public void testConfluenceXmlRpcUrlsShouldIncludeMethod() throws IOException {
         String url = "/confluence/rpc/xmlrpc";
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
@@ -145,21 +135,18 @@ public class ScopedRequestEventTest
         assertEquals("/rpc/xmlrpc/method", event.getHttpRequestUri());
     }
 
-    private String createJsonRpcPayload()
-    {
+    private String createJsonRpcPayload() {
         return "{\"jsonrpc\" : \"2.0\",  \"method\" : \"" + "method" + "\"}";
     }
 
-    private String createXmlRpcPayload()
-    {
+    private String createXmlRpcPayload() {
         return "<?xml version=\"1.0\"?>\n" +
                 "<methodCall>\n" +
-                "   <methodName>"+ "method" +"</methodName>\n" +
+                "   <methodName>" + "method" + "</methodName>\n" +
                 "</methodCall>";
     }
 
-    private class MockServletInputStream extends ServletInputStream
-    {
+    private class MockServletInputStream extends ServletInputStream {
         private InputStream in;
 
         public MockServletInputStream(String body) {
@@ -167,8 +154,7 @@ public class ScopedRequestEventTest
         }
 
         @Override
-        public int read() throws IOException
-        {
+        public int read() throws IOException {
             return in.read();
         }
 

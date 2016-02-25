@@ -1,38 +1,31 @@
 package it.confluence;
 
-import java.util.concurrent.TimeUnit;
-
-import com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.CreateDialog;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
-import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;
-
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A working replacement for the CreateDialog page object in Confluence.
  */
-public class CreateContentDialog extends CreateDialog
-{
-    public CreateContentDialog createWithBlueprintWizard(String completeKey)
-    {
+public class CreateContentDialog extends CreateDialog {
+    public CreateContentDialog createWithBlueprintWizard(String completeKey) {
         clickBlueprintItem(completeKey);
         return this;
     }
 
-    public CreateContentDialog clickCreateButton()
-    {
+    public CreateContentDialog clickCreateButton() {
         getCreateButton().click();
         return this;
     }
 
-    public EditContentPage getEditContentPage()
-    {
+    public EditContentPage getEditContentPage() {
         Editor editor = pageBinder.bind(Editor.class);
         Poller.waitUntil("Waiting for editor to become active.",
                 editor.isEditorCurrentlyActive(), Matchers.is(true), Poller.by(1, TimeUnit.HOURS));
@@ -40,14 +33,17 @@ public class CreateContentDialog extends CreateDialog
         return pageBinder.bind(EditContentPage.class);
     }
 
-    public EditorPage createWithBlueprint(String completeKey)
-    {
+    public EditorPage createWithBlueprint(String completeKey) {
         clickBlueprintItem(completeKey);
         return getEditContentPage();
     }
 
-    private PageElement getCreateButton()
-    {
+    public PageElement getErrorMessage() {
+        By locator = By.cssSelector(".aui-flag .aui-message");
+        return this.pageElementFinder.find(locator);
+    }
+
+    public PageElement getCreateButton() {
         /**
          * For blueprint with wizard. The page will have multiple create button presents
          * We should choose one that isn't disabled.
@@ -56,9 +52,10 @@ public class CreateContentDialog extends CreateDialog
         return getDialog().find(locator);
     }
 
-    private void clickBlueprintItem(String completeKey)
-    {
+    public CreateContentDialog clickBlueprintItem(String completeKey) {
         waitForBlueprint(completeKey).click();
         getCreateButton().click();
+
+        return this;
     }
 }

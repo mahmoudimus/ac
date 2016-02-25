@@ -57,8 +57,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * @schemaTitle Addon Descriptor
  * @since 1.0
  */
-public class ShallowConnectAddonBean extends BaseModuleBean
-{
+public class ShallowConnectAddonBean extends BaseModuleBean {
     public static final String KEY_ATTR = "key";
     public static final String BASE_URL_ATTR = "baseUrl";
 
@@ -89,15 +88,15 @@ public class ShallowConnectAddonBean extends BaseModuleBean
 
     /**
      * The API version is an OPTIONAL integer. If omitted we will infer an API version of 1.
-     * 
+     *
      * The intention behind the API version is to allow vendors the ability to beta test a major revision to their Connect add-on as a private version,
      * and have a seamless transition for those beta customers (and existing customers) once the major revision is launched. 
-     * 
+     *
      * Vendors can accomplish this by listing a new private version of their add-on, with a new descriptor hosted at a new URL. 
-     * 
+     *
      * They use the Atlassian Marketplace's access token facilities to share this version with customers (or for internal use). 
      * When this version is ready to be taken live, it can be transitioned from private to public, and all customers will be seamlessly updated.
-     * 
+     *
      * It's important to note that this approach allows vendors to create new versions manually, despite the fact that in the common case, the versions are automatically created.
      * This has a few benefits-- for example, it gives vendors the ability to change their descriptor URL if they need to 
      * (the descriptor URL will be immutable for existing versions)
@@ -130,7 +129,7 @@ public class ShallowConnectAddonBean extends BaseModuleBean
     /**
      * The base url of the remote add-on, which is used for all communications back to the add-on instance. Once the add-on is installed in a product, the add-on's baseUrl
      * cannot be changed without first uninstalling the add-on. This is important; choose your baseUrl wisely before making your add-on public.
-     * 
+     *
      * Only add-ons with a baseUrl starting with ``https://`` can be [installed in cloud instances](../developing/cloud-installation.html)
      * servers. ``http://`` may still be used for testing locally.
      *
@@ -164,8 +163,7 @@ public class ShallowConnectAddonBean extends BaseModuleBean
      */
     private Map<String, ?> modules; // Only used for shallow schema generation
 
-    public ShallowConnectAddonBean()
-    {
+    public ShallowConnectAddonBean() {
         this.key = "";
         this.name = "";
         this.version = "1.0";
@@ -179,130 +177,104 @@ public class ShallowConnectAddonBean extends BaseModuleBean
         this.enableLicensing = null;
     }
 
-    public ShallowConnectAddonBean(ConnectAddonBeanBuilder builder)
-    {
+    public ShallowConnectAddonBean(ConnectAddonBeanBuilder builder) {
         super(builder);
 
-        if (null == key)
-        {
+        if (null == key) {
             this.key = "";
         }
 
-        if (null == name)
-        {
+        if (null == name) {
             this.name = "";
         }
 
-        if (null == version)
-        {
+        if (null == version) {
             this.version = "1.0";
         }
 
-        if (null == description)
-        {
+        if (null == description) {
             this.description = "";
         }
 
-        if (null == vendor)
-        {
+        if (null == vendor) {
             this.vendor = VendorBean.newVendorBean().build();
         }
 
-        if (null == links)
-        {
+        if (null == links) {
             this.links = newHashMap();
         }
 
-        if (null == scopes)
-        {
+        if (null == scopes) {
             this.scopes = new HashSet<>();
         }
-        
-        if (null == lifecycle)
-        {
+
+        if (null == lifecycle) {
             this.lifecycle = LifecycleBean.newLifecycleBean().build();
         }
-        if (null == baseUrl)
-        {
+        if (null == baseUrl) {
             this.baseUrl = "";
         }
-        if (null == authentication)
-        {
+        if (null == authentication) {
             this.authentication = newAuthenticationBean().build();
         }
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 
-    public Integer getApiVersion()
-    {
+    public Integer getApiVersion() {
         return (null != apiVersion && apiVersion > 0) ? apiVersion : 1;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
-    public VendorBean getVendor()
-    {
+    public VendorBean getVendor() {
         return vendor;
     }
 
-    public Map<String, String> getLinks()
-    {
+    public Map<String, String> getLinks() {
         return links;
     }
 
-    public Set<ScopeName> getScopes()
-    {
+    public Set<ScopeName> getScopes() {
         return scopes;
     }
 
-    public LifecycleBean getLifecycle()
-    {
+    public LifecycleBean getLifecycle() {
         return lifecycle;
     }
 
-    public String getBaseUrl()
-    {
+    public String getBaseUrl() {
         return baseUrl;
     }
 
-    public AuthenticationBean getAuthentication()
-    {
+    public AuthenticationBean getAuthentication() {
         return authentication;
     }
 
-    public Boolean getEnableLicensing()
-    {
+    public Boolean getEnableLicensing() {
         return (null != enableLicensing) ? enableLicensing : Boolean.FALSE;
     }
 
     // don't call super because BaseCapabilityBean has no data
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof ShallowConnectAddonBean))
-        {
+        if (!(otherObj instanceof ShallowConnectAddonBean)) {
             return false;
         }
 
@@ -326,8 +298,7 @@ public class ShallowConnectAddonBean extends BaseModuleBean
 
     // don't call super because BaseCapabilityBean has no data
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(41, 7)
                 .append(key)
                 .append(name)

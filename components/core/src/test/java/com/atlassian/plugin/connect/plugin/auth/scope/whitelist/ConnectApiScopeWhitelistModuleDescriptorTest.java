@@ -25,8 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectApiScopeWhitelistModuleDescriptorTest
-{
+public class ConnectApiScopeWhitelistModuleDescriptorTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -37,14 +36,12 @@ public class ConnectApiScopeWhitelistModuleDescriptorTest
     private Plugin plugin;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         descriptor = new ConnectApiScopeWhitelistModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY);
     }
 
     @Test
-    public void shouldRejectModuleWithoutKey()
-    {
+    public void shouldRejectModuleWithoutKey() {
         Element element = buildModuleElement(Optional.of("/some-file.json"));
         element.remove(element.attribute("key"));
 
@@ -55,8 +52,7 @@ public class ConnectApiScopeWhitelistModuleDescriptorTest
     }
 
     @Test
-    public void shouldRejectModuleWithoutResourceAttribute()
-    {
+    public void shouldRejectModuleWithoutResourceAttribute() {
         Element element = buildModuleElement(Optional.empty());
         expectModuleValidationExceptionOnMissingResource(element);
 
@@ -64,8 +60,7 @@ public class ConnectApiScopeWhitelistModuleDescriptorTest
     }
 
     @Test
-    public void shouldRejectModuleWithEmptyResourceAttribute()
-    {
+    public void shouldRejectModuleWithEmptyResourceAttribute() {
         Element element = buildModuleElement(Optional.of(""));
         expectModuleValidationExceptionOnMissingResource(element);
 
@@ -73,8 +68,7 @@ public class ConnectApiScopeWhitelistModuleDescriptorTest
     }
 
     @Test
-    public void shouldRejectModuleReferencingMissingResource()
-    {
+    public void shouldRejectModuleReferencingMissingResource() {
         String filename = "/some-missing-file.json";
         expectedException.expect(PluginParseException.class);
         expectedException.expectMessage(String.format("Unable to load API scope whitelist resource (%s)", filename));
@@ -84,8 +78,7 @@ public class ConnectApiScopeWhitelistModuleDescriptorTest
     }
 
     @Test
-    public void shouldRejectModuleWithInvalidJsonResource()
-    {
+    public void shouldRejectModuleWithInvalidJsonResource() {
         String classFilename = String.format("/%s.class", getClass().getCanonicalName().replace(".", "/"));
         String jsonParsingExceptionMessage = "java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1";
         expectedException.expect(PluginParseException.class);
@@ -99,8 +92,7 @@ public class ConnectApiScopeWhitelistModuleDescriptorTest
     }
 
     @Test
-    public void shouldReturnWhitelistForValidModule()
-    {
+    public void shouldReturnWhitelistForValidModule() {
         String classFilename = "/scope/test-whitelist.json";
 
         when(plugin.getResource(classFilename)).thenReturn(getClass().getResource(classFilename));
@@ -113,18 +105,15 @@ public class ConnectApiScopeWhitelistModuleDescriptorTest
         assertThat(whitelist.getScopes().keySet(), equalTo(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE)));
     }
 
-    private void expectModuleValidationExceptionOnMissingResource(Element element)
-    {
+    private void expectModuleValidationExceptionOnMissingResource(Element element) {
         expectedException.expect(ValidationException.class);
         expectedException.expectMessage(String.format("An API scope whitelist resource must be specified via the 'resource' attribute: %s", element.asXML()));
     }
 
-    private Element buildModuleElement(Optional<String> optionalResource)
-    {
+    private Element buildModuleElement(Optional<String> optionalResource) {
         Element element = new DOMElement("connect-api-scope-whitelist");
         element.addAttribute("key", "some-key");
-        if (optionalResource.isPresent())
-        {
+        if (optionalResource.isPresent()) {
             element.addAttribute("resource", optionalResource.get());
         }
         return element;

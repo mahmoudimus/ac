@@ -13,8 +13,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.util.fixture.ConnectContainerUtilForTests;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.fixture.ConnectContainerUtilForTests;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
@@ -43,8 +43,7 @@ import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class WorkflowPostFunctionModuleDescriptorFactoryTest
-{
+public class WorkflowPostFunctionModuleDescriptorFactoryTest {
     private ConnectContainerUtilForTests connectAutowireUtil;
     private WorkflowPostFunctionModuleDescriptorFactory wfPostFunctionFactory;
 
@@ -74,8 +73,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     private ConnectAddonBean addon;
 
     @Before
-    public void setup() throws IOException
-    {
+    public void setup() throws IOException {
         this.addon = newConnectAddonBean().withKey("my-key").build();
 
         when(plugin.getName()).thenReturn("My Plugin");
@@ -104,13 +102,12 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyDescriptorKeyIsSet() throws Exception
-    {
+    public void verifyDescriptorKeyIsSet() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withName(new I18nProperty("My Post Function", null))
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withName(new I18nProperty("My Post Function", null))
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -118,13 +115,12 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyNameIsSet() throws Exception
-    {
+    public void verifyNameIsSet() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withName(new I18nProperty("My Post Function", null))
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withName(new I18nProperty("My Post Function", null))
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -132,13 +128,12 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyDescriptionIsSet() throws Exception
-    {
+    public void verifyDescriptionIsSet() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withDescription(new I18nProperty("Some description", null))
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withDescription(new I18nProperty("Some description", null))
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -146,14 +141,13 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyIsEditable() throws Exception
-    {
+    public void verifyIsEditable() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withCreate(new UrlBean("/create"))
-                                                                            .withEdit(new UrlBean("/edit"))
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withCreate(new UrlBean("/create"))
+                .withEdit(new UrlBean("/edit"))
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -161,13 +155,12 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyIsNotEditable() throws Exception
-    {
+    public void verifyIsNotEditable() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withView(new UrlBean("/view"))
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withView(new UrlBean("/view"))
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -175,15 +168,14 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyResourceDescriptorsArePresent() throws Exception
-    {
+    public void verifyResourceDescriptorsArePresent() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withView(new UrlBean("/view"))
-                                                                            .withEdit(new UrlBean(("/edit")))
-                                                                            .withCreate(new UrlBean("/create"))
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withView(new UrlBean("/view"))
+                .withEdit(new UrlBean(("/edit")))
+                .withCreate(new UrlBean("/create"))
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -191,12 +183,11 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyIsDeletable() throws Exception
-    {
+    public void verifyIsDeletable() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -204,12 +195,11 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyIsOrderable() throws Exception
-    {
+    public void verifyIsOrderable() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -217,12 +207,11 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyIsNotUnique() throws Exception
-    {
+    public void verifyIsNotUnique() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -230,12 +219,11 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyIsNoSystemModule() throws Exception
-    {
+    public void verifyIsNoSystemModule() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -243,12 +231,11 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyIsEnabledByDefault() throws Exception
-    {
+    public void verifyIsEnabledByDefault() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -256,13 +243,12 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyCreateUrl() throws Exception
-    {
+    public void verifyCreateUrl() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .withCreate(new UrlBean("/create"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .withCreate(new UrlBean("/create"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -271,13 +257,12 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyEditUrl() throws Exception
-    {
+    public void verifyEditUrl() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .withEdit(new UrlBean("/edit"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .withEdit(new UrlBean("/edit"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 
@@ -286,13 +271,12 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void verifyViewUrl() throws Exception
-    {
+    public void verifyViewUrl() throws Exception {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
-                                                                            .withKey("my-post-function")
-                                                                            .withTriggered(new UrlBean("/callme"))
-                                                                            .withView(new UrlBean("/view"))
-                                                                            .build();
+                .withKey("my-post-function")
+                .withTriggered(new UrlBean("/callme"))
+                .withView(new UrlBean("/view"))
+                .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
 

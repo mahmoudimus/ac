@@ -9,16 +9,14 @@ import java.util.Map;
 /**
  * A remote Confluence macro type that is rendered within an iframe.
  */
-public final class DynamicContentMacro extends AbstractMacro
-{
+public final class DynamicContentMacro extends AbstractMacro {
     private final RemoteMacroRenderer remoteMacroRenderer;
     private final String addonKey;
     private final String moduleKey;
     private final MacroRenderModesBean renderModes;
 
     public DynamicContentMacro(String addonKey, String moduleKey, BodyType bodyType, OutputType outputType,
-                               RemoteMacroRenderer remoteMacroRenderer, MacroRenderModesBean renderModes)
-    {
+                               RemoteMacroRenderer remoteMacroRenderer, MacroRenderModesBean renderModes) {
         super(bodyType, outputType);
         this.remoteMacroRenderer = remoteMacroRenderer;
         this.addonKey = addonKey;
@@ -28,10 +26,9 @@ public final class DynamicContentMacro extends AbstractMacro
 
     @Override
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
-            throws MacroExecutionException
-    {
+            throws MacroExecutionException {
         return remoteMacroRenderer.executeDynamic(addonKey, moduleKey, renderModes,
-                parameters, storageFormatBody,conversionContext);
+                parameters, storageFormatBody, conversionContext);
     }
 
 }

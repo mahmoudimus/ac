@@ -7,8 +7,7 @@ import java.util.Date;
  *
  * @since 0.6.8
  */
-public interface RemotablePluginLicense
-{
+public interface RemotablePluginLicense {
     boolean isValid();
 
     boolean isEvaluation();

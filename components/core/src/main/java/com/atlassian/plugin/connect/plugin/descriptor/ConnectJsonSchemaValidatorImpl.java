@@ -28,16 +28,14 @@ import java.net.URL;
 
 @Component
 @ExportAsService(ConnectJsonSchemaValidator.class)
-public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidator, InitializingBean, DisposableBean
-{
+public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidator, InitializingBean, DisposableBean {
 
     private final JsonSchemaFactory factory;
     private final ApplicationProperties applicationProperties;
     private final IsDevModeService isDevModeService;
 
     @Autowired
-    public ConnectJsonSchemaValidatorImpl(ApplicationProperties applicationProperties, IsDevModeService isDevModeService)
-    {
+    public ConnectJsonSchemaValidatorImpl(ApplicationProperties applicationProperties, IsDevModeService isDevModeService) {
         this.factory = JsonSchemaFactory.newBuilder()
                 .setReportProvider(new ListReportProvider(LogLevel.ERROR, LogLevel.FATAL))
                 .freeze();
@@ -46,31 +44,25 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception
-    {
+    public void afterPropertiesSet() throws Exception {
         LoadingMessageSourceProvider.restartIfNeeded();
     }
 
     @Override
-    public void destroy() throws Exception
-    {
+    public void destroy() throws Exception {
         //JDEV-29184 -  we need to explicitly clean up threads in the underlying msg-simple library provided by the json-schema-validator
         LoadingMessageSourceProvider.shutdown();
     }
 
     @Override
-    public ConnectJsonSchemaValidationResult validateDescriptor(String descriptor, URL schemaUrl)
-    {
+    public ConnectJsonSchemaValidationResult validateDescriptor(String descriptor, URL schemaUrl) {
         JsonSchema jsonSchema = loadSchema(schemaUrl);
 
         ConnectJsonSchemaValidationResult result;
-        try
-        {
+        try {
             JsonNode descriptorNode = JsonLoader.fromReader(new JsonDescriptorStringReader(descriptor));
             result = validate(descriptorNode, jsonSchema);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             result = new DescriptorValidationResult(false, false, "{\"error\":\"JSON not well-formed\"}", e.getMessage());
         }
 
@@ -78,27 +70,21 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
     }
 
     @Override
-    public void assertValidDescriptor(String descriptor, URL schemaUrl) throws ConnectJsonSchemaValidationException
-    {
+    public void assertValidDescriptor(String descriptor, URL schemaUrl) throws ConnectJsonSchemaValidationException {
         ConnectJsonSchemaValidationResult result = validateDescriptor(descriptor, schemaUrl);
-        if (!result.isWellformed())
-        {
+        if (!result.isWellformed()) {
             throw new ConnectJsonSchemaValidationException(result,
                     "Malformed connect descriptor: " + result.getReportAsString(),
                     "connect.invalid.descriptor.malformed.json",
                     result.getReportAsString());
         }
-        if (!result.isValid())
-        {
-            if (isDevModeService.isDevMode())
-            {
+        if (!result.isValid()) {
+            if (isDevModeService.isDevMode()) {
                 throw new ConnectJsonSchemaValidationException(result,
                         "Invalid connect descriptor: " + result.getReportAsString(),
                         "connect.install.error.remote.descriptor.validation.dev",
                         buildHtmlErrorMessage(result));
-            }
-            else
-            {
+            } else {
                 throw new ConnectJsonSchemaValidationException(result,
                         "Invalid connect descriptor: " + result.getReportAsString(),
                         "connect.install.error.remote.descriptor.validation",
@@ -107,55 +93,41 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
         }
     }
 
-    private JsonSchema loadSchema(URL schemaUrl)
-    {
+    private JsonSchema loadSchema(URL schemaUrl) {
         String schema;
-        try
-        {
+        try {
             schema = IOUtils.toString(schemaUrl);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new IllegalStateException("Unable to read from schema URL", e);
         }
 
-        try
-        {
+        try {
             JsonNode schemaNode = JsonLoader.fromString(schema);
             return factory.getJsonSchema(schemaNode);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new IllegalStateException("Unable to deserialize schema", e);
-        }
-        catch (ProcessingException e)
-        {
+        } catch (ProcessingException e) {
             throw new IllegalStateException("Unable to build schema from JSON", e);
         }
     }
 
-    private ConnectJsonSchemaValidationResult validate(JsonNode descriptorNode, JsonSchema schema)
-    {
+    private ConnectJsonSchemaValidationResult validate(JsonNode descriptorNode, JsonSchema schema) {
         ConnectJsonSchemaValidationResult result;
-        try
-        {
+        try {
             ListProcessingReport report = (ListProcessingReport) schema.validate(descriptorNode);
             result = new DescriptorValidationResult(report);
-        }
-        catch (ProcessingException e)
-        {
+        } catch (ProcessingException e) {
             result = new DescriptorValidationResult(true, false, e.getProcessingMessage().asJson().toString(), e.getProcessingMessage().toString());
         }
         return result;
     }
 
-    private String buildHtmlErrorMessage(ConnectJsonSchemaValidationResult result)
-    {
+    private String buildHtmlErrorMessage(ConnectJsonSchemaValidationResult result) {
         StringBuilder messageBuilder = new StringBuilder("<ul>");
-        for (String message : result.getReportMessages())
-        {
+        for (String message : result.getReportMessages()) {
             messageBuilder.append("<li>");
             messageBuilder.append(TextUtils.htmlEncode(message));
+            messageBuilder.append("</li>");
         }
         messageBuilder.append("</ul>");
         return messageBuilder.toString();
@@ -164,16 +136,14 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
     /**
      * A string reader with a custom string representation, for sensible Jackson error messages.
      */
-    private static class JsonDescriptorStringReader extends StringReader
-    {
+    private static class JsonDescriptorStringReader extends StringReader {
 
         /**
          * Creates a new string reader.
          *
          * @param s String providing the character stream.
          */
-        public JsonDescriptorStringReader(String s)
-        {
+        public JsonDescriptorStringReader(String s) {
             super(s);
         }
 
@@ -183,8 +153,7 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
          * @return an empty string
          */
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "";
         }
     }

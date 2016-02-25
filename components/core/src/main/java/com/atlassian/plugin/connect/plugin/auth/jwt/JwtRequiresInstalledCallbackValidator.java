@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.descriptor.AddonBeanValidator;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.plugin.descriptor.ShallowConnectAddonBeanValidator;
 
 import javax.inject.Named;
 
@@ -15,22 +15,19 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * @since 1.0
  */
-@Named ("jwt-requires-installed-callback-validator")
-public class JwtRequiresInstalledCallbackValidator implements AddonBeanValidator
-{
+@Named("jwt-requires-installed-callback-validator")
+public class JwtRequiresInstalledCallbackValidator implements ShallowConnectAddonBeanValidator {
+
     @Override
-    public void validate(final ConnectAddonBean addon) throws InvalidDescriptorException
-    {
-        if (addon.getAuthentication().getType() == JWT && !hasInstalledCallback(addon))
-        {
+    public void validate(final ShallowConnectAddonBean addon) throws InvalidDescriptorException {
+        if (addon.getAuthentication().getType() == JWT && !hasInstalledCallback(addon)) {
             throw new InvalidDescriptorException("The add-on (" + addon.getKey() + ") requested authentication "
                     + "but did not specify an installed lifecycle callback in its descriptor.",
                     "connect.install.error.auth.with.no.installed.callback");
         }
     }
 
-    private boolean hasInstalledCallback(final ConnectAddonBean addon)
-    {
+    private boolean hasInstalledCallback(final ShallowConnectAddonBean addon) {
         return addon.getLifecycle() != null && !isNullOrEmpty(addon.getLifecycle().getInstalled());
     }
 }

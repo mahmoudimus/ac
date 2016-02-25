@@ -8,8 +8,7 @@ import java.util.Map;
 /**
  * Generates an authorization http header value, optionally using an arbitrary secret.
  */
-public interface ReKeyableAuthorizationGenerator extends AuthorizationGenerator
-{
+public interface ReKeyableAuthorizationGenerator extends AuthorizationGenerator {
     /**
      * Generates an authorisation header for the request with the given parameters.
      *

@@ -4,9 +4,10 @@ import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationEx
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.descriptor.ConnectModuleSchemaValidationException;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -21,8 +22,7 @@ import java.util.List;
  *
  * @param <T> the type of the add-on descriptor module representation
  */
-public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> implements ConnectModuleProvider<T>
-{
+public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> implements ConnectModuleProvider<T> {
 
     /**
      * Deserializes the given JSON module list entry as a JSON object or array of JSON objects based on the metadata of
@@ -34,27 +34,32 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
      * @throws ConnectModuleValidationException if the syntax or semantics of the module list entry is invalid
      */
     @Override
-    public List<T> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<T> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         JsonElement modulesElement = new JsonParser().parse(jsonModuleListEntry);
         Gson gson = ConnectModulesGsonFactory.getGson();
         List<T> beans;
-        if (modulesElement.isJsonObject())
-        {
+        if (modulesElement.isJsonObject()) {
             assertMultipleModulesNotAllowed(descriptor);
             T module = gson.fromJson(jsonModuleListEntry, getMeta().getBeanClass());
             beans = Collections.singletonList(module);
-        }
-        else
-        {
+        } else {
             assertMultipleModulesAllowed(descriptor);
             beans = new ArrayList<>();
-            for (JsonElement moduleElement : modulesElement.getAsJsonArray())
-            {
+            for (JsonElement moduleElement : modulesElement.getAsJsonArray()) {
                 beans.add(gson.fromJson(moduleElement, getMeta().getBeanClass()));
             }
         }
         return beans;
+    }
+
+    /**
+     * Does nothing.
+     *
+     * @param descriptor the add-on descriptor (with the module list)
+     * @throws ConnectModuleValidationException if the semantics of the dependencies of this module list entry are invalid
+     */
+    @Override
+    public void validateModuleDependencies(ConnectAddonBean descriptor) throws ConnectModuleValidationException {
     }
 
     /**
@@ -68,17 +73,14 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
      * @throws ConnectModuleSchemaValidationException if the module list entry was not well-formed or did not match the schema
      */
     protected void assertDescriptorValidatesAgainstSchema(String jsonModuleListEntry,
-            ShallowConnectAddonBean descriptor,
-            URL schemaUrl,
-            ConnectJsonSchemaValidator schemaValidator)
-            throws ConnectModuleSchemaValidationException
-    {
+                                                          ShallowConnectAddonBean descriptor,
+                                                          URL schemaUrl,
+                                                          ConnectJsonSchemaValidator schemaValidator)
+            throws ConnectModuleSchemaValidationException {
         String modules = String.format("{\"%s\": %s}", getMeta().getDescriptorKey(), jsonModuleListEntry);
-        try
-        {
+        try {
             schemaValidator.assertValidDescriptor(modules, schemaUrl);
-        } catch (ConnectJsonSchemaValidationException e)
-        {
+        } catch (ConnectJsonSchemaValidationException e) {
             throw new ConnectModuleSchemaValidationException(descriptor, getMeta(), e);
         }
     }
@@ -89,10 +91,8 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
      * @param descriptor the add-on descriptor (without the module list)
      * @throws ConnectModuleValidationException if the assertion fails
      */
-    private void assertMultipleModulesAllowed(ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
-        if (!getMeta().multipleModulesAllowed())
-        {
+    private void assertMultipleModulesAllowed(ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
+        if (!getMeta().multipleModulesAllowed()) {
             throw new ConnectModuleValidationException(descriptor, getMeta(), "Modules should be provided as a JSON array of objects.", null, null);
         }
     }
@@ -103,10 +103,8 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
      * @param descriptor the add-on descriptor (without the module list)
      * @throws ConnectModuleValidationException if the assertion fails
      */
-    private void assertMultipleModulesNotAllowed(ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
-        if (getMeta().multipleModulesAllowed())
-        {
+    private void assertMultipleModulesNotAllowed(ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
+        if (getMeta().multipleModulesAllowed()) {
             throw new ConnectModuleValidationException(descriptor, getMeta(), "A single module should be provided as a JSON object.", null, null);
         }
     }

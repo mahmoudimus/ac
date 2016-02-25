@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
-
 import org.junit.Test;
 
 import static com.atlassian.fugue.Option.some;
@@ -17,8 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class TestConfluenceWebHooks
-{
+public class TestConfluenceWebHooks {
     protected static final ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
 
     private final String baseUrl = new ConfluenceTestedProductAccessor().getConfluenceProduct().getProductInstance().getBaseUrl();
@@ -26,15 +24,13 @@ public class TestConfluenceWebHooks
 
     private ConfluenceOps confluenceOps;
 
-    public TestConfluenceWebHooks()
-    {
+    public TestConfluenceWebHooks() {
         confluenceOps = new ConfluenceOps(baseUrl);
         testUserFactory = new ConfluenceTestUserFactory(product);
     }
 
     @Test
-    public void testSearchPerformedWebHookFired() throws Exception
-    {
+    public void testSearchPerformedWebHookFired() throws Exception {
         final String pluginKey = AddonTestUtils.randomAddonKey();
 
         runInRunner(baseUrl, "search_performed", pluginKey, waiter -> {
@@ -49,8 +45,7 @@ public class TestConfluenceWebHooks
     }
 
     @Test
-    public void testPageCreatedWebHookFired() throws Exception
-    {
+    public void testPageCreatedWebHookFired() throws Exception {
 
         final String pluginKey = AddonTestUtils.randomAddonKey();
 
@@ -65,8 +60,7 @@ public class TestConfluenceWebHooks
     }
 
     @Test
-    public void testVersionIsIncluded() throws Exception
-    {
+    public void testVersionIsIncluded() throws Exception {
         final String pluginKey = AddonTestUtils.randomAddonKey();
 
         runInRunner(baseUrl, "page_created", pluginKey, waiter -> {
@@ -74,13 +68,12 @@ public class TestConfluenceWebHooks
             confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "testxmlWebhooks", content);
             final WebHookBody body = waiter.waitForHook();
             assertNotNull(body);
-            assertThat(body.getConnectVersion(),isVersionNumber());
+            assertThat(body.getConnectVersion(), isVersionNumber());
         });
     }
 
     @Test
-    public void testContentPermissionsUpdatedWebHookFired() throws Exception
-    {
+    public void testContentPermissionsUpdatedWebHookFired() throws Exception {
         final String pluginKey = AddonTestUtils.randomAddonKey();
         final TestUser user = testUserFactory.basicUser();
 

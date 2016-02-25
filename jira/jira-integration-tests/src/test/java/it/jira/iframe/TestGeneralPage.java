@@ -1,10 +1,5 @@
 package it.jira.iframe;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -16,7 +11,7 @@ import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCaptu
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 import com.atlassian.plugin.connect.test.jira.pageobjects.JiraGeneralPage;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -24,7 +19,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.jira.JiraWebDriverTestBase;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -40,8 +38,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of general page in JIRA
  */
-public class TestGeneralPage extends JiraWebDriverTestBase
-{
+public class TestGeneralPage extends JiraWebDriverTestBase {
     private static final String KEY_MY_CONTEXT_PAGE = "my-context-page";
     private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String PAGE_NAME = "My Awesome Page";
@@ -54,14 +51,12 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
     private static String addonKey;
     private String awesomePageModuleKey;
-    private String contextPageModuleKey;
 
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         addonKey = AddonTestUtils.randomAddonKey();
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
@@ -75,37 +70,32 @@ public class TestGeneralPage extends JiraWebDriverTestBase
                                 .withWeight(1234)
                                 .build()
                         , newPageBean()
-                        .withName(new I18nProperty(CONTEXT_PAGE_NAME, null))
-                        .withKey(KEY_MY_CONTEXT_PAGE)
-                        .withUrl("/pg?project_id={project.id}&project_key={project.key}")
-                        .withConditions(newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
-                                "?project_id={project.id}&project_key={project.key}").build())
-                        .withWeight(1234)
-                        .build())
+                                .withName(new I18nProperty(CONTEXT_PAGE_NAME, null))
+                                .withKey(KEY_MY_CONTEXT_PAGE)
+                                .withUrl("/pg?project_id={project.id}&project_key={project.key}")
+                                .withConditions(newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
+                                        "?project_id={project.id}&project_key={project.key}").build())
+                                .withWeight(1234)
+                                .build())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Before
-    public void beforeEachTest()
-    {
-        this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
-        this.contextPageModuleKey = addonAndModuleKey(addonKey,KEY_MY_CONTEXT_PAGE);
+    public void beforeEachTest() {
+        this.awesomePageModuleKey = addonAndModuleKey(addonKey, KEY_MY_AWESOME_PAGE);
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException {
         loginAndVisit(testUserFactory.basicUser(), JiraViewProjectPage.class, project.getKey());
 
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, addonKey);
@@ -117,15 +107,14 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         assertThat(addonContentsPage.isFullSize(), is(true));
 
         // check iframe url params
-        Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
+        Map<String, String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
         verifyContainsStandardAddonQueryParameters(iframeQueryParams, product.getProductInstance().getContextPath());
         assertThat(iframeQueryParams, hasEntry("project_key", project.getKey()));
         assertThat(iframeQueryParams, hasEntry("project_id", project.getId()));
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
+    public void pageIsNotAccessibleWithFalseCondition() {
         loginAndVisit(testUserFactory.basicUser(), HomePage.class);
 
         // web item should be displayed

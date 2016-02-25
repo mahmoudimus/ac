@@ -10,14 +10,12 @@ import org.springframework.stereotype.Component;
 
 @ModuleType(ListableModuleDescriptorFactory.class)
 @Component
-public class ConnectApiScopeWhitelistModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectApiScopeWhitelistModuleDescriptor>
-{
+public class ConnectApiScopeWhitelistModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectApiScopeWhitelistModuleDescriptor> {
 
     private static final String TYPE = "connect-api-scope-whitelist";
 
     @Autowired
-    public ConnectApiScopeWhitelistModuleDescriptorFactory(HostContainer hostContainer)
-    {
+    public ConnectApiScopeWhitelistModuleDescriptorFactory(HostContainer hostContainer) {
         super(hostContainer, TYPE, ConnectApiScopeWhitelistModuleDescriptor.class);
     }
 }

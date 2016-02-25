@@ -4,32 +4,21 @@ import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.test.common.servlet.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
-
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public final class TestConfluenceBlueprintWebHooks extends ConfluenceWebDriverTestBase
-{
+public final class TestConfluenceBlueprintWebHooks extends ConfluenceWebDriverTestBase {
     private static String RETROSPECTIVES_ITEM_KEY = "com.atlassian.confluence.plugins"
             + ".confluence-software-blueprints:retrospectives-item";
 
     @Test
-    @Ignore("Temporary disable the test case until the fix deployed in production")
-    public void testBlueprintPageCreatedWebHookFired() throws Exception
-    {
-        // TODO: A legacy js code in create content plugin is causing the button panel disappear.
-        // Ignore this test case for now until the fix merged and correct version was bumped in Confluence
-        // https://bitbucket.org/atlassian/confluence-create-content-plugin/pull-requests/249/ce-282-the-legacy-user-multiselet-is/diff
-
-
+    public void testBlueprintPageCreatedWebHookFired() throws Exception {
         // This test case currently need web driver as Blueprint APIs are not ready
         WebHookTestServlet.runInJsonRunner(product.getProductInstance().getBaseUrl(), "blueprint_page_created", waiter -> {
-            try
-            {
+            try {
                 String title = "Test page for blueprint webhook test" + AddonTestUtils.randomAddonKey();
 
                 login(testUserFactory.basicUser());
@@ -46,9 +35,7 @@ public final class TestConfluenceBlueprintWebHooks extends ConfluenceWebDriverTe
 
                 assertNotNull(body);
                 assertEquals(body.find("page/title"), title);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 fail("Should not throw exception: " + e.getMessage());
             }
         });

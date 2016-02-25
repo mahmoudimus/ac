@@ -17,8 +17,7 @@ import javax.inject.Named;
 import java.io.IOException;
 
 @Named
-public class ConnectPluginDisabledHandler implements InitializingBean, DisposableBean
-{
+public class ConnectPluginDisabledHandler implements InitializingBean, DisposableBean {
     private static final Logger log = LoggerFactory.getLogger(ConnectPluginDisabledHandler.class);
     private final EventPublisher eventPublisher;
     private final ConnectAddonRegistry addonRegistry;
@@ -27,9 +26,8 @@ public class ConnectPluginDisabledHandler implements InitializingBean, Disposabl
 
     @Inject
     public ConnectPluginDisabledHandler(final ConnectAddonRegistry addonRegistry,
-            final ConnectAddonManager addonManager, final EventPublisher eventPublisher,
-            final ConnectExtensionManager extensionManager)
-    {
+                                        final ConnectAddonManager addonManager, final EventPublisher eventPublisher,
+                                        final ConnectExtensionManager extensionManager) {
         this.eventPublisher = eventPublisher;
         this.addonRegistry = addonRegistry;
         this.addonManager = addonManager;
@@ -38,42 +36,32 @@ public class ConnectPluginDisabledHandler implements InitializingBean, Disposabl
 
     @PluginEventListener
     @SuppressWarnings("unused")
-    public void beforePluginDisabled(BeforePluginDisabledEvent beforePluginDisabledEvent) throws IOException
-    {
-        if (isTheConnectPlugin(beforePluginDisabledEvent.getPlugin()))
-        {
-            for (String pluginKey : addonRegistry.getAllAddonKeys())
-            {
-                try
-                {
+    public void beforePluginDisabled(BeforePluginDisabledEvent beforePluginDisabledEvent) throws IOException {
+        if (isTheConnectPlugin(beforePluginDisabledEvent.getPlugin())) {
+            for (String pluginKey : addonRegistry.getAllAddonKeys()) {
+                try {
                     addonManager.disableConnectAddonWithoutPersistingState(pluginKey);
-                }
-                catch (ConnectAddonDisableException e)
-                {
+                } catch (ConnectAddonDisableException e) {
                     log.error("Unable to disable addon user for addon: " + pluginKey, e);
                 }
             }
         }
-        if (addonManager.isVertigo())
-        {
+        if (addonManager.isVertigo()) {
             extensionManager.stop();
         }
     }
 
-    private boolean isTheConnectPlugin(Plugin plugin)
-    {
+    private boolean isTheConnectPlugin(Plugin plugin) {
         return (ConnectPluginInfo.getPluginKey().equals(plugin.getKey()));
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception
-    {
+    public void afterPropertiesSet() throws Exception {
         eventPublisher.register(this);
     }
 
     @Override
-    public void destroy() throws Exception
-    {
+    public void destroy() throws Exception {
         eventPublisher.unregister(this);
     }
 }

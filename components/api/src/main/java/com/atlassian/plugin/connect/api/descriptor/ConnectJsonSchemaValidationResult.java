@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.api.descriptor;
 
-public interface ConnectJsonSchemaValidationResult
-{
+public interface ConnectJsonSchemaValidationResult {
     boolean isWellformed();
 
     boolean isValid();

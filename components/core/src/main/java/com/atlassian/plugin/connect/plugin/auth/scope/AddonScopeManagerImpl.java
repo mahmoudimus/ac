@@ -28,29 +28,19 @@ import static com.google.common.collect.Iterables.any;
 
 @Component
 @ExportAsDevService
-public final class AddonScopeManagerImpl implements AddonScopeManager
-{
+public final class AddonScopeManagerImpl implements AddonScopeManager {
     private final Supplier<Collection<AddonScope>> allScopesSupplier;
     private final AddonScope addonPropertyScope;
     private final ConnectAddonAccessor addonAccessor;
 
     @Autowired
-    public AddonScopeManagerImpl(ScopeService scopeService, ConnectAddonAccessor addonAccessor) throws IOException
-    {
-        this.allScopesSupplier = Suppliers.memoize(new Supplier<Collection<AddonScope>>()
-        {
-            @Override
-            public Collection<AddonScope> get()
-            {
-                return scopeService.build();
-            }
-        });
+    public AddonScopeManagerImpl(ScopeService scopeService, ConnectAddonAccessor addonAccessor) throws IOException {
+        this.allScopesSupplier = Suppliers.memoize(scopeService::build);
         this.addonAccessor = addonAccessor;
         this.addonPropertyScope = createAddonPropertyScope();
     }
 
-    private AddonScope createAddonPropertyScope()
-    {
+    private AddonScope createAddonPropertyScope() {
         RestApiScopeHelper.RestScope restScope = new RestApiScopeHelper.RestScope("atlassian-connect", Arrays.asList("1", "latest"), "/addons($|/.*)", Arrays.asList("GET", "POST", "PUT", "DELETE"), true);
 
         ArrayList<AddonScopeApiPath> paths = new ArrayList<>();
@@ -60,43 +50,35 @@ public final class AddonScopeManagerImpl implements AddonScopeManager
     }
 
     @Override
-    public boolean isRequestInApiScope(HttpServletRequest request, String addonKey)
-    {
+    public boolean isRequestInApiScope(HttpServletRequest request, String addonKey) {
         return any(getApiScopesForPlugin(addonKey), new IsInApiScopePredicate(request));
     }
 
-    private Iterable<? extends ApiScope> getApiScopesForPlugin(String addonKey)
-    {
+    private Iterable<? extends ApiScope> getApiScopesForPlugin(String addonKey) {
         return Iterables.concat(StaticAddonScopes.dereference(getAllScopes(), getScopeReferences(addonKey)), Collections.singleton(addonPropertyScope));
     }
 
-    private Set<ScopeName> getScopeReferences(String pluginKey)
-    {
+    private Set<ScopeName> getScopeReferences(String pluginKey) {
         Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
-        if (!optionalAddon.isPresent())
-        {
+        if (!optionalAddon.isPresent()) {
             throw new IllegalStateException(String.format("The Connect Add-on Registry has no descriptor for add-on '%s' and therefore we cannot compute its scopes!", pluginKey));
         }
         return optionalAddon.get().getScopes();
     }
 
-    private Collection<AddonScope> getAllScopes()
-    {
+    private Collection<AddonScope> getAllScopes() {
         return allScopesSupplier.get();
     }
 
-    private static final class IsInApiScopePredicate implements Predicate<ApiScope>
-    {
+    private static final class IsInApiScopePredicate implements Predicate<ApiScope> {
         private final HttpServletRequest request;
 
-        public IsInApiScopePredicate(HttpServletRequest request)
-        {
+        public IsInApiScopePredicate(HttpServletRequest request) {
             this.request = checkNotNull(request);
         }
 
         @Override
-        public boolean apply(ApiScope scope)
-        {
+        public boolean apply(ApiScope scope) {
             return null != scope && scope.allow(request);
         }
     }

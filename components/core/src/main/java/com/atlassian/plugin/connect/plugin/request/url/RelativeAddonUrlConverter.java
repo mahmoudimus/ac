@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
  * servlet url. This should be used everywhere relative-to-local addon url conversion is needed.
  */
 @Component
-public class RelativeAddonUrlConverter
-{
+public class RelativeAddonUrlConverter {
     private static String CONNECT_SERVLET_PREFIX = "/ac/";
 
     /**
@@ -21,8 +20,7 @@ public class RelativeAddonUrlConverter
      * @param addonUrl    an addon-relative url
      * @return the local servlet url corresponding to the module
      */
-    public RelativeAddonUrl addonUrlToLocalServletUrl(String pluginKey, String addonUrl)
-    {
+    public RelativeAddonUrl addonUrlToLocalServletUrl(String pluginKey, String addonUrl) {
         String addonPath = (addonUrl.startsWith("/") ? addonUrl : "/" + addonUrl);
         return new RelativeAddonUrl(CONNECT_SERVLET_PREFIX + pluginKey + addonPath);
     }

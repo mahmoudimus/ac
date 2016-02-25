@@ -4,20 +4,17 @@ import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 
-public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebPanelModuleBeanBuilder, WebPanelModuleBean>
-{
+public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebPanelModuleBeanBuilder, WebPanelModuleBean> {
     private String location;
     private WebPanelLayout layout;
     private String url;
     private Integer weight;
     private I18nProperty tooltip;
 
-    public WebPanelModuleBeanBuilder()
-    {
+    public WebPanelModuleBeanBuilder() {
     }
 
-    public WebPanelModuleBeanBuilder(WebPanelModuleBean webPanelBean)
-    {
+    public WebPanelModuleBeanBuilder(WebPanelModuleBean webPanelBean) {
         super(webPanelBean);
 
         this.location = webPanelBean.getLocation();
@@ -28,40 +25,34 @@ public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBui
     }
 
 
-    public WebPanelModuleBeanBuilder withLocation(String location)
-    {
+    public WebPanelModuleBeanBuilder withLocation(String location) {
         this.location = location;
         return this;
     }
 
-    public WebPanelModuleBeanBuilder withLayout(WebPanelLayout layout)
-    {
+    public WebPanelModuleBeanBuilder withLayout(WebPanelLayout layout) {
         this.layout = layout;
         return this;
     }
 
-    public WebPanelModuleBeanBuilder withUrl(String url)
-    {
+    public WebPanelModuleBeanBuilder withUrl(String url) {
         this.url = url;
         return this;
     }
 
 
-    public WebPanelModuleBeanBuilder withWeight(int weight)
-    {
+    public WebPanelModuleBeanBuilder withWeight(int weight) {
         this.weight = weight;
         return this;
     }
 
-    public WebPanelModuleBeanBuilder withTooltip(I18nProperty tooltip)
-    {
+    public WebPanelModuleBeanBuilder withTooltip(I18nProperty tooltip) {
         this.tooltip = tooltip;
         return this;
     }
 
     @Override
-    public WebPanelModuleBean build()
-    {
+    public WebPanelModuleBean build() {
         return new WebPanelModuleBean(this);
     }
 }

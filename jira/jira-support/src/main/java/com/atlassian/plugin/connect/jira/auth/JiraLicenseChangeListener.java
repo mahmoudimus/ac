@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.jira.auth;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
@@ -12,15 +9,16 @@ import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserGroupProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUsers;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.google.common.collect.Sets.difference;
 
-public class JiraLicenseChangeListener
-{
+public class JiraLicenseChangeListener {
     private static final Logger log = LoggerFactory.getLogger(JiraLicenseChangeListener.class);
     private final ApplicationRoleManager applicationRoleManager;
     private final ConnectAddonUsers connectAddonUsers;
@@ -28,8 +26,7 @@ public class JiraLicenseChangeListener
     private final ApplicationAuthorizationService applicationAuthorizationService;
 
     @Autowired
-    public JiraLicenseChangeListener(ApplicationRoleManager applicationRoleManager, ConnectAddonUsers connectAddonUsers, ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService, ApplicationAuthorizationService applicationAuthorizationService)
-    {
+    public JiraLicenseChangeListener(ApplicationRoleManager applicationRoleManager, ConnectAddonUsers connectAddonUsers, ConnectAddonUserGroupProvisioningService connectAddonUserGroupProvisioningService, ApplicationAuthorizationService applicationAuthorizationService) {
         this.applicationRoleManager = applicationRoleManager;
         this.connectAddonUsers = connectAddonUsers;
         this.connectAddonUserGroupProvisioningService = connectAddonUserGroupProvisioningService;
@@ -37,32 +34,25 @@ public class JiraLicenseChangeListener
     }
 
     @EventListener
-    public void onLicenseChanged(LicenseChangedEvent event)
-    {
+    public void onLicenseChanged(LicenseChangedEvent event) {
         boolean ignoreEvent = false;
         log.info("Received a LicenseChangedEvent");
-        if (!applicationAuthorizationService.rolesEnabled())
-        {
+        if (!applicationAuthorizationService.rolesEnabled()) {
             log.info("License roles are not enabled");
             ignoreEvent = true;
         }
-        if (event.getPreviousLicenseDetails().isEmpty())
-        {
+        if (event.getPreviousLicenseDetails().isEmpty()) {
             log.info("No previous license details");
             ignoreEvent = true;
         }
-        if (event.getNewLicenseDetails().isEmpty())
-        {
+        if (event.getNewLicenseDetails().isEmpty()) {
             log.info("No new license details");
             ignoreEvent = true;
         }
-        if (ignoreEvent)
-        {
+        if (ignoreEvent) {
             log.info("Ignoring LicenseChangedEvent");
             return;
-        }
-        else
-        {
+        } else {
             log.info("Handling LicenseChangedEvent");
         }
 
@@ -71,15 +61,12 @@ public class JiraLicenseChangeListener
         addApplicationUsersToDefaultApplicationGroups(difference(newKeys, oldKeys));
     }
 
-    private void addApplicationUsersToDefaultApplicationGroups(Set<ApplicationKey> keys)
-    {
+    private void addApplicationUsersToDefaultApplicationGroups(Set<ApplicationKey> keys) {
         Set<String> newGroups = new HashSet<>();
         StringBuilder newAppsMessage = new StringBuilder("Found the following applications and groups: ");
-        for (ApplicationKey key : keys)
-        {
+        for (ApplicationKey key : keys) {
             newAppsMessage.append(key).append(": [ ");
-            for (Group group : applicationRoleManager.getDefaultGroups(key))
-            {
+            for (Group group : applicationRoleManager.getDefaultGroups(key)) {
                 newAppsMessage.append(group.getName()).append(" ");
                 newGroups.add(group.getName());
             }
@@ -87,15 +74,11 @@ public class JiraLicenseChangeListener
         }
         log.info(newAppsMessage.toString());
 
-        for (User addonUser : connectAddonUsers.getAddonUsers())
-        {
-            try
-            {
+        for (User addonUser : connectAddonUsers.getAddonUsers()) {
+            try {
                 connectAddonUserGroupProvisioningService.ensureUserIsInGroups(addonUser.getName(), newGroups);
-            }
-            catch (Exception e)
-            {
-                log.error("Error adding addon user {} to new application default groups", addonUser.getName(), e);
+            } catch (Exception e) {
+                log.warn("Error adding addon user {} to new application default groups", addonUser.getName(), e);
             }
         }
     }

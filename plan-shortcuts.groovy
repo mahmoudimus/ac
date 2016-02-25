@@ -87,10 +87,11 @@ runTestsStage(['installMavenParameters', 'testMavenParameters']) {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
+            setupVncTask()
             mavenTestTask(
                     description: 'Run QUnit Tests using Karma',
                     goal: '-pl jsapi package -Pkarma-tests #testMavenParameters',
-                    environmentVariables: ''
+                    environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome'
             )
             artifactDefinition(
                     name: 'Karma Test Results',

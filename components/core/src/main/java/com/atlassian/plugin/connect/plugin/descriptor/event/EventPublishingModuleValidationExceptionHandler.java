@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.descriptor.event;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ModuleMultimap;
-import com.atlassian.plugin.connect.plugin.descriptor.LoggingModuleValidationExceptionHandler;
+import com.atlassian.plugin.connect.plugin.descriptor.ModuleValidationExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,20 +14,17 @@ import java.util.function.Consumer;
  * validation exceptions.
  */
 @Component
-public class EventPublishingModuleValidationExceptionHandler extends LoggingModuleValidationExceptionHandler
-{
+public class EventPublishingModuleValidationExceptionHandler extends ModuleValidationExceptionHandler {
 
     private EventPublisher eventPublisher;
 
     @Autowired
-    public EventPublishingModuleValidationExceptionHandler(EventPublisher eventPublisher)
-    {
+    public EventPublishingModuleValidationExceptionHandler(EventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 
     @Override
-    protected void handleModuleValidationCause(ConnectModuleValidationException cause)
-    {
+    public void acceptModuleValidationCause(ConnectModuleValidationException cause) {
         eventPublisher.publish(new ConnectAddonModuleValidationFailedAfterInstallEvent(cause));
     }
 }

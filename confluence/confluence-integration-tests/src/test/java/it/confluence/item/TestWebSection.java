@@ -1,7 +1,5 @@
 package it.confluence.item;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.confluence.pageobjects.component.menu.ConfluenceMenuItem;
 import com.atlassian.confluence.pageobjects.component.menu.ToolsMenu;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
@@ -9,14 +7,14 @@ import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.Confluenc
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
-
-import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -25,8 +23,7 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomAddonKey;
 import static org.junit.Assert.assertTrue;
 
-public class TestWebSection extends ConfluenceWebDriverTestBase
-{
+public class TestWebSection extends ConfluenceWebDriverTestBase {
     private static final String PLUGIN_KEY = randomAddonKey();
 
     private static final String TOOLS_LOCATION = "system.content.action";
@@ -44,8 +41,7 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
@@ -69,17 +65,14 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void testWebItemFoundWithinWebSection() throws MalformedURLException, XmlRpcFault
-    {
+    public void testWebItemFoundWithinWebSection() throws MalformedURLException, XmlRpcFault {
         TestUser user = testUserFactory.basicUser();
         final ConfluencePageData pageData = confluenceOps.setPage(some(user), "ds", "Page with web section", "some page content");
         final String pageId = pageData.getId();

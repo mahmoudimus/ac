@@ -25,8 +25,7 @@ import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDO
  * @see com.atlassian.plugins.rest.common.security.jersey.SysadminOnlyResourceFilter
  */
 @Provider
-public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
-{
+public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter {
     // TODO Figure out why a NoSuchBeanDefinitionException is thrown when these properties are injected through the constructor
     @Context
     HttpServletRequest httpRequest;
@@ -36,49 +35,37 @@ public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
 
     private final UserManager userManager;
 
-    public AddonOrSysadminOnlyResourceFilter(UserManager userManager)
-    {
+    public AddonOrSysadminOnlyResourceFilter(UserManager userManager) {
         this.userManager = Preconditions.checkNotNull(userManager);
     }
 
     @VisibleForTesting
-    AddonOrSysadminOnlyResourceFilter(UserManager userManager, HttpServletRequest httpRequest, UriInfo uriInfo)
-    {
+    AddonOrSysadminOnlyResourceFilter(UserManager userManager, HttpServletRequest httpRequest, UriInfo uriInfo) {
         this(userManager);
         this.httpRequest = Preconditions.checkNotNull(httpRequest);
         this.uriInfo = Preconditions.checkNotNull(uriInfo);
     }
 
-    public ContainerRequestFilter getRequestFilter()
-    {
+    public ContainerRequestFilter getRequestFilter() {
         return new AddonOrSysadminOnlyResourceFilter.RequestFilter();
     }
 
-    public ContainerResponseFilter getResponseFilter()
-    {
+    public ContainerResponseFilter getResponseFilter() {
         return null;
     }
 
-    private class RequestFilter implements ContainerRequestFilter
-    {
+    private class RequestFilter implements ContainerRequestFilter {
 
         @Override
-        public ContainerRequest filter(ContainerRequest containerRequest)
-        {
+        public ContainerRequest filter(ContainerRequest containerRequest) {
             Object pluginKey = httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
-            if (pluginKey != null)
-            {
+            if (pluginKey != null) {
                 assertResourceAllowedForAddon(pluginKey);
-            }
-            else
-            {
+            } else {
                 UserKey userKey = userManager.getRemoteUserKey();
-                if (userKey != null)
-                {
+                if (userKey != null) {
                     assertUserIsSystemAdmin(userKey);
-                }
-                else
-                {
+                } else {
                     throw new ConnectAddonAuthenticationRequiredException();
                 }
             }
@@ -86,23 +73,18 @@ public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
             return containerRequest;
         }
 
-        private void assertResourceAllowedForAddon(Object pluginKey)
-        {
+        private void assertResourceAllowedForAddon(Object pluginKey) {
             List<String> resourceAddonKeys = uriInfo.getPathParameters().get(ADDON_KEY_PATH_PARAMETER);
-            if (resourceAddonKeys != null && !resourceAddonKeys.isEmpty())
-            {
+            if (resourceAddonKeys != null && !resourceAddonKeys.isEmpty()) {
                 String resourceAddonKey = resourceAddonKeys.iterator().next();
-                if (!pluginKey.equals(resourceAddonKey))
-                {
+                if (!pluginKey.equals(resourceAddonKey)) {
                     throw new PermissionDeniedException(null);
                 }
             }
         }
 
-        private void assertUserIsSystemAdmin(UserKey userKey)
-        {
-            if (!userManager.isSystemAdmin(userKey))
-            {
+        private void assertUserIsSystemAdmin(UserKey userKey) {
+            if (!userManager.isSystemAdmin(userKey)) {
                 throw new PermissionDeniedException(null);
             }
         }

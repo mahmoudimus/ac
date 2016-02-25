@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.web.item;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
@@ -8,7 +9,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.Condition;
@@ -32,8 +32,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 @ExportAsDevService
-public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescriptorFactory
-{
+public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescriptorFactory {
 
     private static final Logger log = LoggerFactory.getLogger(WebItemModuleDescriptorFactoryImpl.class);
 
@@ -45,10 +44,9 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
 
     @Autowired
     public WebItemModuleDescriptorFactoryImpl(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory,
-            IconModuleFragmentFactory iconModuleFragmentFactory,
-            WebFragmentLocationQualifier webFragmentLocationQualifier,
-            ConditionModuleFragmentFactory conditionModuleFragmentFactory)
-    {
+                                              IconModuleFragmentFactory iconModuleFragmentFactory,
+                                              WebFragmentLocationQualifier webFragmentLocationQualifier,
+                                              ConditionModuleFragmentFactory conditionModuleFragmentFactory) {
         this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
         this.webFragmentLocationQualifier = webFragmentLocationQualifier;
@@ -56,23 +54,20 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(WebItemModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public WebItemModuleDescriptor createModuleDescriptor(WebItemModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         return createModuleDescriptor(bean, addon, plugin, Collections.<Class<? extends Condition>>emptyList());
     }
 
     @Override
     public WebItemModuleDescriptor createModuleDescriptor(WebItemModuleBean bean, ConnectAddonBean addon, Plugin plugin,
-            Class<? extends Condition> additionalCondition)
-    {
+                                                          Class<? extends Condition> additionalCondition) {
         return createModuleDescriptor(bean, addon, plugin, Collections.<Class<? extends Condition>>singletonList(additionalCondition)
         );
     }
 
     @Override
     public WebItemModuleDescriptor createModuleDescriptor(WebItemModuleBean bean, ConnectAddonBean addon, Plugin plugin,
-            Iterable<Class<? extends Condition>> additionalConditions)
-    {
+                                                          Iterable<Class<? extends Condition>> additionalConditions) {
         Element webItemElement = new DOMElement("web-item");
 
         String webItemKey = bean.getKey(addon);
@@ -91,8 +86,7 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
                 .addAttribute("key", i18nKey)
                 .setText(webItemLabel);
 
-        if (null != bean.getTooltip())
-        {
+        if (null != bean.getTooltip()) {
             webItemElement.addElement("tooltip")
                     .addAttribute("key", bean.getTooltip().getI18n())
                     .setText(bean.getTooltip().getValue());
@@ -105,28 +99,22 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
 
         List<String> styles = newArrayList(bean.getStyleClasses());
 
-        if (null != bean.getIcon())
-        {
+        if (null != bean.getIcon()) {
             webItemElement.add(iconModuleFragmentFactory.createFragment(addon.getKey(), bean.getIcon()));
         }
 
-        if (!bean.getConditions().isEmpty())
-        {
+        if (!bean.getConditions().isEmpty()) {
             webItemElement.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions(),
                     additionalConditions));
         }
 
-        if (bean.getTarget().isDialogTarget())
-        {
+        if (bean.getTarget().isDialogTarget()) {
             styles.add("ap-dialog");
-        }
-        else if (bean.getTarget().isInlineDialogTarget())
-        {
+        } else if (bean.getTarget().isInlineDialogTarget()) {
             styles.add("ap-inline-dialog");
         }
 
-        if (!bean.getTarget().isPageTarget())
-        {
+        if (!bean.getTarget().isPageTarget()) {
             styles.add("ap-plugin-key-" + addon.getKey());
             styles.add("ap-module-key-" + webItemKey);
         }
@@ -138,31 +126,26 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
         final Map<String, Object> dialogOptions = gson.fromJson(gson.toJsonTree(options), Map.class);
         Map<String, String> beanParams = bean.getParams();
 
-        if (null != dialogOptions && !dialogOptions.isEmpty())
-        {
+        if (null != dialogOptions && !dialogOptions.isEmpty()) {
             //TODO: use regex to escape special characters with \
-            for (Map.Entry<String, Object> entry : dialogOptions.entrySet())
-            {
+            for (Map.Entry<String, Object> entry : dialogOptions.entrySet()) {
                 beanParams.put(DIALOG_OPTION_PREFIX + entry.getKey(), entry.getValue().toString());
             }
         }
 
         final boolean isDialog = bean.getTarget().isDialogTarget() || bean.getTarget().isInlineDialogTarget();
 
-        for(Map.Entry<String,String> entry : bean.getParams().entrySet())
-        {
+        for (Map.Entry<String, String> entry : bean.getParams().entrySet()) {
             webItemElement.addElement("param")
-                    .addAttribute("name",entry.getKey())
-                    .addAttribute("value",entry.getValue());
+                    .addAttribute("name", entry.getKey())
+                    .addAttribute("value", entry.getValue());
         }
 
-        if (!styles.isEmpty())
-        {
+        if (!styles.isEmpty()) {
             webItemElement.addElement("styleClass").setText(Joiner.on(" ").join(styles));
         }
 
-        if (log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
@@ -170,8 +153,7 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(ConnectAddonBean addon, Plugin plugin, Element webItemElement, String moduleKey, String url,
-                                                            boolean absolute, AddonUrlContext urlContext, boolean isDialog, String section)
-    {
+                                                            boolean absolute, AddonUrlContext urlContext, boolean isDialog, String section) {
         webItemElement.addAttribute("system", "true");
 
         final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(

@@ -7,6 +7,7 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringEscapeUtils;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.confluence.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
@@ -14,10 +15,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.uri.Uri;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.dom4j.Element;
@@ -32,23 +31,20 @@ import static com.atlassian.plugin.connect.api.util.Dom4jUtils.printNode;
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 
 public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean>
-        implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
-{
+        implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor> {
     private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleDescriptorFactory.class);
 
     private final AbsoluteAddonUrlConverter urlConverter;
 
     public AbstractContentMacroModuleDescriptorFactory(
-            AbsoluteAddonUrlConverter urlConverter)
-    {
+            AbsoluteAddonUrlConverter urlConverter) {
         this.urlConverter = urlConverter;
     }
 
     protected abstract ModuleFactory createModuleFactory(ConnectAddonBean addon, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(B bean, ConnectAddonBean connectAddonBean, Plugin plugin)
-    {
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(B bean, ConnectAddonBean connectAddonBean, Plugin plugin) {
         DOMElement element = createDOMElement(connectAddonBean, bean);
         ModuleFactory moduleFactory = createModuleFactory(connectAddonBean, element, bean);
         MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(connectAddonBean, bean);
@@ -62,35 +58,25 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         return descriptor;
     }
 
-    private void updateDefaultParameterLabels(List<MacroParameter> macroParameters, List<MacroParameterBean> macroParameterBeans)
-    {
-        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, new Function<MacroParameter, String>()
-        {
-            @Override
-            public String apply(MacroParameter parameter)
-            {
-                Preconditions.checkNotNull(parameter, "Implementation error: parameter must never be null");
-                return parameter.getName();
-            }
+    private void updateDefaultParameterLabels(List<MacroParameter> macroParameters, List<MacroParameterBean> macroParameterBeans) {
+        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, parameter -> {
+            Preconditions.checkNotNull(parameter, "Implementation error: parameter must never be null");
+            return parameter.getName();
         });
-        for (MacroParameterBean parameterBean : macroParameterBeans)
-        {
+        for (MacroParameterBean parameterBean : macroParameterBeans) {
             MacroParameter macroParameter = parameterMap.get(parameterBean.getIdentifier());
             Preconditions.checkNotNull(macroParameter, "Implementation error: Mismatch between parameters in the " +
                     "Confluence module descriptor and declared parameters in the descriptor.");
-            if (parameterBean.hasName())
-            {
+            if (parameterBean.hasName()) {
                 macroParameter.setDisplayName(parameterBean.getName().getValue());
             }
-            if (parameterBean.hasDescription())
-            {
+            if (parameterBean.hasDescription()) {
                 macroParameter.setDescription(parameterBean.getDescription().getValue());
             }
         }
     }
 
-    protected DOMElement createDOMElement(ConnectAddonBean addon, B bean)
-    {
+    protected DOMElement createDOMElement(ConnectAddonBean addon, B bean) {
         DOMElement element = new DOMElement("macro");
         // For macros, the name has to be a key and can't contain spaces etc.
         // If 'featured' is true, the web item needs the macro name as it's key...
@@ -103,20 +89,16 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
-        if (bean.getDescription() != null)
-        {
+        if (bean.getDescription() != null) {
             element.addElement("description").addCDATA(StringEscapeUtils.escapeHtml(bean.getDescription().getValue()));
         }
-        if (bean.hasDocumentation())
-        {
+        if (bean.hasDocumentation()) {
             element.setAttribute("documentation-url", bean.getDocumentation().getUrl());
         }
-        if (bean.hasIcon())
-        {
+        if (bean.hasIcon()) {
             element.setAttribute("icon", urlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
         }
-        if (bean.isHidden())
-        {
+        if (bean.isHidden()) {
             element.setAttribute("hidden", "true");
         }
 
@@ -124,82 +106,65 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         handleCategories(bean, element);
         handleAliases(bean, element);
 
-        if (log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             log.debug("Created macro: " + printNode(element));
         }
         return element;
     }
 
-    private void handleAliases(B bean, DOMElement element)
-    {
-        for (String alias : bean.getAliases())
-        {
+    private void handleAliases(B bean, DOMElement element) {
+        for (String alias : bean.getAliases()) {
             element.addElement("alias").addAttribute("name", alias);
         }
     }
 
-    private void handleCategories(B bean, DOMElement element)
-    {
-        for (String category : bean.getCategories())
-        {
+    private void handleCategories(B bean, DOMElement element) {
+        for (String category : bean.getCategories()) {
             element.addElement("category").addAttribute("name", category);
         }
     }
 
-    private void handleParameters(B bean, DOMElement element)
-    {
+    private void handleParameters(B bean, DOMElement element) {
         Element parameters = element.addElement("parameters");
-        for (MacroParameterBean parameterBean : bean.getParameters())
-        {
+        for (MacroParameterBean parameterBean : bean.getParameters()) {
             Element parameter = parameters.addElement("parameter")
                     .addAttribute("name", parameterBean.getIdentifier())
                     .addAttribute("type", parameterBean.getType());
 
-            if (parameterBean.isRequired())
-            {
+            if (parameterBean.isRequired()) {
                 parameter.addAttribute("required", "true");
             }
-            if (parameterBean.isMultiple())
-            {
+            if (parameterBean.isMultiple()) {
                 parameter.addAttribute("multiple", "true");
             }
-            if (parameterBean.hasDefaultValue())
-            {
+            if (parameterBean.hasDefaultValue()) {
                 parameter.addAttribute("default", parameterBean.getDefaultValue());
             }
-            for (String value : parameterBean.getValues())
-            {
+            for (String value : parameterBean.getValues()) {
                 parameter.addElement("value").addAttribute("name", value);
             }
-            for (String value : parameterBean.getAliases())
-            {
+            for (String value : parameterBean.getAliases()) {
                 parameter.addElement("alias").addAttribute("name", value);
             }
         }
     }
 
-    private MacroMetadataParser createMacroMetaDataParser(ConnectAddonBean addon, B bean)
-    {
+    private MacroMetadataParser createMacroMetaDataParser(ConnectAddonBean addon, B bean) {
         ConnectDocumentationBeanFactory docBeanFactory = new ConnectDocumentationBeanFactory(makeAbsolute(addon, bean.getDocumentation()));
         return new MacroMetadataParser(docBeanFactory);
     }
 
-    protected ImagePlaceholderMacro decorateWithImagePlaceHolder(ConnectAddonBean addon, Macro macro, ImagePlaceholderBean bean)
-    {
+    protected ImagePlaceholderMacro decorateWithImagePlaceHolder(ConnectAddonBean addon, Macro macro, ImagePlaceholderBean bean) {
         String absoluteUrl = urlConverter.getAbsoluteUrl(addon, bean.getUrl());
         Dimensions dimensions = null;
-        if (null != bean.getHeight() && null != bean.getWidth())
-        {
+        if (null != bean.getHeight() && null != bean.getWidth()) {
             dimensions = new Dimensions(bean.getWidth(), bean.getHeight());
         }
         return new ImagePlaceholderMacro(macro, Uri.parse(absoluteUrl), dimensions, bean.applyChrome());
     }
 
-    private LinkBean makeAbsolute(ConnectAddonBean addon, LinkBean documentation)
-    {
-        if (null != documentation)
-        {
+    private LinkBean makeAbsolute(ConnectAddonBean addon, LinkBean documentation) {
+        if (null != documentation) {
             String absoluteUrl = urlConverter.getAbsoluteUrl(addon, documentation.getUrl());
             return newLinkBean(documentation).withUrl(absoluteUrl).build();
         }
