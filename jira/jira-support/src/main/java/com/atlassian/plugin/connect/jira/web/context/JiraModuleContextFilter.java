@@ -38,6 +38,7 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
     public static final String DASHBOARD_ITEM_VIEW_TYPE = "dashboardItem.viewType";
     public static final String DASHBOARD_ID = "dashboard.id";
     public static final String ISSUETYPE_ID = "issuetype.id";
+    public static final String QUERY = "query";
 
     private final PermissionManager permissionManager;
     private final ProjectService projectService;
@@ -192,7 +193,8 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
                 // Dashboard items are always allowed. Permission checking is applied per dashboard already.
                 PermissionChecks.<ApplicationUser>alwaysAllowed(DASHBOARD_ITEM_ID),
                 PermissionChecks.<ApplicationUser>alwaysAllowed(DASHBOARD_ITEM_KEY),
-                PermissionChecks.<ApplicationUser>alwaysAllowed(DASHBOARD_ITEM_VIEW_TYPE)
+                PermissionChecks.<ApplicationUser>alwaysAllowed(DASHBOARD_ITEM_VIEW_TYPE),
+                PermissionChecks.alwaysAllowed(QUERY)
         );
     }
 }

@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.GlobalPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ProjectPermissionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebSearcherModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 
 import java.util.List;
@@ -76,6 +77,11 @@ public class JiraModuleList extends BaseModuleBean {
      * Add project permission to JIRA.
      */
     private List<ProjectPermissionModuleBean> jiraProjectPermissions;
+
+    /**
+     * Extend quick search results in JIRA
+     */
+    private List<WebSearcherModuleBean> jiraWebSearchers;
 
     private JiraModuleList() {
     }

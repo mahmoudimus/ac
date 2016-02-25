@@ -11,6 +11,7 @@
     <connect-module key="jiraReports" class="com.atlassian.plugin.connect.jira.report.ReportModuleProvider"/>
     <connect-module key="jiraSearchRequestViews" class="com.atlassian.plugin.connect.jira.search.SearchRequestViewModuleProvider"/>
     <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.workflow.WorkflowPostFunctionModuleProviderImpl"/>
+    <connect-module key="jiraWebSearchers" class="com.atlassian.plugin.connect.jira.search.WebSearcherModuleProvider"/>
 
     <connect-api-scope-whitelist key="jira-api-scope-whitelist" resource="/scope/jira-whitelist.json"/>
     <connect-api-scope-whitelist key="jira-software-api-scope-whitelist" resource="/scope/jira-software-whitelist.json"/>
