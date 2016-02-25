@@ -9,10 +9,13 @@ import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Sets;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -41,7 +44,7 @@ public class ExtensibleContentTypeSupportTest {
     private CustomContentManager customContentManager;
 
     @Mock
-    private PermissionDelegate permissionDelegate;
+    private PermissionManager permissionManager;
 
     @Mock
     private PaginationService paginationService;
@@ -97,7 +100,6 @@ public class ExtensibleContentTypeSupportTest {
         ExtensibleContentTypeSupport extensibleTypeSupport = buildContentTypeSupport("extensible", bean);
         when(apiSupportProvider.getForType(extensible)).thenReturn(extensibleTypeSupport);
 
-
         Space space = Space.builder().build();
         Content content = Content.builder().type(extensible).space(space).container(space).build();
         Content childContent = Content.builder().type(extensible).space(space).container(content).build();
@@ -106,18 +108,27 @@ public class ExtensibleContentTypeSupportTest {
     }
 
     private ExtensibleContentTypeSupport buildContentTypeSupport(String contentTypeKey, ExtensibleContentTypeModuleBean bean) {
-        return new ExtensibleContentTypeSupport(
+        when(customContentApiSupportParams.getProvider()).thenReturn(apiSupportProvider);
+
+        ExtensibleContentType extensibleContentType = new ExtensibleContentType(
                 contentTypeKey,
-                bean.getApiSupport().getSupportedContainerTypes(),
-                bean.getApiSupport().getSupportedContainedTypes(),
-                customContentApiSupportParams,
+                bean,
+                permissionManager,
                 paginationService,
                 contentService,
-                permissionDelegate);
+                customContentApiSupportParams);
+
+        return new ExtensibleContentTypeSupport(
+                extensibleContentType,
+                customContentApiSupportParams,
+                paginationService,
+                contentService);
     }
 
     private ExtensibleContentTypeModuleBean buildBean(Set<String> supportedContainer, Set<String> supportedContained) {
         return new ExtensibleContentTypeModuleBeanBuilder()
+                .withUISupport(new UISupportBeanBuilder()
+                        .build())
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(supportedContainer)
                         .withSupportedContainedTypes(supportedContained)
