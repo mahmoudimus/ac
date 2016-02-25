@@ -123,7 +123,7 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
 
         // use gson to turn it into a map
         final Gson gson = ConnectModulesGsonFactory.getGson();
-        final Map<String, Object> dialogOptions = gson.fromJson(gson.toJsonTree(options), Map.class);
+        final Map<String, Object> dialogOptions = getDialogOptions(options, gson);
         Map<String, String> beanParams = bean.getParams();
 
         if (null != dialogOptions && !dialogOptions.isEmpty()) {
@@ -168,5 +168,10 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
         descriptor.init(plugin, webItemElement);
 
         return descriptor;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getDialogOptions(WebItemTargetOptions options, Gson gson) {
+        return gson.fromJson(gson.toJsonTree(options), Map.class);
     }
 }

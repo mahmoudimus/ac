@@ -105,7 +105,7 @@ public class XWorkPackageCreator {
         List<Interceptor> interceptors = newArrayList();
 
         for (String interceptorRef : actionModuleBean.getInterceptorRefs()) {
-            List list = constructInterceptorReference(packageConfig, interceptorRef, Collections.EMPTY_MAP);
+            List list = constructInterceptorReference(packageConfig, interceptorRef, Collections.emptyMap());
             for (Object interceptor : list) {
                 interceptors.add((Interceptor) interceptor);
             }

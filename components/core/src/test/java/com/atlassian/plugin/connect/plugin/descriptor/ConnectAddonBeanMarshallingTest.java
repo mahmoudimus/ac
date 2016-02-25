@@ -74,6 +74,7 @@ public class ConnectAddonBeanMarshallingTest {
      * @throws Exception
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void verifyCompositeCondition() throws Exception {
         String json = readAddonTestFile("addonNoCapabilitiesCompositeCondition.json");
 

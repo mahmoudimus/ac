@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -88,7 +88,7 @@ public class WebItemModuleDescriptorFactoryTest {
 
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
 
-        when(webFragmentHelper.renderVelocityFragment(anyString(), anyMap())).thenAnswer(
+        when(webFragmentHelper.renderVelocityFragment(anyString(), anyMapOf(String.class, Object.class))).thenAnswer(
                 invocationOnMock -> {
                     Object[] args = invocationOnMock.getArguments();
                     return (String) args[0];

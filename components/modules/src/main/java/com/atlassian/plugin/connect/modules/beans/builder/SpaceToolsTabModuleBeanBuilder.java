@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 import java.util.Map;
 
-public class SpaceToolsTabModuleBeanBuilder<T extends SpaceToolsTabModuleBeanBuilder, B extends SpaceToolsTabModuleBean> extends BeanWithKeyParamsAndConditionsBuilder<T, B> {
+public class SpaceToolsTabModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<SpaceToolsTabModuleBeanBuilder, SpaceToolsTabModuleBean> {
     private String url;
     private Integer weight;
     private String location;
@@ -21,54 +21,54 @@ public class SpaceToolsTabModuleBeanBuilder<T extends SpaceToolsTabModuleBeanBui
     public SpaceToolsTabModuleBeanBuilder() {
     }
 
-    public T withUrl(String url) {
+    public SpaceToolsTabModuleBeanBuilder withUrl(String url) {
         this.url = url;
-        return (T) this;
+        return this;
     }
 
-    public T withWeight(int weight) {
+    public SpaceToolsTabModuleBeanBuilder withWeight(int weight) {
         this.weight = weight;
-        return (T) this;
+        return this;
     }
 
     @Override
-    public T withConditions(ConditionalBean... beans) {
+    public SpaceToolsTabModuleBeanBuilder withConditions(ConditionalBean... beans) {
         super.withConditions(beans);
-        return (T) this;
+        return this;
     }
 
     @Override
-    public T withParams(Map<String, String> params) {
+    public SpaceToolsTabModuleBeanBuilder withParams(Map<String, String> params) {
         super.withParams(params);
-        return (T) this;
+        return this;
     }
 
     @Override
-    public T withParam(String key, String value) {
+    public SpaceToolsTabModuleBeanBuilder withParam(String key, String value) {
         super.withParam(key, value);
-        return (T) this;
+        return this;
     }
 
     @Override
-    public T withKey(String key) {
+    public SpaceToolsTabModuleBeanBuilder withKey(String key) {
         super.withKey(key);
-        return (T) this;
+        return this;
     }
 
     @Override
-    public T withName(I18nProperty name) {
+    public SpaceToolsTabModuleBeanBuilder withName(I18nProperty name) {
         super.withName(name);
-        return (T) this;
+        return this;
     }
 
-    public T withLocation(String location) {
+    public SpaceToolsTabModuleBeanBuilder withLocation(String location) {
         this.location = location;
-        return (T) this;
+        return this;
     }
 
     @Override
-    public B build() {
-        return (B) new SpaceToolsTabModuleBean(this);
+    public SpaceToolsTabModuleBean build() {
+        return new SpaceToolsTabModuleBean(this);
     }
 
 }

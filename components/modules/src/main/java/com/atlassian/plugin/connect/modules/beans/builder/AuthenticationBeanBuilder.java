@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 
-public class AuthenticationBeanBuilder extends BaseModuleBeanBuilder<AuthenticationBeanBuilder, AuthenticationBean> {
+public class AuthenticationBeanBuilder {
     private AuthenticationType type;
     private String publicKey;
 
@@ -27,7 +27,6 @@ public class AuthenticationBeanBuilder extends BaseModuleBeanBuilder<Authenticat
         return this;
     }
 
-    @Override
     public AuthenticationBean build() {
         return new AuthenticationBean(this);
     }

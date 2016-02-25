@@ -62,6 +62,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Set<String> getAddonKeySet() {
         List<String> keyList;
 

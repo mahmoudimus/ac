@@ -6,6 +6,8 @@ import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
+
 /**
  * Allows an add-on to register callbacks for plugin lifecycle events. Each property in this object is a URL relative to
  * the add-on's base URL. When a lifecycle event is fired, it will POST to the appropriate URL registered for the event.
@@ -79,7 +81,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * @schemaTitle Lifecycle
  */
-public class LifecycleBean extends BaseModuleBean {
+public class LifecycleBean {
     /**
      * When a Connect add-on is installed, a synchronous request is fired to this URL to initiate the installation
      * handshake. In order to successfully complete installation, the add-on must respond with either a `200 OK` or
@@ -122,7 +124,7 @@ public class LifecycleBean extends BaseModuleBean {
     }
 
     public LifecycleBean(LifecycleBeanBuilder builder) {
-        super(builder);
+        copyFieldsByNameAndType(builder, this);
 
         if (null == installed) {
             this.installed = "";

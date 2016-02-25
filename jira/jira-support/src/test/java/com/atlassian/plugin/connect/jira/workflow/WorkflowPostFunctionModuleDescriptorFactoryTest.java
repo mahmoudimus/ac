@@ -58,8 +58,6 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest {
     @Mock
     private PluginRetrievalService pluginRetrievalService;
     @Mock
-    private ModuleDescriptor moduleDescriptor;
-    @Mock
     private WebResourceUrlProvider webResourceUrlProvider;
     @Mock
     private ResourceDescriptor resourceDescriptor;
@@ -93,9 +91,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest {
         when(componentAccessor.getComponent(ComponentClassManager.class)).thenReturn(componentClassManager);
 
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
-        when(plugin.getModuleDescriptor("dialog")).thenReturn(moduleDescriptor);
 
-        when(moduleDescriptor.getResourceDescriptors()).thenReturn(Collections.<ResourceDescriptor>singletonList(resourceDescriptor));
         when(webResourceUrlProvider.getStaticPluginResourceUrl(any(ModuleDescriptor.class), anyString(), any(UrlMode.class))).thenReturn("test.js");
 
         wfPostFunctionFactory = new WorkflowPostFunctionModuleDescriptorFactory(connectAutowireUtil);

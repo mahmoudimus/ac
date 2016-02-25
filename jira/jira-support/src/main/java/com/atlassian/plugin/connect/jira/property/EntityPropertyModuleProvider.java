@@ -35,7 +35,7 @@ public class EntityPropertyModuleProvider extends AbstractJiraConnectModuleProvi
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<EntityPropertyModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<EntityPropertyModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()));
     }
 }

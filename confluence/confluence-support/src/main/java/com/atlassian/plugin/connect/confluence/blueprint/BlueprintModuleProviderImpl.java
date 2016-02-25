@@ -45,9 +45,9 @@ public class BlueprintModuleProviderImpl extends AbstractConfluenceConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<BlueprintModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<BlueprintModuleBean> modules, ConnectAddonBean addon) {
         Plugin plugin = pluginRetrievalService.getPlugin();
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
         for (BlueprintModuleBean blueprint : modules) {
             descriptors.add(blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(blueprint, addon, plugin));
             descriptors.add(blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(blueprint, addon, plugin));

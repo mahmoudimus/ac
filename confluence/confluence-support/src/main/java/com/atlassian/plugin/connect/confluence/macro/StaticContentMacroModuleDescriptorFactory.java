@@ -23,7 +23,9 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
 
     protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final StaticContentMacroModuleBean bean) {
         return new ModuleFactory() {
+
             @Override
+            @SuppressWarnings("unchecked")
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException {
                 StaticContentMacro macro = new StaticContentMacro(
                         addon.getKey(), bean.getRawKey(), bean.getUrl(),

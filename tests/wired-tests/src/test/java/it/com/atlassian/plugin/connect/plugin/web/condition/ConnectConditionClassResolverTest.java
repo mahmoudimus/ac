@@ -1,9 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.web.condition;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -16,14 +12,16 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
+import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -47,6 +45,7 @@ public class ConnectConditionClassResolverTest extends AbstractConnectAddonTest 
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldApplyPluginProvidedConditionsToWebItems() throws IOException {
         String visibleItemKey = "visible-item";
         String hiddenItemKey = "hidden-item";

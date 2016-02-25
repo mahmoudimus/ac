@@ -11,6 +11,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+@SuppressWarnings("unchecked")
 public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAndConditionsBuilder, B extends BeanWithKeyAndParamsAndConditions> extends BeanWithKeyAndParamsBuilder<T, B> {
     private List<ConditionalBean> conditions;
 

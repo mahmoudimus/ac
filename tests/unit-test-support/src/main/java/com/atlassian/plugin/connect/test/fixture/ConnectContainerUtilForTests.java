@@ -24,6 +24,7 @@ public class ConnectContainerUtilForTests implements ConnectContainerUtil {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T createBean(Class<T> clazz) {
         Constructor<?>[] constructors = clazz.getConstructors();
         Preconditions.checkState(constructors.length == 1);

@@ -52,8 +52,8 @@ public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectM
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, ConnectAddonBean connectAddonBean) {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, ConnectAddonBean connectAddonBean) {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
 
         for (WorkflowPostFunctionModuleBean bean : modules) {
             // register render strategies for iframe workflow views

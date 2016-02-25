@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class ConnectTabPanelModuleBeanBuilder<T extends ConnectTabPanelModuleBeanBuilder, B extends ConnectTabPanelModuleBean> extends BeanWithKeyParamsAndConditionsBuilder<T, B> {
     private String url;
     private Integer weight;

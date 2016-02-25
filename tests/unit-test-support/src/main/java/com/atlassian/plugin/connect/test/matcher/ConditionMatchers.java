@@ -82,6 +82,7 @@ public class ConditionMatchers {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static List<String> getNestedConditionSimpleNamesReflectively(final AbstractCompositeCondition condition) {
         try {
             Field conditions = AbstractCompositeCondition.class.getDeclaredField("conditions");
