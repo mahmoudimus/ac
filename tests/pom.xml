@@ -24,27 +24,12 @@
         <module>unit-test-support</module>
         <module>marketplace-support</module>
         <module>integration-tests-support</module>
+        <module>core-integration-tests</module>
+        <module>plugin-lifecycle-tests</module>
+        <module>wired-tests</module>
     </modules>
 
     <profiles>
-        <profile>
-            <id>it</id>
-            <modules>
-                <module>core-integration-tests</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>pluginLifecycle</id>
-            <modules>
-                <module>plugin-lifecycle-tests</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>wired</id>
-            <modules>
-                <module>wired-tests</module>
-            </modules>
-        </profile>
         <profile>
             <id>freezer-release-profile</id>
             <modules>
