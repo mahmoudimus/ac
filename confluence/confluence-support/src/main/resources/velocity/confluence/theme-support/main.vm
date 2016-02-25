@@ -1,15 +1,14 @@
-#* @vtlvariable name="webResourceHelper" type="com.atlassian.confluence.setup.velocity.VelocityFriendlyPageBuilderService" *#
 #* @vtlvariable name="confluenceRemoteTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" *#
 #* @vtlvariable name="addonTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
 #* @vtlvariable name="currentUser" type="com.atlassian.confluence.user.ConfluenceUserImpl" *#
 #* @vtlvariable name="action" type="com.atlassian.confluence.core.ConfluenceActionSupport" *#
 #set($addonTheme = $confluenceRemoteTheme.themeManager.globalTheme)
-<html class="main.vm">
+#set($currentUser = $action.authenticatedUser)
+<html>
 <head>
-$webResourceHelper.requireResource("com.atlassian.plugins.atlassian-connect-plugin:confluence-atlassian-connect-resources")
-$webResourceHelper.getRequiredResources()
+    #parse("/velocity/confluence/theme-support/includes/head.vm")
 </head>
-<body style="margin: 0">
+<body>
 <content tag="connectAddonThemed">true</content>
     ${addonTheme.getRemoteThemeIframe($addonTheme.layoutTypes.main, {
         'username' : $currentUser.fullName,

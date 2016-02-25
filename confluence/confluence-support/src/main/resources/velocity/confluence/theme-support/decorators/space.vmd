@@ -1,0 +1,5 @@
+#if($sitemeshPage.getProperty("page.connectAddonThemed") == "true")
+    #parse("/velocity/confluence/theme-support/includes/theme.vm")
+#else
+    #parse("/decorators/space.vmd")
+#end

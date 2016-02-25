@@ -1,0 +1,12 @@
+#* @vtlvariable name="webResourceHelper" type="com.atlassian.confluence.setup.velocity.VelocityFriendlyPageBuilderService" *#
+
+<html>
+<title>$title</title>
+<head>
+    $head
+    $webResourceHelper.getRequiredResources()
+</head>
+<body style="margin: 0">
+    $body
+</body>
+</html>

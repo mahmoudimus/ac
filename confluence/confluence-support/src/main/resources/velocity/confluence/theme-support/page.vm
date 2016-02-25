@@ -1,16 +1,14 @@
-#* @vtlvariable name="webResourceHelper" type="com.atlassian.confluence.setup.velocity.VelocityFriendlyPageBuilderService" *#
 #* @vtlvariable name="confluenceRemoteTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" *#
 #* @vtlvariable name="addonTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
 #* @vtlvariable name="currentUser" type="com.atlassian.confluence.user.ConfluenceUserImpl" *#
-#* @vtlvariable name="action" type="com.atlassian.confluence.core.ConfluenceActionSupport" *#
+#* @vtlvariable name="action" type="com.atlassian.confluence.pages.actions.ViewPageAction" *#
 #set($addonTheme = $confluenceRemoteTheme.themeManager.getSpaceTheme($action.spaceKey))
 #set($currentUser = $action.authenticatedUser)
-<html class="page.vm">
-<body style="margin: 0">
+<html>
 <head>
-$webResourceHelper.requireResource("com.atlassian.plugins.atlassian-connect-plugin:confluence-atlassian-connect-resources")
-$webResourceHelper.getRequiredResources()
+    #parse("/velocity/confluence/theme-support/includes/head.vm")
 </head>
+<body>
 <content tag="spacekey">$action.spaceKey</content>
 <content tag="connectAddonThemed">true</content>
     ${addonTheme.getRemoteThemeIframe($addonTheme.layoutTypes.page, {
@@ -18,7 +16,7 @@ $webResourceHelper.getRequiredResources()
         'spaceKey': $action.spaceKey,
         'username' : $currentUser.fullName,
         'userKey' : $currentUser.key.stringValue,
-        'contentType':'page'
+        'contentType': $action.page.type
     })}
 </body>
 </html>
