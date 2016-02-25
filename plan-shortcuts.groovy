@@ -196,64 +196,70 @@ testJobsForConfluence(['installMavenParameters', 'testMavenParameters']) {
             testMavenParameters: '#testMavenParameters'
     )
     integrationTestJob(
-            key: 'CITCM',
+            key: 'CITC1',
             product: 'Confluence',
-            testGroup: 'confluence-common-misc',
-            groupName: 'Common Misc',
+            testGroup: 'confluence-common-batches',
+            groupName: 'Common Batch 1',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=3 -DtestBatchRunner.currentBatchNumber=1'
     )
     integrationTestJob(
-            key: 'CITCI',
+            key: 'CITC2',
             product: 'Confluence',
-            testGroup: 'confluence-common-iframe',
-            groupName: 'Common iframe',
+            testGroup: 'confluence-common-batches',
+            groupName: 'Common Batch 2',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=3 -DtestBatchRunner.currentBatchNumber=2'
     )
     integrationTestJob(
-            key: 'CITCL',
+            key: 'CITC3',
             product: 'Confluence',
-            testGroup: 'confluence-common-lifecycle',
-            groupName: 'Common Lifecycle',
+            testGroup: 'confluence-common-batches',
+            groupName: 'Common Batch 3',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=3 -DtestBatchRunner.currentBatchNumber=3'
     )
     confluenceIntegrationTestJob(
-            key: 'CITM',
-            testGroup: 'confluence-misc',
-            groupName: 'Misc',
+            key: 'CIT1',
+            testGroup: 'confluence-batches',
+            groupName: 'Batch 1',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=6 -DtestBatchRunner.currentBatchNumber=1'
     )
     confluenceIntegrationTestJob(
-            key: 'CITI',
-            testGroup: 'confluence-iframe',
-            groupName: 'iframe',
+            key: 'CIT2',
+            testGroup: 'confluence-batches',
+            groupName: 'Batch 2',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=6 -DtestBatchRunner.currentBatchNumber=2'
     )
     confluenceIntegrationTestJob(
-            key: 'CITT',
-            testGroup: 'confluence-item',
-            groupName: 'Item',
+            key: 'CIT3',
+            testGroup: 'confluence-batches',
+            groupName: 'Batch 3',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=6 -DtestBatchRunner.currentBatchNumber=3'
     )
     confluenceIntegrationTestJob(
-            key: 'CITJF',
-            testGroup: 'confluence-jsapi',
-            groupName: 'JS API FF',
+            key: 'CIT4',
+            testGroup: 'confluence-batches',
+            groupName: 'Batch 4',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=6 -DtestBatchRunner.currentBatchNumber=4'
     )
-    integrationTestJob(
-            key: 'CITJFC',
-            product: 'Confluence',
-            testGroup: 'confluence-common-jsapi',
-            groupName: 'JS API Common FF',
+    confluenceIntegrationTestJob(
+            key: 'CIT5',
+            testGroup: 'confluence-batches',
+            groupName: 'Batch 5',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=6 -DtestBatchRunner.currentBatchNumber=5'
+    )
+    confluenceIntegrationTestJob(
+            key: 'CIT6',
+            testGroup: 'confluence-batches',
+            groupName: 'Batch 6',
+            installMavenParameters: '#installMavenParameters',
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=6 -DtestBatchRunner.currentBatchNumber=6'
     )
     confluenceIntegrationTestJob(
             key: 'CITJC',
@@ -269,13 +275,6 @@ testJobsForConfluence(['installMavenParameters', 'testMavenParameters']) {
             groupName: 'JS API Common Chrome',
             installMavenParameters: '#installMavenParameters',
             testMavenParameters: '#testMavenParameters -Dwebdriver.browser=chrome'
-    )
-    confluenceIntegrationTestJob(
-            key: 'CITA',
-            testGroup: 'confluence-macro',
-            groupName: 'Macro',
-            installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
     )
 }
 
@@ -295,64 +294,63 @@ testJobsForJIRA(['installMavenParameters', 'testMavenParameters']) {
             testMavenParameters: '#testMavenParameters'
     )
     integrationTestJob(
-            key: 'JITCM',
+            key: 'JITC1',
             product: 'JIRA',
-            testGroup: 'jira-common-misc',
-            groupName: 'Common Misc',
+            testGroup: 'jira-common-batches',
+            groupName: 'Common Batch 1',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=3 -DtestBatchRunner.currentBatchNumber=1'
     )
     integrationTestJob(
-            key: 'JITCI',
+            key: 'JITC2',
             product: 'JIRA',
-            testGroup: 'jira-common-iframe',
-            groupName: 'Common iframe',
+            testGroup: 'jira-common-batches',
+            groupName: 'Common Batch 2',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=3 -DtestBatchRunner.currentBatchNumber=2'
     )
     integrationTestJob(
-            key: 'JITCL',
+            key: 'JITC3',
             product: 'JIRA',
-            testGroup: 'jira-common-lifecycle',
-            groupName: 'Common Lifecycle',
+            testGroup: 'jira-common-batches',
+            groupName: 'Common Batch 3',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=3 -DtestBatchRunner.currentBatchNumber=3'
     )
     jiraIntegrationTestJob(
-            key: 'JITM',
-            testGroup: 'jira-misc',
-            groupName: 'Misc',
+            key: 'JIT1',
+            testGroup: 'jira-batches',
+            groupName: 'Batch 1',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=5 -DtestBatchRunner.currentBatchNumber=1'
     )
     jiraIntegrationTestJob(
-            key: 'JITI',
-            testGroup: 'jira-iframe',
-            groupName: 'iframe',
+            key: 'JIT2',
+            testGroup: 'jira-batches',
+            groupName: 'Batch 2',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=5 -DtestBatchRunner.currentBatchNumber=2'
     )
     jiraIntegrationTestJob(
-            key: 'JITT',
-            testGroup: 'jira-item',
-            groupName: 'Item',
+            key: 'JIT3',
+            testGroup: 'jira-batches',
+            groupName: 'Batch 3',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=5 -DtestBatchRunner.currentBatchNumber=3'
     )
     jiraIntegrationTestJob(
-            key: 'JITJF',
-            testGroup: 'jira-jsapi',
-            groupName: 'JS API FF',
+            key: 'JIT4',
+            testGroup: 'jira-batches',
+            groupName: 'Batch 4',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=5 -DtestBatchRunner.currentBatchNumber=4'
     )
-    integrationTestJob(
-            key: 'JITJFC',
-            testGroup: 'jira-common-jsapi',
-            product: 'JIRA',
-            groupName: 'JS API FF Common',
+    jiraIntegrationTestJob(
+            key: 'JIT5',
+            testGroup: 'jira-batches',
+            groupName: 'Batch 5',
             installMavenParameters: '#installMavenParameters',
-            testMavenParameters: '#testMavenParameters'
+            testMavenParameters: '#testMavenParameters -DtestBatchRunner.numberOfBatches=5 -DtestBatchRunner.currentBatchNumber=5'
     )
     jiraIntegrationTestJob(
             key: 'JITJC',
