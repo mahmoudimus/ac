@@ -17,7 +17,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import com.atlassian.fugue.Either;
-import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
+import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
 import com.atlassian.plugin.connect.api.property.AddonPropertyIterable;
 import com.atlassian.plugin.connect.api.property.AddonPropertyService;
@@ -28,13 +28,9 @@ import com.atlassian.plugin.connect.plugin.rest.data.RestAddonProperty;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.message.I18nResolver;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * REST endpoint for add-on properties
@@ -47,21 +43,15 @@ public class AddonPropertiesResource
     public static final String VALUE_TOO_LONG_ERROR_MSG = String.format("The value cannot be bigger than %s.", FileUtils.byteCountToDisplaySize(AddonPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH));
     public static final String REST_PATH = "addons/{addonKey}/properties";
 
-    private static final Logger log = LoggerFactory.getLogger(AddonPropertiesResource.class);
-
     private final ApplicationProperties applicationProperties;
     private final AddonPropertyService addonPropertyService;
-    private final AddonKeyExtractor addonKeyExtractor;
     private final I18nResolver i18nResolver;
-    private final UserManager userManager;
 
-    public AddonPropertiesResource(ApplicationProperties applicationProperties, AddonPropertyService addonPropertyService, AddonKeyExtractor addonKeyExtractor, I18nResolver i18nResolver, UserManager userManager)
+    public AddonPropertiesResource(ApplicationProperties applicationProperties, AddonPropertyService addonPropertyService, I18nResolver i18nResolver)
     {
         this.applicationProperties = applicationProperties;
         this.addonPropertyService = addonPropertyService;
-        this.addonKeyExtractor = addonKeyExtractor;
         this.i18nResolver = i18nResolver;
-        this.userManager = userManager;
     }
 
     /**
@@ -76,16 +66,15 @@ public class AddonPropertiesResource
      *      A list of property keys with links to themselves.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.403.doc
+     *      Request for data the authenticated user or add-on does not have permissions to access, e.g. accessing other add-ons properties
      * @response.representation.404.doc
      *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
      */
     @GET
     public Response getAddonProperties(@PathParam ("addonKey") final String addonKey, @Context HttpServletRequest servletRequest)
     {
-        UserProfile user = userManager.getRemoteUser(servletRequest);
-        String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
-
-        return addonPropertyService.getAddonProperties(user, sourcePluginKey, addonKey).fold(
+        return addonPropertyService.getAddonProperties(AuthenticationData.byRequest(servletRequest), addonKey).fold(
                 new Function<AddonPropertyService.OperationStatus, Response>()
                 {
                     @Override
@@ -123,6 +112,8 @@ public class AddonPropertiesResource
      *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.403.doc
+     *      Request for data the authenticated user or add-on does not have permissions to access, e.g. accessing other add-ons properties
      * @response.representation.404.doc
      *      Request to get a property that does not exist.
      * @response.representation.404.doc
@@ -132,10 +123,7 @@ public class AddonPropertiesResource
     @Path ("{propertyKey}")
     public Response getAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") String propertyKey, @QueryParam ("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
     {
-        UserProfile user = userManager.getRemoteUser(servletRequest);
-        String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
-
-        return addonPropertyService.getPropertyValue(user, sourcePluginKey, addonKey, propertyKey).fold(new Function<AddonPropertyService.OperationStatus, Response>()
+        return addonPropertyService.getPropertyValue(AuthenticationData.byRequest(servletRequest), addonKey, propertyKey).fold(new Function<AddonPropertyService.OperationStatus, Response>()
         {
             @Override
             public Response apply(final AddonPropertyService.OperationStatus status)
@@ -175,6 +163,8 @@ public class AddonPropertiesResource
      *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.403.doc
+     *      Request for data the authenticated user or add-on does not have permissions to access, e.g. accessing other add-ons properties
      * @response.representation.404.doc
      *      Request to get a property that does not exist.
      * @response.representation.404.doc
@@ -198,11 +188,7 @@ public class AddonPropertiesResource
             @Override
             public Response apply(final String propertyValue)
             {
-                final UserProfile user = userManager.getRemoteUser(servletRequest);
-                // can be null, it is checked in the service.
-                final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
-
-                return addonPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, propertyKey, propertyValue, eTagValidationFunction(request))
+                return addonPropertyService.setPropertyValueIfConditionSatisfied(AuthenticationData.byRequest(servletRequest), addonKey, propertyKey, propertyValue, eTagValidationFunction(request))
                         .fold(onPreconditionFailed(), onFailure(), onSuccess());
             }
         });
@@ -223,6 +209,8 @@ public class AddonPropertiesResource
      *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.403.doc
+     *      Request for data the authenticated user or add-on does not have permissions to access, e.g. accessing other add-ons properties
      * @response.representation.404.doc
      *      Request to get a property that does not exist.
      * @response.representation.404.doc
@@ -232,11 +220,7 @@ public class AddonPropertiesResource
     @Path ("{propertyKey}")
     public Response deleteAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
     {
-        final UserProfile user = userManager.getRemoteUser(servletRequest);
-        // can be null, it is checked in the service.
-        final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
-
-        return addonPropertyService.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, propertyKey, eTagValidationFunction(request))
+        return addonPropertyService.deletePropertyValueIfConditionSatisfied(AuthenticationData.byRequest(servletRequest), addonKey, propertyKey, eTagValidationFunction(request))
                 .fold(onPreconditionFailed(), onFailure(), onDeleteSuccess());
     }
 
@@ -355,7 +339,9 @@ public class AddonPropertiesResource
         try
         {
             return new String(IOUtils.toCharArray(request.getInputStream()));
-        } catch(IllegalStateException e) {
+        }
+        catch (IllegalStateException e)
+        {
             return new String(IOUtils.toCharArray(request.getReader()));
         }
     }

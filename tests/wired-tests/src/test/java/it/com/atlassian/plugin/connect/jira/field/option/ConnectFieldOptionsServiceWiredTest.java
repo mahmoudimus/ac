@@ -17,7 +17,7 @@ import com.atlassian.jira.util.PageRequest;
 import com.atlassian.jira.util.PageRequests;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.jira.field.FieldId;
-import com.atlassian.plugin.connect.jira.field.option.AuthenticationData;
+import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionService;
 import com.atlassian.plugin.connect.jira.util.Json;

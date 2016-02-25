@@ -360,6 +360,10 @@
                                 <placement>f</placement>
                             </tag>
                             <tag>
+                                <name>response.representation.403.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
                                 <name>response.representation.404.doc</name>
                                 <placement>f</placement>
                             </tag>
