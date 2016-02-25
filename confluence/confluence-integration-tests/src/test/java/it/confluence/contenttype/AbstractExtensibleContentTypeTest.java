@@ -61,7 +61,7 @@ public abstract class AbstractExtensibleContentTypeTest extends ConfluenceWebDri
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(restrictedContainer)
                         .withSupportedContainedTypes(restrictedContained)
-                        .withIndexing(new IndexingBean(false, ""))
+                        .withIndexing(new IndexingBean(true, ""))
                         .build())
                 .build();
     }

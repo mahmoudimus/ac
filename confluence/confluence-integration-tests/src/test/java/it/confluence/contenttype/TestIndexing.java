@@ -37,12 +37,12 @@ public class TestIndexing extends AbstractExtensibleContentTypeTest {
         // Test can find content1
         List<PageElement> results1 = product.visit(SearchPage.class).searchQuery("123").results();
         assertThat(Iterables.any(results1, result -> result.getText().contains("123")), is(true));
-        List<PageElement> results3 = product.visit(SearchPage.class).searchQuery("body1").results();
-        assertThat(Iterables.any(results3, result -> result.getText().contains("123")), is(true));
+        List<PageElement> results2 = product.visit(SearchPage.class).searchQuery("body1").results();
+        assertThat(Iterables.any(results2, result -> result.getText().contains("123")), is(true));
 
         // Test can find content2
-        List<PageElement> results2 = product.visit(SearchPage.class).searchQuery("456").results();
-        assertThat(Iterables.any(results2, result -> result.getText().contains("456")), is(true));
+        List<PageElement> results3 = product.visit(SearchPage.class).searchQuery("456").results();
+        assertThat(Iterables.any(results3, result -> result.getText().contains("456")), is(true));
         List<PageElement> results4 = product.visit(SearchPage.class).searchQuery("body2").results();
         assertThat(Iterables.any(results4, result -> result.getText().contains("456")), is(true));
     }
@@ -93,6 +93,8 @@ public class TestIndexing extends AbstractExtensibleContentTypeTest {
 
         createContent(buildContent(contentType1, null, CONTENT_TITLE + " indexingEnabled", "body1"));
         createContent(buildContent(contentType2, null, CONTENT_TITLE + " indexingDisabled", "body2"));
+
+        rpc.flushIndexQueue();
 
         login(user);
 
