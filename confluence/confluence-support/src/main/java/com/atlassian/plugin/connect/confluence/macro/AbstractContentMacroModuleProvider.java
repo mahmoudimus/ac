@@ -54,9 +54,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                                               HostContainer hostContainer,
                                               AbsoluteAddonUrlConverter absoluteAddonUrlConverter,
                                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
-
-    {
+                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
