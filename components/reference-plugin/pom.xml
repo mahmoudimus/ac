@@ -43,20 +43,6 @@
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
-            <version>${atlassian.spring.scanner.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner-processor</artifactId>
-            <version>${atlassian.spring.scanner.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner-runtime</artifactId>
-            <version>${atlassian.spring.scanner.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -87,10 +73,6 @@
                         <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
                         <Spring-Context>*</Spring-Context>
                         <Import-Package>
-                            <!-- Referenced by Spring Scanner for compatibility with Plugins 3, but isn't present
-                            and isn't needed, so we need to explicitly set it as optional -->
-                            org.springframework.osgi.*;resolution:="optional",
-
                             <!-- Clover references classes it doesn't bundle so we need them to be optional -->
                             *;resolution:=optional
 

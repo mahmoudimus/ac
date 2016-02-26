@@ -87,9 +87,6 @@
                             <phase>process-classes</phase>
                         </execution>
                     </executions>
-                    <configuration>
-                        <includeExclude>-com.atlassian.plugin.spring.scanner.annotation.*</includeExclude>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -737,21 +734,7 @@
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-annotation</artifactId>
                 <version>${atlassian.spring.scanner.version}</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.atlassian.plugin</groupId>
-                <artifactId>atlassian-spring-scanner-processor</artifactId>
-                <version>${atlassian.spring.scanner.version}</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.atlassian.plugin</groupId>
-                <artifactId>atlassian-spring-scanner-runtime</artifactId>
-                <version>${atlassian.spring.scanner.version}</version>
-                <scope>runtime</scope>
             </dependency>
 
             <dependency>
@@ -971,7 +954,7 @@
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.2.12</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>2.0.0</atlassian.spring.scanner.version>
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
         <skipTests>false</skipTests>

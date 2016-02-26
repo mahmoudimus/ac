@@ -19,7 +19,6 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -47,8 +46,8 @@ import javax.inject.Inject;
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
 @SuppressWarnings("ALL")
-@Scanned
 public class CommonImports {
+
     @Inject
     public CommonImports(
             @ComponentImport PluginController pluginController,
@@ -87,6 +86,5 @@ public class CommonImports {
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
             @ComponentImport CrowdService crowdService,
             @ComponentImport DarkFeatureManager darkFeatureManager,
-            @ComponentImport ActiveObjects activeObjects) {
-    }
+            @ComponentImport ActiveObjects activeObjects) {}
 }

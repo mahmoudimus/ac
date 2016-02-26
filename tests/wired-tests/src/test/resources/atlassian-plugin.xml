@@ -4,6 +4,7 @@
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <bundle-instructions>
+            <Spring-Context>*</Spring-Context>
             <Import-Package>
                 com.atlassian.plugin.connect*,
                 *;resolution:=optional

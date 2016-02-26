@@ -24,7 +24,6 @@ import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.web.context.HttpContext;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.core.task.MultiQueueTaskManager;
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ConfluenceImport;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -35,8 +34,8 @@ import javax.inject.Inject;
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
 @SuppressWarnings("ALL")
-@Scanned
 public class ConfluenceImports {
+
     @Inject
     public ConfluenceImports(
             @ConfluenceImport BandanaManager bandanaManager,
@@ -62,6 +61,5 @@ public class ConfluenceImports {
             @ConfluenceImport PageTemplateManager pageTemplateManager,
             @ConfluenceImport FavouriteManager favouriteManager,
             @ConfluenceImport NotificationManager notificationManager,
-            @ConfluenceImport ContentBodyConversionService converter) {
-    }
+            @ConfluenceImport ContentBodyConversionService converter) {}
 }

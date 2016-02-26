@@ -48,7 +48,6 @@ import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.velocity.VelocityRequestContextFactory;
 import com.atlassian.jira.web.FieldVisibilityManager;
 import com.atlassian.jira.web.session.SessionSearchObjectManagerFactory;
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
 
@@ -59,8 +58,8 @@ import javax.inject.Inject;
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
 @SuppressWarnings("ALL")
-@Scanned
 public class JiraImports {
+
     @Inject
     public JiraImports(
             @JiraImport("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
@@ -111,6 +110,5 @@ public class JiraImports {
             @JiraImport IssueTypePropertyService issueTypePropertyService,
             @JiraImport ProjectPropertyService projectPropertyService,
             @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
-            @JiraImport IssueTypeService issueTypeService) {
-    }
+            @JiraImport IssueTypeService issueTypeService) {}
 }

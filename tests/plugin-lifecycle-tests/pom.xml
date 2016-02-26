@@ -116,10 +116,6 @@
 
                     <testBundleExcludes>
                         <testBundleExclude>
-                            <groupId>com.atlassian.plugin</groupId>
-                            <artifactId>atlassian-spring-scanner-runtime</artifactId>
-                        </testBundleExclude>
-                        <testBundleExclude>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>atlassian-connect-modules</artifactId>
                         </testBundleExclude>

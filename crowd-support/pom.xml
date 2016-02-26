@@ -26,7 +26,6 @@
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>

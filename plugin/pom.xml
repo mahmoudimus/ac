@@ -58,19 +58,6 @@
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.plugin</groupId>
-            <artifactId>atlassian-spring-scanner-runtime</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -487,13 +474,9 @@
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <testBundleExcludes>
                         <testBundleExclude>
-                            <groupId>com.atlassian.plugin</groupId>
-                            <artifactId>atlassian-spring-scanner</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>atlassian-connect-modules</artifactId>
                         </testBundleExclude>
-                        <testBundleExclude>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>atlassian-connect-modules</artifactId>
-                    </testBundleExclude>
                         <testBundleExclude>
                             <groupId>com.google.code.gson</groupId>
                             <artifactId>gson</artifactId>
