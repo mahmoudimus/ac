@@ -2,16 +2,13 @@ package com.atlassian.plugin.connect.confluence.theme;
 
 import com.atlassian.confluence.plugin.descriptor.LayoutModuleDescriptor;
 import com.atlassian.confluence.themes.ThemedDecorator;
-import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.sal.api.net.RequestFactory;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -25,19 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFactory<ConfluenceThemeModuleBean, LayoutModuleDescriptor> {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceLayoutModuleFactory.class);
     private final ModuleFactory moduleFactory;
-    private final I18NBeanFactory i18nBeanFactory;
-    private final RequestFactory<?> requestFactory;
-    private final PluginAccessor pluginAccessor;
 
     @Autowired
-    public ConfluenceLayoutModuleFactory(ModuleFactory moduleFactory,
-                                         I18NBeanFactory i18nBeanFactory,
-                                         RequestFactory<?> requestFactory,
-                                         PluginAccessor pluginAccessor) {
+    public ConfluenceLayoutModuleFactory(ModuleFactory moduleFactory) {
         this.moduleFactory = moduleFactory;
-        this.i18nBeanFactory = i18nBeanFactory;
-        this.requestFactory = requestFactory;
-        this.pluginAccessor = pluginAccessor;
     }
 
     @Override
@@ -82,6 +70,7 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
 
         @Override
         public Class<ThemedDecorator> getModuleClass() {
+            //deliberately don't call super.getModuleClass() - that fails when this module is registered dynamically
             if (hackedModuleClazz == null) {
                 hackedModuleClazz = moduleFactory.createModule(getModuleClassName(), this).getClass();
             }

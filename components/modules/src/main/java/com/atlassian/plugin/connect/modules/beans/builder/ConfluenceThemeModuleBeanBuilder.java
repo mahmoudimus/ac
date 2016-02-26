@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteInterceptionsBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
 /**
@@ -10,9 +11,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 public class ConfluenceThemeModuleBeanBuilder extends RequiredKeyBeanBuilder<ConfluenceThemeModuleBeanBuilder, ConfluenceThemeModuleBean> {
     private ConfluenceThemeRouteInterceptionsBean routes;
     private IconBean icon;
+    private I18nProperty description;
 
     public ConfluenceThemeModuleBeanBuilder withRoutes(ConfluenceThemeRouteInterceptionsBean routes) {
         this.routes = routes;
+        return this;
+    }
+
+    public ConfluenceThemeModuleBeanBuilder withDescription(I18nProperty description) {
+        this.description = description;
         return this;
     }
 

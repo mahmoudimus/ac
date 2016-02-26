@@ -60,8 +60,19 @@ public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedThe
         return addonKey;
     }
 
-    public Constants getLayoutTypes() {
-        return new Constants();
+    public String getThemeKey() {
+        return themeKey;
+    }
+
+    @Override
+    public boolean hasSpaceSideBar() {
+        //this is true, not because we want the sidebar, but because we want pages _not_ under an addon remote theme
+        //to have the sidebar.
+        return true;
+    }
+
+    public NavigationInfoConstants getNavigationInfo() {
+        return new NavigationInfoConstants();
     }
 
     /**
@@ -69,12 +80,12 @@ public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedThe
      * Not intended to be used by other plugins.
      */
     @Internal
-    public static final class Constants {
+    public static final class NavigationInfoConstants {
         public NavigationTargetOverrideInfo getBlog() {
             return NavigationTargetOverrideInfo.blogpost;
         }
 
-        public NavigationTargetOverrideInfo getMain() {
+        public NavigationTargetOverrideInfo getDashboard() {
             return NavigationTargetOverrideInfo.dashboard;
         }
 

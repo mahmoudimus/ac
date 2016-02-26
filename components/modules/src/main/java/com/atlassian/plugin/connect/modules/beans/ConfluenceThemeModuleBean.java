@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.ConfluenceThemeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteInterceptionsBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
@@ -15,6 +16,8 @@ public class ConfluenceThemeModuleBean extends RequiredKeyBean {
     private ConfluenceThemeRouteInterceptionsBean routes;
 
     private IconBean icon;
+
+    private I18nProperty description;
 
     public ConfluenceThemeModuleBean(ConfluenceThemeModuleBeanBuilder builder) {
         super(builder);
@@ -31,5 +34,9 @@ public class ConfluenceThemeModuleBean extends RequiredKeyBean {
 
     public IconBean getIcon() {
         return icon;
+    }
+
+    public I18nProperty getDescription() {
+        return description;
     }
 }

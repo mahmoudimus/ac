@@ -78,6 +78,8 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
         dom.addAttribute("name", i18nBeanFactory.getI18NBean().getText(themeBean.getName().getKeyOrValue()));
         dom.addAttribute("class", ConfluenceRemoteAddonTheme.class.getName());
         dom.addAttribute("disable-sitemesh", "false");
+        dom.addElement("description")
+           .addText(i18nBeanFactory.getI18NBean().getText(themeBean.getDescription().getKeyOrValue()));
         dom.addElement("resource").addAttribute("name", THEME_ICON_NAME)
            .addAttribute("type", "download")
            .addAttribute("location", addon.getBaseUrl() + themeBean.getIcon().getUrl());
@@ -96,25 +98,12 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
                    .addAttribute("name", ConfluenceThemeUtils.getOverrideTypeName(overrideInfo))
                    .addAttribute("value", routeBean.getUrl());
 
-                IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                                                                                        .addon(addon.getKey())
-                                                                                        .module(themeBean.getRawKey())
-                                                                                        .genericBodyTemplate()
-                                                                                        .urlTemplate(routeBean.getUrl())
-                                                                                        .ensureUniqueNamespace(false)
-                                                                                        .dimensions("100%", "100%")
-                                                                                        .sign(true)
-                                                                                        .build();
-                iFrameRenderStrategyRegistry.register(addon.getKey(),
-                                                      themeBean.getRawKey(),
-                                                      overrideInfo.name(),
-                                                      renderStrategy);
+                registerIframeRenderStrategy(themeBean, addon, routeBean, overrideInfo);
             }
         }
         for (LayoutModuleDescriptor layout : layouts) {
             dom.addElement("layout")
-               //TODO: dont hardcode this plugin key here
-               .addAttribute("key", "com.atlassian.plugins.atlassian-connect-plugin:" + layout.getKey());
+               .addAttribute("key", plugin.getKey() + ":" + layout.getKey());
         }
 
         dom.addElement("param")
@@ -134,16 +123,36 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
         return themeModuleDescriptor;
     }
 
+    private void registerIframeRenderStrategy(ConfluenceThemeModuleBean themeBean,
+                                              ConnectAddonBean addon,
+                                              ConfluenceThemeRouteBean routeBean,
+                                              NavigationTargetOverrideInfo overrideInfo) {
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                                                                                .addon(addon.getKey())
+                                                                                .module(themeBean.getRawKey())
+                                                                                .genericBodyTemplate()
+                                                                                .urlTemplate(routeBean.getUrl())
+                                                                                .ensureUniqueNamespace(false)
+                                                                                .dimensions("100%", "100%")
+                                                                                .sign(true)
+                                                                                .build();
+        iFrameRenderStrategyRegistry.register(addon.getKey(),
+                                              themeBean.getRawKey(),
+                                              overrideInfo.name(),
+                                              renderStrategy);
+    }
+
     //this class hacks around bug : https://ecosystem.atlassian.net/browse/PLUG-1177
     private static class ConnectThemeModuleDescriptor extends ThemeModuleDescriptor {
         private Class<? extends Theme> hackedModuleClazz;
 
-        public ConnectThemeModuleDescriptor(final ModuleFactory moduleFactory, final PluginAccessor pluginAccessor) {
+        ConnectThemeModuleDescriptor(final ModuleFactory moduleFactory, final PluginAccessor pluginAccessor) {
             super(moduleFactory, pluginAccessor);
         }
 
         @Override
         public Class<Theme> getModuleClass() {
+            //deliberately don't call super.getModuleClass() - that fails when this module is registered dynamically
             if (hackedModuleClazz == null) {
                 hackedModuleClazz = moduleFactory.createModule(getModuleClassName(), this).getClass();
             }

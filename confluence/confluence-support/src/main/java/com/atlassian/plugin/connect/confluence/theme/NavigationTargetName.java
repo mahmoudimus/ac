@@ -1,24 +1,28 @@
 package com.atlassian.plugin.connect.confluence.theme;
 
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * The enum values should match the navigation targets specified in
+ * <a href="https://developer.atlassian.com/static/connect/docs/latest/javascript/Navigator-target.html">the connect developer docs</a>.
  */
 public enum NavigationTargetName {
     dashboard,
     spaceview,
     contentview;
-
-    //just a cache for easy access (since this will be read on every load)
+    private static final Logger log = LoggerFactory.getLogger(NavigationTargetName.class);
     private static final Map<NavigationTargetName, List<NavigationTargetOverrideInfo>> navTargetNameMap;
 
     static {
-        navTargetNameMap = Maps.newHashMap();
+        navTargetNameMap = Maps.newEnumMap(NavigationTargetName.class);
         for (NavigationTargetOverrideInfo navTarget : NavigationTargetOverrideInfo.values()) {
             if (!navTargetNameMap.containsKey(navTarget.getNavigationTargetName())) {
                 navTargetNameMap.put(navTarget.getNavigationTargetName(), new ArrayList<>(1));
@@ -28,7 +32,12 @@ public enum NavigationTargetName {
     }
 
     public static List<NavigationTargetOverrideInfo> forNavigationTargetName(String navTargetName) {
-        return navTargetNameMap.get(valueOf(navTargetName));
+        try {
+            return Collections.unmodifiableList(navTargetNameMap.get(valueOf(navTargetName)));
+        } catch (IllegalArgumentException e) {
+            log.error("unknown navigation target name:" + navTargetName + ". Should be one of " + Arrays.toString(values()));
+            return Collections.emptyList();
+        }
     }
 
 }

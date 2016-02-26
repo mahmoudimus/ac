@@ -5,12 +5,13 @@
 #set($addonTheme = $confluenceRemoteTheme.themeManager.globalTheme)
 #set($currentUser = $action.authenticatedUser)
 <html>
+<title>$action.getText("title.dashboard")</title>
 <head>
     #parse("/velocity/confluence/theme-support/includes/head.vm")
 </head>
 <body>
 <content tag="connectAddonThemed">true</content>
-    ${addonTheme.getRemoteThemeIframe($addonTheme.layoutTypes.main, {
+    ${addonTheme.getRemoteThemeIframe($addonTheme.navigationInfo.dashboard, {
         'username' : $currentUser.fullName,
         'userKey' : $currentUser.key.stringValue
     })}

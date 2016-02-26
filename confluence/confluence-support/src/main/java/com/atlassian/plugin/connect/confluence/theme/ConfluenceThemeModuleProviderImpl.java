@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModulePr
 import com.atlassian.plugin.connect.modules.beans.ConfluenceThemeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteInterceptionsBean;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -17,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.atlassian.plugin.connect.confluence.theme.ConfluenceThemeUtils.filterProperties;
 
 /**
  *
@@ -58,21 +59,22 @@ public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnect
         return descriptors;
     }
 
+    /**
+     * Turn each routes in the moduleBean given into the correct LayoutModuleDescriptors.
+     */
     private List<LayoutModuleDescriptor> makeLayouts(ConnectAddonBean addon, Plugin plugin, ConfluenceThemeModuleBean moduleBean) {
-        ConfluenceThemeRouteInterceptionsBean routes = moduleBean.getRoutes();
-        return ConfluenceThemeUtils.filterProperties(routes)
-                                   .stream()
-                                   .flatMap(routeProperty -> {
-                                       List<NavigationTargetOverrideInfo> type = NavigationTargetName.forNavigationTargetName(
-                                               routeProperty.getName());
-                                       return Lists.transform(
-                                               type,
-                                               overrideInfo -> layoutModuleFactory.createModuleDescriptor(
-                                                       addon,
-                                                       plugin,
-                                                       moduleBean,
-                                                       overrideInfo)).stream();
-                                   })
-                                   .collect(Collectors.toList());
+        return filterProperties(moduleBean.getRoutes())
+                .stream()
+                .flatMap(routeProperty -> {
+                    List<NavigationTargetOverrideInfo> type = NavigationTargetName.forNavigationTargetName(routeProperty.getName());
+                    return Lists.transform(
+                            type,
+                            overrideInfo -> layoutModuleFactory.createModuleDescriptor(addon,
+                                                                                       plugin,
+                                                                                       moduleBean,
+                                                                                       overrideInfo)
+                    ).stream();
+                })
+                .collect(Collectors.toList());
     }
 }

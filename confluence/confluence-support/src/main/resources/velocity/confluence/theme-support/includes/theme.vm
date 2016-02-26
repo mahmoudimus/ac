@@ -1,7 +1,9 @@
+#* @vtlvariable name="theme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
+#* @vtlvariable name="settingsManager" type="com.atlassian.confluence.setup.settings.SettingsManager" *#
 #* @vtlvariable name="webResourceHelper" type="com.atlassian.confluence.setup.velocity.VelocityFriendlyPageBuilderService" *#
-
+<!-- theme: $generalUtil.htmlEncode($theme.addonKey):$generalUtil.htmlEncode($theme.themeKey)  -->
 <html>
-<title>$title</title>
+<title>$title - $settingsManager.globalSettings.siteTitle</title>
 <head>
     $head
     $webResourceHelper.getRequiredResources()

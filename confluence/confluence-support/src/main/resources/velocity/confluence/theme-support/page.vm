@@ -5,13 +5,14 @@
 #set($addonTheme = $confluenceRemoteTheme.themeManager.getSpaceTheme($action.spaceKey))
 #set($currentUser = $action.authenticatedUser)
 <html>
+<title>$action.page.title</title>
 <head>
     #parse("/velocity/confluence/theme-support/includes/head.vm")
 </head>
 <body>
 <content tag="spacekey">$action.spaceKey</content>
 <content tag="connectAddonThemed">true</content>
-    ${addonTheme.getRemoteThemeIframe($addonTheme.layoutTypes.page, {
+    ${addonTheme.getRemoteThemeIframe($addonTheme.navigationInfo.page, {
         'contentId': "$action.page.id",
         'spaceKey': $action.spaceKey,
         'username' : $currentUser.fullName,

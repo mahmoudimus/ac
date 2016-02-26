@@ -1,4 +1,5 @@
 ## contains the common webresources we need for each addon themed
 #* @vtlvariable name="webResourceHelper" type="com.atlassian.confluence.setup.velocity.VelocityFriendlyPageBuilderService" *#
 
+$webResourceHelper.requireResource("confluence.web.resources:general-analytics-bindings")
 $webResourceHelper.requireResource("com.atlassian.plugins.atlassian-connect-plugin:confluence-atlassian-connect-resources")
