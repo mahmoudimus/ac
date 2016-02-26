@@ -60,9 +60,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.atlassian</groupId>
+            <artifactId>test-batching</artifactId>
+            <version>1.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>confluence-test-utils</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.4</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -346,7 +353,7 @@
 
                     <testGroups>
                         <testGroup>
-                            <id>confluence-misc</id>
+                            <id>confluence-batches</id>
                             <productIds>
                                 <productId>confluence</productId>
                             </productIds>
@@ -354,37 +361,7 @@
                                 <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
-                                <include>it/confluence/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/confluence/iframe/*.java</exclude>
-                                <exclude>it/confluence/item/*.java</exclude>
-                                <exclude>it/confluence/jsapi/*.java</exclude>
-                                <exclude>it/confluence/macro/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-iframe</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-item</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/item/*.java</include>
+                                <include>it/confluence/ConfluenceIntegrationTestBatch.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -397,18 +374,6 @@
                             </systemProperties>
                             <includes>
                                 <include>it/confluence/jsapi/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-macro</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/macro/*.java</include>
                             </includes>
                         </testGroup>
                     </testGroups>
