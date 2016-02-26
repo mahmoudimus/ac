@@ -6,6 +6,7 @@ import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.user.User;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -36,9 +37,9 @@ public class ConfluenceMentionEventMapper extends ConfluenceEventMapper {
     private Map<String, Object> mentionToMap(ConfluenceMentionEvent mentionEvent) {
         ImmutableMap.Builder<String, Object> mention = ImmutableMap.builder();
         mention.put("mentionedUser", userProfileToMap(mentionEvent.getMentionedUserProfile()));
-        ConfluenceUser source = mentionEvent.getMentioningUser();
+        User source = mentionEvent.getMentioningUser();
         if (source != null) {
-            UserProfile profile = userManager.getUserProfile(source.getKey());
+            UserProfile profile = userManager.getUserProfile(source.getName());
             if (profile != null) {
                 mention.put("mentioningUser", userProfileToMap(profile));
             }

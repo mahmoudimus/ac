@@ -44,7 +44,6 @@ import com.atlassian.confluence.event.events.user.UserReactivateEvent;
 import com.atlassian.confluence.event.events.user.UserRemoveEvent;
 import com.atlassian.confluence.plugins.createcontent.api.events.BlueprintPageCreateEvent;
 import com.atlassian.confluence.plugins.mentions.api.ConfluenceMentionEvent;
-import com.atlassian.confluence.plugins.tasklist.event.ConfluenceTaskV2CreateEvent;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
