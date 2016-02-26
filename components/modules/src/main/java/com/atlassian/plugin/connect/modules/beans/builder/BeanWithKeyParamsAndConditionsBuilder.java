@@ -30,8 +30,7 @@ public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAn
     }
 
     public T withConditions(Collection<? extends ConditionalBean> beans) {
-        if (beans != null) // not sure why this comes in as null sometimes
-        {
+        if (beans != null) {
             if (null == conditions) {
                 conditions = newArrayList();
             }

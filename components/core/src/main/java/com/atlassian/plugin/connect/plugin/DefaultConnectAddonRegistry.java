@@ -130,8 +130,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry {
         try {
             for (String addonKey : getAddonKeySet()) {
                 final String json = getRawAddonSettings(addonKey);
-                if (json != null) // paranoid; check settings actually exist
-                {
+                if (json != null) { // paranoid; check settings actually exist
                     final AddonSettings addonSettings = deserializeAddonSettings(gson, json);
                     allAddonSettings.add(addonSettings);
                 } else {
