@@ -24,11 +24,18 @@
                 <version>${confluence-mentions.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian.confluence.plugins</groupId>
+                <artifactId>confluence-inline-tasks</artifactId>
+                <version>${confluence-inline-tasks.version}</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <properties>
         <confluence-mentions.version>1.9.23-SNAPSHOT</confluence-mentions.version>
+        <confluence-inline-tasks.version>6.0.3-SNAPSHOT</confluence-inline-tasks.version>
     </properties>
 
     <profiles>

@@ -33,6 +33,7 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
                 new LabelEventMapper(userManager, confluenceSettingsManager),
                 new UserEventMapper(userManager, confluenceSettingsManager),
                 new ConfluenceMentionEventMapper(userManager, confluenceSettingsManager),
+                new ConfluenceTaskCreateEventMapper(userManager, confluenceSettingsManager),
                 new SearchPerformedEventMapper(userManager, confluenceSettingsManager),
                 new AttachmentEventMapper(userManager, confluenceSettingsManager),
                 new PageChildrenReorderEventMapper(userManager, confluenceSettingsManager),

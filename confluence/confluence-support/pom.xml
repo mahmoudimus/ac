@@ -77,6 +77,11 @@
             <artifactId>confluence-mentions-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.confluence.plugins</groupId>
+            <artifactId>confluence-inline-tasks</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.httpclient</groupId>

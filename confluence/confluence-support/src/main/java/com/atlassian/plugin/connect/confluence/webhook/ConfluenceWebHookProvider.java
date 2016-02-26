@@ -75,6 +75,7 @@ public class ConfluenceWebHookProvider implements WebHookProvider {
         publish.webhook("user_created").whenFired(UserCreateEvent.class).serializedWith(serializer);
         publish.webhook("user_followed").whenFired(FollowEvent.class).serializedWith(serializer);
         publish.webhook("user_mention").whenFired(ConfluenceMentionEvent.class).serializedWith(serializer);
+        publish.webhook("user_task_created").whenFired(ConfluenceTaskV2CreateEvent.class).serializedWith(serializer);
         publish.webhook("space_permissions_updated").whenFired(SpacePermissionsUpdateEvent.class).serializedWith(serializer);
         publish.webhook("space_removed").whenFired(SpaceRemoveEvent.class).serializedWith(serializer);
         publish.webhook("space_logo_updated").whenFired(SpaceLogoUpdateEvent.class).serializedWith(serializer);
