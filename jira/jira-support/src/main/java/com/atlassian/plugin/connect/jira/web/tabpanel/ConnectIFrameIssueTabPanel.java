@@ -57,6 +57,8 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3 {
     protected void populateConditionContext(Map<String, Object> conditionContext, ShowPanelRequest request) {
         JiraHelper helper = new JiraHelper(ExecutingHttpRequest.get(), request.issue().getProjectObject(),
                 ImmutableMap.<String, Object>of("issue", request.issue()));
+        conditionContext.put("issue", request.issue());
+        conditionContext.put("project", request.issue().getProjectObject());
         conditionContext.put(CONTEXT_KEY_HELPER, helper);
         if (!request.isAnonymous()) {
             ApplicationUser user = request.remoteUser();
