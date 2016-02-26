@@ -58,6 +58,8 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3 {
         JiraHelper helper = new JiraHelper(ExecutingHttpRequest.get(), request.issue().getProjectObject(),
                 ImmutableMap.<String, Object>of("issue", request.issue()));
         conditionContext.put(CONTEXT_KEY_HELPER, helper);
+        conditionContext.put("issue", request.issue());
+        conditionContext.put("project", request.issue().getProjectObject());
         if (!request.isAnonymous()) {
             ApplicationUser user = request.remoteUser();
             if (user != null) {
