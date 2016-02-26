@@ -16,6 +16,21 @@
         <module>confluence-support</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.atlassian.confluence.plugins</groupId>
+                <artifactId>confluence-mentions-plugin</artifactId>
+                <version>${confluence-mentions.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <properties>
+        <confluence-mentions.version>1.9.23-SNAPSHOT</confluence-mentions.version>
+    </properties>
+
     <profiles>
         <profile>
             <id>it</id>

@@ -32,6 +32,7 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
         mappers = ImmutableList.of(
                 new LabelEventMapper(userManager, confluenceSettingsManager),
                 new UserEventMapper(userManager, confluenceSettingsManager),
+                new ConfluenceMentionEventMapper(userManager, confluenceSettingsManager),
                 new SearchPerformedEventMapper(userManager, confluenceSettingsManager),
                 new AttachmentEventMapper(userManager, confluenceSettingsManager),
                 new PageChildrenReorderEventMapper(userManager, confluenceSettingsManager),
