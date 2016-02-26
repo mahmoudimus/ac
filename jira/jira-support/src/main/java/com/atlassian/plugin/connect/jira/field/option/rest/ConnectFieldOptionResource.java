@@ -59,7 +59,7 @@ public class ConnectFieldOptionResource
     {
         PageRequest pageRequest = PageRequests.request(startAt, maxResults);
 
-        ServiceOutcome<Page<ConnectFieldOption>> allOptions = connectFieldOptionService.getAllOptions(
+        ServiceOutcome<Page<ConnectFieldOption>> allOptions = connectFieldOptionService.getOptions(
                 AuthenticationData.byRequest(servletRequest),
                 FieldId.of(addonKey, fieldKey),
                 pageRequest);

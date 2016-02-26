@@ -98,7 +98,7 @@ public class ConnectFieldOptionsServiceWiredTest
         assertTrue(result.isValid());
         assertEquals(expectedResult, result.get());
 
-        Page<ConnectFieldOption> allOptions = connectFieldOptionService.getAllOptions(auth, fieldId, UNLIMITED_PAGE).get();
+        Page<ConnectFieldOption> allOptions = connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE).get();
         assertEquals(ImmutableList.of(expectedResult), allOptions.getValues());
     }
 
@@ -107,7 +107,7 @@ public class ConnectFieldOptionsServiceWiredTest
     {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"", "\"d\"", "\"e\"");
 
-        List<ConnectFieldOption> options = connectFieldOptionService.getAllOptions(auth, fieldId, UNLIMITED_PAGE).get().getValues();
+        List<ConnectFieldOption> options = connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE).get().getValues();
         assertEquals(ImmutableList.of(
                         ConnectFieldOption.of(1, Json.parse("\"a\"").get()),
                         ConnectFieldOption.of(2, Json.parse("\"b\"").get()),
@@ -127,7 +127,7 @@ public class ConnectFieldOptionsServiceWiredTest
         createOption(fieldId, "\"a\"").getId();
         createOption(fieldId, "\"b\"").getId();
 
-        Set<Integer> ids = connectFieldOptionService.getAllOptions(auth, fieldId, UNLIMITED_PAGE).get().getValues().stream().map(ConnectFieldOption::getId).collect(toSet());
+        Set<Integer> ids = connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE).get().getValues().stream().map(ConnectFieldOption::getId).collect(toSet());
 
         assertEquals(4, ids.size());
     }
@@ -196,7 +196,7 @@ public class ConnectFieldOptionsServiceWiredTest
                 data -> connectFieldOptionService.replaceInAllIssues(data, fieldId, 1, 2),
                 data -> connectFieldOptionService.getOption(data, fieldId, 1),
                 data -> connectFieldOptionService.removeOption(data, fieldId, 1),
-                data -> connectFieldOptionService.getAllOptions(data, fieldId, UNLIMITED_PAGE));
+                data -> connectFieldOptionService.getOptions(data, fieldId, UNLIMITED_PAGE));
 
         notAuthorized.forEach(data -> methods.forEach(method -> {
             ServiceResult result = method.apply(data);

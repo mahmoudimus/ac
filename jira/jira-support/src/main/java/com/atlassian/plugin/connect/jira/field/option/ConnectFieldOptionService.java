@@ -45,7 +45,7 @@ public interface ConnectFieldOptionService
      * @param pageRequest requested page
      * @return a page of all options
      */
-    ServiceOutcome<Page<ConnectFieldOption>> getAllOptions(AuthenticationData auth, FieldId fieldId, PageRequest pageRequest);
+    ServiceOutcome<Page<ConnectFieldOption>> getOptions(AuthenticationData auth, FieldId fieldId, PageRequest pageRequest);
 
     /**
      * Get an option with a particular id for a specified field

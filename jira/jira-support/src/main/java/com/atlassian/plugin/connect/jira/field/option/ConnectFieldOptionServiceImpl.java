@@ -79,11 +79,11 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
     }
 
     @Override
-    public ServiceOutcome<Page<ConnectFieldOption>> getAllOptions(AuthenticationData auth, final FieldId fieldId, PageRequest pageRequest)
+    public ServiceOutcome<Page<ConnectFieldOption>> getOptions(AuthenticationData auth, final FieldId fieldId, PageRequest pageRequest)
     {
         return authenticated(auth, fieldId, () -> {
-            Pair<List<ConnectFieldOption>, Long> options = connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey(), pageRequest);
-            return successOutcome(Pages.page(options.left(), options.right(), pageRequest));
+            Page<ConnectFieldOption> options = connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey(), pageRequest);
+            return successOutcome(options);
         });
     }
 
@@ -138,7 +138,7 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService
 
             return ServiceOutcomes.toEither(getOption(fieldId, to))
                     .left().map(ServiceOutcomes::errorResult)
-                    .left().on(toOption -> {
+                    .left().on(newValue -> {
                         customFieldValueManager.replace(fieldId, from, to);
                         return successResult();
                     });
