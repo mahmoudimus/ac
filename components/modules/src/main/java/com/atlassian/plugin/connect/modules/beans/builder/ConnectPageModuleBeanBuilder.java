@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class ConnectPageModuleBeanBuilder<T extends ConnectPageModuleBeanBuilder, B extends ConnectPageModuleBean> extends BeanWithKeyParamsAndConditionsBuilder<T, B> {
     private String url;
     private Integer weight;

@@ -60,7 +60,7 @@ public abstract class ModuleListDeserializer implements JsonDeserializer<Map<Str
     protected void throwUnknownModuleType(String moduleTypeKey) throws ConnectModuleValidationException {
         throw new ConnectModuleValidationException(
                 addon,
-                new ConnectModuleMeta(moduleTypeKey, ModuleBean.class) {
+                new ConnectModuleMeta<ModuleBean>(moduleTypeKey, ModuleBean.class) {
                 },
                 "No provider found for module type " + moduleTypeKey + " referenced in the descriptor",
                 "connect.install.error.unknown.module",

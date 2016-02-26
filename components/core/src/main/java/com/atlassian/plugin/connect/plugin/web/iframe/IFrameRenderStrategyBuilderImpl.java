@@ -21,6 +21,7 @@ import org.apache.http.entity.ContentType;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -372,7 +373,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         @Override
         public boolean shouldShow(Map<String, ? extends Object> conditionContext) {
-            return condition == null || condition.shouldDisplay((Map<String, Object>) conditionContext);
+            return condition == null || condition.shouldDisplay(new HashMap<>(conditionContext));
         }
 
         @Override

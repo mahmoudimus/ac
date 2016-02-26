@@ -29,7 +29,8 @@ public class EchoQueryParametersServlet extends MustacheServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
-        NameValuePairs parameters = new NameValuePairs(req.getParameterMap());
+        Map<String, String[]> parameterMap = getParameterMap(req);
+        NameValuePairs parameters = new NameValuePairs(parameterMap);
         queryParameters.push(parameters);
 
         List<Map<String, String>> nvps = new ArrayList<>();
@@ -48,6 +49,11 @@ public class EchoQueryParametersServlet extends MustacheServlet {
         newContext.put("nvp", nvps);
 
         super.doGet(req, resp, ImmutableMap.copyOf(newContext));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, String[]> getParameterMap(HttpServletRequest req) {
+        return req.getParameterMap();
     }
 
     @Override

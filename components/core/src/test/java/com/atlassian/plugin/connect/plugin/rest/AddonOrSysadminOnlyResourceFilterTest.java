@@ -83,7 +83,7 @@ public class AddonOrSysadminOnlyResourceFilterTest {
 
         when(httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
         when(uriInfo.getPathParameters()).thenReturn(pathParameters);
-        when(pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Collections.EMPTY_LIST);
+        when(pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Collections.emptyList());
 
         assertThat(resourceFilter.getRequestFilter().filter(containerRequest), equalTo(containerRequest));
     }

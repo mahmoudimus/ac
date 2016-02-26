@@ -42,7 +42,7 @@ public class IssueTabPanelModuleProvider extends ConnectTabPanelModuleProvider {
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon) {
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("issue-tab-page",
                 ConnectIssueTabPanelModuleDescriptor.class, ConnectIFrameIssueTabPanel.class);
 

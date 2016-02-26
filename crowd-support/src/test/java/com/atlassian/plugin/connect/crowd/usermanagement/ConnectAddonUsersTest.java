@@ -14,7 +14,9 @@ import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -44,12 +46,15 @@ public class ConnectAddonUsersTest {
     @Mock
     private ConnectAddonAccessor addonAccessor;
 
+    @Captor
+    private ArgumentCaptor<MembershipQuery<User>> userQueryCaptor;
+
     @Before
     public void beforeEach() throws ApplicationNotFoundException {
         initMocks(this);
 
-        List<Object> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
-        when(applicationService.searchDirectGroupRelationships(any(Application.class), any(MembershipQuery.class))).thenReturn(allAddonUsers);
+        List<User> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
+        when(applicationService.searchDirectGroupRelationships(any(Application.class), Mockito.<MembershipQuery<User>>any())).thenReturn(allAddonUsers);
         when(addonAccessor.getAllAddonKeys()).thenReturn(singletonList("rad-jira-addon"));
         when(crowdApplicationProvider.getCrowdApplication()).thenReturn(application);
 
@@ -61,7 +66,6 @@ public class ConnectAddonUsersTest {
             throws ApplicationNotFoundException {
         connectAddonUsers.getAddonUsers();
 
-        ArgumentCaptor<MembershipQuery> userQueryCaptor = ArgumentCaptor.forClass(MembershipQuery.class);
         verify(applicationService).searchDirectGroupRelationships(eq(application), userQueryCaptor.capture());
 
         @SuppressWarnings("unchecked")

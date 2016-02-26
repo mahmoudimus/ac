@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
-import static com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.matcher.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertThat;
 
 public class WebSectionModuleBeanTest {
@@ -52,6 +52,7 @@ public class WebSectionModuleBeanTest {
         List<WebSectionModuleBean> beans = new ArrayList<>(Arrays.asList(webSectionBean, hiddenSpoonSection, falafelSection));
 
         String json = readTestFile("funkyWebSectionTest.json");
+        @SuppressWarnings("unchecked")
         List<WebSectionModuleBean> deserializedBeans = gson.fromJson(json, List.class);
         assertThat(deserializedBeans, sameDeepPropertyValuesAs(beans));
     }

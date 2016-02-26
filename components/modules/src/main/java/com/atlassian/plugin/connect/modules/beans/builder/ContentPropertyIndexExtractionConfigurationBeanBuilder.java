@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.UISupportBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
@@ -14,7 +14,7 @@ public class ContentPropertyIndexExtractionConfigurationBeanBuilder
     private String objectName;
     private ContentPropertyIndexFieldType type;
     private String alias;
-    private UISupportModuleBean uiSupport;
+    private UISupportBean uiSupport;
 
 
     @Override
@@ -37,7 +37,7 @@ public class ContentPropertyIndexExtractionConfigurationBeanBuilder
         return this;
     }
 
-    public ContentPropertyIndexExtractionConfigurationBeanBuilder withUiSupport(UISupportModuleBean uiSupport) {
+    public ContentPropertyIndexExtractionConfigurationBeanBuilder withUiSupport(UISupportBean uiSupport) {
         this.uiSupport = uiSupport;
         return this;
     }
@@ -58,7 +58,7 @@ public class ContentPropertyIndexExtractionConfigurationBeanBuilder
         return alias;
     }
 
-    public UISupportModuleBean getUiSupport() {
+    public UISupportBean getUiSupport() {
         return uiSupport;
     }
 }

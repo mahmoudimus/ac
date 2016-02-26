@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin;
+package com.atlassian.plugin.connect.test;
 
 import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;

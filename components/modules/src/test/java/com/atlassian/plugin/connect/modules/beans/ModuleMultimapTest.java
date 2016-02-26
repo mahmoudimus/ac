@@ -136,22 +136,27 @@ public class ModuleMultimapTest {
         assertThat(moduleMultimap, not(equalTo(otherModuleMultimap)));
     }
 
+    @SuppressWarnings("unchecked")
     private HashSet<Map.Entry<String, Supplier<List<ModuleBean>>>> twoValidModuleListSuppliers() {
         return Sets.newHashSet(entry(MODULE_TYPE, validSupplier), entry(OTHER_MODULE_TYPE, otherValidSupplier));
     }
 
+    @SuppressWarnings("unchecked")
     private HashSet<Map.Entry<String, Supplier<List<ModuleBean>>>> validAndInvalidModuleListSuppliers() {
         return Sets.newHashSet(entry(MODULE_TYPE, validSupplier), entry(OTHER_MODULE_TYPE, exceptionSupplier));
     }
 
+    @SuppressWarnings("unchecked")
     private HashSet<Map.Entry<String, Supplier<List<ModuleBean>>>> twoInvalidModuleListSuppliers() {
         return Sets.newHashSet(entry(MODULE_TYPE, exceptionSupplier), entry(OTHER_MODULE_TYPE, otherExceptionSupplier));
     }
 
+    @SuppressWarnings("unchecked")
     private HashSet<Map.Entry<String, List<ModuleBean>>> twoModuleLists() {
         return Sets.newHashSet(entry(MODULE_TYPE, newArrayList(moduleBeanMock)), entry(OTHER_MODULE_TYPE, newArrayList(otherModuleBeanMock)));
     }
 
+    @SuppressWarnings("unchecked")
     private HashSet<Map.Entry<String, List<ModuleBean>>> oneModuleList() {
         return Sets.newHashSet(entry(MODULE_TYPE, newArrayList(moduleBeanMock)));
     }

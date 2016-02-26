@@ -142,7 +142,9 @@ public class AddonPropertyStoreTest {
     }
 
     public static final class Data implements DatabaseUpdater {
+
         @Override
+        @SuppressWarnings("unchecked")
         public void update(final EntityManager entityManager) throws Exception {
             entityManager.migrate(AddonPropertyAO.class);
         }

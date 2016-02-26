@@ -10,7 +10,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

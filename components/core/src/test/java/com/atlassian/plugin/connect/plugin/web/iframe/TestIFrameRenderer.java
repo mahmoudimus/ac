@@ -20,6 +20,7 @@ import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -33,6 +34,7 @@ import java.util.SimpleTimeZone;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -55,6 +57,12 @@ public class TestIFrameRenderer {
     private TimeZoneManager timeZoneManager;
     @Mock
     private UserManager userManager;
+
+    @Captor
+    private ArgumentCaptor<Map<String, String[]>> signedUrlParamsCaptor;
+
+    @Captor
+    private ArgumentCaptor<Map<String, Object>> templateRendererContextCaptor;
 
     private IFrameRenderer iframeRenderer;
 
@@ -99,6 +107,7 @@ public class TestIFrameRenderer {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testProductContext() throws Exception {
         Map<String, Object> productContext = ImmutableMap.<String, Object>of(
                 "hell", ImmutableMap.of("o", "world", "a", "good"),
@@ -140,25 +149,23 @@ public class TestIFrameRenderer {
         when(hostApplicationInfo.getUrl()).thenReturn(URI.create(iframeHostUrl));
         when(licenseRetriever.getLicenseStatus(pluginKey)).thenReturn(LicenseStatus.ACTIVE);
         when(remotablePluginAccessorFactory.get(pluginKey)).thenReturn(remotePluginAccessor);
-        when(remotePluginAccessor.signGetUrl(any(URI.class), any(Map.class))).thenReturn(expectedSignedUrl);
+        when(remotePluginAccessor.signGetUrl(any(URI.class), anyMapOf(String.class, String[].class))).thenReturn(expectedSignedUrl);
     }
 
     private Map<String, String[]> getActualSignedUrlParams() {
-        ArgumentCaptor<Map> argument = ArgumentCaptor.forClass(Map.class);
-        verify(remotePluginAccessor).signGetUrl(any(URI.class), argument.capture());
-        return argument.getValue();
+        verify(remotePluginAccessor).signGetUrl(any(URI.class), signedUrlParamsCaptor.capture());
+        return signedUrlParamsCaptor.getValue();
     }
 
     private String getActualTemplateRendererPath() throws IOException {
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
-        verify(templateRenderer).render(argument.capture(), any(Map.class), any(Writer.class));
+        verify(templateRenderer).render(argument.capture(), anyMapOf(String.class, Object.class), any(Writer.class));
         return argument.getValue();
     }
 
     private Map<String, Object> getActualTemplateRendererContext() throws IOException {
-        ArgumentCaptor<Map> argument = ArgumentCaptor.forClass(Map.class);
-        verify(templateRenderer).render(anyString(), argument.capture(), any(Writer.class));
-        return argument.getValue();
+        verify(templateRenderer).render(anyString(), templateRendererContextCaptor.capture(), any(Writer.class));
+        return templateRendererContextCaptor.getValue();
     }
 
     public static final Map<String, String[]> emptyParams() {

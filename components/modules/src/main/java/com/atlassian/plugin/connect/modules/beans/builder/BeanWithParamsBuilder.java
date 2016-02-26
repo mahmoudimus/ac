@@ -7,6 +7,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
+@SuppressWarnings("unchecked")
 public class BeanWithParamsBuilder<T extends BeanWithParamsBuilder, B extends BeanWithParams> extends BaseModuleBeanBuilder<T, B> {
     private Map<String, String> params;
 

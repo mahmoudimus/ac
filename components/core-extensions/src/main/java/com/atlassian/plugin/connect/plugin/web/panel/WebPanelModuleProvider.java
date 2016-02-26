@@ -72,8 +72,8 @@ public class WebPanelModuleProvider extends AbstractConnectCoreModuleProvider<We
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectAddonBean addon) {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, ConnectAddonBean addon) {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
         for (WebPanelModuleBean webPanel : modules) {
             registerIframeRenderStrategy(webPanel, addon);
             descriptors.add(webPanelFactory.createModuleDescriptor(webPanel, addon, pluginRetrievalService.getPlugin()));
