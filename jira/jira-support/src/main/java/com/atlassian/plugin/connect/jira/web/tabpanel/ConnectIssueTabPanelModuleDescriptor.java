@@ -14,31 +14,27 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKey
 /**
  * A ModuleDescriptor for a Connect version of a Jira Issue Tab Panel
  */
-public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDescriptorImpl
-{
+public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDescriptorImpl {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
 
     public ConnectIssueTabPanelModuleDescriptor(JiraAuthenticationContext authenticationContext,
-            ModuleFactory moduleFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ModuleContextFilter moduleContextFilter)
-    {
+                                                ModuleFactory moduleFactory,
+                                                IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                                ModuleContextFilter moduleContextFilter) {
         super(authenticationContext, moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.moduleContextFilter = moduleContextFilter;
     }
 
     @Override
-    public IssueTabPanel3 getModule()
-    {
+    public IssueTabPanel3 getModule() {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameIssueTabPanel(renderStrategy, moduleContextFilter);
     }
 
     @Override
-    public String getModuleClassName()
-    {
+    public String getModuleClassName() {
         return super.getModuleClassName();
     }
 

@@ -8,30 +8,26 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-public class SecurityEventMapper extends ConfluenceEventMapper
-{
-    public SecurityEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
-    {
+public class SecurityEventMapper extends ConfluenceEventMapper {
+    public SecurityEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager) {
         super(userManager, confluenceSettingsManager);
     }
 
     @Override
-    public boolean handles(ConfluenceEvent e)
-    {
+    public boolean handles(ConfluenceEvent e) {
         return e instanceof SecurityEvent;
     }
 
     @Override
-    public Map<String, Object> toMap(ConfluenceEvent e)
-    {
+    public Map<String, Object> toMap(ConfluenceEvent e) {
         final SecurityEvent event = (SecurityEvent) e;
 
         // Note: don't call the base implementation because we want to populate the 'user' parameter differently.
         return ImmutableMap.<String, Object>of(
-            "timestamp", e.getTimestamp(),
-            "user", event.getUsername(),
-            "remoteHost", event.getRemoteHost(),
-            "remoteIP", event.getRemoteIP()
+                "timestamp", e.getTimestamp(),
+                "user", event.getUsername(),
+                "remoteHost", event.getRemoteHost(),
+                "remoteIP", event.getRemoteIP()
         );
     }
 }

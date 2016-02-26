@@ -4,16 +4,13 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
-public class JiraRequestExperimentalTestPage extends ConnectAddonEmbeddedTestPage implements Page
-{
-    public JiraRequestExperimentalTestPage(String addonKey, String moduleKey)
-    {
+public class JiraRequestExperimentalTestPage extends ConnectAddonEmbeddedTestPage implements Page {
+    public JiraRequestExperimentalTestPage(String addonKey, String moduleKey) {
         super(addonKey, moduleKey, true);
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 

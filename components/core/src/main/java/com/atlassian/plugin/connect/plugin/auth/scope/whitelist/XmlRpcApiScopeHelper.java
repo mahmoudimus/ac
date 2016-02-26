@@ -20,14 +20,12 @@ import static com.google.common.collect.Iterables.transform;
 /**
  * An api scope for xml-rpc requests
  */
-public class XmlRpcApiScopeHelper
-{
+public class XmlRpcApiScopeHelper {
     private final String path;
     private final Collection<String> methods;
     private final Iterable<ApiResourceInfo> apiResourceInfo;
 
-    public XmlRpcApiScopeHelper(final String path, Collection<String> methods)
-    {
+    public XmlRpcApiScopeHelper(final String path, Collection<String> methods) {
         this.path = path;
         // This is horrific: for transformed collections being passed in,
         // EqualsBuilder will no longer return true, even though
@@ -36,60 +34,47 @@ public class XmlRpcApiScopeHelper
         this.methods = Lists.newArrayList(methods);
         this.apiResourceInfo = transform(methods, from -> new ApiResourceInfo(path, "POST", from));
     }
-    
+
     @Nullable
-    public static String extractMethod(HttpServletRequest rq)
-    {
+    public static String extractMethod(HttpServletRequest rq) {
         Document doc = readDocument(rq);
-        if(doc == null)
-        {
+        if (doc == null) {
             return null;
         }
         Element root = doc.getRootElement();
-        if(root == null)
-        {
+        if (root == null) {
             return null;
         }
         Element methodName = root.element("methodName");
-        if(null == methodName)
-        {
+        if (null == methodName) {
             return null;
         }
         return methodName.getTextTrim();
     }
 
-    public boolean allow(HttpServletRequest request)
-    {
+    public boolean allow(HttpServletRequest request) {
         final String pathInfo = ServletUtils.extractPathInfo(request);
-        if (path.equals(pathInfo))
-        {
+        if (path.equals(pathInfo)) {
             String method = extractMethod(request);
-            if (method == null)
-            {
+            if (method == null) {
                 return false;
-            }
-            else if (methods.contains(method))
-            {
+            } else if (methods.contains(method)) {
                 return true;
             }
         }
         return false;
     }
 
-    public Iterable<ApiResourceInfo> getApiResourceInfos()
-    {
+    public Iterable<ApiResourceInfo> getApiResourceInfos() {
         return apiResourceInfo;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -102,8 +87,7 @@ public class XmlRpcApiScopeHelper
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         // don't consider apiResourceInfo as it is built from path and methods
         return new HashCodeBuilder(19, 71)
                 .append(path)
@@ -112,8 +96,7 @@ public class XmlRpcApiScopeHelper
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         // don't consider apiResourceInfo as it is built from path and methods
         return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                 .append("path", path)

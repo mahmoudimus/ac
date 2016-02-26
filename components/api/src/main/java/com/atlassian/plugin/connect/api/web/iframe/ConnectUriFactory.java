@@ -9,8 +9,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * @since 1.0
  */
 @ThreadSafe
-public interface ConnectUriFactory
-{
+public interface ConnectUriFactory {
     ConnectAddonUriBuilder createConnectAddonUriBuilder();
 
     String createConnectIFrameServletUri(String addOnKey, String moduleKey, ModuleContextParameters moduleContext);

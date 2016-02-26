@@ -7,8 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 /**
  * @since 1.0
  */
-public interface ConnectModuleDescriptorFactory<B, D extends ModuleDescriptor>
-{
+public interface ConnectModuleDescriptorFactory<B, D extends ModuleDescriptor> {
 
     D createModuleDescriptor(B bean, ConnectAddonBean addon, Plugin plugin);
 }

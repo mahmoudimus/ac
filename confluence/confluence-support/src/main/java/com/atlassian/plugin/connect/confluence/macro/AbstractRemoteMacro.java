@@ -5,24 +5,20 @@ import com.atlassian.confluence.macro.Macro;
 /**
  * Base for remote macros
  */
-public abstract class AbstractRemoteMacro implements Macro
-{
+public abstract class AbstractRemoteMacro implements Macro {
     protected final RemoteMacroInfo remoteMacroInfo;
 
-    public AbstractRemoteMacro(RemoteMacroInfo remoteMacroInfo)
-    {
+    public AbstractRemoteMacro(RemoteMacroInfo remoteMacroInfo) {
         this.remoteMacroInfo = remoteMacroInfo;
     }
 
     @Override
-    public BodyType getBodyType()
-    {
+    public BodyType getBodyType() {
         return remoteMacroInfo.getBodyType();
     }
 
     @Override
-    public OutputType getOutputType()
-    {
+    public OutputType getOutputType() {
         return remoteMacroInfo.getOutputType();
     }
 }

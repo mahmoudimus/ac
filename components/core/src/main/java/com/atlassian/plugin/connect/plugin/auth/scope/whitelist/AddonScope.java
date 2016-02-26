@@ -16,46 +16,39 @@ import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 
-public class AddonScope implements ApiScope, Comparable<AddonScope>
-{
+public class AddonScope implements ApiScope, Comparable<AddonScope> {
     private final String key;
     private final Iterable<AddonScopeApiPath> paths;
     private transient final Iterable<ApiResourceInfo> apiResourceInfos;
 
-    public AddonScope(String key, Iterable<AddonScopeApiPath> paths)
-    {
+    public AddonScope(String key, Iterable<AddonScopeApiPath> paths) {
         this.key = checkNotNull(key);
         this.paths = checkNotNull(paths);
         this.apiResourceInfos = concat(transform(paths,
-            path -> null == path ? Collections.<ApiResourceInfo>emptySet() : path.getApiResourceInfos())
+                path -> null == path ? Collections.<ApiResourceInfo>emptySet() : path.getApiResourceInfos())
         );
     }
 
     @Override
-    public boolean allow(final HttpServletRequest request)
-    {
+    public boolean allow(final HttpServletRequest request) {
         return any(paths, path -> null != path && path.allow(request));
     }
 
     @Override
-    public Iterable<ApiResourceInfo> getApiResourceInfos()
-    {
+    public Iterable<ApiResourceInfo> getApiResourceInfos() {
         return apiResourceInfos;
     }
 
-    public Iterable<AddonScopeApiPath> getPaths()
-    {
+    public Iterable<AddonScopeApiPath> getPaths() {
         return paths;
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         // don't consider apiResourceInfo because they are a static transform of paths
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("key", getKey())
@@ -64,14 +57,11 @@ public class AddonScope implements ApiScope, Comparable<AddonScope>
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -84,8 +74,7 @@ public class AddonScope implements ApiScope, Comparable<AddonScope>
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(29, 7)
                 // don't consider apiResourceInfo because they are a static transform of paths
                 .appendSuper(super.hashCode())
@@ -95,8 +84,7 @@ public class AddonScope implements ApiScope, Comparable<AddonScope>
     }
 
     @Override
-    public int compareTo(AddonScope o)
-    {
+    public int compareTo(AddonScope o) {
         return null == o ? 1 : ScopeName.valueOf(getKey()).compareTo(ScopeName.valueOf(o.getKey()));
     }
 }

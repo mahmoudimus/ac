@@ -1,7 +1,5 @@
 package it.jira.item;
 
-import java.util.Optional;
-
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -10,20 +8,19 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 
-public class TestJiraWebItemWithProductCondition extends JiraWebDriverTestBase
-{
+public class TestJiraWebItemWithProductCondition extends JiraWebDriverTestBase {
 
     private static final String ITEM_KEY = "admin-mode-only-item";
     private static final String ITEM_URL = "/adminModeOnly";
@@ -31,8 +28,7 @@ public class TestJiraWebItemWithProductCondition extends JiraWebDriverTestBase
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void startAddon() throws Exception
-    {
+    public static void startAddon() throws Exception {
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("webItems", newWebItemBean()
@@ -50,17 +46,14 @@ public class TestJiraWebItemWithProductCondition extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopAddon() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void stopAddon() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void shouldPerformActionForWebItemWithAdminModeCondition()
-    {
+    public void shouldPerformActionForWebItemWithAdminModeCondition() {
         loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
         RemoteWebItem webItem = connectPageOperations.findWebItem(addonAndModuleKey(addon.getAddon().getKey(), ITEM_KEY), Optional.<String>empty());
         webItem.click();

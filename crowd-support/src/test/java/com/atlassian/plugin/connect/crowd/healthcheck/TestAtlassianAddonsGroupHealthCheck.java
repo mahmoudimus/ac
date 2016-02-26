@@ -1,22 +1,20 @@
 package com.atlassian.plugin.connect.crowd.healthcheck;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.healthcheck.core.HealthStatus;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.Constants;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
-
 import com.google.common.collect.Sets;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -26,24 +24,21 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class TestAtlassianAddonsGroupHealthCheck
-{
+@RunWith(MockitoJUnitRunner.class)
+public class TestAtlassianAddonsGroupHealthCheck {
     @Mock
     private ApplicationService applicationService;
     @Mock
     private CrowdApplicationProvider crowdApplicationProvider;
 
     @Test
-    public void testHealthyIfNoAddonUsers() throws Exception
-    {
+    public void testHealthyIfNoAddonUsers() throws Exception {
         AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(Sets.<User>newHashSet());
         assertTrue(healthCheck.check().isHealthy());
     }
 
     @Test
-    public void testHealthyIfAddonUsersHaveCorrectUsernameAndEmail() throws Exception
-    {
+    public void testHealthyIfAddonUsersHaveCorrectUsernameAndEmail() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
         users.add(createUser("addon_my-another-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
@@ -54,8 +49,7 @@ public class TestAtlassianAddonsGroupHealthCheck
     }
 
     @Test
-    public void testUnhealthyIfAddonUserHasIncorrectEmail() throws Exception
-    {
+    public void testUnhealthyIfAddonUserHasIncorrectEmail() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", "ceo@acme.com"));
 
@@ -66,8 +60,7 @@ public class TestAtlassianAddonsGroupHealthCheck
     }
 
     @Test
-    public void testUnhealthyIfAddonUserHasIncorrectUsername() throws Exception
-    {
+    public void testUnhealthyIfAddonUserHasIncorrectUsername() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("larryemdur", Constants.ADDON_USER_EMAIL_ADDRESS));
 
@@ -78,8 +71,7 @@ public class TestAtlassianAddonsGroupHealthCheck
     }
 
     @Test
-    public void testUnhealthyIfSomeAddonUsersHaveIncorrectEmail() throws Exception
-    {
+    public void testUnhealthyIfSomeAddonUsersHaveIncorrectEmail() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
         users.add(createUser("addon_my-baddie", "ceo@acme.com"));
@@ -91,8 +83,7 @@ public class TestAtlassianAddonsGroupHealthCheck
     }
 
     @Test
-    public void testUnhealthyIfSomeAddonUsersHaveIncorrectUsername() throws Exception
-    {
+    public void testUnhealthyIfSomeAddonUsersHaveIncorrectUsername() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
         users.add(createUser("larryemdur", Constants.ADDON_USER_EMAIL_ADDRESS));
@@ -104,8 +95,7 @@ public class TestAtlassianAddonsGroupHealthCheck
     }
 
     @Test
-    public void testUnhealthyIfSomeAddonUsersHaveIncorrectUsernameAndEmail() throws Exception
-    {
+    public void testUnhealthyIfSomeAddonUsersHaveIncorrectUsernameAndEmail() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
         users.add(createUser("larryemdur", "larry@thepriceisright.com"));
@@ -117,8 +107,7 @@ public class TestAtlassianAddonsGroupHealthCheck
     }
 
     @Test
-    public void testUnhealthyIfSomeAddonUsersHaveIncorrectUsernameOrEmail() throws Exception
-    {
+    public void testUnhealthyIfSomeAddonUsersHaveIncorrectUsernameOrEmail() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
         users.add(createUser("addon_price-is-right", "larry@thepriceisright.com"));
@@ -131,8 +120,7 @@ public class TestAtlassianAddonsGroupHealthCheck
     }
 
     @Test
-    public void testUnhealthyIfSomeAddonUsersHaveIncorrectUsernameOrEmailOrActive() throws Exception
-    {
+    public void testUnhealthyIfSomeAddonUsersHaveIncorrectUsernameOrEmailOrActive() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
         users.add(createUser("addon_price-is-right", "larry@thepriceisright.com"));
@@ -148,8 +136,7 @@ public class TestAtlassianAddonsGroupHealthCheck
 
     @Ignore("TODO: assert that we can find users that were never associated with an add-on (e.g. by setting attributes on users)")
     @Test
-    public void testUnhealthyIfAddonUserNotInApplinkAndActive() throws Exception
-    {
+    public void testUnhealthyIfAddonUserNotInApplinkAndActive() throws Exception {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS, true));
 
@@ -159,13 +146,11 @@ public class TestAtlassianAddonsGroupHealthCheck
         assertThat(check.failureReason(), containsString("no applink"));
     }
 
-    private User createUser(String username, String email)
-    {
+    private User createUser(String username, String email) {
         return createUser(username, email, true);
     }
 
-    private User createUser(String username, String email, boolean isActive)
-    {
+    private User createUser(String username, String email, boolean isActive) {
         User u = mock(User.class);
         when(u.getName()).thenReturn(username);
         when(u.getEmailAddress()).thenReturn(email);
@@ -173,25 +158,21 @@ public class TestAtlassianAddonsGroupHealthCheck
         return u;
     }
 
-    private AtlassianAddonsGroupHealthCheck createHealthCheckWithUsers(Collection<User> users)
-    {
+    private AtlassianAddonsGroupHealthCheck createHealthCheckWithUsers(Collection<User> users) {
         return new TestHealthCheck(users, applicationService, crowdApplicationProvider);
     }
 
-    private static class TestHealthCheck extends AtlassianAddonsGroupHealthCheck
-    {
+    private static class TestHealthCheck extends AtlassianAddonsGroupHealthCheck {
         private final Collection<User> users;
 
         TestHealthCheck(final Collection<User> users, ApplicationService applicationService,
-                CrowdApplicationProvider crowdApplicationProvider)
-        {
+                        CrowdApplicationProvider crowdApplicationProvider) {
             super(applicationService, crowdApplicationProvider);
             this.users = users;
         }
 
         @Override
-        protected Collection<User> getAddonUsers() throws ApplicationNotFoundException
-        {
+        protected Collection<User> getAddonUsers() throws ApplicationNotFoundException {
             return users;
         }
     }

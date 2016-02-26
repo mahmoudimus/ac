@@ -1,9 +1,5 @@
 package it.jira.iframe;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraAdminPage;
 import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
@@ -14,14 +10,16 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.jira.JiraWebDriverTestBase;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.test.common.servlet.ToggleableConditionServlet.toggleableConditionBean;
@@ -34,8 +32,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test of general page in JIRA
  */
-public class TestAdminPage extends JiraWebDriverTestBase
-{
+public class TestAdminPage extends JiraWebDriverTestBase {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddonKey();
 
     private static final String PAGE_NAME = "My Admin Page";
@@ -47,8 +44,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
@@ -65,17 +61,14 @@ public class TestAdminPage extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
-    {
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException {
         loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
@@ -88,8 +81,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     }
 
     @Test
-    public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
-    {
+    public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException {
         loginAndVisit(testUserFactory.admin(), ViewGeneralConfigurationPage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
@@ -99,16 +91,14 @@ public class TestAdminPage extends JiraWebDriverTestBase
     }
 
     @Test
-    public void nonAdminCanNotSeePage()
-    {
+    public void nonAdminCanNotSeePage() {
         InsufficientPermissionsPage page = loginAndVisit(testUserFactory.basicUser(), InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
+    public void pageIsNotAccessibleWithFalseCondition() {
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         login(testUserFactory.admin());

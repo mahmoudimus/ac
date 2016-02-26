@@ -4,12 +4,10 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class RedirectServletPath
-{
+public class RedirectServletPath {
     private static final String SERVLET_PATH = "/plugins/servlet/ac-redirect/";
 
-    public static String forModule(String addOnKey, String moduleKey)
-    {
+    public static String forModule(String addOnKey, String moduleKey) {
         checkNotNull(addOnKey);
         checkNotNull(moduleKey);
 

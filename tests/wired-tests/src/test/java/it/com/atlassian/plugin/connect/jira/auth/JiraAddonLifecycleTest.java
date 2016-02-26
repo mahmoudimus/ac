@@ -32,8 +32,7 @@ import static org.junit.Assert.fail;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraAddonLifecycleTest
-{
+public class JiraAddonLifecycleTest {
     private static final String PLUGIN_NAME = "test-plugin";
     private static final String addonKey = "test-key";
     private static final String INSTALLED = "/installed";
@@ -45,57 +44,48 @@ public class JiraAddonLifecycleTest
     private Plugin plugin = null;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.testBean = newConnectAddonBean().withName(PLUGIN_NAME)
-                                             .withScopes(Sets.newHashSet(ScopeName.ADMIN))
-                                             .withModule("webItems", randomWebItemBean())
-                                             .withKey(addonKey)
-                                             .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
-                                             .withLifecycle(newLifecycleBean().withInstalled(INSTALLED).build())
-                                             .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT)
-                                                                                        .build())
+                .withScopes(Sets.newHashSet(ScopeName.ADMIN))
+                .withModule("webItems", randomWebItemBean())
+                .withKey(addonKey)
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
+                .withLifecycle(newLifecycleBean().withInstalled(INSTALLED).build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT)
+                        .build())
 
-                                             .build();
+                .build();
     }
 
     public JiraAddonLifecycleTest(GlobalPermissionManager jiraPermissionManager,
-        TestPluginInstaller testPluginInstaller, AddonTestFilterResults testFilterResults, I18nResolver i18nResolver)
-    {
+                                  TestPluginInstaller testPluginInstaller, AddonTestFilterResults testFilterResults, I18nResolver i18nResolver) {
         this.jiraPermissionManager = jiraPermissionManager;
         this.testPluginInstaller = testPluginInstaller;
         this.testFilterResults = testFilterResults;
     }
 
     @Test
-    public void testMissingAdminPermissionFailsWithCorrectError() throws IOException
-    {
-        try
-        {
+    public void testMissingAdminPermissionFailsWithCorrectError() throws IOException {
+        try {
             plugin = testPluginInstaller.installAddon(testBean);
             jiraPermissionManager.removePermission(Permissions.ADMINISTER, "atlassian-addons-admin");
             plugin = testPluginInstaller.installAddon(testBean);
 
             fail("Addon installation should have failed");
-        }
-        catch (PluginInstallException e)
-        {
+        } catch (PluginInstallException e) {
             assertPluginInstallExceptionProperties(e, "connect.install.error.addon.admin.permission", testBean.getName());
         }
     }
 
-    private void assertPluginInstallExceptionProperties(PluginInstallException e, String errorCode, Serializable... params)
-    {
+    private void assertPluginInstallExceptionProperties(PluginInstallException e, String errorCode, Serializable... params) {
         Pair<String, Serializable[]> i18nMessageProperties = e.getI18nMessageProperties().get();
         assertThat(i18nMessageProperties.first(), equalTo(errorCode));
         assertThat(i18nMessageProperties.second(), equalTo(params));
     }
 
     @After
-    public void cleanup() throws IOException
-    {
-        if(plugin != null)
-        {
+    public void cleanup() throws IOException {
+        if (plugin != null) {
             testPluginInstaller.uninstallAddon(plugin);
         }
         testFilterResults.clearRequest(addonKey, INSTALLED);

@@ -30,8 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
 @Named
-public final class IFrameRendererImpl implements IFrameRenderer
-{
+public final class IFrameRendererImpl implements IFrameRenderer {
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final HostApplicationInfo hostApplicationInfo;
     private final TemplateRenderer templateRenderer;
@@ -42,12 +41,11 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
     @Inject
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
-            HostApplicationInfo hostApplicationInfo,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            TimeZoneManager timeZoneManager,
-            final LicenseRetriever licenseRetriever,
-            LocaleHelper localeHelper, UserManager userManager)
-    {
+                              HostApplicationInfo hostApplicationInfo,
+                              RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                              TimeZoneManager timeZoneManager,
+                              final LicenseRetriever licenseRetriever,
+                              LocaleHelper localeHelper, UserManager userManager) {
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
@@ -58,33 +56,28 @@ public final class IFrameRendererImpl implements IFrameRenderer
     }
 
     @Override
-    public String render(IFrameContext iframeContext, String remoteUser) throws IOException
-    {
+    public String render(IFrameContext iframeContext, String remoteUser) throws IOException {
         return render(iframeContext, "", Collections.<String, String[]>emptyMap(), Collections.<String, Object>emptyMap());
     }
 
     @Override
-    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, Map<String, Object> productContext) throws IOException
-    {
+    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, Map<String, Object> productContext) throws IOException {
         return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, productContext), "velocity/deprecated/iframe-body.vm");
     }
 
     @Override
-    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, Map<String, Object> productContext) throws IOException
-    {
+    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, Map<String, Object> productContext) throws IOException {
         return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, productContext), "velocity/deprecated/iframe-body-inline.vm");
     }
 
-    private String renderWithTemplate(Map<String, Object> ctx, String templatePath) throws IOException
-    {
+    private String renderWithTemplate(Map<String, Object> ctx, String templatePath) throws IOException {
         StringWriter output = new StringWriter();
         templateRenderer.render(templatePath, ctx, output);
         return output.toString();
     }
 
     private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, Map<String, Object> productContext)
-            throws IOException
-    {
+            throws IOException {
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
         final URI hostUrl = hostApplicationInfo.getUrl();
@@ -109,8 +102,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         allParams.put("loc", new String[]{localeHelper.getLocaleTag()});
         allParams.put("lic", new String[]{licenseRetriever.getLicenseStatus(iframeContext.getPluginKey()).value()});
 
-        if (dialog != null && dialog.length == 1)
-        {
+        if (dialog != null && dialog.length == 1) {
             allParams.put("dialog", dialog);
         }
         String signedUrl = remotablePluginAccessor.signGetUrl(iframeUrl, allParams);
@@ -130,14 +122,12 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
         ctx.put("timeZone", timeZone);
 
-        if (dialog != null && dialog.length == 1)
-        {
+        if (dialog != null && dialog.length == 1) {
             ctx.put("dialog", dialog[0]);
         }
 
         String[] simpleDialog = queryParams.get("simpleDialog");
-        if (simpleDialog != null && simpleDialog.length == 1)
-        {
+        if (simpleDialog != null && simpleDialog.length == 1) {
             ctx.put("simpleDialog", simpleDialog[0]);
         }
 
@@ -145,19 +135,15 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return ctx;
     }
 
-    private String encodeProductContext(Map<String, Object> productContext) throws IOException
-    {
+    private String encodeProductContext(Map<String, Object> productContext) throws IOException {
         JSONObject jsonObj = new JSONObject();
-        for (Map.Entry<String, Object> entry : productContext.entrySet())
-        {
+        for (Map.Entry<String, Object> entry : productContext.entrySet()) {
             Object value = entry.getValue();
 
             // json-simple doesn't support serializing java arrays - so unwrap or convert to java.util.List
-            if (value instanceof Object[])
-            {
+            if (value instanceof Object[]) {
                 Object[] objArray = (Object[]) value;
-                switch (objArray.length)
-                {
+                switch (objArray.length) {
                     case 0:
                         value = null;
                         break;

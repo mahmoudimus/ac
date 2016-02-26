@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin;
+package com.atlassian.plugin.connect.modules.schema;
 
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
@@ -15,8 +15,7 @@ import java.util.List;
  */
 @SuppressWarnings("UnusedDeclaration")
 @ObjectSchemaAttributes(additionalProperties = false)
-public class CommonModuleList extends BaseModuleBean
-{
+public class CommonModuleList extends BaseModuleBean {
 
     /**
      * The Web Item module allows you to define new links in application menus.
@@ -61,7 +60,6 @@ public class CommonModuleList extends BaseModuleBean
      */
     private ConnectPageModuleBean postInstallPage;
 
-    private CommonModuleList()
-    {
+    private CommonModuleList() {
     }
 }

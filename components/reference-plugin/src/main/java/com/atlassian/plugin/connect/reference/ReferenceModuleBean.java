@@ -4,31 +4,25 @@ import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class ReferenceModuleBean extends RequiredKeyBean
-{
+public class ReferenceModuleBean extends RequiredKeyBean {
 
     private int referenceField;
 
-    public ReferenceModuleBean(int referenceField)
-    {
+    public ReferenceModuleBean(int referenceField) {
         this.referenceField = referenceField;
     }
 
-    public int getReferenceField()
-    {
+    public int getReferenceField() {
         return referenceField;
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof ReferenceModuleBean && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof ReferenceModuleBean && super.equals(otherObj))) {
             return false;
         }
 
@@ -40,8 +34,7 @@ public class ReferenceModuleBean extends RequiredKeyBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(12, 34)
                 .append(super.hashCode())
                 .append(referenceField)

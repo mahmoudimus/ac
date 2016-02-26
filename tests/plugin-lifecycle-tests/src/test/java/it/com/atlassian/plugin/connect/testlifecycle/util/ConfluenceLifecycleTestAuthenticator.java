@@ -7,12 +7,10 @@ import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelpe
 /**
  * we have our own version of this because we can't use the test support lifecycle due to it's dependency on connect modules
  */
-public class ConfluenceLifecycleTestAuthenticator implements LifecycleTestAuthenticator
-{
+public class ConfluenceLifecycleTestAuthenticator implements LifecycleTestAuthenticator {
 
     @Override
-    public void authenticateUser(String username)
-    {
+    public void authenticateUser(String username) {
         ConfluenceUser user = FindUserHelper.getUserByUsername(username);
         AuthenticatedUserThreadLocal.set(user);
     }

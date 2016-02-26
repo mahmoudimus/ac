@@ -6,12 +6,10 @@ import com.atlassian.event.api.AsynchronousPreferred;
 /**
  *
  */
-@EventName ("confluence.blueprint.context.response.parse.fail")
+@EventName("confluence.blueprint.context.response.parse.fail")
 @AsynchronousPreferred
-public class BlueprintContextResponseParseFailureEvent extends AbstractBlueprintContextEvent
-{
-    public BlueprintContextResponseParseFailureEvent(String addonKey, String moduleKey, String url)
-    {
+public class BlueprintContextResponseParseFailureEvent extends AbstractBlueprintContextEvent {
+    public BlueprintContextResponseParseFailureEvent(String addonKey, String moduleKey, String url) {
         super(addonKey, moduleKey, url);
     }
 }

@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira;
+package com.atlassian.plugin.connect.modules.schema;
 
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
@@ -19,8 +19,7 @@ import java.util.List;
  */
 @SuppressWarnings("UnusedDeclaration")
 @ObjectSchemaAttributes(additionalProperties = false)
-public class JiraModuleList extends BaseModuleBean
-{
+public class JiraModuleList extends BaseModuleBean {
 
     /**
      * The Issue Tab Panel module allows you to add new tabs to the 'Browse Component' page.
@@ -78,7 +77,6 @@ public class JiraModuleList extends BaseModuleBean
      */
     private List<ProjectPermissionModuleBean> jiraProjectPermissions;
 
-    private JiraModuleList()
-    {
+    private JiraModuleList() {
     }
 }

@@ -3,8 +3,7 @@ package it.confluence;
 /**
  * String contents for macro context parameters.
  */
-public class ContextParameters
-{
+public class ContextParameters {
     public static final String CTX_OUTPUT_TYPE = "output_type";
     public static final String CTX_PAGE_ID = "page_id";
     public static final String CTX_PAGE_TYPE = "page_type";

@@ -22,9 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import java.util.List;
 
@@ -47,8 +45,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @ConvertToWiredTest
-public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>>
-{
+public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>> {
     public static final String MACRO_NAME_KEY = "the-macro-name";
     public static final String MACRO_NAME = "The Macro Name";
     public static final String MACRO_DESCRIPTION = "The Macro Description";
@@ -66,100 +63,80 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     protected abstract T newContentMacroModuleBeanBuilder();
 
     @Before
-    public void beforeEachTest() throws Exception
-    {
+    public void beforeEachTest() throws Exception {
         setupContainer();
         setupUrlConverter();
         this.descriptor = createModuleDescriptorForTest();
         this.descriptor.enabled();
     }
 
-    private void setupUrlConverter()
-    {
-        when(absoluteAddonUrlConverter.getAbsoluteUrl((ConnectAddonBean)any(), anyString())).then(new Answer<Object>()
-        {
-            @Override
-            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
-            {
-                String url  = (String) invocationOnMock.getArguments()[1];
-                if (url.startsWith("/"))
-                {
-                    return "http://www.example.com" + url;
-                }
-                return invocationOnMock.getArguments()[1];
+    private void setupUrlConverter() {
+        when(absoluteAddonUrlConverter.getAbsoluteUrl((ConnectAddonBean) any(), anyString())).then(invocationOnMock -> {
+            String url = (String) invocationOnMock.getArguments()[1];
+            if (url.startsWith("/")) {
+                return "http://www.example.com" + url;
             }
+            return invocationOnMock.getArguments()[1];
         });
     }
 
-    private void setupContainer()
-    {
+    private void setupContainer() {
         when(containerContext.isSetup()).thenReturn(true);
         when(containerContext.getComponent("docBean")).thenReturn(new MockDocBean());
         ContainerManager.getInstance().setContainerContext(containerContext);
     }
 
 
-
     @Test
-    public void verifyPluginKeyIsCorrect() throws Exception
-    {
+    public void verifyPluginKeyIsCorrect() throws Exception {
         assertThat(descriptor.getPluginKey(), is("my-plugin"));
     }
 
     @Test
-    public void verifyKeyIsCorrect()
-    {
+    public void verifyKeyIsCorrect() {
         assertThat(descriptor.getKey(), is("macro-" + MACRO_NAME_KEY));
     }
 
     @Test
-    public void verifyCompleteKeyIsCorrect()
-    {
+    public void verifyCompleteKeyIsCorrect() {
         assertThat(descriptor.getCompleteKey(), is("my-plugin:" + "macro-" + MACRO_NAME_KEY));
     }
 
     @Test
-    public void verifyNameIsSet() throws Exception
-    {
+    public void verifyNameIsSet() throws Exception {
         assertThat(descriptor.getName(), is(MACRO_NAME_KEY));
     }
 
     @Test
-    public void verifyMacroNameIsSet() throws Exception
-    {
+    public void verifyMacroNameIsSet() throws Exception {
         assertThat(descriptor.getMacroMetadata().getMacroName(), is(MACRO_NAME_KEY));
     }
 
     @Test
-    public void verifyMacroTitleIsSet() throws Exception
-    {
+    public void verifyMacroTitleIsSet() throws Exception {
         // TODO the key is actually the raw value, as we've removed i18n support until we fix Confluence to support reloading i18n dynamically
         assertThat(descriptor.getMacroMetadata().getTitle().getKey(), is(MACRO_NAME));
     }
 
     @Test
-    public void verifyMacroDescriptionIsSet() throws Exception
-    {
+    public void verifyMacroDescriptionIsSet() throws Exception {
         // TODO the key is actually the raw value, as we've removed i18n support until we fix Confluence to support reloading i18n dynamically
         assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is(MACRO_DESCRIPTION));
     }
 
     @Test
-    public void verifyModuleIsCreated() throws Exception
-    {
+    public void verifyModuleIsCreated() throws Exception {
         assertThat(descriptor.getModule(), is(not(nullValue())));
     }
 
     @Test
-    public void verifyAliasNames() throws Exception
-    {
+    public void verifyAliasNames() throws Exception {
         String[] aliases = descriptor.getMacroMetadata().getAliases().toArray(new String[2]);
         assertThat(aliases, arrayContainingInAnyOrder("alias1", "alias2"));
     }
 
     @Test
-    public void verifyCategoryNames() throws Exception
-    {
+    public void verifyCategoryNames() throws Exception {
         String[] categories = descriptor.getMacroMetadata().getCategories().toArray(new String[2]);
         assertThat(categories, arrayContainingInAnyOrder(
                 "media",
@@ -167,8 +144,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     }
 
     @Test
-    public void verifyIconAttributes() throws Exception
-    {
+    public void verifyIconAttributes() throws Exception {
         MacroIcon icon = descriptor.getMacroMetadata().getIcon();
         assertThat(icon, allOf(
                 hasProperty("width", is(80)),
@@ -178,8 +154,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     }
 
     @Test
-    public void verifyParameters() throws Exception
-    {
+    public void verifyParameters() throws Exception {
         List<MacroParameter> parameters = descriptor.getMacroMetadata().getFormDetails().getParameters();
         MacroParameter macroParameter = parameters.get(0);
         assertThat(macroParameter, allOf(
@@ -192,15 +167,13 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     }
 
     @Test
-    public void verifyDocumentationLink() throws Exception
-    {
+    public void verifyDocumentationLink() throws Exception {
         String documentationUrl = descriptor.getMacroMetadata().getFormDetails().getDocumentationUrl();
         assertThat(documentationUrl, is("http://docs.example.com/macro"));
     }
 
     @Test
-    public void verifyParameterValue() throws Exception
-    {
+    public void verifyParameterValue() throws Exception {
         List<MacroParameter> parameters = descriptor.getMacroMetadata().getFormDetails().getParameters();
         MacroParameter macroParameter = parameters.get(0);
 
@@ -208,8 +181,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     }
 
     @Test
-    public void verifyParameterAlias() throws Exception
-    {
+    public void verifyParameterAlias() throws Exception {
         List<MacroParameter> parameters = descriptor.getMacroMetadata().getFormDetails().getParameters();
         MacroParameter macroParameter = parameters.get(0);
 
@@ -217,25 +189,21 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     }
 
     @Test
-    public void verifyIsNoSystemModule() throws Exception
-    {
+    public void verifyIsNoSystemModule() throws Exception {
         assertThat(descriptor.isSystemModule(), is(false));
     }
 
     @Test
-    public void verifyIsEnabledByDefault() throws Exception
-    {
+    public void verifyIsEnabledByDefault() throws Exception {
         assertThat(descriptor.isEnabledByDefault(), is(true));
     }
 
     @Test
-    public void verifyIsHidden() throws Exception
-    {
+    public void verifyIsHidden() throws Exception {
         assertThat(descriptor.getMacroMetadata().isHidden(), is(true));
     }
 
-    protected T createBeanBuilder()
-    {
+    protected T createBeanBuilder() {
         return newContentMacroModuleBeanBuilder()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withKey(MACRO_NAME_KEY)

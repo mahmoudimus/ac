@@ -16,36 +16,31 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public abstract class ScopeManagerTest
-{
+public abstract class ScopeManagerTest {
     private final ScopeTestHelper scopeTestHelper;
     private final Collection<ScopeTestData> scopeTestData;
 
     private AddonScopeManager permissionManager;
     private Map<ScopeName, Plugin> installedAddons;
 
-    public ScopeManagerTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper, Collection<ScopeTestData> scopeTestData)
-    {
+    public ScopeManagerTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper, Collection<ScopeTestData> scopeTestData) {
         this.permissionManager = scopeManager;
         this.scopeTestHelper = scopeTestHelper;
         this.scopeTestData = scopeTestData;
     }
 
     @BeforeClass
-    public void setup() throws IOException
-    {
+    public void setup() throws IOException {
         installedAddons = scopeTestHelper.installScopedAddons();
     }
 
     @AfterClass
-    public void tearDown() throws IOException
-    {
+    public void tearDown() throws IOException {
         scopeTestHelper.uninstallScopedAddons(installedAddons);
     }
 
     @Test
-    public void testRequestsInApiScope() throws Exception
-    {
+    public void testRequestsInApiScope() throws Exception {
         Iterable<Matcher<? super AddonScopeManager>> matchers = new ScopeTestDataMatcherFactory(installedAddons).toScopeTestDataMatchers(scopeTestData);
         assertThat(permissionManager, Matchers.allOf(matchers));
     }

@@ -18,27 +18,23 @@ import static com.atlassian.plugin.connect.jira.web.context.JiraModuleContextFil
 /**
  * Verifies if a user has permissions to edit the configuration of a project.
  */
-public class IsProjectAdminCondition implements Condition
-{
+public class IsProjectAdminCondition implements Condition {
     private static final String PROJECT_REQ_ATTR = "com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project";
 
     private final JiraAuthenticationContext authenticationContext;
     private final ProjectService projectService;
 
-    public IsProjectAdminCondition(JiraAuthenticationContext authenticationContext, ProjectService projectService)
-    {
+    public IsProjectAdminCondition(JiraAuthenticationContext authenticationContext, ProjectService projectService) {
         this.authenticationContext = authenticationContext;
         this.projectService = projectService;
     }
 
     @Override
-    public void init(Map<String, String> params) throws PluginParseException
-    {
+    public void init(Map<String, String> params) throws PluginParseException {
     }
 
     @Override
-    public boolean shouldDisplay(Map<String, Object> ctx)
-    {
+    public boolean shouldDisplay(Map<String, Object> ctx) {
         ProjectService.GetProjectResult getProjectResult = projectService.getProjectByKeyForAction(
                 authenticationContext.getUser(),
                 getProject(ctx).getKey(),
@@ -53,45 +49,36 @@ public class IsProjectAdminCondition implements Condition
      *
      * @return the context project
      */
-    private Project getProject(final Map<String, Object> ctx)
-    {
+    private Project getProject(final Map<String, Object> ctx) {
         HttpServletRequest req = ExecutingHttpRequest.get();
         Project project;
 
         // first try to resolve the project from the context
         Object projectObj = ctx.get("project");
-        if (projectObj instanceof Project)
-        {
+        if (projectObj instanceof Project) {
             project = (Project) projectObj;
-        }
-        else
-        {
+        } else {
             // otherwise check to see if it's been cached as a request attribute
-            if (req == null)
-            {
+            if (req == null) {
                 throw new IllegalStateException("No " + HttpServletRequest.class.getSimpleName() +
                         " context, can't resolve project!");
             }
             project = (Project) req.getAttribute(PROJECT_REQ_ATTR);
-            if (project == null)
-            {
+            if (project == null) {
                 // otherwise see if there's a request parameter specifying the project
                 Object projectKey = req.getParameterMap().get(PROJECT_KEY);
-                if (!(projectKey instanceof String[]))
-                {
+                if (!(projectKey instanceof String[])) {
                     throw new IllegalStateException("No " + PROJECT_KEY + " parameter found in the query string!");
                 }
                 final String key = ((String[]) projectKey)[0];
                 project = ComponentManager.getComponent(ProjectManager.class).getProjectObjByKey(key);
-                if (project == null)
-                {
+                if (project == null) {
                     throw new IllegalStateException("No project with key " + key + "!");
                 }
             }
         }
 
-        if (req != null)
-        {
+        if (req != null) {
             // cache project as request attribute
             req.setAttribute(PROJECT_REQ_ATTR, project);
         }

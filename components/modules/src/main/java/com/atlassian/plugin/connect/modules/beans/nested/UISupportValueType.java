@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-public enum UISupportValueType
-{
+public enum UISupportValueType {
 
     SPACE("space"),
     LABEL("label"),
@@ -14,13 +13,11 @@ public enum UISupportValueType
 
     private final String value;
 
-    UISupportValueType(String value)
-    {
+    UISupportValueType(String value) {
         this.value = value;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return value;
     }
 

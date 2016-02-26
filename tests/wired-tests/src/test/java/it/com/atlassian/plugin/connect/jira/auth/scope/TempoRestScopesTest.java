@@ -1,13 +1,13 @@
 package it.com.atlassian.plugin.connect.jira.auth.scope;
 
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.auth.scope.AddonScopeManager;
 import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeManagerTest;
+import it.com.atlassian.plugin.connect.plugin.auth.scope.ScopeTestData;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
@@ -17,20 +17,17 @@ import java.util.List;
 import static it.com.atlassian.plugin.connect.jira.auth.scope.JiraScopeTestHelper.emptyBodyForJira;
 import static java.util.Arrays.asList;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class TempoRestScopesTest extends ScopeManagerTest
-{
-    public TempoRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
-            super(scopeManager, scopeTestHelper, testData());
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class TempoRestScopesTest extends ScopeManagerTest {
+    public TempoRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
+        super(scopeManager, scopeTestHelper, testData());
     }
 
     /**
      * These tests are not exhaustive. They are samples across the JIRA endpoints.
      */
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         List<ScopeTestData> params = new ArrayList<>();
 
         params.addAll(asList(

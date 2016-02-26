@@ -8,42 +8,35 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  *
  */
-public final class ApiResourceInfo
-{
+public final class ApiResourceInfo {
     private final String path;
     private final String httpMethod;
     private final String rpcMethod;
 
-    public ApiResourceInfo(String path, String httpMethod)
-    {
+    public ApiResourceInfo(String path, String httpMethod) {
         this(path, httpMethod, null);
     }
 
-    public ApiResourceInfo(String path, String httpMethod, String rpcMethod)
-    {
+    public ApiResourceInfo(String path, String httpMethod, String rpcMethod) {
         this.path = path;
         this.httpMethod = httpMethod;
         this.rpcMethod = rpcMethod;
     }
 
-    public String getPath()
-    {
+    public String getPath() {
         return path;
     }
 
-    public String getHttpMethod()
-    {
+    public String getHttpMethod() {
         return httpMethod;
     }
 
-    public String getRpcMethod()
-    {
+    public String getRpcMethod() {
         return rpcMethod;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
                 .append("path", path)
                 .append("httpMethod", httpMethod)
@@ -52,14 +45,11 @@ public final class ApiResourceInfo
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -72,8 +62,7 @@ public final class ApiResourceInfo
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(7, 41)
                 .append(path)
                 .append(httpMethod)

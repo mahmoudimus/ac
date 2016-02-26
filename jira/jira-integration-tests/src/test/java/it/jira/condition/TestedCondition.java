@@ -1,14 +1,13 @@
 package it.jira.condition;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-
-public final class TestedCondition
-{
+public final class TestedCondition {
     private final String name;
     private final Map<String, String> parameters;
 
@@ -20,27 +19,27 @@ public final class TestedCondition
         return new TestedCondition(name, ImmutableMap.<String, String>builder().putAll(parameters).put(key, value).build());
     }
 
-    private TestedCondition(String name, Map<String, String> parameters)
-    {
+    private TestedCondition(String name, Map<String, String> parameters) {
         this.name = Preconditions.checkNotNull(name);
         this.parameters = ImmutableMap.copyOf(parameters);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public Map<String, String> getParameters()
-    {
+    public Map<String, String> getParameters() {
         return parameters;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         TestedCondition that = (TestedCondition) o;
 
@@ -49,14 +48,12 @@ public final class TestedCondition
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(getName(), getParameters());
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("name", getName())
                 .add("parameters", getParameters())

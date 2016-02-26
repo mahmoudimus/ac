@@ -5,7 +5,6 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.confluence.macro.FixedMacroMetadata;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -15,30 +14,25 @@ import org.dom4j.Element;
  *
  * See https://jira.atlassian.com/browse/CONF-25394
  */
-public class FixedXhtmlMacroModuleDescriptor extends XhtmlMacroModuleDescriptor
-{
+public class FixedXhtmlMacroModuleDescriptor extends XhtmlMacroModuleDescriptor {
     public FixedXhtmlMacroModuleDescriptor(ModuleFactory moduleFactory,
-            MacroMetadataParser metadataParser)
-    {
+                                           MacroMetadataParser metadataParser) {
         super(moduleFactory, metadataParser);
     }
 
     @Override
-    public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException
-    {
+    public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException {
         super.init(plugin, element);
 
     }
 
     @Override
-    public MacroMetadata getMacroMetadata()
-    {
+    public MacroMetadata getMacroMetadata() {
         return new FixedMacroMetadata(super.getMacroMetadata());
     }
 
     @Override
-    public String getModuleClassName()
-    {
+    public String getModuleClassName() {
         return super.getModuleClassName();
     }
 }

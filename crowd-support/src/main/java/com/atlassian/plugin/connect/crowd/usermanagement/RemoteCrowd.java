@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -22,107 +18,81 @@ import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInitException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoteCrowd extends ConnectCrowdBase
-{
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+public class RemoteCrowd extends ConnectCrowdBase {
     private static final Logger log = LoggerFactory.getLogger(RemoteCrowd.class);
     private final CrowdClientProvider crowdClientProvider;
 
-    public RemoteCrowd(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
-    {
+    public RemoteCrowd(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation) {
         super(userReconciliation);
         this.crowdClientProvider = crowdClientProvider;
     }
 
     @Override
-    public void setAttributesOnUser(String username, Map<String, Set<String>> attributes)
-    {
-        try
-        {
+    public void setAttributesOnUser(String username, Map<String, Set<String>> attributes) {
+        try {
             client().storeUserAttributes(username, attributes);
-        }
-        catch (UserNotFoundException | InvalidAuthenticationException | ApplicationPermissionException | OperationFailedException e)
-        {
+        } catch (UserNotFoundException | InvalidAuthenticationException | ApplicationPermissionException | OperationFailedException e) {
             throw new ConnectAddonInitException(e);
         }
     }
 
     @Override
     protected void addUser(UserTemplate userTemplate, PasswordCredential passwordCredential)
-            throws OperationFailedException, InvalidUserException
-    {
-        try
-        {
+            throws OperationFailedException, InvalidUserException {
+        try {
             client().addUser(userTemplate, passwordCredential);
-        }
-        catch (InvalidCredentialException | ApplicationPermissionException | InvalidAuthenticationException e)
-        {
+        } catch (InvalidCredentialException | ApplicationPermissionException | InvalidAuthenticationException e) {
             throw new ConnectAddonInitException(e);
         }
     }
 
-    protected void updateUser(UserTemplate requiredUpdates)
-    {
-        try
-        {
+    protected void updateUser(UserTemplate requiredUpdates) {
+        try {
             client().updateUser(requiredUpdates);
-        }
-        catch (InvalidUserException | InvalidAuthenticationException
-                | ApplicationPermissionException | OperationFailedException | UserNotFoundException e)
-        {
+        } catch (InvalidUserException | InvalidAuthenticationException
+                | ApplicationPermissionException | OperationFailedException | UserNotFoundException e) {
             throw new ConnectAddonInitException(e);
         }
     }
 
-    protected void updateUserCredential(String username, PasswordCredential passwordCredential)
-    {
-        try
-        {
-            if (passwordCredential.equals(PasswordCredential.NONE))
-            {
+    protected void updateUserCredential(String username, PasswordCredential passwordCredential) {
+        try {
+            if (passwordCredential.equals(PasswordCredential.NONE)) {
                 client().updateUserCredential(username, null);
-            }
-            else
-            {
+            } else {
                 client().updateUserCredential(username, passwordCredential.getCredential());
             }
-        }
-        catch (OperationFailedException e)
-        {
+        } catch (OperationFailedException e) {
             log.warn("Tried to update the add-on user credentials but the operation failed: " + e.getMessage());
-        }
-        catch (UserNotFoundException | InvalidAuthenticationException |
-                ApplicationPermissionException | InvalidCredentialException e)
-        {
+        } catch (UserNotFoundException | InvalidAuthenticationException |
+                ApplicationPermissionException | InvalidCredentialException e) {
             throw new ConnectAddonInitException(e);
         }
     }
 
-    public Optional<? extends User> findUserByName(String username)
-    {
-        try
-        {
+    public Optional<? extends User> findUserByName(String username) {
+        try {
             return Optional.of(client().getUser(username));
-        }
-        catch (UserNotFoundException | InvalidAuthenticationException |
-                ApplicationPermissionException | OperationFailedException e)
-        {
+        } catch (UserNotFoundException | InvalidAuthenticationException |
+                ApplicationPermissionException | OperationFailedException e) {
             return Optional.empty();
         }
     }
 
     @Override
     protected void addGroup(String groupName)
-            throws InvalidGroupException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
-    {
+            throws InvalidGroupException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException {
         client().addGroup(new GroupTemplate(groupName));
     }
 
-    private CrowdClient client()
-    {
+    private CrowdClient client() {
         return crowdClientProvider.getCrowdClient();
     }
 
@@ -130,19 +100,14 @@ public class RemoteCrowd extends ConnectCrowdBase
     public void ensureUserIsInGroup(String username, String groupName)
             throws ApplicationNotFoundException, UserNotFoundException,
             ApplicationPermissionException, GroupNotFoundException,
-            OperationFailedException, InvalidAuthenticationException
-    {
+            OperationFailedException, InvalidAuthenticationException {
         log.info("Attempting to make user '{}' a member of group '{}' (if not already a member).", username, groupName);
 
-        if (!client().isUserDirectGroupMember(username, groupName))
-        {
-            try
-            {
+        if (!client().isUserDirectGroupMember(username, groupName)) {
+            try {
                 client().addUserToGroup(username, groupName);
                 log.info("Added user '{}' to group '{}',", username, groupName);
-            }
-            catch (MembershipAlreadyExistsException e)
-            {
+            } catch (MembershipAlreadyExistsException e) {
                 // ignore, because the membership that we're trying to create exists
             }
         }
@@ -152,38 +117,29 @@ public class RemoteCrowd extends ConnectCrowdBase
     public void removeUserFromGroup(String username, String groupName)
             throws ApplicationNotFoundException, UserNotFoundException,
             ApplicationPermissionException, GroupNotFoundException, OperationFailedException,
-            InvalidAuthenticationException
-    {
-        try
-        {
+            InvalidAuthenticationException {
+        try {
             client().removeUserFromGroup(username, groupName);
             log.info("Removed user '{}' from group '{}'.", username, groupName);
-        }
-        catch (MembershipNotFoundException e)
-        {
+        } catch (MembershipNotFoundException e) {
             // ignore, we wanted to remove the member anyway
         }
     }
 
     @Override
     public Group findGroupByKey(String groupName)
-            throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
-    {
+            throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException {
         Group group;
-        try
-        {
+        try {
             group = client().getGroup(groupName);
-        }
-        catch (GroupNotFoundException| OperationFailedException gnf)
-        {
+        } catch (GroupNotFoundException | OperationFailedException gnf) {
             group = null;
         }
         return group;
     }
 
     @Override
-    public void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
-    {
+    public void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException {
         client().invalidateSSOTokensForUser(username);
     }
 }

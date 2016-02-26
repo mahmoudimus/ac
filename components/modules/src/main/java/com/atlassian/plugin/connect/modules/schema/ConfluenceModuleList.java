@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.confluence;
+package com.atlassian.plugin.connect.modules.schema;
 
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
@@ -16,8 +16,7 @@ import java.util.List;
  */
 @SuppressWarnings("UnusedDeclaration")
 @ObjectSchemaAttributes(additionalProperties = false)
-public class ConfluenceModuleList extends BaseModuleBean
-{
+public class ConfluenceModuleList extends BaseModuleBean {
     /**
      * Dynamic content macros allow you to add a macro into a Confluence page which is rendered as an iframe.
      *
@@ -53,7 +52,6 @@ public class ConfluenceModuleList extends BaseModuleBean
      */
     private List<ContentPropertyModuleBean> confluenceContentProperties;
 
-    private ConfluenceModuleList()
-    {
+    private ConfluenceModuleList() {
     }
 }

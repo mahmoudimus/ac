@@ -8,12 +8,11 @@ import org.dom4j.dom.DOMElement;
 import java.util.List;
 import java.util.Map;
 
-public interface ConditionModuleFragmentFactory
-{
+public interface ConditionModuleFragmentFactory {
     DOMElement createFragment(String pluginKey, List<ConditionalBean> beans);
 
     DOMElement createFragment(String pluginKey, List<ConditionalBean> beans,
-            Iterable<Class<? extends Condition>> additionalStaticConditions);
+                              Iterable<Class<? extends Condition>> additionalStaticConditions);
 
     Map<String, String> getFragmentParameters(String addonKey, SingleConditionBean conditionBean);
 }

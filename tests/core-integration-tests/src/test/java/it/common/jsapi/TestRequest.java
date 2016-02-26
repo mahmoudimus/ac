@@ -1,7 +1,5 @@
 package it.common.jsapi;
 
-import java.util.TimeZone;
-
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
@@ -9,13 +7,13 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectGeneralTestPage;
-
+import it.common.MultiProductWebDriverTestBase;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.common.MultiProductWebDriverTestBase;
+import java.util.TimeZone;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
@@ -23,8 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class TestRequest extends MultiProductWebDriverTestBase
-{
+public class TestRequest extends MultiProductWebDriverTestBase {
 
     private static final String PAGE_MODULE_KEY = "remotePluginGeneral";
     private static final String PAGE_NAME = "Request";
@@ -32,8 +29,7 @@ public class TestRequest extends MultiProductWebDriverTestBase
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         String pageUrl = "/rpg";
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .addJWT()
@@ -50,17 +46,14 @@ public class TestRequest extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testRequestFromGeneralPage()
-    {
+    public void testRequestFromGeneralPage() {
         TestUser user = testUserFactory.basicUser();
         ConnectGeneralTestPage page = loginAndVisit(user,
                 ConnectGeneralTestPage.class, remotePlugin.getAddon().getKey(), PAGE_MODULE_KEY);

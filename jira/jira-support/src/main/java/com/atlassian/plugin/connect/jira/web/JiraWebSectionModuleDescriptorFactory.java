@@ -11,21 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @JiraComponent
-public class JiraWebSectionModuleDescriptorFactory implements ProductSpecificWebSectionModuleDescriptorFactory
-{
+public class JiraWebSectionModuleDescriptorFactory implements ProductSpecificWebSectionModuleDescriptorFactory {
     private final WebInterfaceManager webInterfaceManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
     @Autowired
-    public JiraWebSectionModuleDescriptorFactory(WebInterfaceManager webInterfaceManager, JiraAuthenticationContext jiraAuthenticationContext)
-    {
+    public JiraWebSectionModuleDescriptorFactory(WebInterfaceManager webInterfaceManager, JiraAuthenticationContext jiraAuthenticationContext) {
         this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
         this.webInterfaceManager = checkNotNull(webInterfaceManager);
     }
 
     @Override
-    public WebSectionModuleDescriptor createWebSectionModuleDescriptor()
-    {
+    public WebSectionModuleDescriptor createWebSectionModuleDescriptor() {
         return new JiraWebSectionModuleDescriptor(jiraAuthenticationContext, webInterfaceManager);
     }
 }

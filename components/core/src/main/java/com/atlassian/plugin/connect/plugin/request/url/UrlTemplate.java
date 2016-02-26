@@ -16,8 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * {@code /acmeaddon?pid=15&issueid=100}
  */
-public class UrlTemplate
-{
+public class UrlTemplate {
     private final String urlTemplateStr;
 
     /**
@@ -25,30 +24,24 @@ public class UrlTemplate
      *
      * @param urlTemplateStr the string form of a URL template
      */
-    public UrlTemplate(String urlTemplateStr)
-    {
+    public UrlTemplate(String urlTemplateStr) {
         this.urlTemplateStr = checkNotNull(urlTemplateStr);
     }
 
     @Deprecated // Only exposed until ACDEV-498 implemented. After that createUrl will be used instead
-    public String getTemplateString()
-    {
+    public String getTemplateString() {
         return urlTemplateStr;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == null)
-        {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        if (obj == this)
-        {
+        if (obj == this) {
             return true;
         }
-        if (obj.getClass() != getClass())
-        {
+        if (obj.getClass() != getClass()) {
             return false;
         }
         UrlTemplate rhs = (UrlTemplate) obj;

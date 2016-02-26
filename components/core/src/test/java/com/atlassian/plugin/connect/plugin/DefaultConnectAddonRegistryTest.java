@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
-
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import org.junit.Before;
@@ -31,8 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultConnectAddonRegistryTest
-{
+public class DefaultConnectAddonRegistryTest {
 
     private DefaultConnectAddonRegistry registry;
 
@@ -44,16 +42,14 @@ public class DefaultConnectAddonRegistryTest
     private PluginSettings pluginSettings;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         when(pluginSettingsFactory.createGlobalSettings()).thenReturn(pluginSettings);
 
         this.registry = new DefaultConnectAddonRegistry(pluginSettingsFactory, TransactionCallback::doInTransaction);
     }
 
     @Test
-    public void shouldReturnNoAddonKeys()
-    {
+    public void shouldReturnNoAddonKeys() {
         List<String> keys = Collections.emptyList();
         when(pluginSettings.get(any(String.class))).thenReturn(keys);
         assertThat(this.registry.getAllAddonKeys(), emptyIterable());
@@ -61,8 +57,7 @@ public class DefaultConnectAddonRegistryTest
     }
 
     @Test
-    public void shouldReturnAddonKeys()
-    {
+    public void shouldReturnAddonKeys() {
         String[] keys = new String[]{"foo", "bar"};
         List<String> keyList = Arrays.asList(keys);
         when(pluginSettings.get(any(String.class))).thenReturn(keyList);
@@ -71,8 +66,7 @@ public class DefaultConnectAddonRegistryTest
     }
 
     @Test
-    public void shouldStoreRestartStateWhenChanged()
-    {
+    public void shouldStoreRestartStateWhenChanged() {
         String addonKey = "foo";
         AddonSettings addonSettings = new AddonSettings();
         addonSettings.setBaseUrl("https://base.url");
@@ -88,8 +82,7 @@ public class DefaultConnectAddonRegistryTest
     }
 
     @Test
-    public void shouldIgnoreRestartStateWhenSettingsNotFound()
-    {
+    public void shouldIgnoreRestartStateWhenSettingsNotFound() {
         String addonKey = "foo";
         when(pluginSettings.get(ADDON_LIST_KEY)).thenReturn(ImmutableList.of(addonKey));
 
@@ -100,8 +93,7 @@ public class DefaultConnectAddonRegistryTest
     }
 
     @Test
-    public void shouldNotStoreRestartStateWhenUnchanged()
-    {
+    public void shouldNotStoreRestartStateWhenUnchanged() {
         String addonKey = "foo";
         AddonSettings addonSettings = new AddonSettings();
 
@@ -114,8 +106,7 @@ public class DefaultConnectAddonRegistryTest
         verify(pluginSettings, never()).put(eq(ADDON_LIST_KEY), any());
     }
 
-    private String toJson(Object object)
-    {
+    private String toJson(Object object) {
         return new Gson().toJson(object);
     }
 }

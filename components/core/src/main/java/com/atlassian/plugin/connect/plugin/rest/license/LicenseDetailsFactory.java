@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.rest.license;
 
 import com.atlassian.upm.api.license.entity.Contact;
 import com.atlassian.upm.api.license.entity.PluginLicense;
-
 import org.joda.time.DateTime;
 
 import java.util.Date;
@@ -11,10 +10,8 @@ import static com.google.common.collect.Iterables.transform;
 
 /**
  */
-public class LicenseDetailsFactory
-{
-    public static LicenseDetailsRepresentation createRemotablePluginLicense(PluginLicense pluginLicense)
-    {
+public class LicenseDetailsFactory {
+    public static LicenseDetailsRepresentation createRemotablePluginLicense(PluginLicense pluginLicense) {
         return new LicenseDetailsRepresentation(pluginLicense.isValid(),
                 pluginLicense.isEvaluation(),
                 PluginLicenses.isNearlyExpired().apply(pluginLicense),
@@ -33,8 +30,7 @@ public class LicenseDetailsFactory
                 pluginLicense.isEnterprise());
     }
 
-    private static String getContactsEmail(Iterable<Contact> contacts)
-    {
+    private static String getContactsEmail(Iterable<Contact> contacts) {
         Iterable<String> emails = transform(contacts, Contact::getEmail);
 
         return Strings.getFirstNonEmpty(emails).getOrElse((String) null);

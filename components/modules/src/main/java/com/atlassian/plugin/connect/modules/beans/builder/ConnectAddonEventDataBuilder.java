@@ -7,8 +7,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
-public class ConnectAddonEventDataBuilder extends BaseModuleBeanBuilder<ConnectAddonEventDataBuilder, ConnectAddonEventData>
-{
+public class ConnectAddonEventDataBuilder extends BaseModuleBeanBuilder<ConnectAddonEventDataBuilder, ConnectAddonEventData> {
     private Map<String, String> links;
     //this is the plugin key
     private String key;
@@ -24,13 +23,11 @@ public class ConnectAddonEventDataBuilder extends BaseModuleBeanBuilder<ConnectA
     private String serviceEntitlementNumber;
     private String eventType;
 
-    public ConnectAddonEventDataBuilder()
-    {
+    public ConnectAddonEventDataBuilder() {
         this.links = newHashMap();
     }
 
-    public ConnectAddonEventDataBuilder(ConnectAddonEventData defaultBean)
-    {
+    public ConnectAddonEventDataBuilder(ConnectAddonEventData defaultBean) {
         this.links = defaultBean.getLinks();
         this.key = defaultBean.getPluginKey();
         this.clientKey = defaultBean.getClientKey();
@@ -46,96 +43,81 @@ public class ConnectAddonEventDataBuilder extends BaseModuleBeanBuilder<ConnectA
         this.eventType = defaultBean.getEventType();
     }
 
-    public ConnectAddonEventDataBuilder withLinks(Map<String, String> params)
-    {
+    public ConnectAddonEventDataBuilder withLinks(Map<String, String> params) {
         checkNotNull(params);
 
         this.links = params;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withLink(String key, String value)
-    {
+    public ConnectAddonEventDataBuilder withLink(String key, String value) {
         links.put(key, value);
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withPluginKey(String key)
-    {
+    public ConnectAddonEventDataBuilder withPluginKey(String key) {
         this.key = key;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withClientKey(String key)
-    {
+    public ConnectAddonEventDataBuilder withClientKey(String key) {
         this.clientKey = key;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withPublicKey(String key)
-    {
+    public ConnectAddonEventDataBuilder withPublicKey(String key) {
         this.publicKey = key;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withSharedSecret(String sharedSecret)
-    {
+    public ConnectAddonEventDataBuilder withSharedSecret(String sharedSecret) {
         this.sharedSecret = sharedSecret;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withServerVersion(String version)
-    {
+    public ConnectAddonEventDataBuilder withServerVersion(String version) {
         this.serverVersion = version;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withPluginsVersion(String version)
-    {
+    public ConnectAddonEventDataBuilder withPluginsVersion(String version) {
         this.pluginsVersion = version;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withBaseUrl(String url)
-    {
+    public ConnectAddonEventDataBuilder withBaseUrl(String url) {
         this.baseUrl = url;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withProductType(String type)
-    {
+    public ConnectAddonEventDataBuilder withProductType(String type) {
         this.productType = type;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withDescription(String description)
-    {
+    public ConnectAddonEventDataBuilder withDescription(String description) {
         this.description = description;
         return this;
     }
 
     @Deprecated // Not to be used with JWT
-    public ConnectAddonEventDataBuilder withUserKey(String key)
-    {
+    public ConnectAddonEventDataBuilder withUserKey(String key) {
         this.userKey = key;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withServiceEntitlementNumber(String sen)
-    {
+    public ConnectAddonEventDataBuilder withServiceEntitlementNumber(String sen) {
         this.serviceEntitlementNumber = sen;
         return this;
     }
 
-    public ConnectAddonEventDataBuilder withEventType(String type)
-    {
+    public ConnectAddonEventDataBuilder withEventType(String type) {
         this.eventType = type;
         return this;
     }
 
     @Override
-    public ConnectAddonEventData build()
-    {
+    public ConnectAddonEventData build() {
         return new ConnectAddonEventData(this);
     }
 }
