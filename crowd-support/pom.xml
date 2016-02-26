@@ -10,14 +10,6 @@
     <artifactId>atlassian-connect-crowd-support</artifactId>
     <name>Atlassian Connect - Crowd Support</name>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -112,7 +104,6 @@
     <dependency>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>atlassian-plugins-api</artifactId>
-        <version>${atlassian.plugins.version}</version>
         <scope>test</scope>
     </dependency>
         <dependency>
