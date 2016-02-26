@@ -221,8 +221,7 @@ public class OAuth2LOAuthenticator implements Authenticator {
             // omit the stacktrace
             logger.warn(
                     "Problem encountered authenticating OAuth client for url \"{}\", error was \"{}\", with parameters \"{}\"",
-                    new Object[]{message.URL, ope.getProblem(), ope.getParameters()}
-            );
+                    message.URL, ope.getProblem(), ope.getParameters());
         }
     }
 

@@ -19,7 +19,7 @@ public enum MacroOutputType {
 
     private final String value;
 
-    private MacroOutputType(String value) {
+    MacroOutputType(String value) {
         this.value = value;
     }
 

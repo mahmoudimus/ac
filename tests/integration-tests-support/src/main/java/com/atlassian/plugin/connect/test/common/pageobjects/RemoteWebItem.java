@@ -18,7 +18,7 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
  * A remote web-item, which link is expected to pass context.
  */
 public class RemoteWebItem {
-    public static enum ItemMatchingMode {ID, LINK_TEXT, JQUERY}
+    public enum ItemMatchingMode {ID, LINK_TEXT, JQUERY}
 
     private static final String INLINE_DIALOG_ACTIVE_CLASS = "active";
     private final static Logger log = LoggerFactory.getLogger(RemoteWebItem.class);

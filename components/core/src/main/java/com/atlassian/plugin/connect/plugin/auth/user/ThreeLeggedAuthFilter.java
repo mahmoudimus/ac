@@ -129,7 +129,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware {
         // warn if weird properties are set
         if (null != addonKeyObject && !(addonKeyObject instanceof String)) {
             log.warn("The value of the request attribute '{}' should be a string but instead it is a '{}': '{}'. This is a programming error in the code that sets this value.",
-                    new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addonKeyObject.getClass().getSimpleName(), addonKeyObject});
+                    JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addonKeyObject.getClass().getSimpleName(), addonKeyObject);
         }
         return addonKey;
     }

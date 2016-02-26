@@ -9,7 +9,7 @@ public interface DynamicDescriptorRegistration {
 
     Registration registerDescriptors(Iterable<ModuleDescriptor<?>> descriptors);
 
-    public static interface Registration {
+    interface Registration {
         void unregister();
 
         Collection<ModuleDescriptor<?>> getRegisteredDescriptors();
