@@ -1,22 +1,20 @@
 package com.atlassian.plugin.connect.test.common.servlet.condition;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import com.atlassian.fugue.Iterables;
+import com.atlassian.fugue.Option;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.fugue.Iterables;
-import com.atlassian.fugue.Option;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParameterCapturingConditionServlet extends HttpServlet {
     /**
@@ -38,6 +36,7 @@ public class ParameterCapturingConditionServlet extends HttpServlet {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         paramsFromLastRequest = req.getParameterMap();
         Map<String, String> headers = new HashMap<>();

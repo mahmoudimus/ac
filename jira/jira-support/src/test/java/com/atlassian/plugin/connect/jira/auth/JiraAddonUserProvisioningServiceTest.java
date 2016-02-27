@@ -112,7 +112,7 @@ public class JiraAddonUserProvisioningServiceTest {
 
         when(connectAddonUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(false);
 
-        when(jiraPermissionManager.getGroupsWithPermission(Permissions.ADMINISTER)).thenReturn(Collections.EMPTY_LIST);
+        when(jiraPermissionManager.getGroupsWithPermission(Permissions.ADMINISTER)).thenReturn(Collections.emptyList());
 
 
         Set<ScopeName> previousScopes = newHashSet();

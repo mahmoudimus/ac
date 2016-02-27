@@ -47,7 +47,7 @@ public class WebSectionModuleProvider extends AbstractConnectCoreModuleProvider<
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebSectionModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<WebSectionModuleBean> modules, ConnectAddonBean addon) {
         return modules.stream()
                 .map(webSection -> webSectionFactory.createModuleDescriptor(webSection, addon, pluginRetrievalService.getPlugin()))
                 .collect(Collectors.toList());

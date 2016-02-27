@@ -31,7 +31,7 @@ public class ConditionLoadingValidatorImplTest {
     private PluginAccessor pluginAccessor;
 
     private ShallowConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean().build();
-    private ConnectModuleMeta moduleMeta = new ConnectModuleMeta("someModules", ModuleBean.class) {
+    private ConnectModuleMeta<ModuleBean> moduleMeta = new ConnectModuleMeta<ModuleBean>("someModules", ModuleBean.class) {
     };
 
     public ConditionLoadingValidatorImplTest(ConditionLoadingValidator conditionLoadingValidator,

@@ -62,7 +62,19 @@ runTestsStage(['installMavenParameters', 'testMavenParameters']) {
                 testMavenParameters: '#testMavenParameters'
         )
         job(
-                key: 'UTJ7',
+                key: 'STYLE',
+                name: 'Checkstyle'
+        ) {
+            commonRequirements()
+            checkoutDefaultRepositoryTask()
+            mavenTask(
+                    description: 'Run Checkstyle',
+                    goal: 'verify -Pcheckstyle -Pit -PpluginLifecycle -Pwired',
+                    environmentVariables: ''
+            )
+        }
+        job(
+                key: 'UTJ',
                 name: 'Unit Tests'
         ) {
             commonRequirements()

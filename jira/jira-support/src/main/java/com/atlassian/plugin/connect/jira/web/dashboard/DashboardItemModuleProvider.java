@@ -48,7 +48,7 @@ public class DashboardItemModuleProvider extends AbstractJiraConnectModuleProvid
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<DashboardItemModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<DashboardItemModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> dashboardItemModuleDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()));
     }
 }

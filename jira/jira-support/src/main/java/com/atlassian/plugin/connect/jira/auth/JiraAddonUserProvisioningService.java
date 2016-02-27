@@ -278,7 +278,7 @@ public class JiraAddonUserProvisioningService implements CrowdAddonUserProvision
                             ProjectRoleActor.USER_ROLE_ACTOR_TYPE,
                             errorCollection);
                     String projectKey = null == project ? null : project.getKey();
-                    log.info("Added user '{}' to project '{}' role '{}'", new Object[]{addonUser.getName(), projectKey, projectRole.getName()});
+                    log.info("Added user '{}' to project '{}' role '{}'", addonUser.getName(), projectKey, projectRole.getName());
                 }
             }
         }
@@ -300,7 +300,7 @@ public class JiraAddonUserProvisioningService implements CrowdAddonUserProvision
                         ProjectRoleActor.USER_ROLE_ACTOR_TYPE,
                         errorCollection);
                 String projectKey = null == project ? null : project.getKey();
-                log.info("Removed user '{}' from project '{}' role '{}'", new Object[]{addonUser.getName(), projectKey, projectRole.getName()});
+                log.info("Removed user '{}' from project '{}' role '{}'", addonUser.getName(), projectKey, projectRole.getName());
             }
         }
         if (errorCollection.hasAnyErrors()) {

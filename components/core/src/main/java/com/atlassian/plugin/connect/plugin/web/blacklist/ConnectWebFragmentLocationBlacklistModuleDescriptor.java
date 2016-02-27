@@ -70,10 +70,14 @@ public final class ConnectWebFragmentLocationBlacklistModuleDescriptor extends A
         Element subElementWithLocations = element.element(elementName);
         if (subElementWithLocations == null) return ImmutableSet.of();
 
-        List<Element> locations = subElementWithLocations.elements();
-        return ImmutableSet.copyOf(
-                locations.stream().map(Element::getText).collect(Collectors.toSet())
+        List<Element> locations = getElements(subElementWithLocations);
+        return ImmutableSet.copyOf(locations.stream().map(Element::getText).collect(Collectors.toSet())
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Element> getElements(Element element) {
+        return element.elements();
     }
 
     @Override

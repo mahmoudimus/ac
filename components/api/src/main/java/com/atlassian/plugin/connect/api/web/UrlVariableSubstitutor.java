@@ -24,7 +24,7 @@ public interface UrlVariableSubstitutor {
      * @param context context containing values to replace
      * @return source with variables replaced by values.
      */
-    public String replace(String source, WebFragmentContext context);
+    String replace(String source, WebFragmentContext context);
 
     /**
      * Appends (rather than substitutes) a map of parameters to the end of the url.
@@ -33,12 +33,12 @@ public interface UrlVariableSubstitutor {
      * @param parameters the parameters to append
      * @return the URL, with the supplied parameters appended
      */
-    public String append(String source, Map<String, String> parameters);
+    String append(String source, Map<String, String> parameters);
 
     /**
      * Parses from the given URL a {@link java.util.Map} of name-in-source to context-variable-name.
      * @param source string containing variables (e.g. "http://server:80/path?my_page_id={page.id}" or "my_page_id={page.id}")
      * @return {@link java.util.Map} of name-in-source to context-variable-name (e.g. "my_page_id" to "page.id")
      */
-    public Map<String, String> getContextVariableMap(final String source);
+    Map<String, String> getContextVariableMap(final String source);
 }

@@ -24,13 +24,11 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
-import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.AbstractConnectCoreModuleProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,8 +94,8 @@ public class WebItemModuleProviderImpl extends AbstractConnectCoreModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebItemModuleBean> modules, ConnectAddonBean addon) {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<WebItemModuleBean> modules, ConnectAddonBean addon) {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
         for (WebItemModuleBean bean : modules) {
             descriptors.add(beanToDescriptor(addon, pluginRetrievalService.getPlugin(), bean));
             registerIframeRenderStrategy(bean, addon);

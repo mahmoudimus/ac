@@ -7,7 +7,11 @@ import com.atlassian.plugin.connect.spi.HostProperties;
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+
+import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.Constants.ADDON_USER_GROUP_KEY;
 import static com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddonUserUtil.buildConnectAddonUserAttribute;
@@ -46,7 +50,7 @@ public class TestCrowdAddonUserService {
         initMocks(this);
         when(user.getName()).thenReturn(ADDON_USERNAME);
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
-                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, NEWLY_CREATED));
+                any(PasswordCredential.class), Matchers.<Map<String, Set<String>>>any())).thenReturn(new UserCreationResult(user, NEWLY_CREATED));
         crowdAddonUserService = new CrowdAddonUserService(
                 crowdAddonUserProvisioningService,
                 connectAddonUserGroupProvisioningService,
@@ -86,7 +90,7 @@ public class TestCrowdAddonUserService {
     @Test
     public void getOrCreateUserNameAddsPreExistingUserToAddonGroupOnly() throws Exception {
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
-                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
+                any(PasswordCredential.class), Matchers.<Map<String, Set<String>>>any())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
 
         when(crowdAddonUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
         when(crowdAddonUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
@@ -107,7 +111,7 @@ public class TestCrowdAddonUserService {
     @Test
     public void getOrCreateUserNameInvalidatesSessionsForPreExistingUser() throws Exception {
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
-                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
+                any(PasswordCredential.class), Matchers.<Map<String, Set<String>>>any())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
 
         crowdAddonUserService.getOrCreateAddonUserName(ADDON_KEY, ADDON_NAME);
 

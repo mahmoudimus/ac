@@ -1,10 +1,11 @@
 package com.atlassian.plugin.connect.plugin.web.context.condition;
 
-import java.util.Map;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class InlineConditionVariableSubstitutorImpl implements InlineConditionVariableSubstitutor {
@@ -19,7 +20,7 @@ public class InlineConditionVariableSubstitutorImpl implements InlineConditionVa
 
     public Optional<String> substitute(String variable, Map<String, ?> context) {
         return parser.parse(variable)
-                .flatMap(condition -> resolver.resolve(condition, (Map<String, Object>) context))
+                .flatMap(condition -> resolver.resolve(condition, new HashMap<>(context)))
                 .map(Object::toString)
                 .map(String::toLowerCase);
     }

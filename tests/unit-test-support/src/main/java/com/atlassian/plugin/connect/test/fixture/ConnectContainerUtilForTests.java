@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.util.fixture;
+package com.atlassian.plugin.connect.test.fixture;
 
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.google.common.base.Preconditions;
@@ -24,6 +24,7 @@ public class ConnectContainerUtilForTests implements ConnectContainerUtil {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T createBean(Class<T> clazz) {
         Constructor<?>[] constructors = clazz.getConstructors();
         Preconditions.checkState(constructors.length == 1);
