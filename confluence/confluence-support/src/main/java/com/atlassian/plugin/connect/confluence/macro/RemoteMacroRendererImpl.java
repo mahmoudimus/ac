@@ -55,11 +55,11 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer {
 
         if (fallback != null) {
             log.debug("execute dynamic macro [ {} ] from add on [ {} ] with render mode [ {} ] to device [ {} ] to fallback [ {} ]",
-                    new Object[]{moduleKey, addonKey, conversionContext.getOutputType(), conversionContext.getOutputDeviceType(), fallback.getUrl()});
+                    moduleKey, addonKey, conversionContext.getOutputType(), conversionContext.getOutputDeviceType(), fallback.getUrl());
             return executeStatic(addonKey, moduleKey, fallback.getUrl(), parameters, storageFormatBody, conversionContext);
         } else {
             log.debug("execute dynamic macro [ {} ] from add on [ {} ] with render mode [ {} ] to device [ {} ] without fallback",
-                    new Object[]{moduleKey, addonKey, conversionContext.getOutputType(), conversionContext.getOutputDeviceType()});
+                    moduleKey, addonKey, conversionContext.getOutputType(), conversionContext.getOutputDeviceType());
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKey, CONTENT_CLASSIFIER);
             ModuleContextParameters moduleContext = macroModuleContextExtractor.extractParameters(storageFormatBody, conversionContext, parameters);
             return IFrameRenderStrategyUtil.renderToString(moduleContext, renderStrategy);

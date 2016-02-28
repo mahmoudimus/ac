@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationExcepti
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@VisibleForTesting
 public class StaticModuleListDeserializer extends ModuleListDeserializer {
     private final Set<ConnectModuleMeta> moduleMetas;
 
@@ -43,7 +41,7 @@ public class StaticModuleListDeserializer extends ModuleListDeserializer {
 
         Gson deserializer = ConnectModulesGsonFactory.getGson();
         List<ModuleBean> beans = new ArrayList<>();
-        Class<? extends ModuleBean> beanClass = moduleMeta.getBeanClass();
+        Class<? extends ModuleBean> beanClass = getBeanClass(moduleMeta);
         if (modules.isJsonObject()) {
             beans.add(deserializer.fromJson(modules, beanClass));
         } else {
@@ -54,6 +52,11 @@ public class StaticModuleListDeserializer extends ModuleListDeserializer {
             }
         }
         return beans;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<? extends ModuleBean> getBeanClass(ConnectModuleMeta moduleMeta) {
+        return moduleMeta.getBeanClass();
     }
 
     @Nullable

@@ -53,7 +53,7 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             return (ModuleContextParameters) webFragmentContext;
         }
 
-        ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl((Map) webFragmentContext);
+        ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl(new HashMap<>(webFragmentContext));
 
         {
             @SuppressWarnings("unchecked") // it is what it is

@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.UISupportBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
@@ -57,7 +57,7 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
                 propertyExtractionElement.addAttribute("type", extractionBean.getType().toString());
                 propertyExtractionElement.addAttribute("alias", extractionBean.getAlias());
 
-                UISupportModuleBean uiSupportBean = extractionBean.getUiSupport();
+                UISupportBean uiSupportBean = extractionBean.getUiSupport();
                 if (uiSupportBean != null) {
                     Element uiSupportElement = propertyExtractionElement.addElement("ui-support");
 

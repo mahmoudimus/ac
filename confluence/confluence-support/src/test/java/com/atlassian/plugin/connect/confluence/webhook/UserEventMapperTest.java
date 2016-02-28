@@ -35,6 +35,7 @@ public class UserEventMapperTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testUserProfileMapping() {
         User user = mock(User.class);
         UserProfile userProfile = mock(UserProfile.class);

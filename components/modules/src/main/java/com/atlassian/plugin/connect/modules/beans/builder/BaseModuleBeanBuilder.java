@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 /**
  * @since 1.0
  */
+@SuppressWarnings("unchecked")
 public abstract class BaseModuleBeanBuilder<T extends BaseModuleBeanBuilder, B extends BaseModuleBean> implements ModuleBeanBuilder<B> {
 
     public BaseModuleBeanBuilder() {

@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.UriBuilder;

@@ -29,6 +29,7 @@ public class ContextMapURLSerializer {
         this.contextMapParameterExtractors = checkNotNull(contextMapParameterExtractors);
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getExtractedWebPanelParameters(final Map<String, Object> context) {
         Map<String, Object> whiteListedContext = newHashMap();
         for (ContextMapParameterExtractor extractor : contextMapParameterExtractors) {

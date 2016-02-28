@@ -3,11 +3,12 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.json.schema.annotation.ArraySchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
-import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.AutoconvertBeanBuilder;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
 
 /**
@@ -27,7 +28,7 @@ import java.util.List;
  * @since 1.1.27
  */
 @SchemaDefinition("autoconvert")
-public class AutoconvertBean extends BaseModuleBean {
+public class AutoconvertBean {
 
     /**
      * The name of the macro parameter the matched url will be inserted into.
@@ -47,7 +48,7 @@ public class AutoconvertBean extends BaseModuleBean {
     }
 
     public AutoconvertBean(AutoconvertBeanBuilder builder) {
-        super(builder);
+        copyFieldsByNameAndType(builder, this);
 
         if (null == matchers) {
             this.matchers = Collections.emptyList();

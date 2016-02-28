@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.util.annotation;
+package com.atlassian.plugin.connect.test.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

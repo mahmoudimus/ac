@@ -71,8 +71,8 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractJiraConne
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectProjectAdminTabPanelModuleBean> modules, ConnectAddonBean connectAddonBean) {
-        ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectProjectAdminTabPanelModuleBean> modules, ConnectAddonBean connectAddonBean) {
+        ImmutableList.Builder<ModuleDescriptor<?>> builder = ImmutableList.builder();
 
         for (ConnectProjectAdminTabPanelModuleBean bean : modules) {
             // render a web item for our tab

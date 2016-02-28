@@ -13,8 +13,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.util.fixture.ConnectContainerUtilForTests;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.fixture.ConnectContainerUtilForTests;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
@@ -58,8 +58,6 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest {
     @Mock
     private PluginRetrievalService pluginRetrievalService;
     @Mock
-    private ModuleDescriptor moduleDescriptor;
-    @Mock
     private WebResourceUrlProvider webResourceUrlProvider;
     @Mock
     private ResourceDescriptor resourceDescriptor;
@@ -93,9 +91,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest {
         when(componentAccessor.getComponent(ComponentClassManager.class)).thenReturn(componentClassManager);
 
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
-        when(plugin.getModuleDescriptor("dialog")).thenReturn(moduleDescriptor);
 
-        when(moduleDescriptor.getResourceDescriptors()).thenReturn(Collections.<ResourceDescriptor>singletonList(resourceDescriptor));
         when(webResourceUrlProvider.getStaticPluginResourceUrl(any(ModuleDescriptor.class), anyString(), any(UrlMode.class))).thenReturn("test.js");
 
         wfPostFunctionFactory = new WorkflowPostFunctionModuleDescriptorFactory(connectAutowireUtil);

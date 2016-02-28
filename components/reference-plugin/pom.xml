@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-components-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.77-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,11 +33,6 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -109,15 +104,6 @@
             <plugin>
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
-                <version>${atlassian.spring.scanner.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>atlassian-spring-scanner</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

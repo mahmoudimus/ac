@@ -59,7 +59,7 @@ public class BeanToModuleRegistrar {
             return;
         }
 
-        Collection<ConnectModuleProvider> moduleProviders = pluginAccessor.getModules(
+        Collection<ConnectModuleProvider<?>> moduleProviders = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
 
         Map<String, List<ModuleBean>> moduleLists = getModuleLists(addon);
@@ -120,19 +120,20 @@ public class BeanToModuleRegistrar {
         return webhooks;
     }
 
+    @SuppressWarnings("unchecked")
     private void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
                                                     ConnectAddonBean addon,
-                                                    Collection<ConnectModuleProvider> moduleProviders,
+                                                    Collection<ConnectModuleProvider<?>> moduleProviders,
                                                     List<ModuleDescriptor<?>> descriptorsToRegister) throws ConnectModuleRegistrationException {
         for (Map.Entry<String, List<ModuleBean>> entry : moduleList.entrySet()) {
-            List<ModuleBean> beans = entry.getValue();
+            List<?> beans = entry.getValue();
             ConnectModuleProvider provider = findProviderOrThrow(entry.getKey(), moduleProviders);
             List<ModuleDescriptor<?>> descriptors = provider.createPluginModuleDescriptors(beans, addon);
             descriptorsToRegister.addAll(descriptors);
         }
     }
 
-    private ConnectModuleProvider findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider> moduleProviders)
+    private ConnectModuleProvider<?> findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider<?>> moduleProviders)
             throws ConnectModuleRegistrationException {
         return moduleProviders.stream()
                 .filter(provider -> provider.getMeta().getDescriptorKey().equals(descriptorKey))

@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.request.BaseSigningRemotablePluginAccessorTest;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 import org.junit.Test;
