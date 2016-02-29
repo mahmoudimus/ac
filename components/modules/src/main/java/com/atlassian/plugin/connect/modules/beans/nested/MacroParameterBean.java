@@ -99,8 +99,7 @@ public class MacroParameterBean extends BaseModuleBean {
     @CommonSchemaAttributes(defaultValue = "false")
     private Boolean hidden;
 
-    public MacroParameterBean()
-    {
+    public MacroParameterBean() {
         init();
     }
 
@@ -134,8 +133,7 @@ public class MacroParameterBean extends BaseModuleBean {
         if (null == aliases) {
             aliases = ImmutableList.of();
         }
-        if (null == hidden)
-        {
+        if (null == hidden) {
             hidden = false;
         }
     }
