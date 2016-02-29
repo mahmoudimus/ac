@@ -13,6 +13,7 @@ import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionCla
 public class JiraConditionClassResolver implements ConnectConditionClassResolver {
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Entry> getEntries() {
         return ImmutableList.of(
                 newEntry("has_selected_project", com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class).build(),

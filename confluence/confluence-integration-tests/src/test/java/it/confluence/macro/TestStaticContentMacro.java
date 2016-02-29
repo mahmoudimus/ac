@@ -70,6 +70,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest {
         StaticContentMacroModuleBean editorMacro = createEditorMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(newStaticContentMacroModuleBean());
         StaticContentMacroModuleBean hiddenMacro = createHiddenMacro(newStaticContentMacroModuleBean());
+        StaticContentMacroModuleBean hiddenParameterMacro = createHiddenParameterMacro(newStaticContentMacroModuleBean());
 
         StaticContentMacroModuleBean storageFormatMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-storage-format")
@@ -107,7 +108,8 @@ public class TestStaticContentMacro extends AbstractContentMacroTest {
                         editorMacro,
                         customTitleEditorMacro,
                         hiddenMacro,
-                        counterMacro
+                        counterMacro,
+                        hiddenParameterMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, wrapContextAwareServlet(parameterServlet))
                 .addRoute("/render-editor", macroEditor())

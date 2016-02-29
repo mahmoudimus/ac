@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 
-public class LifecycleBeanBuilder extends BaseModuleBeanBuilder<LifecycleBeanBuilder, LifecycleBean> {
+public class LifecycleBeanBuilder {
     private String installed;
     private String uninstalled;
     private String enabled;
@@ -42,7 +42,6 @@ public class LifecycleBeanBuilder extends BaseModuleBeanBuilder<LifecycleBeanBui
         return this;
     }
 
-    @Override
     public LifecycleBean build() {
         return new LifecycleBean(this);
     }

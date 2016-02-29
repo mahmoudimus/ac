@@ -78,6 +78,7 @@ public class TestCloudAwareCrowdServiceInJiraCloud {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void createOrEnableUserSetsAttributesOnBothSides() {
         final User ignoredMockUser = mock(User.class);
         when(embedded.findUserByName(anyString())).thenReturn((Optional) Optional.of(ignoredMockUser));

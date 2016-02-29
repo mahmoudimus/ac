@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.testsupport.util.matcher;
+package com.atlassian.plugin.connect.test.matcher;
 
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AbstractCompositeCondition;
@@ -82,6 +82,7 @@ public class ConditionMatchers {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static List<String> getNestedConditionSimpleNamesReflectively(final AbstractCompositeCondition condition) {
         try {
             Field conditions = AbstractCompositeCondition.class.getDeclaredField("conditions");

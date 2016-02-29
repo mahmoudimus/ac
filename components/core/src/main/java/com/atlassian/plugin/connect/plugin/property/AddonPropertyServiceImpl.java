@@ -48,11 +48,11 @@ public class AddonPropertyServiceImpl implements AddonPropertyService {
         private final String i18nKey;
         private final String[] values;
 
-        private OperationStatusImpl(int httpStatusCode, String i18nKey) {
+        OperationStatusImpl(int httpStatusCode, String i18nKey) {
             this(httpStatusCode, i18nKey, new String[0]);
         }
 
-        private OperationStatusImpl(int httpStatusCode, String i18nKey, String... values) {
+        OperationStatusImpl(int httpStatusCode, String i18nKey, String... values) {
             this.httpStatusCode = httpStatusCode;
             this.i18nKey = i18nKey;
             this.values = values;

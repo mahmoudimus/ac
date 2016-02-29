@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
-import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.UISupportBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 
 /**
@@ -69,7 +69,7 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
      *
      * Note: You need to define an <code>alias</code> to use <code>uiSupport</code>.
      */
-    private final UISupportModuleBean uiSupport;
+    private final UISupportBean uiSupport;
 
     public ContentPropertyIndexExtractionConfigurationBean(ContentPropertyIndexExtractionConfigurationBeanBuilder builder) {
         this.objectName = builder.getObjectName();
@@ -94,7 +94,7 @@ public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleB
         return alias;
     }
 
-    public UISupportModuleBean getUiSupport() {
+    public UISupportBean getUiSupport() {
         return uiSupport;
     }
 }

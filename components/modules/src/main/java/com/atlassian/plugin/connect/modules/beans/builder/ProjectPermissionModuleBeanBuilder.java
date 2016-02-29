@@ -45,8 +45,7 @@ public class ProjectPermissionModuleBeanBuilder
     }
 
     public ProjectPermissionModuleBeanBuilder withConditions(Collection<? extends ConditionalBean> beans) {
-        if (beans != null) // not sure why this comes in as null sometimes
-        {
+        if (beans != null) {
             if (null == conditions) {
                 conditions = newArrayList();
             }

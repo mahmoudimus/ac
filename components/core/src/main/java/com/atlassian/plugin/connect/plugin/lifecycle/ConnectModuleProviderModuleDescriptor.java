@@ -9,7 +9,7 @@ import com.atlassian.util.concurrent.Supplier;
 
 import static com.atlassian.plugin.util.validation.ValidationPattern.test;
 
-public class ConnectModuleProviderModuleDescriptor extends AbstractModuleDescriptor<ConnectModuleProvider> {
+public class ConnectModuleProviderModuleDescriptor extends AbstractModuleDescriptor<ConnectModuleProvider<?>> {
     private final Supplier<ConnectModuleProvider> moduleLazyReference = new ResettableLazyReference<ConnectModuleProvider>() {
         @Override
         protected ConnectModuleProvider create() throws Exception {

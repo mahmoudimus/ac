@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.confluence.analytics;
 
-import com.atlassian.plugin.connect.plugin.AnalyticsWhitelistTestHelper;
+import com.atlassian.plugin.connect.test.AnalyticsWhitelistTestHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

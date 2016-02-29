@@ -146,6 +146,9 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
             for (String value : parameterBean.getAliases()) {
                 parameter.addElement("alias").addAttribute("name", value);
             }
+            if (parameterBean.isHidden()) {
+                parameter.addAttribute("hidden", "true");
+            }
         }
     }
 

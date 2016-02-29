@@ -83,11 +83,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
-            <version>${schema.generator.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.uri</groupId>
             <artifactId>atlassian-uri</artifactId>
         </dependency>

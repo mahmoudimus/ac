@@ -90,11 +90,11 @@ public class JwtAuthorizationGenerator {
 
         try {
             if (!StringUtils.isEmpty(targetPath.getQuery())) {
-                completeParams = new HashMap(params);
+                completeParams = new HashMap<>(params);
                 completeParams.putAll(constructParameterMap(targetPath));
             }
 
-            CanonicalHttpUriRequest canonicalHttpUriRequest = new CanonicalHttpUriRequest(httpMethod.toString(),
+            CanonicalHttpUriRequest canonicalHttpUriRequest = new CanonicalHttpUriRequest(httpMethod,
                     targetPath.getPath(), "", completeParams);
 
             JwtClaimsBuilder.appendHttpRequestClaims(jsonBuilder, canonicalHttpUriRequest);

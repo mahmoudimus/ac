@@ -40,6 +40,7 @@ public class LifecycleUpmHelper implements DisposableBean {
         return tmpFile;
     }
 
+    @SuppressWarnings("unchecked")
     public PluginInstallHandler getUpmInstallHandler() {
         /*
         NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
@@ -59,6 +60,7 @@ public class LifecycleUpmHelper implements DisposableBean {
         throw new IllegalStateException("Could not locate UPM install handler");
     }
 
+    @SuppressWarnings("unchecked")
     public PluginControlHandler getUpmControlHandler() {
         /*
         NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
@@ -82,6 +84,7 @@ public class LifecycleUpmHelper implements DisposableBean {
         throw new IllegalStateException("Could not locate UPM control handler");
     }
 
+    @SuppressWarnings("unchecked")
     private ServiceTracker getServiceTracker(Class clazz) {
         ServiceTracker tracker;
 

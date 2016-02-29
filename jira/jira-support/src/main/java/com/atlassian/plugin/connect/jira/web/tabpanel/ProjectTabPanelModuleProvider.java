@@ -42,7 +42,7 @@ public class ProjectTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon) {
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("project-tab-page",
                 ConnectProjectTabPanelModuleDescriptor.class, ConnectIFrameProjectTabPanel.class);
 

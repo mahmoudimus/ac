@@ -97,11 +97,11 @@ public class OAuth2LOAuthenticator implements Authenticator {
                     consumerKey = extractPluginKey(authHeader, consumerKey);
                 }
             }
-        }
-        /*!
-        If any of these criteria fail, the authorization process is treated as a failure
-          and the request will be rejected with a 403.
-         */ catch (IOException e) {
+        } catch (IOException e) {
+        /*
+           If any of these criteria fail, the authorization process is treated as a failure
+           and the request will be rejected with a 403.
+         */
             log.warn("Exception authenticating request", e);
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
@@ -151,7 +151,7 @@ public class OAuth2LOAuthenticator implements Authenticator {
                 sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
                 return new Result.Failure(new DefaultMessage("Permission denied"));
             }
-        }
+        } else {
         /*!
         There are a few APIs provided by the application which can be accessed without specifying
         a valid user.  These are generally provided by the Remotable Plugins plugin itself.  Examples
@@ -161,7 +161,6 @@ public class OAuth2LOAuthenticator implements Authenticator {
          <li>Deleting all cached macro content for an app</li>
         </ul>
          */
-        else {
             user = NonUserAdminPrincipal.INSTANCE;
         }
 
@@ -222,8 +221,7 @@ public class OAuth2LOAuthenticator implements Authenticator {
             // omit the stacktrace
             logger.warn(
                     "Problem encountered authenticating OAuth client for url \"{}\", error was \"{}\", with parameters \"{}\"",
-                    new Object[]{message.URL, ope.getProblem(), ope.getParameters()}
-            );
+                    message.URL, ope.getProblem(), ope.getParameters());
         }
     }
 

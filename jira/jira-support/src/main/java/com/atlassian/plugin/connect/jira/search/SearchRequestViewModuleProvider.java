@@ -48,8 +48,8 @@ public class SearchRequestViewModuleProvider extends AbstractJiraConnectModulePr
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SearchRequestViewModuleBean> modules, ConnectAddonBean addon) {
-        List<ModuleDescriptor> moduleDescriptors = new ArrayList<>();
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<SearchRequestViewModuleBean> modules, ConnectAddonBean addon) {
+        List<ModuleDescriptor<?>> moduleDescriptors = new ArrayList<>();
 
         for (SearchRequestViewModuleBean bean : modules) {
             ModuleDescriptor descriptor = searchRequestViewModuleDescriptorFactory.createModuleDescriptor(

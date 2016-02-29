@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-plugin</artifactId>
+            <artifactId>atlassian-connect-modules</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -38,7 +38,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-plugin</artifactId>
+                                    <artifactId>atlassian-connect-modules</artifactId>
                                     <version>${project.version}</version>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                     <includes>**/*-schema.json</includes>

@@ -38,7 +38,7 @@ public class ConnectReport implements Report {
     public String generateReportHtml(final ProjectActionSupport projectActionSupport, final Map map) throws Exception {
         StringWriter sw = new StringWriter();
         IFrameRenderStrategy frameRenderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKey, moduleKey);
-        JiraModuleContextParameters moduleContextParameters = new JiraModuleContextParametersImpl(map);
+        JiraModuleContextParameters moduleContextParameters = createJiraModuleContextParameters(map);
         frameRenderStrategy.render(moduleContextParameters, sw, Optional.empty());
         return sw.toString();
     }
@@ -56,5 +56,10 @@ public class ConnectReport implements Report {
     @Override
     public boolean showReport() {
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private JiraModuleContextParametersImpl createJiraModuleContextParameters(Map map) {
+        return new JiraModuleContextParametersImpl(map);
     }
 }

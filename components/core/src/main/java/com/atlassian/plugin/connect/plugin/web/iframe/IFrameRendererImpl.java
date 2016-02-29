@@ -136,7 +136,7 @@ public final class IFrameRendererImpl implements IFrameRenderer {
     }
 
     private String encodeProductContext(Map<String, Object> productContext) throws IOException {
-        JSONObject jsonObj = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
         for (Map.Entry<String, Object> entry : productContext.entrySet()) {
             Object value = entry.getValue();
 
@@ -155,11 +155,16 @@ public final class IFrameRendererImpl implements IFrameRenderer {
                 }
             }
 
-            jsonObj.put(entry.getKey(), value);
+            putValue(jsonObject, entry, value);
         }
 
         StringWriter writer = new StringWriter();
-        JavascriptEncoder.escape(writer, jsonObj.toJSONString());
+        JavascriptEncoder.escape(writer, jsonObject.toJSONString());
         return writer.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void putValue(JSONObject jsonObject, Map.Entry<String, Object> entry, Object value) {
+        jsonObject.put(entry.getKey(), value);
     }
 }

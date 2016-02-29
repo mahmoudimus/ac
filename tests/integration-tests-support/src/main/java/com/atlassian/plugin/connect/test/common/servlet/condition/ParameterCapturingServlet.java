@@ -1,16 +1,14 @@
 package com.atlassian.plugin.connect.test.common.servlet.condition;
 
-import java.io.IOException;
-import java.util.Map;
+import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+import java.io.IOException;
+import java.util.Map;
 
 public class ParameterCapturingServlet extends ContextServlet {
 
@@ -25,11 +23,13 @@ public class ParameterCapturingServlet extends ContextServlet {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void doGet(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         paramsFromLastRequest = req.getParameterMap();
         delegate.doGet(req, resp, context);
     }
 
+    @SuppressWarnings("unchecked")
     public void doPost(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException {
         paramsFromLastRequest = req.getParameterMap();
         delegate.doGet(req, resp, context);
