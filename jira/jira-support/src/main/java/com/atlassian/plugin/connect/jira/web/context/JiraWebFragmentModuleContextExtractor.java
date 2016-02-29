@@ -42,6 +42,7 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext) {
         if (ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass())) {
             return (ModuleContextParameters) webFragmentContext;
@@ -99,6 +100,7 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
         void addToContext(JiraModuleContextParameters moduleContext, T value);
     }
 
+    @SuppressWarnings("unchecked")
     private List<ParameterExtractor<?>> constructParameterExtractors() {
         return ImmutableList.of(
                 new ParameterExtractor<Issue>() {

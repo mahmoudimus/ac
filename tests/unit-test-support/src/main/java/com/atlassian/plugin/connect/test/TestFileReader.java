@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.util.io;
+package com.atlassian.plugin.connect.test;
 
 import org.apache.commons.io.IOUtils;
 

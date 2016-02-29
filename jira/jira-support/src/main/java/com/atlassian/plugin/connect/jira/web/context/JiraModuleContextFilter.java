@@ -82,6 +82,7 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
         return permissionChecks;
     }
 
+    @SuppressWarnings("unchecked")
     private Iterable<PermissionCheck<ApplicationUser>> constructPermissionChecks() {
         return ImmutableList.of(
                 new PermissionChecks.LongValue<ApplicationUser>() {

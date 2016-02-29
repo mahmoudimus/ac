@@ -102,7 +102,9 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
 
     private ModuleFactory createModuleFactory(final SearchRequestViewModuleBean bean, final ConnectAddonBean addon) {
         return new ModuleFactory() {
+
             @Override
+            @SuppressWarnings("unchecked")
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException {
                 try {
                     return (T) new RemoteSearchRequestView(

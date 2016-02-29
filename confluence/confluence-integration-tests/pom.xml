@@ -58,7 +58,6 @@
         </profile>
     </profiles>
 
-
     <dependencies>
         <dependency>
             <groupId>com.atlassian.confluence</groupId>
@@ -209,7 +208,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <executions>
                     <execution>
                         <id>test-jar</id>
@@ -415,7 +413,6 @@
     </build>
 
     <properties>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9

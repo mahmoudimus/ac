@@ -2,9 +2,10 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
-import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.VendorBeanBuilder;
 import com.google.common.base.Objects;
+
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
 /**
  * Gives basic information about the plugin vendor.
@@ -16,7 +17,7 @@ import com.google.common.base.Objects;
  * @since 1.0
  */
 @SchemaDefinition("vendor")
-public class VendorBean extends BaseModuleBean {
+public class VendorBean {
     /**
      * The name of the plugin vendor.
      * Supply your name or the name of the company you work for.
@@ -35,7 +36,7 @@ public class VendorBean extends BaseModuleBean {
     }
 
     public VendorBean(VendorBeanBuilder builder) {
-        super(builder);
+        copyFieldsByNameAndType(builder, this);
 
         if (null == name) {
             this.name = "";

@@ -251,8 +251,7 @@ public class ConfluenceAddonUserProvisioningService implements CrowdAddonUserPro
         if (!spacePermissionManager.permissionExists(spacePermission)) {
             spacePermissionManager.savePermission(spacePermission);
         } else {
-            log.info("Add-on user {} already has {} permission on space {}", new Object[]{
-                    confluenceAddonUser.getName(), permissionName, space.getKey()});
+            log.info("Add-on user {} already has {} permission on space {}", confluenceAddonUser.getName(), permissionName, space.getKey());
         }
     }
 

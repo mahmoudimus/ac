@@ -83,7 +83,7 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
 
     protected abstract void finalInit();
 
-    static enum LifecycleEvent {
+    enum LifecycleEvent {
         AFTER_PROPERTIES_SET,
         PLUGIN_ENABLED,
         LIFECYCLE_AWARE_ON_START

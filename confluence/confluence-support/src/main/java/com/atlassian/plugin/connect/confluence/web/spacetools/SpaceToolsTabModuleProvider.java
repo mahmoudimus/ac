@@ -93,9 +93,9 @@ public class SpaceToolsTabModuleProvider extends AbstractConfluenceConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SpaceToolsTabModuleBean> modules, ConnectAddonBean connectAddonBean) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<SpaceToolsTabModuleBean> modules, ConnectAddonBean connectAddonBean) {
         Plugin plugin = pluginRetrievalService.getPlugin();
-        List<ModuleDescriptor> moduleDescriptors = newArrayList();
+        List<ModuleDescriptor<?>> moduleDescriptors = newArrayList();
         for (SpaceToolsTabModuleBean bean : modules) {
             XWorkActionModuleBean actionBean = createActionBean(connectAddonBean, bean);
             moduleDescriptors.add(xWorkActionDescriptorFactory.create(connectAddonBean, plugin, actionBean));

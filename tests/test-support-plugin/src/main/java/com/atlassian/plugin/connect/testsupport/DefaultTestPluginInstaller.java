@@ -121,6 +121,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         return tmpFile;
     }
 
+    @SuppressWarnings("unchecked")
     private PluginInstallHandler getInstallHandler() {
         /*
         NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
@@ -141,6 +142,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private PluginControlHandler getControlHandler() {
         /*
         NOTE: we have to get the handler via OSGi by it's string name because we can't depend on the connect plugin.
@@ -160,6 +162,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private ServiceTracker getServiceTracker(Class clazz) {
         ServiceTracker tracker;
 

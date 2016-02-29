@@ -5,6 +5,8 @@ import com.atlassian.plugin.connect.modules.beans.builder.AuthenticationBeanBuil
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
+
 /**
  * Defines the authentication type to use when signing requests between the host application and the connect add on.
  * The authentication type can be JWT or none. If the type is not supplied it will default to JWT.
@@ -14,7 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTHENTICATION_EXAMPLE}
  * @schemaTitle Authentication
  */
-public class AuthenticationBean extends BaseModuleBean {
+public class AuthenticationBean {
     /**
      * The type of authentication to use.
      */
@@ -32,7 +34,8 @@ public class AuthenticationBean extends BaseModuleBean {
     }
 
     public AuthenticationBean(AuthenticationBeanBuilder builder) {
-        super(builder);
+        copyFieldsByNameAndType(builder, this);
+
         if (null == publicKey) {
             this.publicKey = "";
         }

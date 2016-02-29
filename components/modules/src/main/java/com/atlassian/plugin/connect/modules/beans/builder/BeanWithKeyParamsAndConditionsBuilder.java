@@ -11,6 +11,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+@SuppressWarnings("unchecked")
 public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAndConditionsBuilder, B extends BeanWithKeyAndParamsAndConditions> extends BeanWithKeyAndParamsBuilder<T, B> {
     private List<ConditionalBean> conditions;
 
@@ -29,8 +30,7 @@ public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAn
     }
 
     public T withConditions(Collection<? extends ConditionalBean> beans) {
-        if (beans != null) // not sure why this comes in as null sometimes
-        {
+        if (beans != null) {
             if (null == conditions) {
                 conditions = newArrayList();
             }

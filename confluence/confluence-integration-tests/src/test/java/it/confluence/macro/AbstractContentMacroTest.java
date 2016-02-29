@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import redstone.xmlrpc.XmlRpcFault;
 
@@ -49,6 +50,11 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     protected static final String SINGLE_PARAM_ID = "param1";
     protected static final String SINGLE_PARAM_NAME = "Parameter 1";
 
+    protected static final String HIDDEN_PARAMETER_MACRO_NAME = "Hidden Param Macro";
+    protected static final String HIDDEN_PARAMETER_MACRO_KEY = "hidden-param-macro";
+    protected static final String HIDDEN_PARAM_ID = "hidden-param1";
+    protected static final String HIDDEN_PARAM_NAME = "hidden-Parameter 1";
+
     private static final String ALL_PARAMETER_TYPES_MACRO_NAME = "All Parameters Macro";
     private static final String ALL_PARAMETER_TYPES_MACRO_KEY = "all-parameters-macro";
 
@@ -64,7 +70,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_KEY = "custom-title-macro";
     private static final String CUSTOM_TITLE = "Custom Title";
 
-    protected static final String HIDDEN_MACRO_NAME = "Hidden Macro";
+    protected static final String HIDDEN_MACRO_NAME = "Hidden Macro - Not Visible In Browser";
     protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
 
     @BeforeClass
@@ -142,7 +148,24 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 .build();
     }
 
-    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createAllParametersMacro(T builder) {
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createHiddenParameterMacro(T builder)
+    {
+        return builder
+                .withUrl(DEFAULT_MACRO_URL + "?hidden-param1={hidden-param1}")
+                .withKey(HIDDEN_PARAMETER_MACRO_KEY)
+                .withName(new I18nProperty(HIDDEN_PARAMETER_MACRO_NAME, null))
+                .withParameters(MacroParameterBean.newMacroParameterBean()
+                        .withIdentifier(HIDDEN_PARAM_ID)
+                        .withName(new I18nProperty(HIDDEN_PARAM_NAME, null))
+                        .withType("string")
+                        .withHidden(true)
+                        .build()
+                )
+                .build();
+    }
+
+    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createAllParametersMacro(T builder)
+    {
         return builder
                 .withUrl(DEFAULT_MACRO_URL)
                 .withKey(ALL_PARAMETER_TYPES_MACRO_KEY)
@@ -273,16 +296,35 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     }
 
     @Test
-    public void testParameterLabel() throws Exception {
+    public void testParameterAndLabelIsVisible() throws Exception {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(ModuleKeyUtils.randomName("Parameter Page"));
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
         try {
-            Assert.assertTrue(macroBrowserAndEditor.macroForm.getField(SINGLE_PARAM_ID).isVisible());
+            // Check the parameter container div is visible.
+            WebElement paramContainerDiv = confluencePageOperations.findElement(By.id("macro-param-div-" + SINGLE_PARAM_ID));
+            Assert.assertThat(paramContainerDiv.getAttribute("style"), CoreMatchers.not(CoreMatchers.containsString("display: none;")));
 
+            // Check the label is visible and contains the correcct text
+            Assert.assertTrue(macroBrowserAndEditor.macroForm.getField(SINGLE_PARAM_ID).isVisible());
             WebElement label = confluencePageOperations.findLabel("macro-param-" + SINGLE_PARAM_ID);
             Assert.assertThat(label.getText(), CoreMatchers.is(SINGLE_PARAM_NAME));
+        } finally {
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
+            cancelEditor(editorPage);
+        }
+    }
+
+    @Test
+    public void testHiddenParameter() throws Exception {
+        CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
+        editorPage.setTitle(ModuleKeyUtils.randomName("Parameter Page"));
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, HIDDEN_PARAMETER_MACRO_NAME);
+
+        try {
+            WebElement paramContainerDiv = confluencePageOperations.findElement(By.id("macro-param-div-" + HIDDEN_PARAM_ID));
+            Assert.assertThat(paramContainerDiv.getAttribute("style"), CoreMatchers.is("display: none;"));
         } finally {
             macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
             cancelEditor(editorPage);

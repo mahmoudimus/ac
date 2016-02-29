@@ -10,14 +10,6 @@
     <artifactId>atlassian-connect-api</artifactId>
     <name>Atlassian Connect - Public API</name>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <dependencies>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>

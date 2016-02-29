@@ -13,6 +13,7 @@ import static org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class IsTransitionUpScopeUtilTest extends BaseScopeUtilTest {
+
     public IsTransitionUpScopeUtilTest(Object previousTopScope, Object newTopScope, boolean expectedResult) {
         super(previousTopScope, newTopScope, expectedResult);
     }
@@ -27,5 +28,4 @@ public class IsTransitionUpScopeUtilTest extends BaseScopeUtilTest {
         logParams();
         assertThat(isTransitionUpFromReadOrLess(previousScopes, newScopes), is(expectedResult));
     }
-
 }

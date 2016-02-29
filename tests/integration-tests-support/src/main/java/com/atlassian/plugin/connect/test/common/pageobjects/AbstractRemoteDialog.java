@@ -38,6 +38,7 @@ public abstract class AbstractRemoteDialog<C extends AbstractRemoteDialog> exten
         return elementFinder.find(By.cssSelector("." + cssClass + " iframe")).getAttribute("id");
     }
 
+    @SuppressWarnings("unchecked")
     public void waitUntilHidden() {
         poller.waitUntil(getHiddenCondition(By.className(getContainerCssClassName())), 10);
     }

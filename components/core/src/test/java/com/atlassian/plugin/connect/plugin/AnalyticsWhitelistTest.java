@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
+import com.atlassian.plugin.connect.test.AnalyticsWhitelistTestHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

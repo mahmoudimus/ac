@@ -13,8 +13,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.util.fixture.PluginForTests;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.fixture.PluginForTests;
 import com.atlassian.spring.container.ContainerContext;
 import com.atlassian.spring.container.ContainerManager;
 import org.apache.commons.lang.NotImplementedException;
@@ -162,7 +162,8 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
                 hasProperty("name", is("parametername")),
                 hasProperty("type", hasToString("enum")),
                 hasProperty("multiple", is(false)),
-                hasProperty("required", is(true))
+                hasProperty("required", is(true)),
+                hasProperty("hidden", is(false))
         ));
     }
 
