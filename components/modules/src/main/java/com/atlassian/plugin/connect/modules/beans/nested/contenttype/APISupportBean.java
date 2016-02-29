@@ -29,10 +29,7 @@ public class APISupportBean extends BaseModuleBean
 
     /**
      * Defines types that this Extensible Content Type can be contained in.
-     * {@code global} or/and {@code personal} should be set for a first class space content.
-     *
-     * For example: ["global", "blogpost"] indicates a global Space or a BlogPost can be set as the container of
-     * this Extensible Content Type.
+     * For example: ["space", "blogpost"] indicates a Space or a BlogPost can be set as the container of this Extensible Content Type.
      */
     @Required
     private Set<String> supportedContainerTypes;
@@ -57,7 +54,7 @@ public class APISupportBean extends BaseModuleBean
     private String onDeleteUrl;
 
     /**
-     * Defines how would this Extensive Content Type be indexed
+     * Defines how this content type will be indexed
      */
     private IndexingBean indexing;
 

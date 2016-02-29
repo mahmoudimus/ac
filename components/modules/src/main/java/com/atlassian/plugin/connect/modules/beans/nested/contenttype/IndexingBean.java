@@ -4,7 +4,7 @@ import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples;
 
 /**
- * Defines how would the Extensive Content Type be indexed.
+ * Defines how this content type will be indexed
  *
  * @schemaTitle Indexing
  * @exampleJson {@link ConnectJsonExamples#EXTENSIBLE_CONTENT_TYPE_INDEXING_EXAMPLE}

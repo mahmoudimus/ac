@@ -5,6 +5,8 @@ import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.JsonContentProperty;
+import com.atlassian.confluence.it.rpc.ConfluenceRpc;
+import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.elasticsearch.shaded.google.common.collect.Sets;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
@@ -18,22 +20,33 @@ import com.atlassian.plugin.connect.modules.beans.nested.contenttype.IndexingBea
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-import it.confluence.ConfluenceWebDriverTestBase;
+import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
+import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
+import com.atlassian.plugin.connect.test.confluence.util.ConfluenceTestUserFactory;
+import it.confluence.ConfluenceRestClient;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.junit.After;
+import org.junit.BeforeClass;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Set;
 
+import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public abstract class AbstractExtensibleContentTypeTest extends ConfluenceWebDriverTestBase {
+public abstract class AbstractExtensibleContentTypeTest {
+    protected static final ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
+    protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
+    protected static ConfluenceRestClient restClient;
+    protected static ConnectTestUserFactory testUserFactory;
+
     protected final String CONTAINER_TITLE = "Test Extensible Type Container";
     protected final String TYPE_KEY_1 = "test-extensible-type-1";
     protected final String TYPE_NAME_1 = "Test Extensible Type 1";
@@ -46,8 +59,20 @@ public abstract class AbstractExtensibleContentTypeTest extends ConfluenceWebDri
     protected ContentType contentType2;
     protected String addonKey;
 
+    @BeforeClass
+    public static void confluenceTestSetup() throws Exception {
+        testUserFactory = new ConfluenceTestUserFactory(product, rpc);
+        final TestUser admin = testUserFactory.admin();
+        rpc.logIn(toConfluenceUser(admin));
+        restClient = new ConfluenceRestClient(getProduct(), admin);
+    }
+
+    protected static ConfluenceTestedProduct getProduct() {
+        return product;
+    }
+
     public ExtensibleContentTypeModuleBean createSimpleBean(String typeKey, String typeName) {
-        return createBeanWithRestriction(typeKey, typeName, Sets.newHashSet("global"), Sets.newHashSet());
+        return createBeanWithRestriction(typeKey, typeName, Sets.newHashSet("space"), Sets.newHashSet());
     }
 
     public ExtensibleContentTypeModuleBean createBeanWithRestriction(String typeKey, String typeName, Set<String> restrictedContainer, Set<String> restrictedContained) {
@@ -75,7 +100,7 @@ public abstract class AbstractExtensibleContentTypeTest extends ConfluenceWebDri
                 .withOperationSupport(new OperationSupportBeanBuilder()
                         .build())
                 .withAPISupport(new APISupportBeanBuilder()
-                        .withSupportedContainerTypes(Sets.newHashSet("global"))
+                        .withSupportedContainerTypes(Sets.newHashSet("space"))
                         .withSupportedContainedTypes(Sets.newHashSet())
                         .withIndexing(new IndexingBean(indexingEnabled, contentPropertyKey))
                         .build())

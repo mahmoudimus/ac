@@ -73,8 +73,8 @@ public class TestExtensibleContentType extends AbstractExtensibleContentTypeTest
     @Ignore("Blocked by expansion not support dash/colon character. Will address later")
     public void testCanRestrictContainedType() throws Exception {
         startConnectAddon(
-                createBeanWithRestriction(TYPE_KEY_1, TYPE_NAME_1, Sets.newHashSet("global"), Sets.newHashSet(getCompleteContentTypeKey(TYPE_KEY_2))),
-                createBeanWithRestriction(TYPE_KEY_2, TYPE_NAME_2, Sets.newHashSet("global", getCompleteContentTypeKey(TYPE_KEY_1)), Sets.newHashSet())
+                createBeanWithRestriction(TYPE_KEY_1, TYPE_NAME_1, Sets.newHashSet("space"), Sets.newHashSet(getCompleteContentTypeKey(TYPE_KEY_2))),
+                createBeanWithRestriction(TYPE_KEY_2, TYPE_NAME_2, Sets.newHashSet("space", getCompleteContentTypeKey(TYPE_KEY_1)), Sets.newHashSet())
         );
 
         Content content1 = createContent(buildContent(contentType1, null, CONTENT_TITLE));

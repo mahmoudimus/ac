@@ -16,12 +16,6 @@ public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent {
         this.indexingEnabled = bean.getApiSupport().getIndexing().isEnabled();
 
         switch (bean.getApiSupport().getBodyType()) {
-            case WIKI:
-                this.bodyType = BodyType.WIKI;
-                break;
-            case RAW:
-                this.bodyType = BodyType.RAW;
-                break;
             default:
                 this.bodyType = BodyType.XHTML;
                 break;

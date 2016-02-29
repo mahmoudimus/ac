@@ -557,7 +557,7 @@ public class ConnectJsonExamples {
                 .withName(new I18nProperty("Extensible Content Type Name", null))
                 .withAPISupport(new APISupportBeanBuilder()
                         .withBodyType("storage")
-                        .withSupportedContainedTypes(Sets.newHashSet("global", "personal", "page"))
+                        .withSupportedContainedTypes(Sets.newHashSet("space", "page"))
                         .withSupportedContainerTypes(Sets.newHashSet("comment", "attachment"))
                         .withOnCreateUrl("/create")
                         .withOnDeleteUrl("/delete")
