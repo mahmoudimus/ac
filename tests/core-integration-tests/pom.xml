@@ -166,7 +166,7 @@
         <dependency>
             <artifactId>acceptance-data-helper</artifactId>
             <groupId>com.atlassian.test.ondemand</groupId>
-            <version>1.0.14</version>
+            <version>1.0.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
