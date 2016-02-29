@@ -14,6 +14,8 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ import java.util.Map;
 @ExportAsDevService
 @Component
 public class ConnectAddonBeanFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(ConnectAddonBeanFactory.class);
 
     private final ConnectJsonSchemaValidator descriptorSchemaValidator;
     private final ShallowConnectAddonBeanValidatorService shallowAddonBeanValidatorService;
@@ -55,9 +59,12 @@ public class ConnectAddonBeanFactory {
     }
 
     protected ConnectAddonBean fromJsonImpl(final String jsonDescriptor) throws InvalidDescriptorException {
+        final long start = System.currentTimeMillis();
         validateDescriptorAgainstShallowSchema(jsonDescriptor);
         ConnectAddonBean addon = deserializeDescriptor(jsonDescriptor);
         shallowAddonBeanValidatorService.validate(addon);
+        final long stop = System.currentTimeMillis();
+        log.info("Parsed and shallow validated descriptor for {} in {}ms", addon.getKey(), (stop - start));
         return addon;
     }
 
