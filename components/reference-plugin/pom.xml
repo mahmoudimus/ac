@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-components-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.69-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,12 +32,11 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-osgi-bridge</artifactId>
-            <scope>provided</scope>
+            <artifactId>atlassian-plugins-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi-bridge</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -71,14 +70,6 @@
         </dependency>
     </dependencies>
 
-    <licenses>
-        <license>
-            <name>Atlassian 3.0 End User License Agreement</name>
-            <url>http://www.atlassian.com/end-user-agreement/</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <build>
         <plugins>
             <plugin>
@@ -109,15 +100,6 @@
             <plugin>
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
-                <version>${atlassian.spring.scanner.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>atlassian-spring-scanner</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -32,8 +32,7 @@ import static com.atlassian.oauth.util.Check.notNull;
  * Authenticates an incoming 2LO request
  */
 @Component
-public class OAuth2LOAuthenticator implements Authenticator
-{
+public class OAuth2LOAuthenticator implements Authenticator {
     /**
      * The request attribute key that the request dispatcher uses to store the original URL for a
      * forwarded request.
@@ -51,10 +50,9 @@ public class OAuth2LOAuthenticator implements Authenticator
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
-            ApplicationProperties applicationProperties,
-            OAuthLinkManager oAuthLinkManager, UserManager userManager,
-            ConsumerService consumerService, AddonKeyExtractor addonKeyExtractor)
-    {
+                                 ApplicationProperties applicationProperties,
+                                 OAuthLinkManager oAuthLinkManager, UserManager userManager,
+                                 ConsumerService consumerService, AddonKeyExtractor addonKeyExtractor) {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
         this.addonKeyExtractor = addonKeyExtractor;
@@ -64,8 +62,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         this.consumerService = notNull(consumerService, "consumerService");
     }
 
-    public Result authenticate(HttpServletRequest request, HttpServletResponse response)
-    {
+    public Result authenticate(HttpServletRequest request, HttpServletResponse response) {
         /*!
         Remotable Plugins supports a special OAuth-based authentication process that allows a Remotable Plugin
         to bypass any explicit end-user involvement to provide a more seamless user experience. The
@@ -91,51 +88,37 @@ public class OAuth2LOAuthenticator implements Authenticator
           Remotable Plugin.
          */
         String consumerKey;
-        try
-        {
+        try {
             consumerKey = message.getConsumerKey();
             oAuthLinkManager.validateOAuth2LORequest(message);
-            if (consumerService.getConsumer().getKey().equals(consumerKey))
-            {
+            if (consumerService.getConsumer().getKey().equals(consumerKey)) {
                 String authHeader = request.getHeader("Authorization");
-                if (authHeader != null)
-                {
+                if (authHeader != null) {
                     consumerKey = extractPluginKey(authHeader, consumerKey);
                 }
             }
-        }
-        /*!
-        If any of these criteria fail, the authorization process is treated as a failure
-          and the request will be rejected with a 403.
+        } catch (IOException e) {
+        /*
+           If any of these criteria fail, the authorization process is treated as a failure
+           and the request will be rejected with a 403.
          */
-        catch (IOException e)
-        {
             log.warn("Exception authenticating request", e);
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
-        }
-        catch (URISyntaxException e)
-        {
+        } catch (URISyntaxException e) {
             log.warn("Exception authenticating request", e);
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
-        }
-        catch (OAuthProblemException ope)
-        {
+        } catch (OAuthProblemException ope) {
             logOAuthProblem(message, ope, log);
-            try
-            {
+            try {
                 OAuthServlet.handleException(response, ope, applicationProperties.getBaseUrl(UrlMode.CANONICAL));
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 // there was an IOE or ServletException, nothing more we can really do
                 log.error("Failure reporting OAuth error to client", e);
             }
             return new Result.Failure(new DefaultMessage(ope.getMessage()));
-        }
-        catch (OAuthException e)
-        {
+        } catch (OAuthException e) {
             log.warn("Exception authenticating request", e);
             sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
@@ -149,31 +132,26 @@ public class OAuth2LOAuthenticator implements Authenticator
         /*!
         The 'user_key' is checked first. If it exists, it is used to derive the 'user_id' from the application.
          */
-        if (userKey != null && !"".equals(userKey))
-        {
+        if (userKey != null && !"".equals(userKey)) {
             UserProfile userProfile = userManager.getUserProfile(userKey);
             userId = userProfile == null ? null : userProfile.getUsername();
-        }
-        else
-        {
+        } else {
             userId = request.getParameter(OAuth2LOFilter.USER_ID);
         }
 
         Principal user;
-        if (userId != null && !"".equals(userId))
-        {
+        if (userId != null && !"".equals(userId)) {
             /*!
             The user must be a valid user in the system and must be able to both log in.
             If either of these cases fail, a 401 is returned.
              */
             user = userManager.resolve(userId);
-            if (user == null || !authenticationController.canLogin(user, request))
-            {
+            if (user == null || !authenticationController.canLogin(user, request)) {
                 log.warn("Access denied to user '{}' because that user cannot login", userId);
                 sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
                 return new Result.Failure(new DefaultMessage("Permission denied"));
             }
-        }
+        } else {
         /*!
         There are a few APIs provided by the application which can be accessed without specifying
         a valid user.  These are generally provided by the Remotable Plugins plugin itself.  Examples
@@ -183,8 +161,6 @@ public class OAuth2LOAuthenticator implements Authenticator
          <li>Deleting all cached macro content for an app</li>
         </ul>
          */
-        else
-        {
             user = NonUserAdminPrincipal.INSTANCE;
         }
 
@@ -202,79 +178,59 @@ public class OAuth2LOAuthenticator implements Authenticator
         /*!-helper methods*/
     }
 
-    static String extractPluginKey(String authHeader, String defKey)
-    {
-        if (authHeader.contains("realm="))
-        {
+    static String extractPluginKey(String authHeader, String defKey) {
+        if (authHeader.contains("realm=")) {
             return authHeader.replaceAll(".* realm=\"([^\"]*)\".*", "$1");
-        }
-        else
-        {
+        } else {
             return defKey;
         }
     }
 
-    public static String getLogicalUri(HttpServletRequest request)
-    {
+    public static String getLogicalUri(HttpServletRequest request) {
         String uriPathBeforeForwarding = (String) request.getAttribute(FORWARD_REQUEST_URI);
-        if (uriPathBeforeForwarding == null)
-        {
+        if (uriPathBeforeForwarding == null) {
             return null;
         }
         URI newUri = URI.create(request.getRequestURL().toString());
-        try
-        {
+        try {
             return new URI(newUri.getScheme(), newUri.getAuthority(),
                     uriPathBeforeForwarding,
                     newUri.getQuery(),
                     newUri.getFragment()).toString();
-        }
-        catch (URISyntaxException e)
-        {
+        } catch (URISyntaxException e) {
             log.warn("forwarded request had invalid original URI path: " + uriPathBeforeForwarding);
             return null;
         }
     }
 
     public static void logOAuthProblem(final OAuthMessage message,
-            final OAuthProblemException ope,
-            final Logger logger)
-    {
-        if (OAuth.Problems.TIMESTAMP_REFUSED.equals(ope.getProblem()))
-        {
+                                       final OAuthProblemException ope,
+                                       final Logger logger) {
+        if (OAuth.Problems.TIMESTAMP_REFUSED.equals(ope.getProblem())) {
             logger.warn("Rejecting OAuth request for url \"{}\" due to invalid timestamp ({}). " +
-                    "This is most likely due to our system clock not being " +
-                    "synchronized with the consumer's clock.",
-                    new Object[] { message.URL, ope.getParameters() });
-        }
-        else if (logger.isDebugEnabled())
-        {
+                            "This is most likely due to our system clock not being " +
+                            "synchronized with the consumer's clock.",
+                    new Object[]{message.URL, ope.getParameters()});
+        } else if (logger.isDebugEnabled()) {
             // include the full stacktrace
             logger.warn(
                     "Problem encountered authenticating OAuth client request for url \"" +
-                        message.URL + "\", error was \"" + ope.getProblem() +
+                            message.URL + "\", error was \"" + ope.getProblem() +
                             "\", with parameters \"" + ope.getParameters() + "\"", ope);
-        }
-        else
-        {
+        } else {
             // omit the stacktrace
             logger.warn(
                     "Problem encountered authenticating OAuth client for url \"{}\", error was \"{}\", with parameters \"{}\"",
-                    new Object[] { message.URL, ope.getProblem(), ope.getParameters() }
-            );
+                    message.URL, ope.getProblem(), ope.getParameters());
         }
     }
 
-    private void sendError(HttpServletResponse response, int status, OAuthMessage message)
-    {
+    private void sendError(HttpServletResponse response, int status, OAuthMessage message) {
         response.setStatus(status);
-        try
-        {
+        try {
             response.addHeader("WWW-Authenticate",
                     message.getAuthorizationHeader(applicationProperties.getBaseUrl(UrlMode.CANONICAL)));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             log.error("Failure reporting OAuth error to client", e);
         }
     }

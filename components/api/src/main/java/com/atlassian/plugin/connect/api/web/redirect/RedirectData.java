@@ -9,8 +9,7 @@ import java.util.Map;
  * Bunch of data required to created redirect response by RedirectServlet.
  */
 
-public final class RedirectData
-{
+public final class RedirectData {
     private static final String TEMPLATE_PATH = "velocity/";
     private static final String TEMPLATE_ACCESS_DENIED_PAGE = TEMPLATE_PATH + "iframe-page-accessdenied.vm";
     private static final String TEMPLATE_ACCESS_DENIED_GENERIC_BODY = TEMPLATE_PATH + "iframe-body-accessdenied.vm";
@@ -24,36 +23,30 @@ public final class RedirectData
     private final Condition condition;
     private final AccessDeniedTemplateType accessDeniedTemplateType;
 
-    public RedirectData(String title, String urlTemplate, Condition condition, AccessDeniedTemplateType accessDeniedTemplateType)
-    {
+    public RedirectData(String title, String urlTemplate, Condition condition, AccessDeniedTemplateType accessDeniedTemplateType) {
         this.title = title;
         this.urlTemplate = urlTemplate;
         this.condition = condition;
         this.accessDeniedTemplateType = accessDeniedTemplateType;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    public String getUrlTemplate()
-    {
+    public String getUrlTemplate() {
         return urlTemplate;
     }
 
-    public String getAccessDeniedTemplate()
-    {
+    public String getAccessDeniedTemplate() {
         return accessDeniedTemplateTypeToPath.get(accessDeniedTemplateType);
     }
 
-    public boolean shouldRedirect(Map<String, ? extends Object> conditionContext)
-    {
-        return condition == null || condition.shouldDisplay((Map<String, Object>) conditionContext);
+    public boolean shouldRedirect(Map<String, Object> conditionContext) {
+        return condition == null || condition.shouldDisplay(conditionContext);
     }
 
-    public enum AccessDeniedTemplateType
-    {
+    public enum AccessDeniedTemplateType {
         PAGE,
         IFRAME
     }

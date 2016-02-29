@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.ConversionContextPropertyName;
 import com.atlassian.confluence.content.render.xhtml.storage.macro.MacroId;
@@ -15,16 +13,16 @@ import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParamete
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 /**
  *
  */
 @ConfluenceComponent
-public class MacroModuleContextExtractorImpl implements MacroModuleContextExtractor
-{
+public class MacroModuleContextExtractorImpl implements MacroModuleContextExtractor {
     /**
      * Specifies how much of the body to allow in the GET request to a remote app.  If the body parameter is
      * included in a URL, this values specifies how its truncated.
@@ -34,15 +32,13 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
     private final UserManager userManager;
 
     @Autowired
-    public MacroModuleContextExtractorImpl(UserManager userManager)
-    {
+    public MacroModuleContextExtractorImpl(UserManager userManager) {
         this.userManager = userManager;
     }
 
     @Override
-    public ModuleContextParameters extractParameters(final String storageFormatBody, final ConversionContext conversionContext, final Map<String, String> parameters)
-    {
-        ModuleContextParameters moduleContext = new HashMapModuleContextParameters();
+    public ModuleContextParameters extractParameters(final String storageFormatBody, final ConversionContext conversionContext, final Map<String, String> parameters) {
+        ModuleContextParameters moduleContext = new HashMapModuleContextParameters(parameters);
 
         moduleContext.putAll(parameters);
 
@@ -52,7 +48,7 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
         MacroDefinition macroDefinition = (MacroDefinition) conversionContext.getProperty(ConversionContextPropertyName.MACRO_DEFINITION);
 
         Option<MacroId> macroId = macroDefinition.getMacroId();
-        if(macroId.isDefined()) {
+        if (macroId.isDefined()) {
             // the getMacroId call will fall back to the hash if no macro Id is specified
             String macroIdString = macroId.get().getId();
             moduleContext.put("macro.hash", macroIdString); // backwards compatible
@@ -77,18 +73,15 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
         String userId = "";
         String userKey = "";
 
-        if (entity != null)
-        {
+        if (entity != null) {
             pageId = entity.getIdAsString();
             pageTitle = StringUtils.defaultString(entity.getTitle());
             pageType = entity.getType();
             versionId = Integer.toString(entity.getVersion());
 
-            if (entity instanceof Spaced)
-            {
+            if (entity instanceof Spaced) {
                 Space space = ((Spaced) entity).getSpace();
-                if (space != null)
-                {
+                if (space != null) {
                     spaceKey = space.getKey();
                     spaceId = Long.toString(space.getId());
                 }
@@ -96,8 +89,7 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
         }
 
         UserProfile currentUser = userManager.getRemoteUser();
-        if (currentUser != null)
-        {
+        if (currentUser != null) {
             userId = currentUser.getUsername();
             userKey = currentUser.getUserKey().getStringValue();
         }

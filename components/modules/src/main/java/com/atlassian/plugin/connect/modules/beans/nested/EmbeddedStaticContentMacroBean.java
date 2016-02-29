@@ -19,24 +19,20 @@ import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentM
  * @since 1.0
  */
 @SchemaDefinition("embeddedStaticContentMacroBean")
-public class EmbeddedStaticContentMacroBean extends BaseModuleBean
-{
+public class EmbeddedStaticContentMacroBean extends BaseModuleBean {
     @Required
     @StringSchemaAttributes(format = "uri-template")
     private String url;
 
-    public EmbeddedStaticContentMacroBean(EmbeddedStaticContentMacroBeanBuilder builder)
-    {
+    public EmbeddedStaticContentMacroBean(EmbeddedStaticContentMacroBeanBuilder builder) {
         super(builder);
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public static EmbeddedStaticContentMacroBeanBuilder newEmbeddedStaticContentMacroModuleBean()
-    {
+    public static EmbeddedStaticContentMacroBeanBuilder newEmbeddedStaticContentMacroModuleBean() {
         return new EmbeddedStaticContentMacroBeanBuilder();
     }
 }

@@ -11,16 +11,13 @@ import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters
  *
  */
 public class ConnectIFrameProjectTabPanel extends AbstractConnectIFrameTabPanel<ProjectTabPanelModuleDescriptor, BrowseContext>
-        implements ProjectTabPanel
-{
-    public ConnectIFrameProjectTabPanel(final IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter)
-    {
+        implements ProjectTabPanel {
+    public ConnectIFrameProjectTabPanel(final IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter) {
         super(iFrameRenderStrategy, moduleContextFilter);
     }
 
     @Override
-    protected void populateModuleContext(final JiraModuleContextParameters moduleContext, final BrowseContext ctx)
-    {
+    protected void populateModuleContext(final JiraModuleContextParameters moduleContext, final BrowseContext ctx) {
         moduleContext.addProject(ctx.getProject());
     }
 }

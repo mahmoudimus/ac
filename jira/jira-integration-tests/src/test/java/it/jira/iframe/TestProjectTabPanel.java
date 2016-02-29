@@ -27,8 +27,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of project tabs in JIRA.
  */
-public class TestProjectTabPanel extends JiraWebDriverTestBase
-{
+public class TestProjectTabPanel extends JiraWebDriverTestBase {
     private static final String ADDON_KEY = AddonTestUtils.randomAddonKey();
     private static final String MODULE_KEY = "ac-test-project-tab";
     private static final String MODULE_TITLE = "AC Test Project Tab";
@@ -41,8 +40,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     @BeforeClass
-    public static void setUpClass() throws Exception
-    {
+    public static void setUpClass() throws Exception {
         logout();
 
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
@@ -65,17 +63,14 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void projectTabShouldBePresentAndReceiveContextParameters() throws Exception
-    {
+    public void projectTabShouldBePresentAndReceiveContextParameters() throws Exception {
         login(testUserFactory.basicUser());
         JiraProjectSummaryPageWithAddonTab summaryPage = product.visit(
                 JiraProjectSummaryPageWithAddonTab.class, project.getKey(), ADDON_KEY, MODULE_KEY);

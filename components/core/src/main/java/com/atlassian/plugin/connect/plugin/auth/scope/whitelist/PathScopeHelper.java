@@ -1,91 +1,64 @@
 package com.atlassian.plugin.connect.plugin.auth.scope.whitelist;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.plugin.connect.api.util.ServletUtils;
 import com.atlassian.plugin.connect.plugin.auth.scope.ApiResourceInfo;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.transform;
+import static java.util.Collections.singletonList;
 
 /**
  * Download scope for GET requests on paths that start with a certain prefix
  */
-public final class PathScopeHelper
-{
-    private final Iterable<ApiResourceInfo> apiResourceInfo;
-    private final Iterable<String> paths;
+public final class PathScopeHelper {
+    private final Collection<ApiResourceInfo> apiResourceInfo;
+    private final Collection<String> paths;
     private final boolean isRegex;
     private final String httpMethod;
 
-    public PathScopeHelper(final boolean isRegex, final Collection<String> paths)
-    {
-        this(isRegex, paths, "GET");
+    public PathScopeHelper(final boolean isRegex, final String path) {
+        this(isRegex, singletonList(checkNotNull(path)), "GET");
     }
 
-    public PathScopeHelper(final boolean isRegex, final Collection<String> paths, String httpMethod)
-    {
+    public PathScopeHelper(final boolean isRegex, final Collection<String> paths, String httpMethod) {
         this.paths = checkNotNull(paths);
         this.isRegex = isRegex;
         this.httpMethod = checkNotNull(httpMethod);
-        this.apiResourceInfo = transform(paths, new Function<String, ApiResourceInfo>()
-        {
-            @Override
-            public ApiResourceInfo apply(String from)
-            {
-                return new ApiResourceInfo(from, PathScopeHelper.this.httpMethod);
-            }
-        });
+        this.apiResourceInfo = paths.stream()
+                .map(from -> new ApiResourceInfo(from, PathScopeHelper.this.httpMethod))
+                .collect(Collectors.toList());
     }
 
-    public PathScopeHelper(final boolean isRegex, final String... paths)
-    {
-        this(isRegex, Lists.newArrayList(paths));
-    }
-
-    public boolean allow(final HttpServletRequest request)
-    {
-        if (!this.httpMethod.equalsIgnoreCase(request.getMethod()))
-        {
+    public boolean allow(final HttpServletRequest request) {
+        if (!this.httpMethod.equalsIgnoreCase(request.getMethod())) {
             return false;
         }
 
         final String pathInfo = ServletUtils.extractPathInfo(request);
-        return Iterables.any(paths, new Predicate<String>()
-        {
-            @Override
-            public boolean apply(final String path)
-            {
-                return isRegex
-                    ? pathInfo.matches(path)
-                    : pathInfo.startsWith(path);
-            }
-        });
+        return paths.stream().anyMatch(path -> isRegex
+                ? pathInfo.matches(path)
+                : pathInfo.startsWith(path));
     }
 
-    public Iterable<ApiResourceInfo> getApiResourceInfos()
-    {
+    public Iterable<ApiResourceInfo> getApiResourceInfos() {
         return apiResourceInfo;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -97,8 +70,7 @@ public final class PathScopeHelper
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(47, 19)
                 .append(isRegex)
                 .append(paths)
@@ -106,8 +78,7 @@ public final class PathScopeHelper
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("isRegex", isRegex)
                 .append("paths", paths)

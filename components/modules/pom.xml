@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-components-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.69-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,8 +32,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
@@ -94,6 +96,110 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <!-- this MUST run after compilation -->
+            <plugin>
+                <groupId>external.atlassian.json</groupId>
+                <artifactId>json-schemagen-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>schema-support</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-support-docs</goal>
+                        </goals>
+                        <configuration>
+                            <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
+                            <debug>${debugSchemaGen}</debug>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>common-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.schema.CommonModuleList</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jira-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.modules.schema.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.schema.JiraModuleList</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>confluence-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.modules.schema.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.schema.ConfluenceModuleList</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>shallow-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.modules.schema.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-schema-support-docs-exist</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireFilesExist>
+                                    <files>
+                                        <file>${project.build.directory}/jsonSchemaInterfaces.json</file>
+                                        <file>${project.build.directory}/jsonSchemaDocs.json</file>
+                                    </files>
+                                    <message>The goal json-schemagen-maven-plugin:generate-support-docs did not produce the expected files</message>
+                                </requireFilesExist>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
+    <properties>
+        <debugSchemaGen>false</debugSchemaGen>
+    </properties>
 </project>

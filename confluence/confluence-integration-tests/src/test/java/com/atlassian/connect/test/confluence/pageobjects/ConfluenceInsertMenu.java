@@ -4,17 +4,12 @@ import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDrop
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 
-public class ConfluenceInsertMenu extends InsertDropdownMenu
-{
-    public boolean hasEntryWithKey(String macroKey)
-    {
-        try
-        {
+public class ConfluenceInsertMenu extends InsertDropdownMenu {
+    public boolean hasEntryWithKey(String macroKey) {
+        try {
             getPageElement().find(By.className("macro-" + macroKey));
             return true;
-        }
-        catch (NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             return false;
         }
     }

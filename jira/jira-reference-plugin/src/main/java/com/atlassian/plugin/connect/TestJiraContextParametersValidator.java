@@ -10,19 +10,16 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 @Component
-public final class TestJiraContextParametersValidator implements ContextParametersValidator<ApplicationUser>
-{
+public final class TestJiraContextParametersValidator implements ContextParametersValidator<ApplicationUser> {
     @Override
-    public Collection<PermissionCheck<ApplicationUser>> getPermissionChecks()
-    {
+    public Collection<PermissionCheck<ApplicationUser>> getPermissionChecks() {
         return ImmutableList.of(
                 PermissionChecks.<ApplicationUser>mustBeLoggedIn("project.keyConcatId")
         );
     }
 
     @Override
-    public Class<ApplicationUser> getUserType()
-    {
+    public Class<ApplicationUser> getUserType() {
         return ApplicationUser.class;
     }
 }

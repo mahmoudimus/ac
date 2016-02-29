@@ -17,8 +17,7 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-public final class AtlassianConnectRestClient
-{
+public final class AtlassianConnectRestClient {
     private final String baseUrl;
     private final String defaultUsername;
     private final String defaultPassword;
@@ -26,23 +25,20 @@ public final class AtlassianConnectRestClient
 
     public static final String UPM_URL_PATH = "/rest/plugins/1.0/";
 
-    public AtlassianConnectRestClient(String baseUrl, String username, String password)
-    {
+    public AtlassianConnectRestClient(String baseUrl, String username, String password) {
         this.baseUrl = baseUrl;
         this.defaultUsername = username;
         this.defaultPassword = password;
         this.userRequestSender = new UserRequestSender(baseUrl);
     }
 
-    public void install(String registerUrl) throws Exception
-    {
+    public void install(String registerUrl) throws Exception {
         install(registerUrl, true);
     }
 
     // this variant is useful when testing install failure scenarios. i.e. where we expect the install to fail
     // It will timeout much quicker and swallow the exception that would terminate the test otherwise
-    public void install(String registerUrl, boolean checkStatus) throws Exception
-    {
+    public void install(String registerUrl, boolean checkStatus) throws Exception {
         //get a upm token
         String token = getUpmToken();
 
@@ -55,34 +51,24 @@ public final class AtlassianConnectRestClient
 
         String response = userRequestSender.sendRequestAsUser(post, responseHandler, defaultUsername, defaultPassword);
 
-        if(Strings.isNullOrEmpty(response) || (!response.startsWith("{") && !response.endsWith("}")))
-        {
+        if (Strings.isNullOrEmpty(response) || (!response.startsWith("{") && !response.endsWith("}"))) {
             install(registerUrl);
-        }
-        else
-        {
+        } else {
             JSON json = JSON.parse(response);
 
-            if (null == json.get("enabled"))
-            {
+            if (null == json.get("enabled")) {
                 URI uri = new URI(baseUrl);
                 final String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
 
-                if (checkStatus)
-                {
+                if (checkStatus) {
                     InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
                     statusChecker.run(defaultUsername, defaultPassword);
-                }
-                else
-                {
+                } else {
                     InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 5, TimeUnit.SECONDS,
                             500, TimeUnit.MILLISECONDS);
-                    try
-                    {
+                    try {
                         statusChecker.run(defaultUsername, defaultPassword);
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                     }
 
                 }
@@ -90,28 +76,22 @@ public final class AtlassianConnectRestClient
         }
     }
 
-    public void uninstall(String appKey) throws Exception
-    {
+    public void uninstall(String appKey) throws Exception {
         HttpDelete delete = new HttpDelete(UpmTokenRequestor.getUpmPluginResource(baseUrl, appKey));
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-        try
-        {
+        try {
             userRequestSender.sendRequestAsUser(delete, responseHandler, defaultUsername, defaultPassword);
-        }
-        catch (HttpResponseException e)
-        {
+        } catch (HttpResponseException e) {
             //eat 404's as it means the addon does not exist
-            if(e.getStatusCode() != 404)
-            {
+            if (e.getStatusCode() != 404) {
                 throw e;
             }
         }
     }
 
-    public void setEnabled(String appKey, boolean enabled) throws Exception
-    {
+    public void setEnabled(String appKey, boolean enabled) throws Exception {
         HttpPut request = new HttpPut(UpmTokenRequestor.getUpmPluginResource(baseUrl, appKey));
         request.setHeader("Content-Type", "application/vnd.atl.plugins.plugin+json");
         String requestBody = new JSONObject(ImmutableMap.<String, Object>of("enabled", Boolean.toString(enabled))).toString();
@@ -122,16 +102,14 @@ public final class AtlassianConnectRestClient
         userRequestSender.sendRequestAsUser(request, responseHandler, defaultUsername, defaultPassword);
     }
 
-    public String getUpmPluginJson(String appKey) throws Exception
-    {
+    public String getUpmPluginJson(String appKey) throws Exception {
         HttpGet get = new HttpGet(UpmTokenRequestor.getUpmPluginResource(baseUrl, appKey));
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         return userRequestSender.sendRequestAsUser(get, responseHandler, defaultUsername, defaultPassword);
     }
 
-    private String getUpmToken() throws Exception
-    {
+    private String getUpmToken() throws Exception {
         UpmTokenRequestor tokenRequestor = new UpmTokenRequestor(userRequestSender, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
         return tokenRequestor.run(defaultUsername, defaultPassword);
     }

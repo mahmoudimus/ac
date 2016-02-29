@@ -29,8 +29,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class StaticResourcesFilterTest
-{
+public class StaticResourcesFilterTest {
     private static final String JS_FILE = "all.js";
     private static final String OTHER_JS_FILE = "other.js";
     private static final byte[] JS_DATA = "/* some js */".getBytes(Charset.forName("UTF-8"));
@@ -38,8 +37,7 @@ public class StaticResourcesFilterTest
     private Filter filter;
 
     @Before
-    public void before() throws ServletException
-    {
+    public void before() throws ServletException {
         PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
         Plugin plugin = mock(Plugin.class);
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
@@ -57,19 +55,15 @@ public class StaticResourcesFilterTest
     }
 
     @Test
-    public void testNoGzip() throws IOException
-    {
+    public void testNoGzip() throws IOException {
         HttpServletRequest request = mockRequest(JS_FILE);
         when(request.getHeader("Accept-Encoding")).thenReturn("");
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
         FilterChain chain = mock(FilterChain.class);
-        try
-        {
+        try {
             filter.doFilter(request, response, chain);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.getMessage());
         }
         verify(response).setStatus(200);
@@ -82,20 +76,16 @@ public class StaticResourcesFilterTest
     }
 
     @Test
-    public void testNotModified() throws IOException
-    {
+    public void testNotModified() throws IOException {
         String etag = etag(JS_DATA);
         HttpServletRequest request = mockRequest(JS_FILE);
         when(request.getHeader("If-None-Match")).thenReturn(etag);
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
         FilterChain chain = mock(FilterChain.class);
-        try
-        {
+        try {
             filter.doFilter(request, response, chain);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.getMessage());
         }
         verify(response).setStatus(304);
@@ -104,23 +94,19 @@ public class StaticResourcesFilterTest
         verify(response).setHeader("ETag", etag);
         verify(response).setHeader("Vary", "Accept-Encoding");
         verify(response).setHeader("Connection", "keep-alive");
-        verify(sos, never()).write((byte[]) anyObject());
+        verify(sos, never()).write(anyObject());
     }
 
     @Test
-    public void testModified() throws IOException
-    {
+    public void testModified() throws IOException {
         HttpServletRequest request = mockRequest(JS_FILE);
         when(request.getHeader("If-None-Match")).thenReturn("stale-value");
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
         FilterChain chain = mock(FilterChain.class);
-        try
-        {
+        try {
             filter.doFilter(request, response, chain);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.getMessage());
         }
         verify(response).setStatus(200);
@@ -133,19 +119,15 @@ public class StaticResourcesFilterTest
     }
 
     @Test
-    public void testNotFoundExisting() throws IOException
-    {
+    public void testNotFoundExisting() throws IOException {
         // plugin actually knows about other.js, but the filter pattern should hide it
         HttpServletRequest request = mockRequest(OTHER_JS_FILE);
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
         FilterChain chain = mock(FilterChain.class);
-        try
-        {
+        try {
             filter.doFilter(request, response, chain);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.getMessage());
         }
         verify(response).sendError(eq(404), anyString());
@@ -154,23 +136,19 @@ public class StaticResourcesFilterTest
         verify(response, never()).setHeader(eq("ETag"), anyString());
         verify(response, never()).setHeader(eq("Vary"), anyString());
         verify(response, never()).setHeader(eq("Connection"), anyString());
-        verify(sos, never()).write((byte[]) anyObject());
+        verify(sos, never()).write(anyObject());
     }
 
     @Test
-    public void testNotFoundMissing() throws IOException
-    {
+    public void testNotFoundMissing() throws IOException {
         // plugin doesn't know about other2.js
         HttpServletRequest request = mockRequest("other2.js");
         ServletOutputStream sos = mock(ServletOutputStream.class);
         HttpServletResponse response = mockResponse(sos);
         FilterChain chain = mock(FilterChain.class);
-        try
-        {
+        try {
             filter.doFilter(request, response, chain);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             fail(e.getMessage());
         }
         verify(response).sendError(eq(404), anyString());
@@ -179,11 +157,10 @@ public class StaticResourcesFilterTest
         verify(response, never()).setHeader(eq("ETag"), anyString());
         verify(response, never()).setHeader(eq("Vary"), anyString());
         verify(response, never()).setHeader(eq("Connection"), anyString());
-        verify(sos, never()).write((byte[]) anyObject());
+        verify(sos, never()).write(anyObject());
     }
 
-    private HttpServletRequest mockRequest(String localPath)
-    {
+    private HttpServletRequest mockRequest(String localPath) {
         String contextPath = "/foo";
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(contextPath + "/atlassian-connect/" + localPath);
@@ -191,15 +168,13 @@ public class StaticResourcesFilterTest
         return request;
     }
 
-    private HttpServletResponse mockResponse(ServletOutputStream sos) throws IOException
-    {
+    private HttpServletResponse mockResponse(ServletOutputStream sos) throws IOException {
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(response.getOutputStream()).thenReturn(sos);
         return response;
     }
 
-    private String etag(byte[] data)
-    {
+    private String etag(byte[] data) {
         return DigestUtils.md5Hex(data);
     }
 }

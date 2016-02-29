@@ -10,23 +10,22 @@ public class ConnectAddonInstallException extends Exception {
     private final Serializable[] i18nArgs;
     private final String i18nKey;
 
-    public ConnectAddonInstallException(String message)
-    {
+    public ConnectAddonInstallException(String message) {
         super(message);
 
-        i18nArgs = new Serializable[] {};
+        i18nArgs = new Serializable[]{};
         i18nKey = null;
     }
 
     public ConnectAddonInstallException(String message, Throwable cause) {
         super(message, cause);
 
-        i18nArgs = new Serializable[] {};
+        i18nArgs = new Serializable[]{};
         i18nKey = null;
     }
 
-    public ConnectAddonInstallException(String message, String i18nKey, Serializable... i18nArgs) {
-        super(message);
+    public ConnectAddonInstallException(String message, Throwable cause, String i18nKey, Serializable... i18nArgs) {
+        super(message, cause);
 
         this.i18nArgs = i18nArgs;
         this.i18nKey = i18nKey;

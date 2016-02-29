@@ -12,8 +12,8 @@ import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.user.User;
@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.not;
@@ -37,9 +39,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class ConfluenceModuleContextFilterTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class ConfluenceModuleContextFilterTest {
     @Mock
     private PermissionManager permissionManager;
     @Mock
@@ -59,21 +60,19 @@ public class ConfluenceModuleContextFilterTest
     private ConfluenceModuleContextFilter filter;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         filter = new ConfluenceModuleContextFilter(pluginAccessor, permissionManager, userAccessor, userManager, spaceManager, pageManager, contentEntityManager);
         when(userAccessor.getExistingUserByKey(any(UserKey.class))).thenReturn(mock(ConfluenceUser.class));
     }
 
     @Test
-    public void testFilterForbiddenPage()
-    {
+    public void testFilterForbiddenPage() {
         Page page = mock(Page.class);
         // Mockito would have mocked this to be false by default, but I wanted it to be explicit for readability.
         when(pageManager.getAbstractPage(anyLong())).thenReturn(page);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(page))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("page.id", "1234");
         params.put("page.version", "1");
         params.put("page.type", "page");
@@ -87,13 +86,12 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterAllowedPage()
-    {
+    public void testFilterAllowedPage() {
         Page page = mock(Page.class);
         when(pageManager.getAbstractPage(anyLong())).thenReturn(page);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(page))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("page.id", "1234");
         params.put("page.version", "2");
         params.put("page.type", "blog");
@@ -105,13 +103,12 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterAllowedBlogPost()
-    {
+    public void testFilterAllowedBlogPost() {
         BlogPost post = mock(BlogPost.class);
         when(pageManager.getAbstractPage(anyLong())).thenReturn(post);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(post))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("page.id", "1234");
         params.put("page.version", "2");
         params.put("page.type", "blog");
@@ -123,13 +120,12 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterAllowedSpaceKey()
-    {
+    public void testFilterAllowedSpaceKey() {
         Space space = mock(Space.class);
         when(spaceManager.getSpace(anyString())).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("space.key", "TEST");
 
         ModuleContextParameters filtered = filter.filter(params);
@@ -137,15 +133,14 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterAllowedSpaceKeyAndId()
-    {
+    public void testFilterAllowedSpaceKeyAndId() {
         Space space = mock(Space.class);
         when(space.getId()).thenReturn(1L);
         when(spaceManager.getSpace(eq("TEST"))).thenReturn(space);
         when(spaceManager.getSpace(eq(1L))).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("space.key", "TEST");
         params.put("space.id", "1");
 
@@ -155,14 +150,13 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterAllowedSpaceKeyButNotSpaceId()
-    {
+    public void testFilterAllowedSpaceKeyButNotSpaceId() {
         Space space = mock(Space.class);
         when(space.getId()).thenReturn(1L);
         when(spaceManager.getSpace(anyString())).thenReturn(space);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(space))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("space.key", "TEST");
         params.put("space.id", "2");
 
@@ -172,8 +166,7 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterAllowedSpaceIdButNotSpaceKey()
-    {
+    public void testFilterAllowedSpaceIdButNotSpaceKey() {
         Space fooSpace = mock(Space.class);
         when(fooSpace.getId()).thenReturn(1L);
         when(spaceManager.getSpace("FOO")).thenReturn(fooSpace);
@@ -186,7 +179,7 @@ public class ConfluenceModuleContextFilterTest
         when(spaceManager.getSpace(2L)).thenReturn(barSpace);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(barSpace))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("space.key", "FOO");
         params.put("space.id", "2"); // bar's id
 
@@ -196,15 +189,14 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterProfileNameAndKeyAllowed()
-    {
+    public void testFilterProfileNameAndKeyAllowed() {
         ConfluenceUser bob = mock(ConfluenceUser.class);
         UserKey userKey = new UserKey("babecafe");
         when(userAccessor.getExistingUserByKey(eq(userKey))).thenReturn(bob);
         when(userAccessor.getUserByName(eq("bob"))).thenReturn(bob);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(bob))).thenReturn(true);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("profileUser.name", "bob");
         params.put("profileUser.key", "babecafe");
 
@@ -215,8 +207,7 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterProfileNameAllowedAndKeyForbidden()
-    {
+    public void testFilterProfileNameAllowedAndKeyForbidden() {
         ConfluenceUser bob = mock(ConfluenceUser.class); // bob is allowed
         ConfluenceUser eve = mock(ConfluenceUser.class); // eve is not
         UserKey userKey = new UserKey("defaced");
@@ -225,7 +216,7 @@ public class ConfluenceModuleContextFilterTest
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(bob))).thenReturn(true);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(eve))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("profileUser.name", "bob");
         params.put("profileUser.key", "defaced");
 
@@ -236,15 +227,14 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterProfileNameAndKeyForbidden()
-    {
+    public void testFilterProfileNameAndKeyForbidden() {
         ConfluenceUser eve = mock(ConfluenceUser.class); // eve is not
         UserKey userKey = new UserKey("defaced");
         when(userAccessor.getUserByName(eq("eve"))).thenReturn(eve);
         when(userAccessor.getExistingUserByKey(eq(userKey))).thenReturn(eve);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(eve))).thenReturn(false);
 
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("profileUser.name", "eve");
         params.put("profileUser.key", "defaced");
 
@@ -257,8 +247,7 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterForbiddenContentDoesNotContainId()
-    {
+    public void testFilterForbiddenContentDoesNotContainId() {
         createMockContentEntity(false);
         ModuleContextParameters filtered = filter.filter(createCustomContentParams());
 
@@ -266,8 +255,7 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterForbiddenContentAllowsNonSensitiveParams()
-    {
+    public void testFilterForbiddenContentAllowsNonSensitiveParams() {
         createMockContentEntity(false);
         ModuleContextParameters filtered = filter.filter(createCustomContentParams());
 
@@ -278,8 +266,7 @@ public class ConfluenceModuleContextFilterTest
     }
 
     @Test
-    public void testFilterAllowedContent()
-    {
+    public void testFilterAllowedContent() {
         createMockContentEntity(true);
 
         ModuleContextParameters filtered = filter.filter(createCustomContentParams());
@@ -290,9 +277,8 @@ public class ConfluenceModuleContextFilterTest
         assertEquals("plugin:foo", filtered.get("content.plugin"));
     }
 
-    private ModuleContextParameters createCustomContentParams()
-    {
-        ModuleContextParameters params = new HashMapModuleContextParameters();
+    private ModuleContextParameters createCustomContentParams() {
+        ModuleContextParameters params = new HashMapModuleContextParameters(Collections.emptyMap());
         params.put("content.id", "1234");
         params.put("content.version", "1");
         params.put("content.type", "custom");
@@ -300,8 +286,7 @@ public class ConfluenceModuleContextFilterTest
         return params;
     }
 
-    private ContentEntityObject createMockContentEntity(boolean allowed)
-    {
+    private ContentEntityObject createMockContentEntity(boolean allowed) {
         ContentEntityObject content = mock(ContentEntityObject.class);
         when(contentEntityManager.getById(anyLong())).thenReturn(content);
         when(permissionManager.hasPermission(any(User.class), eq(Permission.VIEW), eq(content))).thenReturn(allowed);

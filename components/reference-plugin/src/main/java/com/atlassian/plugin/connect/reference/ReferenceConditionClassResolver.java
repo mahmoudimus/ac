@@ -9,12 +9,10 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 
-public class ReferenceConditionClassResolver implements ConnectConditionClassResolver
-{
+public class ReferenceConditionClassResolver implements ConnectConditionClassResolver {
 
     @Override
-    public List<Entry> getEntries()
-    {
+    public List<Entry> getEntries() {
         return ImmutableList.of(
                 newEntry("always-display", AlwaysDisplayCondition.class).contextFree().build(),
                 newEntry("never-display", NeverDisplayCondition.class).contextFree().build()

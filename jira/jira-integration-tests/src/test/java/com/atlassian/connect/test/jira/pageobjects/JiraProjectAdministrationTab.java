@@ -5,6 +5,7 @@ import com.atlassian.jira.pageobjects.project.ProjectConfigHeader;
 import com.atlassian.jira.pageobjects.project.ProjectConfigPageTab;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.ProjectInfoLocator;
+import com.atlassian.jira.pageobjects.project.ProjectSettingsHeader;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.ElementBy;
@@ -16,8 +17,7 @@ import javax.inject.Inject;
 /**
  * Describes a project administration tab.
  */
-public class JiraProjectAdministrationTab extends ConnectAddonEmbeddedTestPage implements ProjectConfigPageTab
-{
+public class JiraProjectAdministrationTab extends ConnectAddonEmbeddedTestPage implements ProjectConfigPageTab {
     @Inject
     private PageBinder pageBinder;
 
@@ -27,53 +27,50 @@ public class JiraProjectAdministrationTab extends ConnectAddonEmbeddedTestPage i
     private ProjectInfoLocator projectInfoLocator;
     private final String projectKey;
 
-    public JiraProjectAdministrationTab(String projectKey, String addonKey, String moduleKey)
-    {
+    public JiraProjectAdministrationTab(String projectKey, String addonKey, String moduleKey) {
         super(addonKey, moduleKey, true);
         this.projectKey = projectKey;
     }
 
     @Init
-    public void init()
-    {
+    public void init() {
         projectInfoLocator = pageBinder.bind(ProjectInfoLocator.class);
     }
 
 
     @Override
-    public String getProjectKey()
-    {
+    public String getProjectKey() {
         return projectKey;
     }
 
     @Override
-    public long getProjectId()
-    {
+    public long getProjectId() {
         return projectInfoLocator.getProjectId();
     }
 
     @Override
-    public ProjectConfigTabs getTabs()
-    {
+    public ProjectConfigTabs getTabs() {
         return pageBinder.bind(ProjectConfigTabs.class);
     }
 
     @Override
-    public ProjectConfigHeader getProjectHeader()
-    {
+    public ProjectConfigHeader getProjectHeader() {
         return pageBinder.bind(ProjectConfigHeader.class);
     }
 
     @Override
-    public ProjectConfigActions getOperations()
-    {
+    public ProjectSettingsHeader getProjectSettingsHeader() {
+        return pageBinder.bind(ProjectSettingsHeader.class);
+    }
+
+    @Override
+    public ProjectConfigActions getOperations() {
         operations.click();
         return pageBinder.bind(ProjectConfigActions.class);
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         throw new UnsupportedOperationException("Not implemented");
     }
 }

@@ -8,13 +8,13 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.jira.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
@@ -31,8 +31,7 @@ import java.util.Collections;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @JiraComponent
-public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDescriptorFactory<SearchRequestViewModuleBean, SearchRequestViewModuleDescriptor>
-{
+public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDescriptorFactory<SearchRequestViewModuleBean, SearchRequestViewModuleDescriptor> {
     private final JiraAuthenticationContext authenticationContext;
     private final SearchRequestURLHandler urlHandler;
     private final ConnectConditionDescriptorFactory conditionDescriptorFactory;
@@ -40,7 +39,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final ConnectUriFactory connectUriFactory;
 
     @Autowired
     public SearchRequestViewModuleDescriptorFactory(JiraAuthenticationContext authenticationContext,
@@ -49,9 +48,8 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                                                     ApplicationProperties applicationProperties,
                                                     SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
                                                     TemplateRenderer templateRenderer,
-                                                    IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                                                    DelegatingComponentAccessor componentAccessor)
-    {
+                                                    ConnectUriFactory connectUriFactory,
+                                                    DelegatingComponentAccessor componentAccessor) {
         this.authenticationContext = checkNotNull(authenticationContext);
         this.urlHandler = checkNotNull(componentAccessor.getComponent(SearchRequestURLHandler.class));
         this.conditionDescriptorFactory = checkNotNull(conditionDescriptorFactory);
@@ -59,12 +57,11 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
+        this.connectUriFactory = checkNotNull(connectUriFactory);
     }
 
     @Override
-    public SearchRequestViewModuleDescriptor createModuleDescriptor(SearchRequestViewModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public SearchRequestViewModuleDescriptor createModuleDescriptor(SearchRequestViewModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
                 urlHandler, createModuleFactory(bean, addon), conditionDescriptorFactory);
         Element element = createElement(bean, addon);
@@ -73,8 +70,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     }
 
 
-    private Element createElement(SearchRequestViewModuleBean bean, ConnectAddonBean addon)
-    {
+    private Element createElement(SearchRequestViewModuleBean bean, ConnectAddonBean addon) {
         DOMElement element = new DOMElement("search-request-view");
 
         element.setAttribute("key", bean.getKey(addon));
@@ -93,8 +89,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                 .addText(bean.getDescription().getValue())
                 .addAttribute("key", bean.getDescription().getI18n());
 
-        if (!bean.getConditions().isEmpty())
-        {
+        if (!bean.getConditions().isEmpty()) {
             element.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
         } else {
             // JIRA throws an NPE if no conditions are present...
@@ -105,28 +100,24 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         return element;
     }
 
-    private ModuleFactory createModuleFactory(final SearchRequestViewModuleBean bean, final ConnectAddonBean addon)
-    {
-        return new ModuleFactory()
-        {
+    private ModuleFactory createModuleFactory(final SearchRequestViewModuleBean bean, final ConnectAddonBean addon) {
+        return new ModuleFactory() {
+
             @Override
-            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
-            {
-                try
-                {
+            @SuppressWarnings("unchecked")
+            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException {
+                try {
                     return (T) new RemoteSearchRequestView(
                             applicationProperties,
                             searchRequestViewBodyWriterUtil,
                             templateRenderer,
-                            iFrameUriBuilderFactory,
+                            connectUriFactory,
                             addon.getKey(),
                             bean.getKey(addon),
                             bean.createUri(),
-                            bean.getDisplayName(), 
+                            bean.getDisplayName(),
                             authenticationContext);
-                }
-                catch (URISyntaxException e)
-                {
+                } catch (URISyntaxException e) {
                     throw new PluginParseException(e);
                 }
             }

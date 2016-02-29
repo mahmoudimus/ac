@@ -3,8 +3,9 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
-import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.MatcherBeanBuilder;
+
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
 /**
  * Matchers define a URL string as part of an Autoconvert definition.
@@ -21,8 +22,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MatcherBeanBuilder;
  * @since 1.1
  */
 @SchemaDefinition("matchers")
-public class MatcherBean extends BaseModuleBean
-{
+public class MatcherBean {
 
     /**
      * The pattern is a string that defines a single URL to match.
@@ -31,33 +31,27 @@ public class MatcherBean extends BaseModuleBean
     @StringSchemaAttributes(maxLength = 1024)
     private String pattern;
 
-    public MatcherBean()
-    {
+    public MatcherBean() {
         this.pattern = "";
     }
 
-    public MatcherBean(MatcherBeanBuilder builder)
-    {
-        super(builder);
+    public MatcherBean(MatcherBeanBuilder builder) {
+        copyFieldsByNameAndType(builder, this);
 
-        if (null == pattern)
-        {
+        if (null == pattern) {
             this.pattern = "";
         }
     }
 
-    public static MatcherBeanBuilder newMatcherBean()
-    {
+    public static MatcherBeanBuilder newMatcherBean() {
         return new MatcherBeanBuilder();
     }
 
-    public static MatcherBeanBuilder newMatcherBean(MatcherBean defaultBean)
-    {
+    public static MatcherBeanBuilder newMatcherBean(MatcherBean defaultBean) {
         return new MatcherBeanBuilder(defaultBean);
     }
 
-    public String getPattern()
-    {
+    public String getPattern() {
         return pattern;
     }
 }

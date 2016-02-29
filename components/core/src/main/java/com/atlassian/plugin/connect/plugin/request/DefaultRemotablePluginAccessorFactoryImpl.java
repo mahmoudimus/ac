@@ -7,26 +7,22 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
-import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
 import com.atlassian.plugin.connect.api.request.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.auth.applinks.DefaultConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.auth.jwt.JwtSigningRemotablePluginAccessor;
-import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.auth.oauth.OAuthSigningRemotablePluginAccessor;
-import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
 import com.atlassian.plugin.connect.plugin.auth.applinks.RemotePluginContainerApplicationType;
+import com.atlassian.plugin.connect.plugin.auth.jwt.JwtSigningRemotablePluginAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -42,11 +38,9 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Component
-public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultRemotablePluginAccessorFactory
-{
+public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultRemotablePluginAccessorFactory {
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddonRegistry connectAddonRegistry;
-    private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
@@ -63,20 +57,17 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
     @Autowired
     public DefaultRemotablePluginAccessorFactoryImpl(ConnectApplinkManager connectApplinkManager,
-                                                 ConnectAddonRegistry connectAddonRegistry,
-                                                 OAuthLinkManager oAuthLinkManager,
-                                                 CachingHttpContentRetriever httpContentRetriever,
-                                                 PluginAccessor pluginAccessor,
-                                                 ApplicationProperties applicationProperties,
-                                                 EventPublisher eventPublisher,
-                                                 JwtJsonBuilderFactory jwtBuilderFactory,
-                                                 JwtService jwtService,
-                                                 ConsumerService consumerService,
-                                                 ConnectAddonAccessor addonAccessor)
-    {
+                                                     ConnectAddonRegistry connectAddonRegistry,
+                                                     CachingHttpContentRetriever httpContentRetriever,
+                                                     PluginAccessor pluginAccessor,
+                                                     ApplicationProperties applicationProperties,
+                                                     EventPublisher eventPublisher,
+                                                     JwtJsonBuilderFactory jwtBuilderFactory,
+                                                     JwtService jwtService,
+                                                     ConsumerService consumerService,
+                                                     ConnectAddonAccessor addonAccessor) {
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddonRegistry = connectAddonRegistry;
-        this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
         this.applicationProperties = applicationProperties;
@@ -96,10 +87,8 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @param event the event fired
      */
     @EventListener
-    public void onApplicationLinkCreated(ApplicationLinkAddedEvent event)
-    {
-        if (event.getApplicationType() instanceof RemotePluginContainerApplicationType)
-        {
+    public void onApplicationLinkCreated(ApplicationLinkAddedEvent event) {
+        if (event.getApplicationType() instanceof RemotePluginContainerApplicationType) {
             // we clear the whole cache because the plugin key isn't set as a property yet and there
             // is no event for that action
             accessors.clear();
@@ -112,63 +101,46 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @param event the event fired
      */
     @EventListener
-    public void onApplicationLinkRemoved(ApplicationLinkDeletedEvent event)
-    {
-        if (event.getApplicationType() instanceof RemotePluginContainerApplicationType)
-        {
+    public void onApplicationLinkRemoved(ApplicationLinkDeletedEvent event) {
+        if (event.getApplicationType() instanceof RemotePluginContainerApplicationType) {
             accessors.remove(getPluginKey(event.getApplicationLink()));
         }
     }
 
-    private String getPluginKey(ApplicationLink link)
-    {
+    private String getPluginKey(ApplicationLink link) {
         return String.valueOf(link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY));
     }
 
-    public RemotablePluginAccessor get(String pluginKey)
-    {
+    @Override
+    public RemotablePluginAccessor get(final String pluginKey) {
         Optional<ConnectAddonBean> optionalAddon = addonAccessor.getAddon(pluginKey);
-        if (optionalAddon.isPresent())
-        {
+        if (optionalAddon.isPresent()) {
             return get(optionalAddon.get());
         }
-
-        final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         return get(plugin, pluginKey);
     }
 
-    public RemotablePluginAccessor get(ConnectAddonBean addon)
-    {
+    private RemotablePluginAccessor get(ConnectAddonBean addon) {
         // this will potentially create multiple instances if called quickly, but we don't really
         // care as they shouldn't be cached
         final RemotablePluginAccessor accessor;
-        if (accessors.containsKey(addon.getKey()))
-        {
+        if (accessors.containsKey(addon.getKey())) {
             accessor = accessors.get(addon.getKey());
-        }
-        else
-        {
+        } else {
             accessor = create(addon, getDisplayUrl(addon));
             accessors.put(addon.getKey(), accessor);
         }
         return accessor;
     }
 
-    /**
-     * @deprecated use {@code get(String pluginKey)} or {@code get(ConnectAddonBean addon)} instead
-     */
-    @Deprecated
-    private RemotablePluginAccessor get(final Plugin plugin, final String pluginKey)
-    {
+    private RemotablePluginAccessor get(final Plugin plugin, final String pluginKey) {
         // this will potentially create multiple instances if called quickly, but we don't really
         // care as they shouldn't be cached
         final RemotablePluginAccessor accessor;
-        if (accessors.containsKey(pluginKey))
-        {
+        if (accessors.containsKey(pluginKey)) {
             accessor = accessors.get(pluginKey);
-        }
-        else
-        {
+        } else {
             accessor = create(plugin, pluginKey, getDisplayUrl(pluginKey));
             accessors.put(pluginKey, accessor);
         }
@@ -176,50 +148,18 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
     }
 
     @Override
-    public RemotablePluginAccessor getOrThrow(final String pluginKey)
-    {
-        RemotablePluginAccessor remotablePluginAccessor = get(pluginKey);
-        if (remotablePluginAccessor == null)
-        {
-            throw new IllegalStateException("No " + RemotablePluginAccessor.class + " available for " + pluginKey);
-        }
-        return remotablePluginAccessor;
-    }
-
-    @Override
-    public void remove(String pluginKey)
-    {
+    public void remove(String pluginKey) {
         accessors.remove(pluginKey);
     }
 
-    private Supplier<URI> getDisplayUrl(final ConnectAddonBean addon)
-    {
+    private Supplier<URI> getDisplayUrl(final ConnectAddonBean addon) {
         final String storedBaseUrl = addon.getBaseUrl();
 
-        if (!Strings.isNullOrEmpty(storedBaseUrl))
-        {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
-                    new Supplier<String>()
-                    {
-                        @Override
-                        public String get()
-                        {
-                            return storedBaseUrl;
-                        }
-                    }
-            );
-        }
-        else
-        {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
-                    new Supplier<String>()
-                    {
-                        @Override
-                        public String get()
-                        {
-                            return applicationProperties.getBaseUrl(UrlMode.CANONICAL);
-                        }
-                    }
+        if (!Strings.isNullOrEmpty(storedBaseUrl)) {
+            return Suppliers.compose(URI::create, () -> storedBaseUrl);
+        } else {
+            return Suppliers.compose(URI::create,
+                    () -> applicationProperties.getBaseUrl(UrlMode.CANONICAL)
             );
         }
     }
@@ -228,45 +168,22 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @deprecated use {@code getDisplayUrl(ConnectAddonBean addon)} instead
      */
     @Deprecated
-    private Supplier<URI> getDisplayUrl(final String pluginKey)
-    {
-        String addonBaseUrl = "";
+    private Supplier<URI> getDisplayUrl(final String pluginKey) {
+        String addonBaseUrl;
 
-        if(connectAddonRegistry.hasBaseUrl(pluginKey))
-        {
+        if (connectAddonRegistry.hasBaseUrl(pluginKey)) {
             addonBaseUrl = connectAddonRegistry.getBaseUrl(pluginKey);
-        }
-        else
-        {
+        } else {
             throw new IllegalStateException(pluginKey + " appears to be an XML add-on");
         }
 
         final String storedBaseUrl = addonBaseUrl;
 
-        if (!Strings.isNullOrEmpty(storedBaseUrl))
-        {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
-                    new Supplier<String>()
-                    {
-                        @Override
-                        public String get()
-                        {
-                            return storedBaseUrl;
-                        }
-                    }
-            );
-        }
-        else
-        {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
-                    new Supplier<String>()
-                    {
-                        @Override
-                        public String get()
-                        {
-                            return applicationProperties.getBaseUrl(UrlMode.CANONICAL);
-                        }
-                    }
+        if (!Strings.isNullOrEmpty(storedBaseUrl)) {
+            return Suppliers.compose(URI::create, () -> storedBaseUrl);
+        } else {
+            return Suppliers.compose(URI::create,
+                    () -> applicationProperties.getBaseUrl(UrlMode.CANONICAL)
             );
         }
     }
@@ -280,41 +197,30 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @param addon The addon bean
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
-     *
-     * @deprecated use {@code create(ConnectAddonBean addon, Supplier<URI> displayUrl)} instead
      */
-    @Deprecated
-    private RemotablePluginAccessor create(ConnectAddonBean addon, Supplier<URI> displayUrl)
-    {
+    private RemotablePluginAccessor create(ConnectAddonBean addon, Supplier<URI> displayUrl) {
         ApplicationLink appLink = connectApplinkManager.getAppLink(addon.getKey());
         AuthenticationMethod authenticationMethod = null;
-        if (null == appLink)
-        {
+        if (null == appLink) {
             log.error("Found no app link by plugin key '{}'!", addon.getKey());
-        }
-        else
-        {
+        } else {
             Object authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
-            if (authTypeProperty != null)
-            {
+            if (authTypeProperty != null) {
                 authenticationMethod = AuthenticationMethod.forName(authTypeProperty.toString());
             }
         }
 
-        if (AuthenticationMethod.JWT.equals(authenticationMethod))
-        {
+        if (AuthenticationMethod.JWT.equals(authenticationMethod)) {
             return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtBuilderFactory, jwtService,
                     consumerService, connectApplinkManager, httpContentRetriever);
-        }
-        else if (AuthenticationMethod.NONE.equals(authenticationMethod))
-        {
+        } else if (AuthenticationMethod.NONE.equals(authenticationMethod)) {
             return new NoAuthRemotablePluginAccessor(addon, displayUrl, httpContentRetriever);
-        }
-        else
-        {
-            // default to OAuth (for backwards compatibility)
-            return new OAuthSigningRemotablePluginAccessor(addon, displayUrl, getDummyServiceProvider(),
-                    httpContentRetriever, oAuthLinkManager);
+        } else {
+            throw new IllegalStateException("No valid authentication method found for " + addon.getKey() +
+                    ".\nThis was probably caused by a data restore from a different instance.\n" +
+                    "Please refer this instance to the Atlassian Connect developer on support for remediation.\n" +
+                    "DO NOT simply re-install the affected add-ons; this can cause data loss for some add-ons.\n" +
+                    "See https://ecosystem.atlassian.net/browse/AC-1528");
         }
     }
 
@@ -328,68 +234,36 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @param pluginKey The plugin key
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
-     *
-     * @deprecated use {@code create(ConnectAddonBean addon, Supplier<URI> displayUrl)} instead
      */
-    @Deprecated
-    public RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl)
-    {
-        
+    private RemotablePluginAccessor create(Plugin plugin, String pluginKey, Supplier<URI> displayUrl) {
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
         ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
         AuthenticationMethod authenticationMethod = null;
-        if (null == appLink)
-        {
+        if (null == appLink) {
             log.error("Found no app link by plugin key '{}'!", pluginKey);
-        }
-        else
-        {
+        } else {
             Object authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
-            if (authTypeProperty != null)
-            {
+            if (authTypeProperty != null) {
                 authenticationMethod = AuthenticationMethod.forName(authTypeProperty.toString());
             }
         }
 
-        if (AuthenticationMethod.JWT.equals(authenticationMethod))
-        {
+        if (AuthenticationMethod.JWT.equals(authenticationMethod)) {
             ConnectAddonBean addon = addonAccessor.getAddon(pluginKey).get();
             return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtBuilderFactory, jwtService,
                     consumerService, connectApplinkManager, httpContentRetriever);
-        }
-        else if (AuthenticationMethod.NONE.equals(authenticationMethod))
-        {
+        } else if (AuthenticationMethod.NONE.equals(authenticationMethod)) {
             return new NoAuthRemotablePluginAccessor(plugin, displayUrl, httpContentRetriever);
+        } else {
+            throw new IllegalStateException("No valid authentication method found for " + plugin.getKey() +
+                    ".\nThis was probably caused by a data restore from a different instance.\n" +
+                    "Please contact Atlassian support for assistance getting your add-ons up and running again.");
         }
-        else
-        {
-            // default to OAuth (for backwards compatibility)
-            return new OAuthSigningRemotablePluginAccessor(plugin, displayUrl, getDummyServiceProvider(),
-                    httpContentRetriever, oAuthLinkManager);
-        }
-    }
-
-    private ServiceProvider getDummyServiceProvider()
-    {
-        URI dummyUri = URI.create("http://localhost");
-        return new ServiceProvider(dummyUri, dummyUri, dummyUri);
     }
 
     @Override
-    public void destroy() throws Exception
-    {
+    public void destroy() throws Exception {
         eventPublisher.unregister(this);
-    }
-
-    private enum ToUriFunction implements Function<String, URI>
-    {
-        INSTANCE;
-
-        @Override
-        public URI apply(String uri)
-        {
-            return URI.create(uri);
-        }
     }
 }

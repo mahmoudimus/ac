@@ -18,51 +18,43 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil.renderAccessDeniedToString;
 import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyUtil.renderToString;
 import static com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
+import static java.util.Collections.emptyMap;
 
 /**
  *
  */
-public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
-{
+public class ConnectIFrameProfileTabPanel implements ViewProfilePanel {
     private final IFrameRenderStrategy iFrameRenderStrategy;
     private final ModuleContextFilter moduleContextFilter;
     private final UserManager userManager;
 
     public ConnectIFrameProfileTabPanel(IFrameRenderStrategy iFrameRenderStrategy,
-            ModuleContextFilter moduleContextFilter,
-            UserManager userManager)
-    {
+                                        ModuleContextFilter moduleContextFilter,
+                                        UserManager userManager) {
         this.iFrameRenderStrategy = iFrameRenderStrategy;
         this.moduleContextFilter = moduleContextFilter;
         this.userManager = userManager;
     }
 
     @Override
-    public void init(final ViewProfilePanelModuleDescriptor moduleDescriptor)
-    {
+    public void init(final ViewProfilePanelModuleDescriptor moduleDescriptor) {
     }
 
-    public String getHtml(ApplicationUser user)
-    {
+    public String getHtml(ApplicationUser user) {
         ModuleContextParameters unfilteredContext = createUnfilteredContext(user);
         Map<String, ModuleContextParameters> conditionContext = ImmutableMap.of(MODULE_CONTEXT_KEY, unfilteredContext);
 
-        if (iFrameRenderStrategy.shouldShow(conditionContext))
-        {
+        if (iFrameRenderStrategy.shouldShow(conditionContext)) {
             return renderToString(moduleContextFilter.filter(unfilteredContext), iFrameRenderStrategy);
-        }
-        else
-        {
+        } else {
             return renderAccessDeniedToString(iFrameRenderStrategy);
         }
     }
 
-    private ModuleContextParameters createUnfilteredContext(final ApplicationUser profileUser)
-    {
+    private ModuleContextParameters createUnfilteredContext(final ApplicationUser profileUser) {
         UserProfile userProfile = userManager.getUserProfile(new UserKey(profileUser.getKey()));
-        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+        JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl(emptyMap());
         unfilteredContext.addProfileUser(userProfile);
         return unfilteredContext;
     }
-
 }

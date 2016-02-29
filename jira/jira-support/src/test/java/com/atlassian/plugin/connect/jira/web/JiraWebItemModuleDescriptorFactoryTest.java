@@ -2,14 +2,15 @@ package com.atlassian.plugin.connect.jira.web;
 
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.api.web.iframe.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.api.web.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectUriFactory;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.util.fixture.PluginForTests;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.fixture.PluginForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
@@ -24,26 +25,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
-import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
-@RunWith (MockitoJUnitRunner.class)
-public class JiraWebItemModuleDescriptorFactoryTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class JiraWebItemModuleDescriptorFactoryTest {
     @Mock
     private WebInterfaceManager webInterfaceManager;
 
@@ -57,7 +55,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
     private HttpServletRequest servletRequest;
 
     @Mock
-    private IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private ConnectUriFactory connectUriFactory;
 
     @Mock
     private PluggableParametersExtractor webFragmentModuleContextExtractor;
@@ -70,14 +68,13 @@ public class JiraWebItemModuleDescriptorFactoryTest
     private Plugin plugin;
 
     @Before
-    public void setup() throws ConditionLoadingException
-    {
+    public void setup() throws ConditionLoadingException {
         plugin = new PluginForTests("my-key", "My Plugin");
 
         UrlVariableSubstitutor urlVariableSubstitutor = createUrlSubstitutor();
 
         webItemFactory = new JiraWebItemModuleDescriptorFactory(
-                webFragmentHelper, webInterfaceManager, iFrameUriBuilderFactory, jiraAuthenticationContext,
+                webFragmentHelper, webInterfaceManager, connectUriFactory, jiraAuthenticationContext,
                 webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
@@ -88,8 +85,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void urlPrefixIsCorrect()
-    {
+    public void urlPrefixIsCorrect() {
         WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin?my_project_id",
                 "my-key",
@@ -107,8 +103,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void urlIsCorrectWhenThereIsNoContext()
-    {
+    public void urlIsCorrectWhenThereIsNoContext() {
         WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin?my_project_id={project.id}&my_project_key={project.key}",
                 "my-key",
@@ -126,8 +121,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void testWebItemLinkContainsAllQueryParams() throws Exception
-    {
+    public void testWebItemLinkContainsAllQueryParams() throws Exception {
         final ImmutableSet<String> ADMIN_MENUS_KEYS = ImmutableSet.of(
                 "admin_system_menu",
                 "admin_plugins_menu",
@@ -135,15 +129,11 @@ public class JiraWebItemModuleDescriptorFactoryTest
                 "admin_issues_menu",
                 "admin_project_menu");
 
-        for (String key : ADMIN_MENUS_KEYS)
-        {
-            testWebItemLinkContainsAllQueryParamsForSection(key);
-        }
+        ADMIN_MENUS_KEYS.forEach(this::testWebItemLinkContainsAllQueryParamsForSection);
     }
 
     @Test
-    public void testWebItemLinkQueryParamIsNotOverridenBySourceParamIfPresent()
-    {
+    public void testWebItemLinkQueryParamIsNotOverridenBySourceParamIfPresent() {
         String moduleKey = "myLinkId";
         WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin?s=blabla",
@@ -162,8 +152,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
         assertThat(displayableUrl, urlHasWebItemSourceQueryParameter("blabla"));
     }
 
-    private void testWebItemLinkContainsAllQueryParamsForSection(String section)
-    {
+    private void testWebItemLinkContainsAllQueryParamsForSection(String section) {
         String moduleKey = "myLinkId";
         WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin",
@@ -182,52 +171,33 @@ public class JiraWebItemModuleDescriptorFactoryTest
         assertThat(displayableUrl, urlHasWebItemSourceQueryParameter(moduleKey));
     }
 
-    private UrlVariableSubstitutor createUrlSubstitutor()
-    {
+    private UrlVariableSubstitutor createUrlSubstitutor() {
         UrlVariableSubstitutor mock = mock(UrlVariableSubstitutor.class);
-        when(mock.append(anyString(), anyMap())).then(new Answer<Object>()
-        {
-            @Override
-            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
-            {
-                return invocationOnMock.getArguments()[0];
-            }
-        });
-        when(mock.replace(anyString(), anyMap())).then(new Answer<Object>()
-        {
-            @Override
-            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
-            {
-                String template = (String) invocationOnMock.getArguments()[0];
-                return template.replaceAll("\\{.*?\\}","");
-            }
+        when(mock.append(anyString(), anyMapOf(String.class, String.class))).then(invocationOnMock -> invocationOnMock.getArguments()[0]);
+        when(mock.replace(anyString(), any(WebFragmentContext.class))).then(invocationOnMock -> {
+            String template = (String) invocationOnMock.getArguments()[0];
+            return template.replaceAll("\\{.*?\\}", "");
         });
         return mock;
     }
 
-    private Element createElement()
-    {
+    private Element createElement() {
         DOMElement element = new DOMElement("web-item");
         element.addAttribute("key", "mykey");
         return element;
     }
 
-    private Matcher<String> urlHasWebItemSourceQueryParameter(final String value)
-    {
-        return new TypeSafeMatcher<String>()
-        {
+    private Matcher<String> urlHasWebItemSourceQueryParameter(final String value) {
+        return new TypeSafeMatcher<String>() {
             @Override
-            protected boolean matchesSafely(String url)
-            {
+            protected boolean matchesSafely(String url) {
                 return url.contains(JiraWebItemModuleDescriptorFactory.WEB_ITEM_SOURCE_QUERY_PARAM + "=" + value);
             }
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("Url containing " + JiraWebItemModuleDescriptorFactory.WEB_ITEM_SOURCE_QUERY_PARAM + "=" + value);
             }
         };
     }
-
 }

@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 import com.atlassian.plugin.connect.modules.beans.BeanWithKeyAndParamsAndConditions;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.google.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,33 +11,27 @@ import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAndConditionsBuilder, B extends BeanWithKeyAndParamsAndConditions> extends BeanWithKeyAndParamsBuilder<T, B>
-{
+@SuppressWarnings("unchecked")
+public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAndConditionsBuilder, B extends BeanWithKeyAndParamsAndConditions> extends BeanWithKeyAndParamsBuilder<T, B> {
     private List<ConditionalBean> conditions;
 
-    public BeanWithKeyParamsAndConditionsBuilder()
-    {
+    public BeanWithKeyParamsAndConditionsBuilder() {
         this.conditions = newArrayList();
     }
 
-    public BeanWithKeyParamsAndConditionsBuilder(BeanWithKeyAndParamsAndConditions defaultBean)
-    {
+    public BeanWithKeyParamsAndConditionsBuilder(BeanWithKeyAndParamsAndConditions defaultBean) {
         super(defaultBean);
 
         this.conditions = newArrayList(defaultBean.getConditions());
     }
 
-    public T withConditions(ConditionalBean... beans)
-    {
+    public T withConditions(ConditionalBean... beans) {
         return withConditions(Arrays.asList(beans));
     }
 
-    public T withConditions(Collection<? extends ConditionalBean> beans)
-    {
-        if (beans != null) // not sure why this comes in as null sometimes
-        {
-            if (null == conditions)
-            {
+    public T withConditions(Collection<? extends ConditionalBean> beans) {
+        if (beans != null) {
+            if (null == conditions) {
                 conditions = newArrayList();
             }
 
@@ -50,36 +43,31 @@ public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAn
     }
 
     @Override
-    public T withParams(Map<String, String> params)
-    {
+    public T withParams(Map<String, String> params) {
         super.withParams(params);
         return (T) this;
     }
 
     @Override
-    public T withParam(String key, String value)
-    {
+    public T withParam(String key, String value) {
         super.withParam(key, value);
         return (T) this;
     }
 
     @Override
-    public T withKey(String key)
-    {
+    public T withKey(String key) {
         super.withKey(key);
         return (T) this;
     }
 
     @Override
-    public T withName(I18nProperty name)
-    {
+    public T withName(I18nProperty name) {
         super.withName(name);
         return (T) this;
     }
 
     @Override
-    public B build()
-    {
+    public B build() {
         return (B) new BeanWithKeyAndParamsAndConditions(this);
     }
 }

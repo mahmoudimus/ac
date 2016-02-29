@@ -16,27 +16,23 @@ import org.junit.runner.RunWith;
 
 import java.util.Map;
 
-import javax.ws.rs.core.UriBuilder;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 
-import static org.junit.Assert.assertTrue;
-
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest {
     private final JiraTestUtil jiraTestUtil;
 
     public JiraWebitemModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
                                          TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-                                         JiraTestUtil jiraTestUtil)
-    {
+                                         JiraTestUtil jiraTestUtil) {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
         this.jiraTestUtil = jiraTestUtil;
     }
 
     @Test
-    public void singleAddonLinkWithContextPrams() throws Exception
-    {
+    public void singleAddonLinkWithContextPrams() throws Exception {
         Project project = jiraTestUtil.createProject();
         WebItemModuleDescriptor descriptor = registerWebItem("myProject={project.key}", "atl.admin/menu");
 
@@ -46,8 +42,7 @@ public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
 
         String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
 
-        String expectedUrlPrefix = UriBuilder.fromPath(CONTEXT_PATH).path(RedirectServletPath.forModule(PLUGIN_KEY, MODULE_KEY)).build().toString();
-        assertTrue("wrong url prefix. expected: " + expectedUrlPrefix + ", but got: " + convertedUrl, convertedUrl.startsWith(expectedUrlPrefix));
-        assertTrue("project key not found in: " + convertedUrl, convertedUrl.contains("project.key=" + project.getKey()));
+        assertThat(convertedUrl, containsString(RedirectServletPath.forModule(PLUGIN_KEY, MODULE_KEY)));
+        assertThat(convertedUrl, containsString("project.key=" + project.getKey()));
     }
 }

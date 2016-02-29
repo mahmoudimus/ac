@@ -6,37 +6,30 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
-public class AutoconvertBeanBuilder<T extends AutoconvertBeanBuilder, B extends AutoconvertBean> extends BaseModuleBeanBuilder<T, B>
-{
+public class AutoconvertBeanBuilder {
 
     private String urlParameter;
     private List<MatcherBean> matchers;
 
-    public AutoconvertBeanBuilder()
-    {
+    public AutoconvertBeanBuilder() {
     }
 
-    public AutoconvertBeanBuilder(AutoconvertBean defaultBean)
-    {
+    public AutoconvertBeanBuilder(AutoconvertBean defaultBean) {
         this.matchers = defaultBean.getMatchers();
         this.urlParameter = defaultBean.getUrlParameter();
     }
 
-    public T withMatchers(MatcherBean... matchers)
-    {
+    public AutoconvertBeanBuilder withMatchers(MatcherBean... matchers) {
         this.matchers = ImmutableList.copyOf(matchers);
-        return (T) this;
+        return this;
     }
 
-    public T withUrlParameter(String urlParameter)
-    {
+    public AutoconvertBeanBuilder withUrlParameter(String urlParameter) {
         this.urlParameter = urlParameter;
-        return (T) this;
+        return this;
     }
 
-    @Override
-    public B build()
-    {
-        return (B) new AutoconvertBean(this);
+    public AutoconvertBean build() {
+        return new AutoconvertBean(this);
     }
 }

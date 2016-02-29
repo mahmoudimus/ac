@@ -17,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @JiraComponent
-public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
-{
+public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider {
 
     @VisibleForTesting
     public static final TabPanelDescriptorHints HINTS = new TabPanelDescriptorHints("profile-tab-page",
@@ -28,25 +27,22 @@ public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
 
     @Autowired
     public ProfileTabPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            ConnectTabPanelModuleDescriptorFactory descriptorFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            ConditionLoadingValidator conditionLoadingValidator)
-    {
+                                         ConnectJsonSchemaValidator schemaValidator,
+                                         ConnectTabPanelModuleDescriptorFactory descriptorFactory,
+                                         IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                         IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                         ConditionLoadingValidator conditionLoadingValidator) {
         super(pluginRetrievalService, schemaValidator, descriptorFactory, iFrameRenderStrategyRegistry,
                 iFrameRenderStrategyBuilderFactory, conditionLoadingValidator);
     }
 
     @Override
-    public ConnectModuleMeta<ConnectTabPanelModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<ConnectTabPanelModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon) {
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("profile-tab-page",
                 ConnectViewProfilePanelModuleDescriptor.class, ConnectIFrameProfileTabPanel.class);
 

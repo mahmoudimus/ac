@@ -5,11 +5,9 @@ import com.atlassian.pageobjects.Page;
 /**
  * User Profile confluence page.
  */
-public class ConfluenceUserProfilePage implements Page
-{
+public class ConfluenceUserProfilePage implements Page {
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return "/users/viewmyprofile.action";
     }
 

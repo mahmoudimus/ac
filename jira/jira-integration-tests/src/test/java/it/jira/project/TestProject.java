@@ -1,24 +1,20 @@
 package it.jira.project;
 
-public class TestProject
-{
+public class TestProject {
     private final String id;
 
     private final String key;
 
-    public TestProject(String key, String id)
-    {
+    public TestProject(String key, String id) {
         this.key = key;
         this.id = id;
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 }

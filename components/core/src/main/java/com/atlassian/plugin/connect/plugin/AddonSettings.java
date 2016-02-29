@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.PluginState;
 
-public class AddonSettings
-{
+public class AddonSettings {
     private String descriptor;
     private String baseUrl;
     private String secret;
@@ -12,8 +11,7 @@ public class AddonSettings
     private String auth;
     private String restartState;
 
-    public AddonSettings()
-    {
+    public AddonSettings() {
         this.descriptor = "";
         this.baseUrl = "";
         this.secret = "";
@@ -22,73 +20,61 @@ public class AddonSettings
         this.restartState = PluginState.ENABLED.name();
     }
 
-    public String getDescriptor()
-    {
+    public String getDescriptor() {
         return descriptor;
     }
 
-    public AddonSettings setDescriptor(String descriptor)
-    {
+    public AddonSettings setDescriptor(String descriptor) {
         this.descriptor = descriptor;
-        
+
         return this;
     }
 
-    public String getBaseUrl()
-    {
+    public String getBaseUrl() {
         return baseUrl;
     }
 
-    public AddonSettings setBaseUrl(String baseUrl)
-    {
+    public AddonSettings setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
 
         return this;
     }
 
-    public String getSecret()
-    {
+    public String getSecret() {
         return secret;
     }
 
-    public AddonSettings setSecret(String secret)
-    {
+    public AddonSettings setSecret(String secret) {
         this.secret = secret;
 
         return this;
     }
 
-    public String getUserKey()
-    {
+    public String getUserKey() {
         return userKey;
     }
 
-    public AddonSettings setUserKey(String user)
-    {
+    public AddonSettings setUserKey(String user) {
         this.userKey = user;
 
         return this;
     }
 
-    public String getAuth()
-    {
+    public String getAuth() {
         return auth;
     }
 
-    public AddonSettings setAuth(String auth)
-    {
+    public AddonSettings setAuth(String auth) {
         this.auth = auth;
 
         return this;
     }
 
-    public String getRestartState()
-    {
+    public String getRestartState() {
         return restartState;
     }
 
-    public AddonSettings setRestartState(PluginState restartState)
-    {
+    public AddonSettings setRestartState(PluginState restartState) {
         this.restartState = restartState.name();
         return this;
     }

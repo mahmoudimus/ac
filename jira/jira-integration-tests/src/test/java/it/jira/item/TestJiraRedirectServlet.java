@@ -1,13 +1,5 @@
 package it.jira.item;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.ws.rs.core.UriBuilder;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
@@ -21,7 +13,7 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.JiraWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -30,7 +22,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
@@ -41,28 +38,25 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class TestJiraRedirectServlet extends JiraWebDriverTestBase
-{
+public class TestJiraRedirectServlet extends JiraWebDriverTestBase {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
     private static final String ADDON_WEBITEM_FOR_LOGGED_USERS = "ac-general-web-item-for-logged";
     private static final String ADDON_WEBITEM_JIRA_CONDITION = "ac-general-web-item-jira-condition";
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
     private static final String WEB_ITEM_ON_URL = "/irwi";
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
 
     private final String baseUrl = product.getProductInstance().getBaseUrl();
     private final String addOnKey = AddonTestUtils.randomAddonKey();
     private ConnectRunner runner;
 
     @BeforeClass
-    public static void setupUrlHandlers()
-    {
+    public static void setupUrlHandlers() {
         HttpURLConnection.setFollowRedirects(false);
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         WebItemTargetBean pageTarget = newWebItemTargetBean()
                 .withType(WebItemTargetType.page)
                 .build();
@@ -102,20 +96,17 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         runner.stopAndUninstall();
     }
 
     @AfterClass
-    public static void tearDownUrlHandlers()
-    {
+    public static void tearDownUrlHandlers() {
         HttpURLConnection.setFollowRedirects(true);
     }
 
     @Test
-    public void shouldResolveUriParamsForRedirection() throws Exception
-    {
+    public void shouldResolveUriParamsForRedirection() throws Exception {
         login(testUserFactory.basicUser());
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM));
@@ -129,8 +120,7 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
     }
 
     @Test
-    public void shouldFilterOutUriParamsForWhichUserDoesNotHavePermission() throws IOException
-    {
+    public void shouldFilterOutUriParamsForWhichUserDoesNotHavePermission() throws IOException {
         String postFunctionId = "value";
         URI redirectUrl = UriBuilder.fromPath(baseUrl)
                 .path(RedirectServletPath.forModule(addOnKey, ADDON_WEBITEM))
@@ -146,8 +136,7 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
     }
 
     @Test
-    public void shouldReturnNotFoundWhenConditionEvaluatesToFalse() throws Exception
-    {
+    public void shouldReturnNotFoundWhenConditionEvaluatesToFalse() throws Exception {
         URI redirectUrl = UriBuilder.fromPath(baseUrl)
                 .path(RedirectServletPath.forModule(addOnKey, ADDON_WEBITEM_FOR_LOGGED_USERS))
                 .build();
@@ -157,8 +146,7 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
     }
 
     @Test
-    public void shouldNotCheckProductSpecificConditions() throws Exception
-    {
+    public void shouldNotCheckProductSpecificConditions() throws Exception {
         // As described in AC-1640 servlets does not have product specific context required by product specific conditions, so they should not be checked.
         login(testUserFactory.basicUser());
 
@@ -170,24 +158,20 @@ public class TestJiraRedirectServlet extends JiraWebDriverTestBase
         assertThat(response.getResponseCode(), Matchers.is(HttpStatus.SC_TEMPORARY_REDIRECT));
     }
 
-    private RemoteWebItem findViewPageWebItem(String moduleKey) throws Exception
-    {
+    private RemoteWebItem findViewPageWebItem(String moduleKey) throws Exception {
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         return viewProjectPage.findWebItem(moduleKey, Optional.<String>empty());
     }
 
-    private String getModuleKey(String module)
-    {
+    private String getModuleKey(String module) {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 
-    private HttpURLConnection doRedirectRequest(URI uri) throws IOException
-    {
+    private HttpURLConnection doRedirectRequest(URI uri) throws IOException {
         return (HttpURLConnection) uri.toURL().openConnection();
     }
 
-    private String getQueryParam(String key, String location)
-    {
+    private String getQueryParam(String key, String location) {
         return RemotePageUtil.findInContext(location, key);
     }
 }

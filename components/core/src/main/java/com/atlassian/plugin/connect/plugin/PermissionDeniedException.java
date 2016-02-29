@@ -8,32 +8,27 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlRootElement
-public class PermissionDeniedException extends RuntimeException
-{
+public class PermissionDeniedException extends RuntimeException {
     private final String pluginKey;
 
-    public PermissionDeniedException(String message)
-    {
+    public PermissionDeniedException(String message) {
         super(message);
         this.pluginKey = null;
     }
 
-    public PermissionDeniedException(String pluginKey, String message)
-    {
+    public PermissionDeniedException(String pluginKey, String message) {
         super(message);
         this.pluginKey = pluginKey;
     }
 
     @XmlAttribute
-    public String getPluginKey()
-    {
+    public String getPluginKey() {
         return pluginKey;
     }
 
     @Override
     @XmlElement
-    public String getMessage()
-    {
+    public String getMessage() {
         return super.getMessage();
     }
 }

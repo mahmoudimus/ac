@@ -8,8 +8,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class BeanWithKeyAndParams extends RequiredKeyBean
-{
+public class BeanWithKeyAndParams extends RequiredKeyBean {
     /**
      * This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.
      *
@@ -20,36 +19,29 @@ public class BeanWithKeyAndParams extends RequiredKeyBean
      */
     private Map<String, String> params;
 
-    public BeanWithKeyAndParams()
-    {
+    public BeanWithKeyAndParams() {
         this.params = newHashMap();
     }
 
-    public BeanWithKeyAndParams(BeanWithKeyAndParamsBuilder builder)
-    {
+    public BeanWithKeyAndParams(BeanWithKeyAndParamsBuilder builder) {
         super(builder);
 
-        if (null == params)
-        {
+        if (null == params) {
             this.params = newHashMap();
         }
     }
 
-    public Map<String, String> getParams()
-    {
+    public Map<String, String> getParams() {
         return params;
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof BeanWithKeyAndParams && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof BeanWithKeyAndParams && super.equals(otherObj))) {
             return false;
         }
 
@@ -61,8 +53,7 @@ public class BeanWithKeyAndParams extends RequiredKeyBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(41, 17)
                 .appendSuper(super.hashCode())
                 .append(params)

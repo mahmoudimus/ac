@@ -12,20 +12,17 @@ import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.jira.servlet.JiraAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.servlet.JiraAppServlets;
-
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.junit.Assert.assertEquals;
 
-public class TestWorkflowPostFunction extends JiraWebDriverTestBase
-{
+public class TestWorkflowPostFunction extends JiraWebDriverTestBase {
     private static final String WORKFLOW_POST_FUNCTION_NAME = "My Connect Post Function";
     private static final String WORKFLOW_POST_FUNCTION_KEY = "ac-workflow-post-function";
     private static final String WORKFLOW_POST_FUNCTION_INVALID_NAME = "My Invalid Connect Post Function";
@@ -36,8 +33,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     private static String addonKey;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         addonKey = AddonTestUtils.randomAddonKey();
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
@@ -73,24 +69,21 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
 
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void testCreateWorkflowPostFunction()
-    {
+    public void testCreateWorkflowPostFunction() {
         String clonedWorkflowName = RandomStringUtils.randomAlphabetic(10);
         product.backdoor().getTestkit().workflow().cloneWorkflow(JiraWorkflow.DEFAULT_WORKFLOW_NAME, clonedWorkflowName);
 
         login(testUserFactory.admin());
 
         ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, clonedWorkflowName);
-        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(clonedWorkflowName, workflowStepsPage);
+        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage) goToFirstTransition(clonedWorkflowName, workflowStepsPage);
 
         AddWorkflowTransitionPostFunctionPage addTransitionPostFunctionPage = viewWorkflowTransitionPage.goToAddPostFunction();
 
@@ -98,7 +91,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                 = addTransitionPostFunctionPage.selectAndSubmitByName(WORKFLOW_POST_FUNCTION_NAME);
 
         connectPageOperations.findWebPanel(addonAndModuleKey(addonKey, WORKFLOW_POST_FUNCTION_KEY));
-        viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)addTransitionPostFunctionParamsPage.submit();
+        viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage) addTransitionPostFunctionParamsPage.submit();
 
         JiraEditWorkflowTransitionFunctionParamsPage editTransitionFunctionParamsPage
                 = viewWorkflowTransitionPage.updateFirstPostFunction(addonKey, WORKFLOW_POST_FUNCTION_KEY);
@@ -108,15 +101,14 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testCreateInvalidWorkflowPostFunction()
-    {
+    public void testCreateInvalidWorkflowPostFunction() {
         String clonedWorkflowName = RandomStringUtils.randomAlphabetic(10);
         product.backdoor().getTestkit().workflow().cloneWorkflow(JiraWorkflow.DEFAULT_WORKFLOW_NAME, clonedWorkflowName);
 
         login(testUserFactory.admin());
 
         ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, clonedWorkflowName);
-        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(clonedWorkflowName, workflowStepsPage);
+        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage) goToFirstTransition(clonedWorkflowName, workflowStepsPage);
 
         JiraEditWorkflowTransitionFunctionParamsPage addTransitionPostFunctionPage
                 = viewWorkflowTransitionPage.goToAddAddonPostFunction(
@@ -127,15 +119,13 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
         assertEquals(url, product.getTester().getDriver().getCurrentUrl());
     }
 
-    private static void ensureDefaultWorkflowActivated()
-    {
+    private static void ensureDefaultWorkflowActivated() {
         String projectKey = RandomStringUtils.randomAlphabetic(6).toUpperCase();
         product.backdoor().project().addProject(projectKey, projectKey,
                 testUserFactory.basicUser().getUsername());
     }
 
-    private ViewWorkflowTransitionPage goToFirstTransition(String workflowName, ViewWorkflowSteps workflowStepsPage)
-    {
+    private ViewWorkflowTransitionPage goToFirstTransition(String workflowName, ViewWorkflowSteps workflowStepsPage) {
         ViewWorkflowSteps.WorkflowStepItem firstStep = workflowStepsPage.getWorkflowStepItems().iterator().next();
         ViewWorkflowSteps.Transition firstTransition = firstStep.getTransitions().iterator().next();
         return workflowStepsPage.goToEditTransition(firstTransition.getTransition(), JiraWorkflow.LIVE, workflowName,

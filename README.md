@@ -12,7 +12,7 @@ products based on [`atlassian-plugins`](https://bitbucket.org/atlassian/atlassia
 ## Dependencies
 
 * JDK 8
-* Maven 3.2
+* Maven 3.3.9
 
 ## Usage
 
@@ -137,7 +137,7 @@ To run unit tests:
 
 To run JavaScript unit tests:
 
-    mvn clean package -Pkarma-tests -DskipUnits
+    mvn -pl jsapi test -Pkarma-tests
 
 #### Integration tests
 

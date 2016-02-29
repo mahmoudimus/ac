@@ -8,10 +8,8 @@ import com.atlassian.sal.api.component.ComponentLocator;
 
 @ConfluenceComponent
 @ExportAsDevService
-public class ConfluenceApplicationService extends AbstractDelegatingApplicationService implements ApplicationService
-{
-    public ConfluenceApplicationService()
-    {
+public class ConfluenceApplicationService extends AbstractDelegatingApplicationService implements ApplicationService {
+    public ConfluenceApplicationService() {
         super(ComponentLocator.getComponent(ApplicationService.class));
     }
 }

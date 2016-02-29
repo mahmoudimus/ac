@@ -1,10 +1,5 @@
 package it.jira.item;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.connect.test.jira.pageobjects.JiraViewProjectPage;
 import com.atlassian.plugin.connect.modules.beans.AddonUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -23,12 +18,15 @@ import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameC
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -49,8 +47,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @since 1.0
  */
-public class TestJiraWebItem extends JiraWebDriverTestBase
-{
+public class TestJiraWebItem extends JiraWebDriverTestBase {
     private static final String GENERAL_PAGE = "ac-general-page";
     private static final String PAGE_CONTEXT_WEBITEM = "ac-general-web-item";
     private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
@@ -63,7 +60,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String ADDON_WEBITEM_DIALOG = "ac-general-web-item-dialog";
     private static final String ABSOLUTE_WEBITEM_DIALOG = "ac-general-web-item-dialog-absolute";
 
-    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingPageServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_DIRECT_WEBITEM_SERVLET = ConnectAppServlets.parameterCapturingServlet(ConnectAppServlets.simplePageServlet());
 
     private static ConnectRunner runner;
 
@@ -71,8 +68,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         betty = testUserFactory.admin();
         barney = testUserFactory.basicUser();
 
@@ -174,17 +170,14 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @Test
-    public void testBettyCanSeeAbsoluteWebItem()
-    {
+    public void testBettyCanSeeAbsoluteWebItem() {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM), Optional.<String>empty());
         assertNotNull("Web item should be found", webItem);
@@ -194,8 +187,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testRelativePageWebItem()
-    {
+    public void testRelativePageWebItem() {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -208,8 +200,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddonDirectWebItem() throws Exception
-    {
+    public void testAddonDirectWebItem() throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -226,8 +217,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testProductWebItem() throws MalformedURLException
-    {
+    public void testProductWebItem() throws MalformedURLException {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -242,8 +232,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void adminCannotSeeBettyWebItem()
-    {
+    public void adminCannotSeeBettyWebItem() {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -253,8 +242,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     //TODO: once generalPage is complete, add a test to check that a web item pointing to the page works properly
 
     @Test
-    public void testAbsoluteWebItemInlineDialog() throws Exception
-    {
+    public void testAbsoluteWebItemInlineDialog() throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -267,8 +255,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddonWebItemInlineDialog() throws Exception
-    {
+    public void testAddonWebItemInlineDialog() throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -281,21 +268,18 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAbsoluteWebItemInlineDialogXdm() throws Exception
-    {
+    public void testAbsoluteWebItemInlineDialogXdm() throws Exception {
         testWebItemInlineDialogXdm(ABSOLUTE_WEBITEM_INLINE_DIALOG);
     }
 
     @Test
-    public void testAddonWebItemInlineDialogXdm() throws Exception
-    {
+    public void testAddonWebItemInlineDialogXdm() throws Exception {
         RemoteInlineDialog inlineDialogPage = testWebItemInlineDialogXdm(ADDON_WEBITEM_INLINE_DIALOG);
         assertEquals("Success", inlineDialogPage.getIFrameElementText("message"));
         assertEquals("200", inlineDialogPage.getIFrameElementText("client-http-status"));
     }
 
-    private RemoteInlineDialog testWebItemInlineDialogXdm(String moduleKey) throws Exception
-    {
+    private RemoteInlineDialog testWebItemInlineDialogXdm(String moduleKey) throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -307,8 +291,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAbsoluteWebItemInlineDialogTargetOptions() throws Exception
-    {
+    public void testAbsoluteWebItemInlineDialogTargetOptions() throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -320,8 +303,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAbsoluteWebItemDialog() throws Exception
-    {
+    public void testAbsoluteWebItemDialog() throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -342,8 +324,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddonWebItemDialog() throws Exception
-    {
+    public void testAddonWebItemDialog() throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -363,19 +344,16 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddonWebItemDialogDimensions() throws Exception
-    {
+    public void testAddonWebItemDialogDimensions() throws Exception {
         testWebItemDialogDimensions(ADDON_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAbsoluteWebItemDialogDimensions() throws Exception
-    {
+    public void testAbsoluteWebItemDialogDimensions() throws Exception {
         testWebItemDialogDimensions(ABSOLUTE_WEBITEM_DIALOG);
     }
 
-    private void testWebItemDialogDimensions(String moduleKey) throws Exception
-    {
+    private void testWebItemDialogDimensions(String moduleKey) throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -387,19 +365,16 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddonWebItemDialogXdm() throws Exception
-    {
+    public void testAddonWebItemDialogXdm() throws Exception {
         testWebItemDialogXdm(ADDON_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAbsoluteWebItemDialogXdm() throws Exception
-    {
+    public void testAbsoluteWebItemDialogXdm() throws Exception {
         testWebItemDialogXdm(ABSOLUTE_WEBITEM_DIALOG);
     }
 
-    private void testWebItemDialogXdm(String moduleKey) throws Exception
-    {
+    private void testWebItemDialogXdm(String moduleKey) throws Exception {
         TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
@@ -411,43 +386,36 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddonWebItemDialogTargetOptions() throws Exception
-    {
+    public void testAddonWebItemDialogTargetOptions() throws Exception {
         testWebItemDialogTargetOptions(true, ADDON_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAddonWebItemDialogTargetOptionsChromeless() throws Exception
-    {
+    public void testAddonWebItemDialogTargetOptionsChromeless() throws Exception {
         testWebItemDialogTargetOptions(false, ADDON_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAddonWebItemDialogTargetOptionsNullChrome() throws Exception
-    {
+    public void testAddonWebItemDialogTargetOptionsNullChrome() throws Exception {
         testWebItemDialogTargetOptions(null, ADDON_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAbsoluteWebItemDialogTargetOptions() throws Exception
-    {
+    public void testAbsoluteWebItemDialogTargetOptions() throws Exception {
         testWebItemDialogTargetOptions(true, ABSOLUTE_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAbsoluteWebItemDialogTargetOptionsChromeless() throws Exception
-    {
+    public void testAbsoluteWebItemDialogTargetOptionsChromeless() throws Exception {
         testWebItemDialogTargetOptions(false, ABSOLUTE_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testAbsoluteWebItemDialogTargetOptionsNullChrome() throws Exception
-    {
+    public void testAbsoluteWebItemDialogTargetOptionsNullChrome() throws Exception {
         testWebItemDialogTargetOptions(null, ABSOLUTE_WEBITEM_DIALOG);
     }
 
-    private void testWebItemDialogTargetOptions(Boolean chrome, String moduleKey) throws Exception
-    {
+    private void testWebItemDialogTargetOptions(Boolean chrome, String moduleKey) throws Exception {
         String dialogOptionKey = dialogOptionKey(chrome, moduleKey);
         TestUser admin = testUserFactory.basicUser();
 
@@ -464,31 +432,26 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertEquals(isChrome, dialogPage.hasChrome());
     }
 
-    private String getModuleKey(String module)
-    {
+    private String getModuleKey(String module) {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 
-    private static WebItemModuleBean webItemWithDialogOptions(Boolean chrome)
-    {
+    private static WebItemModuleBean webItemWithDialogOptions(Boolean chrome) {
         return webItemWithDialogOptions(chrome, ADDON_WEBITEM_DIALOG);
     }
 
-    private static WebItemModuleBean absoluteWebItemWithDialogOptions(Boolean chrome)
-    {
+    private static WebItemModuleBean absoluteWebItemWithDialogOptions(Boolean chrome) {
         return webItemWithDialogOptions(chrome, ABSOLUTE_WEBITEM_DIALOG);
     }
 
-    private static WebItemModuleBean webItemWithDialogOptions(Boolean chrome, String moduleKeyPrefix)
-    {
+    private static WebItemModuleBean webItemWithDialogOptions(Boolean chrome, String moduleKeyPrefix) {
         String variant = dialogOptionVariant(chrome);
 
         DialogOptionsBuilder dialogOptionsBuilder = newDialogOptions()
                 .withWidth("300px")
                 .withHeight("200px");
 
-        if (chrome != null)
-        {
+        if (chrome != null) {
             dialogOptionsBuilder.withChrome(chrome);
         }
 
@@ -507,20 +470,15 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 .build();
     }
 
-    private static String dialogOptionKey(Boolean chrome, String moduleKey)
-    {
+    private static String dialogOptionKey(Boolean chrome, String moduleKey) {
         return moduleKey + dialogOptionVariant(chrome);
     }
 
-    private static String dialogOptionVariant(Boolean chrome)
-    {
+    private static String dialogOptionVariant(Boolean chrome) {
         String variant = "";
-        if (chrome == null)
-        {
+        if (chrome == null) {
             variant = NULL_CHROME_VARIANT;
-        }
-        else if (!chrome)
-        {
+        } else if (!chrome) {
             variant = CHROMELESS_VARIANT;
         }
         return variant;

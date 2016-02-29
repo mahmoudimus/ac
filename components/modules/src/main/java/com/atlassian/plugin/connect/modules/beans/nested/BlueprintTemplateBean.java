@@ -2,16 +2,15 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
-import com.atlassian.plugin.connect.modules.beans.builder.BlueprintModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.BlueprintTemplateBeanBuilder;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
 /**
- * Defines where the blueprint template is located.
+ * Defines where the blueprint template is located and the context for variable substitution.
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#BLUEPRINT_TEMPLATE_EXAMPLE}
- * @schemaTitle Remote Blueprint Template
+ * @schemaTitle Blueprint Template
  * @since 1.1.5
  */
 public class BlueprintTemplateBean {
@@ -21,8 +20,17 @@ public class BlueprintTemplateBean {
      * to the add-on base URL.
      */
     @Required
-    @StringSchemaAttributes(format="url-template")
+    @StringSchemaAttributes(format = "uri")
     private String url;
+
+    /**
+     * Defines the add-on server endpoint that provides the JSON objects used for substituting variables in the blueprint template.
+     *
+     *
+     * For more information on defining variables in blueprint templates, check out the examples in
+     * <a href="blueprint-template-context.html">Blueprint Template Context</a>.
+     */
+    private BlueprintTemplateContextBean blueprintContext;
 
     public static BlueprintTemplateBeanBuilder newBlueprintTemplateBeanBuilder() {
         return new BlueprintTemplateBeanBuilder();
@@ -36,4 +44,7 @@ public class BlueprintTemplateBean {
         return url;
     }
 
+    public BlueprintTemplateContextBean getBlueprintContext() {
+        return blueprintContext;
+    }
 }

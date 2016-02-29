@@ -9,21 +9,16 @@ import java.util.Collections;
 import java.util.Map;
 
 @Component
-public final class TestConfluenceContextParametersExtractor implements ContextParametersExtractor
-{
+public final class TestConfluenceContextParametersExtractor implements ContextParametersExtractor {
     @Override
-    public Map<String, String> extractParameters(final Map<String, Object> context)
-    {
+    public Map<String, String> extractParameters(final Map<String, Object> context) {
         Object spaceObj = context.get("space");
-        if (spaceObj != null && spaceObj instanceof Space)
-        {
+        if (spaceObj != null && spaceObj instanceof Space) {
             Space space = (Space) spaceObj;
             return ImmutableMap.of(
                     "space.keyConcatId", space.getKey() + space.getId()
             );
-        }
-        else
-        {
+        } else {
             return Collections.emptyMap();
         }
     }

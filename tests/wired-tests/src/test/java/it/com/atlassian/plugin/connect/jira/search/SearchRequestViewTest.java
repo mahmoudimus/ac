@@ -1,9 +1,9 @@
 package it.com.atlassian.plugin.connect.jira.search;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
@@ -25,41 +25,37 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class SearchRequestViewTest
-{
+public class SearchRequestViewTest {
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
 
-    public SearchRequestViewTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, ConnectAddonRegistry connectAddonRegistry)
-    {
+    public SearchRequestViewTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, ConnectAddonRegistry connectAddonRegistry) {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
     }
 
     @Test
-    public void canInstallWithQuoteInUrl() throws IOException
-    {
+    public void canInstallWithQuoteInUrl() throws IOException {
         final String key = getClass().getSimpleName() + '-' + AddonUtil.randomPluginKey();
         final String url = "/page\"";
         Plugin addon = testPluginInstaller.installAddon(newConnectAddonBean()
-                        .withKey(key)
-                        .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
-                        .withAuthentication(newAuthenticationBean()
-                                .withType(AuthenticationType.NONE)
-                                .build())
-                        .withModule("jiraSearchRequestViews", newSearchRequestViewModuleBean()
-                                .withKey("page")
-                                .withName(new I18nProperty("Hello", "hello"))
-                                .withUrl(url)
-                                .withDescription(new I18nProperty("Description", "description"))
-                                .build())
-                        .build()
+                .withKey(key)
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
+                .withAuthentication(newAuthenticationBean()
+                        .withType(AuthenticationType.NONE)
+                        .build())
+                .withModule("jiraSearchRequestViews", newSearchRequestViewModuleBean()
+                        .withKey("page")
+                        .withName(new I18nProperty("Hello", "hello"))
+                        .withUrl(url)
+                        .withDescription(new I18nProperty("Description", "description"))
+                        .build())
+                .build()
         );
 
-        try
-        {
+        try {
             String descriptor = connectAddonRegistry.getDescriptor(key);
             assertFalse(Strings.isNullOrEmpty(descriptor));
 
@@ -67,22 +63,18 @@ public class SearchRequestViewTest
             JsonNode urlNode = descriptorNode.path("modules").path("jiraSearchRequestViews").path(0).path("url");
             assertFalse(urlNode.isMissingNode());
             assertEquals(url, urlNode.asText());
-        }
-        finally
-        {
+        } finally {
             testPluginInstaller.uninstallAddon(addon);
         }
     }
 
     @BeforeClass
-    public void beforeAnyTests()
-    {
+    public void beforeAnyTests() {
         testAuthenticator.authenticateUser("admin");
     }
 
     @AfterClass
-    public void afterAllTests()
-    {
+    public void afterAllTests() {
         testAuthenticator.unauthenticate();
     }
 }

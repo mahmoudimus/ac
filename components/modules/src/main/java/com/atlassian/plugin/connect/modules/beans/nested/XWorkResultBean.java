@@ -6,34 +6,28 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
-public class XWorkResultBean
-{
+public class XWorkResultBean {
     private String name;
     private String type;
     private Map<String, Object> params;
 
-    public XWorkResultBean(final XWorkResultBeanBuilder builder)
-    {
+    public XWorkResultBean(final XWorkResultBeanBuilder builder) {
         copyFieldsByNameAndType(builder, this);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
-    public Map<String, Object> getParams()
-    {
+    public Map<String, Object> getParams() {
         return params;
     }
 
-    public static XWorkResultBeanBuilder newXWorkResultBean()
-    {
+    public static XWorkResultBeanBuilder newXWorkResultBean() {
         return new XWorkResultBeanBuilder();
     }
 }

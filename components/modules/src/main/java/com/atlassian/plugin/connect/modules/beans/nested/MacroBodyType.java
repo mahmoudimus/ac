@@ -6,8 +6,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
  * @schemaTitle Macro Body Type
  * @since 1.0
  */
-public enum MacroBodyType
-{
+public enum MacroBodyType {
     /**
      * If this macro allows its body to contain rich content such as wiki markup
      */
@@ -25,13 +24,11 @@ public enum MacroBodyType
 
     private final String value;
 
-    MacroBodyType(String value)
-    {
+    MacroBodyType(String value) {
         this.value = value;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return value;
     }
 }

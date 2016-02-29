@@ -11,11 +11,9 @@ import java.util.Map;
  * Serializes Version objects.
  */
 @JiraComponent
-public class VersionSerializer implements ParameterSerializer<Version>
-{
+public class VersionSerializer implements ParameterSerializer<Version> {
     @Override
-    public Map<String, Object> serialize(final Version version)
-    {
+    public Map<String, Object> serialize(final Version version) {
         return ImmutableMap.<String, Object>of("version", ImmutableMap.of("id", version.getId()));
     }
 }

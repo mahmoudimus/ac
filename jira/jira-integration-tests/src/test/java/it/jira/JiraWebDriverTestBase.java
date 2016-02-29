@@ -20,9 +20,8 @@ import org.junit.Rule;
 
 import java.rmi.RemoteException;
 
-@Retry(maxAttempts=JiraWebDriverTestBase.MAX_RETRY_ATTEMPTS)
-public class JiraWebDriverTestBase
-{
+@Retry(maxAttempts = JiraWebDriverTestBase.MAX_RETRY_ATTEMPTS)
+public class JiraWebDriverTestBase {
 
     protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
@@ -44,34 +43,29 @@ public class JiraWebDriverTestBase
     public static final int MAX_RETRY_ATTEMPTS = 3;
 
     @BeforeClass
-    public static void beforeClass() throws RemoteException
-    {
+    public static void beforeClass() throws RemoteException {
         testUserFactory = new JiraTestUserFactory(product);
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
         project = JiraTestBase.addProject();
     }
 
     @AfterClass
-    public static void afterClass() throws RemoteException
-    {
+    public static void afterClass() throws RemoteException {
         product.backdoor().project().deleteProject(project.getKey());
     }
 
     @BeforeClass
     @AfterClass
-    public static void logout()
-    {
+    public static void logout() {
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
-    protected static void login(TestUser user)
-    {
+    protected static void login(TestUser user) {
         logout();
         product.quickLogin(user.getUsername(), user.getPassword());
     }
 
-    protected static <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
-    {
+    protected static <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args) {
         logout();
         return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
     }

@@ -13,4 +13,5 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface ConnectCondition {}
+public @interface ConnectCondition {
+}

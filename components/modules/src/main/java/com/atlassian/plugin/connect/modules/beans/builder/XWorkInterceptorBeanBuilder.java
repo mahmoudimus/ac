@@ -6,32 +6,27 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class XWorkInterceptorBeanBuilder
-{
+public class XWorkInterceptorBeanBuilder {
     private String name;
     private Class<?> clazz;
     private Map<String, Object> params = newHashMap();
 
-    public XWorkInterceptorBeanBuilder withName(String name)
-    {
+    public XWorkInterceptorBeanBuilder withName(String name) {
         this.name = name;
         return this;
     }
 
-    public XWorkInterceptorBeanBuilder withClazz(Class<?> clazz)
-    {
+    public XWorkInterceptorBeanBuilder withClazz(Class<?> clazz) {
         this.clazz = clazz;
         return this;
     }
 
-    public XWorkInterceptorBeanBuilder withParam(String key, Object value)
-    {
+    public XWorkInterceptorBeanBuilder withParam(String key, Object value) {
         params.put(key, value);
         return this;
     }
 
-    public XWorkInterceptorBean build()
-    {
+    public XWorkInterceptorBean build() {
         return new XWorkInterceptorBean(this);
     }
 }

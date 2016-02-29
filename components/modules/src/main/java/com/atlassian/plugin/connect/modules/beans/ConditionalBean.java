@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.modules.beans;
 /**
  * A condition
  */
-public interface ConditionalBean
-{
+public interface ConditionalBean {
 
 }

@@ -23,8 +23,7 @@ import com.google.gson.annotations.SerializedName;
  * @schemaTitle Macro Render Modes
  * @since 1.1.15
  */
-public class MacroRenderModesBean extends BaseModuleBean
-{
+public class MacroRenderModesBean extends BaseModuleBean {
     private static final String OUTPUT_WORD = "word";
     private static final String OUTPUT_PDF = "pdf";
     private static final String OUTPUT_HTML_EXPORT = "html_export";
@@ -50,16 +49,14 @@ public class MacroRenderModesBean extends BaseModuleBean
     @SerializedName("default")
     private EmbeddedStaticContentMacroBean defaultFallback;
 
-    protected MacroRenderModesBean()
-    {}
+    protected MacroRenderModesBean() {
+    }
 
-    public MacroRenderModesBean(BaseModuleBeanBuilder builder)
-    {
+    public MacroRenderModesBean(BaseModuleBeanBuilder builder) {
         super(builder);
     }
 
-    public static MacroRenderModesBeanBuilder newMacroRenderModesBean()
-    {
+    public static MacroRenderModesBeanBuilder newMacroRenderModesBean() {
         return new MacroRenderModesBeanBuilder();
     }
 
@@ -71,21 +68,16 @@ public class MacroRenderModesBean extends BaseModuleBean
      * @param outputType the output type to find the render mode for
      * @return the static macro fallback for the output type if one is found
      */
-    public EmbeddedStaticContentMacroBean getEmbeddedStaticContentMacro(String outputType)
-    {
-        if (outputType.toLowerCase().equals(OUTPUT_WORD))
-        {
+    public EmbeddedStaticContentMacroBean getEmbeddedStaticContentMacro(String outputType) {
+        if (outputType.toLowerCase().equals(OUTPUT_WORD)) {
             return fallbackFrom(word);
-        }
-        else if (outputType.toLowerCase().equals(OUTPUT_PDF))
-        {
+        } else if (outputType.toLowerCase().equals(OUTPUT_PDF)) {
             return fallbackFrom(pdf);
         }
         return null;
     }
 
-    private EmbeddedStaticContentMacroBean fallbackFrom(EmbeddedStaticContentMacroBean bean)
-    {
+    private EmbeddedStaticContentMacroBean fallbackFrom(EmbeddedStaticContentMacroBean bean) {
         return (bean == null) ? defaultFallback : bean;
     }
 }

@@ -11,55 +11,44 @@ import java.io.Serializable;
  *
  * @since 1.0
  */
-public class InvalidDescriptorException extends PluginInstallException
-{
-    public InvalidDescriptorException(String message)
-    {
+public class InvalidDescriptorException extends PluginInstallException {
+    public InvalidDescriptorException(String message) {
         super(message);
     }
 
-    public InvalidDescriptorException(String message, boolean stackTraceSignificant)
-    {
+    public InvalidDescriptorException(String message, boolean stackTraceSignificant) {
         super(message, stackTraceSignificant);
     }
 
-    public InvalidDescriptorException(String message, String upmMessageI18nKey)
-    {
-        super(message, Option.<String>some(upmMessageI18nKey));
+    public InvalidDescriptorException(String message, String upmMessageI18nKey) {
+        super(message, Option.some(upmMessageI18nKey));
     }
 
-    public InvalidDescriptorException(String message, Throwable cause)
-    {
+    public InvalidDescriptorException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public InvalidDescriptorException(String message, Throwable cause, boolean stackTraceSignificant)
-    {
+    public InvalidDescriptorException(String message, Throwable cause, boolean stackTraceSignificant) {
         super(message, cause, stackTraceSignificant);
     }
 
-    public InvalidDescriptorException(String message, Option<String> code)
-    {
+    public InvalidDescriptorException(String message, Option<String> code) {
         super(message, code);
     }
 
-    public InvalidDescriptorException(String message, String code, Serializable... params)
-    {
+    public InvalidDescriptorException(String message, String code, Serializable... params) {
         super(message, code, params);
     }
 
-    public InvalidDescriptorException(String message, Option<String> code, boolean stackTraceSignificant)
-    {
+    public InvalidDescriptorException(String message, Option<String> code, boolean stackTraceSignificant) {
         super(message, code, stackTraceSignificant);
     }
 
-    public InvalidDescriptorException(String message, Option<String> code, Throwable cause, boolean stackTraceSignificant)
-    {
+    public InvalidDescriptorException(String message, Option<String> code, Throwable cause, boolean stackTraceSignificant) {
         super(message, code, cause, stackTraceSignificant);
     }
 
-    public InvalidDescriptorException(String message, String upmMessageI18nKey, Throwable cause)
-    {
-        super(message, Option.<String>some(upmMessageI18nKey), cause, true);
+    public InvalidDescriptorException(String message, String upmMessageI18nKey, Throwable cause) {
+        super(message, Option.some(upmMessageI18nKey), cause, true);
     }
 }

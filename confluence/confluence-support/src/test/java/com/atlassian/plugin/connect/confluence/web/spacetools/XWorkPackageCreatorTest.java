@@ -12,7 +12,12 @@ import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.ActionInvocation;
 import com.opensymphony.xwork.Result;
 import com.opensymphony.xwork.config.Configuration;
-import com.opensymphony.xwork.config.entities.*;
+import com.opensymphony.xwork.config.entities.ActionConfig;
+import com.opensymphony.xwork.config.entities.InterceptorConfig;
+import com.opensymphony.xwork.config.entities.InterceptorStackConfig;
+import com.opensymphony.xwork.config.entities.PackageConfig;
+import com.opensymphony.xwork.config.entities.ResultConfig;
+import com.opensymphony.xwork.config.entities.ResultTypeConfig;
 import com.opensymphony.xwork.interceptor.Interceptor;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,32 +33,38 @@ import static com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.nested.XWorkInterceptorBean.newXWorkInterceptorBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.XWorkResultBean.newXWorkResultBean;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class XWorkPackageCreatorTest
-{
-    @Mock private Plugin plugin;
-    @Mock private Configuration configuration;
-    @Mock private PackageConfig defaultParentPackage;
-    @Mock private InterceptorStackConfig validatingStack;
-    @Mock private XsrfTokenInterceptor validatingStackInterceptor;
+@RunWith(MockitoJUnitRunner.class)
+public class XWorkPackageCreatorTest {
+    @Mock
+    private Plugin plugin;
+    @Mock
+    private Configuration configuration;
+    @Mock
+    private PackageConfig defaultParentPackage;
+    @Mock
+    private InterceptorStackConfig validatingStack;
+    @Mock
+    private XsrfTokenInterceptor validatingStackInterceptor;
 
     private XWorkPackageCreator packageCreator;
 
     private PackageConfig packageConfig;
     private ActionConfig actionConfig;
-    
+
     private ConnectAddonBean addon;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.addon = newConnectAddonBean().withKey("test-plugin").build();
-        
+
         when(plugin.getKey()).thenReturn("test-plugin");
         when(configuration.getPackageConfig("default")).thenReturn(defaultParentPackage);
 
@@ -91,35 +102,31 @@ public class XWorkPackageCreatorTest
         ArgumentCaptor<PackageConfig> argumentCaptor = ArgumentCaptor.forClass(PackageConfig.class);
         verify(configuration).addPackageConfig(anyString(), argumentCaptor.capture());
         packageConfig = argumentCaptor.getValue();
-        actionConfig = (ActionConfig)packageConfig.getActionConfigs().get("test-action");
+        actionConfig = (ActionConfig) packageConfig.getActionConfigs().get("test-action");
     }
 
     @Test
-    public void testPackageName()
-    {
+    public void testPackageName() {
         assertEquals("atlassian-connect-test-plugin-test-action", packageConfig.getName());
     }
 
     @Test
-    public void testNamespace()
-    {
+    public void testNamespace() {
         assertEquals("/test/namespace", packageConfig.getNamespace());
     }
 
     @Test
-    public void testParents()
-    {
+    public void testParents() {
         assertEquals(1, packageConfig.getParents().size());
         assertSame(defaultParentPackage, packageConfig.getParents().get(0));
     }
 
     @Test
-    public void testInterceptorRegistered()
-    {
+    public void testInterceptorRegistered() {
         assertEquals(1, packageConfig.getInterceptorConfigs().size());
         assertTrue(packageConfig.getInterceptorConfigs().containsKey("test-interceptor"));
 
-        InterceptorConfig interceptorConfig = (InterceptorConfig)packageConfig.getInterceptorConfigs().get("test-interceptor");
+        InterceptorConfig interceptorConfig = (InterceptorConfig) packageConfig.getInterceptorConfigs().get("test-interceptor");
         assertEquals("test-interceptor", interceptorConfig.getName());
         assertEquals(TestInterceptor.class.getName(), interceptorConfig.getClassName());
         assertEquals(1, interceptorConfig.getParams().size());
@@ -127,33 +134,30 @@ public class XWorkPackageCreatorTest
     }
 
     @Test
-    public void testResultTypesRegistered()
-    {
+    public void testResultTypesRegistered() {
         assertEquals(1, packageConfig.getResultTypeConfigs().size());
         assertTrue(packageConfig.getResultTypeConfigs().containsKey("test-result"));
 
-        ResultTypeConfig resultConfig = (ResultTypeConfig)packageConfig.getResultTypeConfigs().get("test-result");
+        ResultTypeConfig resultConfig = (ResultTypeConfig) packageConfig.getResultTypeConfigs().get("test-result");
         assertEquals("test-result", resultConfig.getName());
         assertSame(TestResult.class, resultConfig.getClazz());
     }
 
     @Test
-    public void testActionCreatedWithCorrectKey()
-    {
+    public void testActionCreatedWithCorrectKey() {
         assertEquals(1, packageConfig.getActionConfigs().size());
         assertTrue(packageConfig.getActionConfigs().containsKey("test-action"));
     }
 
     @Test
-    public void testActionClass()
-    {
+    public void testActionClass() {
         assertEquals(TestAction.class.getName(), actionConfig.getClassName());
     }
 
     @Test
-    public void testActionInterceptorStack()
-    {
-        List<Interceptor> interceptors = (List<Interceptor>)actionConfig.getInterceptors();
+    @SuppressWarnings("unchecked")
+    public void testActionInterceptorStack() {
+        List<Interceptor> interceptors = (List<Interceptor>) actionConfig.getInterceptors();
         assertEquals(2, interceptors.size());
         // Testing that the default interceptor ref "validatingStack" was added properly.
         assertSame(validatingStackInterceptor, interceptors.get(0));
@@ -161,16 +165,14 @@ public class XWorkPackageCreatorTest
     }
 
     @Test
-    public void testActionResults()
-    {
+    public void testActionResults() {
         assertEquals(2, actionConfig.getResults().size());
         assertTrue(actionConfig.getResults().keySet().contains("success"));
         assertTrue(actionConfig.getResults().keySet().contains("fail"));
     }
 
     @Test
-    public void testActionResultClass()
-    {
+    public void testActionResultClass() {
         ResultConfig resultConfig = (ResultConfig) actionConfig.getResults().get("fail");
         assertEquals(TestResult.class.getName(), resultConfig.getClassName());
         assertEquals(1, resultConfig.getParams().size());
@@ -178,58 +180,48 @@ public class XWorkPackageCreatorTest
     }
 
     @Test
-    public void testActionResultParams()
-    {
+    public void testActionResultParams() {
         ResultConfig resultConfig = (ResultConfig) actionConfig.getResults().get("fail");
         assertEquals(1, resultConfig.getParams().size());
         assertEquals("param", resultConfig.getParams().get("test"));
     }
 
     @Test
-    public void testActionResultFromParent()
-    {
+    public void testActionResultFromParent() {
         // Ensures that the "velocity" result name we referenced comes from parent config.
         ResultConfig resultConfig = (ResultConfig) actionConfig.getResults().get("success");
         assertEquals(VelocityResult.class.getName(), resultConfig.getClassName());
     }
 
-    public static class TestAction implements Action
-    {
+    public static class TestAction implements Action {
         @Override
-        public String execute() throws Exception
-        {
+        public String execute() throws Exception {
             return null;
         }
     }
 
-    public static class TestInterceptor implements Interceptor
-    {
+    public static class TestInterceptor implements Interceptor {
         public String test;
 
         @Override
-        public void destroy()
-        {
+        public void destroy() {
 
         }
 
         @Override
-        public void init()
-        {
+        public void init() {
 
         }
 
         @Override
-        public String intercept(final ActionInvocation invocation) throws Exception
-        {
+        public String intercept(final ActionInvocation invocation) throws Exception {
             return null;
         }
     }
 
-    public static class TestResult implements Result
-    {
+    public static class TestResult implements Result {
         @Override
-        public void execute(final ActionInvocation invocation) throws Exception
-        {
+        public void execute(final ActionInvocation invocation) throws Exception {
 
         }
     }

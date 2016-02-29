@@ -9,13 +9,11 @@ import static com.google.common.collect.Maps.newHashMap;
  * Creates a context-aware instance of {@link RequestContextParameters} for use in an iframe URL
  * or HTTP content retrieval call.
  */
-public class RequestContextParameterFactory
-{
+public class RequestContextParameterFactory {
     private final Set<String> queryParameters;
     private final Set<String> headerParameters;
 
-    public RequestContextParameterFactory(Set<String> queryParameters, Set<String> headerParameters)
-    {
+    public RequestContextParameterFactory(Set<String> queryParameters, Set<String> headerParameters) {
         this.queryParameters = queryParameters;
         this.headerParameters = headerParameters;
     }
@@ -30,8 +28,7 @@ public class RequestContextParameterFactory
      * @param entityContextParameters parameters related to the entity of the current context
      * @return the request context parameters
      */
-    public RequestContextParameters create(String userId, String userKey, Map<String, String> entityContextParameters)
-    {
+    public RequestContextParameters create(String userId, String userKey, Map<String, String> entityContextParameters) {
         Map<String, String> allContextParameters = newHashMap();
         allContextParameters.put("user_id", userId != null ? userId : "");
         allContextParameters.put("user_key", userKey != null ? userKey : "");
@@ -39,7 +36,6 @@ public class RequestContextParameterFactory
 
         return new RequestContextParameters(allContextParameters, queryParameters, headerParameters);
     }
-
 
 
 }

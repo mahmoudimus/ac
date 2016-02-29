@@ -2,14 +2,13 @@ package com.atlassian.plugin.connect.spi.web.condition;
 
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.web.Condition;
+import com.google.common.annotations.VisibleForTesting;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -26,8 +25,7 @@ import java.util.function.Predicate;
  *
  * @see com.atlassian.plugin.connect.api.web.condition.ConditionClassAccessor
  */
-public interface ConnectConditionClassResolver
-{
+public interface ConnectConditionClassResolver {
 
     /**
      * Returns the list of entries provided by this condition class resolver.
@@ -49,12 +47,19 @@ public interface ConnectConditionClassResolver
 
         private final boolean contextFree;
 
-        private Entry(Builder builder)
-        {
+        private final boolean inlineSupport;
+
+        private Entry(Builder builder) {
             this.conditionName = builder.conditionName;
             this.conditionClass = builder.conditionClass;
             this.parameterPredicates = builder.parameterPredicates;
             this.contextFree = builder.contextFree;
+            this.inlineSupport = builder.inlineSupport;
+        }
+
+        @VisibleForTesting
+        public String getConditionName() {
+            return conditionName;
         }
 
         /**
@@ -64,8 +69,7 @@ public interface ConnectConditionClassResolver
          * @param conditionClass the condition class
          * @return a resolver entry builder
          */
-        public static Builder newEntry(String conditionName, Class<? extends Condition> conditionClass)
-        {
+        public static Builder newEntry(String conditionName, Class<? extends Condition> conditionClass) {
             return new Builder(conditionName, conditionClass);
         }
 
@@ -76,9 +80,19 @@ public interface ConnectConditionClassResolver
          * @param conditionBean a condition element from an add-on descriptor
          * @return the condition class or {@link Optional#empty()}
          */
-        public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean)
-        {
-            return getConditionClass(conditionBean, false);
+        public Optional<Class<? extends Condition>> getConditionClassForHostContext(SingleConditionBean conditionBean) {
+            return getConditionClass(conditionBean, false, false);
+        }
+
+        /**
+         * Returns a condition class for use <b>as an inline condition</b>, if this entry
+         * applies to the given condition element.
+         *
+         * @param conditionBean a condition element from an add-on descriptor
+         * @return the condition class or {@link Optional#empty()}
+         */
+        public Optional<Class<? extends Condition>> getConditionClassForInline(SingleConditionBean conditionBean) {
+            return getConditionClass(conditionBean, false, true);
         }
 
         /**
@@ -88,47 +102,29 @@ public interface ConnectConditionClassResolver
          * @param conditionBean a condition element from an add-on descriptor
          * @return the condition class or {@link Optional#empty()}
          */
-        public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean)
-        {
-            return getConditionClass(conditionBean, true);
+        public Optional<Class<? extends Condition>> getConditionClassForNoContext(SingleConditionBean conditionBean) {
+            return getConditionClass(conditionBean, true, false);
         }
 
-        private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean, boolean requireContextFree)
-        {
+        private Optional<Class<? extends Condition>> getConditionClass(SingleConditionBean conditionBean, boolean requireContextFree, boolean inline) {
             Optional<Class<? extends Condition>> optionalClass = Optional.empty();
             if (isApplicableToContext(requireContextFree)
                     && this.conditionName.equals(conditionBean.getCondition())
-                    && isApplicableToParameters(conditionBean.getParams()))
-            {
+                    && isApplicableToParameters(conditionBean.getParams())
+                    && (!inline || inlineSupport)) {
                 optionalClass = Optional.of(conditionClass);
             }
             return optionalClass;
         }
 
-        private boolean isApplicableToContext(boolean requireContextFree)
-        {
+        private boolean isApplicableToContext(boolean requireContextFree) {
             return !requireContextFree || contextFree;
         }
 
-        private boolean isApplicableToParameters(Map<String, String> conditionParameters)
-        {
+        private boolean isApplicableToParameters(Map<String, String> conditionParameters) {
             return parameterPredicates.stream()
-                    .reduce(new BinaryOperator<Predicate<Map<String, String>>>()
-                    {
-                        @Override
-                        public Predicate<Map<String, String>> apply(Predicate<Map<String, String>> p1, Predicate<Map<String, String>> p2)
-                        {
-                            return p1.and(p2);
-                        }
-                    })
-                    .map(new Function<Predicate<Map<String, String>>, Boolean>()
-                    {
-                        @Override
-                        public Boolean apply(Predicate<Map<String, String>> predicate)
-                        {
-                            return predicate.test(conditionParameters);
-                        }
-                    })
+                    .reduce(Predicate::and)
+                    .map(predicate -> predicate.test(conditionParameters))
                     .orElse(true);
         }
 
@@ -144,9 +140,9 @@ public interface ConnectConditionClassResolver
             private List<Predicate<Map<String, String>>> parameterPredicates = Collections.emptyList();
 
             private boolean contextFree;
+            public boolean inlineSupport = true;
 
-            private Builder(String conditionName, Class<? extends Condition> conditionClass)
-            {
+            private Builder(String conditionName, Class<? extends Condition> conditionClass) {
                 this.conditionName = conditionName;
                 this.conditionClass = conditionClass;
             }
@@ -158,8 +154,8 @@ public interface ConnectConditionClassResolver
              * @param parameterPredicates predicates on the parameters of the condition
              * @return the builder
              */
-            public Builder withPredicates(Predicate<Map<String, String>>... parameterPredicates)
-            {
+            @SafeVarargs
+            public final Builder withPredicates(Predicate<Map<String, String>>... parameterPredicates) {
                 this.parameterPredicates = Arrays.asList(parameterPredicates);
                 return this;
             }
@@ -171,9 +167,21 @@ public interface ConnectConditionClassResolver
              *
              * @return the builder
              */
-            public Builder contextFree()
-            {
+            public Builder contextFree() {
                 this.contextFree = true;
+                return this;
+            }
+
+            /**
+             * Some conditions may use ephemeral context variables which cannot be recreated
+             * at the time of URL variable substitution. Mark such conditions using this method.
+             * This will cause them not be resolved at all, in other words they will not be available
+             * in context parameters.
+             *
+             * @return this builder
+             */
+            public Builder withoutInlineSupport() {
+                this.inlineSupport = false;
                 return this;
             }
 
@@ -182,8 +190,7 @@ public interface ConnectConditionClassResolver
              *
              * @return the resolver entry
              */
-            public Entry build()
-            {
+            public Entry build() {
                 return new Entry(this);
             }
         }

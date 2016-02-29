@@ -14,13 +14,11 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
-public class WebSectionModuleProvider extends AbstractConnectCoreModuleProvider<WebSectionModuleBean>
-{
-
+public class WebSectionModuleProvider extends AbstractConnectCoreModuleProvider<WebSectionModuleBean> {
     private static final WebSectionModuleMeta META = new WebSectionModuleMeta();
 
     private final ConnectWebSectionModuleDescriptorFactory webSectionFactory;
@@ -28,38 +26,30 @@ public class WebSectionModuleProvider extends AbstractConnectCoreModuleProvider<
 
     @Autowired
     public WebSectionModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            ConnectWebSectionModuleDescriptorFactory webSectionFactory,
-            ConditionLoadingValidator conditionLoadingValidator)
-    {
+                                    ConnectJsonSchemaValidator schemaValidator,
+                                    ConnectWebSectionModuleDescriptorFactory webSectionFactory,
+                                    ConditionLoadingValidator conditionLoadingValidator) {
         super(pluginRetrievalService, schemaValidator);
         this.webSectionFactory = webSectionFactory;
         this.conditionLoadingValidator = conditionLoadingValidator;
     }
 
     @Override
-    public ConnectModuleMeta<WebSectionModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<WebSectionModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<WebSectionModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<WebSectionModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         List<WebSectionModuleBean> webSections = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), webSections);
         return webSections;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebSectionModuleBean> modules, ConnectAddonBean addon)
-    {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
-        for (WebSectionModuleBean webSection : modules)
-        {
-            descriptors.add(webSectionFactory.createModuleDescriptor(webSection, addon, pluginRetrievalService.getPlugin()));
-        }
-        return descriptors;
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<WebSectionModuleBean> modules, ConnectAddonBean addon) {
+        return modules.stream()
+                .map(webSection -> webSectionFactory.createModuleDescriptor(webSection, addon, pluginRetrievalService.getPlugin()))
+                .collect(Collectors.toList());
     }
-
 }

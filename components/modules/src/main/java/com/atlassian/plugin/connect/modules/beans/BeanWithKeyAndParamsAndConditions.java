@@ -8,43 +8,35 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams implements BeanWithConditions
-{
+public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams implements BeanWithConditions {
     /**
      * <a href="../../concepts/conditions.html">Conditions</a> can be added to display only when all the given conditions are true.
      */
     private List<ConditionalBean> conditions;
 
-    public BeanWithKeyAndParamsAndConditions()
-    {
+    public BeanWithKeyAndParamsAndConditions() {
         this.conditions = newArrayList();
     }
 
-    public BeanWithKeyAndParamsAndConditions(BeanWithKeyParamsAndConditionsBuilder builder)
-    {
+    public BeanWithKeyAndParamsAndConditions(BeanWithKeyParamsAndConditionsBuilder builder) {
         super(builder);
 
-        if (null == conditions)
-        {
+        if (null == conditions) {
             this.conditions = newArrayList();
         }
     }
 
-    public List<ConditionalBean> getConditions()
-    {
+    public List<ConditionalBean> getConditions() {
         return conditions;
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof BeanWithKeyAndParamsAndConditions && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof BeanWithKeyAndParamsAndConditions && super.equals(otherObj))) {
             return false;
         }
 
@@ -56,8 +48,7 @@ public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams impl
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(59, 29)
                 .appendSuper(super.hashCode())
                 .append(conditions)

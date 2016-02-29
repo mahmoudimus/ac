@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectAddonBean extends ShallowConnectAddonBean
-{
+public class ConnectAddonBean extends ShallowConnectAddonBean {
     /**
      * The list of modules this add-on provides
      */
@@ -20,37 +19,30 @@ public class ConnectAddonBean extends ShallowConnectAddonBean
     /**
      * A validity-aware abstraction of the list of modules this add-on provides
      */
-    private transient Supplier<ModuleMultimap> moduleListMap = Suppliers.memoize(new Supplier<ModuleMultimap>()
-    {
+    private transient Supplier<ModuleMultimap> moduleListMap = Suppliers.memoize(new Supplier<ModuleMultimap>() {
 
         @Override
-        public ModuleMultimap get()
-        {
+        public ModuleMultimap get() {
             return new ModuleMultimap(modules);
         }
     });
 
-    public ConnectAddonBean()
-    {
+    public ConnectAddonBean() {
         this.modules = new HashMap<>();
     }
 
-    public ConnectAddonBean(ConnectAddonBeanBuilder builder)
-    {
+    public ConnectAddonBean(ConnectAddonBeanBuilder builder) {
         super(builder);
-        if (null == modules)
-        {
+        if (null == modules) {
             this.modules = new HashMap<>();
         }
     }
 
-    public static ConnectAddonBeanBuilder newConnectAddonBean()
-    {
+    public static ConnectAddonBeanBuilder newConnectAddonBean() {
         return new ConnectAddonBeanBuilder();
     }
-    
-    public static ConnectAddonBeanBuilder newConnectAddonBean(ShallowConnectAddonBean defaultBean)
-    {
+
+    public static ConnectAddonBeanBuilder newConnectAddonBean(ShallowConnectAddonBean defaultBean) {
         return new ConnectAddonBeanBuilder(defaultBean);
     }
 
@@ -59,26 +51,22 @@ public class ConnectAddonBean extends ShallowConnectAddonBean
      *
      * @return the module list map
      */
-    public ModuleMultimap getModules()
-    {
+    public ModuleMultimap getModules() {
         return moduleListMap.get();
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (!(otherObj instanceof ConnectAddonBean))
-        {
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof ConnectAddonBean)) {
             return false;
         }
         ConnectAddonBean other = (ConnectAddonBean) otherObj;
-        
+
         return new EqualsBuilder().append(getModules(), other.getModules()).isEquals() && super.equals(otherObj);
     }
-    
+
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(41, 7).appendSuper(super.hashCode()).build();
     }
 }

@@ -5,21 +5,13 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.69-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-core-integration-tests</artifactId>
     <name>Atlassian Connect - Core Integration Tests</name>
     <packaging>atlassian-plugin</packaging>
-
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
 
     <profiles>
         <profile>
@@ -114,7 +106,6 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -175,7 +166,7 @@
         <dependency>
             <artifactId>acceptance-data-helper</artifactId>
             <groupId>com.atlassian.test.ondemand</groupId>
-            <version>1.0.14</version>
+            <version>1.0.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -399,6 +390,9 @@
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>
                                     ${addonconfig.maxpropertiesperplugin}
                                 </com.atlassian.plugin.connect.add_on_properties.max_properties>
+
+                                <atlassian.darkfeature.confluence.onboarding.bypass>true</atlassian.darkfeature.confluence.onboarding.bypass>
+                                <atlassian.darkfeature.dashboard.onboarding.disabled>true</atlassian.darkfeature.dashboard.onboarding.disabled>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -439,6 +433,11 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-scriptsfinished-plugin</artifactId>
+                                    <version>${atlassian.confluence.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-functestrpc-plugin</artifactId>
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
@@ -623,10 +622,9 @@
     </build>
 
     <properties>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
-            use-maven,3
+            use-maven,3.3.9
         </od.testing.configuration>
     </properties>
 </project>

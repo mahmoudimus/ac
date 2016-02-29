@@ -23,8 +23,7 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
 
-public class JiraTestUtil
-{
+public class JiraTestUtil {
 
     public static final String ADMIN_USERNAME = "admin";
 
@@ -40,8 +39,7 @@ public class JiraTestUtil
                         final ProjectService projectService,
                         final CommentService commentService,
                         final CommentPropertyService commentPropertyService,
-                        final IssueService issueService)
-    {
+                        final IssueService issueService) {
         this.userManager = userManager;
         this.projectService = projectService;
         this.commentService = commentService;
@@ -49,8 +47,7 @@ public class JiraTestUtil
         this.issueService = issueService;
     }
 
-    public Project createProject() throws IOException
-    {
+    public Project createProject() throws IOException {
         int keyLength = 6;
         String key = RandomStringUtils.randomAlphabetic(keyLength).toUpperCase();
         ApplicationUser user = getAdmin();
@@ -67,10 +64,11 @@ public class JiraTestUtil
         return projectService.createProject(result);
     }
 
-    public ApplicationUser getAdmin() {return userManager.getUserByKey(ADMIN_USERNAME);}
+    public ApplicationUser getAdmin() {
+        return userManager.getUserByKey(ADMIN_USERNAME);
+    }
 
-    public Issue createIssue() throws IOException
-    {
+    public Issue createIssue() throws IOException {
         final ApplicationUser admin = getAdmin();
 
         Project project = createProject();
@@ -88,8 +86,7 @@ public class JiraTestUtil
         return issueResult.getIssue();
     }
 
-    public Comment createComment() throws JSONException, IOException
-    {
+    public Comment createComment() throws JSONException, IOException {
         final ApplicationUser admin = getAdmin();
 
         Issue issue = createIssue();
@@ -102,8 +99,7 @@ public class JiraTestUtil
         return commentService.create(admin, validationResult, false);
     }
 
-    public EntityProperty createCommentProperty(final Comment comment)
-    {
+    public EntityProperty createCommentProperty(final Comment comment) {
         EntityPropertyService.PropertyInput property = new EntityPropertyService.PropertyInput(new JSONObject(ImmutableMap.of("x", "y")).toString(), "key");
         EntityPropertyService.SetPropertyValidationResult validationResult = commentPropertyService.validateSetProperty(getAdmin(), comment.getId(), property);
         EntityPropertyService.PropertyResult propertyResult = commentPropertyService.setProperty(getAdmin(), validationResult);

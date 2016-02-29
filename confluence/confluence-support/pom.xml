@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-confluence-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.69-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -36,16 +36,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-test-support-plugin</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-connect-crowd-support</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-connect-crowd-support</artifactId>
+            <artifactId>atlassian-connect-unit-test-support</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -53,6 +53,12 @@
             <artifactId>confluence</artifactId>
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.confluence.plugins</groupId>
@@ -67,11 +73,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.atlassian.httpclient</groupId>
             <artifactId>atlassian-httpclient-api</artifactId>
@@ -147,7 +148,12 @@
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+            <version>3.1.0</version>
+        </dependency>
     </dependencies>
 
 </project>

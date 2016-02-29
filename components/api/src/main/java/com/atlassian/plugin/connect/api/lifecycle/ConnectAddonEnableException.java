@@ -18,8 +18,7 @@ public class ConnectAddonEnableException extends Exception {
         this.addonKey = addonKey;
     }
 
-    public String getAddonKey()
-    {
+    public String getAddonKey() {
         return addonKey;
     }
 }

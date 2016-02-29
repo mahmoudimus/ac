@@ -1,7 +1,21 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.atlassian.fugue.Either;
+import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
+import com.atlassian.plugin.connect.api.property.AddonProperty;
+import com.atlassian.plugin.connect.api.property.AddonPropertyService;
+import com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl;
+import com.atlassian.plugin.connect.plugin.rest.RestResult;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddonPropertiesBean;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddonProperty;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.message.I18nResolver;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Function;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -16,41 +30,18 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-
-import com.atlassian.fugue.Either;
-import com.atlassian.plugin.connect.api.auth.scope.AddonKeyExtractor;
-import com.atlassian.plugin.connect.plugin.property.AddonProperty;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyIterable;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyService;
-import com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl;
-import com.atlassian.plugin.connect.plugin.rest.RestResult;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddonPropertiesBean;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddonProperty;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
-import com.atlassian.sal.api.message.I18nResolver;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-
-import com.google.common.base.Function;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * REST endpoint for add-on properties
  */
-@Path (AddonPropertiesResource.REST_PATH)
-@Produces ("application/json")
-@Consumes ("application/json")
-public class AddonPropertiesResource
-{
+@Path(AddonPropertiesResource.REST_PATH)
+@Produces("application/json")
+@Consumes("application/json")
+public class AddonPropertiesResource {
     public static final String VALUE_TOO_LONG_ERROR_MSG = String.format("The value cannot be bigger than %s.", FileUtils.byteCountToDisplaySize(AddonPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH));
     public static final String REST_PATH = "addons/{addonKey}/properties";
-
-    private static final Logger log = LoggerFactory.getLogger(AddonPropertiesResource.class);
 
     private final ApplicationProperties applicationProperties;
     private final AddonPropertyService addonPropertyService;
@@ -58,8 +49,7 @@ public class AddonPropertiesResource
     private final I18nResolver i18nResolver;
     private final UserManager userManager;
 
-    public AddonPropertiesResource(ApplicationProperties applicationProperties, AddonPropertyService addonPropertyService, AddonKeyExtractor addonKeyExtractor, I18nResolver i18nResolver, UserManager userManager)
-    {
+    public AddonPropertiesResource(ApplicationProperties applicationProperties, AddonPropertyService addonPropertyService, AddonKeyExtractor addonKeyExtractor, I18nResolver i18nResolver, UserManager userManager) {
         this.applicationProperties = applicationProperties;
         this.addonPropertyService = addonPropertyService;
         this.addonKeyExtractor = addonKeyExtractor;
@@ -83,31 +73,18 @@ public class AddonPropertiesResource
      *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
      */
     @GET
-    public Response getAddonProperties(@PathParam ("addonKey") final String addonKey, @Context HttpServletRequest servletRequest)
-    {
+    public Response getAddonProperties(@PathParam("addonKey") final String addonKey, @Context HttpServletRequest servletRequest) {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
 
         return addonPropertyService.getAddonProperties(user, sourcePluginKey, addonKey).fold(
-                new Function<AddonPropertyService.OperationStatus, Response>()
-                {
-                    @Override
-                    public Response apply(final AddonPropertyService.OperationStatus status)
-                    {
-                        return getResponseBuilderFromOperationStatus(status).build();
-                    }
-
-                }, new Function<AddonPropertyIterable, Response>()
-                {
-                    @Override
-                    public Response apply(final AddonPropertyIterable propertyIterable)
-                    {
-                        String baseURL = getRestPathForAddonKey(addonKey) + "/properties";
-                        return Response.ok()
-                                .entity(RestAddonPropertiesBean.valueOf(propertyIterable.getPropertyKeys(), baseURL))
-                                .cacheControl(never())
-                                .build();
-                    }
+                status -> getResponseBuilderFromOperationStatus(status).build(),
+                propertyIterable -> {
+                    String baseURL = getRestPathForAddonKey(addonKey) + "/properties";
+                    return Response.ok()
+                            .entity(RestAddonPropertiesBean.valueOf(propertyIterable.getPropertyKeys(), baseURL))
+                            .cacheControl(never())
+                            .build();
                 });
     }
 
@@ -133,32 +110,22 @@ public class AddonPropertiesResource
      *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
      */
     @GET
-    @Path ("{propertyKey}")
-    public Response getAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") String propertyKey, @QueryParam("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest)
-    {
+    @Path("{propertyKey}")
+    public Response getAddonProperty(@PathParam("addonKey") final String addonKey, @PathParam("propertyKey") String propertyKey, @QueryParam("jsonValue") boolean returnJsonFormat, @Context final HttpServletRequest servletRequest) {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
 
-        return addonPropertyService.getPropertyValue(user, sourcePluginKey, addonKey, propertyKey).fold(new Function<AddonPropertyService.OperationStatus, Response>()
-        {
-            @Override
-            public Response apply(final AddonPropertyService.OperationStatus status)
-            {
-                return getResponseBuilderFromOperationStatus(status).build();
-            }
-        }, new Function<AddonProperty, Response>()
-        {
-            @Override
-            public Response apply(final AddonProperty property)
-            {
-                String baseURL = getRestPathForAddonKey(addonKey) + "/properties";
-                return Response.ok()
-                        .entity(RestAddonProperty.valueOf(property, baseURL, returnJsonFormat))
-                        .cacheControl(never())
-                        .build();
-            }
-        });
+        return addonPropertyService.getPropertyValue(user, sourcePluginKey, addonKey, propertyKey).fold(
+                status -> getResponseBuilderFromOperationStatus(status).build(),
+                property -> {
+                    String baseURL = getRestPathForAddonKey(addonKey) + "/properties";
+                    return Response.ok()
+                            .entity(RestAddonProperty.valueOf(property, baseURL, returnJsonFormat))
+                            .cacheControl(never())
+                            .build();
+                });
     }
+
     /**
      * Creates or updates a property with the given property key.
      *
@@ -184,30 +151,20 @@ public class AddonPropertiesResource
      *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
      */
     @PUT
-    @Path ("{propertyKey}")
-    public Response putAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
-    {
-        final UserProfile user = userManager.getRemoteUser(servletRequest);
-        // can be null, it is checked in the service.
-        final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
-
+    @Path("{propertyKey}")
+    public Response putAddonProperty(@PathParam("addonKey") final String addonKey, @PathParam("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest) {
         Either<RestParamError, String> errorStringEither = propertyValue(servletRequest);
-        return errorStringEither.fold(new Function<RestParamError, Response>()
-        {
-            @Override
-            public Response apply(final RestParamError error)
-            {
-                return getResponseForMessageAndStatus(VALUE_TOO_LONG_ERROR_MSG, Response.Status.FORBIDDEN);
-            }
-        }, new Function<String, Response>()
-        {
-            @Override
-            public Response apply(final String propertyValue)
-            {
-                return addonPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, propertyKey, propertyValue, eTagValidationFunction(request))
-                        .fold(onPreconditionFailed(), onFailure(), onSuccess());
-            }
-        });
+
+        return errorStringEither.fold(
+                error -> getResponseForMessageAndStatus(VALUE_TOO_LONG_ERROR_MSG, Response.Status.FORBIDDEN),
+                propertyValue -> {
+                    final UserProfile user = userManager.getRemoteUser(servletRequest);
+                    // can be null, it is checked in the service.
+                    final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
+
+                    return addonPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addonKey, propertyKey, propertyValue, eTagValidationFunction(request))
+                            .fold(onPreconditionFailed(), onFailure(), onSuccess());
+                });
     }
 
     /**
@@ -231,9 +188,8 @@ public class AddonPropertiesResource
      *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
      */
     @DELETE
-    @Path ("{propertyKey}")
-    public Response deleteAddonProperty(@PathParam ("addonKey") final String addonKey, @PathParam ("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
-    {
+    @Path("{propertyKey}")
+    public Response deleteAddonProperty(@PathParam("addonKey") final String addonKey, @PathParam("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest) {
         final UserProfile user = userManager.getRemoteUser(servletRequest);
         // can be null, it is checked in the service.
         final String sourcePluginKey = addonKeyExtractor.getAddonKeyFromHttpRequest(servletRequest);
@@ -242,115 +198,73 @@ public class AddonPropertiesResource
                 .fold(onPreconditionFailed(), onFailure(), onDeleteSuccess());
     }
 
-    private String getRestPathForAddonKey(final String key)
-    {
+    private String getRestPathForAddonKey(final String key) {
         return applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/addons" + "/" + key;
     }
 
-    private Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request)
-    {
-        return new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
-        {
-            @Override
-            public AddonPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Optional<AddonProperty> propertyOption)
-            {
-                return AddonPropertyService.ServiceConditionResult.SUCCESS();
-            }
-        };
+    private Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request) {
+        return propertyOption -> AddonPropertyService.ServiceConditionResult.SUCCESS();
     }
 
-    private Function<AddonPropertyService.OperationStatus, Response> onFailure()
-    {
-        return new Function<AddonPropertyService.OperationStatus, Response>()
-        {
-            @Override
-            public Response apply(final AddonPropertyService.OperationStatus operationStatus)
-            {
-                return getResponseBuilderFromOperationStatus(operationStatus)
-                        .build();
-            }
-        };
+    private Function<AddonPropertyService.OperationStatus, Response> onFailure() {
+        return operationStatus -> getResponseBuilderFromOperationStatus(operationStatus).build();
     }
 
-    private Function<AddonPropertyService.PutOperationStatus, Response> onSuccess()
-    {
-        return new Function<AddonPropertyService.PutOperationStatus, Response>()
-        {
-            @Override
-            public Response apply(final AddonPropertyService.PutOperationStatus operationStatus)
-            {
-                return getResponseBuilderFromOperationStatus(operationStatus)
-                        .build();
-            }
-        };
+    private Function<AddonPropertyService.PutOperationStatus, Response> onSuccess() {
+        return operationStatus -> getResponseBuilderFromOperationStatus(operationStatus).build();
     }
 
-    private Function<Response.ResponseBuilder, Response> onPreconditionFailed()
-    {
-        return new Function<Response.ResponseBuilder, Response>()
-        {
-            @Override
-            public Response apply(final Response.ResponseBuilder responseBuilder)
-            {
-                return responseBuilder.entity("").cacheControl(never()).build();
-            }
-        };
+    private Function<Response.ResponseBuilder, Response> onPreconditionFailed() {
+        return responseBuilder -> responseBuilder.entity("").cacheControl(never()).build();
     }
 
-    private Function<AddonPropertyService.OperationStatus, Response> onDeleteSuccess()
-    {
-        return new Function<AddonPropertyService.OperationStatus, Response>()
-        {
-            @Override
-            public Response apply(final AddonPropertyService.OperationStatus operationStatus)
-            {
-                return getResponseBuilderFromOperationStatus(operationStatus).build();
-            }
-        };
+    private Function<AddonPropertyService.OperationStatus, Response> onDeleteSuccess() {
+        return operationStatus -> getResponseBuilderFromOperationStatus(operationStatus).build();
     }
 
-    private Response.ResponseBuilder getResponseBuilderFromOperationStatus(final AddonPropertyService.OperationStatus operationStatus)
-    {
+    private Response.ResponseBuilder getResponseBuilderFromOperationStatus(final AddonPropertyService.OperationStatus operationStatus) {
         return getResponseBuilderForMessageAndStatus(operationStatus.message(i18nResolver), Response.Status.fromStatusCode(operationStatus.getHttpStatusCode()));
     }
 
-    private Response getResponseForMessageAndStatus(final String message, final Response.Status status)
-    {
+    private Response getResponseForMessageAndStatus(final String message, final Response.Status status) {
         return getResponseBuilderForMessageAndStatus(message, status).build();
     }
 
-    private Response.ResponseBuilder getResponseBuilderForMessageAndStatus(final String message, final Response.Status status)
-    {
+    private Response.ResponseBuilder getResponseBuilderForMessageAndStatus(final String message, final Response.Status status) {
         RestResult result = new RestResult(status.getStatusCode(), message);
         Response.ResponseBuilder responseBuilder = Response.status(status);
-        if (status != Response.Status.NO_CONTENT)
-        {
+        if (status != Response.Status.NO_CONTENT) {
             responseBuilder.entity(result);
         }
         return responseBuilder.cacheControl(never());
     }
 
-    private Either<RestParamError, String> propertyValue(final HttpServletRequest request)
-    {
+    private Either<RestParamError, String> propertyValue(final HttpServletRequest request) {
         int contentLength = request.getContentLength();
-        if (contentLength > AddonPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH)
-        {
+        if (contentLength > AddonPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH) {
             return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
         }
 
-        try
-        {
-            char[] charData = IOUtils.toCharArray(request.getReader());
-            return Either.right(new String(charData));
-        }
-        catch (IOException e)
-        {
+        try {
+            return Either.right(readHttpServletRequestBody(request));
+        } catch (IOException e) {
             return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
         }
     }
 
-    private static CacheControl never()
-    {
+    private static String readHttpServletRequestBody(final HttpServletRequest request) throws IOException {
+        // If a previous section of code has grabbed data using getReader or getInput stream before the execution path
+        // goes through this method then we need to use the same getter that the previous codepath used. This method
+        // unfortunately needs to rely upon exceptions for logic to decide which is the correct getter to get the content
+        // of this HttpServletRequest.
+        try {
+            return new String(IOUtils.toCharArray(request.getInputStream()));
+        } catch (IllegalStateException e) {
+            return new String(IOUtils.toCharArray(request.getReader()));
+        }
+    }
+
+    private static CacheControl never() {
         CacheControl cacheNever = new CacheControl();
         cacheNever.setNoStore(true);
         cacheNever.setNoCache(true);
@@ -358,8 +272,7 @@ public class AddonPropertiesResource
         return cacheNever;
     }
 
-    private enum RestParamError
-    {
+    private enum RestParamError {
         PROPERTY_VALUE_TOO_LONG
     }
 }

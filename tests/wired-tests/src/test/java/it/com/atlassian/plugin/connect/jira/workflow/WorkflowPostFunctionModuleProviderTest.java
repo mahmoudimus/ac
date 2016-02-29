@@ -1,10 +1,5 @@
 package it.com.atlassian.plugin.connect.jira.workflow;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Optional;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
@@ -18,11 +13,16 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Optional;
 
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
@@ -36,8 +36,7 @@ import static org.hamcrest.Matchers.not;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class WorkflowPostFunctionModuleProviderTest
-{
+public class WorkflowPostFunctionModuleProviderTest {
     private static final String PLUGIN_KEY = "my-plugin";
     private static final String PLUGIN_NAME = "My Plugin";
     private static final String MODULE_NAME = "My Post Function";
@@ -50,16 +49,14 @@ public class WorkflowPostFunctionModuleProviderTest
     private Plugin plugin;
 
     public WorkflowPostFunctionModuleProviderTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-                                                  IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
-    {
+                                                  IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry) {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     @BeforeClass
-    public void setup() throws IOException
-    {
+    public void setup() throws IOException {
         testAuthenticator.authenticateUser("admin");
 
         WorkflowPostFunctionModuleBean bean = newWorkflowPostFunctionBean()
@@ -84,46 +81,40 @@ public class WorkflowPostFunctionModuleProviderTest
     }
 
     @AfterClass
-    public void cleanup() throws IOException
-    {
-        if (null != plugin)
-        {
+    public void cleanup() throws IOException {
+        if (null != plugin) {
             testPluginInstaller.uninstallAddon(plugin);
         }
 
     }
 
     @Test
-    public void workflowLinksAreAbsoluteToBaseUrl() throws Exception
-    {
+    public void workflowLinksAreAbsoluteToBaseUrl() throws Exception {
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_INPUT_PARAMETERS, "/create");
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
     }
 
     @Test
-    public void uiParamsNotInUrlWhenNotProvided() throws URISyntaxException
-    {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
-        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
+    public void uiParamsNotInUrlWhenNotProvided() throws URISyntaxException {
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters(Collections.emptyMap());
+        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl) iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.<String>empty());
         final URI iframeUrl = new URI(iframeUrlStr);
         assertThat(iframeUrl.getQuery(), not(containsString("ui-params")));
     }
 
     @Test
-    public void uiParamsInUrlWhenProvided() throws URISyntaxException
-    {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
-        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
+    public void uiParamsInUrlWhenProvided() throws URISyntaxException {
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters(Collections.emptyMap());
+        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl) iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.of("blah"));
         final URI iframeUrl = new URI(iframeUrlStr);
         assertThat(iframeUrl.getQuery(), containsString("ui-params=blah"));
     }
 
-    private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
-    {
-        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
-        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
+    private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException {
+        ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters(Collections.emptyMap());
+        IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl) iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
 
         final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Optional.<String>empty());
         final URI iframeUrl = new URI(iframeUrlStr);

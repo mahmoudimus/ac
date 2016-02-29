@@ -26,8 +26,7 @@ import static com.atlassian.plugin.connect.jira.web.JiraTemplateHelper.workflowP
 @JiraComponent
 @ExportAsDevService
 public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectModuleProvider<WorkflowPostFunctionModuleBean>
-        implements WorkflowPostFunctionModuleProvider
-{
+        implements WorkflowPostFunctionModuleProvider {
 
     private static final WorkflowPostFunctionModuleMeta META = new WorkflowPostFunctionModuleMeta();
 
@@ -37,11 +36,10 @@ public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectM
 
     @Autowired
     public WorkflowPostFunctionModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
-    {
+                                                  ConnectJsonSchemaValidator schemaValidator,
+                                                  WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory,
+                                                  IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                                  IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry) {
         super(pluginRetrievalService, schemaValidator);
         this.workflowPostFunctionFactory = workflowPostFunctionFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
@@ -49,29 +47,23 @@ public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectM
     }
 
     @Override
-    public ConnectModuleMeta<WorkflowPostFunctionModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<WorkflowPostFunctionModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, ConnectAddonBean connectAddonBean)
-    {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, ConnectAddonBean connectAddonBean) {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
 
-        for (WorkflowPostFunctionModuleBean bean : modules)
-        {
+        for (WorkflowPostFunctionModuleBean bean : modules) {
             // register render strategies for iframe workflow views
-            if (bean.hasCreate())
-            {
+            if (bean.hasCreate()) {
                 registerIFrameRenderStrategy(connectAddonBean, bean, WorkflowPostFunctionResource.CREATE, bean.getCreate());
             }
-            if (bean.hasEdit())
-            {
+            if (bean.hasEdit()) {
                 registerIFrameRenderStrategy(connectAddonBean, bean, WorkflowPostFunctionResource.EDIT, bean.getEdit());
             }
-            if (bean.hasView())
-            {
+            if (bean.hasView()) {
                 registerIFrameRenderStrategy(connectAddonBean, bean, WorkflowPostFunctionResource.VIEW, bean.getView());
             }
 
@@ -81,22 +73,18 @@ public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectM
         return descriptors;
     }
 
-    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin plugin, WorkflowPostFunctionModuleBean bean)
-    {
+    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin plugin, WorkflowPostFunctionModuleBean bean) {
         return workflowPostFunctionFactory.createModuleDescriptor(bean, addon, plugin);
     }
 
-    private void registerIFrameRenderStrategy(ConnectAddonBean addon, WorkflowPostFunctionModuleBean bean, WorkflowPostFunctionResource resource, UrlBean urlBean)
-    {
+    private void registerIFrameRenderStrategy(ConnectAddonBean addon, WorkflowPostFunctionModuleBean bean, WorkflowPostFunctionResource resource, UrlBean urlBean) {
         IFrameRenderStrategyBuilder.InitializedBuilder builder = iFrameRenderStrategyBuilderFactory.builder()
                 .addon(addon.getKey())
                 .module(bean.getKey(addon))
                 .template(workflowPostFunctionTemplate(resource))
-                .urlTemplate(urlBean.getUrl())
-                ;
+                .urlTemplate(urlBean.getUrl());
 
-        if (resource.equals(WorkflowPostFunctionResource.VIEW))
-        {
+        if (resource.equals(WorkflowPostFunctionResource.VIEW)) {
             builder.ensureUniqueNamespace(true);
         }
 

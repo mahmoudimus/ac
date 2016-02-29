@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.web.context;
 
 import com.atlassian.plugin.connect.api.web.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.web.WebFragmentContext;
 import com.atlassian.plugin.connect.plugin.util.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.web.context.condition.InlineConditionVariableSubstitutor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
 @Component
-public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
-{
+public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor {
     private static final Logger log = LoggerFactory.getLogger(UrlVariableSubstitutorImpl.class);
 
     // in "http://server/path?foo={var}&something" match "{var}" with group 1 = "var"
@@ -33,25 +34,24 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
     private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")");
     private final IsDevModeService devModeService;
 
+    private final InlineConditionVariableSubstitutor inlineConditionVariableSubstitutor;
+
     @Autowired
-    public UrlVariableSubstitutorImpl(IsDevModeService devModeService)
-    {
+    public UrlVariableSubstitutorImpl(IsDevModeService devModeService, final InlineConditionVariableSubstitutor inlineConditionVariableSubstitutor) {
+        this.inlineConditionVariableSubstitutor = inlineConditionVariableSubstitutor;
         this.devModeService = checkNotNull(devModeService);
     }
 
-    public String replace(String source, Map<String, ?> context)
-    {
-        if (devModeService.isDevMode() && source.contains("${"))
-        {
-            log.warn("Addon uses legacy variable format '${ variableName }' in url {}", new Object[] {source} );
+    public String replace(String source, WebFragmentContext context) {
+        if (devModeService.isDevMode() && source.contains("${")) {
+            log.warn("Addon uses legacy variable format '${ variableName }' in url {}", new Object[]{source});
         }
 
         Matcher m = PLACEHOLDER_PATTERN.matcher(source);
         StringBuffer sb = new StringBuffer();
-        while (m.find())
-        {
+        while (m.find()) {
             String term = m.group(1);
-            String value = fromContext(term, context);
+            String value = inlineConditionVariableSubstitutor.substitute(term, context.getProductContext()).orElseGet(() -> fromContext(term, context.getConnectContext()));
             m.appendReplacement(sb, encodeQuery(value));
         }
         m.appendTail(sb);
@@ -59,14 +59,11 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         return sb.toString();
     }
 
-    public String append(String source, Map<String, String> parameters)
-    {
+    public String append(String source, Map<String, String> parameters) {
         StringBuilder sb = new StringBuilder(source);
         String sep = source.contains("?") ? "&" : "?";
-        for (Map.Entry<String, String> entry : parameters.entrySet())
-        {
-            if (!StringUtils.isEmpty(entry.getValue()))
-            {
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            if (!StringUtils.isEmpty(entry.getValue())) {
                 sb.append(sep).append(entry.getKey()).append("=").append(encodeQuery(entry.getValue()));
                 sep = "&";
             }
@@ -74,74 +71,57 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         return sb.toString();
     }
 
-    public Map<String, String> getContextVariableMap(final String source)
-    {
+    public Map<String, String> getContextVariableMap(final String source) {
         Map<String, String> contextVariables = newHashMap();
         Matcher m = VARIABLE_EQUALS_PLACEHOLDER_PATTERN.matcher(source);
-        while (m.find())
-        {
+        while (m.find()) {
             contextVariables.put(m.group(1), m.group(2));
         }
         return contextVariables;
     }
 
-    private String encodeQuery(String value)
-    {
-        if (StringUtils.isEmpty(value))
-        {
+    private String encodeQuery(String value) {
+        if (StringUtils.isEmpty(value)) {
             return "";
         }
-        try
-        {
+        try {
             // URLEncoder.encode encodes space as '+', so we need to replace all occurrences of '+'
             // with '%20' (the percent encoded space) to remain consistent.
             return URLEncoder.encode(value, "UTF-8").replaceAll("\\+", "%20");
-        }
-        catch (UnsupportedEncodingException ex)
-        {
+        } catch (UnsupportedEncodingException ex) {
             log.error("Error encoding value '" + value + "' to querystring", ex);
             return "";
         }
     }
 
-    private String fromContext(String term, Map<String, ?> context)
-    {
+    private String fromContext(String term, Map<String, ?> context) {
         Iterable<String> terms = Arrays.asList(term.split("\\."));
         Object value = fromContext(terms, context);
-        if (null == value)
-        {
+        if (null == value) {
             value = context.get(term);
         }
-        if (null == value)
-        {
+        if (null == value) {
             return "";
         }
         if (value instanceof Number
                 || value instanceof String
-                || value instanceof Boolean)
-        {
+                || value instanceof Boolean) {
             return value.toString();
-        }
-        else if (value instanceof String[]
+        } else if (value instanceof String[]
                 || value instanceof Number[]
-                || value instanceof Boolean[])
-        {
+                || value instanceof Boolean[]) {
             return ((Object[]) value)[0].toString();
         }
         return "";
     }
 
-    private Object fromContext(Iterable<String> terms, Map<String, ?> context)
-    {
+    private Object fromContext(Iterable<String> terms, Map<String, ?> context) {
         Object current = context;
-        for (String key : terms)
-        {
-            if (null == current)
-            {
+        for (String key : terms) {
+            if (null == current) {
                 return null;
             }
-            if (current instanceof Map)
-            {
+            if (current instanceof Map) {
                 current = ((Map) current).get(key);
             }
         }

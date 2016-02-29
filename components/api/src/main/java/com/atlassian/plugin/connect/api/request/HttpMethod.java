@@ -5,8 +5,7 @@ package com.atlassian.plugin.connect.api.request;
  *
  * @since 0.10
  */
-public enum HttpMethod
-{
+public enum HttpMethod {
     GET,
     POST,
     PUT,

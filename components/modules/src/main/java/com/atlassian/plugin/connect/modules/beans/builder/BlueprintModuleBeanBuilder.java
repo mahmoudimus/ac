@@ -5,29 +5,26 @@ import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CreateResultType;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
-public class BlueprintModuleBeanBuilder extends RequiredKeyBeanBuilder<BlueprintModuleBeanBuilder,BlueprintModuleBean>
-{
+public class BlueprintModuleBeanBuilder extends RequiredKeyBeanBuilder<BlueprintModuleBeanBuilder, BlueprintModuleBean> {
 
     private IconBean icon;
     private BlueprintTemplateBean template;
     private CreateResultType createResult;
 
-    public BlueprintModuleBeanBuilder() { }
+    public BlueprintModuleBeanBuilder() {
+    }
 
-    public BlueprintModuleBeanBuilder withTemplate(BlueprintTemplateBean template)
-    {
+    public BlueprintModuleBeanBuilder withTemplate(BlueprintTemplateBean template) {
         this.template = template;
         return this;
     }
 
-    public BlueprintModuleBeanBuilder withCreateResult(CreateResultType createResult)
-    {
+    public BlueprintModuleBeanBuilder withCreateResult(CreateResultType createResult) {
         this.createResult = createResult;
         return this;
     }
 
-    public BlueprintModuleBeanBuilder withIcon(IconBean icon)
-    {
+    public BlueprintModuleBeanBuilder withIcon(IconBean icon) {
         this.icon = icon;
         return this;
     }

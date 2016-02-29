@@ -1,62 +1,58 @@
 package com.atlassian.plugin.connect;
 
-import java.io.IOException;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
+import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 
 /**
  * @since 1.0
  */
-public class AppRunner
-{
+public class AppRunner {
     public static final String JIRA = "http://localhost:2990/jira";
     public static final String CONFLUENCE = "http://localhost:1990/confluence";
 
-    public static void main(String[] args)
-    {
-        try
-        {
-            ConnectRunner runner = new ConnectRunner(JIRA,"tab-panels-plugin")
+    public static void main(String[] args) {
+        try {
+            ConnectRunner runner = new ConnectRunner(JIRA, "tab-panels-plugin")
                     .setAuthenticationToNone()
                     .addModules("jiraIssueTabPanels",
                             newTabPanelBean()
                                     .withName(new I18nProperty("Name and Key", "name.and.key"))
                                     .withUrl("http://www.google.com")
                                     .build()
-                            ,newTabPanelBean()
-                                .withName(new I18nProperty("Name Only", null))
-                                .withUrl("http://www.google.com")
-                                .build()
+                            , newTabPanelBean()
+                                    .withName(new I18nProperty("Name Only", null))
+                                    .withUrl("http://www.google.com")
+                                    .build()
                     )
                     .addModules("jiraProjectTabPanels",
                             newTabPanelBean()
                                     .withName(new I18nProperty("Name and Key", "name.and.key"))
                                     .withUrl("http://www.google.com")
                                     .build()
-                            ,newTabPanelBean()
-                            .withName(new I18nProperty("Name Only", null))
-                            .withUrl("http://www.google.com")
-                            .build()
+                            , newTabPanelBean()
+                                    .withName(new I18nProperty("Name Only", null))
+                                    .withUrl("http://www.google.com")
+                                    .build()
                     )
                     .addModules("jiraProfileTabPanels",
                             newTabPanelBean()
                                     .withName(new I18nProperty("Name and Key", "name.and.key"))
                                     .withUrl("http://www.google.com")
                                     .build()
-                            ,newTabPanelBean()
-                            .withName(new I18nProperty("Name Only", null))
-                            .withUrl("http://www.google.com")
-                            .build()
+                            , newTabPanelBean()
+                                    .withName(new I18nProperty("Name Only", null))
+                                    .withUrl("http://www.google.com")
+                                    .build()
                     )
-                                    .start();
+                    .start();
 
 
 //            ConnectRunner remotePlugin = new ConnectRunner(JIRA,"my-plugin")
@@ -128,22 +124,17 @@ public class AppRunner
 //                            ConnectAppServlets.helloWorldServlet())
 //                    .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
 //                    .start();
-            while (true)
-            {
+            while (true) {
                 //do nothing
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static final class MessageServlet extends HttpServlet
-    {
+    private static final class MessageServlet extends HttpServlet {
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             resp.setContentType("text/plain");
             resp.getWriter().write(req.getParameter("message"));
             resp.getWriter().close();

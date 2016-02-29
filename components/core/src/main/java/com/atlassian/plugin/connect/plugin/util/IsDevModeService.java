@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.util;
 
-public interface IsDevModeService
-{
-    public boolean isDevMode();
+public interface IsDevModeService {
+    boolean isDevMode();
 }

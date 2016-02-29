@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.confluence.blueprint;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.util.Dom4jUtils;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.web.item.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -25,22 +25,19 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ConfluenceComponent
 public class BlueprintWebItemModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, WebItemModuleDescriptor>
-{
+        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, WebItemModuleDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(BlueprintWebItemModuleDescriptorFactory.class);
 
     private final ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory;
 
     @Autowired
-    public BlueprintWebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory)
-    {
+    public BlueprintWebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory) {
         this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(BlueprintModuleBean bean, ConnectAddonBean addon, Plugin plugin)
-    {
+    public WebItemModuleDescriptor createModuleDescriptor(BlueprintModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
         Element webItemElement = new DOMElement("web-item");
 
         String webItemKey = BlueprintUtils.getWebItemKey(addon, bean);
@@ -68,8 +65,7 @@ public class BlueprintWebItemModuleDescriptorFactory
 
         webItemElement.addAttribute("system", "true");
 
-        if (log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(webItemElement));
         }
 

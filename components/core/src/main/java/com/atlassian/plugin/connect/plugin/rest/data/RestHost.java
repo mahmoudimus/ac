@@ -8,8 +8,7 @@ import java.util.List;
 /**
  * A representation of an add-on license for the REST API.
  */
-public class RestHost
-{
+public class RestHost {
 
     @JsonProperty
     private final String product;
@@ -17,19 +16,16 @@ public class RestHost
     @JsonProperty
     private final List<RestContact> contacts;
 
-    public RestHost(String product, List<RestContact> contacts)
-    {
+    public RestHost(String product, List<RestContact> contacts) {
         this.product = product;
         this.contacts = contacts;
     }
 
-    public String getProduct()
-    {
+    public String getProduct() {
         return product;
     }
 
-    public List<RestContact> getContacts()
-    {
+    public List<RestContact> getContacts() {
         return contacts;
     }
 }

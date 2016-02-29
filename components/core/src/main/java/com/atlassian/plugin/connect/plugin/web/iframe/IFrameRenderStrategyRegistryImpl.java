@@ -22,36 +22,31 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKey
  */
 @Component
 @ExportAsDevService
-public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyRegistry, InitializingBean, DisposableBean
-{
+public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyRegistry, InitializingBean, DisposableBean {
     private final EventPublisher eventPublisher;
 
     // all updates to the store or the contained maps should syncrhonize on 'store'
     private final Map<String, Map<String, IFrameRenderStrategy>> store = Maps.newConcurrentMap();
 
     @Autowired
-    public IFrameRenderStrategyRegistryImpl(EventPublisher eventPublisher)
-    {
+    public IFrameRenderStrategyRegistryImpl(EventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 
     @Override
-    public void unregisterAll(final String addonKey)
-    {
+    public void unregisterAll(final String addonKey) {
         synchronized (store) {
             store.remove(addonKey);
         }
     }
 
     @Override
-    public void register(final String addonKey, final String moduleKey, final IFrameRenderStrategy strategy)
-    {
+    public void register(final String addonKey, final String moduleKey, final IFrameRenderStrategy strategy) {
         register(addonKey, moduleKey, null, strategy);
     }
 
     @Override
-    public void register(final String addonKey, final String moduleKey, final String classifier, final IFrameRenderStrategy strategy)
-    {
+    public void register(final String addonKey, final String moduleKey, final String classifier, final IFrameRenderStrategy strategy) {
         synchronized (store) {
             Map<String, IFrameRenderStrategy> addonMap = store.get(addonKey);
             if (addonMap == null) {
@@ -63,31 +58,26 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
     }
 
     @Override
-    public IFrameRenderStrategy get(final String addonKey, final String moduleKey)
-    {
+    public IFrameRenderStrategy get(final String addonKey, final String moduleKey) {
         return get(addonKey, moduleKey, null);
     }
 
     @Override
-    public IFrameRenderStrategy get(final String addonKey, final String moduleKey, final String classifier)
-    {
+    public IFrameRenderStrategy get(final String addonKey, final String moduleKey, final String classifier) {
         Map<String, IFrameRenderStrategy> addonEndpoints = store.get(addonKey);
         return addonEndpoints == null ? null : addonEndpoints.get(composeKey(moduleKeyOnly(addonKey, moduleKey), classifier));
     }
 
     @Override
-    public IFrameRenderStrategy getOrThrow(final String addonKey, final String moduleKey) throws IllegalStateException
-    {
+    public IFrameRenderStrategy getOrThrow(final String addonKey, final String moduleKey) throws IllegalStateException {
         return getOrThrow(addonKey, moduleKey, null);
     }
 
     @Override
     public IFrameRenderStrategy getOrThrow(final String addonKey, final String moduleKey, final String classifier)
-            throws IllegalStateException
-    {
+            throws IllegalStateException {
         IFrameRenderStrategy strategy = get(addonKey, moduleKey, classifier);
-        if (strategy == null)
-        {
+        if (strategy == null) {
             throw new IllegalStateException(String.format("No %s registered for %s:%s",
                     IFrameRenderStrategy.class.getSimpleName(), addonKey, composeKey(moduleKey, classifier)));
         }
@@ -95,25 +85,21 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
     }
 
     @EventListener
-    public void onConnectPluginDisabled(ConnectAddonDisabledEvent event)
-    {
+    public void onConnectPluginDisabled(ConnectAddonDisabledEvent event) {
         unregisterAll(event.getPluginKey());
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception
-    {
+    public void afterPropertiesSet() throws Exception {
         eventPublisher.register(this);
     }
 
     @Override
-    public void destroy() throws Exception
-    {
+    public void destroy() throws Exception {
         eventPublisher.unregister(this);
     }
 
-    private String composeKey(String moduleKey, String classifier)
-    {
+    private String composeKey(String moduleKey, String classifier) {
         return moduleKey + (Strings.isNullOrEmpty(classifier) ? "" : "|" + classifier);
     }
 }

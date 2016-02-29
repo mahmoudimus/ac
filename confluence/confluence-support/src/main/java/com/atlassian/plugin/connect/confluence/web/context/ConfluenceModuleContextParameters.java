@@ -8,9 +8,10 @@ import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 /**
  * @since 1.0
  */
-public interface ConfluenceModuleContextParameters extends ModuleContextParameters
-{
+public interface ConfluenceModuleContextParameters extends ModuleContextParameters {
     void addPage(AbstractPage page);
+
     void addSpace(Space space);
+
     void addContent(ContentEntityObject content);
 }
