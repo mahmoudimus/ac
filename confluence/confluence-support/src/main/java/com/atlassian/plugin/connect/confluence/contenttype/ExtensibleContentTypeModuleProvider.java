@@ -16,8 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @ConfluenceComponent
-public class ExtensibleContentTypeModuleProvider
-        extends AbstractConfluenceConnectModuleProvider<ExtensibleContentTypeModuleBean> {
+public class ExtensibleContentTypeModuleProvider extends AbstractConfluenceConnectModuleProvider<ExtensibleContentTypeModuleBean> {
     private static final ExtensibleContentTypeModuleMeta META = new ExtensibleContentTypeModuleMeta();
 
     private final ExtensibleContentTypeModuleDescriptorFactory extensibleContentTypeModuleDescriptorFactory;
@@ -44,9 +43,9 @@ public class ExtensibleContentTypeModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ExtensibleContentTypeModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ExtensibleContentTypeModuleBean> modules, ConnectAddonBean addon) {
         Plugin plugin = pluginRetrievalService.getPlugin();
-        List<ModuleDescriptor> descriptors = Lists.newArrayList();
+        List<ModuleDescriptor<?>> descriptors = Lists.newArrayList();
 
         for (ExtensibleContentTypeModuleBean bean : modules) {
             descriptors.add(extensibleContentTypeModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin));

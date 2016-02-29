@@ -178,6 +178,7 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
         return SubListResponse.from(treeSortedCCEOs, nextRequest);
     }
 
+    @SuppressWarnings("unchecked")
     private List<CustomContentEntityObject> filterCustomContentEntityObjects(List<CustomContentEntityObject> customContentEntityObjects, Predicate predicate) {
         if (predicate == null) {
             return customContentEntityObjects;
