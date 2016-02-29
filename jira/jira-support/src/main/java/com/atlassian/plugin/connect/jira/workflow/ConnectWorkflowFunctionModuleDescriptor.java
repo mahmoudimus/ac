@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.jira.workflow;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -21,11 +15,15 @@ import com.atlassian.plugin.connect.jira.web.context.JiraModuleContextParameters
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-
 import org.dom4j.Element;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
@@ -34,8 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A ModuleDescriptor for Connect's version of a Jira Workflow Post Function.
  */
-public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor
-{
+public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor {
     public static final String TRIGGERED_URL = "triggeredUrl";
 
     private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
@@ -49,24 +46,21 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
             final ModuleFactory moduleFactory,
             final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry,
-            final DelegatingComponentAccessor componentAccessor)
-    {
+            final DelegatingComponentAccessor componentAccessor) {
         super(authenticationContext, componentAccessor.getComponent(OSWorkflowConfigurator.class),
                 componentAccessor.getComponent(ComponentClassManager.class), moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webHookConsumerRegistry = checkNotNull(webHookConsumerRegistry);
     }
 
-    public void init(Plugin plugin, Element element) throws PluginParseException
-    {
+    public void init(Plugin plugin, Element element) throws PluginParseException {
         super.init(plugin, element);
         this.triggeredUri = URI.create(element.attributeValue(TRIGGERED_URL));
         this.addonKey = addonKeyOnly(getKey());
     }
 
     @Override
-    public void enabled()
-    {
+    public void enabled() {
         super.enabled();
         webHookConsumerRegistry.register(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
@@ -78,8 +72,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     }
 
     @Override
-    public void disabled()
-    {
+    public void disabled() {
         webHookConsumerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 addonKey,
@@ -92,12 +85,10 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     }
 
     @Override
-    public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException
-    {
+    public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()), resourceName);
 
-        if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap()))
-        {
+        if (renderStrategy.shouldShow(Collections.<String, Object>emptyMap())) {
             ModuleContextParameters moduleContext = new JiraModuleContextParametersImpl(startingParams);
             moduleContext.put(
                     JiraModuleContextFilter.POSTFUNCTION_ID,
@@ -108,9 +99,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                     (String) startingParams.get(JiraModuleContextFilter.POSTFUNCTION_CONFIG)
             );
             renderStrategy.render(moduleContext, writer, java.util.Optional.empty());
-        }
-        else
-        {
+        } else {
             renderStrategy.renderAccessDenied(writer);
         }
     }

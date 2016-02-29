@@ -61,8 +61,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 1.0
  */
 @SchemaDefinition("workflowPostFunction")
-public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
-{
+public class WorkflowPostFunctionModuleBean extends RequiredKeyBean {
     /**
      * The description of the workflow post function. This will be presented to the user when they add a new post
      * function to a JIRA workflow.
@@ -160,8 +159,7 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
     @Required
     private UrlBean triggered;
 
-    public WorkflowPostFunctionModuleBean()
-    {
+    public WorkflowPostFunctionModuleBean() {
         this.description = new I18nProperty("", "");
         this.view = null;
         this.edit = null;
@@ -169,81 +167,65 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
         this.triggered = null;
     }
 
-    public WorkflowPostFunctionModuleBean(WorkflowPostFunctionModuleBeanBuilder builder)
-    {
+    public WorkflowPostFunctionModuleBean(WorkflowPostFunctionModuleBeanBuilder builder) {
         super(builder);
 
-        if (null == description)
-        {
+        if (null == description) {
             this.description = new I18nProperty("", "");
         }
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public UrlBean getView()
-    {
+    public UrlBean getView() {
         return view;
     }
 
-    public boolean hasView()
-    {
+    public boolean hasView() {
         return null != view;
     }
 
-    public UrlBean getEdit()
-    {
+    public UrlBean getEdit() {
         return edit;
     }
 
-    public boolean hasEdit()
-    {
+    public boolean hasEdit() {
         return null != edit;
     }
 
-    public UrlBean getCreate()
-    {
+    public UrlBean getCreate() {
         return create;
     }
 
-    public boolean hasCreate()
-    {
+    public boolean hasCreate() {
         return null != create;
     }
 
-    public UrlBean getTriggered()
-    {
+    public UrlBean getTriggered() {
         return triggered;
     }
 
-    public boolean hasTriggered()
-    {
+    public boolean hasTriggered() {
         return null != triggered;
     }
 
-    public static WorkflowPostFunctionModuleBeanBuilder newWorkflowPostFunctionBean()
-    {
+    public static WorkflowPostFunctionModuleBeanBuilder newWorkflowPostFunctionBean() {
         return new WorkflowPostFunctionModuleBeanBuilder();
     }
 
-    public static WorkflowPostFunctionModuleBeanBuilder newWorkflowPostFunctionBean(WorkflowPostFunctionModuleBean defaultBean)
-    {
+    public static WorkflowPostFunctionModuleBeanBuilder newWorkflowPostFunctionBean(WorkflowPostFunctionModuleBean defaultBean) {
         return new WorkflowPostFunctionModuleBeanBuilder(defaultBean);
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof WorkflowPostFunctionModuleBean && super.equals(otherObj)))
-        {
+        if (!(otherObj instanceof WorkflowPostFunctionModuleBean && super.equals(otherObj))) {
             return false;
         }
 
@@ -259,8 +241,7 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(13, 61)
                 .appendSuper(super.hashCode())
                 .append(description)

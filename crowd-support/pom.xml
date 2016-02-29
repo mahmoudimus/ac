@@ -3,20 +3,12 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.77-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-crowd-support</artifactId>
     <name>Atlassian Connect - Crowd Support</name>
-
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
 
     <dependencies>
         <dependency>
@@ -85,6 +77,14 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
 
         <!--Test Dependencies-->
     <dependency>
@@ -104,7 +104,6 @@
     <dependency>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>atlassian-plugins-api</artifactId>
-        <version>${atlassian.plugins.version}</version>
         <scope>test</scope>
     </dependency>
         <dependency>

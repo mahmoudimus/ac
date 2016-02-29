@@ -11,8 +11,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  * Represents the data that an addon will receive with lifecycle events.
  */
-public class ConnectAddonEventData extends BaseModuleBean
-{
+public class ConnectAddonEventData extends BaseModuleBean {
     private Map<String, String> links;
     //this is the plugin key
     private String key;
@@ -30,8 +29,7 @@ public class ConnectAddonEventData extends BaseModuleBean
     private String eventType;
 
 
-    public ConnectAddonEventData()
-    {
+    public ConnectAddonEventData() {
         this.key = "";
         this.links = newHashMap();
         this.clientKey = "";
@@ -47,152 +45,120 @@ public class ConnectAddonEventData extends BaseModuleBean
         this.eventType = "";
     }
 
-    public ConnectAddonEventData(ConnectAddonEventDataBuilder builder)
-    {
+    public ConnectAddonEventData(ConnectAddonEventDataBuilder builder) {
         super(builder);
 
-        if (null == key)
-        {
+        if (null == key) {
             this.key = "";
         }
 
-        if (null == links)
-        {
+        if (null == links) {
             this.links = newHashMap();
         }
-        if (null == clientKey)
-        {
+        if (null == clientKey) {
             this.clientKey = "";
         }
-        if (null == publicKey)
-        {
+        if (null == publicKey) {
             this.publicKey = "";
         }
-        if (null == sharedSecret)
-        {
+        if (null == sharedSecret) {
             this.sharedSecret = "";
         }
-        if (null == serverVersion)
-        {
+        if (null == serverVersion) {
             this.serverVersion = "";
         }
-        if (null == pluginsVersion)
-        {
+        if (null == pluginsVersion) {
             this.pluginsVersion = "";
         }
-        if (null == baseUrl)
-        {
+        if (null == baseUrl) {
             this.baseUrl = "";
         }
-        if (null == productType)
-        {
+        if (null == productType) {
             this.productType = "";
         }
-        if (null == description)
-        {
+        if (null == description) {
             this.description = "";
         }
-        if (null == userKey)
-        {
+        if (null == userKey) {
             this.userKey = "";
         }
-        if (null == serviceEntitlementNumber)
-        {
+        if (null == serviceEntitlementNumber) {
             this.serviceEntitlementNumber = "";
         }
-        if (null == eventType)
-        {
+        if (null == eventType) {
             this.eventType = "";
         }
     }
 
-    public Map<String, String> getLinks()
-    {
+    public Map<String, String> getLinks() {
         return links;
     }
 
-    public String getPluginKey()
-    {
+    public String getPluginKey() {
         return key;
     }
 
-    public String getClientKey()
-    {
+    public String getClientKey() {
         return clientKey;
     }
 
-    public String getPublicKey()
-    {
+    public String getPublicKey() {
         return publicKey;
     }
 
-    public String getSharedSecret()
-    {
+    public String getSharedSecret() {
         return sharedSecret;
     }
 
-    public String getServerVersion()
-    {
+    public String getServerVersion() {
         return serverVersion;
     }
 
-    public String getPluginsVersion()
-    {
+    public String getPluginsVersion() {
         return pluginsVersion;
     }
 
-    public String getBaseUrl()
-    {
+    public String getBaseUrl() {
         return baseUrl;
     }
 
-    public String getProductType()
-    {
+    public String getProductType() {
         return productType;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     @Deprecated // Not to be used with JWT
-    public String getUserKey()
-    {
+    public String getUserKey() {
         return userKey;
     }
 
-    public String getServiceEntitlementNumber()
-    {
+    public String getServiceEntitlementNumber() {
         return serviceEntitlementNumber;
     }
 
-    public String getEventType()
-    {
+    public String getEventType() {
         return eventType;
     }
 
-    public static ConnectAddonEventDataBuilder newConnectAddonEventData()
-    {
+    public static ConnectAddonEventDataBuilder newConnectAddonEventData() {
         return new ConnectAddonEventDataBuilder();
     }
 
-    public static ConnectAddonEventDataBuilder newConnectAddonEventData(ConnectAddonEventData defaultBean)
-    {
+    public static ConnectAddonEventDataBuilder newConnectAddonEventData(ConnectAddonEventData defaultBean) {
         return new ConnectAddonEventDataBuilder(defaultBean);
     }
 
     // don't call super because BaseModuleBean has no data
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof ConnectAddonEventData))
-        {
+        if (!(otherObj instanceof ConnectAddonEventData)) {
             return false;
         }
 
@@ -217,8 +183,7 @@ public class ConnectAddonEventData extends BaseModuleBean
 
     // don't call super because BaseAddonBean has no data
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(41, 7)
                 .append(key)
                 .append(links)

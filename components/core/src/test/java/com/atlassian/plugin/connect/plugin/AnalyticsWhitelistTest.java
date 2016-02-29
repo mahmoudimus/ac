@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin;
 
+import com.atlassian.plugin.connect.test.AnalyticsWhitelistTestHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,46 +22,39 @@ import static org.hamcrest.collection.IsMapContaining.hasKey;
  * Syntax errors and typos in the whitelist JSON will be caught.
  */
 @RunWith(Parameterized.class)
-public class AnalyticsWhitelistTest
-{
+public class AnalyticsWhitelistTest {
     private static Map<String, List<String>> eventClassFields = new HashMap<>();
 
     private final String eventName;
     private final List<String> whiteListedFields;
 
-    public AnalyticsWhitelistTest(String eventName, List<String> whiteListedFields)
-    {
+    public AnalyticsWhitelistTest(String eventName, List<String> whiteListedFields) {
         this.eventName = eventName;
         this.whiteListedFields = whiteListedFields;
     }
 
     @Parameterized.Parameters(name = "Event {0}")
-    public static Collection<Object[]> testData() throws IOException
-    {
+    public static Collection<Object[]> testData() throws IOException {
         Map<String, List<String>> whiteList = AnalyticsWhitelistTestHelper.getAnalyticsWhitelistFrom("/analytics/connect-analytics-whitelist.json");
         Collection<Object[]> toTest = new ArrayList<>();
-        for (Map.Entry<String, List<String>> entry : whiteList.entrySet())
-        {
+        for (Map.Entry<String, List<String>> entry : whiteList.entrySet()) {
             toTest.add(new Object[]{entry.getKey(), entry.getValue()});
         }
         return toTest;
     }
 
     @BeforeClass
-    public static void collectEventClasses()
-    {
+    public static void collectEventClasses() {
         eventClassFields.putAll(AnalyticsWhitelistTestHelper.reflectAllEventClassesFrom("com.atlassian.plugin.connect.plugin"));
     }
 
     @Test
-    public void whiteListEventNameMatchesClassAnnotation()
-    {
+    public void whiteListEventNameMatchesClassAnnotation() {
         assertThat(eventClassFields, hasKey(eventName));
     }
 
     @Test
-    public void whiteListAttributesMatchFields()
-    {
+    public void whiteListAttributesMatchFields() {
         // make hamcrest happy
         String[] jsonWhitelistFields = whiteListedFields.toArray(new String[whiteListedFields.size()]);
         assertThat(eventClassFields.get(eventName), hasItems(jsonWhitelistFields));

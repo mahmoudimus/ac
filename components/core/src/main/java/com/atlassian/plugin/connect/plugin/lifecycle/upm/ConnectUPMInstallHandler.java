@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.lifecycle.upm;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectAddonInstallException;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.lifecycle.ConnectAddonInstaller;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.api.util.Option;
@@ -29,35 +29,28 @@ import java.io.IOException;
  */
 @ExportAsService(PluginInstallHandler.class)
 @Named
-public class ConnectUPMInstallHandler implements PluginInstallHandler
-{
+public class ConnectUPMInstallHandler implements PluginInstallHandler {
     private static final Logger log = LoggerFactory.getLogger(ConnectUPMInstallHandler.class);
 
     private final ConnectAddonInstaller connectInstaller;
 
     @Inject
-    public ConnectUPMInstallHandler(ConnectAddonInstaller connectInstaller)
-    {
+    public ConnectUPMInstallHandler(ConnectAddonInstaller connectInstaller) {
         this.connectInstaller = connectInstaller;
     }
 
     @Override
-    public boolean canInstallPlugin(File descriptorFile, Option<String> contentType)
-    {
+    public boolean canInstallPlugin(File descriptorFile, Option<String> contentType) {
         boolean canInstall;
 
-        try
-        {
+        try {
             String json = Files.toString(descriptorFile, Charsets.UTF_8);
             canInstall = isConnectJson(descriptorFile, contentType, json);
 
-            if (!canInstall)
-            {
+            if (!canInstall) {
                 log.error("The given plugin descriptor is not a valid connect json file");
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             log.error("Cannot load descriptor " + descriptorFile.getName(), e);
             canInstall = false;
         }
@@ -67,22 +60,17 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         return canInstall;
     }
 
-    private boolean isConnectJson(File descriptorFile, Option<String> contentType, String json)
-    {
+    private boolean isConnectJson(File descriptorFile, Option<String> contentType, String json) {
         Gson gson = new Gson();
         boolean valid = false;
 
-        try
-        {
+        try {
             JsonElement root = gson.fromJson(json, JsonElement.class);
-            if (root.isJsonObject())
-            {
+            if (root.isJsonObject()) {
                 JsonObject jobj = root.getAsJsonObject();
                 valid = (jobj.has(ConnectAddonBean.KEY_ATTR) && jobj.has(ConnectAddonBean.BASE_URL_ATTR));
             }
-        }
-        catch (JsonSyntaxException e)
-        {
+        } catch (JsonSyntaxException e) {
             // Don't fail just yet, maybe it *is* a Connect descriptor and just malformed.
             // We can report this case only if we actually get to the install handler.
             // This is a workaround for https://ecosystem.atlassian.net/browse/UPM-4356
@@ -94,20 +82,15 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         return valid;
     }
 
-    private static boolean isJsonContentType(File descriptorFile, Option<String> contentType)
-    {
+    private static boolean isJsonContentType(File descriptorFile, Option<String> contentType) {
         return matchesContentType(contentType, "application/json", "text/json")
                 || descriptorFile.getName().toLowerCase().endsWith(".json");
     }
 
-    private static boolean matchesContentType(Option<String> actualContentType, String... desiredContentType)
-    {
-        for (String contentType : actualContentType)
-        {
-            for (String desired : desiredContentType)
-            {
-                if (contentType.equals(desired) || contentType.startsWith(desired + ";"))
-                {
+    private static boolean matchesContentType(Option<String> actualContentType, String... desiredContentType) {
+        for (String contentType : actualContentType) {
+            for (String desired : desiredContentType) {
+                if (contentType.equals(desired) || contentType.startsWith(desired + ";")) {
                     return true;
                 }
             }
@@ -115,8 +98,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         return false;
     }
 
-    private boolean isMalformedConnectJson(String descriptor)
-    {
+    private boolean isMalformedConnectJson(String descriptor) {
         String trimmedJson = descriptor.trim();
         return trimmedJson.startsWith("{")
                 && trimmedJson.endsWith("}")
@@ -124,37 +106,29 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
                 && containsJsonProperty(trimmedJson, ConnectAddonBean.BASE_URL_ATTR);
     }
 
-    private boolean containsJsonProperty(String descriptor, String property)
-    {
+    private boolean containsJsonProperty(String descriptor, String property) {
         return descriptor.contains("\"" + property + "\"");
     }
 
     @Override
-    public PluginInstallResult installPlugin(File descriptorFile, Option<String> contentType) throws PluginInstallException
-    {
-        try
-        {
+    public PluginInstallResult installPlugin(File descriptorFile, Option<String> contentType) throws PluginInstallException {
+        try {
             String json = Files.toString(descriptorFile, Charsets.UTF_8);
             Plugin plugin = connectInstaller.install(json);
 
             return new PluginInstallResult(plugin);
-        }
-        catch (ConnectAddonInstallException e)
-        {
+        } catch (ConnectAddonInstallException e) {
             Throwable cause = e.getCause();
             Throwables.propagateIfInstanceOf(cause, PluginInstallException.class);
 
             // translate the internal exception to one that UPM understands
             PluginInstallException exception = e.getI18nKey() == null ? new PluginInstallException(e.getMessage()) :
                     new PluginInstallException(e.getMessage(), e.getI18nKey(), e.getI18nArgs());
-            if (cause != null)
-            {
+            if (cause != null) {
                 exception.initCause(cause);
             }
             throw exception;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // pretty sure if we end up here Connect has done something wrong, not the add-on, so let's describe it as
             // an internal error and recommend contacting Atlassian support.
             log.error("Failed to install " + descriptorFile.getName() + ": " + e.getMessage(), e);

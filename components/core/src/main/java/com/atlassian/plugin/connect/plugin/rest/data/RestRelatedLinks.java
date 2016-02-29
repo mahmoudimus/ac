@@ -13,41 +13,33 @@ import java.util.Map;
  * @since 1.1.0
  */
 @JsonSerialize
-public class RestRelatedLinks extends RestMapEntity
-{
+public class RestRelatedLinks extends RestMapEntity {
     public static final String RELATIONSHIP_SELF = "self";
 
-    private RestRelatedLinks(Map<String, Collection<RestNamedLink>> relations)
-    {
+    private RestRelatedLinks(Map<String, Collection<RestNamedLink>> relations) {
         putAll(relations);
     }
 
-    public static class Builder
-    {
+    public static class Builder {
         private Map<String, Collection<RestNamedLink>> relatedLinks = Maps.newHashMap();
 
-        public Builder addRelatedLinks(String relationship, Collection<RestNamedLink> links)
-        {
+        public Builder addRelatedLinks(String relationship, Collection<RestNamedLink> links) {
             getExisting(relationship).addAll(links);
             return this;
         }
 
-        public Builder addRelatedLink(String relationship, RestNamedLink link)
-        {
+        public Builder addRelatedLink(String relationship, RestNamedLink link) {
             getExisting(relationship).add(link);
             return this;
         }
 
-        public RestRelatedLinks build()
-        {
+        public RestRelatedLinks build() {
             return new RestRelatedLinks(relatedLinks);
         }
 
-        private Collection<RestNamedLink> getExisting(String relationship)
-        {
+        private Collection<RestNamedLink> getExisting(String relationship) {
             Collection<RestNamedLink> existing = relatedLinks.get(relationship);
-            if (existing == null)
-            {
+            if (existing == null) {
                 existing = Sets.newHashSet();
                 relatedLinks.put(relationship, existing);
             }

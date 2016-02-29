@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
-public interface AddonTestFilterResults
-{
+public interface AddonTestFilterResults {
 
     void put(String key, ServletRequestSnapshot req);
 

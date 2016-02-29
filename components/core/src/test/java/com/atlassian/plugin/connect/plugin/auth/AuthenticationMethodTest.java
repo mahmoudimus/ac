@@ -6,11 +6,9 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class AuthenticationMethodTest
-{
+public class AuthenticationMethodTest {
     @Test
-    public void jwtAuthMethodHasExpectedToStringValue()
-    {
+    public void jwtAuthMethodHasExpectedToStringValue() {
         assertThat(AuthenticationMethod.JWT.toString(), is(JwtConstants.AppLinks.JWT_AUTH_METHOD_NAME));
     }
 }

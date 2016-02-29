@@ -43,9 +43,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class ConnectEntityPropertyModuleDescriptorFactoryTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class ConnectEntityPropertyModuleDescriptorFactoryTest {
     public static final String PROPERTY_KEY = "attachment";
     public static final String SIZE_EXTRACTOR = "size";
     public static final String EXTENSION_EXTRACTOR = "extension";
@@ -54,19 +53,24 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     @Rule
     public RuleChain mocksInContainer = MockitoMocksInContainer.forTest(this);
 
-    @Mock private ConnectContainerUtil autowireUtil;
-    @Mock private Plugin plugin;
-    @Mock private BundleContext bundleContext;
-    @Mock private JiraAuthenticationContext authContext;
-    @Mock private ModuleFactory moduleFactory;
-    @AvailableInContainer private final IndexDocumentConfigurationFactory indexDocumentConfigurationFactory = new IndexDocumentConfigurationFactory();
+    @Mock
+    private ConnectContainerUtil autowireUtil;
+    @Mock
+    private Plugin plugin;
+    @Mock
+    private BundleContext bundleContext;
+    @Mock
+    private JiraAuthenticationContext authContext;
+    @Mock
+    private ModuleFactory moduleFactory;
+    @AvailableInContainer
+    private final IndexDocumentConfigurationFactory indexDocumentConfigurationFactory = new IndexDocumentConfigurationFactory();
 
     private EntityPropertyIndexDocumentModuleDescriptor moduleDescriptor;
     private ConnectAddonBean addon;
-    
+
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.addon = newConnectAddonBean().withKey("com.atlassian.plugin.key").build();
         when(plugin.getKey()).thenReturn("com.atlassian.plugin.key");
         ConnectEntityPropertyModuleDescriptorFactory factory = new ConnectEntityPropertyModuleDescriptorFactory(autowireUtil);
@@ -78,20 +82,17 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     }
 
     @Test
-    public void entityKeyIsCorrect()
-    {
+    public void entityKeyIsCorrect() {
         assertThat(moduleDescriptor.getIndexDocumentConfiguration().getEntityKey(), is(EntityPropertyType.issue.getValue()));
     }
 
     @Test
-    public void completeKeyIsCorrect()
-    {
-        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + addonAndModuleKey(addon.getKey(),"attachment-indexing")));
+    public void completeKeyIsCorrect() {
+        assertThat(moduleDescriptor.getCompleteKey(), startsWith(addon.getKey() + ":" + addonAndModuleKey(addon.getKey(), "attachment-indexing")));
     }
 
     @Test
-    public void keyConfigurationIsCorrect()
-    {
+    public void keyConfigurationIsCorrect() {
         List<KeyConfiguration> keyConfigurations =
                 moduleDescriptor.getIndexDocumentConfiguration().getKeyConfigurations();
 
@@ -100,8 +101,7 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     }
 
     @Test
-    public void extractorsAreCorrect()
-    {
+    public void extractorsAreCorrect() {
         List<ExtractConfiguration> extractors =
                 moduleDescriptor.getIndexDocumentConfiguration().getKeyConfigurations().get(0).getExtractorConfigurations();
 
@@ -114,13 +114,11 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     }
 
     @Test
-    public void i18nKeyIsCorrect()
-    {
+    public void i18nKeyIsCorrect() {
         assertThat(moduleDescriptor.getI18nNameKey(), is(I18N_KEY));
     }
 
-    private EntityPropertyModuleBean createBean()
-    {
+    private EntityPropertyModuleBean createBean() {
         ImmutableList<EntityPropertyIndexExtractionConfigurationBean> extractionConfigurationBeans = ImmutableList.of(
                 new EntityPropertyIndexExtractionConfigurationBean(SIZE_EXTRACTOR, EntityPropertyIndexType.number),
                 new EntityPropertyIndexExtractionConfigurationBean(EXTENSION_EXTRACTOR, EntityPropertyIndexType.string));

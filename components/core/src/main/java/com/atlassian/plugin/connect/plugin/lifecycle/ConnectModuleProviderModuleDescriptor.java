@@ -9,25 +9,20 @@ import com.atlassian.util.concurrent.Supplier;
 
 import static com.atlassian.plugin.util.validation.ValidationPattern.test;
 
-public class ConnectModuleProviderModuleDescriptor extends AbstractModuleDescriptor<ConnectModuleProvider>
-{
-    private final Supplier<ConnectModuleProvider> moduleLazyReference = new ResettableLazyReference<ConnectModuleProvider>()
-    {
+public class ConnectModuleProviderModuleDescriptor extends AbstractModuleDescriptor<ConnectModuleProvider<?>> {
+    private final Supplier<ConnectModuleProvider> moduleLazyReference = new ResettableLazyReference<ConnectModuleProvider>() {
         @Override
-        protected ConnectModuleProvider create() throws Exception
-        {
+        protected ConnectModuleProvider create() throws Exception {
             return moduleFactory.createModule(moduleClassName, ConnectModuleProviderModuleDescriptor.this);
         }
     };
 
-    public ConnectModuleProviderModuleDescriptor(final ModuleFactory moduleFactory)
-    {
+    public ConnectModuleProviderModuleDescriptor(final ModuleFactory moduleFactory) {
         super(moduleFactory);
     }
 
     @Override
-    protected void provideValidationRules(ValidationPattern pattern)
-    {
+    protected void provideValidationRules(ValidationPattern pattern) {
         super.provideValidationRules(pattern);
         pattern
                 .rule(
@@ -36,8 +31,7 @@ public class ConnectModuleProviderModuleDescriptor extends AbstractModuleDescrip
     }
 
     @Override
-    public ConnectModuleProvider getModule()
-    {
+    public ConnectModuleProvider getModule() {
         return moduleLazyReference.get();
     }
 }

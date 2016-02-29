@@ -8,10 +8,8 @@ import org.openqa.selenium.By;
 /**
  *
  */
-public class ConnectConfluenceAdminHomePage extends ConfluenceAdminHomePage
-{
-    public PageElement getWebItem(String pageKey)
-    {
+public class ConnectConfluenceAdminHomePage extends ConfluenceAdminHomePage {
+    public PageElement getWebItem(String pageKey) {
         return pageElementFinder.find(By.id(pageKey), TimeoutType.DEFAULT);
     }
 }

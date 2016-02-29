@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class DynamicContentMacroModuleMeta extends ConnectModuleMeta<DynamicContentMacroModuleBean>
-{
+public class DynamicContentMacroModuleMeta extends ConnectModuleMeta<DynamicContentMacroModuleBean> {
 
-    public DynamicContentMacroModuleMeta()
-    {
+    public DynamicContentMacroModuleMeta() {
         super("dynamicContentMacros", DynamicContentMacroModuleBean.class);
     }
 }

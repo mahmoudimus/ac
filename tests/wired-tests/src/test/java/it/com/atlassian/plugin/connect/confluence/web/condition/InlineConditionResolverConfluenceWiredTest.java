@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import com.atlassian.confluence.mail.notification.NotificationManager;
 import com.atlassian.confluence.pages.Page;
@@ -23,13 +22,16 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.user.User;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestUtil;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import it.com.atlassian.plugin.connect.confluence.util.ConfluenceTestUtil;
 
 import static com.atlassian.fugue.Pair.pair;
 import static java.util.Collections.emptyMap;
@@ -37,10 +39,9 @@ import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Application ("confluence")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class InlineConditionResolverConfluenceWiredTest
-{
+@Application("confluence")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class InlineConditionResolverConfluenceWiredTest {
     private final static List<Pair<Pair<String, Optional<Boolean>>, Map<String, String>>> CONDITIONS = ImmutableList.<Pair<Pair<String, Optional<Boolean>>, Map<String, String>>>builder()
             .add(pair(pair("active_theme", Optional.of(true)), ImmutableMap.of("themes", "")))
             .add(pair(pair("can_edit_space_styles", Optional.of(true)), emptyMap()))
@@ -95,8 +96,7 @@ public class InlineConditionResolverConfluenceWiredTest
     private Page page;
     private Space space;
 
-    public InlineConditionResolverConfluenceWiredTest(final InlineConditionResolver inlineConditionResolver, final WebFragmentModuleContextExtractor extractor, final TestAuthenticator testAuthenticator, final ConfluenceTestUtil confluenceTestUtil, final ThemeManager themeManager, final HttpContext httpContext, final SettingsManager settingsManager, final FavouriteManager favouriteManager, final NotificationManager notificationManager)
-    {
+    public InlineConditionResolverConfluenceWiredTest(final InlineConditionResolver inlineConditionResolver, final WebFragmentModuleContextExtractor extractor, final TestAuthenticator testAuthenticator, final ConfluenceTestUtil confluenceTestUtil, final ThemeManager themeManager, final HttpContext httpContext, final SettingsManager settingsManager, final FavouriteManager favouriteManager, final NotificationManager notificationManager) {
         this.inlineConditionResolver = inlineConditionResolver;
         this.extractor = extractor;
         this.testAuthenticator = testAuthenticator;
@@ -109,8 +109,7 @@ public class InlineConditionResolverConfluenceWiredTest
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         final User user = confluenceTestUtil.getAdmin();
         testAuthenticator.authenticateUser(user.getName());
 
@@ -124,35 +123,24 @@ public class InlineConditionResolverConfluenceWiredTest
     }
 
     @Test
-    public void testAllConditionsAreTested() throws Exception
-    {
-        Set<String> allConditions = conditionClassResolver.getEntries().stream().map(new Function<ConnectConditionClassResolver.Entry, String>()
-        {
-            @Override
-            public String apply(final ConnectConditionClassResolver.Entry entry)
-            {
-                return entry.getConditionName();
-            }
-        }).collect(toSet());
-        Set<String> testedConditions = CONDITIONS.stream().map(new Function<Pair<Pair<String, Optional<Boolean>>, Map<String, String>>, String>()
-        {
-            @Override
-            public String apply(final Pair<Pair<String, Optional<Boolean>>, Map<String, String>> pair)
-            {
-                return pair.left().left();
-            }
-        }).collect(toSet());
+    public void testAllConditionsAreTested() throws Exception {
+        Set<String> allConditions = conditionClassResolver.getEntries().stream()
+                .map(ConnectConditionClassResolver.Entry::getConditionName)
+                .collect(toSet());
+
+        Set<String> testedConditions = CONDITIONS.stream()
+                .map(pair -> pair.left().left())
+                .collect(toSet());
+
         Sets.SetView<String> untestedConditions = Sets.difference(allConditions, testedConditions);
         assertTrue("All conditions should be tested, untested conditions: " + untestedConditions, untestedConditions.isEmpty());
     }
 
     @Test
-    public void testConditions() throws Exception
-    {
+    public void testConditions() throws Exception {
         Map<String, Object> reversedContext = extractor.reverseExtraction(httpContext.getRequest(), redirectContext());
 
-        for (Pair<Pair<String, Optional<Boolean>>, Map<String, String>> conditionAndParams : CONDITIONS)
-        {
+        for (Pair<Pair<String, Optional<Boolean>>, Map<String, String>> conditionAndParams : CONDITIONS) {
             String name = conditionAndParams.left().left();
             Optional<Boolean> expectedValue = conditionAndParams.left().right();
             Map<String, String> params = conditionAndParams.right();
@@ -162,8 +150,7 @@ public class InlineConditionResolverConfluenceWiredTest
         }
     }
 
-    private Map<String, String> redirectContext()
-    {
+    private Map<String, String> redirectContext() {
         return ImmutableMap.of(
                 "page.id", "" + page.getId(),
                 "space.id", "" + space.getId());

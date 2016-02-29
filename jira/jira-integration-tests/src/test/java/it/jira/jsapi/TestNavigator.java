@@ -1,7 +1,7 @@
 package it.jira.jsapi;
 
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.connect.test.jira.pageobjects.RemoteNavigatorGeneralPage;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import it.jira.JiraWebDriverTestBase;
@@ -13,14 +13,12 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static junit.framework.TestCase.assertEquals;
 
-public class TestNavigator extends JiraWebDriverTestBase
-{
+public class TestNavigator extends JiraWebDriverTestBase {
     private static final String PAGE_KEY = "ac-navigator-general-page";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
-    {
+    public static void startConnectAddOn() throws Exception {
         remotePlugin = new ConnectRunner(JiraWebDriverTestBase.product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
                 .setAuthenticationToNone()
                 .addModules("generalPages",
@@ -36,16 +34,13 @@ public class TestNavigator extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddOn() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddOn() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
-    public RemoteNavigatorGeneralPage visitNavigatorPage()
-    {
+    public RemoteNavigatorGeneralPage visitNavigatorPage() {
         return loginAndVisit(testUserFactory.basicUser(),
                 RemoteNavigatorGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
     }
@@ -58,8 +53,7 @@ public class TestNavigator extends JiraWebDriverTestBase
      * @throws Exception
      */
     @Test
-    public void testNavigatorNotAvailable() throws Exception
-    {
+    public void testNavigatorNotAvailable() throws Exception {
         RemoteNavigatorGeneralPage page = visitNavigatorPage();
         assertEquals("navigator should be a function", "function", page.getMessage("navigator-type"));
         assertEquals("navigator.go should be a function", "function", page.getMessage("navigator-go"));

@@ -10,8 +10,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebItemModuleBeanBuilder, WebItemModuleBean>
-{
+public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebItemModuleBeanBuilder, WebItemModuleBean> {
     private String url;
     private String location;
     private AddonUrlContext context;
@@ -22,13 +21,11 @@ public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuil
     private WebItemTargetBean target;
     private boolean needsEscaping = true;
 
-    public WebItemModuleBeanBuilder()
-    {
+    public WebItemModuleBeanBuilder() {
 
     }
 
-    public WebItemModuleBeanBuilder(WebItemModuleBean defaultBean)
-    {
+    public WebItemModuleBeanBuilder(WebItemModuleBean defaultBean) {
         super(defaultBean);
 
         this.url = defaultBean.getUrl();
@@ -41,74 +38,62 @@ public class WebItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuil
         this.target = defaultBean.getTarget();
     }
 
-    public WebItemModuleBeanBuilder withUrl(String url)
-    {
+    public WebItemModuleBeanBuilder withUrl(String url) {
         this.url = url;
         return this;
     }
 
-    public WebItemModuleBeanBuilder withContext(AddonUrlContext context)
-    {
+    public WebItemModuleBeanBuilder withContext(AddonUrlContext context) {
         this.context = context;
         return this;
     }
 
-    public WebItemModuleBeanBuilder withLocation(String location)
-    {
+    public WebItemModuleBeanBuilder withLocation(String location) {
         this.location = location;
         return this;
     }
 
-    public WebItemModuleBeanBuilder withTarget(WebItemTargetBean target)
-    {
+    public WebItemModuleBeanBuilder withTarget(WebItemTargetBean target) {
         this.target = target;
         return this;
     }
 
-    public WebItemModuleBeanBuilder withWeight(int weight)
-    {
+    public WebItemModuleBeanBuilder withWeight(int weight) {
         this.weight = weight;
         return this;
     }
 
-    public WebItemModuleBeanBuilder withStyleClasses(List<String> styleClasses)
-    {
+    public WebItemModuleBeanBuilder withStyleClasses(List<String> styleClasses) {
         this.styleClasses = styleClasses;
         return this;
     }
 
-    public WebItemModuleBeanBuilder withStyleClasses(String... styleClasses)
-    {
+    public WebItemModuleBeanBuilder withStyleClasses(String... styleClasses) {
         this.styleClasses = newArrayList(styleClasses);
         return this;
     }
 
-    public WebItemModuleBeanBuilder withTooltip(I18nProperty tooltip)
-    {
+    public WebItemModuleBeanBuilder withTooltip(I18nProperty tooltip) {
         this.tooltip = tooltip;
         return this;
     }
 
-    public WebItemModuleBeanBuilder withIcon(IconBean icon)
-    {
+    public WebItemModuleBeanBuilder withIcon(IconBean icon) {
         this.icon = icon;
         return this;
     }
 
-    public WebItemModuleBeanBuilder setNeedsEscaping(boolean needsEscaping)
-    {
+    public WebItemModuleBeanBuilder setNeedsEscaping(boolean needsEscaping) {
         this.needsEscaping = needsEscaping;
         return this;
     }
 
-    public boolean needsEscaping()
-    {
+    public boolean needsEscaping() {
         return needsEscaping;
     }
 
     @Override
-    public WebItemModuleBean build()
-    {
+    public WebItemModuleBean build() {
         return new WebItemModuleBean(this);
     }
 }

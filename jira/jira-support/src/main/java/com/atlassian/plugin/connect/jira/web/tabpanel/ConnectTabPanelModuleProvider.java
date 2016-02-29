@@ -17,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectModuleProvider<ConnectTabPanelModuleBean>
-{
+public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectModuleProvider<ConnectTabPanelModuleBean> {
     protected final PluginRetrievalService pluginRetrievalService;
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
@@ -27,12 +26,11 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectM
 
     @Autowired
     public ConnectTabPanelModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            ConnectTabPanelModuleDescriptorFactory descriptorFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            ConditionLoadingValidator conditionLoadingValidator)
-    {
+                                         ConnectJsonSchemaValidator schemaValidator,
+                                         ConnectTabPanelModuleDescriptorFactory descriptorFactory,
+                                         IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                         IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                         ConditionLoadingValidator conditionLoadingValidator) {
         super(pluginRetrievalService, schemaValidator);
         this.pluginRetrievalService = pluginRetrievalService;
         this.descriptorFactory = descriptorFactory;
@@ -42,18 +40,15 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectM
     }
 
     @Override
-    public List<ConnectTabPanelModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<ConnectTabPanelModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         List<ConnectTabPanelModuleBean> tabPanels = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), tabPanels);
         return tabPanels;
     }
 
-    protected List<ModuleDescriptor> provideModules(ConnectAddonBean addonBean, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints)
-    {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
-        for (ConnectTabPanelModuleBean bean : beans)
-        {
+    protected List<ModuleDescriptor<?>> provideModules(ConnectAddonBean addonBean, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints) {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
+        for (ConnectTabPanelModuleBean bean : beans) {
             descriptors.add(descriptorFactory.createModuleDescriptor(addonBean,
                     pluginRetrievalService.getPlugin(), bean, hints));
             registerIframeRenderStrategy(bean, addonBean);
@@ -61,8 +56,7 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractJiraConnectM
         return descriptors;
     }
 
-    private void registerIframeRenderStrategy(ConnectTabPanelModuleBean tabPanel, ConnectAddonBean connectAddonBean)
-    {
+    private void registerIframeRenderStrategy(ConnectTabPanelModuleBean tabPanel, ConnectAddonBean connectAddonBean) {
         // register a render strategy for tab panels
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addon(connectAddonBean.getKey())

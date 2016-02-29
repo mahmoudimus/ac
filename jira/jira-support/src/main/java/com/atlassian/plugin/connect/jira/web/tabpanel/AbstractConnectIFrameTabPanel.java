@@ -23,25 +23,21 @@ import static com.atlassian.plugin.connect.spi.web.context.WebFragmentModuleCont
 /**
  *
  */
-public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDescriptor, C extends BrowseContext> implements TabPanel<D, C>
-{
+public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDescriptor, C extends BrowseContext> implements TabPanel<D, C> {
     private final IFrameRenderStrategy iFrameRenderStrategy;
     private final ModuleContextFilter moduleContextFilter;
 
-    protected AbstractConnectIFrameTabPanel(IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter)
-    {
+    protected AbstractConnectIFrameTabPanel(IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter) {
         this.iFrameRenderStrategy = iFrameRenderStrategy;
         this.moduleContextFilter = moduleContextFilter;
     }
 
     @Override
-    public void init(final D descriptor)
-    {
+    public void init(final D descriptor) {
     }
 
     @Override
-    public String getHtml(final C ctx)
-    {
+    public String getHtml(final C ctx) {
         // parse and filter module context
         JiraModuleContextParameters unfilteredContext = createUnfilteredContext(ctx);
         ModuleContextParameters filteredContext = moduleContextFilter.filter(unfilteredContext);
@@ -50,16 +46,14 @@ public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDesc
         return renderToString(filteredContext, iFrameRenderStrategy);
     }
 
-    private JiraModuleContextParameters createUnfilteredContext(final C ctx)
-    {
+    private JiraModuleContextParameters createUnfilteredContext(final C ctx) {
         JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl(ctx.createParameterMap());
         populateModuleContext(unfilteredContext, ctx);
         return unfilteredContext;
     }
 
     @Override
-    public boolean showPanel(final C ctx)
-    {
+    public boolean showPanel(final C ctx) {
         // create context for evaluating conditions
         Map<String, Object> conditionContext = Maps.newHashMap();
         populateConditionContext(conditionContext, ctx);
@@ -70,13 +64,11 @@ public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDesc
 
     protected abstract void populateModuleContext(final JiraModuleContextParameters moduleContext, final C ctx);
 
-    protected void populateConditionContext(Map<String, Object> conditionContext, C ctx)
-    {
+    protected void populateConditionContext(Map<String, Object> conditionContext, C ctx) {
         JiraHelper helper = new JiraHelper(ExecutingHttpRequest.get(), ctx.getProject(), ctx.createParameterMap());
         conditionContext.put(CONTEXT_KEY_HELPER, helper);
         ApplicationUser user = ctx.getUser();
-        if (user != null)
-        {
+        if (user != null) {
             conditionContext.put(CONTEXT_KEY_USERNAME, user.getUsername());
         }
         conditionContext.put(MODULE_CONTEXT_KEY, createUnfilteredContext(ctx));

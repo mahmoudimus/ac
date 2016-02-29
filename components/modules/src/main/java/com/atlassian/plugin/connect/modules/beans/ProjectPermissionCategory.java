@@ -7,8 +7,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Optional;
 
-public enum ProjectPermissionCategory
-{
+public enum ProjectPermissionCategory {
     PROJECTS("projects"),
     ISSUES("issues"),
     VOTERS_AND_WATCHERS("voters.and.watchers"),
@@ -19,29 +18,24 @@ public enum ProjectPermissionCategory
 
     private static final Map<String, ProjectPermissionCategory> BY_KEY = Maps.uniqueIndex(
             EnumSet.allOf(ProjectPermissionCategory.class),
-            new Function<ProjectPermissionCategory, String>()
-            {
+            new Function<ProjectPermissionCategory, String>() {
                 @Override
-                public String apply(final ProjectPermissionCategory input)
-                {
+                public String apply(final ProjectPermissionCategory input) {
                     return input.getKey();
                 }
             });
 
     private final String key;
 
-    ProjectPermissionCategory(String key)
-    {
+    ProjectPermissionCategory(String key) {
         this.key = key;
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
-    public static Optional<ProjectPermissionCategory> byKey(String key)
-    {
+    public static Optional<ProjectPermissionCategory> byKey(String key) {
         return Optional.ofNullable(BY_KEY.get(key));
     }
 }

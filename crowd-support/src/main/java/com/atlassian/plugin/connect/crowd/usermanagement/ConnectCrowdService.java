@@ -11,13 +11,12 @@ import java.util.Map;
 import java.util.Set;
 
 public interface ConnectCrowdService
-        extends ConnectAddonUserGroupProvisioningService
-{
+        extends ConnectAddonUserGroupProvisioningService {
     UserCreationResult createOrEnableUser(String username, String displayName,
-            String emailAddress, PasswordCredential passwordCredential);
+                                          String emailAddress, PasswordCredential passwordCredential);
 
     UserCreationResult createOrEnableUser(String username, String displayName,
-            String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes);
+                                          String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes);
 
     void disableUser(String username) throws ConnectAddonDisableException;
 

@@ -11,27 +11,23 @@ import it.com.atlassian.plugin.connect.plugin.auth.scope.AdminScopeTestBase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
-{
+public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase {
     protected final PermissionManager confluencePermissionManager;
 
     public ConfluenceAdminScopeTestBase(TestPluginInstaller testPluginInstaller,
                                         JwtApplinkFinder jwtApplinkFinder,
                                         PermissionManager confluencePermissionManager,
-                                        TestAuthenticator testAuthenticator)
-    {
+                                        TestAuthenticator testAuthenticator) {
         super(testPluginInstaller, jwtApplinkFinder, testAuthenticator);
         this.confluencePermissionManager = checkNotNull(confluencePermissionManager);
     }
 
-    protected ConfluenceUser getUser(String username)
-    {
+    protected ConfluenceUser getUser(String username) {
         return FindUserHelper.getUserByUsername(username);
     }
 
     @Override
-    protected boolean isUserTopLevelAdmin(String username)
-    {
+    protected boolean isUserTopLevelAdmin(String username) {
         // now flush the permissions cache so that it rebuilds to reflect new permission sets
         //
         // this is needed because Confluence's CachingSpacePermissionManager caches permissions in ThreadLocalCache

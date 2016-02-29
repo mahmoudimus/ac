@@ -57,8 +57,7 @@ import java.util.List;
  * @schemaTitle Entity Property
  * @since 1.0
  */
-public class EntityPropertyModuleBean extends RequiredKeyBean
-{
+public class EntityPropertyModuleBean extends RequiredKeyBean {
     /**
      * List of properties from which selected values are indexed.
      */
@@ -67,47 +66,39 @@ public class EntityPropertyModuleBean extends RequiredKeyBean
     /**
      * The type of the entity. The default value is issue.
      */
-    @CommonSchemaAttributes (defaultValue = "issue")
+    @CommonSchemaAttributes(defaultValue = "issue")
     private EntityPropertyType entityType;
 
-    public EntityPropertyModuleBean()
-    {
+    public EntityPropertyModuleBean() {
         this.keyConfigurations = Lists.newArrayList();
         this.entityType = EntityPropertyType.issue;
     }
 
-    public EntityPropertyModuleBean(EntityPropertyModuleBeanBuilder builder)
-    {
+    public EntityPropertyModuleBean(EntityPropertyModuleBeanBuilder builder) {
         super(builder);
 
-        if (null == keyConfigurations)
-        {
+        if (null == keyConfigurations) {
             this.keyConfigurations = Lists.newArrayList();
         }
-        if (null == entityType)
-        {
+        if (null == entityType) {
             this.entityType = EntityPropertyType.issue;
         }
     }
 
-    public List<EntityPropertyIndexKeyConfigurationBean> getKeyConfigurations()
-    {
+    public List<EntityPropertyIndexKeyConfigurationBean> getKeyConfigurations() {
         return keyConfigurations;
     }
 
-    public EntityPropertyType getEntityType()
-    {
+    public EntityPropertyType getEntityType() {
         return entityType;
     }
 
-    public static EntityPropertyModuleBeanBuilder newEntityPropertyModuleBean()
-    {
+    public static EntityPropertyModuleBeanBuilder newEntityPropertyModuleBean() {
         return new EntityPropertyModuleBeanBuilder();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(53, 11)
                 .append(entityType)
                 .append(keyConfigurations)
@@ -115,15 +106,12 @@ public class EntityPropertyModuleBean extends RequiredKeyBean
     }
 
     @Override
-    public boolean equals(final Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(final Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof EntityPropertyModuleBean))
-        {
+        if (!(otherObj instanceof EntityPropertyModuleBean)) {
             return false;
         }
 

@@ -9,6 +9,8 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.util.concurrent.Promise;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.net.URI;
 import java.util.Collections;
@@ -20,8 +22,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public abstract class BaseSigningRemotablePluginAccessorTest
-{
+public abstract class BaseSigningRemotablePluginAccessorTest {
     protected static final String PLUGIN_KEY = "key";
     protected static final String PLUGIN_NAME = "name";
     protected static final String CONTEXT_PATH = "/contextPath";
@@ -32,16 +33,17 @@ public abstract class BaseSigningRemotablePluginAccessorTest
     protected static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
     protected static final String GET_FULL_URL = OUTGOING_FULL_GET_URL;
 
-    protected abstract Map<String, String> getPostSigningHeaders(Map<String,String> preSigningHeaders);
+    @Mock
+    private Promise<String> promiseMock;
 
-    protected ServiceProvider createDummyServiceProvider()
-    {
+    protected abstract Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders);
+
+    protected ServiceProvider createDummyServiceProvider() {
         URI dummyUri = URI.create("http://localhost");
         return new ServiceProvider(dummyUri, dummyUri, dummyUri);
     }
 
-    protected Plugin mockPlugin()
-    {
+    protected Plugin mockPlugin() {
         Plugin plugin = mock(Plugin.class);
         when(plugin.getKey()).thenReturn(PLUGIN_KEY);
         when(plugin.getName()).thenReturn(PLUGIN_NAME);
@@ -49,8 +51,7 @@ public abstract class BaseSigningRemotablePluginAccessorTest
         return plugin;
     }
 
-    protected HttpContentRetriever mockCachingHttpContentRetriever()
-    {
+    protected HttpContentRetriever mockCachingHttpContentRetriever() {
         ConnectHttpClientFactory httpClientFactory = mock(ConnectHttpClientFactory.class);
         HttpClient httpClient = mockHttpClient(mockRequest(EXPECTED_GET_RESPONSE));
         when(httpClientFactory.getInstance()).thenReturn(httpClient);
@@ -58,46 +59,35 @@ public abstract class BaseSigningRemotablePluginAccessorTest
         return new CachingHttpContentRetriever(httpClientFactory);
     }
 
-    private HttpClient mockHttpClient(Request.Builder request)
-    {
+    private HttpClient mockHttpClient(Request.Builder request) {
         HttpClient httpClient = mock(HttpClient.class, RETURNS_DEEP_STUBS);
         when(httpClient.newRequest(GET_FULL_URL)).thenReturn(request);
         when(httpClient.transformation()).thenReturn(DefaultResponseTransformation.builder());
         return httpClient;
     }
 
-    private Request.Builder mockRequest(String promisedHttpResponse)
-    {
+    private Request.Builder mockRequest(String promisedHttpResponse) {
         Request.Builder requestBuilder = mock(Request.Builder.class);
         {
             when(requestBuilder.setHeaders(getPostSigningHeaders(UNAUTHED_GET_HEADERS))).thenReturn(requestBuilder);
-            when(requestBuilder.setAttributes(any(Map.class))).thenReturn(requestBuilder);
+            when(requestBuilder.setAttributes(Mockito.<Map<String, String>>any())).thenReturn(requestBuilder);
             {
                 ResponsePromise responsePromise = mock(ResponsePromise.class);
                 when(requestBuilder.execute(any(Request.Method.class))).thenReturn(responsePromise);
 
                 Promise<String> promise = mockPromise(promisedHttpResponse);
-                when(responsePromise.transform(any(ResponseTransformation.class))).thenReturn(promise);
+                when(responsePromise.transform(Mockito.<ResponseTransformation<String>>any())).thenReturn(promise);
             }
         }
         return requestBuilder;
     }
 
-    private Promise<String> mockPromise(String promisedHttpResponse)
-    {
-        Promise<String> promise = mock(Promise.class);
-        try
-        {
-            when(promise.get()).thenReturn(promisedHttpResponse);
-        }
-        catch (InterruptedException e)
-        {
+    private Promise<String> mockPromise(String promisedHttpResponse) {
+        try {
+            when(promiseMock.get()).thenReturn(promisedHttpResponse);
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-        catch (ExecutionException e)
-        {
-            throw new RuntimeException(e);
-        }
-        return promise;
+        return promiseMock;
     }
 }

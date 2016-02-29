@@ -1,13 +1,5 @@
 package it.confluence.macro;
 
-import java.io.IOException;
-import java.util.concurrent.Callable;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
@@ -28,19 +20,22 @@ import com.atlassian.plugin.connect.test.common.pageobjects.RenderedMacro;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
-
+import it.confluence.MacroStorageFormatBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import it.confluence.MacroStorageFormatBuilder;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
@@ -62,8 +57,7 @@ import static org.hamcrest.core.CombinableMatcher.both;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
 
-public class TestDynamicContentMacro extends AbstractContentMacroTest
-{
+public class TestDynamicContentMacro extends AbstractContentMacroTest {
     private static final String SMALL_INLINE_MACRO_NAME = "Small Inline Macro";
     private static final String SMALL_INLINE_MACRO_KEY = "small-inline-macro";
     private static final String SMALL_INLINE_MACRO_DESCRIPTION = "small-inline-macro-description";
@@ -90,8 +84,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
         String addonKey = AddonTestUtils.randomAddonKey();
 
@@ -105,6 +98,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         DynamicContentMacroModuleBean editorMacro = createEditorMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean hiddenMacro = createHiddenMacro(newDynamicContentMacroModuleBean());
+        DynamicContentMacroModuleBean hiddenParameterMacro = createHiddenParameterMacro(newDynamicContentMacroModuleBean());
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
@@ -161,12 +155,12 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .withKey(DYNAMIC_MACRO_KEY)
                 .withName(new I18nProperty(DYNAMIC_MACRO_NAME, null))
                 .withRenderModes(MacroRenderModesBean.newMacroRenderModesBean()
-                                .withDefaultfallback(
-                                        EmbeddedStaticContentMacroBean
-                                                .newEmbeddedStaticContentMacroModuleBean()
-                                                .withUrl("/dynamic-macro-static")
-                                                .build())
-                                .build()
+                        .withDefaultfallback(
+                                EmbeddedStaticContentMacroBean
+                                        .newEmbeddedStaticContentMacroModuleBean()
+                                        .withUrl("/dynamic-macro-static")
+                                        .build())
+                        .build()
                 )
                 .build();
 
@@ -190,7 +184,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         clientSideBodyEditingMacroScriptInjection,
                         macroInTableMacro,
                         slowMacro,
-                        dynamicMacroWithFallback
+                        dynamicMacroWithFallback,
+                        hiddenParameterMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, helloWorldServlet())
                 .addRoute("/render-editor", macroEditor())
@@ -208,17 +203,14 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testMacroIsRendered() throws Exception
-    {
+    public void testMacroIsRendered() throws Exception {
         ViewPage viewPage = getProduct().login(toConfluenceUser(testUserFactory.basicUser()), ViewPage.class, createPageWithStorageFormatMacro());
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
@@ -226,25 +218,18 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroIsRenderedForAnonymous() throws Exception
-    {
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
-                viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-                RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
-                assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
-                return null;
-            }
+    public void testMacroIsRenderedForAnonymous() throws Exception {
+        runWithAnonymousUsePermission(() -> {
+            ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
+            viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+            RenderedMacro renderedMacro = confluencePageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+            assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
+            return null;
         });
     }
 
     @Test
-    public void testDynamicMacroWithPdfFallback() throws Exception
-    {
+    public void testDynamicMacroWithPdfFallback() throws Exception {
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
         login(testUserFactory.basicUser());
@@ -253,20 +238,14 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
 
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                assertThat(extractPDFText(viewPage), containsString("Hello world"));
-                return null;
-            }
+        runWithAnonymousUsePermission(() -> {
+            assertThat(extractPDFText(viewPage), containsString("Hello world"));
+            return null;
         });
     }
 
     @Test
-    public void testDynamicMacroWithWordFallback() throws Exception
-    {
+    public void testDynamicMacroWithWordFallback() throws Exception {
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
         login(testUserFactory.basicUser());
@@ -275,19 +254,13 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
 
-        runWithAnonymousUsePermission(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                assertThat(extractWordText(viewPage), containsString("Hello world"));
-                return null;
-            }
+        runWithAnonymousUsePermission(() -> {
+            assertThat(extractWordText(viewPage), containsString("Hello world"));
+            return null;
         });
     }
 
-    public String extractPDFText(ViewPage viewPage) throws IOException
-    {
+    public String extractPDFText(ViewPage viewPage) throws IOException {
         String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
         byte[] pdfData = loadDataFromUrl(pdfUrl);
 
@@ -295,8 +268,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         PdfReaderContentParser parser = new PdfReaderContentParser(reader);
         TextExtractionStrategy strategy;
         StringBuilder buf = new StringBuilder();
-        for (int i = 1; i <= reader.getNumberOfPages(); i++)
-        {
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             strategy = parser.processContent(i, new SimpleTextExtractionStrategy());
             buf.append(strategy.getResultantText());
         }
@@ -304,23 +276,20 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         return buf.toString();
     }
 
-    private String extractWordText(ViewPage viewPage) throws IOException
-    {
+    private String extractWordText(ViewPage viewPage) throws IOException {
         String url = viewPage.openToolsMenu().getMenuItem(By.id("action-export-word-link")).getHref();
         byte[] data = loadDataFromUrl(url);
         return new String(data);
     }
 
-    private byte[] loadDataFromUrl(String url) throws IOException
-    {
+    private byte[] loadDataFromUrl(String url) throws IOException {
         WebDriver driver = getProduct().getTester().getDriver().getDriver();
         WebDriverSessionAwareDownloader downloader = new WebDriverSessionAwareDownloader(driver);
         return downloader.downloadBytes(url);
     }
 
     @Test
-    public void testBodyInclusion() throws Exception
-    {
+    public void testBodyInclusion() throws Exception {
         login(testUserFactory.basicUser());
         String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
@@ -332,8 +301,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testParameterInclusion() throws Exception
-    {
+    public void testParameterInclusion() throws Exception {
         login(testUserFactory.basicUser());
         String parameterValue = "param value";
         String body = new MacroStorageFormatBuilder(PARAMETER_MACRO_KEY).parameter(SINGLE_PARAM_ID, parameterValue).build();
@@ -345,19 +313,15 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testDescriptionShowsInMacroBrowser() throws Exception
-    {
+    public void testDescriptionShowsInMacroBrowser() throws Exception {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, SMALL_INLINE_MACRO_KEY);
 
-        try
-        {
+        try {
             String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
             assertThat("description shows in macro browser", description, is(SMALL_INLINE_MACRO_DESCRIPTION));
-        }
-        finally
-        {
+        } finally {
             // necessary to prevent Confluence from showing a navigate away alert
             selectMacroAndSave(macroInBrowser);
             cancelEditor(editorPage);
@@ -365,18 +329,14 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testDescriptionDoesNotExposeXss() throws Exception
-    {
+    public void testDescriptionDoesNotExposeXss() throws Exception {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, CLIENT_SIDE_BODY_MACRO_KEY);
-        try
-        {
+        try {
             String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
             assertThat("description shows in macro browser", description, is(CLIENT_SIDE_BODY_MACRO_DESCRIPTION));
-        }
-        finally
-        {
+        } finally {
             // necessary to prevent Confluence from showing a navigate away alert
             macroInBrowser.macro.select();
             RemotePluginDialog dialog = confluencePageOperations.findDialog(CLIENT_SIDE_BODY_MACRO_KEY);
@@ -386,8 +346,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMultipleMacrosOnPage() throws Exception
-    {
+    public void testMultipleMacrosOnPage() throws Exception {
         login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(SIMPLE_MACRO_KEY).build();
         Content page = createPage(randomName(SIMPLE_MACRO_KEY), body + body);
@@ -405,8 +364,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroDimensions() throws Exception
-    {
+    public void testMacroDimensions() throws Exception {
         login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(SMALL_INLINE_MACRO_KEY).build();
         Content page = createPage(randomName(SMALL_INLINE_MACRO_KEY), body + body);
@@ -416,8 +374,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroEditorSavesParameters() throws Exception
-    {
+    public void testMacroEditorSavesParameters() throws Exception {
         CreatePage editorPage = getProduct().loginAndCreatePage(toConfluenceUser(testUserFactory.basicUser()), DEMO);
         editorPage.setTitle(randomName("Macro Editor"));
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
@@ -430,8 +387,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroInOrderedTable() throws Exception
-    {
+    public void testMacroInOrderedTable() throws Exception {
         login(testUserFactory.basicUser());
         Content page = createPage(randomName(TABLE_MACRO_NAME), loadResourceAsString("it/confluence/macro/test-page-table-macro.xhtml"));
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -447,29 +403,24 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroEditorCanReadBody() throws Exception
-    {
+    public void testMacroEditorCanReadBody() throws Exception {
         String macroBody = "cat pictures go here";
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
 
         RemotePluginDialog dialog = confluencePageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
-        try
-        {
+        try {
             String content = dialog.getValueById("macro-body");
             assertThat(content, is(macroBody));
-        }
-        finally
-        {
+        } finally {
             dialog.cancelAndWaitUntilHidden();
             cancelEditor(editorPage);
         }
     }
 
     @Test
-    public void testMacroEditorCanWriteBody() throws Exception
-    {
+    public void testMacroEditorCanWriteBody() throws Exception {
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).build();
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
@@ -483,8 +434,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testBodyIsSanitized() throws Exception
-    {
+    public void testBodyIsSanitized() throws Exception {
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY).build();
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME), body);
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), new Page(page.getId().asLong()));
@@ -498,8 +448,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testSlowMacro() throws Exception
-    {
+    public void testSlowMacro() throws Exception {
         login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(SLOW_MACRO_KEY).build();
         String title = randomName(SLOW_MACRO_KEY);
@@ -509,8 +458,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroInComment() throws Exception
-    {
+    public void testMacroInComment() throws Exception {
         login(testUserFactory.basicUser());
         String title = randomName("The macro is in the comment!");
         Content page = createPage(title, "The macro is in the comment!");
@@ -524,40 +472,31 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Override
-    protected String getAddonBaseUrl()
-    {
+    protected String getAddonBaseUrl() {
         return remotePlugin.getAddon().getBaseUrl();
     }
 
-    private String createPageWithStorageFormatMacro()
-    {
+    private String createPageWithStorageFormatMacro() {
         String body = new MacroStorageFormatBuilder(SIMPLE_MACRO_KEY).build();
         Content page = createPage(randomName(SIMPLE_MACRO_KEY), body);
         return String.valueOf(page.getId().asLong());
     }
 
-    private static final class SlowMacroServlet extends HttpServlet
-    {
+    private static final class SlowMacroServlet extends HttpServlet {
         private final int seconds;
 
-        private SlowMacroServlet(int seconds)
-        {
+        private SlowMacroServlet(int seconds) {
             this.seconds = seconds;
         }
 
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             final long wakeTime = System.currentTimeMillis() + seconds * 1000 + 1;
 
-            while (System.currentTimeMillis() < wakeTime)
-            {
-                try
-                {
+            while (System.currentTimeMillis() < wakeTime) {
+                try {
                     Thread.sleep(wakeTime - System.currentTimeMillis());
-                }
-                catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     // do nothing
                 }
             }

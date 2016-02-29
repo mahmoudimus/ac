@@ -37,8 +37,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.emp
  * @since 1.0
  */
 @SchemaDefinition("searchRequestView")
-public class SearchRequestViewModuleBean extends BeanWithKeyAndParamsAndConditions
-{
+public class SearchRequestViewModuleBean extends BeanWithKeyAndParamsAndConditions {
     /**
      * The URL of the service that will render the representation for the result set. The URL is
      * interpreted relative to the *baseUrl* in the descriptor.
@@ -59,58 +58,47 @@ public class SearchRequestViewModuleBean extends BeanWithKeyAndParamsAndConditio
      */
     private I18nProperty description;
 
-    public SearchRequestViewModuleBean()
-    {
+    public SearchRequestViewModuleBean() {
         this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
         this.url = "";
         this.description = empty();
     }
 
-    public SearchRequestViewModuleBean(SearchRequestViewModuleBeanBuilder builder)
-    {
+    public SearchRequestViewModuleBean(SearchRequestViewModuleBeanBuilder builder) {
         super(builder);
 
-        if (null == weight)
-        {
+        if (null == weight) {
             this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
         }
-        if (null == url)
-        {
+        if (null == url) {
             url = "";
         }
-        if (null == description)
-        {
+        if (null == description) {
             description = empty();
         }
     }
 
-    public static SearchRequestViewModuleBeanBuilder newSearchRequestViewModuleBean()
-    {
+    public static SearchRequestViewModuleBeanBuilder newSearchRequestViewModuleBean() {
         return new SearchRequestViewModuleBeanBuilder();
     }
 
-    public static SearchRequestViewModuleBeanBuilder newSearchRequestViewModuleBean(SearchRequestViewModuleBean defaultBean)
-    {
+    public static SearchRequestViewModuleBeanBuilder newSearchRequestViewModuleBean(SearchRequestViewModuleBean defaultBean) {
         return new SearchRequestViewModuleBeanBuilder(defaultBean);
     }
 
-    public Integer getWeight()
-    {
+    public Integer getWeight() {
         return weight;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public URI createUri() throws URISyntaxException
-    {
+    public URI createUri() throws URISyntaxException {
         return null == url ? null : new URI(url);
     }
 }

@@ -7,12 +7,10 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -30,9 +28,8 @@ import static com.google.common.collect.Collections2.transform;
 /**
  * @since 1.0
  */
-@SuppressWarnings({"unchecked", "UnusedDeclaration"})
-public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extends ConnectAddonBean> extends BaseModuleBeanBuilder<T, B>
-{
+@SuppressWarnings("UnusedDeclaration")
+public class ConnectAddonBeanBuilder {
     private String key;
     private String name;
     private String version;
@@ -47,12 +44,10 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private Boolean enableLicensing;
     private Map<String, Supplier<List<ModuleBean>>> modules;
 
-    public ConnectAddonBeanBuilder()
-    {
+    public ConnectAddonBeanBuilder() {
     }
 
-    public ConnectAddonBeanBuilder(ShallowConnectAddonBean defaultBean)
-    {
+    public ConnectAddonBeanBuilder(ShallowConnectAddonBean defaultBean) {
         this.key = defaultBean.getKey();
         this.name = defaultBean.getName();
         this.version = defaultBean.getVersion();
@@ -67,173 +62,138 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.enableLicensing = defaultBean.getEnableLicensing();
     }
 
-    public T withKey(String key)
-    {
+    public ConnectAddonBeanBuilder withKey(String key) {
         this.key = key;
-        return (T) this;
+        return this;
     }
 
-    public T withName(String name)
-    {
+    public ConnectAddonBeanBuilder withName(String name) {
         this.name = name;
-        return (T) this;
+        return this;
     }
 
-    public T withVersion(String version)
-    {
+    public ConnectAddonBeanBuilder withVersion(String version) {
         this.version = version;
-        return (T) this;
+        return this;
     }
 
-    public T withApiVersion(Integer version)
-    {
+    public ConnectAddonBeanBuilder withApiVersion(Integer version) {
         this.apiVersion = version;
-        return (T) this;
+        return this;
     }
 
-    public T withDescription(String description)
-    {
+    public ConnectAddonBeanBuilder withDescription(String description) {
         this.description = description;
-        return (T) this;
+        return this;
     }
 
-    public T withVendor(VendorBean vendor)
-    {
+    public ConnectAddonBeanBuilder withVendor(VendorBean vendor) {
         this.vendor = vendor;
-        return (T) this;
+        return this;
     }
 
-    public T withModules(String fieldName, final ModuleBean... beans)
-    {
-        if (null == modules)
-        {
+    public ConnectAddonBeanBuilder withModules(String fieldName, final ModuleBean... beans) {
+        if (null == modules) {
             this.modules = new HashMap<>();
         }
 
-        final List<ModuleBean> totalBeans = new ArrayList(Arrays.asList(beans));
-        if (null != modules.get(fieldName))
-        {
+        final List<ModuleBean> totalBeans = new ArrayList<>(Arrays.asList(beans));
+        if (null != modules.get(fieldName)) {
             totalBeans.addAll(modules.get(fieldName).get());
         }
 
         Supplier<List<ModuleBean>> moduleBeanSupplier = () -> totalBeans;
 
         modules.put(fieldName, moduleBeanSupplier);
-        
-        return (T) this;
+
+        return this;
     }
 
-    public T withModule(String fieldName, ModuleBean bean)
-    {
+    public ConnectAddonBeanBuilder withModule(String fieldName, ModuleBean bean) {
         withModules(fieldName, bean);
-        
-        return (T) this;
-    }
-    
-    public T withModuleList(Map<String, Supplier<List<ModuleBean>>> modules)
-    {
-        this.modules = modules;
-        
-        return (T) this;
+
+        return this;
     }
 
-    public T withLinks(Map<String, String> links)
-    {
+    public ConnectAddonBeanBuilder withModuleList(Map<String, Supplier<List<ModuleBean>>> modules) {
+        this.modules = modules;
+
+        return this;
+    }
+
+    public ConnectAddonBeanBuilder withLinks(Map<String, String> links) {
         this.links = links;
 
-        return (T) this;
+        return this;
     }
 
-    public T withScopes(Set<ScopeName> scopes)
-    {
+    public ConnectAddonBeanBuilder withScopes(Set<ScopeName> scopes) {
         this.scopes = ImmutableSet.copyOf(scopes);
-        return (T) this;
+        return this;
     }
 
-    public T withLifecycle(LifecycleBean lifecycle)
-    {
+    public ConnectAddonBeanBuilder withLifecycle(LifecycleBean lifecycle) {
         this.lifecycle = lifecycle;
-        return (T) this;
+        return this;
     }
 
-    public T withBaseurl(String url)
-    {
+    public ConnectAddonBeanBuilder withBaseurl(String url) {
         this.baseUrl = url;
-        return (T) this;
+        return this;
     }
 
-    public T withAuthentication(AuthenticationBean authentication)
-    {
+    public ConnectAddonBeanBuilder withAuthentication(AuthenticationBean authentication) {
         this.authentication = authentication;
-        return (T) this;
+        return this;
     }
 
-    public T withLicensing(Boolean enable)
-    {
+    public ConnectAddonBeanBuilder withLicensing(Boolean enable) {
         this.enableLicensing = enable;
-        return (T) this;
+        return this;
     }
 
-    private static HashSet<String> transformScopeNamesToStrings(Set<ScopeName> scopeNames)
-    {
-        return new HashSet<String>(transform(scopeNames, new Function<ScopeName, String>()
-        {
-            @Override
-            public String apply(@Nullable ScopeName scopeName)
-            {
-                return null == scopeName ? null : scopeName.name();
-            }
-        }));
+    private static HashSet<String> transformScopeNamesToStrings(Set<ScopeName> scopeNames) {
+        return new HashSet<String>(transform(scopeNames, scopeName -> null == scopeName ? null : scopeName.name()));
     }
 
-    private void addBeanReflectivelyByType(String fieldName, Map<String, List<JsonObject>> capabilities, ModuleBean bean)
-    {
+    @SuppressWarnings("unchecked")
+    private void addBeanReflectivelyByType(String fieldName, Map<String, List<JsonObject>> capabilities, ModuleBean bean) {
         Class beanClass = bean.getClass();
-        try
-        {
+        try {
             Field field = capabilities.getClass().getDeclaredField(fieldName);
             Type fieldType = field.getGenericType();
 
-            if (fieldType.equals(beanClass))
-            {
+            if (fieldType.equals(beanClass)) {
                 field.setAccessible(true);
                 field.set(capabilities, bean);
-            }
-            else if (isParameterizedList(fieldType))
-            {
+            } else if (isParameterizedList(fieldType)) {
                 Type listType = ((ParameterizedType) fieldType).getActualTypeArguments()[0];
-                if (listType.equals(beanClass))
-                {
+                if (listType.equals(beanClass)) {
                     field.setAccessible(true);
                     List beanList = (List) field.get(capabilities);
                     beanList.add(bean);
                 }
             }
-        }
-        catch (IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException("Unable to access module field for bean of type: " + bean.getClass(), e);
-        }
-        catch (NoSuchFieldException e)
-        {
+        } catch (NoSuchFieldException e) {
             throw new RuntimeException("Unable to find module field '" + fieldName + "' for bean of type: " + bean.getClass());
         }
     }
 
-    public String getKey() { return key; }
+    public String getKey() {
+        return key;
+    }
 
-    public AuthenticationBean getAuthentication()
-    {
+    public AuthenticationBean getAuthentication() {
         return authentication;
     }
 
-    public LifecycleBean getLifecycle()
-    {
+    public LifecycleBean getLifecycle() {
         return lifecycle;
     }
 
-    public B build()
-    {
-        return (B) new ConnectAddonBean(this);
+    public ConnectAddonBean build() {
+        return new ConnectAddonBean(this);
     }
 }

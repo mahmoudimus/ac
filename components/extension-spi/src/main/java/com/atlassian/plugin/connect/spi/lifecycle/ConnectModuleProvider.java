@@ -4,8 +4,8 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 
 import java.util.List;
 
@@ -26,8 +26,7 @@ import java.util.List;
  *
  * @param <T> the type of the add-on descriptor module representation
  */
-public interface ConnectModuleProvider<T extends BaseModuleBean>
-{
+public interface ConnectModuleProvider<T extends BaseModuleBean> {
 
     /**
      * Returns the metadata for this module.
@@ -66,6 +65,7 @@ public interface ConnectModuleProvider<T extends BaseModuleBean>
      *
      * @param modules the add-on modules for which to create plugin module descriptors
      * @param addon the add-on descriptor
+     * @return the plugin module descriptors to register
      */
-    List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon);
+    List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon);
 }

@@ -9,20 +9,17 @@ import java.util.Locale;
 /**
  */
 @Component
-public class LocaleHelper
-{
+public class LocaleHelper {
     private static final String SEP = "-";
 
     private final LocaleResolver localeResolver;
 
     @Autowired
-    public LocaleHelper(LocaleResolver localeResolver)
-    {
+    public LocaleHelper(LocaleResolver localeResolver) {
         this.localeResolver = localeResolver;
     }
 
-    public String getLocaleTag()
-    {
+    public String getLocaleTag() {
         Locale locale = localeResolver.getLocale();
         StringBuilder buf = new StringBuilder();
 

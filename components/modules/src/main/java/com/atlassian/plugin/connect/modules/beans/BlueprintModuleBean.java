@@ -14,8 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
  * @schemaTitle Blueprint
  * @since 1.1.9
  */
-public class BlueprintModuleBean extends RequiredKeyBean
-{
+public class BlueprintModuleBean extends RequiredKeyBean {
 
     private IconBean icon;
 
@@ -39,35 +38,29 @@ public class BlueprintModuleBean extends RequiredKeyBean
         initialise();
     }
 
-    public BlueprintModuleBean(BlueprintModuleBeanBuilder builder)
-    {
+    public BlueprintModuleBean(BlueprintModuleBeanBuilder builder) {
         super(builder);
         initialise();
     }
 
-    public static BlueprintModuleBeanBuilder newBlueprintModuleBean()
-    {
+    public static BlueprintModuleBeanBuilder newBlueprintModuleBean() {
         return new BlueprintModuleBeanBuilder();
     }
 
-    public BlueprintTemplateBean getBlueprintTemplate()
-    {
+    public BlueprintTemplateBean getBlueprintTemplate() {
         return template;
     }
 
-    public CreateResultType getCreateResult()
-    {
+    public CreateResultType getCreateResult() {
         return createResult;
     }
 
-    public IconBean getIcon()
-    {
+    public IconBean getIcon() {
         return icon;
     }
 
     private void initialise() {
-        if (null == createResult)
-        {
+        if (null == createResult) {
             createResult = CreateResultType.EDIT;
         }
     }

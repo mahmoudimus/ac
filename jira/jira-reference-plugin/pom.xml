@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-jira-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.77-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -63,15 +63,6 @@
 
     </dependencies>
 
-    <licenses>
-        <license>
-            <name>Atlassian 3.0 End User License Agreement</name>
-            <url>http://www.atlassian.com/end-user-agreement/</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-
     <build>
         <plugins>
             <plugin>
@@ -79,25 +70,16 @@
                 <artifactId>maven-jira-plugin</artifactId>
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <skipManifestValidation>true</skipManifestValidation>
+                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
-                <version>${atlassian.spring.scanner.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>atlassian-spring-scanner</goal>
-                        </goals>
-                        <!-- process-classes seems to be skipped if you are using scala
-                             so perhaps use prepare-package -->
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
-
 
 </project>

@@ -5,46 +5,39 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-public class PageInfo
-{
+public class PageInfo {
     private final String decorator;
     private final String templateSuffix;
     private final String title;
     private final Condition condition;
-	private final Map<String, String> metaTagsContent;
+    private final Map<String, String> metaTagsContent;
 
-	public PageInfo(String decorator, String templateSuffix, String title,
-            Condition condition, Map<String, String> metaTagsContent)
-    {
+    public PageInfo(String decorator, String templateSuffix, String title,
+                    Condition condition, Map<String, String> metaTagsContent) {
         this.decorator = decorator;
         this.templateSuffix = templateSuffix;
         this.title = title;
         this.condition = condition;
-		this.metaTagsContent = ImmutableMap.copyOf(metaTagsContent);
-	}
+        this.metaTagsContent = ImmutableMap.copyOf(metaTagsContent);
+    }
 
-    public String getDecorator()
-    {
+    public String getDecorator() {
         return decorator;
     }
 
-    public String getTemplateSuffix()
-    {
+    public String getTemplateSuffix() {
         return templateSuffix;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    public Condition getCondition()
-    {
+    public Condition getCondition() {
         return condition;
     }
 
-	public Map<String, String> getMetaTagsContent()
-	{
-		return metaTagsContent;
-	}
+    public Map<String, String> getMetaTagsContent() {
+        return metaTagsContent;
+    }
 }

@@ -19,20 +19,17 @@ import static java.util.Collections.singletonList;
 /**
  * Download scope for GET requests on paths that start with a certain prefix
  */
-public final class PathScopeHelper
-{
+public final class PathScopeHelper {
     private final Collection<ApiResourceInfo> apiResourceInfo;
     private final Collection<String> paths;
     private final boolean isRegex;
     private final String httpMethod;
 
-    public PathScopeHelper(final boolean isRegex, final String path)
-    {
+    public PathScopeHelper(final boolean isRegex, final String path) {
         this(isRegex, singletonList(checkNotNull(path)), "GET");
     }
 
-    public PathScopeHelper(final boolean isRegex, final Collection<String> paths, String httpMethod)
-    {
+    public PathScopeHelper(final boolean isRegex, final Collection<String> paths, String httpMethod) {
         this.paths = checkNotNull(paths);
         this.isRegex = isRegex;
         this.httpMethod = checkNotNull(httpMethod);
@@ -41,10 +38,8 @@ public final class PathScopeHelper
                 .collect(Collectors.toList());
     }
 
-    public boolean allow(final HttpServletRequest request)
-    {
-        if (!this.httpMethod.equalsIgnoreCase(request.getMethod()))
-        {
+    public boolean allow(final HttpServletRequest request) {
+        if (!this.httpMethod.equalsIgnoreCase(request.getMethod())) {
             return false;
         }
 
@@ -54,20 +49,16 @@ public final class PathScopeHelper
                 : pathInfo.startsWith(path));
     }
 
-    public Iterable<ApiResourceInfo> getApiResourceInfos()
-    {
+    public Iterable<ApiResourceInfo> getApiResourceInfos() {
         return apiResourceInfo;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
@@ -79,8 +70,7 @@ public final class PathScopeHelper
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(47, 19)
                 .append(isRegex)
                 .append(paths)
@@ -88,8 +78,7 @@ public final class PathScopeHelper
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("isRegex", isRegex)
                 .append("paths", paths)

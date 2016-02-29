@@ -35,25 +35,31 @@ import static org.mockito.Mockito.*;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultConnectApplinkManagerTest
-{
+public class DefaultConnectApplinkManagerTest {
     private static final String USER_KEY = "some_user_key";
 
-    @Mock private MutatingApplicationLinkServiceProvider applicationLinkServiceProvider;
-    @Mock private MutatingApplicationLinkService applicationLinkService;
-    @Mock private TypeAccessor typeAccessor;
-    @Mock private PluginSettingsFactory pluginSettingsFactory;
-    @Mock private AddonScopeManager addonScopeManager;
+    @Mock
+    private MutatingApplicationLinkServiceProvider applicationLinkServiceProvider;
+    @Mock
+    private MutatingApplicationLinkService applicationLinkService;
+    @Mock
+    private TypeAccessor typeAccessor;
+    @Mock
+    private PluginSettingsFactory pluginSettingsFactory;
+    @Mock
+    private AddonScopeManager addonScopeManager;
     private TransactionTemplate transactionTemplate;
 
     private ConnectApplinkManager connectApplinkManager;
-    @Mock private RemotePluginContainerApplicationType connectApplicationType;
-    @Mock private JiraApplicationType jiraApplicationType;
-    @Mock private GenericApplicationType genericApplicationType;
+    @Mock
+    private RemotePluginContainerApplicationType connectApplicationType;
+    @Mock
+    private JiraApplicationType jiraApplicationType;
+    @Mock
+    private GenericApplicationType genericApplicationType;
 
     @Test
-    public void testGetAppLinkForConnectAddon() throws Exception
-    {
+    public void testGetAppLinkForConnectAddon() throws Exception {
         ApplicationLink link = mock(ApplicationLink.class);
         String addonKey = "my-connect-addon";
         when(link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)).thenReturn(addonKey);
@@ -67,8 +73,7 @@ public class DefaultConnectApplinkManagerTest
     }
 
     @Test
-    public void testGetAppLinkForConnectAddonWithOtherApplinks() throws Exception
-    {
+    public void testGetAppLinkForConnectAddonWithOtherApplinks() throws Exception {
         ApplicationLink connectLink = mock(ApplicationLink.class);
         String connectKey = "my-connect-addon";
         when(connectLink.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)).thenReturn(connectKey);
@@ -91,8 +96,7 @@ public class DefaultConnectApplinkManagerTest
     }
 
     @Test(expected = NotConnectAddonException.class)
-    public void testGetAppLinkForNonConnectAddonThrowsException() throws Exception
-    {
+    public void testGetAppLinkForNonConnectAddonThrowsException() throws Exception {
         ApplicationLink connectLink = mock(ApplicationLink.class);
         String connectKey = "my-connect-addon";
         when(connectLink.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)).thenReturn(connectKey);
@@ -115,34 +119,28 @@ public class DefaultConnectApplinkManagerTest
     }
 
     @Test
-    public void creatingAnAddonWithJwtAuthenticationSetsAuthenticationMethod()
-    {
+    public void creatingAnAddonWithJwtAuthenticationSetsAuthenticationMethod() {
         MutableApplicationLink appLink = createAppLink();
         verify(appLink).putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
     }
 
     @Test
-    public void creatingAnAddonWithJwtAuthenticationSetsTheSharedSecret()
-    {
+    public void creatingAnAddonWithJwtAuthenticationSetsTheSharedSecret() {
         MutableApplicationLink appLink = createAppLink();
         verify(appLink).putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, "signing key");
     }
 
     @Test
-    public void userKeyIsSet()
-    {
+    public void userKeyIsSet() {
         MutableApplicationLink appLink = createAppLink();
         verify(appLink).putProperty("user.key", USER_KEY);
     }
 
     @Before
-    public void setup()
-    {
-        transactionTemplate = new TransactionTemplate()
-        {
+    public void setup() {
+        transactionTemplate = new TransactionTemplate() {
             @Override
-            public <T> T execute(TransactionCallback<T> action)
-            {
+            public <T> T execute(TransactionCallback<T> action) {
                 return action.doInTransaction();
             }
         };
@@ -154,8 +152,7 @@ public class DefaultConnectApplinkManagerTest
         when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
     }
 
-    private MutableApplicationLink createAppLink()
-    {
+    private MutableApplicationLink createAppLink() {
         MutableApplicationLink appLink = mock(MutableApplicationLink.class);
         ConnectAddonBean addonBean = mock(ConnectAddonBean.class);
         when(addonBean.getKey()).thenReturn("my-connect-addon");

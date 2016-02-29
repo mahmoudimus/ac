@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationExcepti
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,62 +16,53 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@VisibleForTesting
-public class StaticModuleListDeserializer extends ModuleListDeserializer
-{
+public class StaticModuleListDeserializer extends ModuleListDeserializer {
     private final Set<ConnectModuleMeta> moduleMetas;
 
-    public StaticModuleListDeserializer(ShallowConnectAddonBean addon, ConnectModuleMeta... moduleMetas)
-    {
+    public StaticModuleListDeserializer(ShallowConnectAddonBean addon, ConnectModuleMeta... moduleMetas) {
         super(addon);
         this.moduleMetas = new HashSet<>(Arrays.asList(moduleMetas));
     }
 
-    public void addModuleMeta(ConnectModuleMeta moduleMeta)
-    {
+    public void addModuleMeta(ConnectModuleMeta moduleMeta) {
         moduleMetas.add(moduleMeta);
     }
 
-    public boolean hasMetas()
-    {
+    public boolean hasMetas() {
         return !moduleMetas.isEmpty();
     }
 
     @Override
-    public List<ModuleBean> deserializeModules(String moduleTypeKey, JsonElement modules) throws ConnectModuleValidationException
-    {
+    public List<ModuleBean> deserializeModules(String moduleTypeKey, JsonElement modules) throws ConnectModuleValidationException {
         ConnectModuleMeta moduleMeta = getModuleMeta(moduleTypeKey);
-        if (moduleMeta == null)
-        {
+        if (moduleMeta == null) {
             throwUnknownModuleType(moduleTypeKey);
         }
 
         Gson deserializer = ConnectModulesGsonFactory.getGson();
         List<ModuleBean> beans = new ArrayList<>();
-        Class<? extends ModuleBean> beanClass = moduleMeta.getBeanClass();
-        if (modules.isJsonObject())
-        {
+        Class<? extends ModuleBean> beanClass = getBeanClass(moduleMeta);
+        if (modules.isJsonObject()) {
             beans.add(deserializer.fromJson(modules, beanClass));
-        }
-        else
-        {
+        } else {
             JsonArray moduleArray = modules.getAsJsonArray();
-            for (int i = 0; i < moduleArray.size(); i++)
-            {
+            for (int i = 0; i < moduleArray.size(); i++) {
                 JsonElement module = moduleArray.get(i);
                 beans.add(deserializer.fromJson(module, beanClass));
             }
         }
         return beans;
     }
-    
+
+    @SuppressWarnings("unchecked")
+    private Class<? extends ModuleBean> getBeanClass(ConnectModuleMeta moduleMeta) {
+        return moduleMeta.getBeanClass();
+    }
+
     @Nullable
-    public ConnectModuleMeta getModuleMeta(String type)
-    {
-        for (ConnectModuleMeta moduleMeta : moduleMetas)
-        {
-            if (moduleMeta.getDescriptorKey().equals(type))
-            {
+    public ConnectModuleMeta getModuleMeta(String type) {
+        for (ConnectModuleMeta moduleMeta : moduleMetas) {
+            if (moduleMeta.getDescriptorKey().equals(type)) {
                 return moduleMeta;
             }
         }
@@ -80,8 +70,7 @@ public class StaticModuleListDeserializer extends ModuleListDeserializer
     }
 
     @Override
-    public boolean multipleModulesAllowed(String moduleType)
-    {
+    public boolean multipleModulesAllowed(String moduleType) {
         ConnectModuleMeta meta = getModuleMeta(moduleType);
         return meta == null || meta.multipleModulesAllowed();
     }

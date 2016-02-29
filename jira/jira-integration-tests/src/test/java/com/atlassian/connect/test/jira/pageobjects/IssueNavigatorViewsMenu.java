@@ -11,8 +11,7 @@ import org.openqa.selenium.By;
 
 import javax.inject.Inject;
 
-public class IssueNavigatorViewsMenu
-{
+public class IssueNavigatorViewsMenu {
     @Inject
     PageBinder pageBinder;
 
@@ -22,63 +21,52 @@ public class IssueNavigatorViewsMenu
     private JiraAuiDropdownMenu viewsMenu;
 
     @Init
-    public void initialise()
-    {
+    public void initialise() {
         viewsMenu = pageBinder.bind(JiraAuiDropdownMenu.class, By.className("header-views"), By.className("header-views-menu"));
     }
 
-    public IssueNavigatorViewsMenu open()
-    {
+    public IssueNavigatorViewsMenu open() {
         viewsMenu.open();
         return this;
     }
 
-    public boolean isOpen()
-    {
+    public boolean isOpen() {
         return viewsMenu.isOpen();
     }
 
-    public IssueNavigatorViewsMenu close()
-    {
+    public IssueNavigatorViewsMenu close() {
         viewsMenu.close();
         return this;
     }
 
-    public ViewEntry entryWithLabel(String label)
-    {
+    public ViewEntry entryWithLabel(String label) {
         viewsMenu.open();
         PageElement pageElement = finder.find(By.className("header-views-menu")).find(By.linkText(label), TimeoutType.DEFAULT);
         return new ViewEntry(pageElement);
     }
 
 
-    public static class ViewEntry
-    {
+    public static class ViewEntry {
         private final PageElement pageElement;
 
-        public ViewEntry(PageElement pageElement)
-        {
+        public ViewEntry(PageElement pageElement) {
             Preconditions.checkNotNull(pageElement);
             this.pageElement = pageElement;
         }
 
-        public void click()
-        {
+        public void click() {
             pageElement.click();
         }
 
-        public String getLinkUrl()
-        {
+        public String getLinkUrl() {
             return pageElement.getAttribute("href");
         }
 
-        public String getLinkText()
-        {
+        public String getLinkText() {
             return pageElement.getText();
         }
 
-        public boolean isPresent()
-        {
+        public boolean isPresent() {
             return pageElement.isPresent();
         }
     }

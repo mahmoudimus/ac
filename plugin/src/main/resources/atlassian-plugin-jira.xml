@@ -44,6 +44,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-create-issue-dialog</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-request</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-date-picker-widget</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -121,6 +122,17 @@
         <resource type="download" name="create-issue-dialog-rpc.js" location="/js/jira/issue/issue-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="date-picker-widget">
+        <data key="config" class="com.atlassian.plugin.connect.jira.web.jsapi.DatePickerDataProvider" />
+
+        <resource type="download" name="date-picker-widget.js" location="/js/jira/date-picker/date-picker.js" />
+        <resource type="download" name="date-picker-widget-rpc.js" location="/js/jira/date-picker/date-picker-rpc.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <dependency>jira.webresources:calendar</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 

@@ -15,26 +15,22 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class PluggableScopeService implements ScopeService
-{
+public class PluggableScopeService implements ScopeService {
 
     private final PluginAccessor pluginAccessor;
 
     @Autowired
-    public PluggableScopeService(PluginAccessor pluginAccessor)
-    {
+    public PluggableScopeService(PluginAccessor pluginAccessor) {
         this.pluginAccessor = pluginAccessor;
     }
 
     @Override
-    public Collection<AddonScope> build()
-    {
+    public Collection<AddonScope> build() {
         Collection<ConnectApiScopeWhitelist> whitelists = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectApiScopeWhitelistModuleDescriptor.class));
 
         Map<ScopeName, AddonScope> scopes = new HashMap<>();
-        for (ConnectApiScopeWhitelist whitelist : whitelists)
-        {
+        for (ConnectApiScopeWhitelist whitelist : whitelists) {
             AddonScopeLoadJsonFileHelper.combineScopes(scopes, whitelist.getScopes());
         }
 

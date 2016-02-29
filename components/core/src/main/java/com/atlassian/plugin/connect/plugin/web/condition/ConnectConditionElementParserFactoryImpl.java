@@ -11,32 +11,26 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 @Named
-public class ConnectConditionElementParserFactoryImpl implements ConditionElementParserFactory
-{
+public class ConnectConditionElementParserFactoryImpl implements ConditionElementParserFactory {
     private final ConditionElementParser conditionElementParser;
 
     @Inject
-    public ConnectConditionElementParserFactoryImpl(final WebInterfaceManager webInterfaceManager)
-    {
+    public ConnectConditionElementParserFactoryImpl(final WebInterfaceManager webInterfaceManager) {
         conditionElementParser = new ConditionElementParser(new WebInterfaceManagerConditionFactory(webInterfaceManager));
     }
 
-    public ConditionElementParser getConditionElementParser()
-    {
+    public ConditionElementParser getConditionElementParser() {
         return conditionElementParser;
     }
 
-    private static class WebInterfaceManagerConditionFactory implements ConditionElementParser.ConditionFactory
-    {
+    private static class WebInterfaceManagerConditionFactory implements ConditionElementParser.ConditionFactory {
         private final WebInterfaceManager webInterfaceManager;
 
-        private WebInterfaceManagerConditionFactory(final WebInterfaceManager webInterfaceManager)
-        {
+        private WebInterfaceManagerConditionFactory(final WebInterfaceManager webInterfaceManager) {
             this.webInterfaceManager = webInterfaceManager;
         }
 
-        public Condition create(String className, Plugin plugin) throws ConditionLoadingException
-        {
+        public Condition create(String className, Plugin plugin) throws ConditionLoadingException {
             return webInterfaceManager.getWebFragmentHelper().loadCondition(className, plugin);
         }
     }

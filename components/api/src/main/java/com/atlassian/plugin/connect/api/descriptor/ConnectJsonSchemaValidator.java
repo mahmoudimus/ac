@@ -5,8 +5,7 @@ import java.net.URL;
 /**
  * A service for validating a JSON document against a JSON schema.
  */
-public interface ConnectJsonSchemaValidator
-{
+public interface ConnectJsonSchemaValidator {
 
     /**
      * Validates the given JSON descriptor against the given JSON schema.

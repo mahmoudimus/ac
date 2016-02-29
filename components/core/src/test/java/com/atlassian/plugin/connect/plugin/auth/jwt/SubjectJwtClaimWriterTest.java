@@ -1,12 +1,9 @@
 package com.atlassian.plugin.connect.plugin.auth.jwt;
 
-import java.util.Map;
-
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -14,17 +11,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Map;
+
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class SubjectJwtClaimWriterTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class SubjectJwtClaimWriterTest {
     @Mock
     private JwtJsonBuilder builder;
     @Mock
@@ -34,10 +32,9 @@ public class SubjectJwtClaimWriterTest
     @InjectMocks
     private SubjectJwtClaimWriter claimWriter;
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
-    public void noSubjectAddedWhenNotAutenticated()
-    {
+    public void noSubjectAddedWhenNotAutenticated() {
         claimWriter.write(builder);
 
         verify(builder, never()).subject(anyString());
@@ -48,10 +45,9 @@ public class SubjectJwtClaimWriterTest
         assertThat(context.isEmpty(), is(true));
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
-    public void subjectAndContextUserAddedWhenAuthenticated()
-    {
+    public void subjectAndContextUserAddedWhenAuthenticated() {
         when(userManager.getRemoteUser()).thenReturn(userProfile);
         when(userProfile.getUsername()).thenReturn("bwayne");
         when(userProfile.getUserKey()).thenReturn(new UserKey("batman"));

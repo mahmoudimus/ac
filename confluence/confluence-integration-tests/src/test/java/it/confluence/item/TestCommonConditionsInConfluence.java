@@ -1,8 +1,5 @@
 package it.confluence.item;
 
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceEditPage;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
@@ -16,12 +13,13 @@ import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameC
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingConditionServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -41,8 +39,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBase
-{
+public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBase {
     private static ConnectRunner remotePlugin;
 
     private static String onlyBettyWebItem;
@@ -62,8 +59,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         betty = testUserFactory.admin();
         barney = testUserFactory.basicUser();
 
@@ -142,17 +138,14 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void bettyCanSeeBettyWebItem() throws Exception
-    {
+    public void bettyCanSeeBettyWebItem() throws Exception {
         login(betty);
 
         visitEditPage();
@@ -161,8 +154,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void barneyCannotSeeBettyWebItem() throws Exception
-    {
+    public void barneyCannotSeeBettyWebItem() throws Exception {
         login(barney);
 
         visitEditPage();
@@ -170,8 +162,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void adminCannotSeeBettyWebItem() throws Exception
-    {
+    public void adminCannotSeeBettyWebItem() throws Exception {
         login(testUserFactory.admin());
 
         visitEditPage();
@@ -179,8 +170,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void bettyCanSeeBettyAndBarneyWebItem() throws Exception
-    {
+    public void bettyCanSeeBettyAndBarneyWebItem() throws Exception {
         login(betty);
 
         visitEditPage();
@@ -189,8 +179,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void barneyCanSeeBettyAndBarneyWebItem() throws Exception
-    {
+    public void barneyCanSeeBettyAndBarneyWebItem() throws Exception {
         login(barney);
 
         visitEditPage();
@@ -199,8 +188,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void adminCannotSeeBettyAndBarneyWebItem() throws Exception
-    {
+    public void adminCannotSeeBettyAndBarneyWebItem() throws Exception {
         login(testUserFactory.admin());
 
         visitEditPage();
@@ -208,8 +196,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void bettyCanSeeAdminRightsWebItem() throws Exception
-    {
+    public void bettyCanSeeAdminRightsWebItem() throws Exception {
         login(betty);
 
         visitEditPage();
@@ -218,16 +205,14 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void barneyCannotSeeAdminRightsWebItem() throws Exception
-    {
+    public void barneyCannotSeeAdminRightsWebItem() throws Exception {
         login(barney);
         visitEditPage();
         assertFalse("Web item should NOT be found", confluencePageOperations.existsWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
     }
 
     @Test
-    public void adminCanSeeAdminRightsWebItem() throws Exception
-    {
+    public void adminCanSeeAdminRightsWebItem() throws Exception {
         login(testUserFactory.admin());
 
         visitEditPage();
@@ -235,8 +220,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
         assertNotNull("Web item should be found", webItem);
     }
 
-    private ConfluenceEditPage navigateToEditPageAndVerifyParameterCapturingWebItem(TestUser user) throws Exception
-    {
+    private ConfluenceEditPage navigateToEditPageAndVerifyParameterCapturingWebItem(TestUser user) throws Exception {
         login(user);
 
         ConfluenceEditPage editPage = visitEditPage();
@@ -246,8 +230,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void standardParametersArePassedToConditions() throws Exception
-    {
+    public void standardParametersArePassedToConditions() throws Exception {
         TestUser user = testUserFactory.basicUser();
         navigateToEditPageAndVerifyParameterCapturingWebItem(user);
 
@@ -261,8 +244,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void contextParametersArePassedToConditions() throws Exception
-    {
+    public void contextParametersArePassedToConditions() throws Exception {
         ConfluenceEditPage editPage = navigateToEditPageAndVerifyParameterCapturingWebItem(testUserFactory.basicUser());
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
@@ -272,8 +254,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void spaceContextParametersArePassedToConditions() throws Exception
-    {
+    public void spaceContextParametersArePassedToConditions() throws Exception {
         login(testUserFactory.basicUser());
         ConfluenceEditPage editPage = visitEditPage();
 
@@ -287,8 +268,7 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
     @Test
-    public void versionIsIncluded() throws Exception
-    {
+    public void versionIsIncluded() throws Exception {
         navigateToEditPageAndVerifyParameterCapturingWebItem(testUserFactory.basicUser());
 
         String version = PARAMETER_CAPTURING_SERVLET.getHttpHeaderFromLastRequest(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION).get();
@@ -297,15 +277,13 @@ public class TestCommonConditionsInConfluence extends ConfluenceWebDriverTestBas
     }
 
 
-    private ConfluenceEditPage visitEditPage() throws Exception
-    {
+    private ConfluenceEditPage visitEditPage() throws Exception {
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "Page with webpanel", "some page content");
 
         return product.visit(ConfluenceEditPage.class, pageData.getId());
     }
 
-    private String getModuleKey(String module)
-    {
-        return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(),module);
+    private String getModuleKey(String module) {
+        return ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), module);
     }
 }

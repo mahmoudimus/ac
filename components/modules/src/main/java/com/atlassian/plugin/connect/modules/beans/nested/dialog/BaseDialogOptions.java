@@ -5,43 +5,35 @@ import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public abstract class BaseDialogOptions extends BaseModuleBean
-{
+public abstract class BaseDialogOptions extends BaseModuleBean {
     /**
      *  Sets how wide the dialog is in pixels
      */
     private String width;
 
-    public BaseDialogOptions(String width)
-    {
+    public BaseDialogOptions(String width) {
         this.width = width;
     }
 
-    public BaseDialogOptions()
-    {
+    public BaseDialogOptions() {
 
     }
 
-    public BaseDialogOptions(BaseModuleBeanBuilder dialogOptionsBuilder)
-    {
+    public BaseDialogOptions(BaseModuleBeanBuilder dialogOptionsBuilder) {
         super(dialogOptionsBuilder);
     }
 
-    public String getWidth()
-    {
+    public String getWidth() {
         return width;
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof BaseDialogOptions))
-        {
+        if (!(otherObj instanceof BaseDialogOptions)) {
             return false;
         }
 
@@ -53,8 +45,7 @@ public abstract class BaseDialogOptions extends BaseModuleBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(173, 199)
                 .append(width)
                 .build();

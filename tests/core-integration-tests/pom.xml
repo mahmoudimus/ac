@@ -5,21 +5,13 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.77-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-core-integration-tests</artifactId>
     <name>Atlassian Connect - Core Integration Tests</name>
     <packaging>atlassian-plugin</packaging>
-
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
 
     <profiles>
         <profile>
@@ -174,7 +166,7 @@
         <dependency>
             <artifactId>acceptance-data-helper</artifactId>
             <groupId>com.atlassian.test.ondemand</groupId>
-            <version>1.0.14</version>
+            <version>1.0.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -630,7 +622,6 @@
     </build>
 
     <properties>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9

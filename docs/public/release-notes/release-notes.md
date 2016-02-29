@@ -33,6 +33,12 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.77](./1-1-0.html#1.1.77)
+ * New `has_global_permission` condition [ACJIRA-777](https://ecosystem.atlassian.net/browse/ACJIRA-777)
+ * Nested equality comparisons for addon properties [AC-1847](https://ecosystem.atlassian.net/browse/AC-1847)
+ * JIRA: Date picker component [ACJIRA-729](https://ecosystem.atlassian.net/browse/ACJIRA-729)
+
+
 ## [1.1.76](./1-1-0.html#1.1.76)
  * Navigator context API for unsaved edit page [CE-289](https://ecosystem.atlassian.net/browse/CE-289)
  * Navigator context API for contentedit [CE-278](https://ecosystem.atlassian.net/browse/CE-278)

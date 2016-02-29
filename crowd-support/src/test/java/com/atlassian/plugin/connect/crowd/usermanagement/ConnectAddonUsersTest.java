@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.List;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
@@ -9,7 +7,6 @@ import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.ConnectAddonAccessor;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -17,7 +14,11 @@ import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import java.util.List;
 
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static java.util.Arrays.asList;
@@ -33,8 +34,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class ConnectAddonUsersTest
-{
+public class ConnectAddonUsersTest {
     private ConnectAddonUsers connectAddonUsers;
 
     @Mock
@@ -46,13 +46,15 @@ public class ConnectAddonUsersTest
     @Mock
     private ConnectAddonAccessor addonAccessor;
 
+    @Captor
+    private ArgumentCaptor<MembershipQuery<User>> userQueryCaptor;
+
     @Before
-    public void beforeEach() throws ApplicationNotFoundException
-    {
+    public void beforeEach() throws ApplicationNotFoundException {
         initMocks(this);
 
-        List<Object> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
-        when(applicationService.searchDirectGroupRelationships(any(Application.class), any(MembershipQuery.class))).thenReturn(allAddonUsers);
+        List<User> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
+        when(applicationService.searchDirectGroupRelationships(any(Application.class), Mockito.<MembershipQuery<User>>any())).thenReturn(allAddonUsers);
         when(addonAccessor.getAllAddonKeys()).thenReturn(singletonList("rad-jira-addon"));
         when(crowdApplicationProvider.getCrowdApplication()).thenReturn(application);
 
@@ -61,14 +63,12 @@ public class ConnectAddonUsersTest
 
     @Test
     public void getAddonUsersForHostProductFiltersFromMembersOfAddonsGroup()
-            throws ApplicationNotFoundException
-    {
+            throws ApplicationNotFoundException {
         connectAddonUsers.getAddonUsers();
 
-        ArgumentCaptor<MembershipQuery> userQueryCaptor = ArgumentCaptor.forClass(MembershipQuery.class);
         verify(applicationService).searchDirectGroupRelationships(eq(application), userQueryCaptor.capture());
 
-        @SuppressWarnings ("unchecked")
+        @SuppressWarnings("unchecked")
         MembershipQuery<User> userQuery = userQueryCaptor.getValue();
 
         assertThat(userQuery, notNullValue());
@@ -80,34 +80,28 @@ public class ConnectAddonUsersTest
 
     @Test
     public void getAddonUsersForHostProductRetrievesAddonsForRegisteredAddonUsers()
-            throws ApplicationNotFoundException
-    {
+            throws ApplicationNotFoundException {
         Iterable<User> users = connectAddonUsers.getAddonUsers();
 
         assertThat(users, IsIterableWithSize.<User>iterableWithSize(1));
         assertThat(users, contains(hasName("addon_rad-jira-addon")));
     }
 
-    private Matcher<User> hasName(final String name)
-    {
-        return new TypeSafeMatcher<User>()
-        {
+    private Matcher<User> hasName(final String name) {
+        return new TypeSafeMatcher<User>() {
             @Override
-            protected boolean matchesSafely(User user)
-            {
+            protected boolean matchesSafely(User user) {
                 return user != null && user.getName().equals(name);
             }
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("Expected user with name ").appendValue(name);
             }
         };
     }
 
-    private static User mockUser(String name)
-    {
+    private static User mockUser(String name) {
         User mockUser = mock(User.class);
         when(mockUser.getName()).thenReturn(name);
         return mockUser;

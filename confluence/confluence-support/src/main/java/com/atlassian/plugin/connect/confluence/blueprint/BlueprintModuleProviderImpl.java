@@ -19,8 +19,7 @@ import java.util.List;
 @ConfluenceComponent
 @ExportAsDevService
 public class BlueprintModuleProviderImpl extends AbstractConfluenceConnectModuleProvider<BlueprintModuleBean>
-        implements BlueprintModuleProvider
-{
+        implements BlueprintModuleProvider {
 
     private static final BlueprintModuleMeta META = new BlueprintModuleMeta();
 
@@ -30,11 +29,10 @@ public class BlueprintModuleProviderImpl extends AbstractConfluenceConnectModule
 
     @Autowired
     public BlueprintModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            BlueprintWebItemModuleDescriptorFactory blueprintModuleWebItemDescriptorFactory,
-            BlueprintModuleDescriptorFactory blueprintModuleDescriptorFactory,
-            BlueprintContentTemplateModuleDescriptorFactory blueprintContentTemplateModuleDescriptorFactory)
-    {
+                                       ConnectJsonSchemaValidator schemaValidator,
+                                       BlueprintWebItemModuleDescriptorFactory blueprintModuleWebItemDescriptorFactory,
+                                       BlueprintModuleDescriptorFactory blueprintModuleDescriptorFactory,
+                                       BlueprintContentTemplateModuleDescriptorFactory blueprintContentTemplateModuleDescriptorFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.blueprintModuleWebItemDescriptorFactory = blueprintModuleWebItemDescriptorFactory;
         this.blueprintModuleDescriptorFactory = blueprintModuleDescriptorFactory;
@@ -42,18 +40,15 @@ public class BlueprintModuleProviderImpl extends AbstractConfluenceConnectModule
     }
 
     @Override
-    public ConnectModuleMeta<BlueprintModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<BlueprintModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<BlueprintModuleBean> modules, ConnectAddonBean addon)
-    {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<BlueprintModuleBean> modules, ConnectAddonBean addon) {
         Plugin plugin = pluginRetrievalService.getPlugin();
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
-        for (BlueprintModuleBean blueprint : modules)
-        {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
+        for (BlueprintModuleBean blueprint : modules) {
             descriptors.add(blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(blueprint, addon, plugin));
             descriptors.add(blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(blueprint, addon, plugin));
             descriptors.add(blueprintModuleDescriptorFactory.createModuleDescriptor(blueprint, addon, plugin));

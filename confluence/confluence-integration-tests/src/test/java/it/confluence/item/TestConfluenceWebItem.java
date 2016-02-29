@@ -1,10 +1,5 @@
 package it.confluence.item;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps.ConfluencePageData;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.fugue.Pair;
@@ -20,21 +15,23 @@ import com.atlassian.plugin.connect.test.common.servlet.condition.CheckUsernameC
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.confluence.ConfluenceWebDriverTestBase;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts
-        .verifyContainsStandardAddonQueryParameters;
+import static com.atlassian.plugin.connect.test.common.matcher.ConnectAsserts.verifyContainsStandardAddonQueryParameters;
 import static com.atlassian.plugin.connect.test.common.matcher.IsInteger.isInteger;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -49,8 +46,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @since 1.0
  */
-public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
-{
+public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
     private static final String ADDON_DIRECT_WEBITEM = "ac-direct-to-addon-web-item";
     private static final String PRODUCT_WEBITEM = "quick-page-link";
@@ -66,8 +62,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private static TestUser barney;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         barney = testUserFactory.basicUser();
         betty = testUserFactory.admin();
 
@@ -125,17 +120,14 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testAbsoluteWebItem() throws Exception
-    {
+    public void testAbsoluteWebItem() throws Exception {
         login(betty);
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
@@ -148,19 +140,16 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testRelativeWebItem() throws Exception
-    {
+    public void testRelativeWebItem() throws Exception {
         testAddonWebItem(ADDON_WEBITEM);
     }
 
     @Test
-    public void testAddonDirectWebItem() throws Exception
-    {
+    public void testAddonDirectWebItem() throws Exception {
         testAddonWebItem(ADDON_DIRECT_WEBITEM);
     }
 
-    private void testAddonWebItem(final String addonDirectWebitem) throws Exception
-    {
+    private void testAddonWebItem(final String addonDirectWebitem) throws Exception {
         login(testUserFactory.admin());
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(addonDirectWebitem));
@@ -179,8 +168,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testProductWebItem() throws Exception
-    {
+    public void testProductWebItem() throws Exception {
         login(testUserFactory.admin());
 
         ConfluenceViewPage viewPage = createAndVisitViewPage();
@@ -197,8 +185,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void bettyCanSeeWebItem() throws Exception
-    {
+    public void bettyCanSeeWebItem() throws Exception {
         login(betty);
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
@@ -207,8 +194,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void adminCannotSeeBettyWebItem() throws Exception
-    {
+    public void adminCannotSeeBettyWebItem() throws Exception {
         login(testUserFactory.admin());
         createAndVisitViewPage();
         assertFalse("Web item should NOT be found", confluencePageOperations.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
@@ -216,8 +202,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
 
     @Test
-    public void testAddonWebItemInlineDialog() throws Exception
-    {
+    public void testAddonWebItemInlineDialog() throws Exception {
         login(testUserFactory.admin());
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG));
@@ -228,32 +213,27 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertTrue("web item inline dialog should be open", webItem.isActiveInlineDialog());
     }
 
-    private Pair<ConfluenceViewPage, RemoteWebItem> findViewPageWebItem(String webItemId) throws Exception
-    {
+    private Pair<ConfluenceViewPage, RemoteWebItem> findViewPageWebItem(String webItemId) throws Exception {
         ConfluenceViewPage viewPage = createAndVisitViewPage();
         return Pair.pair(viewPage, confluencePageOperations.findWebItem(webItemId, Optional.<String>empty()));
     }
 
-    private ConfluenceViewPage createAndVisitViewPage() throws Exception
-    {
+    private ConfluenceViewPage createAndVisitViewPage() throws Exception {
         return createAndVisitPage(ConfluenceViewPage.class);
     }
 
 
-    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
-    {
+    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception {
         ConfluencePageData pageData = createPage();
         return product.visit(pageClass, pageData.getId());
     }
 
-    private ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
-    {
+    private ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault {
         return confluenceOps.setPage(some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
     }
 
 
-    private String getModuleKey(String module)
-    {
+    private String getModuleKey(String module) {
         return addonAndModuleKey(remotePlugin.getAddon().getKey(), module);
     }
 

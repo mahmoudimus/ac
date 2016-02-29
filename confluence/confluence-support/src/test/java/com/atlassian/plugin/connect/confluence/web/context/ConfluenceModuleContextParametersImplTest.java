@@ -1,59 +1,52 @@
 package com.atlassian.plugin.connect.confluence.web.context;
 
-import java.util.Collections;
-
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConfluenceModuleContextParametersImplTest
-{
+public class ConfluenceModuleContextParametersImplTest {
     private ConfluenceModuleContextParametersImpl moduleContextParameters;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.moduleContextParameters = new ConfluenceModuleContextParametersImpl(Collections.emptyMap());
     }
 
     @Test
-    public void testPutContentHasCorrectId()
-    {
+    public void testPutContentHasCorrectId() {
         moduleContextParameters.addContent(createEntity(ContentEntityObject.class));
 
         assertEquals("123", moduleContextParameters.get("content.id"));
     }
 
     @Test
-    public void testPutContentHasCorrectVersion()
-    {
+    public void testPutContentHasCorrectVersion() {
         moduleContextParameters.addContent(createEntity(ContentEntityObject.class));
         assertEquals("3", moduleContextParameters.get("content.version"));
     }
 
     @Test
-    public void testPutContentHasCorrectType()
-    {
+    public void testPutContentHasCorrectType() {
         moduleContextParameters.addContent(createEntity(ContentEntityObject.class));
         assertEquals("page", moduleContextParameters.get("content.type"));
     }
 
     @Test
-    public void testPutContentHasNoPluginKey()
-    {
+    public void testPutContentHasNoPluginKey() {
         moduleContextParameters.addContent(createEntity(ContentEntityObject.class));
         assertNull(moduleContextParameters.get("content.plugin"));
     }
 
     @Test
-    public void testPutCustomContentHasPluginKey()
-    {
+    public void testPutCustomContentHasPluginKey() {
         CustomContentEntityObject content = mock(CustomContentEntityObject.class);
         when(content.getPluginModuleKey()).thenReturn("plugin:foo");
 
@@ -61,8 +54,7 @@ public class ConfluenceModuleContextParametersImplTest
         assertEquals("plugin:foo", moduleContextParameters.get("content.plugin"));
     }
 
-    private <T extends ContentEntityObject> T createEntity (Class<T> clazz)
-    {
+    private <T extends ContentEntityObject> T createEntity(Class<T> clazz) {
         T content = mock(clazz);
         when(content.getId()).thenReturn(123L);
         when(content.getVersion()).thenReturn(3);

@@ -30,15 +30,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A condition that evaluates based on the response from a remote end-point hosted by the add-on.
  */
-public class AddonCondition implements Condition
-{
+public class AddonCondition implements Condition {
     public static final String URL = "url";
     public static final String ADDON_KEY = ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY;
 
     private static final Logger log = LoggerFactory.getLogger(AddonCondition.class);
 
-    private interface Configuration
-    {
+    private interface Configuration {
         String getUrl();
 
         String getAddonKey();
@@ -56,8 +54,7 @@ public class AddonCondition implements Condition
                           final ConnectUriFactory connectUriFactory,
                           final PluggableParametersExtractor webFragmentModuleContextExtractor,
                           EventPublisher eventPublisher,
-            PluginRetrievalService pluginRetrievalService)
-    {
+                          PluginRetrievalService pluginRetrievalService) {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.connectUriFactory = connectUriFactory;
         this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
@@ -69,8 +66,7 @@ public class AddonCondition implements Condition
      * Initializer used when created as a plugins2 web fragment condition.
      */
     @Override
-    public void init(final Map<String, String> params) throws PluginParseException
-    {
+    public void init(final Map<String, String> params) throws PluginParseException {
         Configuration cfg = new ConfigurationImpl(
                 checkNotNull(params.get(ADDON_KEY), ADDON_KEY),
                 checkNotNull(params.get(URL), URL)
@@ -79,8 +75,7 @@ public class AddonCondition implements Condition
     }
 
     @Override
-    public boolean shouldDisplay(final Map<String, Object> context)
-    {
+    public boolean shouldDisplay(final Map<String, Object> context) {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
@@ -102,15 +97,12 @@ public class AddonCondition implements Condition
         final String version = pluginRetrievalService.getPlugin().getPluginInformation().getVersion();
         final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
         Promise<String> responsePromise = remotablePluginAccessorFactory.get(cfg.getAddonKey())
-                                                                        .executeAsync(HttpMethod.GET, uri, Collections.emptyMap(), httpHeaders, HttpContentRetriever.EMPTY_STREAM);
+                .executeAsync(HttpMethod.GET, uri, Collections.emptyMap(), httpHeaders, HttpContentRetriever.EMPTY_STREAM);
 
         String response;
-        try
-        {
+        try {
             response = responsePromise.claim();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             final long elapsedMillisecs = stopWatch.getTime();
             final String message = String.format("Request to addon condition URL failed: %s", cfg);
             log.warn(message, e);
@@ -118,29 +110,23 @@ public class AddonCondition implements Condition
             return false;
         }
 
-        try
-        {
+        try {
             final long elapsedMillisecs = stopWatch.getTime();
             JSONObject obj = (JSONObject) JSONValue.parseWithException(response);
             Object shouldDisplayObj = obj.get("shouldDisplay");
 
             Boolean shouldDisplay = getShouldDisplay(shouldDisplayObj);
-            if (shouldDisplay != null)
-            {
+            if (shouldDisplay != null) {
                 eventPublisher.publish(new AddonConditionInvokedEvent(cfg.getAddonKey(), uriPath, elapsedMillisecs));
                 return shouldDisplay;
-            }
-            else
-            {
+            } else {
                 final String message = String.format("Malformed response from addon condition URL: %s\nExpected a boolean value "
                         + "but was " + shouldDisplayObj, cfg);
                 log.warn(message);
                 eventPublisher.publish(new AddonConditionFailedEvent(cfg.getAddonKey(), uriPath, elapsedMillisecs, message));
                 return false;
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             final long elapsedMillisecs = stopWatch.getTime();
             final String message = String.format("Malformed response from addon condition URL: %s", cfg);
             log.warn(message, e);
@@ -149,61 +135,48 @@ public class AddonCondition implements Condition
         }
     }
 
-    private Boolean getShouldDisplay(Object shouldDisplayObj)
-    {
+    private Boolean getShouldDisplay(Object shouldDisplayObj) {
         Boolean shouldDisplay = null;
-        if (shouldDisplayObj instanceof Boolean)
-        {
+        if (shouldDisplayObj instanceof Boolean) {
             shouldDisplay = (Boolean) shouldDisplayObj;
-        }
-        else if (shouldDisplayObj instanceof String)
-        {
+        } else if (shouldDisplayObj instanceof String) {
             shouldDisplay = Boolean.parseBoolean((String) shouldDisplayObj);
         }
         return shouldDisplay;
     }
 
-    private static final class ConfigurationImpl implements Configuration
-    {
+    private static final class ConfigurationImpl implements Configuration {
         private final String addonKey;
         private final String url;
 
-        private ConfigurationImpl(String addonKey, String url)
-        {
+        private ConfigurationImpl(String addonKey, String url) {
             this.addonKey = addonKey;
             this.url = url;
         }
 
-        public String getAddonKey()
-        {
+        public String getAddonKey() {
             return addonKey;
         }
 
-        public String getUrl()
-        {
+        public String getUrl() {
             return url;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return String.format("Condition for %s at %s", addonKey, url);
         }
     }
 
-    private static String getErrorMessage(Exception e, String defaultMessage)
-    {
-        if (e instanceof ContentRetrievalException)
-        {
+    private static String getErrorMessage(Exception e, String defaultMessage) {
+        if (e instanceof ContentRetrievalException) {
             ContentRetrievalException cre = (ContentRetrievalException) e;
             return cre.getErrors().getMessages().toString();
         }
-        if (e.getMessage() != null)
-        {
+        if (e.getMessage() != null) {
             return e.getMessage();
         }
-        if (e.getCause() != null && e.getCause().getMessage() != null)
-        {
+        if (e.getCause() != null && e.getCause().getMessage() != null) {
             return e.getCause().getMessage();
         }
         return defaultMessage;

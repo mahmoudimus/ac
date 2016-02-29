@@ -2,13 +2,14 @@ package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
+import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
+import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
+import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
-import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.confluence.AbstractConfluenceConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -20,7 +21,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroPropertyPanelBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
-import com.atlassian.plugin.connect.api.lifecycle.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -38,8 +38,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
-        extends AbstractConfluenceConnectModuleProvider<T>
-{
+        extends AbstractConfluenceConnectModuleProvider<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleProvider.class);
 
@@ -50,14 +49,12 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
     public AbstractContentMacroModuleProvider(PluginRetrievalService pluginRetrievalService,
-            ConnectJsonSchemaValidator schemaValidator,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            HostContainer hostContainer,
-            AbsoluteAddonUrlConverter absoluteAddonUrlConverter,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
-
-    {
+                                              ConnectJsonSchemaValidator schemaValidator,
+                                              WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                              HostContainer hostContainer,
+                                              AbsoluteAddonUrlConverter absoluteAddonUrlConverter,
+                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
@@ -67,45 +64,38 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     }
 
     protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon,
-            Plugin plugin, T macroBean);
+                                                                    Plugin plugin, T macroBean);
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon)
-    {
-        List<ModuleDescriptor> moduleDescriptors = newArrayList();
-        for (T macros : modules)
-        {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon) {
+        List<ModuleDescriptor<?>> moduleDescriptors = newArrayList();
+        for (T macros : modules) {
             moduleDescriptors.addAll(createModuleDescriptors(addon, pluginRetrievalService.getPlugin(), macros));
         }
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(ConnectAddonBean addon, Plugin plugin, T macroBean)
-    {
-        List<ModuleDescriptor> descriptors = newArrayList();
+    protected List<ModuleDescriptor<?>> createModuleDescriptors(ConnectAddonBean addon, Plugin plugin, T macroBean) {
+        List<ModuleDescriptor<?>> descriptors = newArrayList();
 
         descriptors.add(createMacroModuleDescriptor(addon, plugin, macroBean));
 
-        if (macroBean.isFeatured())
-        {
+        if (macroBean.isFeatured()) {
             WebItemModuleBean featuredWebItem = createFeaturedWebItem(macroBean);
             descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(featuredWebItem, addon, plugin));
 
             // Add a featured icon web resource
-            if (macroBean.hasIcon())
-            {
+            if (macroBean.hasIcon()) {
                 descriptors.add(createFeaturedIconWebResource(addon, plugin, macroBean));
             }
 
         }
 
-        if (macroBean.hasAutoConvert())
-        {
+        if (macroBean.hasAutoConvert()) {
             int index = 1;
             AutoconvertBean autoconvertBean = macroBean.getAutoconvert();
 
-            for (MatcherBean matcherBean : autoconvertBean.getMatchers())
-            {
+            for (MatcherBean matcherBean : autoconvertBean.getMatchers()) {
                 String macroKey = macroBean.getKey(addon);
                 AutoconvertModuleDescriptor descriptor = new AutoconvertModuleDescriptor(
                         ModuleFactory.LEGACY_MODULE_FACTORY, macroBean.getRawKey(), autoconvertBean, matcherBean);
@@ -115,8 +105,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             }
         }
 
-        if (macroBean.hasEditor())
-        {
+        if (macroBean.hasEditor()) {
             createEditorIFrame(addon, macroBean);
             descriptors.add(createEditorWebResource(addon, plugin, macroBean));
         }
@@ -129,8 +118,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return ImmutableList.copyOf(descriptors);
     }
 
-    private void createPropertyPanelIFrame(T macroBean, ConnectAddonBean addon)
-    {
+    private void createPropertyPanelIFrame(T macroBean, ConnectAddonBean addon) {
         MacroPropertyPanelBean propertyPanel = macroBean.getPropertyPanel();
         final String width = "0";
         final String height = "0";
@@ -150,8 +138,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), classifier, renderStrategy);
     }
 
-    private WebItemModuleBean createFeaturedWebItem(T bean)
-    {
+    private WebItemModuleBean createFeaturedWebItem(T bean) {
         WebItemModuleBeanBuilder webItemBean = newWebItemBean()
                 // due to issues with Confluence not reloading i18n properties, we have to use the raw name here
                 // TODO use i18n key when we fix Confluence to support reloading i18n
@@ -160,8 +147,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .withLocation("system.editor.featured.macros.default")
                 .useKeyAsIs(true);
 
-        if (bean.hasIcon())
-        {
+        if (bean.hasIcon()) {
             webItemBean.withIcon(IconBean.newIconBean()
                     .withUrl(bean.getIcon().getUrl())
                     .withWidth(16)
@@ -172,8 +158,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     }
 
     // No web-resource beans/builders/descriptors/providers, so falling back to XML
-    private ModuleDescriptor createFeaturedIconWebResource(ConnectAddonBean addon, Plugin plugin, T bean)
-    {
+    private ModuleDescriptor createFeaturedIconWebResource(ConnectAddonBean addon, Plugin plugin, T bean) {
         String macroKey = bean.getRawKey();
 
         Element webResource = new DOMElement("web-resource")
@@ -205,8 +190,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return jsDescriptor;
     }
 
-    private void createEditorIFrame(ConnectAddonBean addon, T macroBean)
-    {
+    private void createEditorIFrame(ConnectAddonBean addon, T macroBean) {
         MacroEditorBean editor = macroBean.getEditor();
         String width = StringUtils.isBlank(editor.getWidth()) ? "100%" : editor.getWidth();
         String height = StringUtils.isBlank(editor.getHeight()) ? "100%" : editor.getHeight();
@@ -224,8 +208,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         iFrameRenderStrategyRegistry.register(addon.getKey(), macroBean.getRawKey(), renderStrategy);
     }
 
-    private ModuleDescriptor createEditorWebResource(ConnectAddonBean addon, Plugin plugin, T macroBean)
-    {
+    private ModuleDescriptor createEditorWebResource(ConnectAddonBean addon, Plugin plugin, T macroBean) {
         String macroKey = macroBean.getRawKey();
 
         Element webResource = new DOMElement("web-resource")
@@ -271,8 +254,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return jsDescriptor;
     }
 
-    private ModuleDescriptor createPropertyPanelWebResource(ConnectAddonBean addon, Plugin plugin, T macroBean)
-    {
+    private ModuleDescriptor createPropertyPanelWebResource(ConnectAddonBean addon, Plugin plugin, T macroBean) {
         String macroKey = macroBean.getRawKey();
 
         Element webResource = new DOMElement("web-resource")
@@ -309,35 +291,27 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return jsDescriptor;
     }
 
-    private void createInsertTitle(T macroBean, Element transformer)
-    {
+    private void createInsertTitle(T macroBean, Element transformer) {
         MacroEditorBean editor = macroBean.getEditor();
         Element insertTitleElement = transformer.addElement("var")
                 .addAttribute("name", "INSERT_TITLE");
 
-        if (editor.hasInsertTitle())
-        {
+        if (editor.hasInsertTitle()) {
             insertTitleElement.addAttribute("value", editor.getInsertTitle().getValue());
-        }
-        else
-        {
+        } else {
             insertTitleElement.addAttribute("value", macroBean.getDisplayName());
             insertTitleElement.addAttribute("i18n-key", "macro.browser.insert.macro.title");
         }
     }
 
-    private void createEditTitle(T macroBean, Element transformer)
-    {
+    private void createEditTitle(T macroBean, Element transformer) {
         MacroEditorBean editor = macroBean.getEditor();
         Element editTitleElement = transformer.addElement("var")
                 .addAttribute("name", "EDIT_TITLE");
 
-        if (editor.hasEditTitle())
-        {
+        if (editor.hasEditTitle()) {
             editTitleElement.addAttribute("value", editor.getEditTitle().getValue());
-        }
-        else
-        {
+        } else {
             editTitleElement.addAttribute("value", macroBean.getDisplayName());
             editTitleElement.addAttribute("i18n-key", "macro.browser.edit.macro.title");
         }

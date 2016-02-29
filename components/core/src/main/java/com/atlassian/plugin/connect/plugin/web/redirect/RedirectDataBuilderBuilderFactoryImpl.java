@@ -17,25 +17,21 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Component
-public class RedirectDataBuilderBuilderFactoryImpl implements RedirectDataBuilderFactory
-{
+public class RedirectDataBuilderBuilderFactoryImpl implements RedirectDataBuilderFactory {
     private final ConnectConditionFactory connectConditionFactory;
 
     @Autowired
-    public RedirectDataBuilderBuilderFactoryImpl(ConnectConditionFactory connectConditionFactory)
-    {
+    public RedirectDataBuilderBuilderFactoryImpl(ConnectConditionFactory connectConditionFactory) {
         this.connectConditionFactory = connectConditionFactory;
     }
 
-    public RedirectDataBuilder builder()
-    {
+    public RedirectDataBuilder builder() {
         return new RedirectDataBuilderImpl(connectConditionFactory);
     }
 
     static class RedirectDataBuilderImpl
             implements RedirectDataBuilder, RedirectDataBuilder.AccessDeniedTemplateTypeBuilder,
-            RedirectDataBuilder.ModuleUriBuilder, RedirectDataBuilder.InitializedBuilder
-    {
+            RedirectDataBuilder.ModuleUriBuilder, RedirectDataBuilder.InitializedBuilder {
         private final ConnectConditionFactory connectConditionFactory;
 
         private String addOnKey;
@@ -44,49 +40,42 @@ public class RedirectDataBuilderBuilderFactoryImpl implements RedirectDataBuilde
         private final List<ConditionalBean> conditionalBeans = Lists.newArrayList();
         private RedirectData.AccessDeniedTemplateType accessDeniedTemplateType;
 
-        RedirectDataBuilderImpl(ConnectConditionFactory connectConditionFactory)
-        {
+        RedirectDataBuilderImpl(ConnectConditionFactory connectConditionFactory) {
             this.connectConditionFactory = connectConditionFactory;
         }
 
         @Override
-        public ModuleUriBuilder addOn(String key)
-        {
+        public ModuleUriBuilder addOn(String key) {
             addOnKey = checkNotNull(key);
             return this;
         }
 
         @Override
-        public InitializedBuilder conditions(Iterable<ConditionalBean> conditions)
-        {
+        public InitializedBuilder conditions(Iterable<ConditionalBean> conditions) {
             Iterables.addAll(conditionalBeans, conditions);
             return this;
         }
 
         @Override
-        public InitializedBuilder title(String title)
-        {
+        public InitializedBuilder title(String title) {
             this.title = title;
             return this;
         }
 
         @Override
-        public AccessDeniedTemplateTypeBuilder urlTemplate(String urlTemplate)
-        {
+        public AccessDeniedTemplateTypeBuilder urlTemplate(String urlTemplate) {
             this.urlTemplate = urlTemplate;
             return this;
         }
 
         @Override
-        public InitializedBuilder accessDeniedTemplateType(RedirectData.AccessDeniedTemplateType accessDeniedTemplateType)
-        {
+        public InitializedBuilder accessDeniedTemplateType(RedirectData.AccessDeniedTemplateType accessDeniedTemplateType) {
             this.accessDeniedTemplateType = accessDeniedTemplateType;
             return this;
         }
 
         @Override
-        public RedirectData build()
-        {
+        public RedirectData build() {
             Condition condition = connectConditionFactory.createCondition(addOnKey, conditionalBeans, Collections.emptyList());
             return new RedirectData(title, urlTemplate, condition, accessDeniedTemplateType);
         }
