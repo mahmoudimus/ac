@@ -1,13 +1,5 @@
 package it.confluence.item;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.ws.rs.core.UriBuilder;
-
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceOps;
 import com.atlassian.connect.test.confluence.pageobjects.ConfluenceViewPage;
 import com.atlassian.plugin.connect.api.web.redirect.RedirectServletPath;
@@ -22,7 +14,7 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.servlet.condition.ParameterCapturingServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
-
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -31,7 +23,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.confluence.ConfluenceWebDriverTestBase;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -43,8 +40,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
-{
+public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
     private static final String ADDON_WEBITEM_FOR_LOGGED_USERS = "ac-general-web-item-for-logged";
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
@@ -57,14 +53,12 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     private ConnectRunner runner;
 
     @BeforeClass
-    public static void setupUrlHandlers()
-    {
+    public static void setupUrlHandlers() {
         HttpURLConnection.setFollowRedirects(false);
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         WebItemTargetBean pageTarget = newWebItemTargetBean()
                 .withType(WebItemTargetType.page)
                 .build();
@@ -93,20 +87,17 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         runner.stopAndUninstall();
     }
 
     @AfterClass
-    public static void tearDownUrlHandlers()
-    {
+    public static void tearDownUrlHandlers() {
         HttpURLConnection.setFollowRedirects(true);
     }
 
     @Test
-    public void shouldResolveUriParamsForRedirection() throws Exception
-    {
+    public void shouldResolveUriParamsForRedirection() throws Exception {
         login(testUserFactory.basicUser());
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM));
@@ -121,8 +112,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void shouldFilterOutUriParamsForWhichUserDoesNotHavePermission() throws IOException
-    {
+    public void shouldFilterOutUriParamsForWhichUserDoesNotHavePermission() throws IOException {
         URI redirectUrl = UriBuilder.fromPath(baseUrl)
                 .path(RedirectServletPath.forModule(addOnKey, ADDON_WEBITEM))
                 .queryParam("page.type", "page")
@@ -136,8 +126,7 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void shouldReturnNotFoundWhenConditionEvaluatesToFalse() throws Exception
-    {
+    public void shouldReturnNotFoundWhenConditionEvaluatesToFalse() throws Exception {
         URI redirectUrl = UriBuilder.fromPath(baseUrl)
                 .path(RedirectServletPath.forModule(addOnKey, ADDON_WEBITEM_FOR_LOGGED_USERS))
                 .build();
@@ -146,25 +135,21 @@ public class TestConfluenceRedirectServlet extends ConfluenceWebDriverTestBase
         assertThat(response.getResponseCode(), Matchers.is(HttpStatus.SC_NOT_FOUND));
     }
 
-    private RemoteWebItem findViewPageWebItem(String moduleKey) throws Exception
-    {
+    private RemoteWebItem findViewPageWebItem(String moduleKey) throws Exception {
         ConfluenceOps.ConfluencePageData page = confluenceOps.setPage(some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
         product.visit(ConfluenceViewPage.class, page.getId());
-        return connectPageOperations.findWebItem(moduleKey, Optional.<String>empty());
+        return confluencePageOperations.findWebItem(moduleKey, Optional.<String>empty());
     }
 
-    private String getModuleKey(String module)
-    {
+    private String getModuleKey(String module) {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 
-    private HttpURLConnection doRedirectRequest(URI uri) throws IOException
-    {
+    private HttpURLConnection doRedirectRequest(URI uri) throws IOException {
         return (HttpURLConnection) uri.toURL().openConnection();
     }
 
-    private String getQueryParam(String key, String location)
-    {
+    private String getQueryParam(String key, String location) {
         return RemotePageUtil.findInContext(location, key);
     }
 }

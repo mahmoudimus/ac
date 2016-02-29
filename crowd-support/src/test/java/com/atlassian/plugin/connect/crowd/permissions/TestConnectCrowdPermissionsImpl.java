@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
 import com.atlassian.plugin.connect.spi.FeatureManager;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -16,16 +15,14 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class TestConnectCrowdPermissionsImpl
-{
+public class TestConnectCrowdPermissionsImpl {
     @Mock
     private ConnectCrowdPermissionsClient connectCrowdPermissionsClient;
     @Mock
     private FeatureManager featureManager;
 
     @Before
-    public void beforeEach()
-    {
+    public void beforeEach() {
         initMocks(this);
 
         when(featureManager.isOnDemand()).thenReturn(true);
@@ -35,24 +32,21 @@ public class TestConnectCrowdPermissionsImpl
     }
 
     @Test
-    public void grantsAdminPermissionToSpecifiedGroup()
-    {
+    public void grantsAdminPermissionToSpecifiedGroup() {
         new ConnectCrowdPermissionsImpl(connectCrowdPermissionsClient, featureManager).giveAdminPermission("group-name", "product-id", "application-id");
 
         verify(connectCrowdPermissionsClient).grantAdminPermission("group-name", "product-id", "application-id");
     }
 
     @Test
-    public void returnsSuccessWhenGrantSucceeds()
-    {
+    public void returnsSuccessWhenGrantSucceeds() {
         final ConnectCrowdPermissions connectCrowdPermissions =
                 new ConnectCrowdPermissionsImpl(connectCrowdPermissionsClient, featureManager);
         assertThat(connectCrowdPermissions.giveAdminPermission("group-name", "product-id", "application-id"), is(REMOTE_GRANT_SUCCEEDED));
     }
 
     @Test
-    public void reportsGrantIsNotRequiredWhenBTFOrUMFeatureIsOff()
-    {
+    public void reportsGrantIsNotRequiredWhenBTFOrUMFeatureIsOff() {
         final ConnectCrowdPermissions connectCrowdPermissions =
                 new ConnectCrowdPermissionsImpl(connectCrowdPermissionsClient, featureManager);
 

@@ -22,8 +22,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @schemaTitle Global Permission
  * @since 1.1
  */
-public class GlobalPermissionModuleBean extends RequiredKeyBean
-{
+public class GlobalPermissionModuleBean extends RequiredKeyBean {
     /**
      * Description of the global permission. It will be displayed under the permission's name.
      */
@@ -33,42 +32,40 @@ public class GlobalPermissionModuleBean extends RequiredKeyBean
     /**
      * Specifies if this permission can be granted to anonymous users.
      */
-    @CommonSchemaAttributes (defaultValue = "true")
+    @CommonSchemaAttributes(defaultValue = "true")
     private Boolean anonymousAllowed;
 
-    public GlobalPermissionModuleBean()
-    {
+    public GlobalPermissionModuleBean() {
         super();
         this.description = I18nProperty.empty();
         this.anonymousAllowed = true;
     }
 
-    public GlobalPermissionModuleBean(GlobalPermissionModuleBeanBuilder builder)
-    {
+    public GlobalPermissionModuleBean(GlobalPermissionModuleBeanBuilder builder) {
         super(builder);
     }
 
-    public static GlobalPermissionModuleBeanBuilder newGlobalPermissionModuleBean()
-    {
+    public static GlobalPermissionModuleBeanBuilder newGlobalPermissionModuleBean() {
         return new GlobalPermissionModuleBeanBuilder();
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public Boolean getAnonymousAllowed()
-    {
+    public Boolean getAnonymousAllowed() {
         return anonymousAllowed;
     }
 
     @Override
-    public boolean equals(final Object otherObj)
-    {
-        if (this == otherObj) { return true; }
+    public boolean equals(final Object otherObj) {
+        if (this == otherObj) {
+            return true;
+        }
 
-        if (otherObj == null || getClass() != otherObj.getClass()) { return false; }
+        if (otherObj == null || getClass() != otherObj.getClass()) {
+            return false;
+        }
 
         final GlobalPermissionModuleBean that = (GlobalPermissionModuleBean) otherObj;
 
@@ -80,8 +77,7 @@ public class GlobalPermissionModuleBean extends RequiredKeyBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
                 .append(description)

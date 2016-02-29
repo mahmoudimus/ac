@@ -15,15 +15,13 @@ import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.matcher.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertThat;
 
-public class WebItemModuleBeanTest
-{
+public class WebItemModuleBeanTest {
     @Test
-    public void producesCorrectBean() throws Exception
-    {
+    public void producesCorrectBean() throws Exception {
         Gson gson = ConnectModulesGsonFactory.getGson();
 
         WebItemModuleBean webItemBean = createWebItemBeanBuilder().build();
@@ -35,8 +33,7 @@ public class WebItemModuleBeanTest
     }
 
     @Test
-    public void producesBeanWithAbsoluteContext() throws Exception
-    {
+    public void producesBeanWithAbsoluteContext() throws Exception {
         Gson gson = ConnectModulesGsonFactory.getGson();
 
         WebItemModuleBean webItemBean = createWebItemBeanBuilder()
@@ -50,8 +47,7 @@ public class WebItemModuleBeanTest
     }
 
     @Test
-    public void producesBeanWithDialogTarget() throws Exception
-    {
+    public void producesBeanWithDialogTarget() throws Exception {
         Gson gson = ConnectModulesGsonFactory.getGson();
 
         WebItemTargetBean target = newWebItemTargetBean()
@@ -68,13 +64,12 @@ public class WebItemModuleBeanTest
     }
 
     @Test
-    public void producesBeanWithInlineDialogTarget() throws Exception
-    {
+    public void producesBeanWithInlineDialogTarget() throws Exception {
         Gson gson = ConnectModulesGsonFactory.getGson();
 
         WebItemTargetBean target = newWebItemTargetBean()
-                        .withType(WebItemTargetType.inlineDialog)
-                        .build();
+                .withType(WebItemTargetType.inlineDialog)
+                .build();
         WebItemModuleBean webItemBean = createWebItemBeanBuilder()
                 .withTarget(target)
                 .build();
@@ -85,8 +80,7 @@ public class WebItemModuleBeanTest
         assertThat(deserializedBean, sameDeepPropertyValuesAs(webItemBean));
     }
 
-    private WebItemModuleBeanBuilder createWebItemBeanBuilder()
-    {
+    private WebItemModuleBeanBuilder createWebItemBeanBuilder() {
         return newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webItem"))
                 .withKey("my-web-item")
@@ -102,8 +96,7 @@ public class WebItemModuleBeanTest
                 .withWeight(200);
     }
 
-    private static String readTestFile(String filename) throws IOException
-    {
+    private static String readTestFile(String filename) throws IOException {
         return readAddonTestFile("webitem/" + filename);
     }
 }

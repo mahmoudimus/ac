@@ -1,23 +1,13 @@
 package it.jira.field;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import javax.annotation.Nullable;
-
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Pair;
 import com.atlassian.jira.rest.api.pagination.PageBean;
 import com.atlassian.jira.rest.api.util.ErrorCollection;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
-import com.atlassian.plugin.connect.jira.util.Json;
 import com.atlassian.plugin.connect.jira.field.option.rest.ConnectFieldOptionBean;
 import com.atlassian.plugin.connect.jira.field.option.rest.ReplaceRequestBean;
+import com.atlassian.plugin.connect.jira.util.Json;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -37,6 +27,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import static com.atlassian.fugue.Pair.pair;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.hamcrest.Matchers.equalTo;
@@ -48,8 +48,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class ConnectFieldOptionResourceTest
-{
+public class ConnectFieldOptionResourceTest {
     private final Gson gson = new Gson();
 
     private String addonKey;
@@ -61,8 +60,7 @@ public class ConnectFieldOptionResourceTest
     private ConnectRunner runner;
 
     @Before
-    public void init() throws Exception
-    {
+    public void init() throws Exception {
         addonKey = "addon_" + RandomStringUtils.randomAlphabetic(10); // random key to achieve independent tests
         restPath = baseUrl + "/rest/atlassian-connect/1/jira/addon/" + addonKey + "/field/" + fieldKey + "/option/";
 
@@ -79,23 +77,20 @@ public class ConnectFieldOptionResourceTest
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         runner.stopAndUninstall();
     }
 
     @Test
-    public void addedOptionsCanBeRetrieved() throws Exception
-    {
+    public void addedOptionsCanBeRetrieved() throws Exception {
         createOption("5");
         createOption("6");
         assertThat(readOptions(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, 5.0d), new ConnectFieldOptionBean(2, 6.0d))));
     }
 
     @Test
-    public void testPagination() throws Exception
-    {
-        Stream.of("1","2","3","4","5").forEach(this::createOption);
+    public void testPagination() throws Exception {
+        Stream.of("1", "2", "3", "4", "5").forEach(this::createOption);
         PageBean<ConnectFieldOptionBean> page1 = readOptions(0, 3);
         PageBean<ConnectFieldOptionBean> page2 = readOptions(3, 7);
 
@@ -107,8 +102,7 @@ public class ConnectFieldOptionResourceTest
     }
 
     @Test
-    public void optionCanBeDeleted() throws Exception
-    {
+    public void optionCanBeDeleted() throws Exception {
         createOption("5");
         int responseCode = establishConnection("1", HttpMethod.DELETE).getResponseCode();
         assertEquals(204, responseCode);
@@ -116,8 +110,7 @@ public class ConnectFieldOptionResourceTest
     }
 
     @Test
-    public void optionValueCanBeReplacedInIssues() throws Exception
-    {
+    public void optionValueCanBeReplacedInIssues() throws Exception {
         createOption("1");
         createOption("2");
 
@@ -127,8 +120,7 @@ public class ConnectFieldOptionResourceTest
 
 
     @Test
-    public void bothValuesAreRequiredInReplace() throws IOException
-    {
+    public void bothValuesAreRequiredInReplace() throws IOException {
         createOption("1");
         createOption("2");
 
@@ -140,8 +132,7 @@ public class ConnectFieldOptionResourceTest
     }
 
     @Test
-    public void newOptionCanBePutWithSpecifiedId() throws Exception
-    {
+    public void newOptionCanBePutWithSpecifiedId() throws Exception {
         ConnectFieldOptionBean option = new ConnectFieldOptionBean(42, "1");
 
         putOption(42, option);
@@ -150,8 +141,7 @@ public class ConnectFieldOptionResourceTest
     }
 
     @Test
-    public void optionCanBeUpdated() throws Exception
-    {
+    public void optionCanBeUpdated() throws Exception {
         ConnectFieldOptionBean option = new ConnectFieldOptionBean(42, "1");
         ConnectFieldOptionBean updatedOption = new ConnectFieldOptionBean(42, "2");
 
@@ -162,29 +152,25 @@ public class ConnectFieldOptionResourceTest
     }
 
     @Test
-    public void errorIsReturnedIfIdInPutIsInconsistent() throws Exception
-    {
+    public void errorIsReturnedIfIdInPutIsInconsistent() throws Exception {
         ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(42, "42")).left().get();
         assertThat(errorCollection.getErrors(), hasEntry("id", "id should be equal to 1"));
     }
 
     @Test
-    public void valueIsRequired()
-    {
+    public void valueIsRequired() {
         ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(1, null)).left().get();
         assertThat(errorCollection.getErrors(), hasEntry("value", "value is required"));
     }
 
     @Test
-    public void idIsRequiredForPut()
-    {
+    public void idIsRequiredForPut() {
         ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(null, "4")).left().get();
         assertThat(errorCollection.getErrors(), hasEntry("id", "id is required"));
     }
 
     @Test
-    public void addOnHasAccessOnlyToItsOwnFields()
-    {
+    public void addOnHasAccessOnlyToItsOwnFields() {
         List<Triple<String, HttpMethod, Object>> methods = ImmutableList.of(
                 Triple.of("", HttpMethod.GET, null),
                 Triple.of("", HttpMethod.POST, new ConnectFieldOptionBean(null, "42")),
@@ -210,8 +196,7 @@ public class ConnectFieldOptionResourceTest
     }
 
     @Test
-    public void differentJsonObjectsAreHandledProperly() throws Exception
-    {
+    public void differentJsonObjectsAreHandledProperly() throws Exception {
         List<String> differentTypes = ImmutableList.of(
                 "1",
                 "4.2",
@@ -226,90 +211,71 @@ public class ConnectFieldOptionResourceTest
         });
     }
 
-    private void putOption(final ConnectFieldOptionBean updatedOption)
-    {
+    private void putOption(final ConnectFieldOptionBean updatedOption) {
         putOption(updatedOption.getId(), updatedOption);
     }
 
-    private Either<ErrorCollection, ConnectFieldOptionBean> putOption(Integer id, final ConnectFieldOptionBean updatedOption)
-    {
+    private Either<ErrorCollection, ConnectFieldOptionBean> putOption(Integer id, final ConnectFieldOptionBean updatedOption) {
         HttpURLConnection connection = establishConnection(id.toString(), HttpMethod.PUT);
         connection = sendObject(connection, updatedOption);
         return readOutput(connection, ConnectFieldOptionBean.class);
     }
 
-    private JsonNode putOption(Integer id, final String value)
-    {
+    private JsonNode putOption(Integer id, final String value) {
         String json = String.format("{ \"id\" : %d, \"value\" : %s }", id, value);
         HttpURLConnection connection = establishConnection(id.toString(), HttpMethod.PUT);
         connection = sendData(connection, json);
         return readOutputAsGenericJson(connection);
     }
 
-    private JsonNode createOption(String json)
-    {
+    private JsonNode createOption(String json) {
         HttpURLConnection connection = establishConnection("", HttpMethod.POST);
         sendData(connection, String.format("{\"value\" : %s }", json));
         return readOutputAsGenericJson(connection);
     }
 
-    private List<ConnectFieldOptionBean> readOptions() throws Exception
-    {
+    private List<ConnectFieldOptionBean> readOptions() throws Exception {
         return readOptions(0, 1000).getValues();
     }
 
-    private PageBean<ConnectFieldOptionBean> readOptions(Integer startAt, Integer maxResults) throws Exception
-    {
+    private PageBean<ConnectFieldOptionBean> readOptions(Integer startAt, Integer maxResults) throws Exception {
         HttpURLConnection httpURLConnection = establishConnection(String.format("?startAt=%d&maxResults=%d", startAt, maxResults), HttpMethod.GET);
-        Either<ErrorCollection, PageBean<ConnectFieldOptionBean>> allOptions = readOutput(httpURLConnection, new TypeToken<PageBean<ConnectFieldOptionBean>>()
-        {
+        Either<ErrorCollection, PageBean<ConnectFieldOptionBean>> allOptions = readOutput(httpURLConnection, new TypeToken<PageBean<ConnectFieldOptionBean>>() {
         }.getType());
 
         return allOptions.right().get();
     }
 
-    private JsonNode readOutputAsGenericJson(final HttpURLConnection connection)
-    {
+    private JsonNode readOutputAsGenericJson(final HttpURLConnection connection) {
         return readOutput(connection, str -> Json.parse(str).get()).right().get();
     }
 
-    private <T> Either<ErrorCollection, T> readOutput(final HttpURLConnection connection, Class<T> type)
-    {
+    private <T> Either<ErrorCollection, T> readOutput(final HttpURLConnection connection, Class<T> type) {
         return readOutput(connection, str -> gson.fromJson(str, type));
     }
 
-    private <T> Either<ErrorCollection, T> readOutput(final HttpURLConnection connection, Type type)
-    {
+    private <T> Either<ErrorCollection, T> readOutput(final HttpURLConnection connection, Type type) {
         return readOutput(connection, str -> gson.fromJson(str, type));
     }
 
-    private <T> Either<ErrorCollection, T> readOutput(final HttpURLConnection connection, Function<String, T> parser)
-    {
-        try
-        {
+    private <T> Either<ErrorCollection, T> readOutput(final HttpURLConnection connection, Function<String, T> parser) {
+        try {
             int responseCode = connection.getResponseCode();
 
-            if (responseCode >= 200 && responseCode < 300)
-            {
+            if (responseCode >= 200 && responseCode < 300) {
                 String result = IOUtils.toString(connection.getInputStream());
                 return Either.right(parser.apply(result));
-            }
-            else
-            {
+            } else {
                 String result = IOUtils.toString(connection.getErrorStream());
                 return Either.left(gson.fromJson(result, ErrorCollection.class));
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private HttpURLConnection establishConnection(String path, HttpMethod method)
-    {
-        try
-        {
+    private HttpURLConnection establishConnection(String path, HttpMethod method) {
+        try {
             URI url = URI.create(restPath + path);
 
             String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
@@ -322,30 +288,22 @@ public class ConnectFieldOptionResourceTest
             connection.setDoOutput(true);
             connection.setRequestProperty("content-type", "application/json");
             return connection;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private HttpURLConnection sendObject(HttpURLConnection connection, @Nullable Object data)
-    {
+    private HttpURLConnection sendObject(HttpURLConnection connection, @Nullable Object data) {
         return data != null ? sendData(connection, gson.toJson(data)) : connection;
     }
 
-    private HttpURLConnection sendData(HttpURLConnection connection, @Nullable String rawData)
-    {
-        try
-        {
-            if (rawData != null)
-            {
+    private HttpURLConnection sendData(HttpURLConnection connection, @Nullable String rawData) {
+        try {
+            if (rawData != null) {
                 connection.getOutputStream().write(rawData.getBytes());
             }
             return connection;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

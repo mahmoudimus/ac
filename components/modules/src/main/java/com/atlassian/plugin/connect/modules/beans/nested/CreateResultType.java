@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-public enum CreateResultType
-{
+public enum CreateResultType {
     /**
      * Creating a page with this blueprint lands in the editor screen.
      */
@@ -14,13 +13,11 @@ public enum CreateResultType
 
     private final String value;
 
-    CreateResultType(String value)
-    {
+    CreateResultType(String value) {
         this.value = value;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return value;
     }
 }

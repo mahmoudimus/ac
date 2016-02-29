@@ -1,21 +1,19 @@
 package com.atlassian.plugin.connect.confluence.web;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.api.web.condition.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
 import com.google.common.collect.ImmutableList;
 
+import java.util.List;
+
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 
-public class ConfluenceConditionClassResolver implements ConnectConditionClassResolver
-{
+public class ConfluenceConditionClassResolver implements ConnectConditionClassResolver {
 
     public static final String SPACE_SIDEBAR = "space_sidebar";
 
     @Override
-    public List<Entry> getEntries()
-    {
+    public List<Entry> getEntries() {
         return ImmutableList.of(
                 newEntry("active_theme", com.atlassian.confluence.plugin.descriptor.web.conditions.ActiveThemeCondition.class).build(),
                 newEntry("can_edit_space_styles", com.atlassian.confluence.plugin.descriptor.web.conditions.CanEditSpaceStylesCondition.class).build(),

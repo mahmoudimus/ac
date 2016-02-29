@@ -2,26 +2,21 @@ package it.common.upm;
 
 import com.atlassian.plugin.connect.test.common.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.upm.pageobjects.PluginManager;
-
-import org.junit.Test;
-
 import it.common.iframe.AbstractPageTestBase;
+import org.junit.Test;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 
-public abstract class AbstractUpmPageTest extends AbstractPageTestBase<PluginManager>
-{
+public abstract class AbstractUpmPageTest extends AbstractPageTestBase<PluginManager> {
 
     @Override
-    protected void revealLinkIfNecessary(PluginManager pluginManager)
-    {
+    protected void revealLinkIfNecessary(PluginManager pluginManager) {
         pluginManager.getPlugin(addonKey).openPluginDetails();
     }
 
     @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
+    public void pageIsNotAccessibleWithFalseCondition() {
         runner.setToggleableConditionShouldDisplay(false);
 
         login(testUserFactory.basicUser());

@@ -18,8 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @JiraComponent
 @ExportAsDevService
-public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTabPanelModuleDescriptorFactory
-{
+public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTabPanelModuleDescriptorFactory {
     private static final String KEY = "key";
     private static final String ORDER = "order";
     private static final String URL = "url";
@@ -31,15 +30,13 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
     private final ConnectContainerUtil connectContainerUtil;
 
     @Autowired
-    public DefaultConnectTabPanelModuleDescriptorFactory(ConditionModuleFragmentFactory conditionModuleFragmentFactory, ConnectContainerUtil connectContainerUtil)
-    {
+    public DefaultConnectTabPanelModuleDescriptorFactory(ConditionModuleFragmentFactory conditionModuleFragmentFactory, ConnectContainerUtil connectContainerUtil) {
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
         this.connectContainerUtil = connectContainerUtil;
     }
 
     @Override
-    public ModuleDescriptor createModuleDescriptor(ConnectAddonBean connectAddonBean, Plugin plugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
-    {
+    public ModuleDescriptor createModuleDescriptor(ConnectAddonBean connectAddonBean, Plugin plugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints) {
         DOMElement element = new DOMElement(hints.getDomElementName());
 
         element
@@ -47,8 +44,7 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
                 .addAttribute(NAME, StringEscapeUtils.escapeHtml(bean.getName().getValue()))
                 .addAttribute(URL, bean.getUrl());
 
-        if (null != hints.getModuleClass())
-        {
+        if (null != hints.getModuleClass()) {
             element.addAttribute(CLASS, hints.getModuleClass().getName());
         }
 
@@ -56,10 +52,9 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
 
         element.addElement(LABEL)
                 .addAttribute(KEY, bean.getName().getI18n())
-                                                 .setText(bean.getName().getValue());
+                .setText(bean.getName().getValue());
 
-        if (!bean.getConditions().isEmpty())
-        {
+        if (!bean.getConditions().isEmpty()) {
             element.add(conditionModuleFragmentFactory.createFragment(connectAddonBean.getKey(), bean.getConditions()));
         }
 

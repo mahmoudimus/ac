@@ -30,8 +30,7 @@ import java.util.List;
  * @schemaTitle Macro Input Parameter
  * @since 1.0
  */
-public class MacroParameterBean extends BaseModuleBean
-{
+public class MacroParameterBean extends BaseModuleBean {
     /**
      * A unique identifier for the parameter. It has to be all lowercase, and must not contain any spaces. This identifier will
      * be used in the query parameters of the add-on URL.
@@ -94,120 +93,108 @@ public class MacroParameterBean extends BaseModuleBean
      */
     private List<String> aliases;
 
-    public MacroParameterBean()
-    {
+    /**
+     * Determines if the parameter will be displayed in the macro editor.
+     */
+    @CommonSchemaAttributes(defaultValue = "false")
+    private Boolean hidden;
+
+    public MacroParameterBean() {
         init();
     }
 
-    public MacroParameterBean(MacroParameterBeanBuilder builder)
-    {
+    public MacroParameterBean(MacroParameterBeanBuilder builder) {
         super(builder);
         init();
     }
 
-    private void init()
-    {
-        if (null == identifier)
-        {
+    private void init() {
+        if (null == identifier) {
             identifier = "";
         }
-        if (null == name)
-        {
+        if (null == name) {
             name = I18nProperty.empty();
         }
-        if (null == type)
-        {
+        if (null == type) {
             type = "string";
         }
-        if (null == required)
-        {
+        if (null == required) {
             required = false;
         }
-        if (null == multiple)
-        {
+        if (null == multiple) {
             multiple = false;
         }
-        if (null == defaultValue)
-        {
+        if (null == defaultValue) {
             defaultValue = "";
         }
-        if (null == values)
-        {
+        if (null == values) {
             values = ImmutableList.of();
         }
-        if (null == aliases)
-        {
+        if (null == aliases) {
             aliases = ImmutableList.of();
+        }
+        if (null == hidden) {
+            hidden = false;
         }
     }
 
-    public String getIdentifier()
-    {
+    public String getIdentifier() {
         return identifier;
     }
 
-    public I18nProperty getName()
-    {
+    public I18nProperty getName() {
         return name;
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
-    public Boolean isRequired()
-    {
+    public Boolean isRequired() {
         return required;
     }
 
-    public Boolean isMultiple()
-    {
+    public Boolean isMultiple() {
         return multiple;
     }
 
-    public String getDefaultValue()
-    {
+    public String getDefaultValue() {
         return defaultValue;
     }
 
-    public boolean hasDefaultValue()
-    {
+    public boolean hasDefaultValue() {
         return !Strings.isNullOrEmpty(defaultValue);
     }
 
-    public boolean hasName()
-    {
+    public boolean hasName() {
         return name != null && name.hasValue();
     }
 
-    public boolean hasDescription()
-    {
+    public boolean hasDescription() {
         return description != null && description.hasValue();
     }
 
-    public List<String> getValues()
-    {
+    public List<String> getValues() {
         return values;
     }
 
-    public List<String> getAliases()
-    {
+    public List<String> getAliases() {
         return aliases;
     }
 
-    public static MacroParameterBeanBuilder newMacroParameterBean()
-    {
+    public Boolean isHidden() {
+        return hidden;
+    }
+
+    public static MacroParameterBeanBuilder newMacroParameterBean() {
         return new MacroParameterBeanBuilder();
     }
 
-    public static MacroParameterBeanBuilder newMacroParameterBean(MacroParameterBean defaultBean)
-    {
+    public static MacroParameterBeanBuilder newMacroParameterBean(MacroParameterBean defaultBean) {
         return new MacroParameterBeanBuilder(defaultBean);
     }
 }

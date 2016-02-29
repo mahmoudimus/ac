@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.request;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
@@ -13,9 +8,7 @@ import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.base.Supplier;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
@@ -23,10 +16,14 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class DefaultRemotablePluginAccessorBase implements RemotablePluginAccessor
-{
+public abstract class DefaultRemotablePluginAccessorBase implements RemotablePluginAccessor {
     private final String pluginKey;
     private final String pluginName;
     private final Supplier<URI> baseUrlSupplier;
@@ -34,13 +31,11 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
     private static final Logger log = LoggerFactory.getLogger(DefaultRemotablePluginAccessorBase.class);
 
-    protected DefaultRemotablePluginAccessorBase(Plugin plugin, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
-    {
+    protected DefaultRemotablePluginAccessorBase(Plugin plugin, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever) {
         this(plugin.getKey(), plugin.getName(), baseUrlSupplier, httpContentRetriever);
     }
 
-    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
-    {
+    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever) {
         this.pluginKey = pluginKey;
         this.pluginName = pluginName;
         this.baseUrlSupplier = baseUrlSupplier;
@@ -48,8 +43,7 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     }
 
     @Override
-    public String createGetUrl(URI targetPath, Map<String, String[]> params)
-    {
+    public String createGetUrl(URI targetPath, Map<String, String[]> params) {
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getTargetUrl(targetPath)));
         UriBuilderUtils.addQueryParameters(uriBuilder, params);
         return uriBuilder.toString();
@@ -60,40 +54,34 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
                                         URI targetPath,
                                         Map<String, String[]> params,
                                         Map<String, String> headers,
-                                        InputStream body)
-    {
+                                        InputStream body) {
         return httpContentRetriever.async(getAuthorizationGenerator(),
-                                          method,
-                                          getTargetUrl(targetPath),
-                                          params,
-                                          headers,
-                                          body,
-                                          getKey()
+                method,
+                getTargetUrl(targetPath),
+                params,
+                headers,
+                body,
+                getKey()
         );
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return pluginKey;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return pluginName;
     }
 
     @Override
-    public URI getBaseUrl()
-    {
+    public URI getBaseUrl() {
         return baseUrlSupplier.get();
     }
 
-    public URI getTargetUrl(URI targetPath)
-    {
-        if (targetPath.isAbsolute())
-        {
+    public URI getTargetUrl(URI targetPath) {
+        if (targetPath.isAbsolute()) {
             throw new IllegalArgumentException("Target url was absolute (" + targetPath.toString() + "). Expected relative path to base URL of add-on (" + getBaseUrl().toString() + ").");
         }
 
@@ -110,29 +98,22 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
     // Call this method to ensure that you don't have "some_param=<any value>" in targetPath and also "some_param" => [ <any values> ] in params.
     // This is to protect against duplicate result values ("some_param=1&some_param=1"), contradictory values ("some_param=1&some_param=2") and not knowing which (if any) is correct.
-    protected void assertThatTargetPathAndParamsDoNotDuplicateParams(URI targetPath, Map<String, String[]> params)
-    {
+    protected void assertThatTargetPathAndParamsDoNotDuplicateParams(URI targetPath, Map<String, String[]> params) {
         checkNotNull(targetPath);
 
-        if (!MapUtils.isEmpty(params))
-        {
+        if (!MapUtils.isEmpty(params)) {
             List queryParams = URLEncodedUtils.parse(targetPath, "UTF-8");
 
-            for (Object queryParam : queryParams)
-            {
-                if (queryParam instanceof NameValuePair)
-                {
+            for (Object queryParam : queryParams) {
+                if (queryParam instanceof NameValuePair) {
                     NameValuePair nameValuePair = (NameValuePair) queryParam;
 
-                    if (params.containsKey(nameValuePair.getName()))
-                    {
+                    if (params.containsKey(nameValuePair.getName())) {
                         throw new IllegalArgumentException(String.format("targetPath and params arguments both contain a parameter called '%s'. " +
-                                "This is ambiguous (which takes precedence? is it a mistake?). Please supply this parameters in one or the other. targetPath = '%s', params['%s'] = [%s]",
+                                        "This is ambiguous (which takes precedence? is it a mistake?). Please supply this parameters in one or the other. targetPath = '%s', params['%s'] = [%s]",
                                 nameValuePair.getName(), targetPath.getQuery(), nameValuePair.getName(), StringUtils.join(params.get(nameValuePair.getName()), ',')));
                     }
-                }
-                else
-                {
+                } else {
                     log.warn("Ignoring query parameter '{}' that is of type '{}' rather than the expected NameValuePair", queryParam, null == queryParam ? null : queryParam.getClass().getName());
                 }
             }

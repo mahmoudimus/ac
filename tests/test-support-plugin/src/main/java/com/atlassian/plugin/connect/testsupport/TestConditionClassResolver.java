@@ -8,21 +8,17 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 
-public class TestConditionClassResolver implements ConnectConditionClassResolver
-{
+public class TestConditionClassResolver implements ConnectConditionClassResolver {
 
     @Override
-    public List<Entry> getEntries()
-    {
+    public List<Entry> getEntries() {
         return ImmutableList.of(
                 newEntry("fail-on-instantiation", NonInstantiableCondition.class).build()
         );
     }
 
-    private static class NonInstantiableCondition extends NeverDisplayCondition
-    {
-        public NonInstantiableCondition()
-        {
+    private static class NonInstantiableCondition extends NeverDisplayCondition {
+        public NonInstantiableCondition() {
             throw new RuntimeException("Failing on purpose");
         }
     }

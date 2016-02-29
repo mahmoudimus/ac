@@ -19,16 +19,14 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, CustomFieldSearcherModuleDescriptor>
-{
+public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, CustomFieldSearcherModuleDescriptor> {
     private final JiraAuthenticationContext authenticationContext;
     private final ModuleFactory moduleFactory;
     private final Encoder encoder;
     private final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver;
 
     @Autowired
-    public CustomFieldSearcherModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver)
-    {
+    public CustomFieldSearcherModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final ModuleFactory moduleFactory, final Encoder encoder, final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver) {
         this.authenticationContext = authenticationContext;
         this.moduleFactory = moduleFactory;
         this.encoder = encoder;
@@ -36,8 +34,7 @@ public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModule
     }
 
     @Override
-    public CustomFieldSearcherModuleDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
-    {
+    public CustomFieldSearcherModuleDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin) {
         CustomFieldSearcherModuleDescriptor descriptor = new CustomFieldSearcherModuleDescriptorImpl(authenticationContext, moduleFactory, new CustomFieldDefaultVelocityParams(encoder));
 
         Element element = new DOMElement("customfield-searcher");
@@ -59,8 +56,7 @@ public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModule
         return descriptor;
     }
 
-    private Element velocityResourceElement(String name, String location)
-    {
+    private Element velocityResourceElement(String name, String location) {
         DOMElement resource = new DOMElement("resource");
         resource.addAttribute("type", "velocity");
         resource.addAttribute("name", name);
@@ -68,16 +64,14 @@ public class CustomFieldSearcherModuleDescriptorFactory implements ConnectModule
         return resource;
     }
 
-    private Element validCustomFieldType(String addOnKey, String customFieldKey)
-    {
+    private Element validCustomFieldType(String addOnKey, String customFieldKey) {
         DOMElement resource = new DOMElement("valid-customfield-type");
         resource.addAttribute("package", addOnKey);
         resource.addAttribute("key", customFieldKey);
         return resource;
     }
 
-    public static String searcherKeyFromCustomFieldTypeKey(String completeKey)
-    {
+    public static String searcherKeyFromCustomFieldTypeKey(String completeKey) {
         return completeKey + "_searcher";
     }
 }

@@ -7,25 +7,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.HeaderParam;
 
 import static java.lang.String.format;
-import static javax.ws.rs.core.MediaType.*;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.Response.ok;
 
 @Path("/experimental")
-public class ExperimentalResource
-{
+public class ExperimentalResource {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserManager userManager;
 
-    public ExperimentalResource(UserManager userManager)
-    {
+    public ExperimentalResource(UserManager userManager) {
         this.userManager = userManager;
     }
 
@@ -33,8 +32,7 @@ public class ExperimentalResource
     @Produces(APPLICATION_JSON)
     @Path("/user")
     @AnonymousAllowed
-    public Response getUserJson(@HeaderParam("X-ExperimentalApi") String experimentalHeader)
-    {
+    public Response getUserJson(@HeaderParam("X-ExperimentalApi") String experimentalHeader) {
         if (experimentalHeader != null && experimentalHeader.equals("opt-in")) {
             return getUser("{\"name\": \"%s\"}", APPLICATION_JSON_TYPE);
         } else {
@@ -42,21 +40,18 @@ public class ExperimentalResource
         }
     }
 
-    private Response getUser(String format, MediaType contentType)
-    {
+    private Response getUser(String format, MediaType contentType) {
         final String username = getUsername();
         logger.info("Getting the user '{}' as '{}'", username, contentType);
         return ok(format(format, username), contentType).build();
     }
 
-    private String getUsername()
-    {
+    private String getUsername() {
         UserProfile user = userManager.getRemoteUser();
         return user == null ? "anonymous" : user.getUsername();
     }
 
-    private Response buildErrorResponse()
-    {
+    private Response buildErrorResponse() {
         return Response.status(Response.Status.PRECONDITION_FAILED).entity("Experimental header missing.").build();
     }
 }

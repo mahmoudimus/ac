@@ -3,10 +3,8 @@ package com.atlassian.plugin.connect.api.util;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
-public final class ServletUtils
-{
-    public static String extractPathInfo(HttpServletRequest request)
-    {
+public final class ServletUtils {
+    public static String extractPathInfo(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         // ACDEV-656
         if (requestURI.contains(";")) {
@@ -15,8 +13,7 @@ public final class ServletUtils
         return URI.create(requestURI.substring(request.getContextPath().length())).normalize().toString();
     }
 
-    public static boolean normalisedAndOriginalRequestUrisDiffer(HttpServletRequest request)
-    {
+    public static boolean normalisedAndOriginalRequestUrisDiffer(HttpServletRequest request) {
         String requestURI = request.getRequestURI().substring(request.getContextPath().length());
         String normalizedURI = URI.create(requestURI).normalize().toString();
 

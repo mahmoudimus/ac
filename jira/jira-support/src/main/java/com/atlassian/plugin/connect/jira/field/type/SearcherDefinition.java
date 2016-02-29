@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.jira.field.type;
 
-public enum SearcherDefinition
-{
+public enum SearcherDefinition {
     EXACT_TEXT(com.atlassian.jira.issue.customfields.searchers.ExactTextSearcher.class,
             "templates/field/searcher/view-searcher-basictext.vm",
             "templates/field/searcher/search-basictext.vm"),
@@ -13,25 +12,21 @@ public enum SearcherDefinition
     private final String viewTemplate;
     private final String searchTemplate;
 
-    SearcherDefinition(final Class searcherClassFullyQualifiedName, final String viewTemplate, final String searchTemplate)
-    {
+    SearcherDefinition(final Class searcherClassFullyQualifiedName, final String viewTemplate, final String searchTemplate) {
         this.searcherClassFullyQualifiedName = searcherClassFullyQualifiedName;
         this.viewTemplate = viewTemplate;
         this.searchTemplate = searchTemplate;
     }
 
-    public String getSearcherClassFullyQualifiedName()
-    {
+    public String getSearcherClassFullyQualifiedName() {
         return searcherClassFullyQualifiedName.getCanonicalName();
     }
 
-    public String getViewTemplate()
-    {
+    public String getViewTemplate() {
         return viewTemplate;
     }
 
-    public String getSearchTemplate()
-    {
+    public String getSearchTemplate() {
         return searchTemplate;
     }
 }

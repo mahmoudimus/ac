@@ -7,9 +7,8 @@ import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
 import net.java.ao.schema.Table;
 
-@Table ("connect_field_option")
-public interface ConnectFieldOptionAO extends Entity
-{
+@Table("connect_field_option")
+public interface ConnectFieldOptionAO extends Entity {
     @Indexed
     @NotNull
     int getOptionId();
@@ -18,20 +17,20 @@ public interface ConnectFieldOptionAO extends Entity
 
     @Indexed
     @NotNull
-    @StringLength (ConnectAddonBean.MAX_KEY_LENGTH)
+    @StringLength(ConnectAddonBean.MAX_KEY_LENGTH)
     String getAddonKey();
 
     void setAddonKey(String key);
 
     @Indexed
     @NotNull
-    @StringLength (ConnectAddonBean.MAX_KEY_LENGTH)
+    @StringLength(ConnectAddonBean.MAX_KEY_LENGTH)
     String getFieldKey();
 
     void setFieldKey(String key);
 
     @NotNull
-    @StringLength (StringLength.UNLIMITED)
+    @StringLength(StringLength.UNLIMITED)
     String getValue();
 
     void setValue(String value);

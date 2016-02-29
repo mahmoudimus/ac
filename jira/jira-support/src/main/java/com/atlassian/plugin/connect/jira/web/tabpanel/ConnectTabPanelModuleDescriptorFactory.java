@@ -5,9 +5,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 
-public interface ConnectTabPanelModuleDescriptorFactory
-{
+public interface ConnectTabPanelModuleDescriptorFactory {
 
     ModuleDescriptor createModuleDescriptor(ConnectAddonBean addonBean, Plugin plugin,
-            ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints);
+                                            ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints);
 }

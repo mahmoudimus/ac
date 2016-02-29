@@ -14,8 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * Class allowing for extracting of plugin key from http requests.
  */
 @Component
-public class AddonKeyExtractorImpl implements AddonKeyExtractor
-{
+public class AddonKeyExtractorImpl implements AddonKeyExtractor {
     /**
      * Set by a {@link javax.servlet.Filter}, possibly using
      * {@link com.atlassian.plugin.connect.plugin.auth.oauth.OAuth2LOAuthenticator} or
@@ -27,44 +26,37 @@ public class AddonKeyExtractorImpl implements AddonKeyExtractor
     private final JsonConnectAddonIdentifierService jsonConnectAddonIdentifierService;
 
     @Autowired
-    public AddonKeyExtractorImpl(final JsonConnectAddonIdentifierService jsonConnectAddonIdentifierService)
-    {
+    public AddonKeyExtractorImpl(final JsonConnectAddonIdentifierService jsonConnectAddonIdentifierService) {
         this.jsonConnectAddonIdentifierService = jsonConnectAddonIdentifierService;
     }
 
     @Override
     @Nullable
-    public String getAddonKeyFromHttpRequest(@Nonnull HttpServletRequest req)
-    {
+    public String getAddonKeyFromHttpRequest(@Nonnull HttpServletRequest req) {
         String addonKey = extractClientKey(req);
-        if (addonKey == null)
-        {
+        if (addonKey == null) {
             addonKey = extractXdmRequestKey(req);
         }
-        if (addonKey != null && jsonConnectAddonIdentifierService.isConnectAddon(addonKey))
-        {
+        if (addonKey != null && jsonConnectAddonIdentifierService.isConnectAddon(addonKey)) {
             return addonKey;
         }
         return null;
     }
 
     @Override
-    public boolean isAddonRequest(@Nonnull HttpServletRequest request)
-    {
+    public boolean isAddonRequest(@Nonnull HttpServletRequest request) {
         return getAddonKeyFromHttpRequest(request) != null;
     }
 
     @Override
     @Nullable
-    public String extractClientKey(@Nonnull HttpServletRequest req)
-    {
+    public String extractClientKey(@Nonnull HttpServletRequest req) {
         return (String) req.getAttribute(PLUGIN_KEY_ATTRIBUTE);
     }
 
 
     @Override
-    public void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
-    {
+    public void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey) {
         req.setAttribute(PLUGIN_KEY_ATTRIBUTE, clientKey);
     }
 
@@ -74,8 +66,7 @@ public class AddonKeyExtractorImpl implements AddonKeyExtractor
      *         behalf of an add-on running in a sandboxed iframe; see AP.request(...) in the host-side AP js
      */
     @Nullable
-    private static String extractXdmRequestKey(HttpServletRequest req)
-    {
+    private static String extractXdmRequestKey(HttpServletRequest req) {
         return req.getHeader(AP_REQUEST_HEADER);
     }
 

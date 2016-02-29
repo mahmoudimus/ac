@@ -35,8 +35,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AbstractConnectPageModuleProviderTest
-{
+public class AbstractConnectPageModuleProviderTest {
 
     private static final String VALID_CONDITION = "user_is_logged_in";
     private static final String INVALID_CONDITION = "user_is_project_admin";
@@ -65,8 +64,7 @@ public class AbstractConnectPageModuleProviderTest
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         provider = new AbstractConnectPageModuleProviderForTesting(pluginRetrievalService, iFrameRenderStrategyBuilderFactory,
                 iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, conditionClassAccessor, conditionLoadingValidator);
 
@@ -77,122 +75,104 @@ public class AbstractConnectPageModuleProviderTest
     }
 
     @Test
-    public void validBuiltInConditionPasses() throws ConnectModuleValidationException
-    {
+    public void validBuiltInConditionPasses() throws ConnectModuleValidationException {
         SingleConditionBean condition = newCondition(VALID_CONDITION);
         provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
-    public void validRemoteConditionPasses() throws ConnectModuleValidationException
-    {
+    public void validRemoteConditionPasses() throws ConnectModuleValidationException {
         SingleConditionBean condition = newCondition("/remote-condition");
         provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
-    public void validNestedBuiltInConditionPasses() throws ConnectModuleValidationException
-    {
+    public void validNestedBuiltInConditionPasses() throws ConnectModuleValidationException {
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition(VALID_CONDITION))
                 .withType(CompositeConditionType.AND).build();
         provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
-    public void validNestedRemoteConditionPasses() throws ConnectModuleValidationException
-    {
+    public void validNestedRemoteConditionPasses() throws ConnectModuleValidationException {
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition("/remote-condition"))
                 .withType(CompositeConditionType.AND).build();
         provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
-    public void invalidConditionFails() throws ConnectModuleValidationException
-    {
+    public void invalidConditionFails() throws ConnectModuleValidationException {
         expectValidationException(INVALID_CONDITION);
         SingleConditionBean condition = newCondition(INVALID_CONDITION);
         provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
     @Test
-    public void invalidNestedConditionFails() throws ConnectModuleValidationException
-    {
+    public void invalidNestedConditionFails() throws ConnectModuleValidationException {
         expectValidationException(INVALID_CONDITION);
         CompositeConditionBean condition = newCompositeConditionBean().withConditions(newCondition(INVALID_CONDITION))
                 .withType(CompositeConditionType.AND).build();
         provider.validateConditions(new ShallowConnectAddonBean(), Collections.singletonList(newPage(condition)));
     }
 
-    private SingleConditionBean newCondition(String condition)
-    {
+    private SingleConditionBean newCondition(String condition) {
         return SingleConditionBean.newSingleConditionBean().withCondition(condition).build();
     }
 
-    private ConnectPageModuleBean newPage(ConditionalBean condition)
-    {
+    private ConnectPageModuleBean newPage(ConditionalBean condition) {
         return ConnectPageModuleBean.newPageBean().withConditions(condition).build();
     }
 
-    private void expectValidationException(String conditionName)
-    {
+    private void expectValidationException(String conditionName) {
         expectedException.expect(ConnectModuleValidationException.class);
         expectedException.expectMessage(String.format("The add-on includes a Page Module with an unsupported condition (%s)", conditionName));
     }
 
-    private Matcher<SingleConditionBean> isSingleConditionBeanFor(String condition)
-    {
-        return new TypeSafeMatcher<SingleConditionBean>()
-        {
+    private Matcher<SingleConditionBean> isSingleConditionBeanFor(String condition) {
+        return new TypeSafeMatcher<SingleConditionBean>() {
 
             @Override
-            protected boolean matchesSafely(SingleConditionBean conditionBean)
-            {
+            protected boolean matchesSafely(SingleConditionBean conditionBean) {
                 return condition.equals(conditionBean.getCondition());
             }
 
             @Override
-            public void describeTo(Description description)
-            {
+            public void describeTo(Description description) {
                 description.appendText("Single condition with condition ")
                         .appendValue(condition);
             }
         };
     }
 
-    private static class AbstractConnectPageModuleProviderForTesting extends AbstractConnectPageModuleProvider
-    {
+    private static class AbstractConnectPageModuleProviderForTesting extends AbstractConnectPageModuleProvider {
         public AbstractConnectPageModuleProviderForTesting(PluginRetrievalService pluginRetrievalService,
-                IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                ConditionClassAccessor conditionClassAccessor,
-                ConditionLoadingValidator conditionLoadingValidator)
-        {
+                                                           IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                                           IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                                           WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                                           ConditionClassAccessor conditionClassAccessor,
+                                                           ConditionLoadingValidator conditionLoadingValidator) {
             super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
                     webItemModuleDescriptorFactory, conditionClassAccessor, conditionLoadingValidator);
         }
 
         @Override
-        public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
-        {
-            return new ConnectModuleMeta<ConnectPageModuleBean>(null, ConnectPageModuleBean.class) {};
+        public ConnectModuleMeta<ConnectPageModuleBean> getMeta() {
+            return new ConnectModuleMeta<ConnectPageModuleBean>(null, ConnectPageModuleBean.class) {
+            };
         }
 
         @Override
-        protected String getDecorator()
-        {
+        protected String getDecorator() {
             return null;
         }
 
         @Override
-        protected String getDefaultSection()
-        {
+        protected String getDefaultSection() {
             return null;
         }
 
         @Override
-        protected int getDefaultWeight()
-        {
+        protected int getDefaultWeight() {
             return 0;
         }
     }

@@ -7,8 +7,7 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Optional;
 
-public enum ReportCategory
-{
+public enum ReportCategory {
     AGILE("agile"),
     ISSUE_ANALYSIS("issue.analysis"),
     FORECAST_MANAGEMENT("forecast.management"),
@@ -18,29 +17,23 @@ public enum ReportCategory
 
     private final String key;
 
-    private ReportCategory(String key)
-    {
+    ReportCategory(String key) {
         this.key = key;
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
-    public static Optional<ReportCategory> byKey(String key)
-    {
+    public static Optional<ReportCategory> byKey(String key) {
         return Optional.ofNullable(BY_KEY.get(key));
     }
 
-    static
-    {
+    static {
         ImmutableList<ReportCategory> categories = ImmutableList.of(AGILE, ISSUE_ANALYSIS, FORECAST_MANAGEMENT, OTHER);
-        BY_KEY = Maps.uniqueIndex(categories, new Function<ReportCategory, String>()
-        {
+        BY_KEY = Maps.uniqueIndex(categories, new Function<ReportCategory, String>() {
             @Override
-            public String apply(final ReportCategory input)
-            {
+            public String apply(final ReportCategory input) {
                 return input.getKey();
             }
         });

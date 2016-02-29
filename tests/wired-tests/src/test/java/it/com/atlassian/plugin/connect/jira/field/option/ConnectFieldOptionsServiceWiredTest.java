@@ -1,13 +1,5 @@
 package it.com.atlassian.plugin.connect.jira.field.option;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.exception.CreateException;
@@ -16,8 +8,8 @@ import com.atlassian.jira.util.Page;
 import com.atlassian.jira.util.PageRequest;
 import com.atlassian.jira.util.PageRequests;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.api.auth.AuthenticationData;
+import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionService;
 import com.atlassian.plugin.connect.jira.util.Json;
@@ -43,6 +35,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.assertEquals;
@@ -50,10 +50,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class ConnectFieldOptionsServiceWiredTest
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class ConnectFieldOptionsServiceWiredTest {
     public static final PageRequest UNLIMITED_PAGE = PageRequests.request(null, null);
     private final ConnectFieldOptionService connectFieldOptionService;
     private final UserManager userManager;
@@ -65,8 +64,7 @@ public class ConnectFieldOptionsServiceWiredTest
     private AuthenticationData.User auth;
     private List<Plugin> addons = Lists.newArrayList();
 
-    public ConnectFieldOptionsServiceWiredTest(final ConnectFieldOptionService connectFieldOptionService, final UserManager userManager, final JiraTestUtil jiraTestUtil, final TestPluginInstaller testPluginInstaller)
-    {
+    public ConnectFieldOptionsServiceWiredTest(final ConnectFieldOptionService connectFieldOptionService, final UserManager userManager, final JiraTestUtil jiraTestUtil, final TestPluginInstaller testPluginInstaller) {
         this.connectFieldOptionService = connectFieldOptionService;
         this.userManager = userManager;
         this.jiraTestUtil = jiraTestUtil;
@@ -74,23 +72,20 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         fieldId = randomFieldId();
         admin = userManager.getUserProfile(jiraTestUtil.getAdmin().getKey());
         auth = AuthenticationData.byUser(admin);
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         addons.forEach(Plugin::uninstall);
         addons.clear();
     }
 
     @Test
-    public void optionCanBeCreated()
-    {
+    public void optionCanBeCreated() {
         JsonNode jsonValue = Json.parse("42").get();
         ConnectFieldOption expectedResult = ConnectFieldOption.of(1, jsonValue);
 
@@ -103,8 +98,7 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
-    public void optionsGetConsecutiveIds()
-    {
+    public void optionsGetConsecutiveIds() {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"", "\"d\"", "\"e\"");
 
         List<ConnectFieldOption> options = connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE).get().getValues();
@@ -119,8 +113,7 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
-    public void everyOptionIsAlwaysAssignedAUniqueId()
-    {
+    public void everyOptionIsAlwaysAssignedAUniqueId() {
         createOptions(fieldId, "1", "2", "3", "4");
         connectFieldOptionService.removeOption(auth, fieldId, 3);
         connectFieldOptionService.removeOption(auth, fieldId, 2);
@@ -133,8 +126,7 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
-    public void optionCanBeRetrievedById()
-    {
+    public void optionCanBeRetrievedById() {
         FieldId field1 = randomFieldId();
         FieldId field2 = randomFieldId();
         createOptions(field1, "\"a\"", "\"b\"", "\"c\"");
@@ -145,8 +137,7 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
-    public void optionCanBeUpdated()
-    {
+    public void optionCanBeUpdated() {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"");
         ConnectFieldOption expectedValue = ConnectFieldOption.of(2, Json.parse("\"B\"").get());
         ConnectFieldOption result = connectFieldOptionService.putOption(auth, fieldId, expectedValue).get();
@@ -155,8 +146,7 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
-    public void optionWithSpecificIdCanBePut()
-    {
+    public void optionWithSpecificIdCanBePut() {
         ConnectFieldOption option = ConnectFieldOption.of(42, Json.parse("42").get());
         ServiceOutcome<ConnectFieldOption> result = connectFieldOptionService.putOption(auth, fieldId, option);
         assertEquals(option, result.get());
@@ -164,22 +154,19 @@ public class ConnectFieldOptionsServiceWiredTest
     }
 
     @Test
-    public void replacementOptionMustExist()
-    {
+    public void replacementOptionMustExist() {
         ServiceResult serviceResult = connectFieldOptionService.replaceInAllIssues(auth, fieldId, 1, 2);
         assertEquals(ImmutableList.of("Option with id 2 not found"), serviceResult.getErrorCollection().getErrorMessages());
     }
 
     @Test
-    public void replacingToTheSameValueIsNotAllowed()
-    {
+    public void replacingToTheSameValueIsNotAllowed() {
         ServiceResult serviceResult = connectFieldOptionService.replaceInAllIssues(auth, fieldId, 1, 1);
         assertEquals(ImmutableList.of("Replacement must be different than the current value"), serviceResult.getErrorCollection().getErrorMessages());
     }
 
     @Test
-    public void testAuthorization() throws PermissionException, CreateException
-    {
+    public void testAuthorization() throws PermissionException, CreateException {
         ImmutableList<AuthenticationData> notAuthorized = ImmutableList.of(
                 AuthenticationData.byAddonKey("wrongAddonKey"),
                 AuthenticationData.byRequest(mock(HttpServletRequest.class)),
@@ -210,8 +197,7 @@ public class ConnectFieldOptionsServiceWiredTest
         }));
     }
 
-    private List<ConnectFieldOption> createOptions(final FieldId fieldId, String... values)
-    {
+    private List<ConnectFieldOption> createOptions(final FieldId fieldId, String... values) {
         return Stream.of(values)
                 .map(Json::parse)
                 .map(Optional::get)
@@ -220,16 +206,13 @@ public class ConnectFieldOptionsServiceWiredTest
                 .collect(toList());
     }
 
-    private ConnectFieldOption createOption(FieldId fieldId, String value)
-    {
+    private ConnectFieldOption createOption(FieldId fieldId, String value) {
         return connectFieldOptionService.addOption(auth, fieldId, Json.parse(value).get()).get();
     }
 
-    private FieldId randomFieldId()
-    {
+    private FieldId randomFieldId() {
         FieldId fieldId = FieldId.of(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5));
-        try
-        {
+        try {
             // the field needs to be installed properly, actually
             addons.add(testPluginInstaller.installAddon(ConnectAddonBean.newConnectAddonBean()
                     .withKey(fieldId.getAddonKey())
@@ -242,9 +225,7 @@ public class ConnectFieldOptionsServiceWiredTest
                             .withBaseType(ConnectFieldType.TEXT)
                             .build())
                     .build()));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return fieldId;

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-public enum EntityPropertyIndexType
-{
+public enum EntityPropertyIndexType {
     number,
     text,
     string,

@@ -9,17 +9,15 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 
-public class ConnectProjectTabPanelModuleBeanTest
-{
+public class ConnectProjectTabPanelModuleBeanTest {
     @Test
-    public void producesCorrectJSON() throws Exception
-    {
+    public void producesCorrectJSON() throws Exception {
         ConnectTabPanelModuleBean bean = newTabPanelBean()
                 .withName(new I18nProperty("My Project Tab Page", "my.projectTabPage"))
                 .withUrl("/my-general-page")
@@ -34,8 +32,7 @@ public class ConnectProjectTabPanelModuleBeanTest
         assertThat(json, is(sameJSONAs(expectedJson)));
     }
 
-    private static String readTestFile() throws IOException
-    {
+    private static String readTestFile() throws IOException {
         return readAddonTestFile("projectTabAddon.json");
     }
 }

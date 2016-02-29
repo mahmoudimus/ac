@@ -7,15 +7,13 @@ import com.atlassian.confluence.macro.MacroExecutionException;
 
 import java.util.Map;
 
-public class StaticContentMacro extends AbstractMacro
-{
+public class StaticContentMacro extends AbstractMacro {
     private final String addonKey;
     private final String moduleKey;
     private final String uriTemplate;
     private final RemoteMacroRenderer remoteMacroRenderer;
 
-    public StaticContentMacro(String addonKey, String moduleKey, String uriTemplate, BodyType bodyType, OutputType outputType, RemoteMacroRenderer remoteMacroRenderer)
-    {
+    public StaticContentMacro(String addonKey, String moduleKey, String uriTemplate, BodyType bodyType, OutputType outputType, RemoteMacroRenderer remoteMacroRenderer) {
         super(bodyType, outputType);
         this.addonKey = addonKey;
         this.moduleKey = moduleKey;
@@ -25,8 +23,7 @@ public class StaticContentMacro extends AbstractMacro
 
     @Override
     @RequiresFormat(Format.Storage)
-    public String execute(Map<String, String> parameters, String body, ConversionContext context) throws MacroExecutionException
-    {
+    public String execute(Map<String, String> parameters, String body, ConversionContext context) throws MacroExecutionException {
         return remoteMacroRenderer.executeStatic(addonKey, moduleKey, uriTemplate, parameters, body, context);
     }
 }

@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddonOrSysadminOnlyResourceFilterTest
-{
+public class AddonOrSysadminOnlyResourceFilterTest {
     private AddonOrSysadminOnlyResourceFilter resourceFilter;
 
     @Mock
@@ -47,22 +46,19 @@ public class AddonOrSysadminOnlyResourceFilterTest
     private MultivaluedMap<String, String> pathParameters;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.resourceFilter = new AddonOrSysadminOnlyResourceFilter(this.userManager, this.httpRequest, this.uriInfo);
     }
 
     @Test(expected = ConnectAddonAuthenticationRequiredException.class)
-    public void shouldRejectAnonymousRequest()
-    {
+    public void shouldRejectAnonymousRequest() {
         when(userManager.getRemoteUserKey()).thenReturn(null);
 
         resourceFilter.getRequestFilter().filter(containerRequest);
     }
 
     @Test(expected = PermissionDeniedException.class)
-    public void shouldRejectUserRequest()
-    {
+    public void shouldRejectUserRequest() {
         UserKey userKey = new UserKey("charlie");
 
         when(userManager.getRemoteUserKey()).thenReturn(userKey);
@@ -72,8 +68,7 @@ public class AddonOrSysadminOnlyResourceFilterTest
     }
 
     @Test
-    public void shouldAllowSystemAdminRequest()
-    {
+    public void shouldAllowSystemAdminRequest() {
         UserKey userKey = new UserKey("charlie");
 
         when(userManager.getRemoteUserKey()).thenReturn(userKey);
@@ -83,20 +78,18 @@ public class AddonOrSysadminOnlyResourceFilterTest
     }
 
     @Test
-    public void shouldAllowAddonRequestToNonAddonResource()
-    {
+    public void shouldAllowAddonRequestToNonAddonResource() {
         String pluginKey = "my-addon";
 
         when(httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
         when(uriInfo.getPathParameters()).thenReturn(pathParameters);
-        when(pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Collections.EMPTY_LIST);
+        when(pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Collections.emptyList());
 
         assertThat(resourceFilter.getRequestFilter().filter(containerRequest), equalTo(containerRequest));
     }
 
     @Test
-    public void shouldAllowAddonRequestToResourceForSameAddon()
-    {
+    public void shouldAllowAddonRequestToResourceForSameAddon() {
         String pluginKey = "my-addon";
 
         when(httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
@@ -107,8 +100,7 @@ public class AddonOrSysadminOnlyResourceFilterTest
     }
 
     @Test(expected = PermissionDeniedException.class)
-    public void shouldRejectAddonRequestToResourceForOtherAddon()
-    {
+    public void shouldRejectAddonRequestToResourceForOtherAddon() {
         String pluginKey = "my-addon";
         String otherPluginKey = "other-addon";
 

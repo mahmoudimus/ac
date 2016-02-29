@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.property;
 
-import java.util.Collections;
-import java.util.Optional;
-
 import com.atlassian.plugin.connect.api.auth.AddonDataAccessChecker;
 import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.api.property.AddonProperty;
@@ -26,6 +23,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.util.Collections;
+import java.util.Optional;
+
 import static com.atlassian.plugin.connect.api.property.AddonPropertyService.OperationStatus;
 import static com.atlassian.plugin.connect.plugin.property.AddonPropertyServiceImpl.OperationStatusImpl;
 import static org.mockito.Matchers.any;
@@ -35,9 +35,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class AddonPropertyServiceImplTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class AddonPropertyServiceImplTest {
     public static final UserKey userKey = new UserKey("userkey");
 
     private final String addonKey = "testAddon";
@@ -61,8 +60,7 @@ public class AddonPropertyServiceImplTest
     private Function<AddonPropertyService.PutOperationStatus, Void> mockPutFunction;
 
     @Before
-    public void init()
-    {
+    public void init() {
         service = new AddonPropertyServiceImpl(store, connectAddonRegistry, addonDataAccessChecker);
         when(user.getUserKey()).thenReturn(userKey);
         when(connectAddonRegistry.hasAddonWithKey(addonKey)).thenReturn(true);
@@ -71,23 +69,19 @@ public class AddonPropertyServiceImplTest
         when(addonDataAccessChecker.hasAccessToAddon(any(AuthenticationData.class), anyString())).then(invocation -> {
             AuthenticationData auth1 = (AuthenticationData) invocation.getArguments()[0];
             String addonKey1 = (String) invocation.getArguments()[1];
-            return auth1.accept(new AuthenticationData.AuthenticationDetailsVisitor<Boolean>()
-            {
+            return auth1.accept(new AuthenticationData.AuthenticationDetailsVisitor<Boolean>() {
                 @Override
-                public Boolean visit(final AuthenticationData.Request authenticationBy)
-                {
+                public Boolean visit(final AuthenticationData.Request authenticationBy) {
                     return false;
                 }
 
                 @Override
-                public Boolean visit(final AuthenticationData.AddonKey authenticationBy)
-                {
+                public Boolean visit(final AuthenticationData.AddonKey authenticationBy) {
                     return authenticationBy.getAddonKey().equals(addonKey1);
                 }
 
                 @Override
-                public Boolean visit(final AuthenticationData.User authenticationBy)
-                {
+                public Boolean visit(final AuthenticationData.User authenticationBy) {
                     return authenticationBy.getUser().equals(user);
                 }
             });
@@ -95,92 +89,77 @@ public class AddonPropertyServiceImplTest
     }
 
     @Test
-    public void testGetExistingPropertyWhenPlugin() throws Exception
-    {
+    public void testGetExistingPropertyWhenPlugin() throws Exception {
         testGetExistingProperty(auth);
     }
 
     @Test
-    public void testGetExistingPropertyWhenSysAdmin() throws Exception
-    {
+    public void testGetExistingPropertyWhenSysAdmin() throws Exception {
         testGetExistingProperty(AuthenticationData.byUser(user));
     }
 
     @Test
-    public void testGetNonExistingPropertyWhenPlugin() throws Exception
-    {
+    public void testGetNonExistingPropertyWhenPlugin() throws Exception {
         testGetNonExistingProperty(auth);
     }
 
     @Test
-    public void testGetNonExistingPropertyWhenSysAdmin() throws Exception
-    {
+    public void testGetNonExistingPropertyWhenSysAdmin() throws Exception {
         testGetNonExistingProperty(AuthenticationData.byUser(user));
     }
 
     @Test
-    public void testPutNonExistingValidPropertyWhenPlugin() throws Exception
-    {
+    public void testPutNonExistingValidPropertyWhenPlugin() throws Exception {
         testPutNonExistingValidProperty(auth);
     }
 
     @Test
-    public void testPutNonExistingValidPropertyWhenSysAdmin() throws Exception
-    {
+    public void testPutNonExistingValidPropertyWhenSysAdmin() throws Exception {
         testPutNonExistingValidProperty(AuthenticationData.byUser(user));
     }
 
     @Test
-    public void testPutExistingValidPropertyWhenPlugin() throws Exception
-    {
+    public void testPutExistingValidPropertyWhenPlugin() throws Exception {
         testPutExistingValidProperty(auth);
     }
 
     @Test
-    public void testPutExistingValidPropertyWhenSysAdmin() throws Exception
-    {
+    public void testPutExistingValidPropertyWhenSysAdmin() throws Exception {
         testPutExistingValidProperty(AuthenticationData.byUser(user));
     }
 
     @Test
-    public void testDeleteExistingPropertyWhenPlugin() throws Exception
-    {
+    public void testDeleteExistingPropertyWhenPlugin() throws Exception {
         testDeleteExistingProperty(auth);
     }
 
     @Test
-    public void testDeleteExistingPropertyWhenSysAdmin() throws Exception
-    {
+    public void testDeleteExistingPropertyWhenSysAdmin() throws Exception {
         testDeleteExistingProperty(AuthenticationData.byUser(user));
     }
 
     @Test
-    public void testDeleteNonExistingPropertyWhenPlugin() throws Exception
-    {
+    public void testDeleteNonExistingPropertyWhenPlugin() throws Exception {
         testDeleteNonExistingProperty(auth);
     }
 
     @Test
-    public void testDeleteNonExistingPropertyWhenSysAdmin() throws Exception
-    {
+    public void testDeleteNonExistingPropertyWhenSysAdmin() throws Exception {
         testDeleteNonExistingProperty(AuthenticationData.byUser(user));
     }
 
     @Test
-    public void testListPropertiesWhenPlugin() throws Exception
-    {
+    public void testListPropertiesWhenPlugin() throws Exception {
         testListProperties(auth);
     }
 
     @Test
-    public void testListPropertiesWhenSysAdmin() throws Exception
-    {
+    public void testListPropertiesWhenSysAdmin() throws Exception {
         testListProperties(AuthenticationData.byUser(user));
     }
 
     @Test
-    public void testGetInvalidPropertyWithTooLongKey() throws Exception
-    {
+    public void testGetInvalidPropertyWithTooLongKey() throws Exception {
         String tooLongKey = StringUtils.repeat(".", AddonPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
         AddonPropertyService.GetServiceResult result = service.getPropertyValue(auth, addonKey, tooLongKey);
@@ -189,8 +168,7 @@ public class AddonPropertyServiceImplTest
     }
 
     @Test
-    public void testPutInvalidPropertyWithTooLongKey() throws Exception
-    {
+    public void testPutInvalidPropertyWithTooLongKey() throws Exception {
         String tooLongKey = StringUtils.repeat(".", AddonPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
         PutServiceResult<Void> result = service.setPropertyValueIfConditionSatisfied(auth, addonKey, tooLongKey, property.getValue().toString(), alwaysTrue());
@@ -199,8 +177,7 @@ public class AddonPropertyServiceImplTest
     }
 
     @Test
-    public void testDeleteInvalidPropertyWithTooLongKey() throws Exception
-    {
+    public void testDeleteInvalidPropertyWithTooLongKey() throws Exception {
         String tooLongKey = StringUtils.repeat(".", AddonPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
         DeleteServiceResult<Void> result = service.deletePropertyValueIfConditionSatisfied(auth, addonKey, tooLongKey, alwaysTrue());
@@ -209,8 +186,7 @@ public class AddonPropertyServiceImplTest
     }
 
     @Test
-    public void testMaximumPropertiesExceeded() throws Exception
-    {
+    public void testMaximumPropertiesExceeded() throws Exception {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(property));
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddonPropertyStore.PutResult.PROPERTY_LIMIT_EXCEEDED, Optional.empty());
@@ -222,40 +198,35 @@ public class AddonPropertyServiceImplTest
     }
 
     @Test
-    public void testNoAccessToGetDifferentPluginData() throws Exception
-    {
+    public void testNoAccessToGetDifferentPluginData() throws Exception {
         AddonPropertyService.GetServiceResult result = service.getPropertyValue(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey());
         result.fold(mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHORIZED);
     }
 
     @Test
-    public void testNoAccessToPutDifferentPluginData() throws Exception
-    {
+    public void testNoAccessToPutDifferentPluginData() throws Exception {
         PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey(), property.getValue().toString(), alwaysTrue());
         foldableServiceResult.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHORIZED);
     }
 
     @Test
-    public void testNoAccessToDeleteDifferentPluginData() throws Exception
-    {
+    public void testNoAccessToDeleteDifferentPluginData() throws Exception {
         DeleteServiceResult<Void> foldableServiceResult = service.deletePropertyValueIfConditionSatisfied(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey, property.getKey(), alwaysTrue());
         foldableServiceResult.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHORIZED);
     }
 
     @Test
-    public void testNoAccessToListDifferentPluginData() throws Exception
-    {
+    public void testNoAccessToListDifferentPluginData() throws Exception {
         AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(AuthenticationData.byAddonKey("DIFF_PLUGIN_KEY"), addonKey);
         result.fold(mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.NOT_AUTHORIZED);
     }
 
     @Test
-    public void testAddonNotFoundWhenPluginNotInstalledAndSysAdmin() throws Exception
-    {
+    public void testAddonNotFoundWhenPluginNotInstalledAndSysAdmin() throws Exception {
         when(connectAddonRegistry.hasAddonWithKey(addonKey)).thenReturn(false);
 
         AddonPropertyService.GetServiceResult result = service.getPropertyValue(AuthenticationData.byUser(user), addonKey, "");
@@ -264,39 +235,34 @@ public class AddonPropertyServiceImplTest
     }
 
     @Test
-    public void testInvalidJson()
-    {
+    public void testInvalidJson() {
         mockExecuteInTransaction();
         assertInvalidJson("[");
         assertInvalidJson("{");
     }
 
     @Test
-    public void testInvalidJsonString()
-    {
+    public void testInvalidJsonString() {
         assertInvalidJson("asdadf");
         assertInvalidJson("\"asdadf");
         assertInvalidJson("asdadf\"");
     }
 
     @Test
-    public void testValidNullPrimitiveValue() throws Exception
-    {
+    public void testValidNullPrimitiveValue() throws Exception {
         mockExecuteInTransaction();
         assertValidJson("null");
     }
 
     @Test
-    public void testValidBooleanValues() throws Exception
-    {
+    public void testValidBooleanValues() throws Exception {
         mockExecuteInTransaction();
         assertValidJson("true");
         assertValidJson("false");
     }
 
     @Test
-    public void testValidNumbers() throws Exception
-    {
+    public void testValidNumbers() throws Exception {
         mockExecuteInTransaction();
         assertValidJson("0");
         assertValidJson("0.1");
@@ -305,15 +271,13 @@ public class AddonPropertyServiceImplTest
     }
 
     @Test
-    public void testValidStrings() throws Exception
-    {
+    public void testValidStrings() throws Exception {
         mockExecuteInTransaction();
         assertValidJson("\"asdasd\"");
     }
 
     @Test
-    public void testValidArray() throws Exception
-    {
+    public void testValidArray() throws Exception {
         mockExecuteInTransaction();
         assertValidJson("[]");
         assertValidJson("[true]");
@@ -322,50 +286,46 @@ public class AddonPropertyServiceImplTest
     }
 
     @Test
-    public void testValidJsonValue() throws Exception
-    {
+    public void testValidJsonValue() throws Exception {
         mockExecuteInTransaction();
         assertValidJson("{}");
         assertValidJson("{ \"k\" : true}");
     }
 
     @Test
-    public void testPreconditionFailedCalledWhenTestFunctionReturnedFalse()
-    {
+    public void testPreconditionFailedCalledWhenTestFunctionReturnedFalse() {
         mockExecuteInTransaction();
         final Object obj = new Object();
-        PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), "0", new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Object>>()
-        {
+        PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), "0", new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Object>>() {
             @Override
-            public AddonPropertyService.ServiceConditionResult<Object> apply(final Optional<AddonProperty> input)
-            {
+            public AddonPropertyService.ServiceConditionResult<Object> apply(final Optional<AddonProperty> input) {
                 return AddonPropertyService.ServiceConditionResult.FAILURE_WITH_OBJECT(obj);
             }
         });
+        @SuppressWarnings("unchecked")
         Function<Object, Object> mockFunction = (Function<Object, Object>) mock(Function.class);
         foldableServiceResult.fold(mockFunction, null, null);
         verify(mockFunction).apply(obj);
     }
 
-    private void testGetExistingProperty(AuthenticationData auth)
-    {
+
+    private void testGetExistingProperty(AuthenticationData auth) {
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(property));
         AddonPropertyService.GetServiceResult result = service.getPropertyValue(auth, addonKey, property.getKey());
+        @SuppressWarnings("unchecked")
         Function<AddonProperty, Void> mockFunction = mock(Function.class);
         result.fold(null, mockFunction);
         verify(mockFunction).apply(property);
     }
 
-    private void testGetNonExistingProperty(AuthenticationData auth)
-    {
+    private void testGetNonExistingProperty(AuthenticationData auth) {
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.empty());
         AddonPropertyService.GetServiceResult result = service.getPropertyValue(auth, addonKey, property.getKey());
         result.fold(mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.PROPERTY_NOT_FOUND);
     }
 
-    private void testPutNonExistingValidProperty(AuthenticationData auth)
-    {
+    private void testPutNonExistingValidProperty(AuthenticationData auth) {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.empty());
 
@@ -379,8 +339,7 @@ public class AddonPropertyServiceImplTest
         verify(mockPutFunction).apply(argThat(hasServiceResult(OperationStatusImpl.PROPERTY_CREATED)));
     }
 
-    private void testPutExistingValidProperty(AuthenticationData auth)
-    {
+    private void testPutExistingValidProperty(AuthenticationData auth) {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(property));
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddonPropertyStore.PutResult.PROPERTY_UPDATED, Optional.of(property));
@@ -392,8 +351,7 @@ public class AddonPropertyServiceImplTest
         verify(mockPutFunction).apply(argThat(hasServiceResult(OperationStatusImpl.PROPERTY_UPDATED)));
     }
 
-    private void testDeleteExistingProperty(AuthenticationData auth)
-    {
+    private void testDeleteExistingProperty(AuthenticationData auth) {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(new AddonProperty("", EMPTY_OBJECT, 0)));
 
@@ -402,8 +360,7 @@ public class AddonPropertyServiceImplTest
         verify(mockFunction).apply(OperationStatusImpl.PROPERTY_DELETED);
     }
 
-    private void testDeleteNonExistingProperty(AuthenticationData auth)
-    {
+    private void testDeleteNonExistingProperty(AuthenticationData auth) {
         mockExecuteInTransaction();
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.empty());
 
@@ -412,19 +369,18 @@ public class AddonPropertyServiceImplTest
         verify(mockFunction).apply(OperationStatusImpl.PROPERTY_NOT_FOUND);
     }
 
-    private void testListProperties(AuthenticationData auth)
-    {
+    private void testListProperties(AuthenticationData auth) {
         AddonPropertyIterable emptyIterable = new AddonPropertyIterable(Collections.<AddonProperty>emptyList());
         when(store.getAllPropertiesForAddonKey(addonKey)).thenReturn(emptyIterable);
 
+        @SuppressWarnings("unchecked")
         Function<AddonPropertyIterable, Void> mockFunction = mock(Function.class);
         AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(auth, addonKey);
         result.fold(null, mockFunction);
         verify(mockFunction).apply(emptyIterable);
     }
 
-    private void assertValidJson(String value)
-    {
+    private void assertValidJson(String value) {
         PutResultWithOptionalProperty mockedResult = new PutResultWithOptionalProperty(AddonPropertyStore.PutResult.PROPERTY_UPDATED, Optional.of(
                 property));
         when(store.setPropertyValue(addonKey, property.getKey(), value)).thenReturn(mockedResult);
@@ -437,33 +393,27 @@ public class AddonPropertyServiceImplTest
         verify(mockPutFunction).apply(argThat(hasServiceResult(OperationStatusImpl.PROPERTY_UPDATED)));
     }
 
-    private void assertInvalidJson(final String value)
-    {
+    private void assertInvalidJson(final String value) {
         PutServiceResult<Void> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(auth, addonKey, property.getKey(), value, alwaysTrue());
         Function<OperationStatus, Void> mockFunction = getMockForFunction();
         foldableServiceResult.fold(null, mockFunction, null);
         verify(mockFunction).apply(OperationStatusImpl.INVALID_PROPERTY_VALUE);
     }
 
-    private Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Void>> alwaysTrue()
-    {
-        return new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Void>>()
-        {
+    private Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Void>> alwaysTrue() {
+        return new Function<Optional<AddonProperty>, AddonPropertyService.ServiceConditionResult<Void>>() {
             @Override
-            public AddonPropertyService.ServiceConditionResult<Void> apply(final Optional<AddonProperty> input)
-            {
+            public AddonPropertyService.ServiceConditionResult<Void> apply(final Optional<AddonProperty> input) {
                 return AddonPropertyService.ServiceConditionResult.SUCCESS();
             }
         };
     }
 
-    private void mockExecuteInTransaction()
-    {
-        when(store.executeInTransaction(any(AddonPropertyStore.TransactionAction.class))).thenAnswer(new Answer<Object>()
-        {
+    @SuppressWarnings("unchecked")
+    private void mockExecuteInTransaction() {
+        when(store.executeInTransaction(any(AddonPropertyStore.TransactionAction.class))).thenAnswer(new Answer<Object>() {
             @Override
-            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
-            {
+            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable {
                 Object[] arguments = invocationOnMock.getArguments();
                 AddonPropertyStore.TransactionAction c = (AddonPropertyStore.TransactionAction) arguments[0];
                 return c.call();
@@ -471,27 +421,21 @@ public class AddonPropertyServiceImplTest
         });
     }
 
-    @SuppressWarnings ("unchecked")
-    private Function<OperationStatus, Void> getMockForFunction()
-    {
+    @SuppressWarnings("unchecked")
+    private Function<OperationStatus, Void> getMockForFunction() {
         return (Function<OperationStatus, Void>) mock(Function.class);
     }
 
-    @SuppressWarnings ("unchecked")
-    private Function<AddonPropertyService.PutOperationStatus, Void> getMockForPutFunction()
-    {
+    @SuppressWarnings("unchecked")
+    private Function<AddonPropertyService.PutOperationStatus, Void> getMockForPutFunction() {
         return (Function<AddonPropertyService.PutOperationStatus, Void>) mock(Function.class);
     }
 
-    private ArgumentMatcher<AddonPropertyService.PutOperationStatus> hasServiceResult(final OperationStatus result)
-    {
-        return new ArgumentMatcher<AddonPropertyService.PutOperationStatus>()
-        {
+    private ArgumentMatcher<AddonPropertyService.PutOperationStatus> hasServiceResult(final OperationStatus result) {
+        return new ArgumentMatcher<AddonPropertyService.PutOperationStatus>() {
             @Override
-            public boolean matches(final Object o)
-            {
-                if (o instanceof AddonPropertyService.PutOperationStatus)
-                {
+            public boolean matches(final Object o) {
+                if (o instanceof AddonPropertyService.PutOperationStatus) {
                     AddonPropertyService.PutOperationStatus other = (AddonPropertyService.PutOperationStatus) o;
                     return result == other.getBase();
                 }

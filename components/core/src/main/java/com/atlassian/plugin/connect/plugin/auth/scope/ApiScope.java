@@ -5,8 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * An api scope for a given set of functionality
  */
-public interface ApiScope
-{
+public interface ApiScope {
     /**
      * Whether to allow the request or not in this scope.
      *

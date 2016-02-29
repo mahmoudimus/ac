@@ -17,20 +17,17 @@ import java.util.List;
 import static it.com.atlassian.plugin.connect.jira.auth.scope.JiraScopeTestHelper.emptyBodyForJira;
 import static java.util.Arrays.asList;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class JiraRestScopesTest extends ScopeManagerTest
-{
-    public JiraRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
-    {
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class JiraRestScopesTest extends ScopeManagerTest {
+    public JiraRestScopesTest(AddonScopeManager scopeManager, ScopeTestHelper scopeTestHelper) {
         super(scopeManager, scopeTestHelper, testData());
     }
 
     /**
      * These tests are not exhaustive. They are samples across the JIRA endpoints.
      */
-    public static Collection<ScopeTestData> testData()
-    {
+    public static Collection<ScopeTestData> testData() {
         List<ScopeTestData> params = new ArrayList<>();
 
         params.addAll(asList(
@@ -173,10 +170,8 @@ public class JiraRestScopesTest extends ScopeManagerTest
         ));
 
         // never allow an add-on to change a user's details or password
-        for (ScopeName scopeName : asList(ScopeName.WRITE, ScopeName.DELETE, ScopeName.ADMIN))
-        {
-            for (HttpMethod httpMethod : asList(HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE))
-            {
+        for (ScopeName scopeName : asList(ScopeName.WRITE, ScopeName.DELETE, ScopeName.ADMIN)) {
+            for (HttpMethod httpMethod : asList(HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE)) {
                 params.add(emptyBodyForJira(scopeName, httpMethod, "/jira/rest/api/2/myself", false));
                 params.add(emptyBodyForJira(scopeName, httpMethod, "/jira/rest/api/2/myself/password", false));
             }

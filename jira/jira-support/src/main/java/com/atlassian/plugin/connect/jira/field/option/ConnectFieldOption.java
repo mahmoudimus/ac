@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.jira.field.option;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 import org.codehaus.jackson.JsonNode;
 
-public final class ConnectFieldOption
-{
+import java.util.Objects;
+
+public final class ConnectFieldOption {
     private final Integer id;
     private final JsonNode value;
 
@@ -14,27 +13,27 @@ public final class ConnectFieldOption
         return new ConnectFieldOption(id, value);
     }
 
-    private ConnectFieldOption(Integer id, JsonNode value)
-    {
+    private ConnectFieldOption(Integer id, JsonNode value) {
         this.id = Preconditions.checkNotNull(id);
         this.value = Preconditions.checkNotNull(value);
     }
 
-    public Integer getId()
-    {
+    public Integer getId() {
         return id;
     }
 
-    public JsonNode getValue()
-    {
+    public JsonNode getValue() {
         return value;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ConnectFieldOption that = (ConnectFieldOption) o;
 
@@ -43,14 +42,12 @@ public final class ConnectFieldOption
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(getId(), getValue());
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("id", getId())
                 .add("value", getValue())

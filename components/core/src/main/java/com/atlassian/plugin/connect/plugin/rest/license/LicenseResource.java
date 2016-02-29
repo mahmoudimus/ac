@@ -20,13 +20,11 @@ import java.util.concurrent.TimeUnit;
  * Remove this once UPM supports this rest resource
  */
 @Path("license")
-public class LicenseResource
-{
+public class LicenseResource {
     private final LicenseRetriever licenseRetriever;
     private final AddonKeyExtractor addonKeyExtractor;
 
-    public LicenseResource(final LicenseRetriever licenseRetriever, final AddonKeyExtractor addonKeyExtractor)
-    {
+    public LicenseResource(final LicenseRetriever licenseRetriever, final AddonKeyExtractor addonKeyExtractor) {
         this.licenseRetriever = licenseRetriever;
         this.addonKeyExtractor = addonKeyExtractor;
     }
@@ -34,26 +32,22 @@ public class LicenseResource
     @GET
     @AnonymousAllowed
     @Produces("application/json")
-    public Response getLicense(@Context javax.servlet.http.HttpServletRequest request)
-    {
+    public Response getLicense(@Context javax.servlet.http.HttpServletRequest request) {
         String pluginKey = addonKeyExtractor.extractClientKey(request);
         if (pluginKey == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                           .entity("Requests to this resource must be authenticated by an add-on.")
-                           .build();
+                    .entity("Requests to this resource must be authenticated by an add-on.")
+                    .build();
         }
 
         Option<PluginLicense> license = licenseRetriever.getLicense(pluginKey);
-        if (license.isDefined())
-        {
+        if (license.isDefined()) {
             Date expirationDate = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5));
 
             return Response.ok(LicenseDetailsFactory.createRemotablePluginLicense(license.get()))
                     .expires(expirationDate)
                     .build();
-        }
-        else
-        {
+        } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }

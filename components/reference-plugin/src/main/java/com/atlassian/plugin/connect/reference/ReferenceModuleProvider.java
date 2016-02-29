@@ -19,57 +19,43 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class ReferenceModuleProvider extends AbstractConnectModuleProvider<ReferenceModuleBean>
-{
+public class ReferenceModuleProvider extends AbstractConnectModuleProvider<ReferenceModuleBean> {
 
     private static final ReferenceModuleMeta META = new ReferenceModuleMeta();
 
     private PluginRetrievalService pluginRetrievalService;
 
     @Autowired
-    public ReferenceModuleProvider(@ComponentImport PluginRetrievalService pluginRetrievalService)
-    {
+    public ReferenceModuleProvider(@ComponentImport PluginRetrievalService pluginRetrievalService) {
         this.pluginRetrievalService = pluginRetrievalService;
     }
 
     @Override
-    public ConnectModuleMeta<ReferenceModuleBean> getMeta()
-    {
+    public ConnectModuleMeta<ReferenceModuleBean> getMeta() {
         return META;
     }
 
     @Override
-    public List<ReferenceModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+    public List<ReferenceModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         List<ReferenceModuleBean> referenceModules = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         assertReferenceFieldValid(descriptor, referenceModules);
         return referenceModules;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReferenceModuleBean> referenceModules, ConnectAddonBean addon)
-    {
-        return referenceModules.stream().map(new Function<ReferenceModuleBean, ModuleDescriptor>()
-        {
-
-            @Override
-            public ModuleDescriptor apply(ReferenceModuleBean referenceModule)
-            {
-                String moduleKey = referenceModule.getKey(addon);
-                FakeModuleDescriptor moduleDescriptor = new FakeModuleDescriptor(moduleKey);
-                moduleDescriptor.setPlugin(pluginRetrievalService.getPlugin());
-                return moduleDescriptor;
-            }
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ReferenceModuleBean> referenceModules, ConnectAddonBean addon) {
+        return referenceModules.stream().map(referenceModule -> {
+            String moduleKey = referenceModule.getKey(addon);
+            FakeModuleDescriptor moduleDescriptor = new FakeModuleDescriptor(moduleKey);
+            moduleDescriptor.setPlugin(pluginRetrievalService.getPlugin());
+            return moduleDescriptor;
         }).collect(Collectors.toList());
     }
 
     private void assertReferenceFieldValid(ShallowConnectAddonBean descriptor, List<ReferenceModuleBean> referenceModules)
-            throws ConnectModuleValidationException
-    {
-        for (ReferenceModuleBean referenceModule : referenceModules)
-        {
-            if (referenceModule.getReferenceField() > Integer.MAX_VALUE)
-            {
+            throws ConnectModuleValidationException {
+        for (ReferenceModuleBean referenceModule : referenceModules) {
+            if (referenceModule.getReferenceField() > Integer.MAX_VALUE) {
                 String message = "Installation failed. The add-on includes a reference module with an impossibly large reference field value.";
                 String i18nKey = "connect.install.error.reference.field.invalid";
                 throw new ConnectModuleValidationException(descriptor, getMeta(), message, i18nKey);
@@ -81,18 +67,15 @@ public class ReferenceModuleProvider extends AbstractConnectModuleProvider<Refer
      * The lifecycle of add-ons relies on there being at least one plugin module descriptor per add-on. This fake
      * descriptor is used to fulfill that requirement.
      */
-    private static class FakeModuleDescriptor extends AbstractModuleDescriptor<Void>
-    {
+    private static class FakeModuleDescriptor extends AbstractModuleDescriptor<Void> {
 
-        public FakeModuleDescriptor(String key)
-        {
+        public FakeModuleDescriptor(String key) {
             super(ModuleFactory.LEGACY_MODULE_FACTORY);
             this.key = key;
         }
 
         @Override
-        public Void getModule()
-        {
+        public Void getModule() {
             return null;
         }
 
@@ -102,7 +85,7 @@ public class ReferenceModuleProvider extends AbstractConnectModuleProvider<Refer
          * @param pattern The validation pattern
          */
         @Override
-        protected void provideValidationRules(ValidationPattern pattern)
-        {}
+        protected void provideValidationRules(ValidationPattern pattern) {
+        }
     }
 }

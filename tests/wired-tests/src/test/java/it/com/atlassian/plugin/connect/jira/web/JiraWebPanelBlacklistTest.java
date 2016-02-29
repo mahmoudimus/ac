@@ -14,25 +14,19 @@ import static org.junit.Assert.assertEquals;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class JiraWebPanelBlacklistTest
-{
+public class JiraWebPanelBlacklistTest {
     private final TestPluginInstaller testPluginInstaller;
 
-    public JiraWebPanelBlacklistTest(TestPluginInstaller testPluginInstaller)
-    {
+    public JiraWebPanelBlacklistTest(TestPluginInstaller testPluginInstaller) {
         this.testPluginInstaller = testPluginInstaller;
     }
 
     @Test
-    public void shouldNotInstallPluginWithInvalidWebPanelLocations() throws IOException
-    {
+    public void shouldNotInstallPluginWithInvalidWebPanelLocations() throws IOException {
         String json = readAddonTestFile("jiraDescriptorWithInvalidLocation.json");
-        try
-        {
+        try {
             testPluginInstaller.installAddon(json);
-        }
-        catch (InvalidDescriptorException e)
-        {
+        } catch (InvalidDescriptorException e) {
             assertEquals("Installation failed. The add-on includes a web fragment with an unsupported location ([atl.header.after.scripts]).", e.getMessage());
         }
     }

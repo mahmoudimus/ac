@@ -12,25 +12,21 @@ import java.io.IOException;
 
 import static java.lang.String.valueOf;
 
-public class CheckUsernameConditionServlet extends HttpServlet
-{
+public class CheckUsernameConditionServlet extends HttpServlet {
     private final String username;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public CheckUsernameConditionServlet(TestUser user)
-    {
+    public CheckUsernameConditionServlet(TestUser user) {
         this.username = user.getUsername();
     }
 
-    public CheckUsernameConditionServlet(String username)
-    {
+    public CheckUsernameConditionServlet(String username) {
         this.username = username;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-    {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final String loggedInUser = req.getParameter("user_id");
 
         final String json = getJson(isUser(loggedInUser));
@@ -38,20 +34,17 @@ public class CheckUsernameConditionServlet extends HttpServlet
         sendJson(resp, json);
     }
 
-    private void sendJson(HttpServletResponse resp, String json) throws IOException
-    {
+    private void sendJson(HttpServletResponse resp, String json) throws IOException {
         resp.setContentType("application/json");
         resp.getWriter().write(json);
         resp.getWriter().close();
     }
 
-    private String getJson(boolean shouldDisplay)
-    {
+    private String getJson(boolean shouldDisplay) {
         return "{\"shouldDisplay\" : " + valueOf(shouldDisplay) + "}";
     }
 
-    private boolean isUser(String loggedInUser)
-    {
+    private boolean isUser(String loggedInUser) {
         return username.equals(loggedInUser);
     }
 }

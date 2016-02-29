@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.jira.report;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.request.AbsoluteAddonUrlConverter;
 import com.atlassian.plugin.connect.api.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectIFrameServletPath;
@@ -9,7 +10,6 @@ import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyBuilderFa
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
-import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -20,8 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Creates Connect implementation of ReportModuleDescriptor.
  */
 @JiraComponent
-public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ReportModuleBean, ConnectReportModuleDescriptor>
-{
+public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ReportModuleBean, ConnectReportModuleDescriptor> {
     private final ConnectContainerUtil containerUtil;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
@@ -29,10 +28,9 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
 
     @Autowired
     public ConnectReportModuleDescriptorFactory(final ConnectContainerUtil containerUtil,
-            final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            final AbsoluteAddonUrlConverter absoluteAddonUrlConverter)
-    {
+                                                final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                                final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                                final AbsoluteAddonUrlConverter absoluteAddonUrlConverter) {
         this.containerUtil = containerUtil;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
@@ -40,8 +38,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
     }
 
     @Override
-    public ConnectReportModuleDescriptor createModuleDescriptor(final ReportModuleBean bean, ConnectAddonBean connectAddonBean, final Plugin plugin)
-    {
+    public ConnectReportModuleDescriptor createModuleDescriptor(final ReportModuleBean bean, ConnectAddonBean connectAddonBean, final Plugin plugin) {
         Element reportModule = createReportDescriptor(bean, connectAddonBean);
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
@@ -62,8 +59,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
         return moduleDescriptor;
     }
 
-    private Element createReportDescriptor(final ReportModuleBean bean, final ConnectAddonBean connectAddonBean)
-    {
+    private Element createReportDescriptor(final ReportModuleBean bean, final ConnectAddonBean connectAddonBean) {
         final String iFrameServletPath = ConnectIFrameServletPath.forModule(connectAddonBean.getKey(), bean.getRawKey());
 
         final Element reportModule = new DOMElement("report");
@@ -90,8 +86,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
         return reportModule;
     }
 
-    private String getThumbnailUrl(ConnectAddonBean connectAddonBean, String thumbnailUrl)
-    {
+    private String getThumbnailUrl(ConnectAddonBean connectAddonBean, String thumbnailUrl) {
         return StringUtils.isEmpty(thumbnailUrl) ? "" : absoluteAddonUrlConverter.getAbsoluteUrl(connectAddonBean, thumbnailUrl);
     }
 }

@@ -20,9 +20,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith (MockitoJUnitRunner.class)
-public class RedirectedWebPanelSectionSearcherTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class RedirectedWebPanelSectionSearcherTest {
     private final String redirectedSectionKey1 = "redirected-section-1";
     private final String sectionKey2 = "regular-section-2";
     private final String jiraSection = "jira-section";
@@ -33,8 +32,7 @@ public class RedirectedWebPanelSectionSearcherTest
     private RedirectedWebPanelSectionSearcher redirectedWebPanelSectionSearcher;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         ModuleFactory moduleFactory = mock(ModuleFactory.class);
         RedirectedWebPanelLocationProviderModuleDescriptor moduleDescriptor = new RedirectedWebPanelLocationProviderModuleDescriptor(moduleFactory);
         Plugin plugin = mock(Plugin.class);
@@ -53,8 +51,7 @@ public class RedirectedWebPanelSectionSearcherTest
     }
 
     @Test
-    public void shouldDetectThatWebPanelIsInRedirectedLocationWhenItIsDirectlyInRedirectedSection()
-    {
+    public void shouldDetectThatWebPanelIsInRedirectedLocationWhenItIsDirectlyInRedirectedSection() {
         WebSectionModuleBean redirectedWebSection = createWebSectionModuleBean(redirectedSectionKey1, jiraSection);
         WebPanelModuleBean webPanelModuleBean = createWebPanelModuleBean(redirectedSectionKey1);
         ConnectAddonBean connectAddonBean = ConnectAddonBean.newConnectAddonBean().withModules("webSections", redirectedWebSection).build();
@@ -64,8 +61,7 @@ public class RedirectedWebPanelSectionSearcherTest
     }
 
     @Test
-    public void shouldDetectThatWebPanelIsInRedirectedLocationWhenItIsInSectionThatIsInRedirectedSection()
-    {
+    public void shouldDetectThatWebPanelIsInRedirectedLocationWhenItIsInSectionThatIsInRedirectedSection() {
         WebSectionModuleBean webSection = createWebSectionModuleBean(sectionKey2, jiraSection);
         String sectionKey1 = "section-key-1";
         WebSectionModuleBean webSection1 = createWebSectionModuleBean(sectionKey1, sectionKey2);
@@ -79,8 +75,7 @@ public class RedirectedWebPanelSectionSearcherTest
     }
 
     @Test
-    public void shouldNotDetectThatWebPanelIsInRedirectedLocationIfItIsNotInRedirectedSection()
-    {
+    public void shouldNotDetectThatWebPanelIsInRedirectedLocationIfItIsNotInRedirectedSection() {
         String sectionKey1 = "section-key-1";
         WebSectionModuleBean webSection1 = createWebSectionModuleBean(sectionKey1, jiraSection);
         String sectionKey2 = "section-key-2";
@@ -93,8 +88,7 @@ public class RedirectedWebPanelSectionSearcherTest
     }
 
     @Test
-    public void cyclesInLocationGraphDoesNotCauseInfinitiveLoop()
-    {
+    public void cyclesInLocationGraphDoesNotCauseInfinitiveLoop() {
         String sectionKey1 = "section-key-1";
         String sectionKey2 = "section-key-2";
         WebSectionModuleBean webSection1 = createWebSectionModuleBean(sectionKey1, sectionKey2);
@@ -107,18 +101,15 @@ public class RedirectedWebPanelSectionSearcherTest
         assertThat(isWebPanelInRedirectedWebSection, is(false));
     }
 
-    private WebPanelModuleBean createWebPanelModuleBean(String location)
-    {
+    private WebPanelModuleBean createWebPanelModuleBean(String location) {
         return WebPanelModuleBean.newWebPanelBean().withLocation(location).build();
     }
 
-    private WebSectionModuleBean createWebSectionModuleBean(String key, String location)
-    {
+    private WebSectionModuleBean createWebSectionModuleBean(String key, String location) {
         return WebSectionModuleBean.newWebSectionBean().withLocation(location).withKey(key).build();
     }
 
-    private ConnectAddonBean createConnectAddonBean(WebSectionModuleBean... webSections)
-    {
+    private ConnectAddonBean createConnectAddonBean(WebSectionModuleBean... webSections) {
         return ConnectAddonBean.newConnectAddonBean().withModules("webSections", webSections).build();
     }
 }

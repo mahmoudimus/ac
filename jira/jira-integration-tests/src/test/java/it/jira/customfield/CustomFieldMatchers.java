@@ -6,23 +6,17 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-public class CustomFieldMatchers
-{
-    private CustomFieldMatchers()
-    {
-    }
+public class CustomFieldMatchers {
+    private CustomFieldMatchers() { }
 
     public static Matcher<CustomFieldResponse> customFieldResponse(
             final String name,
             final String description,
             final String type,
-            final String searcher)
-    {
-        return new TypeSafeMatcher<CustomFieldResponse>()
-        {
+            final String searcher) {
+        return new TypeSafeMatcher<CustomFieldResponse>() {
             @Override
-            protected boolean matchesSafely(final CustomFieldResponse customFieldItem)
-            {
+            protected boolean matchesSafely(final CustomFieldResponse customFieldItem) {
                 return Objects.equal(customFieldItem.name, name)
                         && Objects.equal(customFieldItem.description, description)
                         && Objects.equal(customFieldItem.type, type)
@@ -30,8 +24,7 @@ public class CustomFieldMatchers
             }
 
             @Override
-            public void describeTo(final Description desc)
-            {
+            public void describeTo(final Description desc) {
                 desc.appendValue(name)
                         .appendValue(description)
                         .appendValue(type)

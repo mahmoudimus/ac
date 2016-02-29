@@ -17,56 +17,49 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class EntityPropertyIndexDocumentModuleBeanTest
-{
+public class EntityPropertyIndexDocumentModuleBeanTest {
     private static EntityPropertyModuleBean expectedBean;
     private static EntityPropertyModuleBean actualBean;
 
     @BeforeClass
-    public static void setUp() throws IOException
-    {
+    public static void setUp() throws IOException {
         expectedBean = createModuleBean();
         actualBean = ConnectModulesGsonFactory.getGson().fromJson(readTestFile("entityProperty.json"), EntityPropertyModuleBean.class);
     }
 
     @Test
-    public void correctEntityTypeParsed()
-    {
+    public void correctEntityTypeParsed() {
         assertThat(actualBean.getEntityType(), is(expectedBean.getEntityType()));
     }
 
     @Test
-    public void keyConfigurationsParsed()
-    {
+    public void keyConfigurationsParsed() {
         assertThat(actualBean.getKeyConfigurations(), hasSize(expectedBean.getKeyConfigurations().size()));
         assertThat(actualBean.getKeyConfigurations(), is(expectedBean.getKeyConfigurations()));
     }
 
     @Test
-    public void propertyKeyParsed()
-    {
+    public void propertyKeyParsed() {
         EntityPropertyIndexKeyConfigurationBean actualKeyConfigurationBean = actualBean.getKeyConfigurations().get(0);
         EntityPropertyIndexKeyConfigurationBean expectedKeyConfigurationBean = expectedBean.getKeyConfigurations().get(0);
         assertThat(actualKeyConfigurationBean.getPropertyKey(), is(expectedKeyConfigurationBean.getPropertyKey()));
     }
 
     @Test
-    public void extractionsParsed()
-    {
+    public void extractionsParsed() {
         EntityPropertyIndexKeyConfigurationBean actualKeyConfigurationBean = actualBean.getKeyConfigurations().get(0);
         EntityPropertyIndexKeyConfigurationBean expectedKeyConfigurationBean = expectedBean.getKeyConfigurations().get(0);
 
         assertThat(actualKeyConfigurationBean.getExtractions(), containsInAnyOrder(expectedKeyConfigurationBean.getExtractions().toArray()));
     }
 
-    private static EntityPropertyModuleBean createModuleBean()
-    {
+    private static EntityPropertyModuleBean createModuleBean() {
         List<EntityPropertyIndexExtractionConfigurationBean> extractions = Lists.newArrayList(
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number),
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.string, "attachmentExtension")
@@ -79,8 +72,7 @@ public class EntityPropertyIndexDocumentModuleBeanTest
                 .build();
     }
 
-    private static ConnectAddonBean createAddonBean()
-    {
+    private static ConnectAddonBean createAddonBean() {
         return newConnectAddonBean()
                 .withName("My Add-On")
                 .withKey("my-add-on")
@@ -91,8 +83,7 @@ public class EntityPropertyIndexDocumentModuleBeanTest
                 .build();
     }
 
-    private static String readTestFile(String filename) throws IOException
-    {
+    private static String readTestFile(String filename) throws IOException {
         return readAddonTestFile("entityproperty/" + filename);
     }
 }

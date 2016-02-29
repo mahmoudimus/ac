@@ -22,8 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ThreeLeggedAuthFilterTest
-{
+public class ThreeLeggedAuthFilterTest {
 
     @InjectMocks
     private ThreeLeggedAuthFilter filter;
@@ -59,8 +58,7 @@ public class ThreeLeggedAuthFilterTest
     private FilterChain filterChainMock;
 
     @Test
-    public void shouldSkipIfNotStarted() throws IOException, ServletException
-    {
+    public void shouldSkipIfNotStarted() throws IOException, ServletException {
         filter.doFilter(httpServletRequestMock, httpServletResponseMock, filterChainMock);
         verify(filterChainMock).doFilter(httpServletRequestMock, httpServletResponseMock);
         verifyNoMoreInteractions(httpServletRequestMock);
@@ -68,8 +66,7 @@ public class ThreeLeggedAuthFilterTest
     }
 
     @Test
-    public void shouldNotInvokeAddonAccessorForNonJwtRequest() throws IOException, ServletException
-    {
+    public void shouldNotInvokeAddonAccessorForNonJwtRequest() throws IOException, ServletException {
         filter.onStart();
         filter.doFilter(httpServletRequestMock, httpServletResponseMock, filterChainMock);
         verify(filterChainMock).doFilter(httpServletRequestMock, httpServletResponseMock);

@@ -17,22 +17,19 @@ import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebI
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@RunWith (AtlassianPluginsTestRunner.class)
-public class ConnectAddonAccessorTest
-{
+@RunWith(AtlassianPluginsTestRunner.class)
+public class ConnectAddonAccessorTest {
     private final TestPluginInstaller testPluginInstaller;
     private final ConnectAddonAccessor addonService;
 
     public ConnectAddonAccessorTest(final TestPluginInstaller testPluginInstaller,
-            final ConnectAddonAccessor addonService)
-    {
+                                    final ConnectAddonAccessor addonService) {
         this.testPluginInstaller = testPluginInstaller;
         this.addonService = addonService;
     }
 
     @Test
-    public void testIsAddonEnabled() throws IOException
-    {
+    public void testIsAddonEnabled() throws IOException {
         final String addonKey = "ac-test-" + AddonUtil.randomPluginKey();
         installPlugin(addonKey);
 
@@ -42,14 +39,12 @@ public class ConnectAddonAccessorTest
     }
 
     @Test
-    public void testAddonIsNotEnabled()
-    {
+    public void testAddonIsNotEnabled() {
         assertFalse("ConnectAddonAccessor is expected to return false for not installed add-ons", addonService.isAddonEnabled("some-random-key" + AddonUtil.randomPluginKey()));
     }
 
     @Test
-    public void testAddonIsInstalledButNotEnabled() throws IOException
-    {
+    public void testAddonIsInstalledButNotEnabled() throws IOException {
         final String addonKey = "ac-test-" + AddonUtil.randomPluginKey();
         installPlugin(addonKey);
 
@@ -60,8 +55,7 @@ public class ConnectAddonAccessorTest
         testPluginInstaller.uninstallAddon(addonKey);
     }
 
-    private void installPlugin(final String addonKey) throws IOException
-    {
+    private void installPlugin(final String addonKey) throws IOException {
         final ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(addonKey)
                 .withLicensing(false)

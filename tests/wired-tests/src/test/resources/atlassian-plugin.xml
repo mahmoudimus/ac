@@ -26,7 +26,6 @@
 
     <!-- CONNECT COMPONENTS -->
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager" />
-    <component-import key="connectAddonBeanFactory" interface="com.atlassian.plugin.connect.plugin.descriptor.ConnectAddonBeanFactory" />
     <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.ConnectAddonRegistry"/>
     <component-import key="connectAddonService" interface="com.atlassian.plugin.connect.spi.auth.user.ConnectUserService"/>
     <component-import key="connectCrowdService" interface="com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService"/>

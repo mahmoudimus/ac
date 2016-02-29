@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.api.request;
 
-public interface RemotablePluginAccessorFactory
-{
+public interface RemotablePluginAccessorFactory {
     /**
      * Supplies an accessor for remote plugin operations. Instances are only meant to be used for the current operation
      * and should not be cached across operations.

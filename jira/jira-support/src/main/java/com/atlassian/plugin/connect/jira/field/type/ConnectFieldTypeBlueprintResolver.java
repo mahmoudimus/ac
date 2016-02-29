@@ -11,25 +11,21 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectFieldType.TEXT;
  * Maps {@link ConnectFieldType}s to their respective {@link CustomFieldTypeBlueprint}s.
  */
 @JiraComponent
-public class ConnectFieldTypeBlueprintResolver
-{
+public class ConnectFieldTypeBlueprintResolver {
     private final ImmutableMap<ConnectFieldType, CustomFieldTypeBlueprint> map;
 
-    public ConnectFieldTypeBlueprintResolver()
-    {
+    public ConnectFieldTypeBlueprintResolver() {
         map = ImmutableMap.<ConnectFieldType, CustomFieldTypeBlueprint>builder()
                 .put(STRING, definition(CustomFieldTypeDefinition.TEXT, SearcherDefinition.EXACT_TEXT))
                 .put(TEXT, definition(CustomFieldTypeDefinition.TEXT, SearcherDefinition.LIKE_TEXT))
                 .build();
     }
 
-    public CustomFieldTypeBlueprint getBlueprint(ConnectFieldType fieldType)
-    {
+    public CustomFieldTypeBlueprint getBlueprint(ConnectFieldType fieldType) {
         return map.get(fieldType);
     }
 
-    private CustomFieldTypeBlueprint definition(final CustomFieldTypeDefinition typeDefinition, final SearcherDefinition searcherDefinition)
-    {
+    private CustomFieldTypeBlueprint definition(final CustomFieldTypeDefinition typeDefinition, final SearcherDefinition searcherDefinition) {
         return new CustomFieldTypeBlueprint(typeDefinition, searcherDefinition);
     }
 }

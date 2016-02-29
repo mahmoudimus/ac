@@ -1,39 +1,38 @@
 package com.atlassian.plugin.connect.jira.field.option.rest;
 
-import java.util.Objects;
-
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.Objects;
+
 @JsonAutoDetect
-public final class ConnectFieldOptionBean
-{
+public final class ConnectFieldOptionBean {
     private final Integer id;
     private final Object value;
 
     @JsonCreator
-    public ConnectFieldOptionBean(@JsonProperty ("id") Integer id, @JsonProperty ("value") Object value)
-    {
+    public ConnectFieldOptionBean(@JsonProperty("id") Integer id, @JsonProperty("value") Object value) {
         this.id = id;
         this.value = value;
     }
 
-    public Integer getId()
-    {
+    public Integer getId() {
         return id;
     }
 
-    public Object getValue()
-    {
+    public Object getValue() {
         return value;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ConnectFieldOptionBean that = (ConnectFieldOptionBean) o;
 
@@ -42,14 +41,12 @@ public final class ConnectFieldOptionBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(getId(), getValue());
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("id", getId())
                 .add("value", getValue())

@@ -5,10 +5,9 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecyclePluginHelper;
-import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleUpmHelper;
 import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleTestAuthenticator;
+import it.com.atlassian.plugin.connect.testlifecycle.util.LifecycleUpmHelper;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -18,8 +17,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTest
-{
+public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTest {
 
     private static final String ADDON_DESCRIPTOR = "descriptorWithPluginProvidedModule.json";
 
@@ -29,52 +27,37 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     private Plugin addon;
 
     public ModuleProviderPluginLifecycleTest(PluginController pluginController,
-            LifecyclePluginHelper pluginHelper,
-            LifecycleUpmHelper upmHelper,
-            LifecycleTestAuthenticator testAuthenticator)
-    {
+                                             LifecyclePluginHelper pluginHelper,
+                                             LifecycleUpmHelper upmHelper,
+                                             LifecycleTestAuthenticator testAuthenticator) {
         super(pluginController, pluginHelper, upmHelper, testAuthenticator);
     }
 
     @After
-    public void tearDown()
-    {
-        if (null != addon)
-        {
-            try
-            {
+    public void tearDown() {
+        if (null != addon) {
+            try {
                 pluginController.uninstall(addon);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.warn("Failed to uninstall add-on", e);
-            }
-            finally
-            {
+            } finally {
                 addon = null;
             }
         }
 
-        if (null != referencePlugin)
-        {
-            try
-            {
+        if (null != referencePlugin) {
+            try {
                 pluginController.uninstall(referencePlugin);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.warn("Failed to uninstall plugin", e);
-            }
-            finally
-            {
+            } finally {
                 referencePlugin = null;
             }
         }
     }
 
     @Test
-    public void shouldSkipAddonEnablementWhenDescriptorValidationFails() throws Exception
-    {
+    public void shouldSkipAddonEnablementWhenDescriptorValidationFails() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         referencePlugin = pluginHelper.installGeneralReferencePlugin();
         addon = installAndEnableAddon(ADDON_DESCRIPTOR);
@@ -89,8 +72,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     }
 
     @Test
-    public void shouldSkipAddonEnablementWhenModuleRegistrationFails() throws Exception
-    {
+    public void shouldSkipAddonEnablementWhenModuleRegistrationFails() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         referencePlugin = pluginHelper.installGeneralReferencePlugin();
         addon = installAndEnableAddon(ADDON_DESCRIPTOR);
@@ -105,8 +87,7 @@ public class ModuleProviderPluginLifecycleTest extends AbstractPluginLifecycleTe
     }
 
     @Test
-    public void shouldReturnPluginToUpmWhenDescriptorValidationFails() throws Exception
-    {
+    public void shouldReturnPluginToUpmWhenDescriptorValidationFails() throws Exception {
         theConnectPlugin = pluginHelper.installConnectPlugin();
         referencePlugin = pluginHelper.installGeneralReferencePlugin();
         addon = installAndEnableAddon(ADDON_DESCRIPTOR);

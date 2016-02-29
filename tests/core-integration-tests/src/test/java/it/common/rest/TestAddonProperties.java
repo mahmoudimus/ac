@@ -1,13 +1,5 @@
 package it.common.rest;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collection;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.plugin.property.JsonCommon;
@@ -38,6 +30,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collection;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -45,8 +45,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Functional test for add-on properties
  */
-public class TestAddonProperties
-{
+public class TestAddonProperties {
     public static final int MAX_VALUE_SIZE = 1024 * 32;
     private static final ObjectMapper JSON = new ObjectMapper();
     private static final JsonNode JSON_ZERO = JsonCommon.parseStringToJson("0").get();
@@ -61,8 +60,7 @@ public class TestAddonProperties
     private InstallHandlerServlet installHandlerServlet;
 
     @Before
-    public void init() throws Exception
-    {
+    public void init() throws Exception {
         installHandlerServlet = new InstallHandlerServlet();
         runner = new ConnectRunner(baseUrl, addonKey)
                 .addJWT(installHandlerServlet)
@@ -72,15 +70,13 @@ public class TestAddonProperties
     }
 
     @After
-    public void after()
-    {
+    public void after() {
         ConnectRunner.stopAndUninstallQuietly(runner);
     }
 
     @Test
     public void testCreatePropertyWithJWTQueryParameter()
-            throws IOException, URISyntaxException, NoSuchAlgorithmException
-    {
+            throws IOException, URISyntaxException, NoSuchAlgorithmException {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         String value = "0";
 
@@ -102,8 +98,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testCreateAndGetProperty() throws Exception
-    {
+    public void testCreateAndGetProperty() throws Exception {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddonProperty property = new RestAddonProperty(propertyKey, JSON_ZERO, getSelfForPropertyKey(propertyKey));
 
@@ -118,8 +113,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testCreateAndGetNonAsciProperty() throws Exception
-    {
+    public void testCreateAndGetNonAsciProperty() throws Exception {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
         final JsonNode jsonValue = JsonCommon.parseStringToJson("\"κόσμε\"").get();
@@ -136,8 +130,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testCreateAndDeleteProperty() throws Exception
-    {
+    public void testCreateAndDeleteProperty() throws Exception {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddonProperty property = new RestAddonProperty(propertyKey, JSON_ZERO, getSelfForPropertyKey(propertyKey));
 
@@ -148,8 +141,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testDeleteNonExistentProperty() throws Exception
-    {
+    public void testDeleteNonExistentProperty() throws Exception {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
         int responseCode = executeDeleteRequest(propertyKey);
@@ -157,8 +149,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testUpdateAndGetProperty() throws Exception
-    {
+    public void testUpdateAndGetProperty() throws Exception {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddonProperty property = new RestAddonProperty(propertyKey, JSON_ZERO, getSelfForPropertyKey(propertyKey));
 
@@ -177,8 +168,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testNoAccessFromSecondPlugin() throws Exception
-    {
+    public void testNoAccessFromSecondPlugin() throws Exception {
         InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
         ConnectRunner secondAddon = new ConnectRunner(baseUrl, "secondAddon")
                 .addJWT(installHandlerServlet)
@@ -198,8 +188,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testNoAccessWithoutPluginKeyInHeader() throws Exception
-    {
+    public void testNoAccessWithoutPluginKeyInHeader() throws Exception {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
         HttpURLConnection connection = executeGetRequest(propertyKey, Option.<SignedRequestHandler>none());
@@ -207,8 +196,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testPutValueTooBigReturnsForbidden() throws Exception
-    {
+    public void testPutValueTooBigReturnsForbidden() throws Exception {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         JsonNode tooBigValue = JsonNodeFactory.instance.textNode(StringUtils.repeat(" ", MAX_VALUE_SIZE + 1));
 
@@ -217,26 +205,21 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testMaximumPropertiesNotReached() throws Exception
-    {
+    public void testMaximumPropertiesNotReached() throws Exception {
         String propertyKeyPrefix = RandomStringUtils.randomAlphanumeric(15);
-        for (int i = 0; i < 50; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(i), JSON_THREE).httpStatusCode;
             assertEquals(Response.SC_CREATED, responseCode);
         }
-        for (int i = 0; i < 50; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             deleteAndAssertDeleted(propertyKeyPrefix + String.valueOf(i));
         }
     }
 
     @Test
-    public void testMaximumPropertiesReached() throws Exception
-    {
+    public void testMaximumPropertiesReached() throws Exception {
         String propertyKeyPrefix = RandomStringUtils.randomAlphanumeric(15);
-        for (int i = 0; i < 50; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(i), JSON_THREE).httpStatusCode;
             assertEquals(Response.SC_CREATED, responseCode);
         }
@@ -244,15 +227,13 @@ public class TestAddonProperties
         int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(51), JSON_THREE).httpStatusCode;
         assertEquals(Response.SC_CONFLICT, responseCode);
 
-        for (int i = 0; i < 50; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             deleteAndAssertDeleted(propertyKeyPrefix + String.valueOf(i));
         }
     }
 
     @Test
-    public void testSuccessfulListRequest() throws IOException, URISyntaxException
-    {
+    public void testSuccessfulListRequest() throws IOException, URISyntaxException {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddonProperty property = new RestAddonProperty(propertyKey, JSON_ONE, getSelfForPropertyKey(propertyKey));
 
@@ -268,8 +249,7 @@ public class TestAddonProperties
     }
 
     @Test
-    public void testSuccessfulListRequestWithoutAuthentication() throws IOException, URISyntaxException
-    {
+    public void testSuccessfulListRequestWithoutAuthentication() throws IOException, URISyntaxException {
         // Generate request to properties without authentication
         URL url = new URL(restPath + "/properties");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -279,34 +259,29 @@ public class TestAddonProperties
         assertEquals(Response.SC_UNAUTHORIZED, connection.getResponseCode());
     }
 
-    private String getSelfForPropertyKey(final String propertyKey)
-    {
+    private String getSelfForPropertyKey(final String propertyKey) {
         return restPath + "/properties/" + propertyKey;
     }
 
-    private void deleteAndAssertDeleted(String propertyKey) throws IOException, URISyntaxException
-    {
+    private void deleteAndAssertDeleted(String propertyKey) throws IOException, URISyntaxException {
         int responseCode = executeDeleteRequest(propertyKey);
         assertEquals(Response.SC_NO_CONTENT, responseCode);
     }
 
     private void assertNotAccessibleGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler)
-            throws IOException, URISyntaxException
-    {
+            throws IOException, URISyntaxException {
         HttpURLConnection connection = executeGetRequest(propertyKey, signedRequestHandler);
         assertEquals(Response.SC_FORBIDDEN, connection.getResponseCode());
     }
 
     private String sendSuccessfulGetRequestForPropertyKey(final String propertyKey)
-            throws IOException, URISyntaxException
-    {
+            throws IOException, URISyntaxException {
         HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
         assertEquals(Response.SC_OK, connection.getResponseCode());
         return IOUtils.toString(connection.getInputStream());
     }
 
-    private String sendSuccessfulGetRequestForPropertyList() throws IOException, URISyntaxException
-    {
+    private String sendSuccessfulGetRequestForPropertyList() throws IOException, URISyntaxException {
         URL url = new URL(restPath + "/properties");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -318,60 +293,50 @@ public class TestAddonProperties
         return IOUtils.toString(connection.getInputStream());
     }
 
-    private void deleteAllAddonProperties() throws IOException, URISyntaxException
-    {
+    private void deleteAllAddonProperties() throws IOException, URISyntaxException {
         final String rawProperties = sendSuccessfulGetRequestForPropertyList();
         final RestAddonPropertiesBean restAddonProperties = JSON.readValue(rawProperties, RestAddonPropertiesBean.class);
-        for (RestAddonPropertiesBean.RestAddonPropertyBean restAddonKey : restAddonProperties.keys)
-        {
+        for (RestAddonPropertiesBean.RestAddonPropertyBean restAddonKey : restAddonProperties.keys) {
             deleteAndAssertDeleted(restAddonKey.key);
         }
     }
 
-    private HttpURLConnection executeGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException
-    {
+    private HttpURLConnection executeGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException {
         URL url = new URL(restPath + "/properties/" + propertyKey + "?jsonValue=true");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setDoInput(true);
-        if (signedRequestHandler.isDefined())
-        {
+        if (signedRequestHandler.isDefined()) {
             signedRequestHandler.get().sign(url.toURI(), "GET", null, connection);
         }
         return connection;
     }
 
-    private RequestResponse executePutRequest(final String propertyKey, JsonNode value) throws IOException, URISyntaxException
-    {
+    private RequestResponse executePutRequest(final String propertyKey, JsonNode value) throws IOException, URISyntaxException {
         return executePutRequest(propertyKey, value, Option.<String>none());
     }
 
-    private RequestResponse executePutRequest(final String propertyKey, JsonNode value, Option<String> eTag) throws IOException, URISyntaxException
-    {
+    private RequestResponse executePutRequest(final String propertyKey, JsonNode value, Option<String> eTag) throws IOException, URISyntaxException {
         URL url = new URL(restPath + "/properties/" + propertyKey);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("PUT");
-        if (eTag.isDefined())
-        {
+        if (eTag.isDefined()) {
             connection.setRequestProperty("If-Match", eTag.get());
         }
         runner.getSignedRequestHandler().sign(url.toURI(), "PUT", null, connection);
         connection.setDoOutput(true);
         connection.getOutputStream().write(value.toString().getBytes());
 
-        Option<String> returnedETag = Option.option(connection.getHeaderField("ETag")).map(new Function<String, String>()
-        {
+        Option<String> returnedETag = Option.option(connection.getHeaderField("ETag")).map(new Function<String, String>() {
             @Override
-            public String apply(final String input)
-            {
+            public String apply(final String input) {
                 return input;
             }
         });
         return new RequestResponse(connection.getResponseCode(), returnedETag);
     }
 
-    private int executeDeleteRequest(final String propertyKey) throws IOException, URISyntaxException
-    {
+    private int executeDeleteRequest(final String propertyKey) throws IOException, URISyntaxException {
         URL url = new URL(restPath + "/properties/" + propertyKey);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("DELETE");
@@ -379,13 +344,10 @@ public class TestAddonProperties
         return connection.getResponseCode();
     }
 
-    private Matcher<? super RestAddonProperty> isEqualToIgnoringBaseUrl(final RestAddonProperty expected)
-    {
-        return new TypeSafeMatcher<RestAddonProperty>()
-        {
+    private Matcher<? super RestAddonProperty> isEqualToIgnoringBaseUrl(final RestAddonProperty expected) {
+        return new TypeSafeMatcher<RestAddonProperty>() {
             @Override
-            protected boolean matchesSafely(final RestAddonProperty property)
-            {
+            protected boolean matchesSafely(final RestAddonProperty property) {
                 String urlWithoutBaseUrl = expected.self.substring(baseUrl.length());
                 return new EqualsBuilder()
                         .append(property.key, expected.key)
@@ -395,26 +357,20 @@ public class TestAddonProperties
             }
 
             @Override
-            public void describeTo(final Description description)
-            {
+            public void describeTo(final Description description) {
                 description.appendValue(expected);
             }
         };
     }
 
-    private Matcher<? super RestAddonPropertiesBean> isEqualToIgnoringBaseUrl(final RestAddonPropertiesBean expected)
-    {
-        return new TypeSafeMatcher<RestAddonPropertiesBean>()
-        {
+    private Matcher<? super RestAddonPropertiesBean> isEqualToIgnoringBaseUrl(final RestAddonPropertiesBean expected) {
+        return new TypeSafeMatcher<RestAddonPropertiesBean>() {
             @Override
-            protected boolean matchesSafely(final RestAddonPropertiesBean properties)
-            {
+            protected boolean matchesSafely(final RestAddonPropertiesBean properties) {
                 Iterable<RestAddonPropertiesBean.RestAddonPropertyBean> expectedBeans = ImmutableList.copyOf(expected.keys);
-                Iterable<Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean>> transform = Iterables.transform(expectedBeans, new Function<RestAddonPropertiesBean.RestAddonPropertyBean, Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean>>()
-                {
+                Iterable<Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean>> transform = Iterables.transform(expectedBeans, new Function<RestAddonPropertiesBean.RestAddonPropertyBean, Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean>>() {
                     @Override
-                    public Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean> apply(final RestAddonPropertiesBean.RestAddonPropertyBean input)
-                    {
+                    public Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean> apply(final RestAddonPropertiesBean.RestAddonPropertyBean input) {
                         return isEqualToIgnoringBaseUrl(input);
                     }
                 });
@@ -424,20 +380,16 @@ public class TestAddonProperties
             }
 
             @Override
-            public void describeTo(final Description description)
-            {
+            public void describeTo(final Description description) {
                 description.appendValue(expected);
             }
         };
     }
 
-    private Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean> isEqualToIgnoringBaseUrl(final RestAddonPropertiesBean.RestAddonPropertyBean expected)
-    {
-        return new TypeSafeMatcher<RestAddonPropertiesBean.RestAddonPropertyBean>()
-        {
+    private Matcher<? super RestAddonPropertiesBean.RestAddonPropertyBean> isEqualToIgnoringBaseUrl(final RestAddonPropertiesBean.RestAddonPropertyBean expected) {
+        return new TypeSafeMatcher<RestAddonPropertiesBean.RestAddonPropertyBean>() {
             @Override
-            protected boolean matchesSafely(final RestAddonPropertiesBean.RestAddonPropertyBean property)
-            {
+            protected boolean matchesSafely(final RestAddonPropertiesBean.RestAddonPropertyBean property) {
                 String urlWithoutBaseUrl = expected.self.substring(baseUrl.length());
                 return new EqualsBuilder()
                         .append(property.key, expected.key)
@@ -446,27 +398,23 @@ public class TestAddonProperties
             }
 
             @Override
-            public void describeTo(final Description description)
-            {
+            public void describeTo(final Description description) {
                 description.appendValue(expected);
             }
         };
     }
 
-    private class RequestResponse
-    {
+    private class RequestResponse {
         private final int httpStatusCode;
         private final Option<String> eTag;
 
-        private RequestResponse(final int httpStatusCode, final Option<String> eTag)
-        {
+        private RequestResponse(final int httpStatusCode, final Option<String> eTag) {
             this.httpStatusCode = httpStatusCode;
             this.eTag = eTag;
         }
     }
 
-    private static class RestAddonProperty
-    {
+    private static class RestAddonProperty {
         @JsonProperty
         private final String key;
         @JsonProperty
@@ -474,16 +422,14 @@ public class TestAddonProperties
         @JsonProperty
         private final String self;
 
-        public RestAddonProperty(@JsonProperty ("key") final String key, @JsonProperty ("value") final JsonNode value, @JsonProperty ("self") final String self)
-        {
+        public RestAddonProperty(@JsonProperty("key") final String key, @JsonProperty("value") final JsonNode value, @JsonProperty("self") final String self) {
             this.key = key;
             this.value = value;
             this.self = self;
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return new HashCodeBuilder()
                     .append(key)
                     .append(value)
@@ -491,14 +437,11 @@ public class TestAddonProperties
         }
 
         @Override
-        public boolean equals(final Object obj)
-        {
-            if (obj == null)
-            {
+        public boolean equals(final Object obj) {
+            if (obj == null) {
                 return false;
             }
-            if (getClass() != obj.getClass())
-            {
+            if (getClass() != obj.getClass()) {
                 return false;
             }
             final RestAddonProperty other = (RestAddonProperty) obj;
@@ -509,8 +452,7 @@ public class TestAddonProperties
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "RestAddonProperty{" +
                     "key='" + key + '\'' +
                     ", value='" + value + '\'' +
@@ -519,30 +461,27 @@ public class TestAddonProperties
         }
     }
 
-    private static class RestAddonPropertiesBean
-    {
+    private static class RestAddonPropertiesBean {
         @JsonProperty
         private RestAddonPropertyBean[] keys;
 
         public RestAddonPropertiesBean() {}
 
-        public RestAddonPropertiesBean(@JsonProperty RestAddonPropertyBean[] keys)
-        {
+        public RestAddonPropertiesBean(@JsonProperty RestAddonPropertyBean[] keys) {
             this.keys = keys;
         }
 
         @Override
-        public int hashCode() { return new HashCodeBuilder().append(this.keys).toHashCode();}
+        public int hashCode() {
+            return new HashCodeBuilder().append(this.keys).toHashCode();
+        }
 
         @Override
-        public boolean equals(final Object obj)
-        {
-            if (obj == null)
-            {
+        public boolean equals(final Object obj) {
+            if (obj == null) {
                 return false;
             }
-            if (getClass() != obj.getClass())
-            {
+            if (getClass() != obj.getClass()) {
                 return false;
             }
             final RestAddonPropertiesBean other = (RestAddonPropertiesBean) obj;
@@ -550,25 +489,21 @@ public class TestAddonProperties
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "RestAddonPropertiesBean{" +
                     "properties=" + keys +
                     '}';
         }
 
-        static RestAddonPropertiesBean fromRestAddonProperties(RestAddonProperty... properties)
-        {
+        static RestAddonPropertiesBean fromRestAddonProperties(RestAddonProperty... properties) {
             RestAddonPropertyBean[] propertyBeans = new RestAddonPropertyBean[properties.length];
-            for (int i = 0; i < properties.length; i++)
-            {
+            for (int i = 0; i < properties.length; i++) {
                 propertyBeans[i] = new RestAddonPropertyBean(properties[i].self, properties[i].key);
             }
             return new RestAddonPropertiesBean(propertyBeans);
         }
 
-        public static class RestAddonPropertyBean
-        {
+        public static class RestAddonPropertyBean {
             @JsonProperty
             private String self;
             @JsonProperty
@@ -576,27 +511,30 @@ public class TestAddonProperties
 
             public RestAddonPropertyBean() {}
 
-            public RestAddonPropertyBean(@JsonProperty final String self, @JsonProperty final String key)
-            {
+            public RestAddonPropertyBean(@JsonProperty final String self, @JsonProperty final String key) {
                 this.self = self;
                 this.key = key;
             }
 
             @Override
-            public int hashCode() { return new HashCodeBuilder().append(this.self).append(this.key).toHashCode();}
+            public int hashCode() {
+                return new HashCodeBuilder().append(this.self).append(this.key).toHashCode();
+            }
 
             @Override
-            public boolean equals(final Object obj)
-            {
-                if (obj == null) {return false;}
-                if (getClass() != obj.getClass()) {return false;}
+            public boolean equals(final Object obj) {
+                if (obj == null) {
+                    return false;
+                }
+                if (getClass() != obj.getClass()) {
+                    return false;
+                }
                 final RestAddonPropertyBean other = (RestAddonPropertyBean) obj;
                 return new EqualsBuilder().append(this.self, other.self).append(this.key, other.key).isEquals();
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "RestAddonPropertyBean{" +
                         "self='" + self + '\'' +
                         ", key='" + key + '\'' +

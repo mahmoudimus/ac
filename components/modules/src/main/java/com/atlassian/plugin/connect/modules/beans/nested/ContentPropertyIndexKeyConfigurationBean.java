@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
-import java.util.List;
-
 import com.atlassian.json.schema.annotation.Required;
+
+import java.util.List;
 
 /**
  * A Content Property Index Key Configuration defines which values from your JSON content property
@@ -74,8 +74,7 @@ import com.atlassian.json.schema.annotation.Required;
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Key Configuration
  */
-public class ContentPropertyIndexKeyConfigurationBean
-{
+public class ContentPropertyIndexKeyConfigurationBean {
     /**
      * The key of the property from which the data is indexed. Only alphanumeric characters are allowed,
      * and it must be globally unique. Prefixing it with the name of your add-on is the best way to ensure this.
@@ -89,19 +88,16 @@ public class ContentPropertyIndexKeyConfigurationBean
     private final List<ContentPropertyIndexExtractionConfigurationBean> extractions;
 
     public ContentPropertyIndexKeyConfigurationBean(String propertyKey,
-                                                    List<ContentPropertyIndexExtractionConfigurationBean> extractions)
-    {
+                                                    List<ContentPropertyIndexExtractionConfigurationBean> extractions) {
         this.propertyKey = propertyKey;
         this.extractions = extractions;
     }
 
-    public String getPropertyKey()
-    {
+    public String getPropertyKey() {
         return propertyKey;
     }
 
-    public List<ContentPropertyIndexExtractionConfigurationBean> getExtractions()
-    {
+    public List<ContentPropertyIndexExtractionConfigurationBean> getExtractions() {
         return extractions;
     }
 }

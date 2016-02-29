@@ -16,8 +16,7 @@ import org.codehaus.jackson.JsonNode;
  *     An appropriate error will be returned by each method if authentication fails.
  * </p>
  */
-public interface ConnectFieldOptionService
-{
+public interface ConnectFieldOptionService {
     /**
      * Create a new option.
      *

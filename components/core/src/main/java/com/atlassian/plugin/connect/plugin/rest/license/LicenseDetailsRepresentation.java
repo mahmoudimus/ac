@@ -10,8 +10,7 @@ import java.util.Date;
  *
  * Remove this once UPM supports this rest resource
  */
-public final class LicenseDetailsRepresentation implements RemotablePluginLicense
-{
+public final class LicenseDetailsRepresentation implements RemotablePluginLicense {
     @JsonProperty
     private final boolean valid;
     @JsonProperty
@@ -52,11 +51,10 @@ public final class LicenseDetailsRepresentation implements RemotablePluginLicens
                                         @JsonProperty("pluginSupportEntitlementNumber") String supportEntitlementNumber,
                                         @JsonProperty("organizationName") String organizationName,
                                         @JsonProperty("contactEmail") String contactEmail,
-                                        @JsonProperty("enterprise") Boolean enterprise)
-    {
-        this.valid = (valid == null) ? false : valid.booleanValue();
-        this.evaluation = (evaluation == null) ? false : evaluation.booleanValue();
-        this.nearlyExpired = (nearlyExpired == null) ? false : nearlyExpired.booleanValue();
+                                        @JsonProperty("enterprise") Boolean enterprise) {
+        this.valid = (valid != null) && valid;
+        this.evaluation = (evaluation != null) && evaluation;
+        this.nearlyExpired = (nearlyExpired != null) && nearlyExpired;
         this.maximumNumberOfUsers = maximumNumberOfUsers;
         this.licenseType = licenseType;
         this.maintenanceExpiryDate = maintenanceExpiryDate;
@@ -66,84 +64,71 @@ public final class LicenseDetailsRepresentation implements RemotablePluginLicens
         this.supportEntitlementNumber = supportEntitlementNumber;
         this.organizationName = organizationName;
         this.contactEmail = contactEmail;
-        this.enterprise = (enterprise == null) ? false : enterprise.booleanValue();
+        this.enterprise = (enterprise != null) && enterprise;
     }
 
     @Override
-    public boolean isValid()
-    {
+    public boolean isValid() {
         return valid;
     }
 
     @Override
-    public boolean isEvaluation()
-    {
+    public boolean isEvaluation() {
         return evaluation;
     }
 
     @Override
-    public boolean isNearlyExpired()
-    {
+    public boolean isNearlyExpired() {
         return nearlyExpired;
     }
 
     @Override
-    public Integer getMaximumNumberOfUsers()
-    {
+    public Integer getMaximumNumberOfUsers() {
         return maximumNumberOfUsers;
     }
 
     @Override
-    public Date getMaintenanceExpiryDate()
-    {
+    public Date getMaintenanceExpiryDate() {
         return maintenanceExpiryDate;
     }
 
     @Override
-    public String getMaintenanceExpiryDateString()
-    {
+    public String getMaintenanceExpiryDateString() {
         return maintenanceExpiryDateString;
     }
 
     @Override
-    public String getLicenseType()
-    {
+    public String getLicenseType() {
         return licenseType;
     }
 
     @Override
-    public String getCreationDateString()
-    {
+    public String getCreationDateString() {
         return creationDateString;
     }
-    
+
     @Override
-    public Date getExpiryDate()
-    {
+    public Date getExpiryDate() {
         return expiryDate;
     }
 
     @Override
-    public String getSupportEntitlementNumber()
-    {
+    public String getSupportEntitlementNumber() {
         return supportEntitlementNumber;
     }
 
     @Override
-    public String getOrganizationName()
-    {
+    public String getOrganizationName() {
         return organizationName;
     }
 
     @Override
-    public String getContactEmail()
-    {
+    public String getContactEmail() {
         return contactEmail;
     }
 
     @Override
-    public boolean isEnterprise()
-    {
+    public boolean isEnterprise() {
         return enterprise;
     }
 }

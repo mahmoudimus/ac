@@ -13,23 +13,20 @@ import org.junit.Test;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class ConnectWebFragmentLocationBlacklistModuleDescriptorTest
-{
+public class ConnectWebFragmentLocationBlacklistModuleDescriptorTest {
     public static final String WEB_ITEM_BLACKLISTED_LOCATION = "web-item-blacklisted-location";
     public static final String WEB_PANEL_BLACKLISTED_LOCATION = "web-panel-blacklisted-location";
 
     private ConnectWebFragmentLocationBlacklistModuleDescriptor moduleDescriptor;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         ModuleFactory moduleFactory = mock(ModuleFactory.class);
         moduleDescriptor = new ConnectWebFragmentLocationBlacklistModuleDescriptor(moduleFactory);
     }
 
     @Test
-    public void testLoadingBlacklist()
-    {
+    public void testLoadingBlacklist() {
         DefaultElement descriptorXML = new DefaultElement("connect-web-fragment-location-blacklist");
 
         descriptorXML.add(elementWithLocations("web-panel-locations", WEB_PANEL_BLACKLISTED_LOCATION));
@@ -44,18 +41,15 @@ public class ConnectWebFragmentLocationBlacklistModuleDescriptorTest
         assertThat(blacklist.getWebPanelBlacklistedLocations(), Matchers.contains(WEB_PANEL_BLACKLISTED_LOCATION));
     }
 
-    private Element elementWithLocations(String elementName, String... locations)
-    {
+    private Element elementWithLocations(String elementName, String... locations) {
         Element elementWithLocations = new DefaultElement(elementName);
-        for (String location : locations)
-        {
+        for (String location : locations) {
             elementWithLocations.add(locationElement(location));
         }
         return elementWithLocations;
     }
 
-    private Element locationElement(String location)
-    {
+    private Element locationElement(String location) {
         DefaultElement locationElement = new DefaultElement("location");
         locationElement.add(new DefaultText(location));
         return locationElement;

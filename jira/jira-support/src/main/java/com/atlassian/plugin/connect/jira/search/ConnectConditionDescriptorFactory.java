@@ -21,21 +21,18 @@ import static com.atlassian.plugin.web.baseconditions.AbstractConditionElementPa
  * @since 1.0
  */
 @JiraComponent
-public class ConnectConditionDescriptorFactory implements ConditionDescriptorFactory
-{
+public class ConnectConditionDescriptorFactory implements ConditionDescriptorFactory {
     private final ConditionElementParser conditionElementParser;
 
     @Inject
-    public ConnectConditionDescriptorFactory(final ConditionElementParserFactory conditionElementParserFactory)
-    {
+    public ConnectConditionDescriptorFactory(final ConditionElementParserFactory conditionElementParserFactory) {
         //TODO: check if ConnectConditionElementParserFactory really needed ( and not the interface )
         this.conditionElementParser = conditionElementParserFactory.getConditionElementParser();
     }
 
     @Nonnull
     @Override
-    public Condition retrieveCondition(@Nonnull final Plugin plugin, @Nonnull final Element element)
-    {
+    public Condition retrieveCondition(@Nonnull final Plugin plugin, @Nonnull final Element element) {
         return conditionElementParser.makeConditions(plugin, element, AND);
     }
 }
