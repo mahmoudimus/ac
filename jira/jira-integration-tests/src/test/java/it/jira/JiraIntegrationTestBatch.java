@@ -9,8 +9,7 @@ import org.junit.runner.RunWith;
 @BatchedTests(
     includeTestPattern = "*.Test*",
     excludeTestPatterns = {
-        "*$*",
-        "*TestedCondition*"
+        "*$*"
     },
     basePackages = "it.jira"
 )

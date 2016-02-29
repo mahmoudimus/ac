@@ -62,10 +62,7 @@
         <dependency>
             <groupId>com.atlassian</groupId>
             <artifactId>test-batching</artifactId>
-            <version>1.0.1</version>
-            <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>confluence-test-utils</artifactId>
