@@ -1,11 +1,11 @@
-package com.atlassian.plugin.connect.test;
+package com.atlassian.plugin.connect.test.common.util;
 
-import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class AddonTestUtilsTest {
+
     @Test
     public void testEscapeJQuerySelector() throws Exception {
         String input = "!\"#$%&'()*+,./:;<=>?@[\\]^`{|}~";

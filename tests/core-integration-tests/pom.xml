@@ -13,14 +13,6 @@
     <name>Atlassian Connect - Core Integration Tests</name>
     <packaging>atlassian-plugin</packaging>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <profiles>
         <profile>
             <id>freezer-release-profile</id>
@@ -630,7 +622,6 @@
     </build>
 
     <properties>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9
