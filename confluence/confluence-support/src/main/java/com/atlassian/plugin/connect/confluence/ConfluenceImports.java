@@ -72,7 +72,6 @@ public class ConfluenceImports {
             @ConfluenceImport ContentBodyConversionService converter,
             @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams,
             @ConfluenceImport ModuleFactory moduleFactory,
-            @ConfluenceImport ContentPropertyService contentPropertyService,
             @ConfluenceImport PaginationService paginationService,
             @ConfluenceImport ContentService contentService) {
     }

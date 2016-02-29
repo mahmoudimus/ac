@@ -20,21 +20,18 @@ public class ExtensibleContentTypeModuleProvider extends AbstractConfluenceConne
     private static final ExtensibleContentTypeModuleMeta META = new ExtensibleContentTypeModuleMeta();
 
     private final ExtensibleContentTypeModuleDescriptorFactory extensibleContentTypeModuleDescriptorFactory;
-    private final ContentPropertyExtractorModuleDescriptorFactory contentPropertyExtractorModuleDescriptorFactory;
-    private final ContentPropertyChangeExtractorModuleDescriptorFactory contentPropertyChangeExtractorModuleDescriptorFactory;
+    private final SearchBodyPropertyModuleDescriptorFactory contentPropertyExtractorModuleDescriptorFactory;
 
     @Autowired
     public ExtensibleContentTypeModuleProvider(
             PluginRetrievalService pluginRetrievalService,
             ConnectJsonSchemaValidator schemaValidator,
             ExtensibleContentTypeModuleDescriptorFactory extensibleContentTypeModuleDescriptorFactory,
-            ContentPropertyExtractorModuleDescriptorFactory contentPropertyExtractorModuleDescriptorFactory,
-            ContentPropertyChangeExtractorModuleDescriptorFactory contentPropertyChangeExtractorModuleDescriptorFactory) {
+            SearchBodyPropertyModuleDescriptorFactory contentPropertyExtractorModuleDescriptorFactory) {
         super(pluginRetrievalService, schemaValidator);
 
         this.extensibleContentTypeModuleDescriptorFactory = extensibleContentTypeModuleDescriptorFactory;
         this.contentPropertyExtractorModuleDescriptorFactory = contentPropertyExtractorModuleDescriptorFactory;
-        this.contentPropertyChangeExtractorModuleDescriptorFactory = contentPropertyChangeExtractorModuleDescriptorFactory;
     }
 
     @Override
@@ -52,7 +49,6 @@ public class ExtensibleContentTypeModuleProvider extends AbstractConfluenceConne
 
             if (bean.getApiSupport().getIndexing().isEnabled()) {
                 descriptors.add(contentPropertyExtractorModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin));
-                descriptors.add(contentPropertyChangeExtractorModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin));
             }
         }
 
