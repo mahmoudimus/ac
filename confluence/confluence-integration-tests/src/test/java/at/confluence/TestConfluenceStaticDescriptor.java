@@ -1,8 +1,8 @@
 package at.confluence;
 
-import at.marketplace.ExternalAddonInstaller;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
+import com.atlassian.plugin.connect.test.common.at.AcceptanceTestHelper;
 import com.atlassian.plugin.connect.test.common.pageobjects.ConnectPageOperations;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
@@ -29,9 +29,10 @@ public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
     private static final String WEB_ITEM_TEXT = "AC Action";
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceStaticDescriptor.class);
     public static final String DASHBOARD_ONBOARDING_DISABLED = "dashboard.onboarding.disabled";
+    private static final String ADDON_DESCRIPTOR_URL = "https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-0001/atlassian-connect.json";
 
-    private final ExternalAddonInstaller externalAddonInstaller =
-            new ExternalAddonInstaller(product.getProductInstance().getBaseUrl(), ADMIN);
+    private AcceptanceTestHelper acceptanceTestHelper;
+
     private final ConnectPageOperations connectPageOperations = new ConnectPageOperations(
             product.getPageBinder(), product.getTester().getDriver());
     protected final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), V2_WITH_WIKI_MARKUP);
@@ -45,8 +46,9 @@ public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
 
     @Before
     public void installAddon() throws Exception {
+        acceptanceTestHelper = new AcceptanceTestHelper(ADMIN, ADDON_DESCRIPTOR_URL, product);
         log.info("Installing add-on in preparation for running a test in " + getClass().getName());
-        externalAddonInstaller.install();
+        acceptanceTestHelper.installAddon();
     }
 
     @Before
@@ -80,6 +82,6 @@ public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
     @After
     public void uninstallAddon() throws Exception {
         log.info("Cleaning up after running a test in " + getClass().getName());
-        externalAddonInstaller.uninstall();
+        acceptanceTestHelper.uninstallAddon();
     }
 }

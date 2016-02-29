@@ -1,6 +1,6 @@
 package at.jira;
 
-import at.marketplace.ExternalAddonInstaller;
+import com.atlassian.plugin.connect.test.common.at.AcceptanceTestHelper;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.testutils.annotations.Retry;
 import it.jira.JiraWebDriverTestBase;
@@ -23,16 +23,17 @@ import static com.atlassian.test.ondemand.data.JiraData.Projects.EntityLinkedPro
 @Ignore
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase {
     private static final String WEB_ITEM_TEXT = "AC Action";
+    private static final String ADDON_DESCRIPTOR_URL = "https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/addon-0001/atlassian-connect.json";
 
-    protected static final ExternalAddonInstaller externalAddonInstaller = new ExternalAddonInstaller(
-            product.getProductInstance().getBaseUrl(), testUserFactory.admin());
+    private AcceptanceTestHelper acceptanceTestHelper;
 
     private static final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
 
     @Before
     public void installAddon() throws Exception {
+        acceptanceTestHelper = new AcceptanceTestHelper(testUserFactory.admin(), ADDON_DESCRIPTOR_URL, product);
         log.info("Installing add-on in preparation for running a test in " + getClass().getName());
-        externalAddonInstaller.install();
+        acceptanceTestHelper.installAddon();
     }
 
     @Test
@@ -46,6 +47,6 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase {
     @After
     public void uninstallAddon() throws Exception {
         log.info("Cleaning up after running a test in " + getClass().getName());
-        externalAddonInstaller.uninstall();
+        acceptanceTestHelper.uninstallAddon();
     }
 }

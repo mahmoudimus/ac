@@ -3,10 +3,8 @@ package at.jira;
 import java.rmi.RemoteException;
 
 import com.atlassian.plugin.connect.test.common.at.AcceptanceTestHelper;
-import com.atlassian.plugin.connect.test.common.at.descriptor.AddonDescriptorParser;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage.Scope;
-import com.atlassian.plugin.connect.test.common.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.atlassian.testutils.annotations.Retry;
@@ -18,7 +16,6 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.rmi.RemoteException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;

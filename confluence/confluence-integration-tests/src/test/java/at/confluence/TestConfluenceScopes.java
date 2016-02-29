@@ -1,7 +1,5 @@
 package at.confluence;
 
-import at.marketplace.ConnectAddonRepresentation;
-import at.marketplace.ExternalAddonInstaller;
 import com.atlassian.plugin.connect.test.common.at.AcceptanceTestHelper;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage;
 import com.atlassian.plugin.connect.test.common.at.pageobjects.ScopesTestPage.Scope;
@@ -33,8 +31,6 @@ import static org.hamcrest.core.Is.is;
 public class TestConfluenceScopes extends ConfluenceAcceptanceTestBase {
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceScopes.class);
     public static final String SCOPE_TESTER_DESCRIPTOR_URL = "https://ac-acceptance-test-scope-checker.app.dev.atlassian.io/atlassian-connect.json";
-    private ExternalAddonInstaller externalAddonInstaller;
-    private ConnectAddonRepresentation addon;
     private AcceptanceTestHelper acceptanceTestHelper;
 
     @Before
