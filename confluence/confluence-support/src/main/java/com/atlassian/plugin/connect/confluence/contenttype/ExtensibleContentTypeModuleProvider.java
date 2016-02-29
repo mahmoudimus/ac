@@ -8,8 +8,10 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.nested.contenttype.IndexingBean;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,7 +49,8 @@ public class ExtensibleContentTypeModuleProvider extends AbstractConfluenceConne
         for (ExtensibleContentTypeModuleBean bean : modules) {
             descriptors.add(extensibleContentTypeModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin));
 
-            if (bean.getApiSupport().getIndexing().isEnabled()) {
+            IndexingBean indexing = bean.getApiSupport().getIndexing();
+            if (indexing.isEnabled() && !Strings.isNullOrEmpty(indexing.getContentPropertyBody())) {
                 descriptors.add(contentPropertyExtractorModuleDescriptorFactory.createModuleDescriptor(bean, addon, plugin));
             }
         }

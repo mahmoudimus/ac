@@ -32,7 +32,7 @@ public class SearchBodyPropertyModuleDescriptorFactory
         String SearchBodyPropertyModuleKey = ExtensibleContentTypeUtils.getSearchBodyPropertyModuleKey(bean);
         String contentPropertyKey = bean.getApiSupport().getIndexing().getContentPropertyBody();
 
-        Element extractorElement = new DOMElement("extractor");
+        Element extractorElement = new DOMElement("search-body-property");
         extractorElement.addAttribute("name", "Search Body Content Property definition for Extensible Content Type " + contentTypeKey);
         extractorElement.addAttribute("key", SearchBodyPropertyModuleKey);
         extractorElement.addAttribute("content-type", contentTypeKey);
