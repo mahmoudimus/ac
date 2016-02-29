@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.page;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
+import com.atlassian.plugin.connect.test.matcher.SameDeepPropertyValuesAs;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;

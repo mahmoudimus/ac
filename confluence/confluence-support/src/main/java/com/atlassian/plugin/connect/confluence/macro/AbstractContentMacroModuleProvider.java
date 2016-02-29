@@ -54,9 +54,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                                               HostContainer hostContainer,
                                               AbsoluteAddonUrlConverter absoluteAddonUrlConverter,
                                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
-
-    {
+                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory) {
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
@@ -69,16 +67,16 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                                                                     Plugin plugin, T macroBean);
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon) {
-        List<ModuleDescriptor> moduleDescriptors = newArrayList();
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<T> modules, ConnectAddonBean addon) {
+        List<ModuleDescriptor<?>> moduleDescriptors = newArrayList();
         for (T macros : modules) {
             moduleDescriptors.addAll(createModuleDescriptors(addon, pluginRetrievalService.getPlugin(), macros));
         }
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(ConnectAddonBean addon, Plugin plugin, T macroBean) {
-        List<ModuleDescriptor> descriptors = newArrayList();
+    protected List<ModuleDescriptor<?>> createModuleDescriptors(ConnectAddonBean addon, Plugin plugin, T macroBean) {
+        List<ModuleDescriptor<?>> descriptors = newArrayList();
 
         descriptors.add(createMacroModuleDescriptor(addon, plugin, macroBean));
 

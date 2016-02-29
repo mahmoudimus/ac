@@ -22,6 +22,7 @@ public class PageChildrenReorderEventMapper extends ConfluenceEventMapper {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<String, Object> toMap(ConfluenceEvent e) {
         PageChildrenReorderEvent event = (PageChildrenReorderEvent) e;
 

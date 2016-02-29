@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
-import static com.atlassian.plugin.connect.modules.beans.UISupportModuleBean.newUISupportModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.UISupportBean.newUISupportModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static junit.framework.TestCase.assertFalse;
@@ -158,6 +158,7 @@ public class TestConfluenceContentProperties {
         setupData();
     }
 
+    @SuppressWarnings("unchecked")
     private void setupData() throws Exception {
         String spaceKey = "PROPTEST" + spaceCount++;
         space = restClient.spaces().create(Space.builder().key(spaceKey).name("Content property Test Space").build(), false).get();

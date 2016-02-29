@@ -24,7 +24,7 @@ public class ScopesTestPage extends ConnectAddonPage implements Page {
         return waitForValue(scope.getId() + "-code");
     }
 
-    public static enum Scope {
+    public enum Scope {
         ADMIN {
             @Override
             public String getId() {

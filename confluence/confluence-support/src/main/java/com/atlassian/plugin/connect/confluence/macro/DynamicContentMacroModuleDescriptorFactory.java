@@ -37,7 +37,9 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
 
     protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final DynamicContentMacroModuleBean bean) {
         return new ModuleFactory() {
+
             @Override
+            @SuppressWarnings("unchecked")
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException {
 
                 DynamicContentMacro macro = new DynamicContentMacro(

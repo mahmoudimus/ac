@@ -109,8 +109,8 @@ public interface AddonPropertyService {
      * @param <T> type of object which is passed to onSuccess function.
      */
     interface FoldableGetServiceResult<T> {
-        public <R> R fold(Function<OperationStatus, R> onFail,
-                          Function<T, R> onSuccess);
+        <R> R fold(Function<OperationStatus, R> onFail,
+                   Function<T, R> onSuccess);
     }
 
     /**
@@ -119,20 +119,20 @@ public interface AddonPropertyService {
      * @param <SRT> type of object passed to onSuccess function.
      */
     interface FoldableServiceResult<T, SRT extends OperationStatus> {
-        public <R> R fold(Function<T, R> onPreconditionFailed,
-                          Function<OperationStatus, R> onFail,
-                          Function<SRT, R> onSuccess);
+        <R> R fold(Function<T, R> onPreconditionFailed,
+                   Function<OperationStatus, R> onFail,
+                   Function<SRT, R> onSuccess);
     }
 
     /**
      * Represents a status of the operation. Contains an httpStatus code and I18N key and message.
      */
     interface OperationStatus {
-        public int getHttpStatusCode();
+        int getHttpStatusCode();
 
-        public String message(I18nResolver resolver);
+        String message(I18nResolver resolver);
 
-        public String getKey();
+        String getKey();
     }
 
     /**

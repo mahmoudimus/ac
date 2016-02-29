@@ -154,7 +154,8 @@ public interface ConnectConditionClassResolver {
              * @param parameterPredicates predicates on the parameters of the condition
              * @return the builder
              */
-            public Builder withPredicates(Predicate<Map<String, String>>... parameterPredicates) {
+            @SafeVarargs
+            public final Builder withPredicates(Predicate<Map<String, String>>... parameterPredicates) {
                 this.parameterPredicates = Arrays.asList(parameterPredicates);
                 return this;
             }

@@ -36,8 +36,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-test-support-plugin</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-connect-unit-test-support</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -252,6 +252,14 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
         </dependency>
 
         <dependency>

@@ -36,12 +36,14 @@ public class ConnectConditionClassResolverTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldReturnNothingForEntryWithUnsatisfiedPredicate() {
         ConnectConditionClassResolver.Entry entry = newEntry(CONDITION_NAME, CONDITION_CLASS).withPredicates((parameters) -> false).build();
         assertThat(entry.getConditionClassForHostContext(newCondition(CONDITION_NAME)), equalTo(Optional.empty()));
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldReturnConditionClassForEntryWithSatisfiedPredicate() {
         SingleConditionBean conditionBean = newSingleConditionBean().withCondition(CONDITION_NAME).withParam("some-parameter", "some-value").build();
         ConnectConditionClassResolver.Entry entry = newEntry(CONDITION_NAME, CONDITION_CLASS)

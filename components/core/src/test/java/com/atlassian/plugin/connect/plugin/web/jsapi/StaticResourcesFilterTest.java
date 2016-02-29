@@ -94,7 +94,7 @@ public class StaticResourcesFilterTest {
         verify(response).setHeader("ETag", etag);
         verify(response).setHeader("Vary", "Accept-Encoding");
         verify(response).setHeader("Connection", "keep-alive");
-        verify(sos, never()).write((byte[]) anyObject());
+        verify(sos, never()).write(anyObject());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class StaticResourcesFilterTest {
         verify(response, never()).setHeader(eq("ETag"), anyString());
         verify(response, never()).setHeader(eq("Vary"), anyString());
         verify(response, never()).setHeader(eq("Connection"), anyString());
-        verify(sos, never()).write((byte[]) anyObject());
+        verify(sos, never()).write(anyObject());
     }
 
     @Test
@@ -157,7 +157,7 @@ public class StaticResourcesFilterTest {
         verify(response, never()).setHeader(eq("ETag"), anyString());
         verify(response, never()).setHeader(eq("Vary"), anyString());
         verify(response, never()).setHeader(eq("Connection"), anyString());
-        verify(sos, never()).write((byte[]) anyObject());
+        verify(sos, never()).write(anyObject());
     }
 
     private HttpServletRequest mockRequest(String localPath) {

@@ -84,7 +84,7 @@ public class ConnectAddonPage {
         // the developer debugging this will appreciate a little help in the bamboo logs
         // so that they don't have to run the product and attach a debugger just to find out the parameters
         log.error("Waiting for the container div '{}' to get the class '{}' timed out. addonKey='{}', pageElementKey='{}', includeEmbeddedPrefix={}",
-                new Object[]{containerDivId, IFRAME_INIT, addonKey, pageElementKey, includedEmbeddedPrefix});
+                containerDivId, IFRAME_INIT, addonKey, pageElementKey, includedEmbeddedPrefix);
 
         // this could be because the add-on is not responding to requests for iframe content, so log iframe content
         try {

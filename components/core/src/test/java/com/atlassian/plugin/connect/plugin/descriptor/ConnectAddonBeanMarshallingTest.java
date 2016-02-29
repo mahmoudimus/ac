@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -74,6 +74,7 @@ public class ConnectAddonBeanMarshallingTest {
      * @throws Exception
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void verifyCompositeCondition() throws Exception {
         String json = readAddonTestFile("addonNoCapabilitiesCompositeCondition.json");
 

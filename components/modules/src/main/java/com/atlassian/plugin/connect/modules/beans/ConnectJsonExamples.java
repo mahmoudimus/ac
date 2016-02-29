@@ -51,6 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -180,17 +181,19 @@ public class ConnectJsonExamples {
     }
 
     private static String createAddonExample() {
+        Map<String, String> links = ImmutableMap.<String, String>builder().put("self", "http://www.example.com/connect/jira").build();
+        Set<ScopeName> scopes = Sets.newHashSet(ScopeName.READ, ScopeName.WRITE);
         ConnectAddonBean addonBean = newConnectAddonBean()
                 .withKey("my-addon-key")
                 .withName("My Connect Addon")
                 .withDescription("A connect addon that does something")
                 .withVendor(newVendorBean().withName("My Company").withUrl("http://www.example.com").build())
                 .withBaseurl("http://www.example.com/connect/jira")
-                .withLinks(ImmutableMap.builder().put("self", "http://www.example.com/connect/jira").build())
+                .withLinks(links)
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
+                .withScopes(scopes)
                 .build();
 
         return gson.toJson(addonBean);
@@ -859,7 +862,7 @@ public class ConnectJsonExamples {
     }
 
     private static ContentPropertyIndexExtractionConfigurationBean createAttachmentTypeContentPropertyExtraction() {
-        UISupportModuleBean uiSupport = createAttachmentTypeUISupportBean();
+        UISupportBean uiSupport = createAttachmentTypeUISupportBean();
 
         return createContentPropertyIndexExtractionConfigurationBean("attachment.type", ContentPropertyIndexFieldType.string, "contentType", uiSupport);
     }
@@ -868,8 +871,8 @@ public class ConnectJsonExamples {
         return gson.toJson(createAttachmentTypeUISupportBean());
     }
 
-    private static UISupportModuleBean createAttachmentTypeUISupportBean() {
-        return UISupportModuleBean.newUISupportModuleBean()
+    private static UISupportBean createAttachmentTypeUISupportBean() {
+        return UISupportBean.newUISupportModuleBean()
                 .withName(new I18nProperty("Content Type", "attachment.type.name"))
                 .withDataUri("/data/content-types")
                 .withDefaultOperator("~")
@@ -949,7 +952,7 @@ public class ConnectJsonExamples {
 
     private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName,
                                                                                                                          ContentPropertyIndexFieldType type,
-                                                                                                                         String alias, UISupportModuleBean uiSupport) {
+                                                                                                                         String alias, UISupportBean uiSupport) {
         ContentPropertyIndexExtractionConfigurationBeanBuilder builder = new ContentPropertyIndexExtractionConfigurationBeanBuilder()
                 .withObjectName(objectName)
                 .withType(type);

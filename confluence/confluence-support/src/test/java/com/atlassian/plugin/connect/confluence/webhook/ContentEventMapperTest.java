@@ -36,6 +36,7 @@ public class ContentEventMapperTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testContentEventMapping() {
         ConfluenceUser user = mock(ConfluenceUser.class);
         when(user.getName()).thenReturn("testuser");

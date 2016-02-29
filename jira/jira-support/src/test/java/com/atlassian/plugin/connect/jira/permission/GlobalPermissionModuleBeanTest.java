@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 

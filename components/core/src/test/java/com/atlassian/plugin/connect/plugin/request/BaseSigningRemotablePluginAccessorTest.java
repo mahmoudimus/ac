@@ -9,6 +9,8 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.request.HttpContentRetriever;
 import com.atlassian.util.concurrent.Promise;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.net.URI;
 import java.util.Collections;
@@ -30,6 +32,9 @@ public abstract class BaseSigningRemotablePluginAccessorTest {
     protected static final String EXPECTED_GET_RESPONSE = "expected";
     protected static final String OUTGOING_FULL_GET_URL = FULL_PATH_URL + "?param=param+value";
     protected static final String GET_FULL_URL = OUTGOING_FULL_GET_URL;
+
+    @Mock
+    private Promise<String> promiseMock;
 
     protected abstract Map<String, String> getPostSigningHeaders(Map<String, String> preSigningHeaders);
 
@@ -65,25 +70,24 @@ public abstract class BaseSigningRemotablePluginAccessorTest {
         Request.Builder requestBuilder = mock(Request.Builder.class);
         {
             when(requestBuilder.setHeaders(getPostSigningHeaders(UNAUTHED_GET_HEADERS))).thenReturn(requestBuilder);
-            when(requestBuilder.setAttributes(any(Map.class))).thenReturn(requestBuilder);
+            when(requestBuilder.setAttributes(Mockito.<Map<String, String>>any())).thenReturn(requestBuilder);
             {
                 ResponsePromise responsePromise = mock(ResponsePromise.class);
                 when(requestBuilder.execute(any(Request.Method.class))).thenReturn(responsePromise);
 
                 Promise<String> promise = mockPromise(promisedHttpResponse);
-                when(responsePromise.transform(any(ResponseTransformation.class))).thenReturn(promise);
+                when(responsePromise.transform(Mockito.<ResponseTransformation<String>>any())).thenReturn(promise);
             }
         }
         return requestBuilder;
     }
 
     private Promise<String> mockPromise(String promisedHttpResponse) {
-        Promise<String> promise = mock(Promise.class);
         try {
-            when(promise.get()).thenReturn(promisedHttpResponse);
+            when(promiseMock.get()).thenReturn(promisedHttpResponse);
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-        return promise;
+        return promiseMock;
     }
 }

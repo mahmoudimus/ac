@@ -15,8 +15,8 @@ import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.matcher.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertThat;
 
 public class WebItemModuleBeanTest {
