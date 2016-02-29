@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.request;
 
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
+import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.httpclient.api.ResponseTransformation;
 import com.atlassian.plugin.Plugin;
@@ -20,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.InputStream;
@@ -32,7 +34,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -101,19 +103,19 @@ public class CachingHttpContentRetrieverTest {
     public void beforeEachTest() {
         entityStream = IOUtils.toInputStream("body entity");
         actualEntity = new AtomicReference<>();
-        when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMap())).thenReturn(Optional.empty());
+        when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMapOf(String.class, String[].class))).thenReturn(Optional.empty());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         when(plugin.getPluginInformation()).thenReturn(pluginInformation);
         when(httpClientFactory.getInstance()).thenReturn(httpClient);
         when(httpClient.newRequest(anyString())).thenReturn(requestBuilder);
-        when(requestBuilder.setAttributes(anyMap())).thenReturn(requestBuilder);
-        when(requestBuilder.setHeaders(anyMap())).thenReturn(requestBuilder);
+        when(requestBuilder.setAttributes(anyMapOf(String.class, String.class))).thenReturn(requestBuilder);
+        when(requestBuilder.setHeaders(anyMapOf(String.class, String.class))).thenReturn(requestBuilder);
         when(requestBuilder.execute(any(Request.Method.class))).thenReturn(responsePromise);
         when(httpClient.<String>transformation()).thenReturn(responseTransformationBuilder);
-        when(responseTransformationBuilder.ok(any(Function.class))).thenReturn(responseTransformationBuilder);
-        when(responseTransformationBuilder.forbidden(any(Function.class))).thenReturn(responseTransformationBuilder);
-        when(responseTransformationBuilder.others(any(Function.class))).thenReturn(responseTransformationBuilder);
-        when(responseTransformationBuilder.fail(any(Function.class))).thenReturn(responseTransformationBuilder);
+        when(responseTransformationBuilder.ok(Mockito.<Function<Response, String>>any())).thenReturn(responseTransformationBuilder);
+        when(responseTransformationBuilder.forbidden(Mockito.<Function<Response, String>>any())).thenReturn(responseTransformationBuilder);
+        when(responseTransformationBuilder.others(Mockito.<Function<Response, String>>any())).thenReturn(responseTransformationBuilder);
+        when(responseTransformationBuilder.fail(Mockito.<Function<Throwable, String>>any())).thenReturn(responseTransformationBuilder);
         when(responseTransformationBuilder.build()).thenReturn(responseTransformation);
         when(requestBuilder.setEntityStream(any(InputStream.class))).thenAnswer(a -> {
             actualEntity.set(IOUtils.toString(((InputStream) a.getArguments()[0])));

@@ -29,7 +29,7 @@ public interface AddonScopeApiPath {
                Collection<JsonRpcApiScopeHelper> jsonResources, Collection<XmlRpcApiScopeHelper> xmlResources,
                Collection<PathScopeHelper> paths);
 
-    static class RestApiPath implements AddonScopeApiPath {
+    class RestApiPath implements AddonScopeApiPath {
         private final Collection<RestApiScopeHelper.RestScope> resources;
         private final RestApiScopeHelper restApiScopeHelper;
 
@@ -86,7 +86,7 @@ public interface AddonScopeApiPath {
         }
     }
 
-    public class SoapRpcApiPath implements AddonScopeApiPath {
+    class SoapRpcApiPath implements AddonScopeApiPath {
         private final Collection<RpcEncodedSoapApiScopeHelper> soapRpcResources;
 
         public SoapRpcApiPath(Collection<RpcEncodedSoapApiScopeHelper> soapRpcResources) {
@@ -145,7 +145,7 @@ public interface AddonScopeApiPath {
         }
     }
 
-    public class JsonRpcApiPath implements AddonScopeApiPath {
+    class JsonRpcApiPath implements AddonScopeApiPath {
         private Collection<JsonRpcApiScopeHelper> jsonRpcResources;
 
         public JsonRpcApiPath(Collection<JsonRpcApiScopeHelper> jsonRpcResources) {
@@ -204,7 +204,7 @@ public interface AddonScopeApiPath {
         }
     }
 
-    public class XmlRpcApiPath implements AddonScopeApiPath {
+    class XmlRpcApiPath implements AddonScopeApiPath {
         private Collection<XmlRpcApiScopeHelper> xmlRpcResources;
 
         public XmlRpcApiPath(Collection<XmlRpcApiScopeHelper> xmlRpcResources) {
@@ -263,7 +263,7 @@ public interface AddonScopeApiPath {
         }
     }
 
-    public class ApiPath implements AddonScopeApiPath {
+    class ApiPath implements AddonScopeApiPath {
         private final Collection<PathScopeHelper> paths;
 
         public ApiPath(Collection<PathScopeHelper> paths) {

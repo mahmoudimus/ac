@@ -12,17 +12,13 @@ import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionCla
 public class AddonEntityPropertyEqualToConditionClassResolver implements ConnectConditionClassResolver {
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Entry> getEntries() {
+        Predicate<Map<String, String>> predicate = parameters -> "addon".equals(parameters.get("entity"));
         return Collections.singletonList(
                 newEntry("entity_property_equal_to", AddonEntityPropertyEqualToCondition.class)
                         .contextFree()
-                        .withPredicates(
-                                new Predicate<Map<String, String>>() {
-                                    @Override
-                                    public boolean test(Map<String, String> parameters) {
-                                        return "addon".equals(parameters.get("entity"));
-                                    }
-                                })
+                        .withPredicates(predicate)
                         .build()
         );
     }

@@ -17,7 +17,7 @@ public enum ReportCategory {
 
     private final String key;
 
-    private ReportCategory(String key) {
+    ReportCategory(String key) {
         this.key = key;
     }
 

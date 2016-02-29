@@ -38,7 +38,7 @@ public class ReportModuleProvider extends AbstractJiraConnectModuleProvider<Repo
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ReportModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> moduleDescriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()
         ));
     }

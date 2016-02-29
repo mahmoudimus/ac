@@ -50,13 +50,13 @@ public interface ConnectApplinkManager {
      * @return the {@link ApplicationLink}, or null if either there are none or the plugin key is not associated with a Connect add-on
      * @throws com.atlassian.plugin.connect.plugin.auth.applinks.NotConnectAddonException if the key belongs to a plugin which is not a Connect add-on
      */
-    public ApplicationLink getAppLink(String key) throws NotConnectAddonException;
+    ApplicationLink getAppLink(String key) throws NotConnectAddonException;
 
     /**
      * @param applink application link
      * @return the self link for this application link
      */
-    public URI getApplinkLinkSelfLink(ApplicationLink applink);
+    URI getApplinkLinkSelfLink(ApplicationLink applink);
 
     /**
      * Reads the JWT shared secret or the OAuth consumer public key from an

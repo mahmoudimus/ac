@@ -38,7 +38,7 @@ public class ContentPropertyModuleProvider extends AbstractConfluenceConnectModu
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ContentPropertyModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ContentPropertyModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> contentPropertyIndexFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()
         ));
     }

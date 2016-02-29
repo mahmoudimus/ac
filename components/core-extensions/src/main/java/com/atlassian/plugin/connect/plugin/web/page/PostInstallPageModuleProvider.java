@@ -45,10 +45,10 @@ public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProv
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon) {
         super.createPluginModuleDescriptors(modules, addon);
 
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
         Iterator<ConnectPageModuleBean> iterator = modules.iterator();
         if (iterator.hasNext()) {
             ConnectPageModuleBean postInstallPage = iterator.next();

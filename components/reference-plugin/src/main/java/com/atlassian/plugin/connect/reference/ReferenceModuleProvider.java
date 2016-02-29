@@ -43,8 +43,8 @@ public class ReferenceModuleProvider extends AbstractConnectModuleProvider<Refer
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReferenceModuleBean> referenceModules, ConnectAddonBean addon) {
-        return referenceModules.stream().map((Function<ReferenceModuleBean, ModuleDescriptor>) referenceModule -> {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ReferenceModuleBean> referenceModules, ConnectAddonBean addon) {
+        return referenceModules.stream().map(referenceModule -> {
             String moduleKey = referenceModule.getKey(addon);
             FakeModuleDescriptor moduleDescriptor = new FakeModuleDescriptor(moduleKey);
             moduleDescriptor.setPlugin(pluginRetrievalService.getPlugin());

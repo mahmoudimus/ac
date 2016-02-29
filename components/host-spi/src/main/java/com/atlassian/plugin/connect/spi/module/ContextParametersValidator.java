@@ -29,7 +29,7 @@ public interface ContextParametersValidator<User> {
      *
      * @return a collection of permission checks
      */
-    public Collection<PermissionCheck<User>> getPermissionChecks();
+    Collection<PermissionCheck<User>> getPermissionChecks();
 
     /**
      * <p>Return a class of user that this validator can operate on.</p>
@@ -47,5 +47,5 @@ public interface ContextParametersValidator<User> {
      *
      * @return a class of the user which permissions are validated
      */
-    public Class<User> getUserType();
+    Class<User> getUserType();
 }

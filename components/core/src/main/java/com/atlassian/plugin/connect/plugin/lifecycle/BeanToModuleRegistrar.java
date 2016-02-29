@@ -70,7 +70,7 @@ public class BeanToModuleRegistrar {
                                                                    final PluginAccessor pluginAccessor,
                                                                    final ConnectAddonBean addon) {
 
-        Collection<ConnectModuleProvider> moduleProviders =
+        Collection<ConnectModuleProvider<?>> moduleProviders =
                 pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectModuleProviderModuleDescriptor.class).stream()
                         .map(ModuleDescriptor::getModule)
                         .collect(Collectors.toList());
@@ -133,19 +133,20 @@ public class BeanToModuleRegistrar {
         return webhooks;
     }
 
+    @SuppressWarnings("unchecked")
     private static void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
                                                            ConnectAddonBean addon,
-                                                           Collection<ConnectModuleProvider> moduleProviders,
+                                                           Collection<ConnectModuleProvider<?>> moduleProviders,
                                                            List<ModuleDescriptor<?>> descriptorsToRegister) throws ConnectModuleRegistrationException {
         for (Map.Entry<String, List<ModuleBean>> entry : moduleList.entrySet()) {
-            List<ModuleBean> beans = entry.getValue();
+            List<?> beans = entry.getValue();
             ConnectModuleProvider provider = findProviderOrThrow(entry.getKey(), moduleProviders);
             List<ModuleDescriptor<?>> descriptors = provider.createPluginModuleDescriptors(beans, addon);
             descriptorsToRegister.addAll(descriptors);
         }
     }
 
-    private static ConnectModuleProvider findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider> moduleProviders)
+    private static ConnectModuleProvider<?> findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider<?>> moduleProviders)
             throws ConnectModuleRegistrationException {
         return moduleProviders.stream()
                 .filter(provider -> provider.getMeta().getDescriptorKey().equals(descriptorKey))

@@ -5,7 +5,7 @@ public enum EntityPropertyType {
 
     private final String value;
 
-    private EntityPropertyType(String value) {
+    EntityPropertyType(String value) {
         this.value = value;
     }
 

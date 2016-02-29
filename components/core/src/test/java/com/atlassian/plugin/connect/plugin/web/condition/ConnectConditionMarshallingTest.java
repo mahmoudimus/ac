@@ -30,7 +30,9 @@ import static org.junit.Assert.assertThat;
  * @since 1.0
  */
 public class ConnectConditionMarshallingTest {
+
     @Test
+    @SuppressWarnings("unchecked")
     public void verifyDeserializationWorks() throws Exception {
         String json = readAddonTestFile("conditionMarshalling.json");
 

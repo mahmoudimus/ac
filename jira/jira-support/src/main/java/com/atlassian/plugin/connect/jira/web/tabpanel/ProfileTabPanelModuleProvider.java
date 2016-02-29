@@ -42,7 +42,7 @@ public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, ConnectAddonBean addon) {
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("profile-tab-page",
                 ConnectViewProfilePanelModuleDescriptor.class, ConnectIFrameProfileTabPanel.class);
 

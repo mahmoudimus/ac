@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleValidationException;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
@@ -9,9 +10,12 @@ import com.atlassian.plugin.connect.plugin.lifecycle.ConnectModuleProviderModule
 import com.atlassian.plugin.connect.spi.lifecycle.ConnectModuleProvider;
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
 
 public class PluggableModuleListDeserializer extends ModuleListDeserializer {
 
@@ -24,11 +28,11 @@ public class PluggableModuleListDeserializer extends ModuleListDeserializer {
 
     @Override
     public List<ModuleBean> deserializeModules(final String moduleTypeKey, JsonElement modules) throws ConnectModuleValidationException {
-        final ConnectModuleProvider moduleProvider = getModuleProviders().get(moduleTypeKey);
+        final ConnectModuleProvider<? extends BaseModuleBean> moduleProvider = getModuleProviders().get(moduleTypeKey);
         if (moduleProvider == null) {
             throwUnknownModuleType(moduleTypeKey);
         }
-        return moduleProvider.deserializeAddonDescriptorModules(modules.toString(), addon);
+        return new ArrayList<>(moduleProvider.deserializeAddonDescriptorModules(modules.toString(), addon));
     }
 
     @Override
@@ -36,12 +40,12 @@ public class PluggableModuleListDeserializer extends ModuleListDeserializer {
         return getModuleProviders().get(moduleType).getMeta().multipleModulesAllowed();
     }
 
-    private Map<String, ConnectModuleProvider> getModuleProviders() {
+    private Map<String, ConnectModuleProvider<?>> getModuleProviders() {
         return pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectModuleProviderModuleDescriptor.class).stream()
                 .map(ModuleDescriptor::getModule)
                 .collect(Collectors.toMap(
                         moduleProvider -> moduleProvider.getMeta().getDescriptorKey(),
-                        moduleProvider -> moduleProvider)
+                        identity())
                 );
     }
 }

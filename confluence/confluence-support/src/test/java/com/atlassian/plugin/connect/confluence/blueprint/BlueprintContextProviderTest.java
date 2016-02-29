@@ -36,7 +36,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -74,7 +74,8 @@ public class BlueprintContextProviderTest {
         when(localeResolver.getLocale(any(UserKey.class))).thenReturn(Locale.ENGLISH);
         when(converter.convert(any(), any())).thenAnswer(a -> a.getArguments()[0]);
         when(accessorFactory.get("remote-addon-key")).thenReturn(mockAccessor);
-        when(mockAccessor.executeAsync(eq(POST), eq(URI.create("/context-url")), anyMap(), anyMap(), any())).thenReturn(mockPromise);
+        when(mockAccessor.executeAsync(eq(POST), eq(URI.create("/context-url")), anyMapOf(String.class, String[].class),
+                anyMapOf(String.class, String.class), any())).thenReturn(mockPromise);
         mockResponse(mockPromise, "testfiles/blueprint/context-response.json");
 
         blueprintContextProvider.init(ImmutableMap.of(

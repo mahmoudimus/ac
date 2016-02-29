@@ -34,7 +34,7 @@ import static com.atlassian.plugin.connect.modules.beans.AddonUrlContext.product
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -173,7 +173,7 @@ public class JiraWebItemModuleDescriptorFactoryTest {
 
     private UrlVariableSubstitutor createUrlSubstitutor() {
         UrlVariableSubstitutor mock = mock(UrlVariableSubstitutor.class);
-        when(mock.append(anyString(), anyMap())).then(invocationOnMock -> invocationOnMock.getArguments()[0]);
+        when(mock.append(anyString(), anyMapOf(String.class, String.class))).then(invocationOnMock -> invocationOnMock.getArguments()[0]);
         when(mock.replace(anyString(), any(WebFragmentContext.class))).then(invocationOnMock -> {
             String template = (String) invocationOnMock.getArguments()[0];
             return template.replaceAll("\\{.*?\\}", "");

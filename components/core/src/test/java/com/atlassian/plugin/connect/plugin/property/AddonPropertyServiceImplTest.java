@@ -47,6 +47,12 @@ public class AddonPropertyServiceImplTest {
     private UserManager userManager;
     @Mock
     private ConnectAddonRegistry connectAddonRegistry;
+    @Mock
+    private Function<Object, Object> objectObjectFunction;
+    @Mock
+    private Function<AddonProperty, Void> addonPropertyVoidFunction;
+    @Mock
+    private Function<AddonPropertyIterable, Void> addonPropertyIterableVoidFunction;
 
     private AddonPropertyService service;
     private Function<OperationStatus, Void> mockFunction;
@@ -307,17 +313,15 @@ public class AddonPropertyServiceImplTest {
         final Object obj = new Object();
         PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addonKey, addonKey, property.getKey(), "0",
                 input -> AddonPropertyService.ServiceConditionResult.FAILURE_WITH_OBJECT(obj));
-        Function<Object, Object> mockFunction = (Function<Object, Object>) mock(Function.class);
-        foldableServiceResult.fold(mockFunction, null, null);
-        verify(mockFunction).apply(obj);
+        foldableServiceResult.fold(objectObjectFunction, null, null);
+        verify(objectObjectFunction).apply(obj);
     }
 
     private void testGetExistingProperty(String sourcePlugin) {
         when(store.getPropertyValue(addonKey, property.getKey())).thenReturn(Optional.of(property));
         AddonPropertyService.GetServiceResult result = service.getPropertyValue(user, sourcePlugin, addonKey, property.getKey());
-        Function<AddonProperty, Void> mockFunction = mock(Function.class);
-        result.fold(null, mockFunction);
-        verify(mockFunction).apply(property);
+        result.fold(null, addonPropertyVoidFunction);
+        verify(addonPropertyVoidFunction).apply(property);
     }
 
     private void testGetNonExistingProperty(String sourcePlugin) {
@@ -375,10 +379,9 @@ public class AddonPropertyServiceImplTest {
         AddonPropertyIterable emptyIterable = new AddonPropertyIterable(Collections.<AddonProperty>emptyList());
         when(store.getAllPropertiesForAddonKey(addonKey)).thenReturn(emptyIterable);
 
-        Function<AddonPropertyIterable, Void> mockFunction = mock(Function.class);
         AddonPropertyService.GetAllServiceResult result = service.getAddonProperties(user, sourcePluginKey, addonKey);
-        result.fold(null, mockFunction);
-        verify(mockFunction).apply(emptyIterable);
+        result.fold(null, addonPropertyIterableVoidFunction);
+        verify(addonPropertyIterableVoidFunction).apply(emptyIterable);
     }
 
     private void assertValidJson(String value) {
@@ -405,6 +408,7 @@ public class AddonPropertyServiceImplTest {
         return input -> AddonPropertyService.ServiceConditionResult.SUCCESS();
     }
 
+    @SuppressWarnings("unchecked")
     private void mockExecuteInTransaction() {
         when(store.executeInTransaction(any(AddonPropertyStore.TransactionAction.class))).thenAnswer(
                 invocationOnMock -> {

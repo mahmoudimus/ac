@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 /**
  * @since 1.0
  */
-public class ImagePlaceholderBeanBuilder<T extends ImagePlaceholderBeanBuilder, B extends ImagePlaceholderBean> {
+public class ImagePlaceholderBeanBuilder {
     private Integer width;
     private Integer height;
     private String url;
@@ -41,7 +41,7 @@ public class ImagePlaceholderBeanBuilder<T extends ImagePlaceholderBeanBuilder, 
         return this;
     }
 
-    public B build() {
-        return (B) new ImagePlaceholderBean(this);
+    public ImagePlaceholderBean build() {
+        return new ImagePlaceholderBean(this);
     }
 }
