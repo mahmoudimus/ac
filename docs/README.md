@@ -47,7 +47,7 @@ To regenerate the schemas after changing the source code or the Javadoc of `modu
 
 To explicitly invoke the `json-schemagen` goals to generate an individual schema:
 
-    mvn -pl plugin external.atlassian.json:json-schemagen-maven-plugin:generate-support-docs@schema-support external.atlassian.json:json-schemagen-maven-plugin:generate-schema@<jira|confluence>-schema
+    mvn -pl components/modules external.atlassian.json:json-schemagen-maven-plugin:generate-support-docs@schema-support external.atlassian.json:json-schemagen-maven-plugin:generate-schema@<shallow|jira|confluence>-schema
 
 #### JavaScript API modules
 

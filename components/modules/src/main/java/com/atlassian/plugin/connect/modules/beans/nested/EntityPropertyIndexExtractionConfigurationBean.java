@@ -4,8 +4,6 @@ import com.atlassian.json.schema.annotation.Required;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.annotation.Nullable;
-
 /**
  * Defines an entity property to be indexed by JIRA. An entity property is a reference to a JSON object, which also defines it's type.
  *#### Example
@@ -45,7 +43,6 @@ public class EntityPropertyIndexExtractionConfigurationBean {
     /**
      * The name, under which this property will be searchable with JQL.
      */
-    @Nullable
     private String alias;
 
     public EntityPropertyIndexExtractionConfigurationBean(String objectName, EntityPropertyIndexType type) {

@@ -4,14 +4,11 @@ var _ = require('lodash'),
     fs = require('fs-extra'),
     schemaMerger = require('atlassian-connect-json-schema-utils/merge-schemas.js');
 
-var sourceDirectory = "../plugin/target/classes/";
-var targetDirectory = "target/";
+var sourceSchemaDirectory = "../components/modules/target/classes/schema/";
+var targetSchemaDirectory = "target/schema/";
 
-var sourceSchemaSubDirectory = "schema/";
-var targetSchemaSubDirectory = sourceSchemaSubDirectory;
-
-var sourceScopeSubDirectory = "scope/";
-var targetScopeSubDirectory = "scope/";
+var sourceScopeDirectory = "../plugin/target/classes/scope/";
+var targetScopeDirectory = "target/scope/";
 
 var schemaFiles = [
     'shallow-schema.json',
@@ -78,13 +75,13 @@ function dereference(object, objectRoot, path) {
 
 var importSchemas = function() {
     _.forEach(schemaFiles, function(file) {
-        var sourceJson = fs.readJsonSync(sourceDirectory + sourceSchemaSubDirectory + file);
-        fs.outputJsonSync(targetDirectory + targetSchemaSubDirectory + file, sourceJson);
+        var sourceJson = fs.readJsonSync(sourceSchemaDirectory + file);
+        fs.outputJsonSync(targetSchemaDirectory + file, sourceJson);
 
         renamePropertyShortClassNameToId(sourceJson);
         dereference(sourceJson, sourceJson, "$");
         delete sourceJson.definitions;
-        fs.outputJsonSync(targetDirectory + targetSchemaSubDirectory + "deref-" + file, sourceJson);
+        fs.outputJsonSync(targetSchemaDirectory + "deref-" + file, sourceJson);
     });
 
     schemaMerger.mergeSchemas();
@@ -92,8 +89,8 @@ var importSchemas = function() {
 
 var importScopes = function() {
     _.forEach(scopeFiles, function(file) {
-        var sourceJson = fs.readJsonSync(sourceDirectory + sourceScopeSubDirectory + file);
-        fs.outputJsonSync(targetDirectory + targetScopeSubDirectory + file, sourceJson);
+        var sourceJson = fs.readJsonSync(sourceScopeDirectory + file);
+        fs.outputJsonSync(targetScopeDirectory + file, sourceJson);
     });
 }
 

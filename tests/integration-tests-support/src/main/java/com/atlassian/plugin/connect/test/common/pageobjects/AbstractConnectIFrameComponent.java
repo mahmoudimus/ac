@@ -68,12 +68,14 @@ public abstract class AbstractConnectIFrameComponent<C extends AbstractConnectIF
      * Waits until a script tag (any script tag) has loaded. Most iframes containing a script tag pointing at all.js
      * or all-debug.js
      */
+    @SuppressWarnings("unchecked")
     public C waitUntilContentLoaded() {
         // wait until the remote panel has loaded
         waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), () -> withinIFrame(iframe -> !iframe.findElements(By.tagName("script")).isEmpty())));
         return (C) this;
     }
 
+    @SuppressWarnings("unchecked")
     public C waitUntilContentElementNotEmpty(final String elementId) {
         this.waitUntilContentLoaded();
 

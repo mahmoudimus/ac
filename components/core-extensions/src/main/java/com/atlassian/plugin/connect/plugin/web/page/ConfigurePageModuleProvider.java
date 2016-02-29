@@ -45,10 +45,10 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon) {
         super.createPluginModuleDescriptors(modules, addon);
 
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
         Iterator<ConnectPageModuleBean> iterator = modules.iterator();
         if (iterator.hasNext()) {
             ConnectPageModuleBean configurePage = iterator.next();

@@ -35,7 +35,7 @@ public class GlobalPermissionModuleProvider extends AbstractJiraConnectModulePro
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(final List<GlobalPermissionModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(final List<GlobalPermissionModuleBean> modules, ConnectAddonBean addon) {
         return Lists.transform(modules, bean -> descriptorFactory.createModuleDescriptor(bean, addon, pluginRetrievalService.getPlugin()));
     }
 }

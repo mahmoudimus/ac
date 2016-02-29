@@ -12,9 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LowercaseEnumTypeAdapterFactory implements TypeAdapterFactory {
+
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-        Class<T> rawType = (Class<T>) type.getRawType();
+        Class<T> rawType = getRawType(type);
         if (!rawType.isEnum()) {
             return null;
         }
@@ -24,7 +25,12 @@ public class LowercaseEnumTypeAdapterFactory implements TypeAdapterFactory {
             lowercaseToConstant.put(toLowercase(constant), constant);
         }
 
-        return new LowercaseEnumTypeAdapter(lowercaseToConstant).nullSafe();
+        return new LowercaseEnumTypeAdapter<>(lowercaseToConstant).nullSafe();
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> Class<T> getRawType(TypeToken<T> type) {
+        return (Class<T>) type.getRawType();
     }
 
     private String toLowercase(Object o) {

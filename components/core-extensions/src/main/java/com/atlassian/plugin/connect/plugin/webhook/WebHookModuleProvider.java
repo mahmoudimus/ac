@@ -48,7 +48,7 @@ public class WebHookModuleProvider extends AbstractConnectCoreModuleProvider<Web
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebHookModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<WebHookModuleBean> modules, ConnectAddonBean addon) {
         return modules.stream()
                 .map(webhook -> moduleDescriptorFactory.createModuleDescriptor(webhook, addon, pluginRetrievalService.getPlugin()))
                 .collect(Collectors.toList());

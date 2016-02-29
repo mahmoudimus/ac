@@ -35,7 +35,7 @@ public class ModuleContextParserImpl implements ModuleContextParser {
     @Override
     public ModuleContextParameters parseContextParameters(final HttpServletRequest req) {
         Map<String, String> queryParams = new HashMap<>();
-        final Map<String, String[]> parameterMap = requestJsonParameterUtil.tryExtractContextFromJson(req.getParameterMap());
+        final Map<String, String[]> parameterMap = requestJsonParameterUtil.tryExtractContextFromJson(getParameterMap(req));
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
             String key = entry.getKey();
             String[] values = entry.getValue();
@@ -55,5 +55,10 @@ public class ModuleContextParserImpl implements ModuleContextParser {
         filteredWithProductContext.putAll(filtered);
 
         return filteredWithProductContext;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, String[]> getParameterMap(HttpServletRequest req) {
+        return req.getParameterMap();
     }
 }

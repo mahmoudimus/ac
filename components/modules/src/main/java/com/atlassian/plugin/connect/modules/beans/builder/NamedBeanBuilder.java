@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 /**
  * @since 1.0
  */
+@SuppressWarnings("unchecked")
 public class NamedBeanBuilder<T extends NamedBeanBuilder, B extends NamedBean> extends BaseModuleBeanBuilder<T, B> {
     private I18nProperty name;
 

@@ -155,6 +155,7 @@ public class XWorkPackageCreatorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testActionInterceptorStack() {
         List<Interceptor> interceptors = (List<Interceptor>) actionConfig.getInterceptors();
         assertEquals(2, interceptors.size());

@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.descriptor;
+package com.atlassian.plugin.connect.modules.schema;
 
 import com.atlassian.json.schema.EnumCase;
 import com.atlassian.json.schema.JsonSchemaGenerator;
