@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeM
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.APISupportBean;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.OperationSupportBean;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
-
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
@@ -13,25 +12,25 @@ import org.apache.commons.lang3.ObjectUtils;
  *
  * @schemaTitle Extensible Content Type
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#EXTENSIBLE_CONTENT_TYPE_EXAMPLE}
- *
+ * <p>
  * <h3>Extensible Content Type</h3>
- *
+ * <p>
  * Extensible Content Type allows Connect add-on developer to declare customized content type which behavior like
  * existing built in content types: Page, BlogPost, Comment, etc.
- *
+ * <p>
  * An Extensible Content Type can:
  * <ul>
- *     <li>Created, deleted or removed by using <a href="https://docs.atlassian.com/confluence/REST/latest/">Confluence REST API</a></li>
- *     <li>Get indexed as normal content type and rendered in search result. </li>
- *     <li>Have full screen viewer or dialog as the view component.</li>
+ * <li>Created, deleted or removed by using <a href="https://docs.atlassian.com/confluence/REST/latest/">Confluence REST API</a></li>
+ * <li>Get indexed as normal content type and rendered in search result. </li>
+ * <li>Have full screen viewer or dialog as the view component.</li>
  * </ul>
- *
- *
+ * <p>
+ * <p>
  * <h3>Create an Extensible Content Type via Confluence REST API</h3>
- *
+ * <p>
  * The above module snippet defined an Extensible Content Type "myExtensibleContentType".
  * You can create a new piece of Content with this type by posting the following JSON to Confluence <code>/rest/api/content</code> endpoint.
- *
+ * <p>
  * <pre><code>
  * {
  *     "type":"myExtensibleContentType",
@@ -47,11 +46,9 @@ import org.apache.commons.lang3.ObjectUtils;
  *     }
  * }
  * </code></pre>
- *
  * @since 1.1.77
  */
-public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
-{
+public class ExtensibleContentTypeModuleBean extends RequiredKeyBean {
 
     /**
      * Declares information related for rendering the content in the UI.
@@ -70,39 +67,32 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean
     @Required
     private APISupportBean apiSupport;
 
-    public ExtensibleContentTypeModuleBean()
-    {
+    public ExtensibleContentTypeModuleBean() {
         initialise();
     }
 
-    public ExtensibleContentTypeModuleBean(ExtensibleContentTypeModuleBeanBuilder builder)
-    {
+    public ExtensibleContentTypeModuleBean(ExtensibleContentTypeModuleBeanBuilder builder) {
         super(builder);
         initialise();
     }
 
-    private void initialise()
-    {
+    private void initialise() {
         operationSupport = ObjectUtils.defaultIfNull(operationSupport, new OperationSupportBean());
     }
 
-    public UISupportBean getUiSupport()
-    {
+    public UISupportBean getUiSupport() {
         return uiSupport;
     }
 
-    public OperationSupportBean getOperationSupport()
-    {
+    public OperationSupportBean getOperationSupport() {
         return operationSupport;
     }
 
-    public APISupportBean getApiSupport()
-    {
+    public APISupportBean getApiSupport() {
         return apiSupport;
     }
 
-    public String getModuleKey()
-    {
+    public String getModuleKey() {
         return getRawKey();
     }
 }

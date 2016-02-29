@@ -10,20 +10,16 @@ import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.Ope
  * @since 1.1.77
  */
 @SchemaDefinition("operationSupport")
-public class OperationSupportBean extends BaseModuleBean
-{
-    public OperationSupportBean()
-    {
+public class OperationSupportBean extends BaseModuleBean {
+    public OperationSupportBean() {
         this(new OperationSupportBeanBuilder());
     }
 
-    public OperationSupportBean(OperationSupportBeanBuilder builder)
-    {
+    public OperationSupportBean(OperationSupportBeanBuilder builder) {
         super(builder);
         initialise();
     }
 
-    private void initialise()
-    {
+    private void initialise() {
     }
 }

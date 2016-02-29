@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.OperationSupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
@@ -548,13 +548,11 @@ public class ConnectJsonExamples {
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
     }
 
-    private static String createExtensibleContentTypeIndexingExample()
-    {
+    private static String createExtensibleContentTypeIndexingExample() {
         return gson.toJson(createIndexingBean());
     }
 
-    private static String createExtensibleContentTypeExample()
-    {
+    private static String createExtensibleContentTypeExample() {
         ExtensibleContentTypeModuleBean bean = new ExtensibleContentTypeModuleBeanBuilder()
                 .withKey("myExtensibleContentType")
                 .withName(new I18nProperty("Extensible Content Type Name", null))
@@ -582,8 +580,7 @@ public class ConnectJsonExamples {
         return gson.toJson(createModuleArray("contentTypes", bean));
     }
 
-    private static IndexingBean createIndexingBean()
-    {
+    private static IndexingBean createIndexingBean() {
         return new IndexingBean(true, "content.property.key");
     }
 

@@ -1,17 +1,15 @@
 package com.atlassian.plugin.connect.modules.beans.nested.contenttype;
 
-import java.util.Set;
-
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
-
 import com.google.common.collect.Sets;
-
 import org.apache.commons.lang3.ObjectUtils;
+
+import java.util.Set;
 
 /**
  * Captures business logic for this Extensible Content Type.
@@ -19,8 +17,7 @@ import org.apache.commons.lang3.ObjectUtils;
  * @since 1.1.77
  */
 @SchemaDefinition("apiSupport")
-public class APISupportBean extends BaseModuleBean
-{
+public class APISupportBean extends BaseModuleBean {
     /**
      * The body type of the Extensible Content Type. Defaults to {@code storage}
      */
@@ -36,7 +33,7 @@ public class APISupportBean extends BaseModuleBean
 
     /**
      * Defines types that can be contained in this Extensible Content Type
-     *
+     * <p>
      * For example: ["comment", "attachment"] indicates Comment and Attachment can be contained in this type.
      */
     private Set<String> supportedContainedTypes;
@@ -58,56 +55,46 @@ public class APISupportBean extends BaseModuleBean
      */
     private IndexingBean indexing;
 
-    public APISupportBean()
-    {
+    public APISupportBean() {
         this(new APISupportBeanBuilder());
     }
 
-    public APISupportBean(APISupportBeanBuilder builder)
-    {
+    public APISupportBean(APISupportBeanBuilder builder) {
         super(builder);
         initialise();
     }
 
-    private void initialise()
-    {
+    private void initialise() {
         supportedContainedTypes = ObjectUtils.defaultIfNull(supportedContainedTypes, Sets.newHashSet());
         indexing = ObjectUtils.defaultIfNull(indexing, new IndexingBean());
         bodyType = ObjectUtils.defaultIfNull(bodyType, BodyType.STORAGE);
     }
 
-    public BodyType getBodyType()
-    {
+    public BodyType getBodyType() {
         return bodyType;
     }
 
-    public Set<String> getSupportedContainerTypes()
-    {
+    public Set<String> getSupportedContainerTypes() {
         return supportedContainerTypes;
     }
 
-    public Set<String> getSupportedContainedTypes()
-    {
+    public Set<String> getSupportedContainedTypes() {
         return supportedContainedTypes;
     }
 
-    public String getOnCreateUrl()
-    {
+    public String getOnCreateUrl() {
         return onCreateUrl;
     }
 
-    public String getOnUpdateUrl()
-    {
+    public String getOnUpdateUrl() {
         return onUpdateUrl;
     }
 
-    public String getOnDeleteUrl()
-    {
+    public String getOnDeleteUrl() {
         return onDeleteUrl;
     }
 
-    public IndexingBean getIndexing()
-    {
+    public IndexingBean getIndexing() {
         return indexing;
     }
 
