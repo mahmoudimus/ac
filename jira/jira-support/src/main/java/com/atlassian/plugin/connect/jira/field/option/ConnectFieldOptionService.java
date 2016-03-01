@@ -8,6 +8,8 @@ import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import org.codehaus.jackson.JsonNode;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Service for accessing and manipulating available options storage for select custom fields.
  *
@@ -16,6 +18,7 @@ import org.codehaus.jackson.JsonNode;
  *     An appropriate error will be returned by each method if authentication fails.
  * </p>
  */
+@ParametersAreNonnullByDefault
 public interface ConnectFieldOptionService {
     /**
      * Create a new option.
@@ -40,7 +43,8 @@ public interface ConnectFieldOptionService {
      * Get a page of options for a specific field scoped accordingly.
      *
      * @param fieldId the field to get the options for
-     * @param auth authentication details of the current call
+     * @param auth authentication details of the current call. Regular JIRA users are allowed to perform this method,
+     *             unlike other methods. The service will make sure the authenticated user has permissions to access the scope.
      * @param pageRequest requested page
      * @param scopeQuery the requested scope
      * @return a page of all options

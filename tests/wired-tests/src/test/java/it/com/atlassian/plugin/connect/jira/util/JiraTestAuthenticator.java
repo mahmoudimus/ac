@@ -17,7 +17,7 @@ public class JiraTestAuthenticator implements TestAuthenticator {
 
     @Override
     public void authenticateUser(String username) {
-        ApplicationUser user = userManager.getUserByName("admin");
+        ApplicationUser user = userManager.getUserByName(username);
         jiraAuthenticationContext.setLoggedInUser(user);
     }
 

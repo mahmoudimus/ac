@@ -22,7 +22,7 @@ public class QIssue extends RelationalPathBase<QIssue> {
                 schemaProvider.getTableName(TABLE_NAME));
 
         id = createNumber(schemaProvider.getColumnName(TABLE_NAME, "id"), Long.class);
-        project = createNumber(schemaProvider.getColumnName(TABLE_NAME, "issue"), Long.class);
+        project = createNumber(schemaProvider.getColumnName(TABLE_NAME, "project"), Long.class);
 
         addMetadata(schemaProvider);
     }

@@ -4,6 +4,7 @@ import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.PermissionException;
+import com.atlassian.jira.project.Project;
 import com.atlassian.jira.util.Page;
 import com.atlassian.jira.util.PageRequest;
 import com.atlassian.jira.util.PageRequests;
@@ -28,6 +29,7 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import it.com.atlassian.plugin.connect.jira.util.JiraTestAuthenticator;
 import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.jackson.JsonNode;
@@ -63,30 +65,39 @@ public class ConnectFieldOptionsServiceWiredTest {
     private final UserManager userManager;
     private final JiraTestUtil jiraTestUtil;
     private final TestPluginInstaller testPluginInstaller;
+    private final JiraTestAuthenticator jiraTestAuthenticator;
+
+    private List<Plugin> addons = Lists.newArrayList();
 
     private FieldId fieldId;
     private UserProfile admin;
     private AuthenticationData.User auth;
-    private List<Plugin> addons = Lists.newArrayList();
+    private Project project;
+    private UserProfile regularUser;
 
-    public ConnectFieldOptionsServiceWiredTest(final ConnectFieldOptionService connectFieldOptionService, final UserManager userManager, final JiraTestUtil jiraTestUtil, final TestPluginInstaller testPluginInstaller) {
+    public ConnectFieldOptionsServiceWiredTest(final ConnectFieldOptionService connectFieldOptionService, final UserManager userManager, final JiraTestUtil jiraTestUtil, final TestPluginInstaller testPluginInstaller, JiraTestAuthenticator jiraTestAuthenticator) {
         this.connectFieldOptionService = connectFieldOptionService;
         this.userManager = userManager;
         this.jiraTestUtil = jiraTestUtil;
         this.testPluginInstaller = testPluginInstaller;
+        this.jiraTestAuthenticator = jiraTestAuthenticator;
     }
 
     @Before
     public void setUp() throws Exception {
         fieldId = randomFieldId();
         admin = userManager.getUserProfile(jiraTestUtil.getAdmin().getKey());
+        regularUser = userManager.getUserProfile(jiraTestUtil.createUser().getKey());
         auth = AuthenticationData.byUser(admin);
+        jiraTestAuthenticator.authenticateUser(admin.getUsername());
+        project = jiraTestUtil.createProject();
     }
 
     @After
     public void tearDown() throws Exception {
-        addons.forEach(Plugin::uninstall);
-        addons.clear();
+        for (Plugin addon : addons) {
+            testPluginInstaller.uninstallAddon(addon);
+        }
     }
 
     @Test
@@ -122,8 +133,8 @@ public class ConnectFieldOptionsServiceWiredTest {
         createOptions(fieldId, "1", "2", "3", "4");
         connectFieldOptionService.removeOption(auth, fieldId, 3);
         connectFieldOptionService.removeOption(auth, fieldId, 2);
-        createOption(fieldId, "\"a\"").getId();
-        createOption(fieldId, "\"b\"").getId();
+        createOption(fieldId, "a").getId();
+        createOption(fieldId, "b").getId();
 
         Set<Integer> ids = connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE).get().getValues().stream().map(ConnectFieldOption::getId).collect(toSet());
 
@@ -212,10 +223,13 @@ public class ConnectFieldOptionsServiceWiredTest {
 
     @Test
     public void testAuthorization() throws PermissionException, CreateException {
+
+        jiraTestAuthenticator.unauthenticate();
+
         ImmutableList<AuthenticationData> notAuthorized = ImmutableList.of(
                 AuthenticationData.byAddonKey("wrongAddonKey"),
                 AuthenticationData.byRequest(mock(HttpServletRequest.class)),
-                AuthenticationData.byUser(userManager.getUserProfile(jiraTestUtil.createUser().getKey())));
+                AuthenticationData.byUser(regularUser));
 
         ImmutableList<AuthenticationData> authorized = ImmutableList.of(
                 AuthenticationData.byAddonKey(fieldId.getAddonKey()),
@@ -242,6 +256,18 @@ public class ConnectFieldOptionsServiceWiredTest {
         }));
     }
 
+    @Test
+    public void regularUsersAreAllowedToGetScopedOptions() {
+        ConnectFieldOption globalOption = createOption(fieldId, "global", GLOBAL);
+        ConnectFieldOption projectOption = createOption(fieldId, "project", project(this.project.getId()));
+
+        assertEquals(ImmutableList.of(globalOption),
+                connectFieldOptionService.getOptions(AuthenticationData.byUser(regularUser), fieldId, UNLIMITED_PAGE, GLOBAL).get().getValues());
+
+        assertEquals(ImmutableList.of(globalOption, projectOption),
+                connectFieldOptionService.getOptions(AuthenticationData.byUser(regularUser), fieldId, UNLIMITED_PAGE, project(project.getId())).get().getValues());
+    }
+
     private List<ConnectFieldOption> createOptions(final FieldId fieldId, String... values) {
         return Stream.of(values)
                 .map(Json::parse)
@@ -252,7 +278,11 @@ public class ConnectFieldOptionsServiceWiredTest {
     }
 
     private ConnectFieldOption createOption(FieldId fieldId, String value) {
-        return connectFieldOptionService.addOption(auth, fieldId, Json.parse(value).get(), ConnectFieldOptionScope.GLOBAL).get();
+        return createOption(fieldId, value, GLOBAL);
+    }
+
+    private ConnectFieldOption createOption(FieldId fieldId, String value, ConnectFieldOptionScope scope) {
+        return connectFieldOptionService.addOption(auth, fieldId, Json.toJsonNode(value), scope).get();
     }
 
     private FieldId randomFieldId() {

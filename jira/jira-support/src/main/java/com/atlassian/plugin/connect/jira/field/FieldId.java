@@ -19,6 +19,10 @@ public final class FieldId {
         return ConnectPluginInfo.getPluginKey() + ":" + ModuleKeyUtils.addonAndModuleKey(addonKey, fieldKey);
     }
 
+    public String getCustomFieldName() {
+        return ModuleKeyUtils.addonAndModuleKey(addonKey, fieldKey);
+    }
+
     private FieldId(String addonKey, String fieldKey) {
         this.addonKey = Preconditions.checkNotNull(addonKey);
         this.fieldKey = Preconditions.checkNotNull(fieldKey);
