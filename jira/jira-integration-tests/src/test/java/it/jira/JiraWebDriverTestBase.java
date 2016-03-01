@@ -13,7 +13,7 @@ import com.atlassian.testutils.annotations.Retry;
 import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import it.jira.project.TestProject;
+import it.jira.project.ProjectForTests;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -25,7 +25,7 @@ public class JiraWebDriverTestBase {
 
     protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
-    protected static TestProject project;
+    protected static ProjectForTests project;
 
     protected static ConnectTestUserFactory testUserFactory;
 
