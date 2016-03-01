@@ -19,10 +19,6 @@
         </license>
     </licenses>
 
-    <properties>
-        <notfreezer>true</notfreezer>
-    </properties>
-
     <modules>
         <module>test-support-plugin</module>
         <module>unit-test-support</module>
