@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.
  *
- * <h4>Creating and editing a Post Function</h4>
+ * <h2>Creating and editing a Post Function</h2>
  *
  *The create and edit urls will need to present a form with relevant configuration for the post function. In order to
  * persist this information with JIRA, the page needs to include a snippet of Javascript to facilitate saving this data.

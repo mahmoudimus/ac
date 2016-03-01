@@ -20,7 +20,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * If your add-on uses webhooks, declare the ["read" scope](../../scopes/scopes.html)
  * in your [`atlassian-connect.json` descriptor](../).
  *
- *### Handling the webhook event
+ * <h3>Handling the webhook event</h3>
  *
  *To receive webhook events, your add-on needs to include the webhook module declaration in its JSON descriptor. The
  * declaration indicates the relative URL of the local resource at which it will receive the notification. In other
@@ -33,24 +33,24 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * out by default. [Extra configuration](http://www.django-rest-framework.org/api-guide/authentication/#apache-mod_wsgi-specific-configuration)
  * is required to ensure the Authentication header is visible.
  *
- *### Variable Substitution
+ * <h3>Variable Substitution</h3>
  *
  * JIRA webhooks also provide a way to add and substitute variables in the url. This is similar to context parameters for add-ons. See [context parameters](../../concepts/context-parameters.html).
  *
  * For example, if we register to listen for one of the project events with a url containing `${project.id}`, a POST message will
  * be sent to the address with the `${project.id}` replaced by the id of the project that the event was triggered for.
  *
- *### Webhook event types
+ * <h3>Webhook event types</h3>
  *
  * Below is a list of all available webhook events.
  *
- * <h5>Add-on and system events</h5>
+ * <h4>Add-on and system events</h4>
  *
  * * `connect_addon_disabled`
  * * `connect_addon_enabled`
  * * `server_upgraded`
  *
- * <h5>Issue events</h5>
+ * <h4>Issue events</h4>
  * * `jira:issue_created`
  * * `jira:issue_deleted`
  * * `jira:issue_updated`
@@ -58,7 +58,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Context parameters are `${project.id}, ${project.key}, ${issue.key}, ${issue.id}`
  *
- * <h5>Version events</h5>
+ * <h4>Version events</h4>
  * * `version_created`
  * * `version_deleted`
  * * `version_merged`
@@ -71,21 +71,21 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Special context parameter for version_merged event is `${mergedVersion.id}`.
  *
- * <h5>Project events</h5>
+ * <h4>Project events</h4>
  * * `project_created`
  * * `project_updated`
  * * `project_deleted`
  *
  * Context parameters are `${project.id}, ${project.key}`
  *
- * <h5>User events</h5>
+ * <h4>User events</h4>
  * * `user_created`
  * * `user_deleted`
  * * `user_updated`
  *
  * Context parameters: `${modifiedUser.name}, ${modifiedUser.key}`
  *
- * <h5>Feature status events</h5>
+ * <h4>Feature status events</h4>
  * * `option_voting_changed`
  * * `option_watching_changed`
  * * `option_unassigned_issues_changed`
