@@ -24,3 +24,4 @@ docs/target
 jsapi/src/main/resources/js/core
 jsapi/src/main/resources/css/core
 .vagrant
+**/rebel.xml
