@@ -10,7 +10,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 /**
  * Gives basic information about the plugin vendor.
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
  * @schemaTitle Plugin Vendor

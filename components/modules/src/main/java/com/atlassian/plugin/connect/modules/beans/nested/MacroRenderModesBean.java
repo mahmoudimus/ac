@@ -17,7 +17,7 @@ import com.google.gson.annotations.SerializedName;
  * Macro Render Modes allow you to map a render mode to a static content macro.  This allows you to
  * provide an implementation of your macro for these formats, that will render safely to static formats.
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_RENDER_MODES_EXAMPLE}
  * @schemaTitle Macro Render Modes

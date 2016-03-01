@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Defines the list of extractors which index selected JSON objects from defined property.
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
  * @schemaTitle Index Key Configuration

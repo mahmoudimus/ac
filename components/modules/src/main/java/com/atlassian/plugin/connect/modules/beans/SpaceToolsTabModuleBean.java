@@ -18,7 +18,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * legacy Space Admin area. This module will insert a tab in a pre-defined location in Space Admin (look below for a 
  * complete list of existing locations).
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SPACE_TOOLS_TAB_EXAMPLE}
  * @schemaTitle Space Tools Tab

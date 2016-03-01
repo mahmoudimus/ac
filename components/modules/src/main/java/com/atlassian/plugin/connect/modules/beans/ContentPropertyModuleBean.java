@@ -25,7 +25,7 @@ import java.util.List;
  * Once you've done that, you can use <a href="https://developer.atlassian.com/display/CONFDEV/Advanced+Searching+using+CQL">CQL</a>
  * to query content based on your custom content property.
  *
- * <h3>Example</h3>
+ * <h4>Example</h4>
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
  * @schemaTitle Content Property
  * @since 1.0

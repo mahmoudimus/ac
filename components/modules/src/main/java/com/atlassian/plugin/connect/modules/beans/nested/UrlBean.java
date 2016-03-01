@@ -8,7 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#URL_EXAMPLE}
  * @schemaTitle URL

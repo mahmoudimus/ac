@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Options for an inline dialog target
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE}
  * @schemaTitle Inline Dialog Options

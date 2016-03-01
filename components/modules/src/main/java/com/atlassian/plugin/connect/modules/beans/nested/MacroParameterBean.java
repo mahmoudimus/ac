@@ -24,7 +24,7 @@ import java.util.List;
  *}]
  * </code></pre>
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_PARAMS_EXAMPLE}
  * @schemaTitle Macro Input Parameter

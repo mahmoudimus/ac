@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 
 /**
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PANEL_LAYOUT_EXAMPLE}
  * @schemaTitle Web Panel Layout

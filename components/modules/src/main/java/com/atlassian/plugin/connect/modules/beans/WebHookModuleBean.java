@@ -44,13 +44,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Below is a list of all available webhook events.
  *
- *##### Add-on and system events
+ * <h5>Add-on and system events</h5>
  *
  * * `connect_addon_disabled`
  * * `connect_addon_enabled`
  * * `server_upgraded`
  *
- *##### Issue events
+ * <h5>Issue events</h5>
  * * `jira:issue_created`
  * * `jira:issue_deleted`
  * * `jira:issue_updated`
@@ -58,7 +58,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Context parameters are `${project.id}, ${project.key}, ${issue.key}, ${issue.id}`
  *
- *##### Version events
+ * <h5>Version events</h5>
  * * `version_created`
  * * `version_deleted`
  * * `version_merged`
@@ -71,21 +71,21 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Special context parameter for version_merged event is `${mergedVersion.id}`.
  *
- *##### Project events
+ * <h5>Project events</h5>
  * * `project_created`
  * * `project_updated`
  * * `project_deleted`
  *
  * Context parameters are `${project.id}, ${project.key}`
  *
- *##### User events
+ * <h5>User events</h5>
  * * `user_created`
  * * `user_deleted`
  * * `user_updated`
  *
  * Context parameters: `${modifiedUser.name}, ${modifiedUser.key}`
  *
- *##### Feature status events
+ * <h5>Feature status events</h5>
  * * `option_voting_changed`
  * * `option_watching_changed`
  * * `option_unassigned_issues_changed`
@@ -94,7 +94,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `option_issuelinks_changed`
  * * `option_timetracking_changed`
  *
- *#### Confluence Webhook events
+ * <h4>Confluence Webhook events</h4>
  *
  * * `attachment_created`
  * * `attachment_removed`
@@ -146,7 +146,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `user_reactivated`
  * * `user_removed`
  *
- *### Example Request
+ * <h4>Example Request</h4>
  *
  * <pre><code>
  *POST /jira-issue_created?user_id=admin&amp;user_key=admin HTTP/1.1
@@ -181,7 +181,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * * [Confluence Webhooks: Writing a Multi-page Blueprint using Atlassian Connect](https://developer.atlassian.com/confdev/tutorials/writing-a-multi-page-blueprint-using-atlassian-connect)
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhook

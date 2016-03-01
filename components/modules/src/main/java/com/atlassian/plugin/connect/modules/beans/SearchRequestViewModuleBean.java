@@ -30,7 +30,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.emp
  * * `endIssue`: The index of the last passed issue key in the list of all issues
  * * `totalIssues`: The number of issues in the entire search result
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SEARCH_VIEW_EXAMPLE}
  * @schemaTitle Search Request View

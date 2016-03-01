@@ -143,7 +143,7 @@ public class BlueprintTemplateContextBean {
      * </ul>
      *
      *
-     * <h3 id="POSTBODYEXAMPLE">Example of the request POST body</h3>
+     * <h4 id="POSTBODYEXAMPLE">Example of the request POST body</h4>
      * The context url may need some information to produce a more individually suitable response. Confluence
      * will send some information related to the blueprint in the body of the request during the creation process.
      * Here's an example of what will be sent in the body of the POST request:

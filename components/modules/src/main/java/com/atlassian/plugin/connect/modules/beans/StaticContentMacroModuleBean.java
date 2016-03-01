@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
  * Please consult [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
  * for additional information about how to construct valid storage format XML.
  *
- *#### Use Caching
+ * <h4>Use Caching</h4>
  *
  * Because any calls to the macro rendering service happen synchronously during page load, we strongly encourage the
  * implementations to take advantage of HTTP's caching mechanisms: Often, the rendered content only depends on the macro's
@@ -31,7 +31,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
  *
  *     Cache-Control: no-cache
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#STATIC_MACRO_EXAMPLE}
  * @schemaTitle Static Content Macro

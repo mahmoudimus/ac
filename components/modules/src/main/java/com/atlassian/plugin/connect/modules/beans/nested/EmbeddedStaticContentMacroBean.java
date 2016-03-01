@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentM
  *
  * These embedded static content macros are used to define render mode mappings for your dynamic content macro.
  *
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#EMBEDDED_STATIC_MACRO_EXAMPLE}
  * @schemaTitle Embedded Static Content Macro

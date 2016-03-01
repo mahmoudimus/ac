@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  * Dashboard items allow add-on to display a summary information data on the dashboard. Each dashboard-item can be configured
  * to display information relevant to a particular user.
  *
- *#### Example
+ * <h4>Example</h4>
  * For a full add-on example, see [dashboard item example add-on](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-dashboard-item-example).
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DASHBOARD_ITEM_EXAMPLE}

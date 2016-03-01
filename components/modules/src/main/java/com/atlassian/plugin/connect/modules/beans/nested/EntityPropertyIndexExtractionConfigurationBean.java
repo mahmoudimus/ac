@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Defines an entity property to be indexed by JIRA. An entity property is a reference to a JSON object, which also defines it's type.
- *#### Example
+ * <h4>Example</h4>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Property Index
