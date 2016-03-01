@@ -67,19 +67,19 @@ public class TestJiraConditions extends AbstractJiraConditionsTest {
 
         List<String> passedConditions = CONDITIONS.stream()
                 .filter((nameParams) -> isItemPresentInMoreActionsMenu(issueMenu, getDisplayNameForCondition(nameParams)))
-                .map(TestedCondition::getName)
+                .map(ConditionUnderTest::getName)
                 .collect(toList());
 
-        assertThat(passedConditions, equalTo(CONDITIONS.stream().map(TestedCondition::getName).collect(toList())));
+        assertThat(passedConditions, equalTo(CONDITIONS.stream().map(ConditionUnderTest::getName).collect(toList())));
     }
 
     private static void addWebItemsWithConditions() {
-        for (TestedCondition condition : CONDITIONS) {
+        for (ConditionUnderTest condition : CONDITIONS) {
             addon.addModules("webItems", newWebItemBeanWithCondition(condition));
         }
     }
 
-    private static WebItemModuleBean newWebItemBeanWithCondition(TestedCondition condition) {
+    private static WebItemModuleBean newWebItemBeanWithCondition(ConditionUnderTest condition) {
         SingleConditionBeanBuilder conditionBeanBuilder = newSingleConditionBean().withCondition(condition.getName());
         if (!condition.getParameters().isEmpty()) {
             conditionBeanBuilder.withParams(condition.getParameters());
@@ -94,7 +94,7 @@ public class TestJiraConditions extends AbstractJiraConditionsTest {
                 .build();
     }
 
-    private static String getDisplayNameForCondition(TestedCondition condition) {
+    private static String getDisplayNameForCondition(ConditionUnderTest condition) {
         return String.format("%d %s", CONDITIONS.indexOf(condition), StringUtils.substring(condition.getName(), 0, 15));
     }
 

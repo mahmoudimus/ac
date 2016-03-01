@@ -87,6 +87,11 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.atlassian</groupId>
+            <artifactId>test-batching</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-connect-integration-tests-support</artifactId>
             <version>${project.version}</version>
@@ -530,7 +535,7 @@
 
                     <testGroups>
                         <testGroup>
-                            <id>jira-misc</id>
+                            <id>jira-batches</id>
                             <productIds>
                                 <productId>jira</productId>
                             </productIds>
@@ -538,38 +543,7 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
-                                <include>it/jira/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/jira/condition/*.java</exclude>
-                                <exclude>it/jira/iframe/*.java</exclude>
-                                <exclude>it/jira/item/*.java</exclude>
-                                <exclude>it/jira/jsapi/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-iframe</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-item</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/condition/*.java</include>
-                                <include>it/jira/item/*.java</include>
+                                <include>it/jira/JiraIntegrationTestBatch.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -585,7 +559,6 @@
                             </includes>
                         </testGroup>
                     </testGroups>
-
                 </configuration>
 
             </plugin>
