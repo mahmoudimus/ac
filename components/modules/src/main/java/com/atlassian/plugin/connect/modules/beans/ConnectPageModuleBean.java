@@ -18,15 +18,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * <p>Each type of page displays differently:</p>
  * <ul>
- * <li>`generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.</li>
- * <li>`adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.</li>
- * <li>`profilePages` - (__Confluence only__) displayed as sections inside user profiles.</li>
- * <li>`configurePage` - used to configure the addon itself. A "Configure" button will link to this page from the addon's entry in _Manage Add-ons_.</li>
- * <li>`postInstallPage` - used to provide information about the add-on after it is installed. A "Get Started" button will link to this page from the addon's entry in _Manage Add-ons_.</li>
+ * <li><code>generalPages</code> - have no extra styling and by default a link to the page is displayed in the main navigation menu.</li>
+ * <li><code>adminPages</code> - display in the administration area. Appropriate menus and other styling appear around your content.</li>
+ * <li><code>profilePages</code> - (<strong>Confluence only</strong>) displayed as sections inside user profiles.</li>
+ * <li><code>configurePage</code> - used to configure the addon itself. A "Configure" button will link to this page from the addon's entry in <em>Manage Add-ons</em>.</li>
+ * <li><code>postInstallPage</code> - used to provide information about the add-on after it is installed. A "Get Started" button will link to this page from the addon's entry in <em>Manage Add-ons</em>.</li>
  * </ul>
  * <!-- ## Single page objects -->
  *
- * <p>Note that unlike other module types, an add-on may only define a single `configurePage` and a single `postInstallPage`.
+ * <p>Note that unlike other module types, an add-on may only define a single <code>configurePage</code> and a single <code>postInstallPage</code>.
  * They should each be defined in the descriptor as a single JSON object, not as a JSON array like other modules. See the examples below.</p>
  *
  * <!-- ## Seamless iframes -->

@@ -23,12 +23,13 @@ import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.emp
  * This URL is relative to the base url of the descriptor.
  *
  * Your service will be invoked with these parameters:
- *
- * * `issues`: A comma-separated list of issue keys
- * * `link`: A link back to the JIRA Issue Navigator where the action was invoked
- * * `startIssue`: The index of the first passed issue key in the list of all issues
- * * `endIssue`: The index of the last passed issue key in the list of all issues
- * * `totalIssues`: The number of issues in the entire search result
+ * <ul>
+ *  <li>`issues`: A comma-separated list of issue keys</li>
+ *  <li>`link`: A link back to the JIRA Issue Navigator where the action was invoked</li>
+ *  <li>`startIssue`: The index of the first passed issue key in the list of all issues</li>
+ *  <li>`endIssue`: The index of the last passed issue key in the list of all issues</li>
+ *  <li>`totalIssues`: The number of issues in the entire search result</li>
+ * </ul>
  *
  * <h2>Example</h2>
  *

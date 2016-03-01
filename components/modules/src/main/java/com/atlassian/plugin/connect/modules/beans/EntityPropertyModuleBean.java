@@ -22,6 +22,7 @@ import java.util.List;
  * data:</p>
  *
  * <pre>
+ *  <code>
  * {
  *     "attachment": {
  *         "size": 14231,
@@ -33,6 +34,7 @@ import java.util.List;
  *         ...
  *     }
  * }
+ *  </code>
  * </pre>
  *
  * <p>In this example the developer wants to make the <i>size</i>, <i>extension</i> and <i>updated</i> fields from the <i>attachment</i> object be searchable via JQL. To do that they start

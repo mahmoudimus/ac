@@ -13,12 +13,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Just to give you an idea of how you can use them in add-ons, here are a few sample webhook events:
  *
- * * When an add-on is enabled or disabled
- * * When an issue is created or closed in JIRA
- * * When a page is created or updated in Confluence
+ * <ul>
+ *  <li>When an add-on is enabled or disabled</li>
+ *  <li>When an issue is created or closed in JIRA</li>
+ *  <li>When a page is created or updated in Confluence
  *
  * If your add-on uses webhooks, declare the ["read" scope](../../scopes/scopes.html)
- * in your [`atlassian-connect.json` descriptor](../).
+ * in your [`atlassian-connect.json` descriptor](../).</li>
+ * </ul>
  *
  * <h3>Handling the webhook event</h3>
  *
@@ -45,106 +47,119 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Below is a list of all available webhook events.
  *
  * <h4>Add-on and system events</h4>
- *
- * * `connect_addon_disabled`
- * * `connect_addon_enabled`
- * * `server_upgraded`
+ * <ul>
+ *  <li>`connect_addon_disabled`</li>
+ *  <li>`connect_addon_enabled`</li>
+ *  <li>`server_upgraded`</li>
+ * </ul>
  *
  * <h4>Issue events</h4>
- * * `jira:issue_created`
- * * `jira:issue_deleted`
- * * `jira:issue_updated`
- * * `jira:worklog_updated`
+ * <ul>
+ *  <li>`jira:issue_created`</li>
+ *  <li>`jira:issue_deleted`</li>
+ *  <li>`jira:issue_updated`</li>
+ *  <li>`jira:worklog_updated`
  *
- * Context parameters are `${project.id}, ${project.key}, ${issue.key}, ${issue.id}`
+ * Context parameters are `${project.id}, ${project.key}, ${issue.key}, ${issue.id}`</li>
+ * </ul>
  *
  * <h4>Version events</h4>
- * * `version_created`
- * * `version_deleted`
- * * `version_merged`
- * * `version_updated`
- * * `version_moved`
- * * `version_released`
- * * `version_unreleased`
+ * <ul>
+ *  <li>`version_created`</li>
+ *  <li>`version_deleted`</li>
+ *  <li>`version_merged`</li>
+ *  <li>`version_updated`</li>
+ *  <li>`version_moved`</li>
+ *  <li>`version_released`</li>
+ *  <li>`version_unreleased`
  *
  * Context parameters are `${project.id}, ${project.key}, ${version.id}`.
  *
- * Special context parameter for version_merged event is `${mergedVersion.id}`.
+ * Special context parameter for version_merged event is `${mergedVersion.id}`.</li>
+ * </ul>
  *
  * <h4>Project events</h4>
- * * `project_created`
- * * `project_updated`
- * * `project_deleted`
+ * <ul>
+ *  <li>`project_created`</li>
+ *  <li>`project_updated`</li>
+ *  <li>`project_deleted`
  *
- * Context parameters are `${project.id}, ${project.key}`
+ * Context parameters are `${project.id}, ${project.key}`</li>
+ * </ul>
  *
  * <h4>User events</h4>
- * * `user_created`
- * * `user_deleted`
- * * `user_updated`
+ * <ul>
+ *  <li>`user_created`</li>
+ *  <li>`user_deleted`</li>
+ *  <li>`user_updated`
  *
- * Context parameters: `${modifiedUser.name}, ${modifiedUser.key}`
+ * Context parameters: `${modifiedUser.name}, ${modifiedUser.key}`</li>
+ * </ul>
  *
  * <h4>Feature status events</h4>
- * * `option_voting_changed`
- * * `option_watching_changed`
- * * `option_unassigned_issues_changed`
- * * `option_subtasks_changed`
- * * `option_attachments_changed`
- * * `option_issuelinks_changed`
- * * `option_timetracking_changed`
+ * <ul>
+ *  <li>`option_voting_changed`</li>
+ *  <li>`option_watching_changed`</li>
+ *  <li>`option_unassigned_issues_changed`</li>
+ *  <li>`option_subtasks_changed`</li>
+ *  <li>`option_attachments_changed`</li>
+ *  <li>`option_issuelinks_changed`</li>
+ *  <li>`option_timetracking_changed`</li>
+ * </ul>
  *
  * <h4>Confluence Webhook events</h4>
  *
- * * `attachment_created`
- * * `attachment_removed`
- * * `attachment_updated`
- * * `attachment_viewed`
- * * `blog_created`
- * * `blog_removed`
- * * `blog_restored`
- * * `blog_trashed`
- * * `blog_updated`
- * * `blog_viewed`
- * * `blueprint_page_created`
- * * `cache_statistics_changed`
- * * `comment_created`
- * * `comment_removed`
- * * `comment_updated`
- * * `connect_addon_disabled`
- * * `connect_addon_enabled`
- * * `content_permissions_updated`
- * * `group_created`
- * * `group_removed`
- * * `label_added`
- * * `label_created`
- * * `label_deleted`
- * * `label_removed`
- * * `login`
- * * `login_failed`
- * * `logout`
- * * `page_children_reordered`
- * * `page_created`
- * * `page_moved`
- * * `page_removed`
- * * `page_restored`
- * * `page_trashed`
- * * `page_updated`
- * * `page_viewed`
- * * `plugin_enabled`
- * * `plugins_upgraded`
- * * `search_performed`
- * * `server_upgraded`
- * * `space_created`
- * * `space_logo_updated`
- * * `space_permissions_updated`
- * * `space_removed`
- * * `space_updated`
- * * `user_created`
- * * `user_deactivated`
- * * `user_followed`
- * * `user_reactivated`
- * * `user_removed`
+ * <ul>
+ *  <li>`attachment_created`</li>
+ *  <li>`attachment_removed`</li>
+ *  <li>`attachment_updated`</li>
+ *  <li>`attachment_viewed`</li>
+ *  <li>`blog_created`</li>
+ *  <li>`blog_removed`</li>
+ *  <li>`blog_restored`</li>
+ *  <li>`blog_trashed`</li>
+ *  <li>`blog_updated`</li>
+ *  <li>`blog_viewed`</li>
+ *  <li>`blueprint_page_created`</li>
+ *  <li>`cache_statistics_changed`</li>
+ *  <li>`comment_created`</li>
+ *  <li>`comment_removed`</li>
+ *  <li>`comment_updated`</li>
+ *  <li>`connect_addon_disabled`</li>
+ *  <li>`connect_addon_enabled`</li>
+ *  <li>`content_permissions_updated`</li>
+ *  <li>`group_created`</li>
+ *  <li>`group_removed`</li>
+ *  <li>`label_added`</li>
+ *  <li>`label_created`</li>
+ *  <li>`label_deleted`</li>
+ *  <li>`label_removed`</li>
+ *  <li>`login`</li>
+ *  <li>`login_failed`</li>
+ *  <li>`logout`</li>
+ *  <li>`page_children_reordered`</li>
+ *  <li>`page_created`</li>
+ *  <li>`page_moved`</li>
+ *  <li>`page_removed`</li>
+ *  <li>`page_restored`</li>
+ *  <li>`page_trashed`</li>
+ *  <li>`page_updated`</li>
+ *  <li>`page_viewed`</li>
+ *  <li>`plugin_enabled`</li>
+ *  <li>`plugins_upgraded`</li>
+ *  <li>`search_performed`</li>
+ *  <li>`server_upgraded`</li>
+ *  <li>`space_created`</li>
+ *  <li>`space_logo_updated`</li>
+ *  <li>`space_permissions_updated`</li>
+ *  <li>`space_removed`</li>
+ *  <li>`space_updated`</li>
+ *  <li>`user_created`</li>
+ *  <li>`user_deactivated`</li>
+ *  <li>`user_followed`</li>
+ *  <li>`user_reactivated`</li>
+ *  <li>`user_removed`</li>
+ * </ul>
  *
  * <h4>Example Request</h4>
  *
@@ -173,13 +188,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * and prints the body posted by the instance to the console screen.
  *
  *### References
- *
- * * [JIRA Webhooks: What will the format of the webhook callback message be?](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-Whatwilltheformatofthewebhookcallbackmessagebe%3F)
- * * [JIRA Webhooks: Sample Webhook POST](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-SampleWebhookPOST)
+ * <ul>
+ *  <li>[JIRA Webhooks: What will the format of the webhook callback message be?](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-Whatwilltheformatofthewebhookcallbackmessagebe%3F)</li>
+ *  <li>[JIRA Webhooks: Sample Webhook POST](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-SampleWebhookPOST)</li>
+ * </ul>
  *
  *### Tutorials
- *
- * * [Confluence Webhooks: Writing a Multi-page Blueprint using Atlassian Connect](https://developer.atlassian.com/confdev/tutorials/writing-a-multi-page-blueprint-using-atlassian-connect)
+ * <ul>
+ *  <li>[Confluence Webhooks: Writing a Multi-page Blueprint using Atlassian Connect](https://developer.atlassian.com/confdev/tutorials/writing-a-multi-page-blueprint-using-atlassian-connect)</li>
+ * </ul>
  *
  * <h2>Example</h2>
  *
