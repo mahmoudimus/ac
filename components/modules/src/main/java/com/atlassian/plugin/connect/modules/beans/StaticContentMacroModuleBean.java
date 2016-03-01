@@ -31,7 +31,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
  *
  *     Cache-Control: no-cache
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#STATIC_MACRO_EXAMPLE}
  * @schemaTitle Static Content Macro

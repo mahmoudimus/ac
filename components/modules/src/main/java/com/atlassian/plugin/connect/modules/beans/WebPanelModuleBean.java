@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * controls in the application interface as a group. For example, the existing "People" panel in JIRA issue view shows
  * the assignee, reporter, and similar information for the issue.
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBPANEL_EXAMPLE}
  * @schemaTitle Web Panel

@@ -39,7 +39,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder
  *        });
  *    });
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
  * @schemaTitle Macro Editor

@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
 /**
  * Defines a control which may appear in control extension points such as the dialog control bar
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTROL_EXAMPLE}
  * @schemaTitle Control

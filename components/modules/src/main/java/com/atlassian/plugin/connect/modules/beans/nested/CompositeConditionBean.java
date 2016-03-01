@@ -13,7 +13,7 @@ import java.util.List;
  * Composite Conditions are composed of a collection of [Single Condition](single-condition.html) / Composite Conditions
  * and a type attribute.
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#COMPOSITE_CONDITION_EXAMPLE}
  * @schemaTitle Composite Condition

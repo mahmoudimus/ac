@@ -15,7 +15,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  *
  * Keep in mind that you'll need to define a separate matcher for each relevant internet protocol (such as http vs https).
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_MATCHER_EXAMPLE}
  * @schemaTitle Matcher

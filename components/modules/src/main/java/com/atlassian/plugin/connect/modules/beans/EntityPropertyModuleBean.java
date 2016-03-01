@@ -51,7 +51,7 @@ import java.util.List;
  *
  * <p>For more information, please see the <a href="https://developer.atlassian.com/display/JIRADEV/JIRA+Entity+Properties+Overview">JIRA documentation on entity properties</a>.</p>
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_EXAMPLE}
  * @schemaTitle Entity Property

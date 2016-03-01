@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Allow add-ons to define a new report, which is linked from a project page.
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#REPORT_EXAMPLE}
  * @schemaTitle Report

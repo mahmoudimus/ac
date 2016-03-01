@@ -11,7 +11,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 /**
  * Represents a link, its optional title and alternative text.
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LINK_EXAMPLE}
  * @schemaTitle Link

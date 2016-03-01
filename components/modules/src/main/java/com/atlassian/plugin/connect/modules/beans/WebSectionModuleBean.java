@@ -13,7 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * The Web Section plugin module allows add-ons to define new sections in application menus. Each section can contain one or
  * more links. To insert the links themselves, see the [Web Item Module](./web-item.html).
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBSECTION_EXAMPLE}
  * @schemaTitle Web Section

@@ -181,7 +181,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * * [Confluence Webhooks: Writing a Multi-page Blueprint using Atlassian Connect](https://developer.atlassian.com/confdev/tutorials/writing-a-multi-page-blueprint-using-atlassian-connect)
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhook

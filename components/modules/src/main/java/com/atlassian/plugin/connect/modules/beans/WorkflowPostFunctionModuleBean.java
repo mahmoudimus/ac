@@ -52,7 +52,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * For more information, see the [javascript API](../../javascript/WorkflowConfiguration.html).
  *
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * For a full add-on example, see the [workflow post function example add-on](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-workflow-post-function-example).
  *

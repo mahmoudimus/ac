@@ -51,7 +51,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *&lt;/script&gt;
  *   </code></pre>
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @schemaTitle Page
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PAGE_EXAMPLE}

@@ -26,7 +26,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * 3. To prevent the macro output from being automatically resized, set the `data-options` attribute in the script tag for all.js to "`resize:false`". This turns off automatic resizing of the iframe.
  * 4. If the size of the macro output content size is dynamic, call `AP.resize(w,h)` immediately after the DOM of your iframe is loaded.
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  * The following macro example is an adaptation from the [Google Maps](https://marketplace.atlassian.com/plugins/atlassian-connect-gmaps)
  * add-on. The source is hosted on [Bitbucket](https://bitbucket.org/atlassianlabs/ac-gmaps).
  *

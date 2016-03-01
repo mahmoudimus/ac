@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectProjectAdminTab
  * Project administration tab panel modules add a new tab and corresponding page to the left hand menu on the JIRA
  * project settings (previously called project administration) page.
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PRJ_ADMIN_PAGE_EXAMPLE}
  * @schemaTitle Project Admin Tab Panel
  */

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Represents a string that can be resolved via a localization properties file. You can use the same `i18n Property` key
  * and value in multiple places if you like, but identical keys must have identical values.
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#I18N_EXAMPLE}
  * @schemaTitle i18n Property
  * @since 1.0

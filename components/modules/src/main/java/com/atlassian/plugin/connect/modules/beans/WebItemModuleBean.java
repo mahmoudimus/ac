@@ -32,7 +32,7 @@ import java.util.List;
  * <p>Your add-on can receive [additional context](../../concepts/context-parameters.html) from the application by
  * using variable tokens in the `url` attribute.</p>
  *
- * <h4>Example</h4>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
  * @schemaTitle Web Item
