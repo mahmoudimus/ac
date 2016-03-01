@@ -7,15 +7,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
-public class CustomFieldTypeBlueprintResolverTest
-{
+public class CustomFieldTypeBlueprintResolverTest {
     @Test
-    public void testFieldMapperMapsAllTypes() throws Exception
-    {
+    public void testFieldMapperMapsAllTypes() throws Exception {
         ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver = new ConnectFieldTypeBlueprintResolver();
 
-        for (ConnectFieldType connectFieldType : ConnectFieldType.values())
-        {
+        for (ConnectFieldType connectFieldType : ConnectFieldType.values()) {
             CustomFieldTypeBlueprint mapping = connectFieldTypeBlueprintResolver.getBlueprint(connectFieldType);
             assertNotNull("Mapping for " + connectFieldType.toString() + " was missing", mapping);
         }

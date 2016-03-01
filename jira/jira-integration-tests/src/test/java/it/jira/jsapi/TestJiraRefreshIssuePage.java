@@ -1,7 +1,5 @@
 package it.jira.jsapi;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.connect.test.jira.pageobjects.RemoteRefreshIssuePageWebPanel;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.jira.pageobjects.util.Tracer;
@@ -9,20 +7,19 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
-
+import it.jira.JiraWebDriverTestBase;
+import it.jira.servlet.JiraAppServlets;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
-import it.jira.servlet.JiraAppServlets;
+import java.rmi.RemoteException;
 
 /**
  * Integration tests for the JavaScript API method jira.refreshIssuePage().
  */
-public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
-{
+public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase {
 
     private static final String REFRESH_ISSUE_PAGE_WEB_PANEL_PATH = "/refresh-issue-page-web-panel";
 
@@ -32,8 +29,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     private IssueCreateResponse issue;
 
     @BeforeClass
-    public static void startAddon() throws Exception
-    {
+    public static void startAddon() throws Exception {
         refreshIssuePageWebPanelModuleBean = WebPanelModuleBean.newWebPanelBean()
                 .withKey("refresh-issue-page-web-panel")
                 .withName(new I18nProperty("Refresh Issue Page", null))
@@ -48,23 +44,19 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopAddon() throws Exception
-    {
-        if (addon != null)
-        {
+    public static void stopAddon() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Before
-    public void setUp() throws RemoteException
-    {
+    public void setUp() throws RemoteException {
         issue = product.backdoor().issues().createIssue(project.getKey(), "Test Issue");
     }
 
     @Test
-    public void shouldRefreshIssuePage() throws RemoteException
-    {
+    public void shouldRefreshIssuePage() throws RemoteException {
         login(testUserFactory.basicUser());
         ViewIssuePage viewIssuePage = product.visit(ViewIssuePage.class, issue.key);
         RemoteRefreshIssuePageWebPanel refreshIssuePageWebPanel = findRefreshIssuePageWebPanel();
@@ -74,8 +66,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
         viewIssuePage.waitForAjaxRefresh(tracer);
     }
 
-    private RemoteRefreshIssuePageWebPanel findRefreshIssuePageWebPanel()
-    {
+    private RemoteRefreshIssuePageWebPanel findRefreshIssuePageWebPanel() {
         String id = refreshIssuePageWebPanelModuleBean.getKey(addon.getAddon());
         return connectPageOperations.findWebPanel(id, RemoteRefreshIssuePageWebPanel.class);
     }

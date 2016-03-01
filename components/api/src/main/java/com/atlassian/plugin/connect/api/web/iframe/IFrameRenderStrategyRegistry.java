@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.api.web.iframe;
 /**
  * Responsible for handling registration of iframe {@link IFrameRenderStrategy render strategies}.
  */
-public interface IFrameRenderStrategyRegistry
-{
+public interface IFrameRenderStrategyRegistry {
 
     String RAW_CLASSIFIER = "raw";
 

@@ -3,15 +3,12 @@ package com.atlassian.plugin.connect.test.common.util;
 import com.atlassian.plugin.connect.test.common.helptips.HelpTipApiClient;
 import org.apache.commons.lang.RandomStringUtils;
 
-public abstract class ConnectTestUserFactory
-{
-    public TestUser admin()
-    {
+public abstract class ConnectTestUserFactory {
+    public TestUser admin() {
         return createAndInitializeTestUser(AuthLevel.ADMIN);
     }
 
-    public TestUser basicUser()
-    {
+    public TestUser basicUser() {
         return createAndInitializeTestUser(AuthLevel.BASIC_USER);
     }
 
@@ -19,40 +16,32 @@ public abstract class ConnectTestUserFactory
 
     protected abstract HelpTipApiClient getHelpTipApiClient(TestUser testUser);
 
-    private TestUser createAndInitializeTestUser(AuthLevel authLevel)
-    {
+    private TestUser createAndInitializeTestUser(AuthLevel authLevel) {
         String username = authLevel.getPrefix() + "-" + RandomStringUtils.randomAlphanumeric(20).toLowerCase();
         TestUser testUser = createTestUser(authLevel, username);
         disableHelpTips(testUser);
         return testUser;
     }
 
-    private void disableHelpTips(TestUser testUser)
-    {
-        try
-        {
+    private void disableHelpTips(TestUser testUser) {
+        try {
             getHelpTipApiClient(testUser).dismissAllHelpTips();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    protected enum AuthLevel
-    {
+    protected enum AuthLevel {
         ADMIN("test-admin"),
         BASIC_USER("test-user");
 
         private String prefix;
 
-        AuthLevel(String prefix)
-        {
+        AuthLevel(String prefix) {
             this.prefix = prefix;
         }
 
-        public String getPrefix()
-        {
+        public String getPrefix() {
             return prefix;
         }
     }

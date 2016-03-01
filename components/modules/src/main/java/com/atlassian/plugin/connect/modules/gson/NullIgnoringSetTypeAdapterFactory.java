@@ -13,74 +13,65 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
-public class NullIgnoringSetTypeAdapterFactory implements TypeAdapterFactory
-{
+public class NullIgnoringSetTypeAdapterFactory implements TypeAdapterFactory {
 
     @Override
-    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken)
-    {
+    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
         Type type = typeToken.getType();
         Class rawType = typeToken.getRawType();
-        
-        if(rawType != Set.class || !(type instanceof ParameterizedType))
-        {
-            return null;   
+
+        if (rawType != Set.class || !(type instanceof ParameterizedType)) {
+            return null;
         }
-        
+
         Type nestedType = ((ParameterizedType) type).getActualTypeArguments()[0];
         TypeAdapter nestedTypeAdapter = gson.getAdapter(TypeToken.get(nestedType));
-        
-        return (TypeAdapter<T>) new NullIgnoringSetTypeAdapter<T>(nestedTypeAdapter).nullSafe();
-        
+
+        return createAdapter(nestedTypeAdapter);
     }
 
-    private class NullIgnoringSetTypeAdapter<I> extends TypeAdapter<Set<I>>
-    {
+    @SuppressWarnings("unchecked")
+    private <T> TypeAdapter<T> createAdapter(TypeAdapter nestedTypeAdapter) {
+        return new NullIgnoringSetTypeAdapter<>(nestedTypeAdapter).nullSafe();
+    }
+
+    private class NullIgnoringSetTypeAdapter<I> extends TypeAdapter<Set<I>> {
         private final TypeAdapter<I> nestedAdapter;
 
-        private NullIgnoringSetTypeAdapter(TypeAdapter<I> nestedAdapter)
-        {
+        private NullIgnoringSetTypeAdapter(TypeAdapter<I> nestedAdapter) {
             this.nestedAdapter = nestedAdapter;
         }
 
         @Override
-        public void write(JsonWriter out, Set<I> value) throws IOException
-        {
-            if (null == value)
-            {
+        public void write(JsonWriter out, Set<I> value) throws IOException {
+            if (null == value) {
                 out.nullValue();
-            }
-            else
-            {
+            } else {
                 out.beginArray();
-                
-                for(I item : value)
-                {
-                    nestedAdapter.write(out,item);
+
+                for (I item : value) {
+                    nestedAdapter.write(out, item);
                 }
-                
+
                 out.endArray();
             }
         }
 
         @Override
-        public Set<I> read(JsonReader in) throws IOException
-        {
+        public Set<I> read(JsonReader in) throws IOException {
             Set<I> theSet = new HashSet<I>();
-            
+
             in.beginArray();
-            
-            while(in.hasNext())
-            {
+
+            while (in.hasNext()) {
                 I item = nestedAdapter.read(in);
-                
-                if(null != item)
-                {
+
+                if (null != item) {
                     theSet.add(item);
                 }
             }
             in.endArray();
-            
+
             return theSet;
         }
     }

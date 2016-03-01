@@ -25,35 +25,29 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @since 1.0
  */
 @SchemaDefinition("tabPanel")
-public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
-{
+public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions {
     @Required
     @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     private Integer weight;
 
-    public ConnectTabPanelModuleBean()
-    {
+    public ConnectTabPanelModuleBean() {
         this("", 100);
     }
 
-    public ConnectTabPanelModuleBean(String url, Integer weight)
-    {
+    public ConnectTabPanelModuleBean(String url, Integer weight) {
         this.url = checkNotNull(url);
         this.weight = checkNotNull(weight);
     }
 
-    public ConnectTabPanelModuleBean(ConnectTabPanelModuleBeanBuilder builder)
-    {
+    public ConnectTabPanelModuleBean(ConnectTabPanelModuleBeanBuilder builder) {
         super(builder);
 
-        if (null == weight)
-        {
+        if (null == weight) {
             this.weight = 100;
         }
-        if (null == url)
-        {
+        if (null == url) {
             this.url = "";
         }
     }
@@ -63,8 +57,7 @@ public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * @return the URL of the tab panel
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
@@ -80,18 +73,15 @@ public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * @return the weight of the tab panel
      */
-    public int getWeight()
-    {
+    public int getWeight() {
         return weight;
     }
 
-    public static ConnectTabPanelModuleBeanBuilder newTabPanelBean()
-    {
+    public static ConnectTabPanelModuleBeanBuilder newTabPanelBean() {
         return new ConnectTabPanelModuleBeanBuilder();
     }
 
-    public static ConnectTabPanelModuleBeanBuilder newTabPanelBean(ConnectTabPanelModuleBean defaultBean)
-    {
+    public static ConnectTabPanelModuleBeanBuilder newTabPanelBean(ConnectTabPanelModuleBean defaultBean) {
         return new ConnectTabPanelModuleBeanBuilder(defaultBean);
     }
 }

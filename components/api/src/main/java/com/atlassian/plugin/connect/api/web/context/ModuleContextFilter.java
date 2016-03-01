@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.api.web.context;
 /**
  * @since 1.0
  */
-public interface ModuleContextFilter
-{
+public interface ModuleContextFilter {
     /**
      * @param unfiltered the raw context parameters, parsed from the request
      * @return a filtered collection of parameters that will be passed to the remote iframe

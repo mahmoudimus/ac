@@ -11,12 +11,10 @@ import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionCla
 /**
  * @see ConnectPageModuleBean#conditions documentation of context-free conditions
  */
-public class CommonConditionClassResolver implements ConnectConditionClassResolver
-{
+public class CommonConditionClassResolver implements ConnectConditionClassResolver {
 
     @Override
-    public List<Entry> getEntries()
-    {
+    public List<Entry> getEntries() {
         return ImmutableList.of(
                 newEntry("feature_flag", com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class).contextFree().build(),
                 newEntry("user_is_sysadmin", UserIsSysAdminCondition.class).contextFree().build(),

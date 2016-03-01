@@ -27,8 +27,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  * @schemaTitle Issue Field
  * @since 1.0
  */
-public class ConnectFieldModuleBean extends RequiredKeyBean
-{
+public class ConnectFieldModuleBean extends RequiredKeyBean {
     /**
      * Description of the custom field type. This will be displayed for a user on the create custom field page.
      */
@@ -37,29 +36,24 @@ public class ConnectFieldModuleBean extends RequiredKeyBean
     @Required
     private ConnectFieldType type;
 
-    public ConnectFieldType getType()
-    {
+    public ConnectFieldType getType() {
         return type;
     }
 
-    public I18nProperty getDescription()
-    {
+    public I18nProperty getDescription() {
         return description;
     }
 
-    public ConnectFieldModuleBean()
-    {
+    public ConnectFieldModuleBean() {
         this.type = ConnectFieldType.TEXT;
         this.description = I18nProperty.empty();
     }
 
-    public ConnectFieldModuleBean(IssueFieldModuleBeanBuilder builder)
-    {
+    public ConnectFieldModuleBean(IssueFieldModuleBeanBuilder builder) {
         super(builder);
     }
 
-    public static IssueFieldModuleBeanBuilder newBuilder()
-    {
+    public static IssueFieldModuleBeanBuilder newBuilder() {
         return new IssueFieldModuleBeanBuilder();
     }
 }

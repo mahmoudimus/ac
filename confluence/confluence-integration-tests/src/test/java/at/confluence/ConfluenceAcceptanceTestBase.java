@@ -8,18 +8,15 @@ import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProd
 
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 
-public class ConfluenceAcceptanceTestBase
-{
+public class ConfluenceAcceptanceTestBase {
     protected static final TestUser ADMIN = new TestUser("admin");
     protected final ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
 
-    protected DashboardPage login(TestUser user)
-    {
+    protected DashboardPage login(TestUser user) {
         return login(user, DashboardPage.class);
     }
 
-    protected <T extends Page> T login(TestUser user, Class<T> page, Object... args)
-    {
+    protected <T extends Page> T login(TestUser user, Class<T> page, Object... args) {
         return product.login(toConfluenceUser(user), page, args);
     }
 }

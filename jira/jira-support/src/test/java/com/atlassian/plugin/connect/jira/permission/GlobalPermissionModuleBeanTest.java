@@ -7,15 +7,13 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class GlobalPermissionModuleBeanTest
-{
+public class GlobalPermissionModuleBeanTest {
     @Test
-    public void producesCorrectJSON() throws IOException
-    {
+    public void producesCorrectJSON() throws IOException {
         GlobalPermissionModuleBean globalPermissionModuleBean = readTestFile();
 
         assertThat(globalPermissionModuleBean, equalTo(GlobalPermissionModuleBean.newGlobalPermissionModuleBean()
@@ -26,8 +24,7 @@ public class GlobalPermissionModuleBeanTest
                 .build()));
     }
 
-    private static GlobalPermissionModuleBean readTestFile() throws IOException
-    {
+    private static GlobalPermissionModuleBean readTestFile() throws IOException {
         return ConnectModulesGsonFactory.getGson().fromJson(readAddonTestFile("globalPermission.json"), GlobalPermissionModuleBean.class);
     }
 }

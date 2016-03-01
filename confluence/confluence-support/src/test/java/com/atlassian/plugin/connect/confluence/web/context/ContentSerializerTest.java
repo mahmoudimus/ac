@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.confluence.web.context;
 
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
-import com.atlassian.plugin.connect.confluence.web.context.ContentSerializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,54 +16,46 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ContentSerializerTest
-{
+public class ContentSerializerTest {
     private ContentSerializer contentSerializer;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.contentSerializer = new ContentSerializer();
     }
 
     @Test
-    public void testSerializeContent()
-    {
+    public void testSerializeContent() {
         Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertNotNull(contentSerialized);
     }
 
     @Test
-    public void testSerializeContentHasId()
-    {
+    public void testSerializeContentHasId() {
         Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertEquals(123L, contentSerialized.get("id"));
     }
 
     @Test
-    public void testSerializeContentHasVersion()
-    {
+    public void testSerializeContentHasVersion() {
         Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertEquals(3, contentSerialized.get("version"));
     }
 
     @Test
-    public void testSerializeContentHasType()
-    {
+    public void testSerializeContentHasType() {
         Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertEquals("page", contentSerialized.get("type"));
     }
 
     @Test
-    public void testSerializeContentDoesNotHavePlugin()
-    {
+    public void testSerializeContentDoesNotHavePlugin() {
         Map<String, Object> contentSerialized = serializeAndGetResult(createEntity(ContentEntityObject.class));
         assertNull(contentSerialized.get("plugin"));
     }
 
     @Test
-    public void testSerializeCustomContentHasPlugin()
-    {
+    public void testSerializeCustomContentHasPlugin() {
         CustomContentEntityObject ceo = createEntity(CustomContentEntityObject.class);
         when(ceo.getPluginModuleKey()).thenReturn("plugin:foo");
         Map<String, Object> contentSerialized = serializeAndGetResult(ceo);
@@ -73,14 +64,12 @@ public class ContentSerializerTest
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> serializeAndGetResult(ContentEntityObject ceo)
-    {
+    private Map<String, Object> serializeAndGetResult(ContentEntityObject ceo) {
         Map<String, Object> serialized = contentSerializer.serialize(ceo);
         return (Map<String, Object>) serialized.get("content");
     }
 
-    private <T extends ContentEntityObject> T createEntity(Class<T> clazz)
-    {
+    private <T extends ContentEntityObject> T createEntity(Class<T> clazz) {
         T content = mock(clazz);
         when(content.getId()).thenReturn(123L);
         when(content.getVersion()).thenReturn(3);

@@ -2,22 +2,19 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateContextBean;
 
-public class BlueprintTemplateContextBeanBuilder<T extends BlueprintTemplateContextBeanBuilder, B extends BlueprintTemplateContextBean>
-{
+public class BlueprintTemplateContextBeanBuilder {
+
     private String url;
 
-    public BlueprintTemplateContextBeanBuilder()
-    {
+    public BlueprintTemplateContextBeanBuilder() {
     }
 
-    public T withUrl(String url)
-    {
+    public BlueprintTemplateContextBeanBuilder withUrl(String url) {
         this.url = url;
-        return (T) this;
+        return this;
     }
 
-    public B build()
-    {
-        return (B) new BlueprintTemplateContextBean(this);
+    public BlueprintTemplateContextBean build() {
+        return new BlueprintTemplateContextBean(this);
     }
 }

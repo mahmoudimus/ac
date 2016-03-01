@@ -5,17 +5,14 @@ import com.atlassian.plugin.connect.test.common.pageobjects.ConnectAddonEmbedded
 import com.atlassian.plugin.connect.test.common.util.IframeUtils;
 
 public class ConnectGeneralTestPage extends ConnectAddonEmbeddedTestPage
-        implements Page
-{
+        implements Page {
 
-    public ConnectGeneralTestPage(String addonKey, String moduleKey)
-    {
+    public ConnectGeneralTestPage(String addonKey, String moduleKey) {
         super(addonKey, moduleKey, true);
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return IframeUtils.iframeServletPath(addonKey, pageElementKey);
     }
 }

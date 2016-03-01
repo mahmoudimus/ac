@@ -10,8 +10,7 @@ import java.util.Optional;
  * The accessor of Atlassian Connect add-on state.
  */
 @PublicApi
-public interface ConnectAddonAccessor
-{
+public interface ConnectAddonAccessor {
     /**
      * Checks if the Connect add-on is installed and enabled.
      *

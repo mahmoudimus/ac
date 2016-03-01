@@ -3,11 +3,12 @@ package com.atlassian.plugin.connect.plugin.web.item;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.Condition;
@@ -26,36 +27,43 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.testsupport.util.matcher.ConditionMatchers.isCompositeConditionContaining;
+import static com.atlassian.plugin.connect.test.matcher.ConditionMatchers.isCompositeConditionContaining;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.anyMap;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectWebSectionModuleDescriptorFactoryTest
-{
+public class ConnectWebSectionModuleDescriptorFactoryTest {
     private static final String CONDITION_CLASSNAME = Condition.class.getName();
 
     private WebSectionModuleDescriptor descriptor;
 
-    @Mock private ContainerManagedPlugin plugin;
-    @Mock private HostContainer hostContainer;
-    @Mock private WebInterfaceManager webInterfaceManager;
-    @Mock private UserManager userManager;
-    @Mock private IFrameRenderer iFrameRenderer;
-    @Mock private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
-    @Mock private WebFragmentHelper webFragmentHelper;
-    @Mock private Condition condition;
-    @Mock private WebFragmentLocationQualifier locationQualifier;
+    @Mock
+    private ContainerManagedPlugin plugin;
+    @Mock
+    private HostContainer hostContainer;
+    @Mock
+    private WebInterfaceManager webInterfaceManager;
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private IFrameRenderer iFrameRenderer;
+    @Mock
+    private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
+    @Mock
+    private WebFragmentHelper webFragmentHelper;
+    @Mock
+    private Condition condition;
+    @Mock
+    private WebFragmentLocationQualifier locationQualifier;
 
     @Before
-    public void beforeEachTest() throws Exception
-    {
+    public void beforeEachTest() throws Exception {
         ConnectWebSectionModuleDescriptorFactory webSectionFactory = new DefaultConnectWebSectionModuleDescriptorFactory(
                 locationQualifier,
                 conditionModuleFragmentFactory,
@@ -63,11 +71,11 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
         when(plugin.getKey()).thenReturn("my-awesome-plugin");
         when(plugin.getName()).thenReturn("My Plugin™");
 
-        when(conditionModuleFragmentFactory.createFragment(eq("my-awesome-plugin"), anyList()))
+        when(conditionModuleFragmentFactory.createFragment(eq("my-awesome-plugin"), anyListOf(ConditionalBean.class)))
                 .thenReturn(conditionElement());
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
         when(webFragmentHelper.loadCondition(eq(CONDITION_CLASSNAME), eq(plugin))).thenReturn(condition);
-        when(condition.shouldDisplay(anyMap())).thenReturn(true);
+        when(condition.shouldDisplay(anyMapOf(String.class, Object.class))).thenReturn(true);
 
         WebSectionModuleBean bean = newWebSectionBean()
                 .withName(new I18nProperty("My Web Section", "my.websection"))
@@ -86,8 +94,7 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
         descriptor.enabled();
     }
 
-    private DOMElement conditionElement()
-    {
+    private DOMElement conditionElement() {
         DOMElement conditions = new DOMElement("conditions");
         conditions.addAttribute("type", "and");
         DOMElement condition = new DOMElement("condition");
@@ -97,38 +104,32 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void keyIsCorrect() throws Exception
-    {
-        assertThat(descriptor.getKey(), is(addonAndModuleKey("my-awesome-plugin","my-web-section")));
+    public void keyIsCorrect() throws Exception {
+        assertThat(descriptor.getKey(), is(addonAndModuleKey("my-awesome-plugin", "my-web-section")));
     }
 
     @Test
-    public void completeKeyIsCorrect() throws Exception
-    {
-        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:" + addonAndModuleKey("my-awesome-plugin","my-web-section")));
+    public void completeKeyIsCorrect() throws Exception {
+        assertThat(descriptor.getCompleteKey(), is("my-awesome-plugin:" + addonAndModuleKey("my-awesome-plugin", "my-web-section")));
     }
 
     @Test
-    public void locationIsCorrect()
-    {
+    public void locationIsCorrect() {
         assertThat(descriptor.getLocation(), is("com.atlassian.jira.plugin.headernav.left.context"));
     }
 
     @Test
-    public void weightIsCorrect()
-    {
+    public void weightIsCorrect() {
         assertThat(descriptor.getWeight(), is(50));
     }
 
     @Test
-    public void i18nKeyIsCorrect()
-    {
+    public void i18nKeyIsCorrect() {
         assertThat(descriptor.getI18nNameKey(), is("my.websection"));
     }
 
     @Test
-    public void conditionIsCorrect()
-    {
+    public void conditionIsCorrect() {
         assertThat(descriptor.getCondition(), isCompositeConditionContaining(AndCompositeCondition.class, condition));
     }
 }

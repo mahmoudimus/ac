@@ -33,8 +33,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class TestConnectCrowdPermissionsClientImpl
-{
+public class TestConnectCrowdPermissionsClientImpl {
     @Captor
     private ArgumentCaptor<String> dataCaptor;
 
@@ -53,17 +52,15 @@ public class TestConnectCrowdPermissionsClientImpl
     private ConnectCrowdPermissionsClientImpl connectCrowdPermissionsClient;
 
     @Before
-    public void beforeEach()
-    {
+    public void beforeEach() {
         initMocks(this);
         connectCrowdPermissionsClient = new ConnectCrowdPermissionsClientImpl(connectCrowdSysadminHttpClient);
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
     public void grantAdminPermissionPostsAdminsGroupToAccessConfigEndpoint()
-            throws Exception
-    {
+            throws Exception {
         connectCrowdPermissionsClient.grantAdminPermission("atlassian-addons-admin", "jira", "jira");
 
         verify(connectCrowdSysadminHttpClient).executeAsSysadmin(eq(POST), eq(ACCESS_CONFIG_URL), dataCaptor.capture());
@@ -72,11 +69,10 @@ public class TestConnectCrowdPermissionsClientImpl
         assertThat(providedData, is(singletonList(expectedConfigData)));
     }
 
-    @SuppressWarnings ("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
     public void grantAdminPermissionPutsAdminConfigToAccesConfigEndpoint()
-            throws Exception
-    {
+            throws Exception {
         connectCrowdPermissionsClient.grantAdminPermission("atlassian-addons-admin", "jira", "jira");
 
         verify(connectCrowdSysadminHttpClient).executeAsSysadmin(eq(PUT), eq(HOST_ACCESS_CONFIG_URL), dataCaptor.capture());
@@ -86,8 +82,7 @@ public class TestConnectCrowdPermissionsClientImpl
 
     @Test
     public void grantAdminPermissionReturnsFalseIfExceptionThrown()
-            throws Exception
-    {
+            throws Exception {
         for (Exception exception : Arrays.asList(
                 new CredentialsRequiredException(null, null),
                 new InvalidAuthenticationException((Throwable) null),
@@ -96,21 +91,16 @@ public class TestConnectCrowdPermissionsClientImpl
                 new InactiveAccountException(null),
                 new ApplicationPermissionException(),
                 new ResponseException()
-        ))
-        {
+        )) {
             makeRequestMethodThrow(exception);
             assertThat(connectCrowdPermissionsClient.grantAdminPermission("group-name", "product-id", "application-id"), is(false));
         }
     }
 
-    private void makeRequestMethodThrow(Exception exception)
-    {
-        try
-        {
+    private void makeRequestMethodThrow(Exception exception) {
+        try {
             doThrow(exception).when(connectCrowdSysadminHttpClient).executeAsSysadmin(any(MethodType.class), anyString(), anyString());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

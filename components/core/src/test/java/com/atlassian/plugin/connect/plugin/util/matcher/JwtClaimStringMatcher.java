@@ -6,32 +6,27 @@ import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-public class JwtClaimStringMatcher extends ArgumentMatcher<String>
-{
+public class JwtClaimStringMatcher extends ArgumentMatcher<String> {
     private final String claimName;
     private final String expectedValue;
     private final boolean checkValue;
 
-    private JwtClaimStringMatcher(String claimName, String expectedValue, final boolean checkValue)
-    {
+    private JwtClaimStringMatcher(String claimName, String expectedValue, final boolean checkValue) {
         this.claimName = claimName;
         this.expectedValue = expectedValue;
         this.checkValue = checkValue;
     }
 
-    public static JwtClaimStringMatcher hasJwtClaim(String claimName)
-    {
+    public static JwtClaimStringMatcher hasJwtClaim(String claimName) {
         return new JwtClaimStringMatcher(claimName, null, false);
     }
 
-    public static JwtClaimStringMatcher hasJwtClaimWithValue(String claimName, String expectedValue)
-    {
+    public static JwtClaimStringMatcher hasJwtClaimWithValue(String claimName, String expectedValue) {
         return new JwtClaimStringMatcher(claimName, expectedValue, true);
     }
 
     @Override
-    public boolean matches(Object actual)
-    {
+    public boolean matches(Object actual) {
         if (!(actual instanceof String)) {
             return false;
         }
@@ -39,8 +34,7 @@ public class JwtClaimStringMatcher extends ArgumentMatcher<String>
         JsonObject json = new JsonParser().parse((String) actual).getAsJsonObject();
         boolean matches = StringUtils.isNotEmpty((String) actual) && json.has(claimName);
 
-        if (matches && checkValue)
-        {
+        if (matches && checkValue) {
             String actualClaimValue = json.get(claimName).getAsString();
             matches = null == actualClaimValue ? null == expectedValue : actualClaimValue.equals(expectedValue);
         }
@@ -49,12 +43,10 @@ public class JwtClaimStringMatcher extends ArgumentMatcher<String>
     }
 
     @Override
-    public void describeTo(Description description)
-    {
+    public void describeTo(Description description) {
         description.appendText("JSON encoded string with claim ").appendValue(claimName);
 
-        if (checkValue)
-        {
+        if (checkValue) {
             description.appendText(" having value ").appendValue(expectedValue);
         }
     }

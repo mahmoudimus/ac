@@ -14,6 +14,7 @@
     <connect-module key="jiraCustomFieldTypes" class="com.atlassian.plugin.connect.jira.field.ConnectFieldModuleProvider"/>
 
     <connect-api-scope-whitelist key="jira-api-scope-whitelist" resource="/scope/jira-whitelist.json"/>
+    <connect-api-scope-whitelist key="jira-connect-api-scope-whitelist" resource="/scope/jira-connect-whitelist.json"/>
     <connect-api-scope-whitelist key="jira-software-api-scope-whitelist" resource="/scope/jira-software-whitelist.json"/>
     <connect-api-scope-whitelist key="jira-service-desk-api-scope-whitelist" resource="/scope/jira-service-desk-whitelist.json"/>
     <connect-api-scope-whitelist key="tempo-api-scope-whitelist" resource="/scope/tempo-whitelist.json"/>
@@ -25,6 +26,7 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.plugin.connect.plugin.rest</package>
+        <package>com.atlassian.plugin.connect.jira.field.option.rest</package>
     </rest>
 
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
@@ -45,6 +47,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-create-issue-dialog</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-request</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-date-picker-widget</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -122,6 +125,17 @@
         <resource type="download" name="create-issue-dialog-rpc.js" location="/js/jira/issue/issue-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="date-picker-widget">
+        <data key="config" class="com.atlassian.plugin.connect.jira.web.jsapi.DatePickerDataProvider" />
+
+        <resource type="download" name="date-picker-widget.js" location="/js/jira/date-picker/date-picker.js" />
+        <resource type="download" name="date-picker-widget-rpc.js" location="/js/jira/date-picker/date-picker-rpc.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <dependency>jira.webresources:calendar</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.web.jsapi.ConnectAddonsInstalledCondition"/>
     </web-resource>
 

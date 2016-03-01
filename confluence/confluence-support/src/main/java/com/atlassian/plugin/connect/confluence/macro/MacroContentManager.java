@@ -15,7 +15,6 @@ import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.atlassian.plugin.connect.api.request.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.web.iframe.ConnectAddonUriBuilder;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
@@ -38,8 +37,7 @@ import java.util.regex.Pattern;
  * make better use of {@link ConnectAddonUriBuilder} and friends.
  */
 @ConfluenceComponent
-public class MacroContentManager implements DisposableBean
-{
+public class MacroContentManager implements DisposableBean {
     private final EventPublisher eventPublisher;
     private final StorageFormatCleaner xhtmlCleaner;
     private final MacroContentLinkParser macroContentLinkParser;
@@ -59,8 +57,7 @@ public class MacroContentManager implements DisposableBean
             XhtmlContent xhtmlUtils,
             StorageFormatCleaner cleaner,
             DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            TemplateRenderer templateRenderer, TransactionTemplate transactionTemplate)
-    {
+            TemplateRenderer templateRenderer, TransactionTemplate transactionTemplate) {
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
         this.transactionTemplate = transactionTemplate;
@@ -75,8 +72,7 @@ public class MacroContentManager implements DisposableBean
 
     public String getStaticContent(HttpMethod method, URI path, Map<String, String[]> urlParameters,
                                    final ConversionContext conversionContext,
-                                   final RemotablePluginAccessor accessor)
-    {
+                                   final RemotablePluginAccessor accessor) {
         return getStaticContent(method, path, urlParameters, ImmutableMap.<String, String>of(), conversionContext, accessor);
     }
 
@@ -88,12 +84,10 @@ public class MacroContentManager implements DisposableBean
     */
     private String getStaticContent(HttpMethod method, URI path, Map<String, String[]> urlParameters,
                                     Map<String, String> headers, final ConversionContext conversionContext,
-                                    final RemotablePluginAccessor accessor)
-    {
+                                    final RemotablePluginAccessor accessor) {
         Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers, HttpContentRetriever.EMPTY_STREAM);
 
-        try
-        {
+        try {
             // AC-795: synchronous until confluence-related infinite rendering loop is fixed.
             // we are now rendering in the same thread as any sub-rendering macro which "fixes the glitch".
             String remoteXhtml = promise.claim();
@@ -107,55 +101,38 @@ public class MacroContentManager implements DisposableBean
             // todo: do we want to give feedback to the app of what was cleaned?
             final String cleanedXhtml = xhtmlCleaner.cleanQuietly(remoteXhtml);
             return transactionTemplate.execute(
-                    new TransactionCallback<String>()
-                    {
-                        @Override
-                        public String doInTransaction()
-                        {
-                            try
-                            {
-                                return xhtmlUtils.convertStorageToView(cleanedXhtml, conversionContext);
+                    () -> {
+                        try {
+                            return xhtmlUtils.convertStorageToView(cleanedXhtml, conversionContext);
+                        } catch (Exception e) {
+                            log.warn("Unable to convert storage format for app {} with error {}",
+                                    accessor.getKey(), e.getMessage());
+                            if (log.isDebugEnabled()) {
+                                log.debug("Error converting storage format", e);
                             }
-                            catch (Exception e)
-                            {
-                                log.warn("Unable to convert storage format for app {} with error {}",
-                                        accessor.getKey(), e.getMessage());
-                                if (log.isDebugEnabled())
-                                {
-                                    log.debug("Error converting storage format", e);
-                                }
-                                throw new ContentRetrievalException(
-                                        "Unable to convert storage format to HTML: " + e.getMessage(), e);
-                            }
+                            throw new ContentRetrievalException(
+                                    "Unable to convert storage format to HTML: " + e.getMessage(), e);
                         }
                     }
             );
-        }
-        catch (ContentRetrievalException e)
-        {
+        } catch (ContentRetrievalException e) {
             log.error("Could not render macro", e);
             return renderErrors(e.getErrors());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.error("Could not render macro", e);
             return renderErrors(new ContentRetrievalErrors(ImmutableList.of("An unknown error occurred.")));
         }
     }
 
-    private String renderErrors(ContentRetrievalErrors errors)
-    {
-        try
-        {
+    private String renderErrors(ContentRetrievalErrors errors) {
+        try {
             final Writer writer = new StringWriter();
             templateRenderer.render(
                     "/velocity/macro/errors.vm",
                     ImmutableMap.<String, Object>of("errors", errors),
                     writer);
             return writer.toString();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -173,10 +150,8 @@ public class MacroContentManager implements DisposableBean
     includes events like new pages, edited pages, and even re-ordered pages.
      */
     @EventListener
-    public void onPageEvent(PageEvent pageEvent)
-    {
-        if (!(pageEvent instanceof PageViewEvent))
-        {
+    public void onPageEvent(PageEvent pageEvent) {
+        if (!(pageEvent instanceof PageViewEvent)) {
             String pageId = pageEvent.getPage().getIdAsString();
             cachingHttpContentRetriever.flushCacheByUriPattern(Pattern.compile(".*page_id=" + pageId + ".*"));
         }
@@ -193,22 +168,19 @@ public class MacroContentManager implements DisposableBean
 
     These operations are executed through REST resource DELETEs.
      */
-    public void clearContentByPluginKey(String pluginKey)
-    {
+    public void clearContentByPluginKey(String pluginKey) {
         URI displayUrl = remotablePluginAccessorFactory.get(pluginKey).getBaseUrl();
         cachingHttpContentRetriever.flushCacheByUriPattern(Pattern.compile("^" + displayUrl + "/.*"));
     }
 
-    public void clearContentByInstance(String pluginKey, String instanceKey)
-    {
+    public void clearContentByInstance(String pluginKey, String instanceKey) {
         URI displayUrl = remotablePluginAccessorFactory.get(pluginKey).getBaseUrl();
         cachingHttpContentRetriever.flushCacheByUriPattern(
                 Pattern.compile("^" + displayUrl + "/.*key=" + instanceKey + ".*"));
     }
 
     @Override
-    public void destroy() throws Exception
-    {
+    public void destroy() throws Exception {
         eventPublisher.unregister(this);
     }
 

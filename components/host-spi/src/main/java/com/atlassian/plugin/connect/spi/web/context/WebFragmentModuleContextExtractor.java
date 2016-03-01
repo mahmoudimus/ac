@@ -2,14 +2,13 @@ package com.atlassian.plugin.connect.spi.web.context;
 
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @since 1.0
  */
-public interface WebFragmentModuleContextExtractor
-{
+public interface WebFragmentModuleContextExtractor {
     /**
      * Some connect modules will compute their own {@link ModuleContextParameters}. To prevent writing the context
      * extraction logic twice, the module may place the parsed context in the context map under this key. Context

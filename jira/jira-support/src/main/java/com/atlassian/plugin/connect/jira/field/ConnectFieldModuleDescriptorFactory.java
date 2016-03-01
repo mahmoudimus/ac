@@ -9,8 +9,8 @@ import com.atlassian.jira.render.Encoder;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.lifecycle.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.jira.field.type.CustomFieldTypeDefinition;
 import com.atlassian.plugin.connect.jira.field.type.ConnectFieldTypeBlueprintResolver;
+import com.atlassian.plugin.connect.jira.field.type.CustomFieldTypeDefinition;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -21,8 +21,7 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, ConnectFieldModuleDescriptor>
-{
+public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectFieldModuleBean, ConnectFieldModuleDescriptor> {
 
     private final JiraAuthenticationContext authenticationContext;
     private final RendererManager rendererManager;
@@ -36,8 +35,7 @@ public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescrip
     private final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver;
 
     @Autowired
-    public ConnectFieldModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver)
-    {
+    public ConnectFieldModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext, final RendererManager rendererManager, final ModuleFactory moduleFactory, final Encoder encoder, final CustomFieldManager customFieldManager, final ProjectManager projectManager, final ManagedConfigurationItemService managedConfigurationItemService, final ConnectFieldTypeBlueprintResolver connectFieldTypeBlueprintResolver) {
         this.authenticationContext = authenticationContext;
         this.rendererManager = rendererManager;
         this.moduleFactory = moduleFactory;
@@ -49,8 +47,7 @@ public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescrip
     }
 
     @Override
-    public ConnectFieldModuleDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin)
-    {
+    public ConnectFieldModuleDescriptor createModuleDescriptor(final ConnectFieldModuleBean bean, final ConnectAddonBean addon, final Plugin plugin) {
         ConnectFieldModuleDescriptor descriptor = new ConnectFieldModuleDescriptor(authenticationContext, rendererManager, moduleFactory, new CustomFieldDefaultVelocityParams(encoder), customFieldManager, projectManager, managedConfigurationItemService);
 
         Element element = new DOMElement("customfield-type");
@@ -61,8 +58,7 @@ public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescrip
         element.addAttribute("i18n-name-key", i18nKeyOrName);
         element.addAttribute("managed-access-level", "locked");
 
-        if (bean.getDescription() != null)
-        {
+        if (bean.getDescription() != null) {
             DOMElement description = new DOMElement("description");
             description.setText(bean.getDescription().getValue());
             element.add(description);
@@ -79,8 +75,7 @@ public class ConnectFieldModuleDescriptorFactory implements ConnectModuleDescrip
         return descriptor;
     }
 
-    private Element velocityResourceElement(String name, String location)
-    {
+    private Element velocityResourceElement(String name, String location) {
         DOMElement resource = new DOMElement("resource");
         resource.addAttribute("type", "velocity");
         resource.addAttribute("name", name);

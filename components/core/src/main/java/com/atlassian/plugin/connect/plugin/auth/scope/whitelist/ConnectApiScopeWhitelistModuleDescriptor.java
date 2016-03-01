@@ -16,19 +16,16 @@ import java.util.Map;
 
 import static com.atlassian.plugin.util.validation.ValidationPattern.test;
 
-public class ConnectApiScopeWhitelistModuleDescriptor extends AbstractModuleDescriptor<ConnectApiScopeWhitelist>
-{
+public class ConnectApiScopeWhitelistModuleDescriptor extends AbstractModuleDescriptor<ConnectApiScopeWhitelist> {
 
     private ConnectApiScopeWhitelist whitelist;
 
-    public ConnectApiScopeWhitelistModuleDescriptor(ModuleFactory moduleFactory)
-    {
+    public ConnectApiScopeWhitelistModuleDescriptor(ModuleFactory moduleFactory) {
         super(moduleFactory);
     }
 
     @Override
-    public void init(Plugin plugin, Element element) throws PluginParseException
-    {
+    public void init(Plugin plugin, Element element) throws PluginParseException {
         super.init(plugin, element);
         String resourcePath = element.attributeValue("resource");
         URL resource = plugin.getResource(resourcePath);
@@ -37,8 +34,7 @@ public class ConnectApiScopeWhitelistModuleDescriptor extends AbstractModuleDesc
     }
 
     @Override
-    protected void provideValidationRules(ValidationPattern pattern)
-    {
+    protected void provideValidationRules(ValidationPattern pattern) {
         super.provideValidationRules(pattern);
         pattern.
                 rule(
@@ -47,33 +43,24 @@ public class ConnectApiScopeWhitelistModuleDescriptor extends AbstractModuleDesc
     }
 
     @Override
-    public ConnectApiScopeWhitelist getModule()
-    {
+    public ConnectApiScopeWhitelist getModule() {
         return whitelist;
     }
 
-    private void assertResourceExists(String resourcePath, URL resource)
-    {
-        if (resource == null)
-        {
+    private void assertResourceExists(String resourcePath, URL resource) {
+        if (resource == null) {
             throw new PluginParseException(String.format("Unable to load API scope whitelist resource (%s)", resourcePath));
         }
     }
 
-    private ConnectApiScopeWhitelist loadWhitelist(String resourcePath, URL resource)
-    {
+    private ConnectApiScopeWhitelist loadWhitelist(String resourcePath, URL resource) {
         Map<ScopeName, AddonScope> scopes = new HashMap<>();
-        try
-        {
+        try {
             AddonScopeLoadJsonFileHelper.addProductScopesFromFile(scopes, resource);
-        }
-        catch (JsonSyntaxException e)
-        {
+        } catch (JsonSyntaxException e) {
             String errorMessage = String.format("Unable to parse API scope whitelist (%s) - invalid JSON: %s", resourcePath, e.getMessage());
             throw new PluginParseException(errorMessage, e);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             String errorMessage = String.format("Unable to parse API scope whitelist (%s): %s", resourcePath, e.getMessage());
             throw new PluginParseException(errorMessage, e);
         }

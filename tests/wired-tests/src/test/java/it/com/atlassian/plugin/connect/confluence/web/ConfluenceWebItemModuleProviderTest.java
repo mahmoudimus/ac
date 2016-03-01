@@ -22,20 +22,17 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Application ("confluence")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class ConfluenceWebItemModuleProviderTest extends AbstractConnectAddonTest
-{
+@Application("confluence")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class ConfluenceWebItemModuleProviderTest extends AbstractConnectAddonTest {
     public static final String SPACE_KEY = "ds";
 
-    public ConfluenceWebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
-    {
+    public ConfluenceWebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator) {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
     }
 
     @Test
-    public void singleAddonLinkWithContextPrams() throws Exception
-    {
+    public void singleAddonLinkWithContextPrams() throws Exception {
         WebItemModuleDescriptor descriptor = registerWebItem("mySpace={space.key}", "atl.admin/menu");
 
         Map<String, Object> context = new HashMap<>();

@@ -6,8 +6,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
  * @schemaTitle Macro Output Type
  * @since 1.0
  */
-public enum MacroOutputType
-{
+public enum MacroOutputType {
     /**
      * If the macro output should be displayed on a new line as a block
      */
@@ -20,13 +19,11 @@ public enum MacroOutputType
 
     private final String value;
 
-    private MacroOutputType(String value)
-    {
+    MacroOutputType(String value) {
         this.value = value;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return value;
     }
 

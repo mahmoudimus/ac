@@ -10,13 +10,11 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 /**
  *
  */
-public class InsufficientPermissionsViewProfileTab implements ViewProfileTab
-{
+public class InsufficientPermissionsViewProfileTab implements ViewProfileTab {
     private String addonKey;
     private String moduleKey;
 
-    public InsufficientPermissionsViewProfileTab(String addonKey, String moduleKey)
-    {
+    public InsufficientPermissionsViewProfileTab(String addonKey, String moduleKey) {
         this.addonKey = addonKey;
         this.moduleKey = moduleKey;
     }
@@ -25,25 +23,21 @@ public class InsufficientPermissionsViewProfileTab implements ViewProfileTab
     private PageElement errorMessage;
 
     @Override
-    public String getUrlPart()
-    {
-        return ConnectPluginInfo.getPluginKey() + ":" + ModuleKeyUtils.addonAndModuleKey(addonKey,moduleKey);
+    public String getUrlPart() {
+        return ConnectPluginInfo.getPluginKey() + ":" + ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey);
     }
 
     @Override
-    public String linkId()
-    {
-        return "up_" + ModuleKeyUtils.addonAndModuleKey(addonKey,moduleKey) + "_a";
+    public String linkId() {
+        return "up_" + ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey) + "_a";
     }
 
     @Override
-    public TimedCondition isOpen()
-    {
+    public TimedCondition isOpen() {
         return errorMessage.timed().isPresent();
     }
 
-    public String getErrorMessage()
-    {
+    public String getErrorMessage() {
         return errorMessage.getText();
     }
 

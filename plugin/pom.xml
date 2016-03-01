@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.76-SNAPSHOT</version>
+        <version>1.1.78-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,26 +11,12 @@
     <name>Atlassian Connect Plugin</name>
     <packaging>atlassian-plugin</packaging>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <dependencies>
 
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>external.atlassian.json</groupId>
-            <artifactId>json-schemagen-core</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -77,19 +63,6 @@
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-runtime</artifactId>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>fastdev-plugin</artifactId>
-            <version>${fastdev.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.devrel</groupId>
-            <artifactId>developer-toolbox-plugin</artifactId>
-            <version>${toolbox.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -145,12 +118,6 @@
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-test-support-plugin</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -537,7 +504,7 @@
                             <!-- exclude pocketknife bits we don't need -->
                             !net.sf.cglib.proxy,
                             !org.jvnet.hudson.annotation_indexer,
-                            !org.slf4j*,
+                            <!--!org.slf4j*,-->
                             <!-- end pocketknife excludes -->
 
                             com.atlassian.jwt*;version="[1.4.0,2.0.0)",
@@ -705,11 +672,6 @@
 
                             <bundledArtifacts>
                                 <bundledArtifact>
-                                    <groupId>com.atlassian.devrel</groupId>
-                                    <artifactId>developer-toolbox-plugin</artifactId>
-                                    <version>${toolbox.version}</version>
-                                </bundledArtifact>
-                                <bundledArtifact>
                                     <groupId>com.atlassian.upm</groupId>
                                     <artifactId>atlassian-universal-plugin-manager-javascript-tests</artifactId>
                                     <version>${atlassian.upm.version}</version>
@@ -750,26 +712,6 @@
                     </transformationSets>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.twdata.maven</groupId>
-                <artifactId>maven-cli-plugin</artifactId>
-                <version>1.0.10</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <commands>
-                        <pa>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install</pa>
-                        <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
-                    </commands>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
@@ -786,160 +728,16 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- this MUST run after compilation -->
-            <plugin>
-                <groupId>external.atlassian.json</groupId>
-                <artifactId>json-schemagen-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>schema-support</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-support-docs</goal>
-                        </goals>
-                        <configuration>
-                            <basePackage>com.atlassian.plugin.connect.modules.beans</basePackage>
-                            <sourcepath>../components/modules/src/main/java</sourcepath>
-                            <debug>${debugSchemaGen}</debug>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>common-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.plugin.CommonModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jira-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.jira.JiraModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>confluence-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.confluence.ConfluenceModuleList</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>shallow-schema</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>generate-schema</goal>
-                        </goals>
-                        <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/shallow-schema-pretty.json</prettyOutput>
-                            <enumCase>insensitive</enumCase>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-schema-support-docs-exist</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireFilesExist>
-                                    <files>
-                                        <file>${project.build.directory}/jsonSchemaInterfaces.json</file>
-                                        <file>${project.build.directory}/jsonSchemaDocs.json</file>
-                                    </files>
-                                    <message>The goal json-schemagen-maven-plugin:generate-support-docs did not produce the expected files</message>
-                                </requireFilesExist>
-                            </rules>
-                            <fail>true</fail>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- we need to use this instead of built-in javac processing so we can process multiple source roots -->
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <version>2.2.4</version>
-                <executions>
-                    <execution>
-                        <id>process</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <additionalSourceDirectories>
-                        <additionalSourceDirectory>../components/modules/src/main/java/</additionalSourceDirectory>
-                        <additionalSourceDirectory>../components/spi/src/main/java/</additionalSourceDirectory>
-                    </additionalSourceDirectories>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <compilerArgument>-proc:none</compilerArgument>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <properties>
-        <product>jira</product>
-        <build.test.plugin>false</build.test.plugin>
         <devmode>true</devmode>
-        <fastdev.version>2.4</fastdev.version>
-        <toolbox.version>2.0.12</toolbox.version>
-        <test.plugin.artifact> </test.plugin.artifact>
-        <mvnCommand>/usr/bin/mvn</mvnCommand>
-        <debugSchemaGen>false</debugSchemaGen>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9
             include-artifact,com.atlassian.plugins:atlassian-connect-confluence-integration-tests
             include-artifact,com.atlassian.plugins:atlassian-connect-jira-integration-tests
         </od.testing.configuration>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
-
-        <!-- Override the javadoc.additional.params field because it breaks the json schema documentation generation -->
-        <javadoc.additional.params />
     </properties>
 </project>

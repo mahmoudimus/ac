@@ -22,22 +22,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ContentEventMapperTest
-{
-    @Mock private UserManager userManager;
-    @Mock private SettingsManager settingsManager;
+public class ContentEventMapperTest {
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private SettingsManager settingsManager;
 
     private ContentEventMapper mapper;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         this.mapper = new ContentEventMapper(userManager, settingsManager);
     }
 
     @Test
-    public void testContentEventMapping()
-    {
+    @SuppressWarnings("unchecked")
+    public void testContentEventMapping() {
         ConfluenceUser user = mock(ConfluenceUser.class);
         when(user.getName()).thenReturn("testuser");
         when(user.getKey()).thenReturn(new UserKey("abc123"));
@@ -61,7 +61,7 @@ public class ContentEventMapperTest
         Map<String, Object> map = mapper.toMap(new ContentPermissionEvent(this, ceo, null));
 
         assertTrue(map.containsKey("content"));
-        Map<String, Object> contentMap = (Map<String, Object>)map.get("content");
+        Map<String, Object> contentMap = (Map<String, Object>) map.get("content");
 
         assertEquals("testuser", contentMap.get("creatorName"));
         assertEquals("abc123", contentMap.get("creatorKey"));

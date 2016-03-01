@@ -1,14 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
@@ -18,6 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ControlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
@@ -42,7 +37,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -50,6 +44,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -68,8 +70,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVe
 import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnusedDeclaration")
-public class ConnectJsonExamples
-{
+public class ConnectJsonExamples {
     private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
 
     public static final String ADDON_EXAMPLE = createAddonExample();
@@ -78,6 +79,7 @@ public class ConnectJsonExamples
     public static final String AUTOCONVERT_MATCHER_EXAMPLE = createMatcherExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
     public static final String ISSUE_FIELD_EXAMPLE = createIssueFieldExample();
+    public static final String CONTROL_EXAMPLE = createControl();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
     public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
     public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
@@ -137,93 +139,84 @@ public class ConnectJsonExamples
     public static final String EMBEDDED_STATIC_MACRO_EXAMPLE = MACRO_RENDER_MODES_EXAMPLE;
     public static final String ATTACHMENT_SIZE_ALIAS = "attachmentSize";
 
-    private static String createRenderModesExampleWord()
-    {
+    private static String createRenderModesExampleWord() {
         return gson.toJson(MacroRenderModesBean
                 .newMacroRenderModesBean()
                 .withWord(createEmbeddedStaticMacroBean("/render-map-word"))
                 .build());
     }
 
-    private static String createRenderModesExamplePdf()
-    {
+    private static String createRenderModesExamplePdf() {
         return gson.toJson(MacroRenderModesBean
                 .newMacroRenderModesBean()
                 .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
                 .build());
     }
 
-    private static String createRenderModesExampleHtmlExport()
-    {
+    private static String createRenderModesExampleHtmlExport() {
         return gson.toJson(MacroRenderModesBean
                 .newMacroRenderModesBean()
                 .withHtmlExport(createEmbeddedStaticMacroBean("/render-map-html-export"))
                 .build());
     }
 
-    private static String createRenderModesExampleEmail()
-    {
+    private static String createRenderModesExampleEmail() {
         return gson.toJson(MacroRenderModesBean
                 .newMacroRenderModesBean()
                 .withEmail(createEmbeddedStaticMacroBean("/render-map-email"))
                 .build());
     }
 
-    private static String createRenderModesExampleFeed()
-    {
+    private static String createRenderModesExampleFeed() {
         return gson.toJson(MacroRenderModesBean
                 .newMacroRenderModesBean()
                 .withFeed(createEmbeddedStaticMacroBean("/render-map-rss-feed"))
                 .build());
     }
 
-    private static String createRenderModesExampleDefault()
-    {
+    private static String createRenderModesExampleDefault() {
         return gson.toJson(MacroRenderModesBean
                 .newMacroRenderModesBean()
                 .withDefaultfallback(createEmbeddedStaticMacroBean("/render-map-default"))
                 .build());
     }
 
-    private static String createAddonExample()
-    {
+    private static String createAddonExample() {
+        Map<String, String> links = ImmutableMap.<String, String>builder().put("self", "http://www.example.com/connect/jira").build();
+        Set<ScopeName> scopes = Sets.newHashSet(ScopeName.READ, ScopeName.WRITE);
         ConnectAddonBean addonBean = newConnectAddonBean()
                 .withKey("my-addon-key")
                 .withName("My Connect Addon")
                 .withDescription("A connect addon that does something")
                 .withVendor(newVendorBean().withName("My Company").withUrl("http://www.example.com").build())
                 .withBaseurl("http://www.example.com/connect/jira")
-                .withLinks(ImmutableMap.builder().put("self", "http://www.example.com/connect/jira").build())
+                .withLinks(links)
                 .withAuthentication(newAuthenticationBean().build())
                 .withLicensing(true)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
+                .withScopes(scopes)
                 .build();
 
         return gson.toJson(addonBean);
     }
 
-    private static I18nProperty i18nProperty(String name)
-    {
+    private static I18nProperty i18nProperty(String name) {
         return new I18nProperty(name, null);
     }
 
-    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBeanStatic()
-    {
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBeanStatic() {
         return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
                 .withUrl("/render-map-static")
                 .build();
     }
 
-    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBean(String url)
-    {
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBean(String url) {
         return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
                 .withUrl(url)
                 .build();
     }
 
-    private static String createPageExample()
-    {
+    private static String createPageExample() {
         JsonElement generalPageModuleBean = createJsonArrayWithSingleObject(ConnectPageModuleBean.newPageBean()
                 .withName(i18nProperty("My General Page"))
                 .withKey("my-general-page")
@@ -262,8 +255,7 @@ public class ConnectJsonExamples
         return gson.toJson(object);
     }
 
-    private static String createProjectAdminPageExample()
-    {
+    private static String createProjectAdminPageExample() {
         ConnectProjectAdminTabPanelModuleBean pageModuleBean = ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean()
                 .withName(i18nProperty("Admin Panel"))
                 .withKey("admin-panel")
@@ -274,8 +266,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("jiraProjectAdminTabPanels", pageModuleBean));
     }
 
-    private static String createWebhookExample()
-    {
+    private static String createWebhookExample() {
         WebHookModuleBean bean = WebHookModuleBean.newWebHookBean()
                 .withEvent("jira:issue_created")
                 .withUrl("/issue-created")
@@ -284,8 +275,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("webhooks", bean));
     }
 
-    private static String createWebItemExample()
-    {
+    private static String createWebItemExample() {
         WebItemModuleBean webItemModuleBean = WebItemModuleBean.newWebItemBean()
                 .withName(i18nProperty("My Web Item"))
                 .withUrl("/my-web-item")
@@ -300,8 +290,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("webItems", webItemModuleBean));
     }
 
-    private static String createTabPanelExample()
-    {
+    private static String createTabPanelExample() {
         JsonElement issueTabPanelBean = createJsonArrayWithSingleObject(ConnectTabPanelModuleBean.newTabPanelBean()
                 .withName(i18nProperty("My Issue Tab Panel"))
                 .withKey("my-issue-tab")
@@ -328,8 +317,7 @@ public class ConnectJsonExamples
         return gson.toJson(object);
     }
 
-    private static String createReportExample()
-    {
+    private static String createReportExample() {
         ReportModuleBean reportModuleBean = ReportModuleBean.newBuilder()
                 .withKey("report-example")
                 .withUrl("/report?projectKey={project.key}")
@@ -342,8 +330,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("jiraReports", reportModuleBean));
     }
 
-    private static String createPostFunctionExample()
-    {
+    private static String createPostFunctionExample() {
         WorkflowPostFunctionModuleBean bean = WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
                 .withName(i18nProperty("My Function"))
                 .withKey("workflow-example")
@@ -357,8 +344,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("jiraWorkflowPostFunctions", bean));
     }
 
-    private static String createWebPanelExample()
-    {
+    private static String createWebPanelExample() {
         WebPanelModuleBean webPanelModuleBean = WebPanelModuleBean.newWebPanelBean()
                 .withName(i18nProperty("My Web Panel"))
                 .withUrl("/web-panel")
@@ -371,8 +357,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("webPanels", webPanelModuleBean));
     }
 
-    private static String createWebSectionExample()
-    {
+    private static String createWebSectionExample() {
         WebSectionModuleBean webSectionModuleBean = WebSectionModuleBean.newWebSectionBean()
                 .withName(i18nProperty("My Web Section"))
                 .withKey("my-web-section")
@@ -383,8 +368,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("webSections", webSectionModuleBean));
     }
 
-    private static String createGlobalPermissionExample()
-    {
+    private static String createGlobalPermissionExample() {
         GlobalPermissionModuleBean globalPermissionModuleBean = GlobalPermissionModuleBean.newGlobalPermissionModuleBean()
                 .withKey("my-global-permission")
                 .withName(i18nProperty("My Global Permission"))
@@ -395,8 +379,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("jiraGlobalPermissions", globalPermissionModuleBean));
     }
 
-    private static String createProjectPermissionExample()
-    {
+    private static String createProjectPermissionExample() {
         ProjectPermissionModuleBean projectPermissionModuleBean = ProjectPermissionModuleBean.newProjectPermissionModuleBean()
                 .withKey("my-project-permission")
                 .withName(i18nProperty("My Project Permission"))
@@ -407,8 +390,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("jiraProjectPermissions", projectPermissionModuleBean));
     }
 
-    private static String createBlueprintExample()
-    {
+    private static String createBlueprintExample() {
         BlueprintModuleBean blueprintModuleBean = BlueprintModuleBean.newBlueprintModuleBean()
                 .withName(i18nProperty("Simple Remote Blueprint"))
                 .withKey("remote-blueprint")
@@ -418,17 +400,15 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("blueprints", blueprintModuleBean));
     }
 
-    private static String createBlueprintContextResponseExample()
-    {
-        List<BlueprintContextValue> contextValues =  new LinkedList<>();
+    private static String createBlueprintContextResponseExample() {
+        List<BlueprintContextValue> contextValues = new LinkedList<>();
         contextValues.add(makeBlueprintContextValueExample1());
         contextValues.add(makeBlueprintContextValueExample2());
         contextValues.add(makeBlueprintContextValueExample3());
         return gson.toJson(contextValues);
     }
 
-    private static BlueprintContextValue makeBlueprintContextValue(String identifier, String value, String representation)
-    {
+    private static BlueprintContextValue makeBlueprintContextValue(String identifier, String value, String representation) {
         BlueprintContextValue v1 = new BlueprintContextValue();
         v1.setIdentifier(identifier);
         v1.setValue(value);
@@ -436,62 +416,52 @@ public class ConnectJsonExamples
         return v1;
     }
 
-    private static BlueprintContextValue makeBlueprintContextValueExample1()
-    {
+    private static BlueprintContextValue makeBlueprintContextValueExample1() {
         return makeBlueprintContextValue("ContentPageTitle", "Unique Page Title 1", "plain");
     }
 
-    private static BlueprintContextValue makeBlueprintContextValueExample2()
-    {
+    private static BlueprintContextValue makeBlueprintContextValueExample2() {
         return makeBlueprintContextValue("custom-key1", "custom value 1", "plain");
     }
 
-    private static BlueprintContextValue makeBlueprintContextValueExample3()
-    {
+    private static BlueprintContextValue makeBlueprintContextValueExample3() {
         return makeBlueprintContextValue("custom-key2", "<ac:structured-macro ac:name=\"cheese\" ac:schema-version=\"1\"/> ", "storage");
     }
 
-    private static String createBlueprintPostBodyExample()
-    {
+    private static String createBlueprintPostBodyExample() {
         BlueprintContextPostBody body = new BlueprintContextPostBody("addon-key", "blueprint-key", "SPACEKEY", "edd16ba6-0d41-4313-8bb9-84dc82cf6e7c", Locale.FRANCE);
         return gson.toJson(body);
     }
 
-    private static String createBlueprintTemplateExample()
-    {
+    private static String createBlueprintTemplateExample() {
         BlueprintTemplateBean blueprintTemplateBean = createBlueprintTemplateBean();
         return gson.toJson(createJsonObject("template", blueprintTemplateBean));
     }
 
-    private static String createBlueprintTemplateContextExample()
-    {
+    private static String createBlueprintTemplateContextExample() {
         BlueprintTemplateContextBean blueprintTemplateContextBean = createBlueprintTemplateContextBean();
         return gson.toJson(createJsonObject("blueprintContext", blueprintTemplateContextBean));
     }
 
-    private static BlueprintTemplateContextBean createBlueprintTemplateContextBean()
-    {
+    private static BlueprintTemplateContextBean createBlueprintTemplateContextBean() {
         return BlueprintTemplateContextBean.newBlueprintTemplateContextBeanBuilder()
-                                           .withUrl("/blueprints/context")
-                                           .build();
+                .withUrl("/blueprints/context")
+                .build();
     }
 
-    private static BlueprintTemplateBean createBlueprintTemplateBean()
-    {
+    private static BlueprintTemplateBean createBlueprintTemplateBean() {
         return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
                 .withUrl("/blueprints/blueprint.xml")
                 .withBlueprintContext(createBlueprintTemplateContextBean())
                 .build();
     }
 
-    private static String createScopesExample()
-    {
+    private static String createScopesExample() {
         HashSet<ScopeName> scopeNames = Sets.newHashSet(ScopeName.READ, ScopeName.WRITE);
         return gson.toJson(createJsonObject("scopes", scopeNames));
     }
 
-    public static String createSearchViewExample()
-    {
+    public static String createSearchViewExample() {
         SearchRequestViewModuleBean bean = SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
                 .withName(i18nProperty("My Search View"))
                 .withKey("my-search-view")
@@ -502,8 +472,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("jiraSearchRequestViews", bean));
     }
 
-    private static String createDynamicMacroExample()
-    {
+    private static String createDynamicMacroExample() {
         DynamicContentMacroModuleBean macroModuleBean = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
                 .withName(i18nProperty("Maps"))
                 .withKey("dynamic-macro-example")
@@ -557,8 +526,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
     }
 
-    private static String createDynamicMacroExampleForRenderModes()
-    {
+    private static String createDynamicMacroExampleForRenderModes() {
         DynamicContentMacroModuleBean macroModuleBean = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
                 .withName(i18nProperty("Maps"))
                 .withKey("dynamic-macro-example")
@@ -573,8 +541,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
     }
 
-    private static String createStaticMacroExample()
-    {
+    private static String createStaticMacroExample() {
         StaticContentMacroModuleBean macroModuleBean = StaticContentMacroModuleBean.newStaticContentMacroModuleBean()
                 .withName(i18nProperty("Maps"))
                 .withKey("static-macro-example")
@@ -620,8 +587,7 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("staticContentMacros", macroModuleBean));
     }
 
-    private static String createMacroParamsExample()
-    {
+    private static String createMacroParamsExample() {
         MacroParameterBean macroParameterBean = newMacroParameterBean()
                 .withIdentifier("view")
                 .withName(i18nProperty("Map View"))
@@ -635,8 +601,7 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObjectContainingArray("parameters", macroParameterBean));
     }
 
-    private static String createSpaceToolsTabExample()
-    {
+    private static String createSpaceToolsTabExample() {
         SpaceToolsTabModuleBean spaceToolsTabModuleBean = SpaceToolsTabModuleBean.newSpaceToolsTabBean()
                 .withName(i18nProperty("Space Tools Tab"))
                 .withKey("my-space-tools-tab")
@@ -647,20 +612,17 @@ public class ConnectJsonExamples
         return gson.toJson(createModuleArray("spaceToolsTabs", spaceToolsTabModuleBean));
     }
 
-    private static String createI18nExample()
-    {
+    private static String createI18nExample() {
         I18nProperty bean = new I18nProperty("My Label", null);
         return gson.toJson(createJsonObject("name", bean));
     }
 
-    private static String createIconExample()
-    {
+    private static String createIconExample() {
         IconBean bean = newIconBean().withUrl("/my-icon.png").withWidth(16).withHeight(16).build();
         return gson.toJson(createJsonObject("icon", bean));
     }
 
-    private static String createWebitemTargetInlineDialogOptionsExample()
-    {
+    private static String createWebitemTargetInlineDialogOptionsExample() {
         WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.inlineDialog)
                 .withOptions(InlineDialogOptions.newInlineDialogOptions()
@@ -674,8 +636,7 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObject("target", bean));
     }
 
-    private static String createWebitemTargetDialogOptionsExample()
-    {
+    private static String createWebitemTargetDialogOptionsExample() {
         WebItemTargetBean bean = WebItemTargetBean.newWebItemTargetBean()
                 .withType(WebItemTargetType.dialog)
                 .withOptions(DialogOptions.newDialogOptions()
@@ -688,59 +649,56 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObject("target", bean));
     }
 
-    private static String createLinkExample()
-    {
+    private static String createLinkExample() {
         LinkBean bean = newLinkBean().withUrl("/go-somewhere").withAltText("somewhere").withTitle("Go Somewhere").build();
         return gson.toJson(createJsonObject("link", bean));
     }
 
-    private static String createSingleConditionExample()
-    {
+    private static String createSingleConditionExample() {
         SingleConditionBean bean = newSingleConditionBean().withCondition("user_is_logged_in").build();
         return gson.toJson(bean);
     }
 
-    private static String createCompositeConditionExample()
-    {
+    private static String createCompositeConditionExample() {
         List<ConditionalBean> conditions = asList(
-            newCompositeConditionBean()
-                .withType(CompositeConditionType.OR)
-                .withConditions(
-                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
-                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
-                ).build(),
-            newSingleConditionBean().withCondition("user_is_logged_in").build()
+                newCompositeConditionBean()
+                        .withType(CompositeConditionType.OR)
+                        .withConditions(
+                                newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
+                                newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
+                        ).build(),
+                newSingleConditionBean().withCondition("user_is_logged_in").build()
         );
 
         return gson.toJson(createJsonObject("conditions", conditions));
     }
 
-    private static String createUrlExample()
-    {
+    private static String createControl() {
+        ControlBean bean = new ControlBeanBuilder().withType("button").build();
+        return gson.toJson(createJsonObject("control", bean));
+    }
+
+    private static String createUrlExample() {
         UrlBean bean = new UrlBean("/my-url");
         return gson.toJson(createJsonObject("endpoint", bean));
     }
 
-    private static String createVendorExample()
-    {
+    private static String createVendorExample() {
         VendorBean bean = newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build();
         return gson.toJson(createJsonObject("vendor", bean));
     }
 
-    private static String createPanelLayoutExample()
-    {
+    private static String createPanelLayoutExample() {
         WebPanelLayout bean = new WebPanelLayout("100", "200");
         return gson.toJson(createJsonObject("layout", bean));
     }
 
-    private static String createAuthenticationExample()
-    {
+    private static String createAuthenticationExample() {
         AuthenticationBean bean = newAuthenticationBean().withType(AuthenticationType.JWT).build();
         return gson.toJson(createJsonObject("authentication", bean));
     }
 
-    private static String createParamsExample()
-    {
+    private static String createParamsExample() {
         Map<String, String> params = new HashMap<String, String>(2);
         params.put("myCustomProperty", "myValue");
         params.put("someOtherProperty", "someValue");
@@ -751,8 +709,7 @@ public class ConnectJsonExamples
         return gson.toJson(obj);
     }
 
-    private static String createLinksExample()
-    {
+    private static String createLinksExample() {
         Map<String, String> links = new HashMap<String, String>(2);
         links.put("self", "https://addon.domain.com/atlassian-connect.json");
         links.put("documentation", "https://addon.domain.com/docs");
@@ -763,8 +720,7 @@ public class ConnectJsonExamples
         return gson.toJson(obj);
     }
 
-    private static String createLifecycleExample()
-    {
+    private static String createLifecycleExample() {
         LifecycleBean bean = LifecycleBean.newLifecycleBean()
                 .withInstalled("/installed")
                 .withUninstalled("/uninstalled")
@@ -775,8 +731,7 @@ public class ConnectJsonExamples
         return gson.toJson(bean);
     }
 
-    private static String createLifecyclePayloadExample()
-    {
+    private static String createLifecyclePayloadExample() {
         ConnectAddonEventDataBuilder dataBuilder = newConnectAddonEventData();
 
         dataBuilder.withBaseUrl("http://example.atlassian.net")
@@ -796,8 +751,7 @@ public class ConnectJsonExamples
         return gson.toJson(data);
     }
 
-    private static String createMacroEditorExample()
-    {
+    private static String createMacroEditorExample() {
         MacroEditorBean macroEditorBean = newMacroEditorBean()
                 .withUrl("/generate_md")
                 .withInsertTitle(i18nProperty("Insert New MarkDown"))
@@ -809,8 +763,7 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObject("editor", macroEditorBean));
     }
 
-    private static String createImagePlaceholderExample()
-    {
+    private static String createImagePlaceholderExample() {
         ImagePlaceholderBean imagePlaceholderBean = newImagePlaceholderBean()
                 .withUrl("/images/placeholder.png")
                 .withWidth(100)
@@ -821,8 +774,7 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObject("imagePlaceholder", imagePlaceholderBean));
     }
 
-    private static String createEntityPropertyExample()
-    {
+    private static String createEntityPropertyExample() {
         List<EntityPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, ATTACHMENT_SIZE_ALIAS),
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.text, "attachmentExtension"),
@@ -841,15 +793,13 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObjectContainingArray("jiraEntityProperties", entityPropertyModuleBean));
     }
 
-    private static String createEntityPropertyIndexExtractionConfigurationExample()
-    {
+    private static String createEntityPropertyIndexExtractionConfigurationExample() {
         EntityPropertyIndexExtractionConfigurationBean bean = new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, ATTACHMENT_SIZE_ALIAS);
 
         return gson.toJson(bean);
     }
 
-    private static String createEntityPropertyIndexKeyConfigurationExample()
-    {
+    private static String createEntityPropertyIndexKeyConfigurationExample() {
         EntityPropertyIndexExtractionConfigurationBean extractionConfiguration =
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number);
         EntityPropertyIndexKeyConfigurationBean issueAttachmentIndexConfiguration =
@@ -858,8 +808,7 @@ public class ConnectJsonExamples
         return gson.toJson(issueAttachmentIndexConfiguration);
     }
 
-    private static String createAutoconvertExample()
-    {
+    private static String createAutoconvertExample() {
         DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
                 .withUrl("/dynamic-macro?url={url}")
                 .withKey("dynamic-macro-with-autoconvert")
@@ -887,8 +836,7 @@ public class ConnectJsonExamples
         return gson.toJson(dynamicMacroWithAutoconvert);
     }
 
-    private static String createMatcherExample()
-    {
+    private static String createMatcherExample() {
 
         MatcherBean matcher = MatcherBean.newMatcherBean()
                 .withPattern("https://www.facebook.com/{}/about")
@@ -897,19 +845,16 @@ public class ConnectJsonExamples
         return gson.toJson(matcher);
     }
 
-    private static String createContentPropertyIndexExtractionConfigurationExample()
-    {
+    private static String createContentPropertyIndexExtractionConfigurationExample() {
         return gson.toJson(createAttachmentTypeContentPropertyExtraction());
     }
 
-    private static String createContentPropertyIndexKeyConfigurationExample()
-    {
+    private static String createContentPropertyIndexKeyConfigurationExample() {
         List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = getContentPropertyIndexExtractionConfigurationBeans();
         return gson.toJson(new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration));
     }
 
-    private static List<ContentPropertyIndexExtractionConfigurationBean> getContentPropertyIndexExtractionConfigurationBeans()
-    {
+    private static List<ContentPropertyIndexExtractionConfigurationBean> getContentPropertyIndexExtractionConfigurationBeans() {
         return Lists.newArrayList(
                 createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
                 createAttachmentTypeContentPropertyExtraction(),
@@ -917,21 +862,18 @@ public class ConnectJsonExamples
         );
     }
 
-    private static ContentPropertyIndexExtractionConfigurationBean createAttachmentTypeContentPropertyExtraction()
-    {
-        UISupportModuleBean uiSupport = createAttachmentTypeUISupportBean();
+    private static ContentPropertyIndexExtractionConfigurationBean createAttachmentTypeContentPropertyExtraction() {
+        UISupportBean uiSupport = createAttachmentTypeUISupportBean();
 
         return createContentPropertyIndexExtractionConfigurationBean("attachment.type", ContentPropertyIndexFieldType.string, "contentType", uiSupport);
     }
 
-    private static String createAttachmentTypeUISupportExample()
-    {
+    private static String createAttachmentTypeUISupportExample() {
         return gson.toJson(createAttachmentTypeUISupportBean());
     }
 
-    private static UISupportModuleBean createAttachmentTypeUISupportBean()
-    {
-        return UISupportModuleBean.newUISupportModuleBean()
+    private static UISupportBean createAttachmentTypeUISupportBean() {
+        return UISupportBean.newUISupportModuleBean()
                 .withName(new I18nProperty("Content Type", "attachment.type.name"))
                 .withDataUri("/data/content-types")
                 .withDefaultOperator("~")
@@ -940,8 +882,7 @@ public class ConnectJsonExamples
                 .build();
     }
 
-    public static ContentPropertyModuleBean createContentPropertyExampleBean()
-    {
+    public static ContentPropertyModuleBean createContentPropertyExampleBean() {
         List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = getContentPropertyIndexExtractionConfigurationBeans();
 
         ContentPropertyIndexKeyConfigurationBean indexConfiguration =
@@ -953,13 +894,11 @@ public class ConnectJsonExamples
                 .build();
     }
 
-    private static String createContentPropertyExample()
-    {
+    private static String createContentPropertyExample() {
         return gson.toJson(createJsonObjectContainingArray("confluenceContentProperties", createContentPropertyExampleBean()));
     }
 
-    private static String createDashboardItemExample()
-    {
+    private static String createDashboardItemExample() {
         final DashboardItemModuleBean dashboardItemExample = DashboardItemModuleBean.newBuilder()
                 .withDescription(i18nProperty("Dashboard item description"))
                 .withName(i18nProperty("Dashboard item title"))
@@ -972,8 +911,7 @@ public class ConnectJsonExamples
         return gson.toJson(createJsonObjectContainingArray("jiraDashboardItems", dashboardItemExample));
     }
 
-    private static JsonObject createJsonObjectContainingArray(String name, ModuleBean bean)
-    {
+    private static JsonObject createJsonObjectContainingArray(String name, ModuleBean bean) {
         JsonObject obj = new JsonObject();
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
@@ -981,32 +919,27 @@ public class ConnectJsonExamples
         return obj;
     }
 
-    private static JsonArray createJsonArrayWithSingleObject(Object bean)
-    {
+    private static JsonArray createJsonArrayWithSingleObject(Object bean) {
         JsonArray arr = new JsonArray();
         arr.add(gson.toJsonTree(bean));
         return arr;
     }
 
-    private static JsonObject createJsonObject(String name, Object bean)
-    {
+    private static JsonObject createJsonObject(String name, Object bean) {
         JsonObject obj = new JsonObject();
         obj.add(name, gson.toJsonTree(bean));
         return obj;
     }
 
-    private static JsonObject createModuleArray(String name, ModuleBean bean)
-    {
+    private static JsonObject createModuleArray(String name, ModuleBean bean) {
         JsonObject modules = new JsonObject();
         modules.add("modules", createJsonObjectContainingArray(name, bean));
         return modules;
     }
 
-    private static JsonObject createModuleArray(ImmutableMap<String, ? extends JsonElement> modules)
-    {
+    private static JsonObject createModuleArray(ImmutableMap<String, ? extends JsonElement> modules) {
         JsonObject modulesObject = new JsonObject();
-        for (Map.Entry<String, ? extends JsonElement> module : modules.entrySet())
-        {
+        for (Map.Entry<String, ? extends JsonElement> module : modules.entrySet()) {
             modulesObject.add(module.getKey(), module.getValue());
         }
         JsonObject obj = new JsonObject();
@@ -1014,31 +947,26 @@ public class ConnectJsonExamples
         return obj;
     }
 
-    private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
-    {
+    private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type) {
         return createContentPropertyIndexExtractionConfigurationBean(objectName, type, null, null);
     }
 
     private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName,
                                                                                                                          ContentPropertyIndexFieldType type,
-                                                                                                                         String alias, UISupportModuleBean uiSupport)
-    {
+                                                                                                                         String alias, UISupportBean uiSupport) {
         ContentPropertyIndexExtractionConfigurationBeanBuilder builder = new ContentPropertyIndexExtractionConfigurationBeanBuilder()
                 .withObjectName(objectName)
                 .withType(type);
-        if (alias != null)
-        {
+        if (alias != null) {
             builder = builder.withAlias(alias);
         }
-        if (uiSupport != null)
-        {
+        if (uiSupport != null) {
             builder = builder.withUiSupport(uiSupport);
         }
         return builder.build();
     }
 
-    private static String createIssueFieldExample()
-    {
+    private static String createIssueFieldExample() {
 
         ConnectFieldModuleBean moduleBean = ConnectFieldModuleBean.newBuilder()
                 .withKey("connect-issue-field")

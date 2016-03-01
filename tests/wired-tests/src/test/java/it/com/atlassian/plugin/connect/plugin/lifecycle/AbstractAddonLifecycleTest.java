@@ -7,13 +7,13 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.fugue.Option;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -25,11 +25,11 @@ import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Test;
-import org.junit.Rule;
-import com.atlassian.testutils.junit.RetryRule;
 import com.atlassian.testutils.annotations.Retry;
+import com.atlassian.testutils.junit.RetryRule;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Rule;
+import org.junit.Test;
 
 import java.io.IOException;
 
@@ -43,8 +43,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public abstract class AbstractAddonLifecycleTest
-{
+public abstract class AbstractAddonLifecycleTest {
     public static final String PLUGIN_KEY = "my-lifecycle-plugin";
     public static final String PLUGIN_NAME = "My Plugin";
     public static final String INSTALLED = "/installed";
@@ -89,8 +88,7 @@ public abstract class AbstractAddonLifecycleTest
                                          ApplicationService applicationService,
                                          ApplicationManager applicationManager,
                                          DarkFeatureManager darkFeatureManager,
-                                         ConnectAddonRegistry connectAddonRegistry)
-    {
+                                         ConnectAddonRegistry connectAddonRegistry) {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.testFilterResults = testFilterResults;
@@ -109,8 +107,7 @@ public abstract class AbstractAddonLifecycleTest
 
     protected abstract boolean signCallbacksWithJwt();
 
-    protected void initBeans(AuthenticationBean authBean)
-    {
+    protected void initBeans(AuthenticationBean authBean) {
         String pluginKeyPrefix = PLUGIN_KEY + "-" + authBean.getType().name().toLowerCase();
         String addonKey;
 
@@ -194,32 +191,26 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void installUrlIsPosted() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void installUrlIsPosted() throws Exception {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
         testInstallPost(true);
     }
 
     // with the dark feature enabled we do sign install callbacks using the new shared secret (which is useless, but the previous behaviour)
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void callbackSigningDarkFeaturePreventsSigningTheInstalledCallback() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void callbackSigningDarkFeaturePreventsSigningTheInstalledCallback() throws Exception {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
 
-        try
-        {
+        try {
             testInstallPost(false);
-        }
-        finally
-        {
+        } finally {
             darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
     }
 
-    private void testInstallPost(boolean signsWithPreviousJwtSharedSecret) throws Exception
-    {
+    private void testInstallPost(boolean signsWithPreviousJwtSharedSecret) throws Exception {
         ConnectAddonBean addon = installOnlyBean;
 
         // clear the registry for this add-on
@@ -229,8 +220,7 @@ public abstract class AbstractAddonLifecycleTest
 
         Plugin plugin = null;
         String addonKey = null;
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
@@ -242,8 +232,7 @@ public abstract class AbstractAddonLifecycleTest
             String clientKey = parseClientKey(request);
             assertEquals(signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret, request.hasJwt()); // if signing with the *previous* secret then the first installation cannot be signed because there is no pre-shared key
 
-            if (signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret)
-            {
+            if (signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret) {
                 JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
                 assertTrue("JWT token should be signed with the shared secret in that same callback", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
             }
@@ -257,8 +246,7 @@ public abstract class AbstractAddonLifecycleTest
             assertEquals(signCallbacksWithJwt(), null != secondSharedSecret);
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
 
-            if (signCallbacksWithJwt())
-            {
+            if (signCallbacksWithJwt()) {
                 final String secretUsedToSignSecondInstallCallback = signsWithPreviousJwtSharedSecret ? firstSharedSecret : secondSharedSecret;
                 JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
                 assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignSecondInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
@@ -277,8 +265,7 @@ public abstract class AbstractAddonLifecycleTest
             assertEquals(signCallbacksWithJwt(), null != thirdSharedSecret);
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
 
-            if (signCallbacksWithJwt())
-            {
+            if (signCallbacksWithJwt()) {
                 assert secondSharedSecret != null; // just to get rid of annoying intellij warning on the line below; it doesn't parse the assertion above
                 assertFalse("we should issue a new shared secret on a new installation after an uninstallation", secondSharedSecret.equals(thirdSharedSecret));
 
@@ -286,88 +273,71 @@ public abstract class AbstractAddonLifecycleTest
                 JwtTestVerifier verifier = new JwtTestVerifier(secretUsedToSignThirdInstallCallback, clientKey);
                 assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignThirdInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
             }
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
-    protected String parseClientKey(ServletRequestSnapshot request) throws IOException
-    {
+    protected String parseClientKey(ServletRequestSnapshot request) throws IOException {
         return getPayloadField(request.getEntity(), CLIENT_KEY_FIELD_NAME);
     }
 
-    protected String parseSharedSecret(ServletRequestSnapshot request) throws IOException
-    {
+    protected String parseSharedSecret(ServletRequestSnapshot request) throws IOException {
         return signCallbacksWithJwt() ? getPayloadField(request.getEntity(), SHARED_SECRET_FIELD_NAME) : null;
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void installRequestHasVersion() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void installRequestHasVersion() throws Exception {
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
         String addonKey = null;
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
             addonKey = plugin.getKey();
             final ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
 
             Option<String> maybeHeader = getVersionHeader(request);
             assertVersion(maybeHeader);
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void uninstallUrlIsPosted() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void uninstallUrlIsPosted() throws Exception {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
         testUninstallPost();
     }
 
     // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void callbackSigningDarkFeaturePreventsSigningTheUninstalledCallback() throws IOException
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void callbackSigningDarkFeaturePreventsSigningTheUninstalledCallback() throws IOException {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
 
-        try
-        {
+        try {
             testUninstallPost();
-        }
-        finally
-        {
+        } finally {
             darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
     }
 
-    private void testUninstallPost() throws IOException
-    {
+    private void testUninstallPost() throws IOException {
         ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
@@ -378,29 +348,24 @@ public abstract class AbstractAddonLifecycleTest
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void uninstallRequestHasVersion() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void uninstallRequestHasVersion() throws Exception {
         ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
@@ -410,62 +375,52 @@ public abstract class AbstractAddonLifecycleTest
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             Option<String> maybeHeader = getVersionHeader(request);
             assertVersion(maybeHeader);
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void enableRequestHasVersion() throws IOException
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void enableRequestHasVersion() throws IOException {
         ConnectAddonBean addon = installAndEnabledBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
 
             testPluginInstaller.enableAddon(addonKey);
 
-            ServletRequestSnapshot request = waitForWebhook(addonKey,ENABLED);
+            ServletRequestSnapshot request = waitForWebhook(addonKey, ENABLED);
 
             Option<String> maybeHeader = getVersionHeader(request);
             assertVersion(maybeHeader);
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, ENABLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void disableRequestHasVersion() throws IOException
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void disableRequestHasVersion() throws IOException {
         ConnectAddonBean addon = installAndDisabledBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
@@ -478,56 +433,46 @@ public abstract class AbstractAddonLifecycleTest
             ServletRequestSnapshot request = testFilterResults.getRequest(finalKey, DISABLED);
             Option<String> maybeHeader = getVersionHeader(request);
             assertVersion(maybeHeader);
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, DISABLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void addonUserIsCreatedAndEnabled() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void addonUserIsCreatedAndEnabled() throws Exception {
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
 
             assertUserExistence(addon, true);
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void uninstallAddonUserIsDisabled() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void uninstallAddonUserIsDisabled() throws Exception {
         ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
@@ -536,29 +481,24 @@ public abstract class AbstractAddonLifecycleTest
             plugin = null;
 
             assertUserExistence(addon, false);
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void addonUserIsRecreatedAfterInstall() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void addonUserIsRecreatedAfterInstall() throws Exception {
         ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
@@ -566,8 +506,7 @@ public abstract class AbstractAddonLifecycleTest
             final boolean addonShouldHaveUser = !addon.getAuthentication().getType().equals(AuthenticationType.NONE);
             assertEquals("addon with auth=none should not have a user, all others should", addonShouldHaveUser, connectCrowdService.isUserActive(usernameForAddon(addonKey)));
 
-            if (addonShouldHaveUser)
-            {
+            if (addonShouldHaveUser) {
                 applicationService.removeUser(getApplication(), ADD_ON_USER_KEY_PREFIX + addonKey);
             }
 
@@ -577,52 +516,42 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             assertUserExistence(addon, addonShouldHaveUser);
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void disabledAddonHadDisabledUser() throws IOException
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void disabledAddonHadDisabledUser() throws IOException {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
         testDisabledCallback();
     }
 
     // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void callbackSigningDarkFeatureDoesNotAffectDisabledCallback() throws IOException
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void callbackSigningDarkFeatureDoesNotAffectDisabledCallback() throws IOException {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
 
-        try
-        {
+        try {
             testDisabledCallback();
-        }
-        finally
-        {
+        } finally {
             darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
     }
 
-    private void testDisabledCallback() throws IOException
-    {
+    private void testDisabledCallback() throws IOException {
         ConnectAddonBean addon = installAndDisabledBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
@@ -632,62 +561,50 @@ public abstract class AbstractAddonLifecycleTest
             ServletRequestSnapshot request = waitForWebhook(addonKey, DISABLED);
             assertUserExistence(addon, false);
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, DISABLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void enabledAddonHadEnabledUser() throws Exception
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void enabledAddonHadEnabledUser() throws Exception {
         assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
         testEnabledCallback();
     }
 
     // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
     @Test
-    @Retry(maxAttempts=AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
-    public void callbackSigningDarkFeatureDoesNotAffectEnabledCallback() throws IOException
-    {
+    @Retry(maxAttempts = AbstractAddonLifecycleTest.MAX_RETRY_ATTEMPTS)
+    public void callbackSigningDarkFeatureDoesNotAffectEnabledCallback() throws IOException {
         darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
 
-        try
-        {
+        try {
             testEnabledCallback();
-        }
-        finally
-        {
+        } finally {
             darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
     }
 
-    protected boolean hasPayloadField(String payload, String fieldName) throws IOException
-    {
+    protected boolean hasPayloadField(String payload, String fieldName) throws IOException {
         return !new ObjectMapper().readTree(payload).path(fieldName).isMissingNode();
     }
 
-    protected String getPayloadField(String installPayload, String fieldName) throws IOException
-    {
+    protected String getPayloadField(String installPayload, String fieldName) throws IOException {
         return new ObjectMapper().readTree(installPayload).path(fieldName).asText();
     }
 
-    private void testEnabledCallback() throws IOException
-    {
+    private void testEnabledCallback() throws IOException {
         ConnectAddonBean addon = fullLifecycleBean;
 
         Plugin plugin = null;
         String addonKey = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
@@ -695,69 +612,57 @@ public abstract class AbstractAddonLifecycleTest
 
             testPluginInstaller.disableAddon(addonKey);
 
-            waitForWebhook(addonKey,DISABLED);
+            waitForWebhook(addonKey, DISABLED);
 
             assertUserExistence(addon, false);
 
             testPluginInstaller.enableAddon(addonKey);
-            ServletRequestSnapshot request = waitForWebhook(addonKey,ENABLED);
+            ServletRequestSnapshot request = waitForWebhook(addonKey, ENABLED);
 
             assertUserExistence(addon, true);
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
-        }
-        finally
-        {
+        } finally {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, ENABLED);
             testFilterResults.clearRequest(addonKey, DISABLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
-            if (null != plugin)
-            {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
 
-    private ServletRequestSnapshot waitForWebhook(final String addonKey, final String path)
-    {
+    private ServletRequestSnapshot waitForWebhook(final String addonKey, final String path) {
         final ServletRequestSnapshot[] request = {null};
 
-        WaitUntil.invoke(new WaitUntil.WaitCondition()
-        {
+        WaitUntil.invoke(new WaitUntil.WaitCondition() {
             @Override
-            public boolean isFinished()
-            {
+            public boolean isFinished() {
                 request[0] = testFilterResults.getRequest(addonKey, path);
                 return null != request[0];
             }
 
             @Override
-            public String getWaitMessage()
-            {
+            public String getWaitMessage() {
                 return "waiting for enable webhook post...";
             }
-        },5);
+        }, 5);
 
         return request[0];
     }
 
-    private void assertVersion(Option<String> maybeHeader)
-    {
+    private void assertVersion(Option<String> maybeHeader) {
         //For some reason, assertThat fails with a java.lang.LinkageError
         assertTrue("Invalid version number: " + maybeHeader.get(), isVersionNumber().matches(maybeHeader.get()));
     }
 
-    private void assertUserExistence(ConnectAddonBean addon, boolean shouldBeActiveIfItExists)
-    {
+    private void assertUserExistence(ConnectAddonBean addon, boolean shouldBeActiveIfItExists) {
         final String username = ADD_ON_USER_KEY_PREFIX + addon.getKey();
         final UserProfile userProfile = userManager.getUserProfile(username);
 
-        if (addon.getAuthentication().getType().equals(AuthenticationType.NONE))
-        {
+        if (addon.getAuthentication().getType().equals(AuthenticationType.NONE)) {
             assertTrue("addon with auth=none should not have a user", null == userProfile);
-        }
-        else
-        {
+        } else {
             assertFalse("addon with auth!=none should have a user", null == userProfile);
             UserKey userKey = userProfile.getUserKey();
             assertEquals(String.format("addon user should%s be active", shouldBeActiveIfItExists ? "" : " not"), shouldBeActiveIfItExists, connectCrowdService.isUserActive(usernameForAddon(addon.getKey())));
@@ -765,8 +670,7 @@ public abstract class AbstractAddonLifecycleTest
         }
     }
 
-    private Application getApplication() throws ApplicationNotFoundException
-    {
+    private Application getApplication() throws ApplicationNotFoundException {
         return applicationManager.findByName(CROWD_APPLICATION_NAME);
     }
 }

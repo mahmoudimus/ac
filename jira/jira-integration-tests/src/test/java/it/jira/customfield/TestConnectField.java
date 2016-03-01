@@ -1,10 +1,5 @@
 package it.jira.customfield;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import javax.ws.rs.core.Response.Status;
-
 import com.atlassian.jira.functest.framework.Navigation;
 import com.atlassian.jira.functest.framework.navigation.BulkChangeWizard;
 import com.atlassian.jira.functest.framework.navigation.IssueNavigatorNavigation;
@@ -47,6 +42,11 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import javax.ws.rs.core.Response.Status;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static it.jira.customfield.CustomFieldMatchers.customFieldResponse;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -56,8 +56,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class TestConnectField extends JiraWebDriverTestBase
-{
+public class TestConnectField extends JiraWebDriverTestBase {
     private static final String FIELD_DESCRIPTION = "my description";
     private static String FIELD_NAME = "custom field title";
 
@@ -70,8 +69,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     private final IssueClient issueClient;
     private final Navigation navigation;
 
-    public TestConnectField()
-    {
+    public TestConnectField() {
         customFieldsControl = product.backdoor().customFields();
         screensControl = product.backdoor().screensControl();
         issueClient = new IssueClient(product.environmentData());
@@ -79,8 +77,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @BeforeClass
-    public static void setUpClass()
-    {
+    public static void setUpClass() {
         project = JiraTestHelper.addProject();
         product.backdoor().project().setNotificationScheme(Long.valueOf(project.getId()), 10000L);
         JiraTestHelper.addUserIfDoesNotExist("fred", "jira-software-users");
@@ -88,8 +85,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         fieldKey = "customfieldtype-key-" + org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric(10); // random to have more or less independent tests
 
         addonKey = AddonTestUtils.randomAddonKey();
@@ -104,25 +100,21 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @After
-    public void tearDown() throws Exception
-    {
-        if (addon != null)
-        {
+    public void tearDown() throws Exception {
+        if (addon != null) {
             addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void customFieldTypeIsNotVisibleOnCreateCustomFieldPage()
-    {
+    public void customFieldTypeIsNotVisibleOnCreateCustomFieldPage() {
         CreateCustomFieldPage page = product.quickLoginAsAdmin(CreateCustomFieldPage.class);
 
         assertThat(page.getAvailableCustomFields(), not(hasItem(customFieldTypeEntry(FIELD_NAME, FIELD_DESCRIPTION))));
     }
 
     @Test
-    public void issueFieldIsVisibleOnCreateScreen()
-    {
+    public void issueFieldIsVisibleOnCreateScreen() {
         String fieldId = getFieldId();
         addIssueFieldToScreens(project.getKey());
 
@@ -134,8 +126,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
-    public void issueFieldIsEditableAndVisibleOnViewScreen()
-    {
+    public void issueFieldIsEditableAndVisibleOnViewScreen() {
         String value = RandomStringUtils.randomAlphabetic(6);
 
         String fieldId = getFieldId();
@@ -153,8 +144,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
-    public void jqlSearchWorksForIssueField()
-    {
+    public void jqlSearchWorksForIssueField() {
         String value = RandomStringUtils.randomAlphabetic(6);
 
         String fieldId = getFieldId();
@@ -168,8 +158,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
-    public void tryingToCreateANewCustomFieldWithTheTypeOfTheIssueFieldFails()
-    {
+    public void tryingToCreateANewCustomFieldWithTheTypeOfTheIssueFieldFails() {
         FieldClient fieldClient = new FieldClient(product.environmentData());
 
         CustomFieldDefinitionJsonBean customFieldDefinitionJson = new CustomFieldDefinitionJsonBean(
@@ -186,8 +175,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testEditableByREST() throws Exception
-    {
+    public void testEditableByREST() throws Exception {
         String fieldId = getFieldId();
         addIssueFieldToScreens(project.getKey());
 
@@ -197,8 +185,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
-    public void issueFieldCanBeEditedInBulkMode() throws Exception
-    {
+    public void issueFieldCanBeEditedInBulkMode() throws Exception {
         List<IssueCreateResponse> createdIssues = IntStream.range(0, 5).mapToObj(i -> createTestIssue()).collect(Collectors.toList());
 
         String value = "bulk edited custom field value";
@@ -223,8 +210,7 @@ public class TestConnectField extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testUpdatingTheCustomFieldTriggersNotificationAndFieldValueIsPresentInEmails() throws Exception
-    {
+    public void testUpdatingTheCustomFieldTriggersNotificationAndFieldValueIsPresentInEmails() throws Exception {
         MailTestHelper mailTestHelper = JiraTestHelper.setUpMailTest();
 
         // set up fred as a watcher
@@ -241,13 +227,11 @@ public class TestConnectField extends JiraWebDriverTestBase
         assertThat(mailTestHelper.getSentMailContent(), containsString("custom_field_new_value"));
     }
 
-    private IssueCreateResponse createTestIssue()
-    {
+    private IssueCreateResponse createTestIssue() {
         return product.backdoor().issues().createIssue(project.getKey(), "Issue with comments");
     }
 
-    private IssueCreateResponse createIssueWithCustomFieldViaREST(final String fieldId, final String value)
-    {
+    private IssueCreateResponse createIssueWithCustomFieldViaREST(final String fieldId, final String value) {
         IssueCreateResponse issue = createIssue();
 
         IssueUpdateRequest updateFieldRequest = new IssueUpdateRequest().fields(new IssueFields()
@@ -262,23 +246,20 @@ public class TestConnectField extends JiraWebDriverTestBase
      * Currently depends on the name of the screen
      * @return screens that are tied to a project
      */
-    private List<Screen> getScreensForProject(String projectKey)
-    {
+    private List<Screen> getScreensForProject(String projectKey) {
         List<Screen> allScreens = screensControl.getAllScreens();
         return allScreens.stream()
                 .filter(screen -> screen.getName().startsWith(projectKey))
                 .collect(Collectors.toList());
     }
 
-    private void addIssueFieldToScreens(final String projectKey)
-    {
+    private void addIssueFieldToScreens(final String projectKey) {
         List<Screen> screensForProject = getScreensForProject(projectKey);
         screensForProject.stream()
                 .forEach(screen -> screensControl.addFieldToScreen(screen.getName(), FIELD_NAME));
     }
 
-    private String getFieldId()
-    {
+    private String getFieldId() {
         return customFieldsControl.getCustomFields()
                 .stream().filter((cf) ->
                         customFieldResponse(FIELD_NAME, FIELD_DESCRIPTION, getCustomFieldTypeKey(), getCustomFieldSearcherKey()).matches(cf))
@@ -286,51 +267,41 @@ public class TestConnectField extends JiraWebDriverTestBase
                 .findFirst().get();
     }
 
-    private Long numericFieldId(String fullId)
-    {
+    private Long numericFieldId(String fullId) {
         return Long.parseLong(fullId.split("_")[1]);
     }
 
-    private WebElement findCustomFieldWithIdOnPage(final String customFieldId)
-    {
+    private WebElement findCustomFieldWithIdOnPage(final String customFieldId) {
         return product.getTester().getDriver().findElement(By.id(customFieldId + "-val"));
     }
 
-    private Matcher<Issue> issue(String key)
-    {
-        return new TypeSafeMatcher<Issue>()
-        {
+    private Matcher<Issue> issue(String key) {
+        return new TypeSafeMatcher<Issue>() {
             @Override
-            protected boolean matchesSafely(final Issue issue)
-            {
+            protected boolean matchesSafely(final Issue issue) {
                 return issue.key.equals(key);
             }
 
             @Override
-            public void describeTo(final Description description)
-            {
+            public void describeTo(final Description description) {
                 description.appendText("issue with key = ").appendValue(key);
             }
         };
     }
 
-    private String getCustomFieldTypeKey()
-    {
+    private String getCustomFieldTypeKey() {
         return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + fieldKey;
     }
 
-    private String getCustomFieldSearcherKey()
-    {
+    private String getCustomFieldSearcherKey() {
         return "com.atlassian.plugins.atlassian-connect-plugin:" + addonKey + "__" + fieldKey + "_searcher";
     }
 
-    private IssueCreateResponse createIssue()
-    {
+    private IssueCreateResponse createIssue() {
         return product.backdoor().issues().createIssue(project.getKey(), "issue summary");
     }
 
-    private String fillCreateIssueDialogCustomField(final CreateIssueDialog createIssueDialog, final String customFieldId, final String expectedValue, final IssueCreateResponse issue)
-    {
+    private String fillCreateIssueDialogCustomField(final CreateIssueDialog createIssueDialog, final String customFieldId, final String expectedValue, final IssueCreateResponse issue) {
         createIssueDialog.fill("summary", "summary");
         createIssueDialog.fill(customFieldId, expectedValue);
 
@@ -340,8 +311,7 @@ public class TestConnectField extends JiraWebDriverTestBase
         return newIssueKey;
     }
 
-    private CreateIssueDialog openCreateIssueDialog(String issueKey)
-    {
+    private CreateIssueDialog openCreateIssueDialog(String issueKey) {
         ViewIssuePage viewIssuePage = product.goToViewIssue(issueKey);
         viewIssuePage.execKeyboardShortcut("c");
 
@@ -351,27 +321,22 @@ public class TestConnectField extends JiraWebDriverTestBase
         return createIssueDialog;
     }
 
-    private Matcher<CreateCustomFieldPage.CustomFieldItem> customFieldTypeEntry(final String name, final String description)
-    {
-        return new TypeSafeMatcher<CreateCustomFieldPage.CustomFieldItem>()
-        {
+    private Matcher<CreateCustomFieldPage.CustomFieldItem> customFieldTypeEntry(final String name, final String description) {
+        return new TypeSafeMatcher<CreateCustomFieldPage.CustomFieldItem>() {
             @Override
-            protected boolean matchesSafely(final CreateCustomFieldPage.CustomFieldItem customFieldItem)
-            {
+            protected boolean matchesSafely(final CreateCustomFieldPage.CustomFieldItem customFieldItem) {
                 return Objects.equal(customFieldItem.getName(), name)
                         && Objects.equal(customFieldItem.getDescription(), description);
             }
 
             @Override
-            public void describeTo(final Description description)
-            {
+            public void describeTo(final Description description) {
                 description.appendValue(name);
             }
         };
     }
 
-    private static ConnectFieldModuleBean buildIssueFieldModule(String key, String title, String description)
-    {
+    private static ConnectFieldModuleBean buildIssueFieldModule(String key, String title, String description) {
         return ConnectFieldModuleBean.newBuilder()
                 .withKey(key)
                 .withName(new I18nProperty(title, null))

@@ -9,12 +9,10 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectAppServlets;
 import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
-
+import it.common.MultiProductWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.common.MultiProductWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -25,8 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestDialog extends MultiProductWebDriverTestBase
-{
+public class TestDialog extends MultiProductWebDriverTestBase {
 
     private static final String ADDON_GENERALPAGE = "ac-general-page";
     private static final String ADDON_DIALOG = "my-dialog";
@@ -36,8 +33,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     private static ConnectRunner runner;
 
     @BeforeClass
-    public static void startConnectAddon() throws Exception
-    {
+    public static void startConnectAddon() throws Exception {
         logout();
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddonKey())
@@ -82,10 +78,8 @@ public class TestDialog extends MultiProductWebDriverTestBase
     }
 
     @AfterClass
-    public static void stopConnectAddon() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void stopConnectAddon() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
@@ -95,36 +89,30 @@ public class TestDialog extends MultiProductWebDriverTestBase
      */
 
     @Test
-    public void testOpenCloseDialogKeyWithPrependedAddonKey() throws Exception
-    {
+    public void testOpenCloseDialogKeyWithPrependedAddonKey() throws Exception {
         testOpenAndCloseWithPrependedAddonKey(ADDON_GENERALPAGE, ADDON_DIALOG);
     }
 
     @Test
-    public void testOpenCloseDialogKey()
-    {
+    public void testOpenCloseDialogKey() {
         testOpenAndClose(ADDON_GENERALPAGE, ADDON_DIALOG);
     }
 
     @Test
-    public void testWebItemDialogOpenByKeyWithPrependedAddonKey() throws Exception
-    {
+    public void testWebItemDialogOpenByKeyWithPrependedAddonKey() throws Exception {
         testOpenAndCloseWithPrependedAddonKey(ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_WEBITEM_DIALOG);
     }
 
     @Test
-    public void testWebItemDialogOpenByKey() throws Exception
-    {
+    public void testWebItemDialogOpenByKey() throws Exception {
         testOpenAndClose(ADDON_GENERALPAGE_WEBITEM_DIALOG, ADDON_WEBITEM_DIALOG);
     }
 
-    private void testOpenAndCloseWithPrependedAddonKey(String pageKey, String dialogKey)
-    {
+    private void testOpenAndCloseWithPrependedAddonKey(String pageKey, String dialogKey) {
         testOpenAndClose(pageKey, ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), dialogKey));
     }
 
-    private void testOpenAndClose(String pageKey, String moduleKey)
-    {
+    private void testOpenAndClose(String pageKey, String moduleKey) {
         RemoteDialogOpeningPage dialogOpeningPage = loginAndVisit(testUserFactory.basicUser(),
                 RemoteDialogOpeningPage.class, runner.getAddon().getKey(), pageKey);
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(moduleKey);
@@ -133,15 +121,13 @@ public class TestDialog extends MultiProductWebDriverTestBase
         assertEquals("test dialog close data", closeTheDialog(dialogOpeningPage, closeDialogPage));
     }
 
-    private String closeTheDialog(RemoteDialogOpeningPage dialogOpeningPage, RemoteCloseDialogPage closeDialogPage)
-    {
+    private String closeTheDialog(RemoteDialogOpeningPage dialogOpeningPage, RemoteCloseDialogPage closeDialogPage) {
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();
         return dialogOpeningPage.waitForValue("dialog-close-data");
     }
 
-    private void assertThatTheDialogHasTheCorrectProperties(RemoteCloseDialogPage closeDialogPage)
-    {
+    private void assertThatTheDialogHasTheCorrectProperties(RemoteCloseDialogPage closeDialogPage) {
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));

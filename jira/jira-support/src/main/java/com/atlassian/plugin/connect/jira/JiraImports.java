@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.jira;
 
-import javax.inject.Inject;
-
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.gadgets.dashboard.spi.DashboardPermissionService;
@@ -44,6 +42,7 @@ import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.render.Encoder;
+import com.atlassian.jira.rest.util.ResponseFactory;
 import com.atlassian.jira.rest.v2.issue.builder.BeanBuilderFactory;
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -75,14 +74,15 @@ import com.atlassian.pocketknife.internal.querydsl.util.DatabaseAccessUtil;
 import com.atlassian.pocketknife.spi.querydsl.DefaultDialectConfiguration;
 import com.atlassian.sal.api.rdbms.TransactionalExecutorFactory;
 
+import javax.inject.Inject;
+
 /**
  * This class does nothing but is here to centralize the JIRA component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
  */
-@SuppressWarnings ("ALL")
+@SuppressWarnings("ALL")
 @Scanned
-public class JiraImports
-{
+public class JiraImports {
     /* QueryDSL components. Can't scan them with spring-scanner automatically because we want them in JIRA ony */
     @JiraComponent
     ConnectionPrimerImpl connectionPrimer;
@@ -109,7 +109,7 @@ public class JiraImports
 
     @Inject
     public JiraImports(
-            @JiraImport ("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
+            @JiraImport("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
             @JiraImport AttachmentService attachmentService,
             @JiraImport FieldManager fieldManager,
             @JiraImport FieldVisibilityManager fieldVisibilityManager,
@@ -120,7 +120,7 @@ public class JiraImports
             @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
             @JiraImport JiraBaseUrls jiraBaseUrls,
             @JiraImport JiraLicenseService licenseService,
-            @JiraImport ("jiraPermissionManager") PermissionManager jiraPermissionManager,
+            @JiraImport("jiraPermissionManager") PermissionManager jiraPermissionManager,
             @JiraImport ApplicationAuthorizationService applicationAuthorizationService,
             @JiraImport ApplicationRoleManager applicationRoleManager,
             @JiraImport ApplicationRoleAdminService applicationRoleAdminService,
@@ -138,10 +138,10 @@ public class JiraImports
             @JiraImport UserIssueHistoryManager userIssueHistoryManager,
             @JiraImport UserPreferencesManager userPreferencesManager,
             @JiraImport UserPropertyService userPropertyService,
-            @JiraImport ("jiraUserManager") UserManager userManager,
+            @JiraImport("jiraUserManager") UserManager userManager,
             @JiraImport UserUtil userUtil,
             @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,
-            @JiraImport ("jiraVersionManager") VersionManager versionManager,
+            @JiraImport("jiraVersionManager") VersionManager versionManager,
             @JiraImport VoteManager voteManager,
             @JiraImport WatcherManager watcherManager,
             @JiraImport WebFragmentHelper webFragmentHelper,
@@ -149,7 +149,7 @@ public class JiraImports
             @JiraImport ApplicationService applicationService,
             @JiraImport ApplicationManager applicationManager,
             @JiraImport GlobalPermissionManager globalPermissionManager,
-            @JiraImport ("beanBuilderFactory") BeanBuilderFactory beanBuilderFactory,
+            @JiraImport("beanBuilderFactory") BeanBuilderFactory beanBuilderFactory,
             @JiraImport FeatureManager featureManager,
             @JiraImport DashboardPermissionService dashboardPermissionService,
             @JiraImport CommentPropertyService commentPropertyService,
@@ -166,7 +166,7 @@ public class JiraImports
             @JiraImport CustomFieldInputHelper customFieldInputHelper,
             @JiraImport CustomFieldManager customFieldManager,
             @JiraImport ManagedConfigurationItemService managedConfigurationItemService,
-            @JiraImport TransactionalExecutorFactory transactionalExecutorFactory)
-    {
+            @JiraImport TransactionalExecutorFactory transactionalExecutorFactory,
+            @JiraImport ResponseFactory responseFactory) {
     }
 }

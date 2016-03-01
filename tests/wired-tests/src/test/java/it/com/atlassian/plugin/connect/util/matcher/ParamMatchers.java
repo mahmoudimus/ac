@@ -9,10 +9,8 @@ import org.hamcrest.Matcher;
 /**
  * Matchers for parameters passed to Connect add-ons.
  */
-public class ParamMatchers
-{
-    public static Matcher<String> isVersionNumber()
-    {
+public class ParamMatchers {
+    public static Matcher<String> isVersionNumber() {
         return MatchesPattern.matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*.*");
     }
 }

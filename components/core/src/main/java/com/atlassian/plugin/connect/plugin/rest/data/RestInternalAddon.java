@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.plugin.rest.data;
 import com.atlassian.plugins.rest.common.Link;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class RestInternalAddon extends RestAddon
-{
+public class RestInternalAddon extends RestAddon {
     @JsonProperty
     private final AddonApplink applink;
 
@@ -14,19 +13,16 @@ public class RestInternalAddon extends RestAddon
                              @JsonProperty("host") RestHost host,
                              @JsonProperty("license") RestAddonLicense license,
                              @JsonProperty("links") RestRelatedLinks links,
-                             @JsonProperty("applink") AddonApplink applink)
-    {
+                             @JsonProperty("applink") AddonApplink applink) {
         super(key, version, state, host, license, links);
         this.applink = applink;
     }
 
-    public AddonApplink getApplink()
-    {
+    public AddonApplink getApplink() {
         return applink;
     }
 
-    public static class AddonApplink
-    {
+    public static class AddonApplink {
         @JsonProperty
         private final String id;
 
@@ -34,19 +30,16 @@ public class RestInternalAddon extends RestAddon
         private final Link self;
 
         public AddonApplink(@JsonProperty("id") final String id,
-                            @JsonProperty("self") final Link self)
-        {
+                            @JsonProperty("self") final Link self) {
             this.id = id;
             this.self = self;
         }
 
-        public String getId()
-        {
+        public String getId() {
             return id;
         }
 
-        public Link getSelf()
-        {
+        public Link getSelf() {
             return self;
         }
     }

@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.web.iframe;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry;
@@ -15,14 +7,20 @@ import com.atlassian.plugin.connect.plugin.util.KeysFromPathMatcher;
 import com.atlassian.plugin.connect.plugin.util.KeysFromPathMatcher.AddOnKeyAndModuleKey;
 import com.atlassian.plugin.connect.plugin.web.context.ModuleContextParser;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
+
 import static com.atlassian.plugin.connect.api.web.iframe.IFrameRenderStrategyRegistry.JSON_CLASSIFIER;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Renders an iframe targeting an endpoint provided by a Connect addon.
  */
-public class ConnectIFrameServlet extends HttpServlet
-{
+public class ConnectIFrameServlet extends HttpServlet {
 
     private static final String CLASSIFIER_PARAMETER = "classifier";
 
@@ -32,10 +30,9 @@ public class ConnectIFrameServlet extends HttpServlet
     private final KeysFromPathMatcher keysFromPathMatcher;
 
     public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry,
-            ModuleContextParser moduleContextParser,
-            ModuleUiParamParser moduleUiParamParser,
-            KeysFromPathMatcher keysFromPathMatcher)
-    {
+                                ModuleContextParser moduleContextParser,
+                                ModuleUiParamParser moduleUiParamParser,
+                                KeysFromPathMatcher keysFromPathMatcher) {
         this.IFrameRenderStrategyRegistry = IFrameRenderStrategyRegistry;
         this.moduleContextParser = moduleContextParser;
         this.moduleUiParamParser = moduleUiParamParser;
@@ -44,43 +41,35 @@ public class ConnectIFrameServlet extends HttpServlet
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         Optional<AddOnKeyAndModuleKey> keys = keysFromPathMatcher.getAddOnKeyAndModuleKey(req.getPathInfo());
-        if (!keys.isPresent())
-        {
+        if (!keys.isPresent()) {
             resp.sendError(SC_NOT_FOUND);
             return;
         }
 
         IFrameRenderStrategy renderStrategy = getiFrameRenderStrategyForJsonModule(req, keys.get().getAddOnKey(), keys.get().getModuleKey());
 
-        if (renderStrategy != null)
-        {
+        if (renderStrategy != null) {
             resp.setContentType(renderStrategy.getContentType());
             ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
 
-            if (renderStrategy.shouldShow(moduleContextParameters))
-            {
+            if (renderStrategy.shouldShow(moduleContextParameters)) {
                 Optional<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
                 renderStrategy.render(moduleContextParameters, resp.getWriter(), moduleUiParameters);
-            }
-            else
-            {
+            } else {
                 renderStrategy.renderAccessDenied(resp.getWriter());
             }
         }
     }
 
-    private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addonKey, final String moduleKey)
-    {
+    private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addonKey, final String moduleKey) {
         String classifier = req.getParameter(CLASSIFIER_PARAMETER);
         String lookupClassifier = JSON_CLASSIFIER.equals(classifier) ? null : classifier;
 
         IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addonKey, moduleKey, lookupClassifier);
 
-        if (null != renderStrategy && JSON_CLASSIFIER.equals(classifier))
-        {
+        if (null != renderStrategy && JSON_CLASSIFIER.equals(classifier)) {
             return renderStrategy.toJsonRenderStrategy();
         }
 

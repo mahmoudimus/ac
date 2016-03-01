@@ -65,8 +65,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * continues to function when the add-on updates the template.
  *
  */
-public class BlueprintTemplateContextBean
-{
+public class BlueprintTemplateContextBean {
     /**
      *
      * A URL to which a POST request will be made during the rendering of the blueprint (see <a href="#POSTBODYEXAMPLE">'Example of the request POST body' below</a> for an example
@@ -158,21 +157,18 @@ public class BlueprintTemplateContextBean
      * </ul>
      */
     @Required
-    @StringSchemaAttributes (format = "uri")
+    @StringSchemaAttributes(format = "uri")
     private String url;
 
-    public BlueprintTemplateContextBean(BlueprintTemplateContextBeanBuilder builder)
-    {
+    public BlueprintTemplateContextBean(BlueprintTemplateContextBeanBuilder builder) {
         copyFieldsByNameAndType(builder, this);
     }
 
-    public static BlueprintTemplateContextBeanBuilder newBlueprintTemplateContextBeanBuilder()
-    {
+    public static BlueprintTemplateContextBeanBuilder newBlueprintTemplateContextBeanBuilder() {
         return new BlueprintTemplateContextBeanBuilder();
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 }

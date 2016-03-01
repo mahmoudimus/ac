@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class WebHookModuleMeta extends ConnectModuleMeta<WebHookModuleBean>
-{
+public class WebHookModuleMeta extends ConnectModuleMeta<WebHookModuleBean> {
 
-    public WebHookModuleMeta()
-    {
+    public WebHookModuleMeta() {
         super("webhooks", WebHookModuleBean.class);
     }
 }

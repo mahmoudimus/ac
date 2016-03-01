@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.plugin.web.redirect;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.google.common.annotations.VisibleForTesting;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,14 +15,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.annotations.VisibleForTesting;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,8 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A Servlet filter that performs permanent redirects from the given "from" pattern to the given "to" text
  * when it the response would otherwise have been a 404
  */
-public class RedirectOnNotFoundFilter implements Filter
-{
+public class RedirectOnNotFoundFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(RedirectOnNotFoundFilter.class);
     private static final String FROM_PATTERN = "from.pattern";
     private static final String TO_TEXT = "to.text";
@@ -51,8 +48,7 @@ public class RedirectOnNotFoundFilter implements Filter
      * </init-param>
      * }</pre>
      */
-    public void init(FilterConfig filterConfig)
-    {
+    public void init(FilterConfig filterConfig) {
         fromPattern = checkNotNull(filterConfig.getInitParameter(FROM_PATTERN));
         checkArgument(StringUtils.isNotEmpty(fromPattern));
         toPattern = checkNotNull(filterConfig.getInitParameter(TO_TEXT));
@@ -60,14 +56,12 @@ public class RedirectOnNotFoundFilter implements Filter
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-                         FilterChain filterChain) throws IOException, ServletException
-    {
+                         FilterChain filterChain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         RedirectingHttpServletResponseWrapper wrapper = new RedirectingHttpServletResponseWrapper(response);
         filterChain.doFilter(servletRequest, wrapper);
 
-        if (wrapper.is404())
-        {
+        if (wrapper.is404()) {
             HttpServletRequest request = (HttpServletRequest) servletRequest;
 
             final String queryString = request.getQueryString();
@@ -84,10 +78,8 @@ public class RedirectOnNotFoundFilter implements Filter
 
     @VisibleForTesting
     public static String createRedirectUrl(StringBuffer requestURLStr, String queryString,
-                                           String fromPattern, String toPattern) throws MalformedURLException
-    {
-        if (StringUtils.isEmpty(fromPattern))
-        {
+                                           String fromPattern, String toPattern) throws MalformedURLException {
+        if (StringUtils.isEmpty(fromPattern)) {
             return requestURLStr.toString();
         }
 
@@ -97,8 +89,7 @@ public class RedirectOnNotFoundFilter implements Filter
 
 
         String redirectPath = requestPath.replaceFirst(fromPattern, toPattern).replaceAll("//", "/");
-        if (redirectPath.endsWith("/"))
-        {
+        if (redirectPath.endsWith("/")) {
             redirectPath = redirectPath.substring(0, redirectPath.length() - 1);
         }
 
@@ -107,8 +98,7 @@ public class RedirectOnNotFoundFilter implements Filter
          * Note: fragments are not sent to the server so can ignore them
          */
 
-        if (StringUtils.isNotEmpty(queryString))
-        {
+        if (StringUtils.isNotEmpty(queryString)) {
             // Despite the Javadoc implying the opposite, query params are not included in the requestURLStr
             redirectPath = redirectPath + "?" + queryString;
         }
@@ -118,8 +108,7 @@ public class RedirectOnNotFoundFilter implements Filter
 
 
     @Override
-    public void destroy()
-    {
+    public void destroy() {
 
     }
 }

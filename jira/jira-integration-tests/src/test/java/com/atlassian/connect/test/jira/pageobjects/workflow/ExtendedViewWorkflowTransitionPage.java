@@ -11,8 +11,7 @@ import javax.inject.Inject;
 import static com.atlassian.webdriver.utils.element.ElementConditions.isPresent;
 import static com.atlassian.webdriver.utils.element.ElementConditions.isVisible;
 
-public class ExtendedViewWorkflowTransitionPage extends ViewWorkflowTransitionPage
-{
+public class ExtendedViewWorkflowTransitionPage extends ViewWorkflowTransitionPage {
 
     @Inject
     private PageBinder pageBinder;
@@ -20,13 +19,11 @@ public class ExtendedViewWorkflowTransitionPage extends ViewWorkflowTransitionPa
     @Inject
     private WebDriverPoller poller;
 
-    public ExtendedViewWorkflowTransitionPage(String workflowMode, String workflowName, String workflowStep, String workflowTransition)
-    {
+    public ExtendedViewWorkflowTransitionPage(String workflowMode, String workflowName, String workflowStep, String workflowTransition) {
         super(workflowMode, workflowName, workflowStep, workflowTransition);
     }
 
-    public JiraEditWorkflowTransitionFunctionParamsPage updateFirstPostFunction(String addonKey, String moduleKey)
-    {
+    public JiraEditWorkflowTransitionFunctionParamsPage updateFirstPostFunction(String addonKey, String moduleKey) {
         By viewPostFunctionsTabLocator = By.id("view_post_functions");
         poller.waitUntil(isVisible(viewPostFunctionsTabLocator), 20);
         driver.findElement(viewPostFunctionsTabLocator).click();
@@ -38,8 +35,7 @@ public class ExtendedViewWorkflowTransitionPage extends ViewWorkflowTransitionPa
         return pageBinder.bind(JiraEditWorkflowTransitionFunctionParamsPage.class, addonKey, moduleKey);
     }
 
-    public JiraEditWorkflowTransitionFunctionParamsPage goToAddAddonPostFunction(String postFunctionName, String addonKey, String moduleKey)
-    {
+    public JiraEditWorkflowTransitionFunctionParamsPage goToAddAddonPostFunction(String postFunctionName, String addonKey, String moduleKey) {
         AddWorkflowTransitionPostFunctionPage addTransitionPostFunctionPage = goToAddPostFunction();
         addTransitionPostFunctionPage.selectAndSubmitByName(postFunctionName);
         return pageBinder.bind(JiraEditWorkflowTransitionFunctionParamsPage.class, addonKey, moduleKey);

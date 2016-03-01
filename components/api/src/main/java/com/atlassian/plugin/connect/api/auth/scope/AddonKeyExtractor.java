@@ -4,8 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
-public interface AddonKeyExtractor
-{
+public interface AddonKeyExtractor {
     /**
      * Request header set by /iframe/host/main.js, indicating that the current request is an XDM request. The value
      * is the key of the Connect add-on that made the XDM request.

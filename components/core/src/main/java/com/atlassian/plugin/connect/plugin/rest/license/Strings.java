@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.rest.license;
 
 import com.atlassian.upm.api.util.Option;
-
 import org.apache.commons.lang.StringUtils;
 
 import static com.atlassian.upm.api.util.Option.none;
@@ -12,14 +11,10 @@ import static com.atlassian.upm.api.util.Option.some;
  *
  * Remove this once UPM supports this rest resource
  */
-public class Strings
-{
-    public static Option<String> getFirstNonEmpty(Iterable<String> vals)
-    {
-        for (String val : vals)
-        {
-            if (!StringUtils.isEmpty(val))
-            {
+public class Strings {
+    public static Option<String> getFirstNonEmpty(Iterable<String> vals) {
+        for (String val : vals) {
+            if (!StringUtils.isEmpty(val)) {
                 return some(val);
             }
         }

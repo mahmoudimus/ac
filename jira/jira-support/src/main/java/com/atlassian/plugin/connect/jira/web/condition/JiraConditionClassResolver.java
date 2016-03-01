@@ -1,20 +1,20 @@
 package com.atlassian.plugin.connect.jira.web.condition;
 
+import com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition;
+import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
+import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver;
-import com.google.common.collect.ImmutableList;
-
 import static com.atlassian.plugin.connect.spi.web.condition.ConnectConditionClassResolver.Entry.newEntry;
 
-public class JiraConditionClassResolver implements ConnectConditionClassResolver
-{
+public class JiraConditionClassResolver implements ConnectConditionClassResolver {
 
     @Override
-    public List<Entry> getEntries()
-    {
+    @SuppressWarnings("unchecked")
+    public List<Entry> getEntries() {
         return ImmutableList.of(
                 newEntry("has_selected_project", com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class).build(),
                 newEntry("is_admin_mode", com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class).build(),
@@ -29,11 +29,9 @@ public class JiraConditionClassResolver implements ConnectConditionClassResolver
                 newEntry("can_use_application", CanUseApplicationCondition.class).contextFree().build(),
 
                 newEntry("entity_property_equal_to", com.atlassian.jira.plugin.webfragment.conditions.EntityPropertyEqualToCondition.class)
-                        .withPredicates(new Predicate<Map<String, String>>()
-                        {
+                        .withPredicates(new Predicate<Map<String, String>>() {
                             @Override
-                            public boolean test(Map<String, String> parameters)
-                            {
+                            public boolean test(Map<String, String> parameters) {
                                 return !"addon".equals(parameters.get("entity"));
                             }
                         })
@@ -44,6 +42,7 @@ public class JiraConditionClassResolver implements ConnectConditionClassResolver
                 newEntry("can_manage_attachments", com.atlassian.jira.plugin.webfragment.conditions.CanManageAttachmentsCondition.class).build(),
                 newEntry("has_issue_permission", com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition.class).build(),
                 newEntry("has_project_permission", com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition.class).build(),
+                newEntry("has_global_permission", JiraGlobalPermissionCondition.class).build(),
                 newEntry("has_sub_tasks_available", com.atlassian.jira.plugin.webfragment.conditions.HasSubTasksAvailableCondition.class).build(),
                 newEntry("has_voted_for_issue", com.atlassian.jira.plugin.webfragment.conditions.HasVotedForIssueCondition.class).build(),
                 newEntry("is_issue_assigned_to_current_user", com.atlassian.jira.plugin.webfragment.conditions.IsIssueAssignedToCurrentUserCondition.class).build(),

@@ -1,13 +1,11 @@
 package it.com.atlassian.plugin.connect.confluence.blueprint;
 
-import java.util.List;
-
 import com.atlassian.confluence.plugins.createcontent.extensions.BlueprintModuleDescriptor;
 import com.atlassian.confluence.plugins.createcontent.extensions.ContentTemplateModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.confluence.blueprint.BlueprintContextProvider;
+import com.atlassian.plugin.connect.confluence.blueprint.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -22,10 +20,11 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -36,8 +35,7 @@ import static org.junit.Assert.assertTrue;
 
 @Application("confluence")
 @RunWith(AtlassianPluginsTestRunner.class)
-public class BlueprintModuleProviderTest
-{
+public class BlueprintModuleProviderTest {
 
     public static final String PLUGIN_KEY = "blueprints-plugin";
     public static final String PLUGIN_NAME = "Blueprints Plugin";
@@ -51,22 +49,19 @@ public class BlueprintModuleProviderTest
 
     public BlueprintModuleProviderTest(BlueprintModuleProvider blueprintModuleProvider,
                                        TestPluginInstaller testPluginInstaller,
-                                       TestAuthenticator testAuthenticator)
-    {
+                                       TestAuthenticator testAuthenticator) {
         this.blueprintModuleProvider = blueprintModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
     }
 
     @BeforeClass
-    public void setup()
-    {
+    public void setup() {
         testAuthenticator.authenticateUser("admin");
     }
 
     @Test
-    public void createBlueprintModules() throws Exception
-    {
+    public void createBlueprintModules() throws Exception {
         BlueprintTemplateBean template = new BlueprintTemplateBeanBuilder()
                 .withUrl("/blueprints/blueprint.xml")
                 .withBlueprintContextUrl("/blueprints/context")
@@ -91,11 +86,10 @@ public class BlueprintModuleProviderTest
 
         Plugin plugin = null;
 
-        try
-        {
+        try {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = blueprintModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
+            List<ModuleDescriptor<?>> descriptors = blueprintModuleProvider.createPluginModuleDescriptors(newArrayList(bean), addon);
 
             // should get a WebItem Descriptor and a Blueprint Descriptor
             assertEquals(3, descriptors.size());
@@ -130,7 +124,7 @@ public class BlueprintModuleProviderTest
 
             contentTemplateModuleDescriptor.enabled();
             //context provider is only available after the module is enabled.
-            assertTrue("ConnectBlueprintContextProvider not returned from getContextProvider" , contentTemplateModuleDescriptor.getContextProvider() instanceof BlueprintContextProvider);
+            assertTrue("ConnectBlueprintContextProvider not returned from getContextProvider", contentTemplateModuleDescriptor.getContextProvider() instanceof BlueprintContextProvider);
             BlueprintContextProvider context = (BlueprintContextProvider) contentTemplateModuleDescriptor.getContextProvider();
             assertEquals("the context url either doesn't match, or needs to be a relative url", "/blueprints/context", context.getContextUrl());
             assertEquals(PLUGIN_KEY, context.getAddonKey());
@@ -143,11 +137,8 @@ public class BlueprintModuleProviderTest
 
             blueprintModuleDescriptor.enabled();
 
-        }
-        finally
-        {
-            if (null != plugin)
-            {
+        } finally {
+            if (null != plugin) {
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
