@@ -28,7 +28,7 @@ public class IsLong extends TypeSafeDiagnosingMatcher<String> {
         }
 
         try {
-            Long.valueOf((String) string);
+            Long.valueOf(string);
         } catch (NumberFormatException e) {
             mismatchDescription.appendText("was " + string + " (not a long)");
             return false;

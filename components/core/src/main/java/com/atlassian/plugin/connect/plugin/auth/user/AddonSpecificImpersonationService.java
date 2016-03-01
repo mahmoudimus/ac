@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.auth.user;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserKey;
+import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +14,11 @@ import java.util.Arrays;
 public class AddonSpecificImpersonationService implements ThreeLeggedAuthService {
     private static String[] AUTHORISED_ADD_ON_KEYS;
     private static final String EAZYBI_ADD_ON_KEY = "com.eazybi.atlassian-connect.eazybi-jira";
+    private static final String JMWE_ADD_ON_KEY = "com.innovalog.mwec";
     private static final String ADD_ON_KEYS_SYS_PROP = "com.atlassian.connect.3la.authorised_add_on_keys"; // comma separated list of add-on keys
 
     static {
-        setAuthorisedAddonKeys(System.getProperty(ADD_ON_KEYS_SYS_PROP, EAZYBI_ADD_ON_KEY));
+        setAuthorisedAddonKeys(System.getProperty(ADD_ON_KEYS_SYS_PROP, Joiner.on(",").join(EAZYBI_ADD_ON_KEY, JMWE_ADD_ON_KEY)));
     }
 
     private static void setAuthorisedAddonKeys(String authorisedAddons) {

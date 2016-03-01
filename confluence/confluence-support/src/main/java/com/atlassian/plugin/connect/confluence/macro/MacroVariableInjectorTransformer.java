@@ -55,7 +55,7 @@ public class MacroVariableInjectorTransformer implements WebResourceTransformer 
             @Override
             protected CharSequence transform(CharSequence original) {
                 String originalS = original.toString();
-                for (Element var : (List<Element>) configElement.elements("var")) {
+                for (Element var : getElements(configElement)) {
                     String value = var.attributeValue("value");
                     if (var.attribute("i18n-key") != null) {
                         value = getText(var.attributeValue("i18n-key"), value);
@@ -69,6 +69,11 @@ public class MacroVariableInjectorTransformer implements WebResourceTransformer 
                 return originalS;
             }
         };
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Element> getElements(Element configElement) {
+        return configElement.elements("var");
     }
 
     private String getText(String key, String... values) {

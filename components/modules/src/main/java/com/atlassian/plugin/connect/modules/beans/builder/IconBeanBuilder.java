@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 /**
  * @since 1.0
  */
-public class IconBeanBuilder<T extends IconBeanBuilder, B extends IconBean> {
+public class IconBeanBuilder {
     private int width;
     private int height;
     private String url;
@@ -34,7 +34,7 @@ public class IconBeanBuilder<T extends IconBeanBuilder, B extends IconBean> {
         return this;
     }
 
-    public B build() {
-        return (B) new IconBean(this);
+    public IconBean build() {
+        return new IconBean(this);
     }
 }

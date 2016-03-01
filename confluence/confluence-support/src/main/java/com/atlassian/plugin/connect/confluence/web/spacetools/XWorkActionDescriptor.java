@@ -16,7 +16,7 @@ import org.dom4j.dom.DOMElement;
 
 import java.util.List;
 
-public class XWorkActionDescriptor extends AbstractModuleDescriptor implements ConfigurationProvider {
+public class XWorkActionDescriptor extends AbstractModuleDescriptor<Void> implements ConfigurationProvider {
     private static final ModuleFactory NOOP_MODULE_FACTORY = new NoOpModuleFactory();
 
     private final EventPublisher eventPublisher;
@@ -56,7 +56,7 @@ public class XWorkActionDescriptor extends AbstractModuleDescriptor implements C
     }
 
     @Override
-    public Object getModule() {
+    public Void getModule() {
         return null;
     }
 

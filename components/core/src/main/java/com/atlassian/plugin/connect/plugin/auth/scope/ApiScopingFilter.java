@@ -89,13 +89,13 @@ public class ApiScopingFilter implements Filter {
         HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res);
         if (!addonScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey)) {
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
-                    new Object[]{addonKey, user, req.getMethod(), req.getRequestURI()});
+                    addonKey, user, req.getMethod(), req.getRequestURI());
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
             eventPublisher.publish(new ScopedRequestDeniedEvent(req, addonKey));
             return;
         }
         log.debug("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
-                new Object[]{addonKey, req.getMethod(), req.getRequestURI(), user});
+                addonKey, req.getMethod(), req.getRequestURI(), user);
 
         try {
             chain.doFilter(inputConsumingRequest, wrappedResponse);

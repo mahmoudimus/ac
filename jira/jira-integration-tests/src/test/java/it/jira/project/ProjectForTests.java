@@ -1,11 +1,11 @@
 package it.jira.project;
 
-public class TestProject {
+public class ProjectForTests {
     private final String id;
 
     private final String key;
 
-    public TestProject(String key, String id) {
+    public ProjectForTests(String key, String id) {
         this.key = key;
         this.id = id;
     }

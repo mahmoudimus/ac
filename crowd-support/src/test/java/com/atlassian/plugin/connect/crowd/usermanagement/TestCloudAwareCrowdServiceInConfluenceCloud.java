@@ -104,6 +104,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void createOrEnableUserSetsAttributesOnSecondSyncEvent() {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
@@ -133,6 +134,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud {
 
 
     @Test
+    @SuppressWarnings("unchecked")
     public void createOrEnableUserSetsAttributesOnBothSidesAfterMissedSyncEvent() {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
@@ -149,8 +151,8 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud {
         verify(embedded).setAttributesOnUser(ADDON_USER_NAME, ATTRIBUTES);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
+    @SuppressWarnings("unchecked")
     public void createOrEnableUserThrowsWhenUserFailsToSync() {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);

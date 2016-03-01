@@ -62,6 +62,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Set<String> getAddonKeySet() {
         List<String> keyList;
 
@@ -129,8 +130,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry {
         try {
             for (String addonKey : getAddonKeySet()) {
                 final String json = getRawAddonSettings(addonKey);
-                if (json != null) // paranoid; check settings actually exist
-                {
+                if (json != null) { // paranoid; check settings actually exist
                     final AddonSettings addonSettings = deserializeAddonSettings(gson, json);
                     allAddonSettings.add(addonSettings);
                 } else {
@@ -228,6 +228,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry {
 
     private AddonSettings getAddonSettings(String pluginKey, Gson gson) {
         String json;
+        final long start = System.currentTimeMillis();
         read.lock();
         try {
             json = getRawAddonSettings(pluginKey);
@@ -235,7 +236,10 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry {
             read.unlock();
         }
         if (!Strings.isNullOrEmpty(json)) {
-            return deserializeAddonSettings(gson, json);
+            final AddonSettings addonSettings = deserializeAddonSettings(gson, json);
+            final long stop = System.currentTimeMillis();
+            log.info("Fetched AddonSettings for {} in {}ms", pluginKey, (stop - start));
+            return addonSettings;
         }
         // not found - return an empty AddonSetting object
         return new AddonSettings();

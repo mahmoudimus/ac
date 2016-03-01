@@ -11,14 +11,6 @@
     <name>Atlassian Connect Plugin</name>
     <packaging>atlassian-plugin</packaging>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <dependencies>
 
         <dependency>
@@ -74,19 +66,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>fastdev-plugin</artifactId>
-            <version>${fastdev.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.devrel</groupId>
-            <artifactId>developer-toolbox-plugin</artifactId>
-            <version>${toolbox.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-modules</artifactId>
             <version>${project.version}</version>
@@ -139,12 +118,6 @@
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-test-support-plugin</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -690,11 +663,6 @@
 
                             <bundledArtifacts>
                                 <bundledArtifact>
-                                    <groupId>com.atlassian.devrel</groupId>
-                                    <artifactId>developer-toolbox-plugin</artifactId>
-                                    <version>${toolbox.version}</version>
-                                </bundledArtifact>
-                                <bundledArtifact>
                                     <groupId>com.atlassian.upm</groupId>
                                     <artifactId>atlassian-universal-plugin-manager-javascript-tests</artifactId>
                                     <version>${atlassian.upm.version}</version>
@@ -735,59 +703,20 @@
                     </transformationSets>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.twdata.maven</groupId>
-                <artifactId>maven-cli-plugin</artifactId>
-                <version>1.0.10</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <commands>
-                        <pa>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install</pa>
-                        <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
-                    </commands>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
-                <version>${atlassian.spring.scanner.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>atlassian-spring-scanner</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
 
     <properties>
-        <product>jira</product>
-        <build.test.plugin>false</build.test.plugin>
         <devmode>true</devmode>
-        <fastdev.version>2.4</fastdev.version>
-        <toolbox.version>2.0.12</toolbox.version>
-        <test.plugin.artifact> </test.plugin.artifact>
-        <mvnCommand>/usr/bin/mvn</mvnCommand>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9
             include-artifact,com.atlassian.plugins:atlassian-connect-confluence-integration-tests
             include-artifact,com.atlassian.plugins:atlassian-connect-jira-integration-tests
         </od.testing.configuration>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
-
-        <!-- Override the javadoc.additional.params field because it breaks the json schema documentation generation -->
-        <javadoc.additional.params />
     </properties>
 </project>

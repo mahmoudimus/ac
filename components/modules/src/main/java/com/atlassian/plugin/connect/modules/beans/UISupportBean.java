@@ -2,9 +2,11 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
-import com.atlassian.plugin.connect.modules.beans.builder.UISupportModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.UISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
+
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
 /**
  * The UI Support element allows you to define how your content property field will be presented in
@@ -22,7 +24,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
  * @schemaTitle User Interface Support
  */
 @SchemaDefinition("uiSupport")
-public class UISupportModuleBean extends BaseModuleBean {
+public class UISupportBean {
     /**
      * The CQL builder will use this operator when constructing the CQL string.
      */
@@ -81,16 +83,16 @@ public class UISupportModuleBean extends BaseModuleBean {
     @Required
     private UISupportValueType valueType;
 
-    public UISupportModuleBean(UISupportModuleBeanBuilder builder) {
-        super(builder);
+    public UISupportBean(UISupportBeanBuilder builder) {
+        copyFieldsByNameAndType(builder, this);
     }
 
-    public static UISupportModuleBeanBuilder newUISupportModuleBean() {
-        return new UISupportModuleBeanBuilder<>();
+    public static UISupportBeanBuilder newUISupportModuleBean() {
+        return new UISupportBeanBuilder();
     }
 
-    public static UISupportModuleBeanBuilder newUISupportModuleBean(UISupportModuleBean defaultBean) {
-        return new UISupportModuleBeanBuilder(defaultBean);
+    public static UISupportBeanBuilder newUISupportModuleBean(UISupportBean defaultBean) {
+        return new UISupportBeanBuilder(defaultBean);
     }
 
     public String getDefaultOperator() {

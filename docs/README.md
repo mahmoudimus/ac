@@ -43,11 +43,7 @@ each product, including any specific modules for that product.
 
 To regenerate the schemas after changing the source code or the Javadoc of `modules`:
 
-	mvn -pl plugin process-classes
-
-To explicitly invoke the `json-schemagen` goals to generate an individual schema:
-
-    mvn -pl components/modules external.atlassian.json:json-schemagen-maven-plugin:generate-support-docs@schema-support external.atlassian.json:json-schemagen-maven-plugin:generate-schema@<shallow|jira|confluence>-schema
+	mvn -pl components/modules process-classes
 
 #### JavaScript API modules
 

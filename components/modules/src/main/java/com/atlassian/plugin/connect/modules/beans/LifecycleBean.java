@@ -6,6 +6,8 @@ import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
+
 /**
  * Allows an add-on to register callbacks for plugin lifecycle events. Each property in this object is a URL relative to
  * the add-on's base URL. When a lifecycle event is fired, it will POST to the appropriate URL registered for the event.
@@ -35,7 +37,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *        <td><code>clientKey</code></td>
  *        <td>Identifying key for the Atlassian product instance that the add-on was installed into. This will never change for a given
  *        instance, and is unique across all Atlassian product tenants. This value should be used to key tenant details
- *        in your add-on.</td>
+ *        in your add-on. The one time the clientKey can change is when a backup taken from a different instance is restored onto the instance.
+ *        Determining the contract between the instance and add-on in this situation is tracked by
+ *        <a href="https://ecosystem.atlassian.net/browse/AC-1528">AC-1528</a> in the Connect backlog.</td>
  *    </tr>
  *    <tr>
  *        <td><code>publicKey</code></td>
@@ -70,14 +74,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *    <tr>
  *        <td><code>serviceEntitlementNumber</code>
  *        (optional)</td>
- *        <td>Also known as the SEN, the service entitlement number is the add-on license id. This attribute will only be included  
+ *        <td>Also known as the SEN, the service entitlement number is the add-on license id. This attribute will only be included
  *        during installation of a paid add-on.</td>
  *    </tr>
  *</table>
  *
  * @schemaTitle Lifecycle
  */
-public class LifecycleBean extends BaseModuleBean {
+public class LifecycleBean {
     /**
      * When a Connect add-on is installed, a synchronous request is fired to this URL to initiate the installation
      * handshake. In order to successfully complete installation, the add-on must respond with either a `200 OK` or
@@ -120,7 +124,7 @@ public class LifecycleBean extends BaseModuleBean {
     }
 
     public LifecycleBean(LifecycleBeanBuilder builder) {
-        super(builder);
+        copyFieldsByNameAndType(builder, this);
 
         if (null == installed) {
             this.installed = "";

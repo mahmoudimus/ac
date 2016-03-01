@@ -98,6 +98,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest {
         DynamicContentMacroModuleBean editorMacro = createEditorMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean customTitleEditorMacro = createCustomEditorTitleMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean hiddenMacro = createHiddenMacro(newDynamicContentMacroModuleBean());
+        DynamicContentMacroModuleBean hiddenParameterMacro = createHiddenParameterMacro(newDynamicContentMacroModuleBean());
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
@@ -183,7 +184,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest {
                         clientSideBodyEditingMacroScriptInjection,
                         macroInTableMacro,
                         slowMacro,
-                        dynamicMacroWithFallback
+                        dynamicMacroWithFallback,
+                        hiddenParameterMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, helloWorldServlet())
                 .addRoute("/render-editor", macroEditor())

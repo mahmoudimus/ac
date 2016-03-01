@@ -78,7 +78,7 @@ public class JiraLicenseChangeListener {
             try {
                 connectAddonUserGroupProvisioningService.ensureUserIsInGroups(addonUser.getName(), newGroups);
             } catch (Exception e) {
-                log.error("Error adding addon user {} to new application default groups", addonUser.getName(), e);
+                log.warn("Error adding addon user {} to new application default groups", addonUser.getName(), e);
             }
         }
     }

@@ -2,7 +2,7 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.plugin.connect.test.jira.product.JiraTestedProductAccessor;
-import it.jira.project.TestProject;
+import it.jira.project.ProjectForTests;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,7 +16,7 @@ public class JiraTestBase {
 
     protected static JiraTestedProduct product = new JiraTestedProductAccessor().getJiraProduct();
 
-    protected static TestProject project;
+    protected static ProjectForTests project;
 
     @BeforeClass
     public static void beforeClass() throws RemoteException {
@@ -28,10 +28,10 @@ public class JiraTestBase {
         product.backdoor().project().deleteProject(project.getKey());
     }
 
-    public static TestProject addProject() {
+    public static ProjectForTests addProject() {
         String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
         String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
                 "Test project " + projectKey, projectKey, "admin", PROJECT_TEMPLATE_KEY));
-        return new TestProject(projectKey, projectId);
+        return new ProjectForTests(projectKey, projectId);
     }
 }

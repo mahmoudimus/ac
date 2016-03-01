@@ -66,11 +66,8 @@ public class RelativeAddonUrl {
         if (!relativeUrl.equals(that.relativeUrl)) {
             return false;
         }
-        if (!servletDescriptorUrl.equals(that.servletDescriptorUrl)) {
-            return false;
-        }
+        return servletDescriptorUrl.equals(that.servletDescriptorUrl);
 
-        return true;
     }
 
     @Override

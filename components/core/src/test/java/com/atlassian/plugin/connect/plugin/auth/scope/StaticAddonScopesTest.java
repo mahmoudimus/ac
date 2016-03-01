@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.auth.scope;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScope;
 import com.atlassian.plugin.connect.plugin.auth.scope.whitelist.AddonScopeLoadJsonFileHelper;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.junit.Test;

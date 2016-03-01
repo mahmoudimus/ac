@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.util.matcher.UnitTestMatchers.predicateThatWillMatch;
+import static com.atlassian.plugin.connect.test.matcher.UnitTestMatchers.predicateThatWillMatch;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;

@@ -58,8 +58,7 @@ public final class RedirectedWebPanelLocationProviderModuleDescriptor
     }
 
     private RedirectedWebPanelLocationProvider createRedirectedWebPanelLocationProvider(Element element) {
-        // noinspection unchecked
-        List<Element> locationElements = element.elements("location");
+        List<Element> locationElements = getLocation(element);
         final Set<String> locations = ImmutableSet.copyOf(locationElements.stream()
                 .map(Element::getText)
                 .collect(Collectors.toSet()));
@@ -69,5 +68,10 @@ public final class RedirectedWebPanelLocationProviderModuleDescriptor
     @Override
     public RedirectedWebPanelLocationProvider getModule() {
         return module;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Element> getLocation(Element element) {
+        return element.elements("location");
     }
 }

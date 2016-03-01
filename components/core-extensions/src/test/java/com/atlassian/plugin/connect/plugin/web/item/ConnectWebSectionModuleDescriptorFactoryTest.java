@@ -3,11 +3,12 @@ package com.atlassian.plugin.connect.plugin.web.item;
 import com.atlassian.plugin.connect.api.web.WebFragmentLocationQualifier;
 import com.atlassian.plugin.connect.api.web.condition.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.api.web.iframe.IFrameRenderer;
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.test.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.Condition;
@@ -26,12 +27,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.testsupport.util.matcher.ConditionMatchers.isCompositeConditionContaining;
+import static com.atlassian.plugin.connect.test.matcher.ConditionMatchers.isCompositeConditionContaining;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.anyMap;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
@@ -70,11 +71,11 @@ public class ConnectWebSectionModuleDescriptorFactoryTest {
         when(plugin.getKey()).thenReturn("my-awesome-plugin");
         when(plugin.getName()).thenReturn("My Plugin™");
 
-        when(conditionModuleFragmentFactory.createFragment(eq("my-awesome-plugin"), anyList()))
+        when(conditionModuleFragmentFactory.createFragment(eq("my-awesome-plugin"), anyListOf(ConditionalBean.class)))
                 .thenReturn(conditionElement());
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
         when(webFragmentHelper.loadCondition(eq(CONDITION_CLASSNAME), eq(plugin))).thenReturn(condition);
-        when(condition.shouldDisplay(anyMap())).thenReturn(true);
+        when(condition.shouldDisplay(anyMapOf(String.class, Object.class))).thenReturn(true);
 
         WebSectionModuleBean bean = newWebSectionBean()
                 .withName(new I18nProperty("My Web Section", "my.websection"))

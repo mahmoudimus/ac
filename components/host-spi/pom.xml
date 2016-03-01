@@ -10,14 +10,6 @@
     <artifactId>atlassian-connect-host-spi</artifactId>
     <name>Atlassian Connect - SPI for Host Applications</name>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <dependencies>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -71,7 +63,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

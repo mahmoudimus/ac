@@ -59,8 +59,13 @@ public class BeanToModuleRegistrar {
             return;
         }
 
-        Collection<ConnectModuleProvider> moduleProviders = pluginAccessor.getModules(
+        Collection<ConnectModuleProvider<?>> moduleProviders = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
+
+        // The time period bracketed here is the one we are naively obligated to pay each request with the current
+        // vertigo spike logic as per EXT-43. I'm not including the module provider logic above as we could easily
+        // hoist this in the vertigo logic.
+        final long start = System.currentTimeMillis();
 
         Map<String, List<ModuleBean>> moduleLists = getModuleLists(addon);
         List<ModuleBean> lifecycleWebhooks = getLifecycleWebhooks(addon.getLifecycle());
@@ -70,6 +75,10 @@ public class BeanToModuleRegistrar {
         List<ModuleDescriptor<?>> descriptorsToRegister = new ArrayList<>();
         getDescriptorsToRegisterForModules(moduleLists, addon, moduleProviders, descriptorsToRegister);
         getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, addon, moduleProviders, descriptorsToRegister);
+
+        final long stop = System.currentTimeMillis();
+        log.info("registerDescriptorsForBeans computed descriptors for {} in {}ms", addon.getKey(), (stop - start));
+
         if (!descriptorsToRegister.isEmpty()) {
             registrations.putIfAbsent(addon.getKey(), dynamicDescriptorRegistration.registerDescriptors(descriptorsToRegister));
         }
@@ -120,19 +129,20 @@ public class BeanToModuleRegistrar {
         return webhooks;
     }
 
+    @SuppressWarnings("unchecked")
     private void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
                                                     ConnectAddonBean addon,
-                                                    Collection<ConnectModuleProvider> moduleProviders,
+                                                    Collection<ConnectModuleProvider<?>> moduleProviders,
                                                     List<ModuleDescriptor<?>> descriptorsToRegister) throws ConnectModuleRegistrationException {
         for (Map.Entry<String, List<ModuleBean>> entry : moduleList.entrySet()) {
-            List<ModuleBean> beans = entry.getValue();
+            List<?> beans = entry.getValue();
             ConnectModuleProvider provider = findProviderOrThrow(entry.getKey(), moduleProviders);
             List<ModuleDescriptor<?>> descriptors = provider.createPluginModuleDescriptors(beans, addon);
             descriptorsToRegister.addAll(descriptors);
         }
     }
 
-    private ConnectModuleProvider findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider> moduleProviders)
+    private ConnectModuleProvider<?> findProviderOrThrow(String descriptorKey, Collection<ConnectModuleProvider<?>> moduleProviders)
             throws ConnectModuleRegistrationException {
         return moduleProviders.stream()
                 .filter(provider -> provider.getMeta().getDescriptorKey().equals(descriptorKey))

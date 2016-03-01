@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.jira.web.context;
 
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.web.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
@@ -13,12 +12,8 @@ import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResol
 import com.atlassian.plugin.connect.spi.web.context.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
 import com.atlassian.plugin.connect.spi.web.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.predicate.ModuleDescriptorPredicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -27,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static com.atlassian.plugin.connect.test.matcher.UnitTestMatchers.predicateThatWillMatch;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 import static org.hamcrest.Matchers.equalTo;
@@ -215,21 +211,6 @@ public final class AbstractContextFilterTest {
             @Override
             public boolean hasPermission(final String value, final ApplicationUser applicationUser) {
                 return false;
-            }
-        };
-    }
-
-    // TODO Copied from com.atlassian.plugin.connect.util.matcher.UnitTestMatcher due to circular dependencies. Find better place to utils for tests. API?
-    private static <T> Matcher<ModuleDescriptorPredicate<T>> predicateThatWillMatch(final ModuleDescriptor<T> exampleDescriptor) {
-        return new TypeSafeMatcher<ModuleDescriptorPredicate<T>>() {
-            @Override
-            protected boolean matchesSafely(final ModuleDescriptorPredicate<T> item) {
-                return item.matches(exampleDescriptor);
-            }
-
-            @Override
-            public void describeTo(final Description description) {
-                description.appendText("predicate that matches a " + exampleDescriptor.getClass().toString());
             }
         };
     }

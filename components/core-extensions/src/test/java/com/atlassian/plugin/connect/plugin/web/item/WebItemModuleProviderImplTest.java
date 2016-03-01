@@ -138,7 +138,9 @@ public class WebItemModuleProviderImplTest {
 
     private static Matcher<List<ConditionalBean>> hasComplexConditionalBeanOfType(CompositeConditionType type) {
         return new BaseMatcher<List<ConditionalBean>>() {
+
             @Override
+            @SuppressWarnings("unchecked")
             public boolean matches(Object o) {
                 if (o instanceof List) {
                     List<ConditionalBean> conditionalBeans = (List<ConditionalBean>) o;

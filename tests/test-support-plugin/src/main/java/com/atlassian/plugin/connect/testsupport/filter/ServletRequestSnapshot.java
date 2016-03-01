@@ -28,6 +28,7 @@ public class ServletRequestSnapshot {
     private final UserProfile remoteUserProfile;
     private final String remoteUsername;
 
+    @SuppressWarnings("unchecked")
     public ServletRequestSnapshot(HttpServletRequest request, UserManager userManager) {
         this.contextPath = request.getContextPath();
         this.servletPath = request.getServletPath();

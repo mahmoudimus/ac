@@ -13,6 +13,7 @@ public class ModuleUiParamParserImpl implements ModuleUiParamParser {
     private static final Logger log = LoggerFactory.getLogger(ModuleUiParamParserImpl.class);
 
     @Override
+    @SuppressWarnings("unchecked")
     public Optional<String> parseUiParameters(HttpServletRequest req) {
         Map<String, String[]> parameterMap = req.getParameterMap();
         String uiParams = getParam(parameterMap, "ui-params");
