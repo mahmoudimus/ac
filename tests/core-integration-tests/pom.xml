@@ -13,14 +13,6 @@
     <name>Atlassian Connect - Core Integration Tests</name>
     <packaging>atlassian-plugin</packaging>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <profiles>
         <profile>
             <id>freezer-release-profile</id>
@@ -93,6 +85,10 @@
     </profiles>
 
     <dependencies>
+        <dependency>
+            <groupId>com.atlassian</groupId>
+            <artifactId>test-batching</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-connect-integration-tests-support</artifactId>
@@ -174,7 +170,7 @@
         <dependency>
             <artifactId>acceptance-data-helper</artifactId>
             <groupId>com.atlassian.test.ondemand</groupId>
-            <version>1.0.14</version>
+            <version>1.0.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -495,8 +491,9 @@
                         </testGroup>
 
                         <!-- Tests of cross-product functionality on Confluence -->
+
                         <testGroup>
-                            <id>confluence-common-misc</id>
+                            <id>confluence-common-batches</id>
                             <productIds>
                                 <productId>confluence</productId>
                             </productIds>
@@ -504,38 +501,7 @@
                                 <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
-                                <include>it/common/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/common/iframe/*.java</exclude>
-                                <exclude>it/common/jsapi/*.java</exclude>
-                                <exclude>it/common/lifecycle/*.java</exclude>
-                                <exclude>it/common/upm/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-common-iframe</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/iframe/*.java</include>
-                                <include>it/common/upm/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-common-lifecycle</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/lifecycle/*.java</include>
+                                <include>it/common/CommonIntegrationTestBatch.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -552,9 +518,9 @@
                         </testGroup>
 
                         <!-- Tests of cross-product functionality on JIRA -->
-
+                        
                         <testGroup>
-                            <id>jira-common-misc</id>
+                            <id>jira-common-batches</id>
                             <productIds>
                                 <productId>jira</productId>
                             </productIds>
@@ -562,38 +528,7 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
-                                <include>it/common/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/common/iframe/*.java</exclude>
-                                <exclude>it/common/jsapi/*.java</exclude>
-                                <exclude>it/common/lifecycle/*.java</exclude>
-                                <exclude>it/common/upm/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-common-iframe</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/iframe/*.java</include>
-                                <include>it/common/upm/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-common-lifecycle</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/lifecycle/*.java</include>
+                                <include>it/common/CommonIntegrationTestBatch.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -630,7 +565,6 @@
     </build>
 
     <properties>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9

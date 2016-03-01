@@ -91,7 +91,7 @@ public class WebItemModuleDescriptorFactoryTest {
         when(webFragmentHelper.renderVelocityFragment(anyString(), anyMapOf(String.class, Object.class))).thenAnswer(
                 invocationOnMock -> {
                     Object[] args = invocationOnMock.getArguments();
-                    return (String) args[0];
+                    return args[0];
                 }
         );
     }

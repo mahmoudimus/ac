@@ -62,6 +62,11 @@ public class BeanToModuleRegistrar {
         Collection<ConnectModuleProvider<?>> moduleProviders = pluginAccessor.getModules(
                 new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
 
+        // The time period bracketed here is the one we are naively obligated to pay each request with the current
+        // vertigo spike logic as per EXT-43. I'm not including the module provider logic above as we could easily
+        // hoist this in the vertigo logic.
+        final long start = System.currentTimeMillis();
+
         Map<String, List<ModuleBean>> moduleLists = getModuleLists(addon);
         List<ModuleBean> lifecycleWebhooks = getLifecycleWebhooks(addon.getLifecycle());
         Map<String, List<ModuleBean>> lifecycleWebhookModuleList
@@ -70,6 +75,10 @@ public class BeanToModuleRegistrar {
         List<ModuleDescriptor<?>> descriptorsToRegister = new ArrayList<>();
         getDescriptorsToRegisterForModules(moduleLists, addon, moduleProviders, descriptorsToRegister);
         getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, addon, moduleProviders, descriptorsToRegister);
+
+        final long stop = System.currentTimeMillis();
+        log.info("registerDescriptorsForBeans computed descriptors for {} in {}ms", addon.getKey(), (stop - start));
+
         if (!descriptorsToRegister.isEmpty()) {
             registrations.putIfAbsent(addon.getKey(), dynamicDescriptorRegistration.registerDescriptors(descriptorsToRegister));
         }

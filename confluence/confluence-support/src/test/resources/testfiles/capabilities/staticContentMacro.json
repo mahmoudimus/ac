@@ -63,6 +63,7 @@
         "value": "Some Name"
       },
       "required": true,
+      "hidden": false,
       "type": "enum",
       "values": [
         "paramValue1",

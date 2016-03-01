@@ -22,7 +22,8 @@ import com.atlassian.query.operator.Operator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import it.jira.project.TestProject;
+import it.jira.project.ProjectForTests;
+
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -49,7 +50,7 @@ public class TestEntityProperty extends JiraTestBase {
     private static EntityPropertyClient entityPropertyClient;
     private static ProjectControl projectControl;
     private static SearchClient searchClient;
-    private TestProject testProject;
+    private ProjectForTests testProject;
 
     @BeforeClass
     public static void startConnectAddon() throws Exception {

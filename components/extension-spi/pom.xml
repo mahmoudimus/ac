@@ -10,14 +10,6 @@
     <artifactId>atlassian-connect-extension-spi</artifactId>
     <name>Atlassian Connect - SPI for Extensions</name>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <dependencies>
         <dependency>
             <groupId>javax.inject</groupId>

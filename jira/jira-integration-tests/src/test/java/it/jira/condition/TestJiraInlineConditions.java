@@ -125,7 +125,7 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest {
                 .build()).collect(toList()).toArray(new WebPanelModuleBean[CONDITIONS.size()]);
     }
 
-    private static String webItemKey(final TestedCondition condition) {
+    private static String webItemKey(final ConditionUnderTest condition) {
         return "test-web-item-" + condition.getName().replace("_", "-") + "-" + condition.getParameters().hashCode();
     }
 
@@ -133,7 +133,7 @@ public class TestJiraInlineConditions extends AbstractJiraConditionsTest {
         return "test-web-panel-" + name.replace("_", "-");
     }
 
-    private static String conditionVariable(TestedCondition condition) {
+    private static String conditionVariable(ConditionUnderTest condition) {
         Map<String, String> parameters = condition.getParameters();
         String params = parameters.isEmpty() ? "" :
                 "(" + Joiner.on(",").withKeyValueSeparator("=").join(parameters.entrySet()) + ")";

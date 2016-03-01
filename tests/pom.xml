@@ -11,14 +11,6 @@
     <name>Atlassian Connect - Tests Parent POM</name>
     <packaging>pom</packaging>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <modules>
         <module>test-support-plugin</module>
         <module>unit-test-support</module>
