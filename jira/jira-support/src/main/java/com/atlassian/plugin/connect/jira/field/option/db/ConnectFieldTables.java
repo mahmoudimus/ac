@@ -22,4 +22,8 @@ public class ConnectFieldTables {
     public QCustomFieldValue customFieldValue(String alias) {
         return new QCustomFieldValue(alias, schemaProvider);
     }
+
+    public QIssue issue(String alias) {
+        return new QIssue(alias, schemaProvider);
+    }
 }

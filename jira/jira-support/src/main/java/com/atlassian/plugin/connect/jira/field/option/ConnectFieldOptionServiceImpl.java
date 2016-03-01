@@ -9,6 +9,7 @@ import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.ErrorCollections;
 import com.atlassian.jira.util.Page;
 import com.atlassian.jira.util.PageRequest;
+import com.atlassian.jira.util.PageRequests;
 import com.atlassian.plugin.connect.api.auth.AddonDataAccessChecker;
 import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.FieldId;
@@ -91,7 +92,7 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService 
     @Override
     public ServiceResult removeOption(AuthenticationData auth, final FieldId fieldId, final Integer optionId) {
         return authenticated(auth, fieldId, () -> {
-            Collection<Long> issuesWithTheFieldSet = customFieldValueManager.findIssues(fieldId, optionId);
+            Collection<Long> issuesWithTheFieldSet = customFieldValueManager.findIssues(fieldId, optionId, PageRequests.request(0L, 10));
             if (issuesWithTheFieldSet.isEmpty()) {
                 connectFieldOptionManager.delete(fieldId.getAddonKey(), fieldId.getFieldKey(), optionId);
                 return successResult();
@@ -110,18 +111,18 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService 
     }
 
     @Override
-    public ServiceResult replaceInAllIssues(AuthenticationData auth, final FieldId fieldId, final Integer from, final Integer to) {
-        return authenticated(auth, fieldId, () -> {
+    public ServiceOutcome<Boolean> replaceInAllIssues(AuthenticationData auth, final FieldId fieldId, final Integer from, final Integer to) {
+        return this.<ServiceOutcome<Boolean>>authenticated(auth, fieldId, () -> {
 
             if (from.equals(to)) {
-                return errorResult(ErrorCollections.create(i18n.getText("connect.issue.field.option.replace.equal"), VALIDATION_FAILED));
+                return errorOutcome(ErrorCollections.create(i18n.getText("connect.issue.field.option.replace.equal"), VALIDATION_FAILED));
             }
 
             return ServiceOutcomes.toEither(getOption(fieldId, to))
-                    .left().map(ServiceOutcomes::errorResult)
+                    .left().<ServiceOutcome<Boolean>>map(ServiceOutcomes::errorOutcome)
                     .left().on(newValue -> {
-                        customFieldValueManager.replace(fieldId, from, to);
-                        return successResult();
+                        Collection<Long> leftIssues = customFieldValueManager.replace(fieldId, from, to, newValue.getScope());
+                        return successOutcome(leftIssues.isEmpty());
                     });
         });
     }

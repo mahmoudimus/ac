@@ -68,7 +68,11 @@ public interface ConnectFieldOptionService {
     ServiceOutcome<ConnectFieldOption> getOption(AuthenticationData auth, FieldId fieldId, Integer optionId);
 
     /**
-     * Delete a specified option
+     * Delete a specified option.
+     *
+     * <p>
+     *     The option cannot be deleted if it is set in any issue.
+     * </p>
      *
      * @param fieldId the field the option belongs to
      * @param optionId the option id
@@ -94,7 +98,7 @@ public interface ConnectFieldOptionService {
      * @param from the value currently set in issues
      * @param to the value to replace the previous value with
      * @param auth authentication details of the current call
-     * @return a successful result regardless of how many issues were affected. Errors in case of server problems, DB access or similar
+     * @return true if the value was replaced in all issues, false if some issues could not have the new value set due to scope incompatibility
      */
-    ServiceResult replaceInAllIssues(AuthenticationData auth, FieldId fieldId, Integer from, Integer to);
+    ServiceOutcome<Boolean> replaceInAllIssues(AuthenticationData auth, FieldId fieldId, Integer from, Integer to);
 }
