@@ -13,6 +13,5 @@ import org.junit.runner.RunWith;
     },
     basePackages = "it.jira"
 )
-public class JiraIntegrationTestBatch
-{
+public class JiraIntegrationTestBatch {
 }

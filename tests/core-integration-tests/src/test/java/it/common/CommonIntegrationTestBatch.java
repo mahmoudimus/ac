@@ -13,6 +13,5 @@ import org.junit.runner.RunWith;
     },
     basePackages = "it.common"
 )
-public class CommonIntegrationTestBatch
-{
+public class CommonIntegrationTestBatch {
 }

@@ -13,6 +13,5 @@ import org.junit.runner.RunWith;
     },
     basePackages = "it.confluence"
 )
-public class ConfluenceIntegrationTestBatch
-{
+public class ConfluenceIntegrationTestBatch {
 }
