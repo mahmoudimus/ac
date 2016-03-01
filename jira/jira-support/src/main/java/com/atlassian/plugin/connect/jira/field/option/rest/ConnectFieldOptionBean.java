@@ -10,11 +10,13 @@ import java.util.Objects;
 public final class ConnectFieldOptionBean {
     private final Integer id;
     private final Object value;
+    private final ConnectFieldOptionScopeBean scope;
 
     @JsonCreator
-    public ConnectFieldOptionBean(@JsonProperty("id") Integer id, @JsonProperty("value") Object value) {
+    public ConnectFieldOptionBean(@JsonProperty("id") Integer id, @JsonProperty("value") Object value, @JsonProperty("scope") ConnectFieldOptionScopeBean scope) {
         this.id = id;
         this.value = value;
+        this.scope = scope;
     }
 
     public Integer getId() {
@@ -23,6 +25,10 @@ public final class ConnectFieldOptionBean {
 
     public Object getValue() {
         return value;
+    }
+
+    public ConnectFieldOptionScopeBean getScope() {
+        return scope;
     }
 
     @Override
@@ -37,12 +43,13 @@ public final class ConnectFieldOptionBean {
         ConnectFieldOptionBean that = (ConnectFieldOptionBean) o;
 
         return Objects.equals(this.getId(), that.getId()) &&
-                Objects.equals(this.getValue(), that.getValue());
+                Objects.equals(this.getValue(), that.getValue()) &&
+                Objects.equals(this.getScope(), that.getScope());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getValue());
+        return Objects.hash(getId(), getValue(), getScope());
     }
 
     @Override
@@ -50,6 +57,7 @@ public final class ConnectFieldOptionBean {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("id", getId())
                 .add("value", getValue())
+                .add("scope", getScope())
                 .toString();
     }
 }

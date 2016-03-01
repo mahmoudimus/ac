@@ -21,6 +21,7 @@ import com.atlassian.sal.api.message.I18nResolver;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -54,9 +55,9 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService 
     }
 
     @Override
-    public ServiceOutcome<ConnectFieldOption> addOption(AuthenticationData auth, final FieldId fieldId, final JsonNode value) {
+    public ServiceOutcome<ConnectFieldOption> addOption(AuthenticationData auth, final FieldId fieldId, final JsonNode value, final ConnectFieldOptionScope scope) {
         return authenticated(auth, fieldId, () -> {
-            Either<ErrorCollection, ConnectFieldOption> result = connectFieldOptionManager.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString());
+            Either<ErrorCollection, ConnectFieldOption> result = connectFieldOptionManager.create(fieldId.getAddonKey(), fieldId.getFieldKey(), value.toString(), scope);
             return result.<ServiceOutcome<ConnectFieldOption>>fold(
                     ServiceOutcomes::errorOutcome,
                     ServiceOutcomes::successOutcome);
@@ -65,8 +66,13 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService 
 
     @Override
     public ServiceOutcome<Page<ConnectFieldOption>> getOptions(AuthenticationData auth, final FieldId fieldId, PageRequest pageRequest) {
+        return getOptions(auth, fieldId, pageRequest, null);
+    }
+
+    @Override
+    public ServiceOutcome<Page<ConnectFieldOption>> getOptions(AuthenticationData auth, final FieldId fieldId, PageRequest pageRequest, @Nullable ConnectFieldOptionScope scope) {
         return authenticated(auth, fieldId, () -> {
-            Page<ConnectFieldOption> options = connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey(), pageRequest);
+            Page<ConnectFieldOption> options = connectFieldOptionManager.getAll(fieldId.getAddonKey(), fieldId.getFieldKey(), pageRequest, scope);
             return successOutcome(options);
         });
     }
@@ -98,7 +104,7 @@ public class ConnectFieldOptionServiceImpl implements ConnectFieldOptionService 
     @Override
     public ServiceOutcome<ConnectFieldOption> putOption(AuthenticationData auth, final FieldId fieldId, final ConnectFieldOption option) {
         return authenticated(auth, fieldId, () ->
-                connectFieldOptionManager.save(fieldId.getAddonKey(), fieldId.getFieldKey(), option.getId(), option.getValue())
+                connectFieldOptionManager.save(fieldId.getAddonKey(), fieldId.getFieldKey(), option)
                         .map(ServiceOutcomes::successOutcome)
                         .orElseGet(() -> notFound(option.getId())));
     }

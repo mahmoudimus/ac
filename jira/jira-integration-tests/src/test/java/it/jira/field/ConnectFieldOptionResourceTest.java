@@ -5,7 +5,9 @@ import com.atlassian.fugue.Pair;
 import com.atlassian.jira.rest.api.pagination.PageBean;
 import com.atlassian.jira.rest.api.util.ErrorCollection;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
+import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionScope;
 import com.atlassian.plugin.connect.jira.field.option.rest.ConnectFieldOptionBean;
+import com.atlassian.plugin.connect.jira.field.option.rest.ConnectFieldOptionScopeBean;
 import com.atlassian.plugin.connect.jira.field.option.rest.ReplaceRequestBean;
 import com.atlassian.plugin.connect.jira.util.Json;
 import com.atlassian.plugin.connect.modules.beans.ConnectFieldModuleBean;
@@ -39,6 +41,8 @@ import java.util.stream.Stream;
 
 import static com.atlassian.fugue.Pair.pair;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.String.format;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItems;
@@ -49,6 +53,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ConnectFieldOptionResourceTest {
+
+    private final ConnectFieldOptionScopeBean GLOBAL = new ConnectFieldOptionScopeBean(null);
+
     private final Gson gson = new Gson();
 
     private String addonKey;
@@ -85,20 +92,30 @@ public class ConnectFieldOptionResourceTest {
     public void addedOptionsCanBeRetrieved() throws Exception {
         createOption("5");
         createOption("6");
-        assertThat(readOptions(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, 5.0d), new ConnectFieldOptionBean(2, 6.0d))));
+        assertThat(readOptions(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, 5.0d, GLOBAL), new ConnectFieldOptionBean(2, 6.0d, GLOBAL))));
+    }
+
+    @Test
+    public void optionsCanBeRequestedPerProject() throws Exception {
+        createOption("\"global\"", ConnectFieldOptionScope.GLOBAL);
+        createOption("\"project\"", ConnectFieldOptionScope.project(1L));
+
+        assertThat(readOptions(ConnectFieldOptionScope.GLOBAL), contains(new ConnectFieldOptionBean(1, "global", GLOBAL)));
+        assertThat(readOptions(ConnectFieldOptionScope.project(1L)),
+                contains(new ConnectFieldOptionBean(1, "global", GLOBAL), new ConnectFieldOptionBean(2, "project", new ConnectFieldOptionScopeBean(1L))));
     }
 
     @Test
     public void testPagination() throws Exception {
         Stream.of("1", "2", "3", "4", "5").forEach(this::createOption);
-        PageBean<ConnectFieldOptionBean> page1 = readOptions(0, 3);
-        PageBean<ConnectFieldOptionBean> page2 = readOptions(3, 7);
+        PageBean<ConnectFieldOptionBean> page1 = readAllOptions(0, 3);
+        PageBean<ConnectFieldOptionBean> page2 = readAllOptions(3, 7);
 
         assertFalse(page1.getIsLast());
         assertTrue(page2.getIsLast());
 
-        assertThat(page1.getValues(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, 1.0d), new ConnectFieldOptionBean(2, 2.0d), new ConnectFieldOptionBean(3, 3.0d))));
-        assertThat(page2.getValues(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(4, 4.0d), new ConnectFieldOptionBean(5, 5.0d))));
+        assertThat(page1.getValues(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(1, 1.0d, GLOBAL), new ConnectFieldOptionBean(2, 2.0d, GLOBAL), new ConnectFieldOptionBean(3, 3.0d, GLOBAL))));
+        assertThat(page2.getValues(), equalTo(ImmutableList.of(new ConnectFieldOptionBean(4, 4.0d, GLOBAL), new ConnectFieldOptionBean(5, 5.0d, GLOBAL))));
     }
 
     @Test
@@ -118,7 +135,6 @@ public class ConnectFieldOptionResourceTest {
         assertEquals(200, connection.getResponseCode());
     }
 
-
     @Test
     public void bothValuesAreRequiredInReplace() throws IOException {
         createOption("1");
@@ -133,7 +149,7 @@ public class ConnectFieldOptionResourceTest {
 
     @Test
     public void newOptionCanBePutWithSpecifiedId() throws Exception {
-        ConnectFieldOptionBean option = new ConnectFieldOptionBean(42, "1");
+        ConnectFieldOptionBean option = new ConnectFieldOptionBean(42, "1", GLOBAL);
 
         putOption(42, option);
 
@@ -142,8 +158,8 @@ public class ConnectFieldOptionResourceTest {
 
     @Test
     public void optionCanBeUpdated() throws Exception {
-        ConnectFieldOptionBean option = new ConnectFieldOptionBean(42, "1");
-        ConnectFieldOptionBean updatedOption = new ConnectFieldOptionBean(42, "2");
+        ConnectFieldOptionBean option = new ConnectFieldOptionBean(42, "1", GLOBAL);
+        ConnectFieldOptionBean updatedOption = new ConnectFieldOptionBean(42, "2", GLOBAL);
 
         putOption(option);
         putOption(updatedOption);
@@ -153,19 +169,19 @@ public class ConnectFieldOptionResourceTest {
 
     @Test
     public void errorIsReturnedIfIdInPutIsInconsistent() throws Exception {
-        ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(42, "42")).left().get();
+        ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(42, "42", GLOBAL)).left().get();
         assertThat(errorCollection.getErrors(), hasEntry("id", "id should be equal to 1"));
     }
 
     @Test
     public void valueIsRequired() {
-        ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(1, null)).left().get();
+        ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(1, null, GLOBAL)).left().get();
         assertThat(errorCollection.getErrors(), hasEntry("value", "value is required"));
     }
 
     @Test
     public void idIsRequiredForPut() {
-        ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(null, "4")).left().get();
+        ErrorCollection errorCollection = putOption(1, new ConnectFieldOptionBean(null, "4", GLOBAL)).left().get();
         assertThat(errorCollection.getErrors(), hasEntry("id", "id is required"));
     }
 
@@ -173,8 +189,8 @@ public class ConnectFieldOptionResourceTest {
     public void addOnHasAccessOnlyToItsOwnFields() {
         List<Triple<String, HttpMethod, Object>> methods = ImmutableList.of(
                 Triple.of("", HttpMethod.GET, null),
-                Triple.of("", HttpMethod.POST, new ConnectFieldOptionBean(null, "42")),
-                Triple.of("3", HttpMethod.PUT, new ConnectFieldOptionBean(3, "42")),
+                Triple.of("", HttpMethod.POST, new ConnectFieldOptionBean(null, "42", GLOBAL)),
+                Triple.of("3", HttpMethod.PUT, new ConnectFieldOptionBean(3, "42", GLOBAL)),
                 Triple.of("3", HttpMethod.DELETE, null),
                 Triple.of("replace", HttpMethod.POST, new ReplaceRequestBean(2, 3)));
 
@@ -222,24 +238,39 @@ public class ConnectFieldOptionResourceTest {
     }
 
     private JsonNode putOption(Integer id, final String value) {
-        String json = String.format("{ \"id\" : %d, \"value\" : %s }", id, value);
+        String json = format("{ \"id\" : %d, \"value\" : %s }", id, value);
         HttpURLConnection connection = establishConnection(id.toString(), HttpMethod.PUT);
         connection = sendData(connection, json);
         return readOutputAsGenericJson(connection);
     }
 
     private JsonNode createOption(String json) {
+        return createOption(json, null);
+    }
+
+    private JsonNode createOption(String json, ConnectFieldOptionScope scope) {
         HttpURLConnection connection = establishConnection("", HttpMethod.POST);
-        sendData(connection, String.format("{\"value\" : %s }", json));
+        sendData(connection, scope == null ? format("{\"value\" : %s }", json) : format("{\"value\" : %s, \"scope\" : {\"projectId\" : %d} }", json, scope.getProjectId().orElse(null)));
         return readOutputAsGenericJson(connection);
     }
 
     private List<ConnectFieldOptionBean> readOptions() throws Exception {
-        return readOptions(0, 1000).getValues();
+        return readOptions(0, 1000, null).getValues();
     }
 
-    private PageBean<ConnectFieldOptionBean> readOptions(Integer startAt, Integer maxResults) throws Exception {
-        HttpURLConnection httpURLConnection = establishConnection(String.format("?startAt=%d&maxResults=%d", startAt, maxResults), HttpMethod.GET);
+    private List<ConnectFieldOptionBean> readOptions(ConnectFieldOptionScope scope) throws Exception {
+        return readOptions(0, 1000, scope).getValues();
+    }
+
+    private PageBean<ConnectFieldOptionBean> readAllOptions(Integer startAt, Integer maxResults) throws Exception {
+        return readOptions(startAt, maxResults, null);
+    }
+
+    private PageBean<ConnectFieldOptionBean> readOptions(Integer startAt, Integer maxResults, @Nullable ConnectFieldOptionScope scope) throws Exception {
+        String path = scope != null ?
+                "scoped" + scope.getProjectId().map(id -> "?projectId=" + id + "&").orElse("?") :
+                "?";
+        HttpURLConnection httpURLConnection = establishConnection(path + format("startAt=%d&maxResults=%d", startAt, maxResults), HttpMethod.GET);
         Either<ErrorCollection, PageBean<ConnectFieldOptionBean>> allOptions = readOutput(httpURLConnection, new TypeToken<PageBean<ConnectFieldOptionBean>>() {
         }.getType());
 

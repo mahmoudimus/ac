@@ -11,6 +11,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
+import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionScope;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionService;
 import com.atlassian.plugin.connect.jira.util.Json;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -37,12 +38,16 @@ import org.junit.runner.RunWith;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionScope.GLOBAL;
+import static com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionScope.project;
+import static com.atlassian.plugin.connect.jira.util.Json.toJsonNode;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.assertEquals;
@@ -89,7 +94,7 @@ public class ConnectFieldOptionsServiceWiredTest {
         JsonNode jsonValue = Json.parse("42").get();
         ConnectFieldOption expectedResult = ConnectFieldOption.of(1, jsonValue);
 
-        ServiceOutcome<ConnectFieldOption> result = connectFieldOptionService.addOption(auth, fieldId, jsonValue);
+        ServiceOutcome<ConnectFieldOption> result = connectFieldOptionService.addOption(auth, fieldId, jsonValue, ConnectFieldOptionScope.GLOBAL);
         assertTrue(result.isValid());
         assertEquals(expectedResult, result.get());
 
@@ -137,6 +142,46 @@ public class ConnectFieldOptionsServiceWiredTest {
     }
 
     @Test
+    public void scopesWorkCorrectly() {
+        connectFieldOptionService.addOption(auth, fieldId, toJsonNode("project 1.1"), project(1L));
+        connectFieldOptionService.putOption(auth, fieldId, ConnectFieldOption.of(2, toJsonNode("project 1.2")).withScope(project(1L)));
+        connectFieldOptionService.addOption(auth, fieldId, toJsonNode("project 2.1"), project(2L));
+        connectFieldOptionService.putOption(auth, fieldId, ConnectFieldOption.of(4, toJsonNode("project 2.2")).withScope(project(2L)));
+        connectFieldOptionService.addOption(auth, fieldId, toJsonNode("global 1"), ConnectFieldOptionScope.GLOBAL);
+        connectFieldOptionService.putOption(auth, fieldId, ConnectFieldOption.of(6, toJsonNode("global 2")).withScope(GLOBAL));
+
+        assertHasOptions(connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE),
+                "project 1.1", "project 1.2", "project 2.1", "project 2.2", "global 1", "global 2");
+        assertHasOptions(connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE, GLOBAL),
+                "global 1", "global 2");
+        assertHasOptions(connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE, project(1L)),
+                "project 1.1", "project 1.2", "global 1", "global 2");
+        assertHasOptions(connectFieldOptionService.getOptions(auth, fieldId, UNLIMITED_PAGE, project(2L)),
+                "project 2.1", "project 2.2", "global 1", "global 2");
+    }
+
+    @Test
+    public void scopeCanBeUpdated() {
+        connectFieldOptionService.putOption(auth, fieldId, ConnectFieldOption.of(1, toJsonNode("option")).withScope(project(1L)));
+        assertEquals(project(1L), connectFieldOptionService.getOption(auth, fieldId, 1).get().getScope());
+
+        connectFieldOptionService.putOption(auth, fieldId, ConnectFieldOption.of(1, toJsonNode("option")).withScope(GLOBAL));
+        assertEquals(GLOBAL, connectFieldOptionService.getOption(auth, fieldId, 1).get().getScope());
+
+        connectFieldOptionService.putOption(auth, fieldId, ConnectFieldOption.of(1, toJsonNode("option")).withScope(project(2L)));
+        assertEquals(project(2L), connectFieldOptionService.getOption(auth, fieldId, 1).get().getScope());
+    }
+
+    private void assertHasOptions(ServiceOutcome<Page<ConnectFieldOption>> result, String... expectedOptions) {
+        List<String> options = result.get().getValues().stream()
+                .map(ConnectFieldOption::getValue)
+                .map(JsonNode::asText)
+                .collect(toList());
+
+        assertEquals(Arrays.asList(expectedOptions), options);
+    }
+
+    @Test
     public void optionCanBeUpdated() {
         createOptions(fieldId, "\"a\"", "\"b\"", "\"c\"");
         ConnectFieldOption expectedValue = ConnectFieldOption.of(2, Json.parse("\"B\"").get());
@@ -177,7 +222,7 @@ public class ConnectFieldOptionsServiceWiredTest {
                 AuthenticationData.byUser(admin));
 
         List<Function<AuthenticationData, ServiceResult>> methods = ImmutableList.of(
-                data -> connectFieldOptionService.addOption(data, fieldId, Json.parse("23").get()),
+                data -> connectFieldOptionService.addOption(data, fieldId, Json.parse("23").get(), ConnectFieldOptionScope.GLOBAL),
                 data -> connectFieldOptionService.putOption(data, fieldId, ConnectFieldOption.of(1, Json.parse("42").get())),
                 data -> connectFieldOptionService.putOption(data, fieldId, ConnectFieldOption.of(2, Json.parse("42").get())),
                 data -> connectFieldOptionService.replaceInAllIssues(data, fieldId, 1, 2),
@@ -201,13 +246,13 @@ public class ConnectFieldOptionsServiceWiredTest {
         return Stream.of(values)
                 .map(Json::parse)
                 .map(Optional::get)
-                .map(json -> connectFieldOptionService.addOption(auth, fieldId, json))
+                .map(json -> connectFieldOptionService.addOption(auth, fieldId, json, ConnectFieldOptionScope.GLOBAL))
                 .map(ServiceOutcome::get)
                 .collect(toList());
     }
 
     private ConnectFieldOption createOption(FieldId fieldId, String value) {
-        return connectFieldOptionService.addOption(auth, fieldId, Json.parse(value).get()).get();
+        return connectFieldOptionService.addOption(auth, fieldId, Json.parse(value).get(), ConnectFieldOptionScope.GLOBAL).get();
     }
 
     private FieldId randomFieldId() {

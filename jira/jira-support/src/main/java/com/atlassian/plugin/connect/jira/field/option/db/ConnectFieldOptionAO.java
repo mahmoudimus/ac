@@ -34,4 +34,9 @@ public interface ConnectFieldOptionAO extends Entity {
     String getValue();
 
     void setValue(String value);
+
+    @Indexed
+    Long getProjectId();
+
+    void setProjectId(Long projectId);
 }

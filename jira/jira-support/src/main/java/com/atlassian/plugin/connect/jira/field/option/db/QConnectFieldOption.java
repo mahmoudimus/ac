@@ -32,6 +32,8 @@ public class QConnectFieldOption extends RelationalPathBase<QConnectFieldOption>
 
     public final StringPath VALUE = createString("VALUE");
 
+    public final NumberPath<Long> PROJECT_ID = createNumber("PROJECT_ID", Long.class);
+
     public final com.querydsl.sql.PrimaryKey<QConnectFieldOption> CONNECT_FIELD_OPTION_PK = createPrimaryKey(ID);
 
     public QConnectFieldOption(String variable, String schema, String table) {
@@ -48,5 +50,6 @@ public class QConnectFieldOption extends RelationalPathBase<QConnectFieldOption>
         addMetadata(ID, ColumnMetadata.named("ID").ofType(Types.INTEGER)); // .withSize(0).withNotNull()); // until detect primitive types, int ..
         addMetadata(OPTION_ID, ColumnMetadata.named("OPTION_ID").ofType(Types.INTEGER)); // .withSize(0).withNotNull()); // until detect primitive types, int ..
         addMetadata(VALUE, ColumnMetadata.named("VALUE").ofType(Types.VARCHAR)); // .withSize(2147483647).withNotNull()); // until detect primitive types, int ..
+        addMetadata(PROJECT_ID, ColumnMetadata.named("PROJECT_ID").ofType(Types.INTEGER)); // .withSize(2147483647).withNotNull()); // until detect primitive types, int ..
     }
 }

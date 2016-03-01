@@ -25,7 +25,7 @@ public interface ConnectFieldOptionService {
      * @param auth authentication details of the current call
      * @return the created option if successful, errors otherwise
      */
-    ServiceOutcome<ConnectFieldOption> addOption(AuthenticationData auth, FieldId fieldId, JsonNode value);
+    ServiceOutcome<ConnectFieldOption> addOption(AuthenticationData auth, FieldId fieldId, JsonNode value, ConnectFieldOptionScope scope);
 
     /**
      * Put the specified option into the database. If an option with the same id already exists, it will be replaced.
@@ -37,7 +37,18 @@ public interface ConnectFieldOptionService {
     ServiceOutcome<ConnectFieldOption> putOption(AuthenticationData auth, FieldId fieldId, ConnectFieldOption option);
 
     /**
-     * Get a page of options for a specific field.
+     * Get a page of options for a specific field scoped accordingly.
+     *
+     * @param fieldId the field to get the options for
+     * @param auth authentication details of the current call
+     * @param pageRequest requested page
+     * @param scopeQuery the requested scope
+     * @return a page of all options
+     */
+    ServiceOutcome<Page<ConnectFieldOption>> getOptions(AuthenticationData auth, FieldId fieldId, PageRequest pageRequest, ConnectFieldOptionScope scopeQuery);
+
+    /**
+     * Get a page of options for a specific field. All options are returned no matter their scope. Use this method for options administration.
      *
      * @param fieldId the field to get the options for
      * @param auth authentication details of the current call
@@ -73,6 +84,10 @@ public interface ConnectFieldOptionService {
      * <p>
      *     Useful when you wish to {@link ConnectFieldOptionService#removeOption(AuthenticationData, FieldId, Integer)} an option but there are
      *     still some issues that have the option assigned.
+     * </p>
+     *
+     * <p>
+     *     This method will replace the value only in issues that satisfy the scope of the {@code to}-option.
      * </p>
      *
      * @param fieldId the field the option belongs to

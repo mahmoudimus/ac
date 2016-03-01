@@ -13,9 +13,11 @@ import com.atlassian.jira.util.PageRequests;
 import com.atlassian.plugin.connect.api.auth.AuthenticationData;
 import com.atlassian.plugin.connect.jira.field.FieldId;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOption;
+import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionScope;
 import com.atlassian.plugin.connect.jira.field.option.ConnectFieldOptionService;
 import com.atlassian.plugin.connect.jira.util.ServiceOutcomes;
 import com.atlassian.sal.api.message.I18nResolver;
+import com.google.common.base.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -61,6 +63,28 @@ public class ConnectFieldOptionResource {
                 FieldId.of(addonKey, fieldKey),
                 pageRequest);
 
+        return optionsToResponse(servletRequest, pageRequest, allOptions);
+    }
+
+    @GET
+    @Path("/scoped")
+    public Response getScopedOptions(
+            @QueryParam ("startAt") final Long startAt, @QueryParam ("maxResults") final Integer maxResults, @QueryParam("projectId") Long projectId,
+            @PathParam ("addonKey") String addonKey, @PathParam ("fieldKey") String fieldKey, @Context HttpServletRequest servletRequest)
+    {
+        PageRequest pageRequest = PageRequests.request(startAt, maxResults);
+
+        ServiceOutcome<Page<ConnectFieldOption>> allOptions = connectFieldOptionService.getOptions(
+                AuthenticationData.byRequest(servletRequest),
+                FieldId.of(addonKey, fieldKey),
+                pageRequest,
+                ConnectFieldOptionScope.builder().setProjectId(projectId).build());
+
+        return optionsToResponse(servletRequest, pageRequest, allOptions);
+    }
+
+    private Response optionsToResponse(final @Context HttpServletRequest servletRequest, final PageRequest pageRequest, final ServiceOutcome<Page<ConnectFieldOption>> allOptions)
+    {
         return toEither(allOptions)
                 .right().map(options -> PageBean
                         .from(pageRequest, options)
@@ -83,7 +107,10 @@ public class ConnectFieldOptionResource {
         return beansFactory.jsonFromBean(connectFieldOptionBean)
                 .left().map(responseFactory::errorResponse)
                 .left().on(json -> {
-                    ServiceOutcome<ConnectFieldOption> createResult = connectFieldOptionService.addOption(AuthenticationData.byRequest(servletRequest), FieldId.of(addonKey, fieldKey), json);
+                    AuthenticationData.Request auth = AuthenticationData.byRequest(servletRequest);
+                    FieldId fieldId = FieldId.of(addonKey, fieldKey);
+                    ConnectFieldOptionScope scope = Objects.firstNonNull(beansFactory.fromBean(connectFieldOptionBean.getScope()), ConnectFieldOptionScope.GLOBAL);
+                    ServiceOutcome<ConnectFieldOption> createResult = connectFieldOptionService.addOption(auth, fieldId, json, scope);
                     return toEither(createResult).left().on(option -> responseFactory.okNoCache(beansFactory.toBean(option)));
                 });
     }
