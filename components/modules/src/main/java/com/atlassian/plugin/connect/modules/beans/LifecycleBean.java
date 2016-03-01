@@ -9,8 +9,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 
 /**
- * Allows an add-on to register callbacks for plugin lifecycle events. Each property in this object is a URL relative to
- * the add-on's base URL. When a lifecycle event is fired, it will POST to the appropriate URL registered for the event.
+ * Allows an add-on to register callbacks for events that occur in the lifecycle of an installation. When a lifecycle
+ * event is fired, a POST request will be made to the appropriate URL registered for the event.
+ *
+ * The <a href="#installed"><code>installed</code></a> lifecycle callback is an integral part of the installation process
+ * of an add-on, whereas the remaining lifecycle events are essentially <a href="common/webhook.html">webhooks</a>.
+ *
+ * Each property in this object is a URL relative to the add-on's base URL.
  *
  * <h2>Lifecycle Attribute Example</h2>
  *
@@ -82,17 +87,19 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * @schemaTitle Lifecycle
  */
 public class LifecycleBean {
+
     /**
      * When a Connect add-on is installed, a synchronous request is fired to this URL to initiate the installation
-     * handshake. In order to successfully complete installation, the add-on must respond with either a `200 OK` or
-     * `204 No Content` status.
+     * handshake. In order to successfully complete installation, the add-on must respond with either a
+     * <code>200 OK</code> or <code>204 No Content</code> status.
+     *
      *<div class="aui-message warning">
      *    <p class="title">
      *        <span class="aui-icon icon-warning"></span>
      *        <strong>Important</strong>
      *    </p>
-     *    Upon successful registration, the add-on must return either a `200 OK` or `204 No Content` response code, otherwise
-     *    the operation will fail and the installation will be marked as incomplete.
+     *    Upon successful registration, the add-on must return either a <code>200 OK</code> or <code>204 No Content</code>
+     *    response code, otherwise the operation will fail and the installation will be marked as incomplete.
      *</div>
      */
     @StringSchemaAttributes(format = "uri")
