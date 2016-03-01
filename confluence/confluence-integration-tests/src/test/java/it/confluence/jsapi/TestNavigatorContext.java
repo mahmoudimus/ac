@@ -11,7 +11,11 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.servlet.ConfluenceAppServlets;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
