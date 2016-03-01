@@ -49,6 +49,7 @@
             </activation>
             <modules>
                 <module>wired-tests</module>
+                <module>plugin-lifecycle-tests</module>
             </modules>
         </profile>
     </profiles>
