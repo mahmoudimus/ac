@@ -27,7 +27,6 @@
             </activation>
             <modules>
                 <module>plugin-lifecycle-tests</module>
-                <module>wired-tests</module>
             </modules>
         </profile>
         <profile>
@@ -38,6 +37,18 @@
             <id>descriptorValidation</id>
             <modules>
                 <module>descriptor-validation-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <!--If tests are skipped, wired tests module does not produce an artifact, which breaks the build -->
+            <id>wired-tests</id>
+            <activation>
+                <property>
+                    <name>!maven.test.skip</name>
+                </property>
+            </activation>
+            <modules>
+                <module>wired-tests</module>
             </modules>
         </profile>
     </profiles>
