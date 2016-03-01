@@ -33,6 +33,12 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.78](./1-1-0.html#1.1.78)
+ * New JavaScript close trigger for AP.messages [ACJS-12](https://ecosystem.atlassian.net/browse/ACJS-12)
+ * JIRA: Fix to ensure that contextual information on jiraIssueTabPanels is wired correctly [AC-1882](https://ecosystem.atlassian.net/browse/AC-1882)
+ * JIRA: Fix `entity_property_equal_to` condition for `issue type` in left side of view issue page [AC-1883](https://ecosystem.atlassian.net/browse/AC-1883)
+ * Confluence: Allow hidden parameters for macros [CE-300](https://ecosystem.atlassian.net/browse/CE-300)
+
 ## [1.1.77](./1-1-0.html#1.1.77)
  * New `has_global_permission` condition [ACJIRA-777](https://ecosystem.atlassian.net/browse/ACJIRA-777)
  * Nested equality comparisons for addon properties [AC-1847](https://ecosystem.atlassian.net/browse/AC-1847)
