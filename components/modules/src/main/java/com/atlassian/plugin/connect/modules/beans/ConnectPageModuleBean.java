@@ -16,14 +16,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * <p>Page modules allow add-ons to insert new pages into atlassian products. These can be automatically resized to the width
  * and height of your add-on's content. The location attribute defines where links to the new page appear.</p>
  *
- * <p>Each type of page displays differently:
- *
- * * `generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.
- * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
- * * `profilePages` - (__Confluence only__) displayed as sections inside user profiles.
- * * `configurePage` - used to configure the addon itself. A "Configure" button will link to this page from the addon's entry in _Manage Add-ons_.
- * * `postInstallPage` - used to provide information about the add-on after it is installed. A "Get Started" button will link to this page from the addon's entry in _Manage Add-ons_.
- *
+ * <p>Each type of page displays differently:</p>
+ * <ul>
+ * <li>`generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.</li>
+ * <li>`adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.</li>
+ * <li>`profilePages` - (__Confluence only__) displayed as sections inside user profiles.</li>
+ * <li>`configurePage` - used to configure the addon itself. A "Configure" button will link to this page from the addon's entry in _Manage Add-ons_.</li>
+ * <li>`postInstallPage` - used to provide information about the add-on after it is installed. A "Get Started" button will link to this page from the addon's entry in _Manage Add-ons_.</li>
+ * </ul>
  * <!-- ## Single page objects -->
  *
  * <p>Note that unlike other module types, an add-on may only define a single `configurePage` and a single `postInstallPage`.
@@ -36,20 +36,21 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * <p>As implied here, for most page content modules, you do not need to be concerned with iframe sizing.
  * It's all handled for you. However, an exception exists for inline macros.</p>
- *
- * * Their size is based on the page height and width inside the iframe (i.e., no scrollbars)
- * * They are dynamically resized based on the inner content or relative browser window sizing
- * * They appear without borders, making them look like a non-iframed fragment of the page
- * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content).
- * * To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. It is also possible to hide footer for such pages.
- * * For example, using ACE:
+ * <ul>
+ * <li>Their size is based on the page height and width inside the iframe (i.e., no scrollbars)</li>
+ * <li>They are dynamically resized based on the inner content or relative browser window sizing</li>
+ * <li>They appear without borders, making them look like a non-iframed fragment of the page</li>
+ * <li>For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content).</li>
+ * <li>To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. It is also possible to hide footer for such pages.</li>
+ * <li>For example, using ACE:
  *
  *   <pre><code>
  *&lt;script src=&quot;{{hostScriptUrl}}&quot;
  *       type=&quot;text/javascript&quot;
  *       data-options=&quot;sizeToParent:true;hideFooter:true&quot;&gt;
  *&lt;/script&gt;
- *   </code></pre>
+ *   </code></pre></li>
+ * </ul>
  *
  * <h2>Example</h2>
  *
