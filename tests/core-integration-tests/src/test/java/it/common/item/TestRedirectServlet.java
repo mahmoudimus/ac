@@ -20,6 +20,7 @@ import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.google.common.collect.ImmutableMap;
 import it.common.MultiProductWebDriverTestBase;
+
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
@@ -47,7 +48,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-public class RedirectServletTest extends MultiProductWebDriverTestBase {
+public class TestRedirectServlet extends MultiProductWebDriverTestBase {
     private static final String WEB_ITEM_KEY = "checkPageJwtExpiry";
     private static final String ABSOLUTE_PAGE_KEY = "absolutePage";
     private static final String WEB_ITEM_ON_URL = "/pcp";
