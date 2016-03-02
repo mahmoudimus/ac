@@ -1,8 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.web.condition;
 
-import java.io.IOException;
-import java.util.Collections;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.GroupNotFoundException;
@@ -25,14 +22,14 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
+import java.util.Collections;
 
 import static it.com.atlassian.plugin.connect.plugin.web.condition.WebTestMatchers.webItemWithKey;
 import static org.hamcrest.MatcherAssert.assertThat;
