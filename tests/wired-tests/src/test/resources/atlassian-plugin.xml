@@ -23,7 +23,6 @@
     <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
     <component-import key="darkFeatureManager" interface="com.atlassian.sal.api.features.DarkFeatureManager" />
     <component-import key="licenseHandler" interface="com.atlassian.sal.api.license.LicenseHandler" />
-    <component-import key="embeddedCrowd" interface="com.atlassian.plugin.connect.crowd.usermanagement.EmbeddedCrowd" />
 
     <!-- CONNECT COMPONENTS -->
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager" />
@@ -79,6 +78,17 @@
                application="confluence" />
     <component key="timebombedLicenseManager"
                class="it.com.atlassian.plugin.connect.util.TimebombedLicenseManager"
+               />
+    <component key="connectEmbeddedCrowd"
+               class="com.atlassian.plugin.connect.crowd.usermanagement.EmbeddedCrowd"
+               />
+    <component key="connectUserReconcilliation"
+               class="com.atlassian.plugin.connect.crowd.usermanagement.UserReconciliationImpl"
+               interface="com.atlassian.plugin.connect.crowd.usermanagement.UserReconciliation"
+               />
+    <component key="connectCrowdApplicationProvider"
+               class="com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProviderImpl"
+               interface="com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider"
                />
 
     <!-- MOCK REST RESOURCES -->
