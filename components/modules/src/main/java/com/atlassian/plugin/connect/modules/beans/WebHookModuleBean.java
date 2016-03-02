@@ -31,8 +31,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to validate
  * the authenticity of that request. Specifically, the JWT token can be found in the "Authorization" HTTP header.
  *
- * Note that if using Apache and mod_wsgi to serve files to a Django application, the Authentication header is stripped
- * out by default. <a href="http://www.django-rest-framework.org/api-guide/authentication/#apache-mod_wsgi-specific-configuration">Extra configuration</a>
+ * Note that if using Apache and mod\_wsgi to serve files to a Django application, the Authentication header is stripped
+ * out by default. <a href="http://www.django-rest-framework.org/api-guide/authentication/#apache-mod\_wsgi-specific-configuration">Extra configuration</a>
  * is required to ensure the Authentication header is visible.
  *
  * <h3>Variable Substitution</h3>
@@ -48,129 +48,129 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * <h4>Add-on and system events</h4>
  * <ul>
- *  <li><code>connect_addon_disabled</code></li>
- *  <li><code>connect_addon_enabled</code></li>
- *  <li><code>server_upgraded</code></li>
+ *  <li><code>connect\_addon\_disabled</code></li>
+ *  <li><code>connect\_addon\_enabled</code></li>
+ *  <li><code>server\_upgraded</code></li>
  * </ul>
  *
  * <h4>Issue events</h4>
  * <ul>
- *  <li><code>jira:issue_created</code></li>
- *  <li><code>jira:issue_deleted</code></li>
- *  <li><code>jira:issue_updated</code></li>
- *  <li><code>jira:worklog_updated</code>
+ *  <li><code>jira:issue\_created</code></li>
+ *  <li><code>jira:issue\_deleted</code></li>
+ *  <li><code>jira:issue\_updated</code></li>
+ *  <li><code>jira:worklog\_updated</code>
  *
  * Context parameters are <code>${project.id}, ${project.key}, ${issue.key}, ${issue.id}</code></li>
  * </ul>
  *
  * <h4>Version events</h4>
  * <ul>
- *  <li><code>version_created</code></li>
- *  <li><code>version_deleted</code></li>
- *  <li><code>version_merged</code></li>
- *  <li><code>version_updated</code></li>
- *  <li><code>version_moved</code></li>
- *  <li><code>version_released</code></li>
- *  <li><code>version_unreleased</code>
+ *  <li><code>version\_created</code></li>
+ *  <li><code>version\_deleted</code></li>
+ *  <li><code>version\_merged</code></li>
+ *  <li><code>version\_updated</code></li>
+ *  <li><code>version\_moved</code></li>
+ *  <li><code>version\_released</code></li>
+ *  <li><code>version\_unreleased</code>
  *
  * Context parameters are <code>${project.id}, ${project.key}, ${version.id}</code>.
  *
- * Special context parameter for version_merged event is <code>${mergedVersion.id}</code>.</li>
+ * Special context parameter for version\_merged event is <code>${mergedVersion.id}</code>.</li>
  * </ul>
  *
  * <h4>Project events</h4>
  * <ul>
- *  <li><code>project_created</code></li>
- *  <li><code>project_updated</code></li>
- *  <li><code>project_deleted</code>
+ *  <li><code>project\_created</code></li>
+ *  <li><code>project\_updated</code></li>
+ *  <li><code>project\_deleted</code>
  *
  * Context parameters are <code>${project.id}, ${project.key}</code></li>
  * </ul>
  *
  * <h4>User events</h4>
  * <ul>
- *  <li><code>user_created</code></li>
- *  <li><code>user_deleted</code></li>
- *  <li><code>user_updated</code>
+ *  <li><code>user\_created</code></li>
+ *  <li><code>user\_deleted</code></li>
+ *  <li><code>user\_updated</code>
  *
  * Context parameters: <code>${modifiedUser.name}, ${modifiedUser.key}</code></li>
  * </ul>
  *
  * <h4>Feature status events</h4>
  * <ul>
- *  <li><code>option_voting_changed</code></li>
- *  <li><code>option_watching_changed</code></li>
- *  <li><code>option_unassigned_issues_changed</code></li>
- *  <li><code>option_subtasks_changed</code></li>
- *  <li><code>option_attachments_changed</code></li>
- *  <li><code>option_issuelinks_changed</code></li>
- *  <li><code>option_timetracking_changed</code></li>
+ *  <li><code>option\_voting\_changed</code></li>
+ *  <li><code>option\_watching\_changed</code></li>
+ *  <li><code>option\_unassigned\_issues\_changed</code></li>
+ *  <li><code>option\_subtasks\_changed</code></li>
+ *  <li><code>option\_attachments\_changed</code></li>
+ *  <li><code>option\_issuelinks\_changed</code></li>
+ *  <li><code>option\_timetracking\_changed</code></li>
  * </ul>
  *
  * <h4>Confluence Webhook events</h4>
  *
  * <ul>
- *  <li><code>attachment_created</code></li>
- *  <li><code>attachment_removed</code></li>
- *  <li><code>attachment_updated</code></li>
- *  <li><code>attachment_viewed</code></li>
- *  <li><code>blog_created</code></li>
- *  <li><code>blog_removed</code></li>
- *  <li><code>blog_restored</code></li>
- *  <li><code>blog_trashed</code></li>
- *  <li><code>blog_updated</code></li>
- *  <li><code>blog_viewed</code></li>
- *  <li><code>blueprint_page_created</code></li>
- *  <li><code>cache_statistics_changed</code></li>
- *  <li><code>comment_created</code></li>
- *  <li><code>comment_removed</code></li>
- *  <li><code>comment_updated</code></li>
- *  <li><code>connect_addon_disabled</code></li>
- *  <li><code>connect_addon_enabled</code></li>
- *  <li><code>content_permissions_updated</code></li>
- *  <li><code>group_created</code></li>
- *  <li><code>group_removed</code></li>
- *  <li><code>label_added</code></li>
- *  <li><code>label_created</code></li>
- *  <li><code>label_deleted</code></li>
- *  <li><code>label_removed</code></li>
+ *  <li><code>attachment\_created</code></li>
+ *  <li><code>attachment\_removed</code></li>
+ *  <li><code>attachment\_updated</code></li>
+ *  <li><code>attachment\_viewed</code></li>
+ *  <li><code>blog\_created</code></li>
+ *  <li><code>blog\_removed</code></li>
+ *  <li><code>blog\_restored</code></li>
+ *  <li><code>blog\_trashed</code></li>
+ *  <li><code>blog\_updated</code></li>
+ *  <li><code>blog\_viewed</code></li>
+ *  <li><code>blueprint\_page\_created</code></li>
+ *  <li><code>cache\_statistics\_changed</code></li>
+ *  <li><code>comment\_created</code></li>
+ *  <li><code>comment\_removed</code></li>
+ *  <li><code>comment\_updated</code></li>
+ *  <li><code>connect\_addon\_disabled</code></li>
+ *  <li><code>connect\_addon\_enabled</code></li>
+ *  <li><code>content\_permissions\_updated</code></li>
+ *  <li><code>group\_created</code></li>
+ *  <li><code>group\_removed</code></li>
+ *  <li><code>label\_added</code></li>
+ *  <li><code>label\_created</code></li>
+ *  <li><code>label\_deleted</code></li>
+ *  <li><code>label\_removed</code></li>
  *  <li><code>login</code></li>
- *  <li><code>login_failed</code></li>
+ *  <li><code>login\_failed</code></li>
  *  <li><code>logout</code></li>
- *  <li><code>page_children_reordered</code></li>
- *  <li><code>page_created</code></li>
- *  <li><code>page_moved</code></li>
- *  <li><code>page_removed</code></li>
- *  <li><code>page_restored</code></li>
- *  <li><code>page_trashed</code></li>
- *  <li><code>page_updated</code></li>
- *  <li><code>page_viewed</code></li>
- *  <li><code>plugin_enabled</code></li>
- *  <li><code>plugins_upgraded</code></li>
- *  <li><code>search_performed</code></li>
- *  <li><code>server_upgraded</code></li>
- *  <li><code>space_created</code></li>
- *  <li><code>space_logo_updated</code></li>
- *  <li><code>space_permissions_updated</code></li>
- *  <li><code>space_removed</code></li>
- *  <li><code>space_updated</code></li>
- *  <li><code>user_created</code></li>
- *  <li><code>user_deactivated</code></li>
- *  <li><code>user_followed</code></li>
- *  <li><code>user_reactivated</code></li>
- *  <li><code>user_removed</code></li>
+ *  <li><code>page\_children\_reordered</code></li>
+ *  <li><code>page\_created</code></li>
+ *  <li><code>page\_moved</code></li>
+ *  <li><code>page\_removed</code></li>
+ *  <li><code>page\_restored</code></li>
+ *  <li><code>page\_trashed</code></li>
+ *  <li><code>page\_updated</code></li>
+ *  <li><code>page\_viewed</code></li>
+ *  <li><code>plugin\_enabled</code></li>
+ *  <li><code>plugins\_upgraded</code></li>
+ *  <li><code>search\_performed</code></li>
+ *  <li><code>server\_upgraded</code></li>
+ *  <li><code>space\_created</code></li>
+ *  <li><code>space\_logo\_updated</code></li>
+ *  <li><code>space\_permissions\_updated</code></li>
+ *  <li><code>space\_removed</code></li>
+ *  <li><code>space\_updated</code></li>
+ *  <li><code>user\_created</code></li>
+ *  <li><code>user\_deactivated</code></li>
+ *  <li><code>user\_followed</code></li>
+ *  <li><code>user\_reactivated</code></li>
+ *  <li><code>user\_removed</code></li>
  * </ul>
  *
  * <h4>Example Request</h4>
  *
  * <pre><code>
- * POST /jira-issue_created?user_id=admin&amp;user_key=admin HTTP/1.1
+ * POST /jira-issue\_created?user\_id=admin&amp;user\_key=admin HTTP/1.1
  * Authorization: JWT ...
  * Atlassian-Connect-Version: x.x
  * Content-Type: application/json
  * {
  *   timestamp: 1426661049725,
- *   webhookEvent: 'jira:issue_created',
+ *   webhookEvent: 'jira:issue\_created',
  *   ...
  * }
  * </code></pre>
@@ -200,14 +200,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * <h2>Example</h2>
  *
- * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK\_EXAMPLE}
  * @schemaTitle Webhook
  * @since 1.0
  */
 @SchemaDefinition("webhook")
 public class WebHookModuleBean extends BeanWithParams {
     /**
-     * Specifies the named event you would like to listen to (e.g., "enabled", "jira:issue_created", etc.)
+     * Specifies the named event you would like to listen to (e.g., "enabled", "jira:issue\_created", etc.)
      */
     @Required
     private String event;
