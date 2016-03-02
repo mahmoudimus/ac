@@ -11,7 +11,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * Defines the authentication type to use when signing requests between the host application and the connect add on.
  * The authentication type can be JWT or none. If the type is not supplied it will default to JWT.
  *
- *#### Example
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTHENTICATION_EXAMPLE}
  * @schemaTitle Authentication

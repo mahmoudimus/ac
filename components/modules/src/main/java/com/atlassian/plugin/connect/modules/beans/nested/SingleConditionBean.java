@@ -16,7 +16,7 @@ import com.google.common.base.Objects;
  * To invert a condition, add the attribute ``invert="true"`` to the condition element.
  * This is useful where you want to show the section if a certain condition is not satisfied.
  *
- *#### Example
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}
  * @schemaTitle Single Condition

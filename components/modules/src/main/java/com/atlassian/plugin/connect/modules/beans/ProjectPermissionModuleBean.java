@@ -23,7 +23,7 @@ import static com.google.common.collect.Lists.newArrayList;
  *
  * You can define condition for project permissions. I may sense if permission that depends on global JIRA settings like time-tracking, voting or sub-tasks.
  *
- *#### Example
+ * <h2>Example</h2>
  * @exampleJson {@link ConnectJsonExamples#PROJECT_PERMISSION_EXAMPLE}
  * @schemaTitle Project Permission
  * @since 1.1

@@ -52,7 +52,7 @@ import static com.google.common.collect.Maps.newHashMap;
  *     <p>You can validate your descriptor using this <a href="https://atlassian-connect-validator.herokuapp.com/validate">handy tool</a>.</p>
  * </div>
  *
- *#### Example
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_EXAMPLE}
  * @schemaTitle Addon Descriptor

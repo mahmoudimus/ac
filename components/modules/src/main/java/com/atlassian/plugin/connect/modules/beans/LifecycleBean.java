@@ -17,13 +17,13 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  *
  * Each property in this object is a URL relative to the add-on's base URL.
  *
- *#### Lifecycle Attribute Example
+ * <h2>Lifecycle Attribute Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_EXAMPLE}
  *
- *#### Lifecycle Payload
- *Lifecycle callbacks contain a JSON data payload with important tenant information that you will need to store in your
- *  add-on in order to sign and verify future requests. The payload contains the following attributes:
+ * <h2>Lifecycle Payload</h2>
+ * Lifecycle callbacks contain a JSON data payload with important tenant information that you will need to store in your
+ * add-on in order to sign and verify future requests. The payload contains the following attributes:
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_PAYLOAD_EXAMPLE}
  *

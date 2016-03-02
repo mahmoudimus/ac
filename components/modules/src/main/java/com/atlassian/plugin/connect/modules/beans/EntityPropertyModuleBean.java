@@ -22,6 +22,7 @@ import java.util.List;
  * data:</p>
  *
  * <pre>
+ *  <code>
  * {
  *     "attachment": {
  *         "size": 14231,
@@ -33,6 +34,7 @@ import java.util.List;
  *         ...
  *     }
  * }
+ *  </code>
  * </pre>
  *
  * <p>In this example the developer wants to make the <i>size</i>, <i>extension</i> and <i>updated</i> fields from the <i>attachment</i> object be searchable via JQL. To do that they start
@@ -51,7 +53,7 @@ import java.util.List;
  *
  * <p>For more information, please see the <a href="https://developer.atlassian.com/display/JIRADEV/JIRA+Entity+Properties+Overview">JIRA documentation on entity properties</a>.</p>
  *
- * <h3>Example</h3>
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_EXAMPLE}
  * @schemaTitle Entity Property
