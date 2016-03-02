@@ -11,7 +11,6 @@
 
     <artifactId>atlassian-connect-core-integration-tests</artifactId>
     <name>Atlassian Connect - Core Integration Tests</name>
-    <packaging>atlassian-plugin</packaging>
 
     <profiles>
         <profile>
