@@ -71,12 +71,6 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean {
     private static final Pattern MODULE_KEY_MATCHER = Pattern.compile("\\W");
 
     /**
-     * Declares information related for rendering the content in the UI.
-     */
-    @Required
-    private UISupportBean uiSupport;
-
-    /**
      * Captures business logic for this Extensible Content Type.
      */
     @Required
@@ -92,10 +86,6 @@ public class ExtensibleContentTypeModuleBean extends RequiredKeyBean {
     }
 
     private void initialise() {
-    }
-
-    public UISupportBean getUiSupport() {
-        return uiSupport;
     }
 
     public APISupportBean getApiSupport() {

@@ -28,23 +28,17 @@ public class ExtensibleContentTypeModuleDescriptorFactory
 
     private final ModuleFactory moduleFactory;
     private final PermissionManager permissionManager;
-    private final PaginationService paginationService;
-    private final ContentService contentService;
     private final CustomContentApiSupportParams customContentApiSupportParams;
 
     @Autowired
     public ExtensibleContentTypeModuleDescriptorFactory(
             ModuleFactory moduleFactory,
             PermissionManager permissionManager,
-            PaginationService paginationService,
-            ContentService contentService,
             CustomContentApiSupportParams customContentApiSupportParams) {
 
         this.moduleFactory = moduleFactory;
         this.customContentApiSupportParams = customContentApiSupportParams;
         this.permissionManager = permissionManager;
-        this.paginationService = paginationService;
-        this.contentService = contentService;
     }
 
     @Override
@@ -70,8 +64,6 @@ public class ExtensibleContentTypeModuleDescriptorFactory
                         bean,
                         moduleFactory,
                         permissionManager,
-                        paginationService,
-                        contentService,
                         customContentApiSupportParams);
         descriptor.init(plugin, contentTypeElement);
 
