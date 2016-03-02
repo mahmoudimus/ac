@@ -42,7 +42,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * <li>They appear without borders, making them look like a non-iframed fragment of the page</li>
  * <li>For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content).</li>
  * <li>To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. It is also possible to hide footer for such pages.</li>
- * <li>For example, using ACE:
+ * <li>For example, using <a href="https://bitbucket.org/atlassian/atlassian-connect-express">ACE</a>:
  *
  *   <pre><code>
  *&lt;script src=&quot;{{hostScriptUrl}}&quot;

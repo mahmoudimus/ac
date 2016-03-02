@@ -6,6 +6,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
 import java.util.List;
 
 /**
+ * The purpose of this module is to make the data inside content properties available to CQL search so that add-on vendors
+ * can search for content they have set data on via CQL.
+ *
  * Content properties are one of the forms of persistence available for Confluence Connect add-ons, allowing you
  * to store key-value pairs against a piece of content, where the value must be well formed JSON. Content Properties are
  * stored as JSON objects, and allow you to track extra information that your add-on needs, without the use of a
