@@ -1,32 +1,32 @@
 package com.atlassian.plugin.connect.jira.field.option.rest;
 
-import java.util.Objects;
-
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.Objects;
+
 @JsonAutoDetect
-public class ConnectFieldOptionScopeBean
-{
+public class ConnectFieldOptionScopeBean {
     private final Long projectId;
 
     @JsonCreator
-    public ConnectFieldOptionScopeBean(@JsonProperty ("projectId") Long projectId)
-    {
+    public ConnectFieldOptionScopeBean(@JsonProperty("projectId") Long projectId) {
         this.projectId = projectId;
     }
 
-    public Long getProjectId()
-    {
+    public Long getProjectId() {
         return projectId;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ConnectFieldOptionScopeBean that = (ConnectFieldOptionScopeBean) o;
 
@@ -34,14 +34,12 @@ public class ConnectFieldOptionScopeBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(getProjectId());
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("projectId", getProjectId())
                 .toString();
