@@ -28,25 +28,30 @@ Skip ahead to any section:
 ### <a name="all.js"></a> Loading `all.js` from the host application for static add-ons
 
 Loading `all.js` is necessary to use the [`AP` object](../javascript/module-AP.html) and access [Connect APIs](../concepts/javascript-api.html). 
-This sample uses [jQuery](http://jquery.com/) from CDN, but normally you'd include this directly from your app. 
 This sample only applies to static add-ons. Add-ons with server components should validate JWT signatures on the server,
 and then generate the URL for `all.js`. Accepting `<script>` tag locations from untrusted query string sources 
 could open your application up to XSS attacks.
 
+If you want to set `data-options` for `all.js`, define it in the `<script>` tag as seen in the sample.
+
 ````
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script>
+<script data-options="sizeToParent:false;hideFooter:true">
 (function() {
   var getUrlParam = function (param) {
     var codedParam = (new RegExp(param + '=([^&]*)')).exec(window.location.search)[1];
     return decodeURIComponent(codedParam);
   };
-  
+
   var baseUrl = getUrlParam('xdm_e') + getUrlParam('cp');
-  $.getScript(baseUrl + '/atlassian-connect/all.js', function() {
-    // your calls to AP here
-    console.log("I can use AP now!");
-  });
+  var options = document.currentScript.dataset.options;
+
+  var script = document.createElement("script");
+  script.src = baseUrl + '/atlassian-connect/all.js';
+  
+  if(options)
+    script.setAttribute('data-options', options);  
+  
+  document.getElementsByTagName("head")[0].appendChild(script);
 })();
 </script>
 ````
