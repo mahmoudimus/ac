@@ -205,7 +205,7 @@ The [JWT decoder](http://jwt-decoder.herokuapp.com/jwt/decode) is a handy web ba
 <a name='create'></a>
 ## <a name="creating-token"></a>Creating a JWT token
 
-Here is an example of creating a JWT token, in Java, using atlassian-jwt and nimbus-jwt (version 2.16 or greater):
+Here is an example of creating a JWT token, in Java, using atlassian-jwt and nimbus-jwt (last tested atlassian-jwt version 1.5.3 and nimbus-jwt version 2.16):
 
 <pre><code data-lang="java">
 import java.io.UnsupportedEncodingException;
@@ -253,7 +253,7 @@ public class JWTSample {
 <a name='decode'></a>
 ## <a name="decoding-and-verifying-token"></a>Decoding and verifying a JWT token
 
-Here is a minimal example of decoding and verifying a JWT token, in Java, using atlassian-jwt and nimbus-jwt (version 2.16 or greater).
+Here is a minimal example of decoding and verifying a JWT token, in Java, using atlassian-jwt and nimbus-jwt (last tested atlassian-jwt version 1.5.3 and nimbus-jwt version 2.16).
 
 **NOTE:** This example does not include any error handling.
 See [`AbstractJwtAuthenticator`](https://bitbucket.org/atlassian/atlassian-jwt/src/master/core/src/main/java/com/atlassian/jwt/core/http/auth/AbstractJwtAuthenticator.java)
