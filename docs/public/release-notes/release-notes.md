@@ -4,17 +4,31 @@
 <div class="aui-message info">
 	    <p class="title">
 	        <span class="aui-icon icon-success"></span>
-	        <strong>Latest Atlassian Connect versions</strong>
+	        <strong>Versions in production</strong>
 	    </p>
 	    <table>
 	        <tr>
-	            <td>In production:</td>
+	            <td>Atlassian Connect plugin:</td>
 	            <td><span id="connect-version-prd"/></td>
 	        </tr>
 	        <tr>
-                <td>In development:</td>
-                <td><span id="connect-version-dev"/></td>
+                <td>Atlassian Connect JS:</td>
+                <td><span id="acjs-version-prd"/></td>
             </tr>
+		</table>
+		<p class="title">
+			<span class="aui-icon icon-success"></span>
+			<strong>Versions in development</strong>
+		</p>
+		<table>
+			<tr>
+				<td>Atlassian Connect plugin:</td>
+				<td><span id="connect-version-dev"/></td>
+			</tr>
+			<tr>
+				<td>Atlassian Connect JS:</td>
+				<td><span id="acjs-version-dev"/></td>
+			</tr>
 		</table>
 </div>
 
