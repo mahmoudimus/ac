@@ -154,7 +154,7 @@ web panel with additional information.
 
 ### <a name="addon-is-licensed-condition"></a>addon_is_licensed condition
 
-The `addon_is_licensed` condition will evaluate to `true` if and only if your addon is a paid addon and it 
+The `addon_is_licensed` condition will evaluate to `true` if and only if your add-on is a paid add-on and it 
 is licensed. This condition can be placed on any Atlassian Connect module that supports conditions; it is not context sensitive. 
 Here is an example of the new condition in use:
 
@@ -175,15 +175,15 @@ Here is an example of the new condition in use:
         "weight": 100
     }]
     
-In this example the JIRA Issue Tab Panel will only be shown if the addon is licensed and the user is logged in. However, there are some
+In this example the JIRA Issue Tab Panel will only be shown if the add-on is licensed and the user is logged in. However, there are some
 caveats to this condition:
 
- * If you give away your addon for _free_ then you must not use the `addon_is_licensed` condition. This is important because
-   all free addons are considered _unlicensed_ and will thus the condition will return `false`. Only use this condition with 
-   paid addons that are licensed via the Atlassian Marketplace.
- * In local development with the AMPS tools, you will likely not have a license installed that says that your addon is active. 
+ * If you give away your add-on for _free_ then you must not use the `addon_is_licensed` condition. This is important because
+   all free add-ons are considered _unlicensed_ and will thus the condition will return `false`. Only use this condition with 
+   paid add-ons that are licensed via the Atlassian Marketplace.
+ * In local development with the AMPS tools, you will likely not have a license installed that says that your add-on is active. 
    This means that this condition will always return `false` in local development. Consider only adding the condition to 
-   appropriate modules when you know that your addon will be running on a production Atlassian Cloud instance.
+   appropriate modules when you know that your add-on will be running on a production Atlassian Cloud instance.
 
 ### <a name="can-use-application"></a>can_use_application condition
 
