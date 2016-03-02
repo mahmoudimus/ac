@@ -40,8 +40,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * Their size is based on the page height and width inside the iframe (i.e., no scrollbars)
  * * They are dynamically resized based on the inner content or relative browser window sizing
  * * They appear without borders, making them look like a non-iframed fragment of the page
- * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content).
- * * To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. It is also possible to hide footer for such pages.
+ * * For general-pages, you can also opt to size your iframe to take up all of the host product's available vertical space (instead of resizing to its internal content).
+ * * To do this, add the `data-options` attribute "sizeToParent:true" in the script tag for `all.js`. It is also possible to hide footer for such pages.
  * * For example, using ACE:
  *
  *   <pre><code>
