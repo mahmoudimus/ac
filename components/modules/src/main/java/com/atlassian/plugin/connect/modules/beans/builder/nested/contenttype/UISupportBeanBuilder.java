@@ -5,11 +5,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.contenttype.IconsBean;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
 
 public class UISupportBeanBuilder
-        extends BaseModuleBeanBuilder<UISupportBeanBuilder, UISupportBean>
-{
+        extends BaseModuleBeanBuilder<UISupportBeanBuilder, UISupportBean> {
     private String contentViewComponent;
 
-    private String editViewComponent;
+    private String contentEditComponent;
 
     private String containerViewComponent;
 
@@ -19,48 +18,40 @@ public class UISupportBeanBuilder
 
     private IconsBean icons;
 
-    public UISupportBeanBuilder()
-    {
+    public UISupportBeanBuilder() {
     }
 
-    public UISupportBeanBuilder withViewComponent(String viewComponent)
-    {
+    public UISupportBeanBuilder withContentViewComponent(String viewComponent) {
         this.contentViewComponent = viewComponent;
         return this;
     }
 
-    public UISupportBeanBuilder withEditViewComponent(String editViewComponent)
-    {
-        this.editViewComponent = editViewComponent;
+    public UISupportBeanBuilder withContentEditComponent(String editViewComponent) {
+        this.contentEditComponent = editViewComponent;
         return this;
     }
 
-    public UISupportBeanBuilder withContainerViewComponent(String containerViewComponent)
-    {
+    public UISupportBeanBuilder withContainerViewComponent(String containerViewComponent) {
         this.containerViewComponent = containerViewComponent;
         return this;
     }
 
-    public UISupportBeanBuilder withTitleDisplay(String titleDisplay)
-    {
+    public UISupportBeanBuilder withTitleDisplay(String titleDisplay) {
         this.titleDisplay = titleDisplay;
         return this;
     }
 
-    public UISupportBeanBuilder withTitleSortValue(String titleSortValue)
-    {
+    public UISupportBeanBuilder withTitleSortValue(String titleSortValue) {
         this.titleSortValue = titleSortValue;
         return this;
     }
 
-    public UISupportBeanBuilder withIcons(String createDialog, String singleItem, String collectionItem)
-    {
-        this.icons = new IconsBean(createDialog, singleItem, collectionItem);
+    public UISupportBeanBuilder withIcons(String item, String container, String create) {
+        this.icons = new IconsBean(item, container, create);
         return this;
     }
 
-    public UISupportBean build()
-    {
+    public UISupportBean build() {
         return new UISupportBean(this);
     }
 }

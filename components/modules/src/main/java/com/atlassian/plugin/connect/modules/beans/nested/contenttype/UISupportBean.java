@@ -4,12 +4,16 @@ import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 
+/**
+ * Declares information related for rendering the content in the UI.
+ *
+ * @since 1.1.77
+ */
 @SchemaDefinition("extensiveContentTypeUISupport")
-public class UISupportBean extends BaseModuleBean
-{
+public class UISupportBean extends BaseModuleBean {
     private String contentViewComponent;
 
-    private String editViewComponent;
+    private String contentEditComponent;
 
     private String containerViewComponent;
 
@@ -19,49 +23,40 @@ public class UISupportBean extends BaseModuleBean
 
     private IconsBean icons;
 
-    public UISupportBean()
-    {
+    public UISupportBean() {
         this(new UISupportBeanBuilder());
     }
 
-    public UISupportBean(UISupportBeanBuilder builder)
-    {
+    public UISupportBean(UISupportBeanBuilder builder) {
         super(builder);
         initialise();
     }
 
-    private void initialise()
-    {
+    private void initialise() {
 
     }
 
-    public String getContentViewComponent()
-    {
+    public String getContentViewComponent() {
         return contentViewComponent;
     }
 
-    public String getEditViewComponent()
-    {
-        return editViewComponent;
+    public String getContentEditComponent() {
+        return contentEditComponent;
     }
 
-    public String getContainerViewComponent()
-    {
+    public String getContainerViewComponent() {
         return containerViewComponent;
     }
 
-    public String getTitleDisplay()
-    {
+    public String getTitleDisplay() {
         return titleDisplay;
     }
 
-    public String getTitleSortValue()
-    {
+    public String getTitleSortValue() {
         return titleSortValue;
     }
 
-    public IconsBean getIcons()
-    {
+    public IconsBean getIcons() {
         return icons;
     }
 }

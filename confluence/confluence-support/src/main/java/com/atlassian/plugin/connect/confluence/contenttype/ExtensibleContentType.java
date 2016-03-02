@@ -1,72 +1,89 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
 import com.atlassian.confluence.api.model.content.ContentType;
+import com.atlassian.confluence.api.service.content.ContentService;
+import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.ContentEntityAdapter;
 import com.atlassian.confluence.content.CustomContentEntityObject;
-import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.custom.BaseCustomContentType;
 import com.atlassian.confluence.content.ui.ContentUiSupport;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 
+import java.util.Set;
 
-public class ExtensibleContentType extends BaseCustomContentType
-{
+
+public class ExtensibleContentType extends BaseCustomContentType {
     private final String contentTypeKey;
     private final String contentTypeName;
-    private final ExtensibleContentTypeModuleBean bean;
-    private final ApiSupportProvider apiSupportProvider;
     private final ContentEntityAdapter contentEntityAdapter;
-    private final com.atlassian.confluence.security.PermissionDelegate permissionDelegate;
+    private final PaginationService paginationService;
+    private final ContentService contentService;
+    private final ExtensibleContentTypePermissionDelegate permissionDelegate;
     private final ContentUiSupport contentUiSupport;
     private final CustomContentApiSupportParams customContentApiSupportParams;
+    private final Set<String> supportedContainerTypes;
+    private final Set<String> supportedContainedTypes;
 
     public ExtensibleContentType(
             String contentTypeKey,
             ExtensibleContentTypeModuleBean bean,
-            ContentTypeMapper contentTypeMapper,
-            ApiSupportProvider apiSupportProvider,
-            CustomContentApiSupportParams customContentApiSupportParams)
-    {
-        super(ContentType.valueOf(contentTypeKey), apiSupportProvider);
+            PermissionManager permissionManager,
+            PaginationService paginationService,
+            ContentService contentService,
+            CustomContentApiSupportParams customContentApiSupportParams) {
 
-        this.bean = bean;
+        super(ContentType.valueOf(contentTypeKey), customContentApiSupportParams.getProvider());
+
         this.contentTypeKey = contentTypeKey;
         this.contentTypeName = bean.getName().getI18nOrValue();
 
-        this.apiSupportProvider = apiSupportProvider;
-        this.permissionDelegate = new PermissionDelegate();
-        this.contentEntityAdapter = new ExtensibleContentEntityAdapter(contentTypeMapper);
+        this.permissionDelegate = new ExtensibleContentTypePermissionDelegate(permissionManager);
+        this.paginationService = paginationService;
+        this.contentService = contentService;
+        this.contentEntityAdapter = new ExtensibleContentEntityAdapter(bean);
         this.contentUiSupport = new ExtensibleContentTypeUISupport(contentTypeName, bean);
         this.customContentApiSupportParams = customContentApiSupportParams;
+
+        this.supportedContainerTypes = bean.getApiSupport().getSupportedContainerTypes();
+        this.supportedContainedTypes = bean.getApiSupport().getSupportedContainedTypes();
+    }
+
+    public String getContentTypeKey() {
+        return contentTypeKey;
+    }
+
+    public Set<String> getSupportedContainerTypes() {
+        return supportedContainerTypes;
+    }
+
+    public Set<String> getSupportedContainedTypes() {
+        return supportedContainedTypes;
     }
 
     @Override
-    public ContentEntityAdapter getContentAdapter()
-    {
+    public ContentEntityAdapter getContentAdapter() {
         return contentEntityAdapter;
     }
 
     @Override
-    public com.atlassian.confluence.security.PermissionDelegate getPermissionDelegate()
-    {
+    public ExtensibleContentTypePermissionDelegate getPermissionDelegate() {
         return permissionDelegate;
     }
 
     @Override
-    public ContentUiSupport getContentUiSupport()
-    {
+    public ContentUiSupport getContentUiSupport() {
         return contentUiSupport;
     }
 
     @Override
-    public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport()
-    {
-        return new ExtensibleContentTypeSupport(
-                contentTypeKey,
-                bean,
+    public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport() {
+        return new ExtensibleContentTypeApiSupport(
+                this,
                 customContentApiSupportParams,
-                apiSupportProvider);
+                paginationService,
+                contentService);
     }
 }
