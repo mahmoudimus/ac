@@ -144,8 +144,8 @@ function entityToModel(schemaEntity) {
             if (b.required && !a.required) {
                 return 1;
             }
-            a = (a.title || a.key).toLowerCase();
-            b = (a.title || b.key).toLowerCase();
+            a = a.key.toLowerCase();
+            b = b.key.toLowerCase();
             if (a < b) return -1;
             if (a > b) return 1;
             return 0;
