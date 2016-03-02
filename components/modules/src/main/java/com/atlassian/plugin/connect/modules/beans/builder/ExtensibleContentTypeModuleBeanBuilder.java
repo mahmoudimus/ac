@@ -2,18 +2,11 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.APISupportBean;
-import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
 
 public class ExtensibleContentTypeModuleBeanBuilder extends RequiredKeyBeanBuilder<ExtensibleContentTypeModuleBeanBuilder, ExtensibleContentTypeModuleBean> {
-    private UISupportBean uiSupport;
     private APISupportBean apiSupport;
 
     public ExtensibleContentTypeModuleBeanBuilder() {
-    }
-
-    public ExtensibleContentTypeModuleBeanBuilder withUISupport(UISupportBean uiSupport) {
-        this.uiSupport = uiSupport;
-        return this;
     }
 
     public ExtensibleContentTypeModuleBeanBuilder withAPISupport(APISupportBean apiSupport) {

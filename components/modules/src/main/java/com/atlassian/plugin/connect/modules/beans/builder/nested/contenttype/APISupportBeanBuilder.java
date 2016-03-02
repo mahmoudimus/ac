@@ -12,15 +12,9 @@ import java.util.Set;
  *
  * @since 1.1.77
  */
-public class APISupportBeanBuilder
-        extends BaseModuleBeanBuilder<APISupportBeanBuilder, APISupportBean> {
+public class APISupportBeanBuilder extends BaseModuleBeanBuilder<APISupportBeanBuilder, APISupportBean> {
     private Set<String> supportedContainerTypes;
-
     private Set<String> supportedContainedTypes;
-
-    /**
-     * Defines how would the content type be indexed
-     */
     private IndexingBean indexing;
 
     public APISupportBeanBuilder() {

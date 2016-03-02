@@ -14,7 +14,6 @@ import com.atlassian.elasticsearch.shaded.google.common.collect.Sets;
 import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -126,8 +125,6 @@ public class ExtensibleContentTypeSupportTest {
 
     private ExtensibleContentTypeModuleBean buildBean(Set<String> supportedContainer, Set<String> supportedContained) {
         return new ExtensibleContentTypeModuleBeanBuilder()
-                .withUISupport(new UISupportBeanBuilder()
-                        .build())
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(supportedContainer)
                         .withSupportedContainedTypes(supportedContained)

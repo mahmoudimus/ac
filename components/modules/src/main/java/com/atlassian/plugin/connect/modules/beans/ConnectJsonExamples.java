@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
 import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextValue;
@@ -559,14 +558,6 @@ public class ConnectJsonExamples {
                         .withSupportedContainedTypes(Sets.newHashSet("space", "page"))
                         .withSupportedContainerTypes(Sets.newHashSet("comment", "attachment"))
                         .withIndexing(createIndexingBean())
-                        .build())
-                .withUISupport(new UISupportBeanBuilder()
-                        .withContentViewComponent("")
-                        .withContentEditComponent("")
-                        .withContainerViewComponent("")
-                        .withTitleDisplay("")
-                        .withTitleSortValue("")
-                        .withIcons("/item.png", "/container.png", "/create.png")
                         .build())
                 .build();
 

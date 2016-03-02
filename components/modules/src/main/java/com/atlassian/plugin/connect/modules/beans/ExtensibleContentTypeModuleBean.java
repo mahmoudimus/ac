@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.APISupportBean;
-import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
 
 import java.util.regex.Pattern;
 
