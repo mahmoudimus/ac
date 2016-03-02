@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteBea
 /**
  *
  */
+@SuppressWarnings("unchecked")
 public class ConfluenceThemeRouteBeanBuilder<BUILDER extends ConfluenceThemeRouteBeanBuilder, BEAN extends ConfluenceThemeRouteBean> {
     private String url;
 

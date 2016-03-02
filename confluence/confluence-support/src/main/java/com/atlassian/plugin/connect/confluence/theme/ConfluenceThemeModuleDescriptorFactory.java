@@ -151,6 +151,7 @@ public class ConfluenceThemeModuleDescriptorFactory implements ConnectModuleDesc
         }
 
         @Override
+        @SuppressWarnings({"unchecked", "RefusedBequest"})
         public Class<Theme> getModuleClass() {
             //deliberately don't call super.getModuleClass() - that fails when this module is registered dynamically
             if (hackedModuleClazz == null) {

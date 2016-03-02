@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ConfluenceThemeRouteInt
 /**
  *
  */
+@SuppressWarnings("unchecked")
 public class ConfluenceThemeRouteInterceptionsBeanBuilder<BUILDER extends ConfluenceThemeRouteInterceptionsBeanBuilder, BEAN extends ConfluenceThemeRouteInterceptionsBean> {
     private ConfluenceThemeRouteBean dashboard;
     private ConfluenceThemeRouteBean spaceview;

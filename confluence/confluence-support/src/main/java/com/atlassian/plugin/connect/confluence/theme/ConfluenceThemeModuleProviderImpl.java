@@ -46,9 +46,9 @@ public class ConfluenceThemeModuleProviderImpl extends AbstractConfluenceConnect
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConfluenceThemeModuleBean> modules, ConnectAddonBean addon) {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConfluenceThemeModuleBean> modules, ConnectAddonBean addon) {
         Plugin plugin = pluginRetrievalService.getPlugin();
-        List<ModuleDescriptor> descriptors = Lists.newArrayList();
+        List<ModuleDescriptor<?>> descriptors = Lists.newArrayList();
         for (ConfluenceThemeModuleBean theme : modules) {
             List<LayoutModuleDescriptor> layouts = makeLayouts(addon, plugin, theme);
             descriptors.addAll(layouts);

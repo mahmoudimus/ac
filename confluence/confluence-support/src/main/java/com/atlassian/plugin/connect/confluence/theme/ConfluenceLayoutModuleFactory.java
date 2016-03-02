@@ -69,6 +69,7 @@ public class ConfluenceLayoutModuleFactory implements ConnectModuleDescriptorFac
         }
 
         @Override
+        @SuppressWarnings({"unchecked", "RefusedBequest"})
         public Class<ThemedDecorator> getModuleClass() {
             //deliberately don't call super.getModuleClass() - that fails when this module is registered dynamically
             if (hackedModuleClazz == null) {

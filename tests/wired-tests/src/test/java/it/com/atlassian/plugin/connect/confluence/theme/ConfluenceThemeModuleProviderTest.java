@@ -83,7 +83,7 @@ public class ConfluenceThemeModuleProviderTest {
         try {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors =
+            List<ModuleDescriptor<?>> descriptors =
                     confluenceThemeModuleProvider.createPluginModuleDescriptors(newArrayList(themeBean), addon);
             //1 theme module + each route is one layout module (4 routes atm)
             assertThat("incorrect number of module descriptors found", descriptors.size(), is(1 + NavigationTargetOverrideInfo.values().length));
@@ -117,7 +117,7 @@ public class ConfluenceThemeModuleProviderTest {
             assertThat("wrong number of velocity overrides", velocityResultOverrides.size(), is(4));
             List<ThemedDecorator> layouts = themeDescriptor.getLayouts();
             assertThat("wrong number of layouts", layouts.size(), is(4));
-            List<ModuleDescriptor> layoutModules = descriptors.subList(0, descriptors.size() - 1);
+            List<ModuleDescriptor<?>> layoutModules = descriptors.subList(0, descriptors.size() - 1);
             assertThat("mismatched layout modules", layoutModules.size(), is(layouts.size()));
 
             assertThat(params.get("addon-key"), is(ADDON_KEY));
