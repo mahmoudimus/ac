@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-confluence-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.78-SNAPSHOT</version>
+        <version>1.1.79-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -51,15 +51,6 @@
         </dependency>
 
     </dependencies>
-
-    <licenses>
-        <license>
-            <name>Atlassian 3.0 End User License Agreement</name>
-            <url>http://www.atlassian.com/end-user-agreement/</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
 
     <build>
         <plugins>

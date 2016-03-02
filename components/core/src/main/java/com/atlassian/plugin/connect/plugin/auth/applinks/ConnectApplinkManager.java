@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.auth.applinks;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
@@ -12,19 +11,6 @@ import java.util.Optional;
  * A helper component for creating applinks for add ons.
  */
 public interface ConnectApplinkManager {
-    /**
-     * Creates an {@link ApplicationLink} for a connect add-on.
-     * @param plugin The plugin to create the applink for
-     * @param baseUrl The baseurl of the connect addon
-     * @param authType the authentication type, must be JWT
-     * @param publicKey the publicKey used for asymmetric key encryption. Cannot be null if using JWT+RSA
-     * @param addonUserKey the user-key of the add-on user; will be stored for later retrieval when we work out the {@link java.security.Principal} for incoming requests from this add-on
-     *
-     * @deprecated use the addonBean version
-     */
-    @Deprecated
-    //use the addonBean version
-    void createAppLink(Plugin plugin, String baseUrl, AuthenticationType authType, String publicKey, String addonUserKey);
 
     /**
      * Creates an {@link ApplicationLink} for a connect add-on.

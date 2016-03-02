@@ -7,19 +7,19 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
-public final class TestedCondition {
+public final class ConditionUnderTest {
     private final String name;
     private final Map<String, String> parameters;
 
-    public static TestedCondition condition(String name) {
-        return new TestedCondition(name, Collections.emptyMap());
+    public static ConditionUnderTest condition(String name) {
+        return new ConditionUnderTest(name, Collections.emptyMap());
     }
 
-    public TestedCondition withParam(String key, String value) {
-        return new TestedCondition(name, ImmutableMap.<String, String>builder().putAll(parameters).put(key, value).build());
+    public ConditionUnderTest withParam(String key, String value) {
+        return new ConditionUnderTest(name, ImmutableMap.<String, String>builder().putAll(parameters).put(key, value).build());
     }
 
-    private TestedCondition(String name, Map<String, String> parameters) {
+    private ConditionUnderTest(String name, Map<String, String> parameters) {
         this.name = Preconditions.checkNotNull(name);
         this.parameters = ImmutableMap.copyOf(parameters);
     }
@@ -41,7 +41,7 @@ public final class TestedCondition {
             return false;
         }
 
-        TestedCondition that = (TestedCondition) o;
+        ConditionUnderTest that = (ConditionUnderTest) o;
 
         return Objects.equals(this.getName(), that.getName()) &&
                 Objects.equals(this.getParameters(), that.getParameters());

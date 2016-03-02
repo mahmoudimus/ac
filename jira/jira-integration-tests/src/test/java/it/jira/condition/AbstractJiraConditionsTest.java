@@ -13,10 +13,10 @@ import it.jira.JiraWebDriverTestBase;
 
 import java.util.List;
 
-import static it.jira.condition.TestedCondition.condition;
+import static it.jira.condition.ConditionUnderTest.condition;
 
 public abstract class AbstractJiraConditionsTest extends JiraWebDriverTestBase {
-    protected static final List<TestedCondition> CONDITIONS = ImmutableList.<TestedCondition>builder()
+    protected static final List<ConditionUnderTest> CONDITIONS = ImmutableList.<ConditionUnderTest>builder()
             .add(condition("has_selected_project"))
             .add(condition("linking_enabled"))
             .add(condition("sub_tasks_enabled"))

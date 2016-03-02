@@ -138,6 +138,9 @@ public class TestMacroPropertyPanel extends ConfluenceWebDriverTestBase {
         EditContentPage editorPage = getProduct().loginAndEdit(toConfluenceUser(testUserFactory.basicUser()), page);
         EditorWithPropertyPanel editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
         editor.openPropertyPanel(PROPERTY_PANEL_MACRO_KEY);
+        // Click within the editor to close the property panel
+        // Saving while the property panel is open has caused flakiness in the test
+        editor.selectFirstParagraph();
 
         editorPage.save();
 
@@ -151,6 +154,7 @@ public class TestMacroPropertyPanel extends ConfluenceWebDriverTestBase {
         editor = product.getPageBinder().bind(EditorWithPropertyPanel.class);
 
         editor.openPropertyPanel(PROPERTY_PANEL_MACRO_KEY);
+        editor.selectFirstParagraph();
 
         editorPage.save();
 

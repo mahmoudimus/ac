@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.fixture;
 
-import com.atlassian.plugin.impl.AbstractPlugin;
+import com.atlassian.plugin.DummyPlugin;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -8,11 +8,24 @@ import java.net.URL;
 /**
  * @since 1.0
  */
-public class PluginForTests extends AbstractPlugin {
+public class PluginForTests extends DummyPlugin {
+
+    private final String pluginKey;
+    private final String name;
+
     public PluginForTests(String pluginKey, String pluginName) {
-        setKey(pluginKey);
-        setName(pluginName);
-        setPluginsVersion(2);
+        this.pluginKey = pluginKey;
+        this.name = pluginName;
+    }
+
+    @Override
+    public String getKey() {
+        return pluginKey;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
