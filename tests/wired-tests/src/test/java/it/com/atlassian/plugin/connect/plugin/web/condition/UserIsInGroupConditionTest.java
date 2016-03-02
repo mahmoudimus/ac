@@ -38,8 +38,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AtlassianPluginsTestRunner.class)
-public class UserIsInGroupConditionTest
-{
+public class UserIsInGroupConditionTest {
     public static final String LOCATION = "example-web-fragment-location";
     public static final String ADDON_MODULE_KEY = "test-user-in-group-condition-addon-module-key";
     public static final String ADDON_KEY = "test-addon-condition-user-in-group";
@@ -51,54 +50,49 @@ public class UserIsInGroupConditionTest
     private final EmbeddedCrowd embeddedCrowd;
 
     public UserIsInGroupConditionTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-                                      WebInterfaceManager webInterfaceManager, EmbeddedCrowd embeddedCrowd)
-    {
+                                      WebInterfaceManager webInterfaceManager, EmbeddedCrowd embeddedCrowd) {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.webInterfaceManager = webInterfaceManager;
         this.embeddedCrowd = embeddedCrowd;
     }
 
-    private Plugin installJsonAddon(final String groupName) throws IOException
-    {
+    private Plugin installJsonAddon(final String groupName) throws IOException {
         final WebItemModuleBean userInGroupConditionWebItem = WebItemModuleBean.newWebItemBean()
-            .withKey(ADDON_MODULE_KEY)
-            .withName(new I18nProperty(ADDON_MODULE_KEY, "blah"))
-            .withLocation(LOCATION)
-            .withUrl("/nowhere")
-            .withConditions(ImmutableList.of(
-                SingleConditionBean.newSingleConditionBean().withCondition(UserIsInGroupCondition.CONDITION_NAME).withParam("groupName", groupName).build()
-            ))
-            .build();
+                .withKey(ADDON_MODULE_KEY)
+                .withName(new I18nProperty(ADDON_MODULE_KEY, "blah"))
+                .withLocation(LOCATION)
+                .withUrl("/nowhere")
+                .withConditions(ImmutableList.of(
+                        SingleConditionBean.newSingleConditionBean().withCondition(UserIsInGroupCondition.CONDITION_NAME).withParam("groupName", groupName).build()
+                ))
+                .build();
 
         ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
-            .withKey(ADDON_KEY)
-            .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(ADDON_KEY))
-            .withDescription(getClass().getCanonicalName())
-            .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
-            .withScopes(Sets.newHashSet(ScopeName.READ))
-            .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
-            .withModule("webItems", userInGroupConditionWebItem)
-            .withLicensing(true)
-            .build();
+                .withKey(ADDON_KEY)
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(ADDON_KEY))
+                .withDescription(getClass().getCanonicalName())
+                .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
+                .withScopes(Sets.newHashSet(ScopeName.READ))
+                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                .withModule("webItems", userInGroupConditionWebItem)
+                .withLicensing(true)
+                .build();
 
         return testPluginInstaller.installAddon(addonBean);
     }
 
     @After
-    public void tearDown() throws IOException
-    {
-        for (String key : testPluginInstaller.getInstalledAddonKeys())
-        {
+    public void tearDown() throws IOException {
+        for (String key : testPluginInstaller.getInstalledAddonKeys()) {
             testPluginInstaller.uninstallAddon(key);
         }
     }
 
     @Test
     public void webItemsDisplayedWhenUserExistsInGroup()
-        throws IOException, ApplicationPermissionException, OperationFailedException, ApplicationNotFoundException,
-        InvalidAuthenticationException, UserNotFoundException, GroupNotFoundException
-    {
+            throws IOException, ApplicationPermissionException, OperationFailedException, ApplicationNotFoundException,
+            InvalidAuthenticationException, UserNotFoundException, GroupNotFoundException {
         final String username = "admin";
         final String groupName = TEST_GROUP_NAME + "-user-in-group";
 
@@ -114,9 +108,8 @@ public class UserIsInGroupConditionTest
 
     @Test
     public void webItemsNotDisplayedWhenUserExistsButNotInGroup()
-        throws IOException, ApplicationPermissionException, OperationFailedException, ApplicationNotFoundException,
-        InvalidAuthenticationException, UserNotFoundException, GroupNotFoundException
-    {
+            throws IOException, ApplicationPermissionException, OperationFailedException, ApplicationNotFoundException,
+            InvalidAuthenticationException, UserNotFoundException, GroupNotFoundException {
         final String username = "admin";
         final String groupName = TEST_GROUP_NAME + "-user-not-in-group";
 
@@ -131,9 +124,8 @@ public class UserIsInGroupConditionTest
 
     @Test
     public void webItemsNotDisplayedWhenUserExistsButGroupDoesNot()
-        throws IOException, ApplicationPermissionException, OperationFailedException, ApplicationNotFoundException,
-        InvalidAuthenticationException, UserNotFoundException, GroupNotFoundException
-    {
+            throws IOException, ApplicationPermissionException, OperationFailedException, ApplicationNotFoundException,
+            InvalidAuthenticationException, UserNotFoundException, GroupNotFoundException {
         final String username = "admin";
         final String groupName = TEST_GROUP_NAME + "-group-that-does-not-exist";
 
