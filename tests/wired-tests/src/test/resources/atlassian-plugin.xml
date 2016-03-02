@@ -23,6 +23,7 @@
     <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
     <component-import key="darkFeatureManager" interface="com.atlassian.sal.api.features.DarkFeatureManager" />
     <component-import key="licenseHandler" interface="com.atlassian.sal.api.license.LicenseHandler" />
+    <component-import key="embeddedCrowd" interface="com.atlassian.plugin.connect.crowd.usermanagement.EmbeddedCrowd" />
 
     <!-- CONNECT COMPONENTS -->
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.auth.applinks.ConnectApplinkManager" />

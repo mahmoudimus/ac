@@ -7,7 +7,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-public class WebTestMatchers {
+class WebTestMatchers {
     private WebTestMatchers() {
     }
 
