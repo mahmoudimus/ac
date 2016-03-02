@@ -13,175 +13,192 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Just to give you an idea of how you can use them in add-ons, here are a few sample webhook events:
  *
- * * When an add-on is enabled or disabled
- * * When an issue is created or closed in JIRA
- * * When a page is created or updated in Confluence
+ * <ul>
+ *  <li>When an add-on is enabled or disabled</li>
+ *  <li>When an issue is created or closed in JIRA</li>
+ *  <li>When a page is created or updated in Confluence
  *
- * If your add-on uses webhooks, declare the ["read" scope](../../scopes/scopes.html)
- * in your [`atlassian-connect.json` descriptor](../).
+ * If your add-on uses webhooks, declare the <a href="../../scopes/scopes.html">"read" scope</a>
+ * in your <a href="../"><code>atlassian-connect.json</code> descriptor</a>.</li>
+ * </ul>
  *
- *### Handling the webhook event
+ * <h3>Handling the webhook event</h3>
  *
- *To receive webhook events, your add-on needs to include the webhook module declaration in its JSON descriptor. The
+ * To receive webhook events, your add-on needs to include the webhook module declaration in its JSON descriptor. The
  * declaration indicates the relative URL of the local resource at which it will receive the notification. In other
  * words, the Atlassian application will send an HTTP POST to this resource in response to an application event. The
  * add-on code that handles the POST should process any information passed in the body of the message, as appropriate.
  * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to validate
  * the authenticity of that request. Specifically, the JWT token can be found in the "Authorization" HTTP header.
  *
- *Note that if using Apache and mod_wsgi to serve files to a Django application, the Authentication header is stripped
- * out by default. [Extra configuration](http://www.django-rest-framework.org/api-guide/authentication/#apache-mod_wsgi-specific-configuration)
+ * Note that if using Apache and mod\_wsgi to serve files to a Django application, the Authentication header is stripped
+ * out by default. <a href="http://www.django-rest-framework.org/api-guide/authentication/#apache-mod_wsgi-specific-configuration">Extra configuration</a>
  * is required to ensure the Authentication header is visible.
  *
- *### Variable Substitution
+ * <h3>Variable Substitution</h3>
  *
- * JIRA webhooks also provide a way to add and substitute variables in the url. This is similar to context parameters for add-ons. See [context parameters](../../concepts/context-parameters.html).
+ * JIRA webhooks also provide a way to add and substitute variables in the url. This is similar to context parameters for add-ons. See <a href="../../concepts/context-parameters.html">context parameters</a>.
  *
- * For example, if we register to listen for one of the project events with a url containing `${project.id}`, a POST message will
- * be sent to the address with the `${project.id}` replaced by the id of the project that the event was triggered for.
+ * For example, if we register to listen for one of the project events with a url containing <code>${project.id}</code>, a POST message will
+ * be sent to the address with the <code>${project.id}</code> replaced by the id of the project that the event was triggered for.
  *
- *### Webhook event types
+ * <h3>Webhook event types</h3>
  *
  * Below is a list of all available webhook events.
  *
- *##### Add-on and system events
+ * <h4>Add-on and system events</h4>
+ * <ul>
+ *  <li><code>connect\_addon\_disabled</code></li>
+ *  <li><code>connect\_addon\_enabled</code></li>
+ *  <li><code>server\_upgraded</code></li>
+ * </ul>
  *
- * * `connect_addon_disabled`
- * * `connect_addon_enabled`
- * * `server_upgraded`
+ * <h4>Issue events</h4>
+ * <ul>
+ *  <li><code>jira:issue\_created</code></li>
+ *  <li><code>jira:issue\_deleted</code></li>
+ *  <li><code>jira:issue\_updated</code></li>
+ *  <li><code>jira:worklog\_updated</code>
  *
- *##### Issue events
- * * `jira:issue_created`
- * * `jira:issue_deleted`
- * * `jira:issue_updated`
- * * `jira:worklog_updated`
+ * Context parameters are <code>${project.id}, ${project.key}, ${issue.key}, ${issue.id}</code></li>
+ * </ul>
  *
- * Context parameters are `${project.id}, ${project.key}, ${issue.key}, ${issue.id}`
+ * <h4>Version events</h4>
+ * <ul>
+ *  <li><code>version\_created</code></li>
+ *  <li><code>version\_deleted</code></li>
+ *  <li><code>version\_merged</code></li>
+ *  <li><code>version\_updated</code></li>
+ *  <li><code>version\_moved</code></li>
+ *  <li><code>version\_released</code></li>
+ *  <li><code>version\_unreleased</code>
  *
- *##### Version events
- * * `version_created`
- * * `version_deleted`
- * * `version_merged`
- * * `version_updated`
- * * `version_moved`
- * * `version_released`
- * * `version_unreleased`
+ * Context parameters are <code>${project.id}, ${project.key}, ${version.id}</code>.
  *
- * Context parameters are `${project.id}, ${project.key}, ${version.id}`.
+ * Special context parameter for version\_merged event is <code>${mergedVersion.id}</code>.</li>
+ * </ul>
  *
- * Special context parameter for version_merged event is `${mergedVersion.id}`.
+ * <h4>Project events</h4>
+ * <ul>
+ *  <li><code>project\_created</code></li>
+ *  <li><code>project\_updated</code></li>
+ *  <li><code>project\_deleted</code>
  *
- *##### Project events
- * * `project_created`
- * * `project_updated`
- * * `project_deleted`
+ * Context parameters are <code>${project.id}, ${project.key}</code></li>
+ * </ul>
  *
- * Context parameters are `${project.id}, ${project.key}`
+ * <h4>User events</h4>
+ * <ul>
+ *  <li><code>user\_created</code></li>
+ *  <li><code>user\_deleted</code></li>
+ *  <li><code>user\_updated</code>
  *
- *##### User events
- * * `user_created`
- * * `user_deleted`
- * * `user_updated`
+ * Context parameters: <code>${modifiedUser.name}, ${modifiedUser.key}</code></li>
+ * </ul>
  *
- * Context parameters: `${modifiedUser.name}, ${modifiedUser.key}`
+ * <h4>Feature status events</h4>
+ * <ul>
+ *  <li><code>option\_voting\_changed</code></li>
+ *  <li><code>option\_watching\_changed</code></li>
+ *  <li><code>option\_unassigned\_issues\_changed</code></li>
+ *  <li><code>option\_subtasks\_changed</code></li>
+ *  <li><code>option\_attachments\_changed</code></li>
+ *  <li><code>option\_issuelinks\_changed</code></li>
+ *  <li><code>option\_timetracking\_changed</code></li>
+ * </ul>
  *
- *##### Feature status events
- * * `option_voting_changed`
- * * `option_watching_changed`
- * * `option_unassigned_issues_changed`
- * * `option_subtasks_changed`
- * * `option_attachments_changed`
- * * `option_issuelinks_changed`
- * * `option_timetracking_changed`
+ * <h4>Confluence Webhook events</h4>
  *
- *#### Confluence Webhook events
+ * <ul>
+ *  <li><code>attachment\_created</code></li>
+ *  <li><code>attachment\_removed</code></li>
+ *  <li><code>attachment\_updated</code></li>
+ *  <li><code>attachment\_viewed</code></li>
+ *  <li><code>blog\_created</code></li>
+ *  <li><code>blog\_removed</code></li>
+ *  <li><code>blog\_restored</code></li>
+ *  <li><code>blog\_trashed</code></li>
+ *  <li><code>blog\_updated</code></li>
+ *  <li><code>blog\_viewed</code></li>
+ *  <li><code>blueprint\_page\_created</code></li>
+ *  <li><code>cache\_statistics\_changed</code></li>
+ *  <li><code>comment\_created</code></li>
+ *  <li><code>comment\_removed</code></li>
+ *  <li><code>comment\_updated</code></li>
+ *  <li><code>connect\_addon\_disabled</code></li>
+ *  <li><code>connect\_addon\_enabled</code></li>
+ *  <li><code>content\_permissions\_updated</code></li>
+ *  <li><code>group\_created</code></li>
+ *  <li><code>group\_removed</code></li>
+ *  <li><code>label\_added</code></li>
+ *  <li><code>label\_created</code></li>
+ *  <li><code>label\_deleted</code></li>
+ *  <li><code>label\_removed</code></li>
+ *  <li><code>login</code></li>
+ *  <li><code>login\_failed</code></li>
+ *  <li><code>logout</code></li>
+ *  <li><code>page\_children\_reordered</code></li>
+ *  <li><code>page\_created</code></li>
+ *  <li><code>page\_moved</code></li>
+ *  <li><code>page\_removed</code></li>
+ *  <li><code>page\_restored</code></li>
+ *  <li><code>page\_trashed</code></li>
+ *  <li><code>page\_updated</code></li>
+ *  <li><code>page\_viewed</code></li>
+ *  <li><code>plugin\_enabled</code></li>
+ *  <li><code>plugins\_upgraded</code></li>
+ *  <li><code>search\_performed</code></li>
+ *  <li><code>server\_upgraded</code></li>
+ *  <li><code>space\_created</code></li>
+ *  <li><code>space\_logo\_updated</code></li>
+ *  <li><code>space\_permissions\_updated</code></li>
+ *  <li><code>space\_removed</code></li>
+ *  <li><code>space\_updated</code></li>
+ *  <li><code>user\_created</code></li>
+ *  <li><code>user\_deactivated</code></li>
+ *  <li><code>user\_followed</code></li>
+ *  <li><code>user\_reactivated</code></li>
+ *  <li><code>user\_removed</code></li>
+ * </ul>
  *
- * * `attachment_created`
- * * `attachment_removed`
- * * `attachment_updated`
- * * `attachment_viewed`
- * * `blog_created`
- * * `blog_removed`
- * * `blog_restored`
- * * `blog_trashed`
- * * `blog_updated`
- * * `blog_viewed`
- * * `blueprint_page_created`
- * * `cache_statistics_changed`
- * * `comment_created`
- * * `comment_removed`
- * * `comment_updated`
- * * `connect_addon_disabled`
- * * `connect_addon_enabled`
- * * `content_permissions_updated`
- * * `group_created`
- * * `group_removed`
- * * `label_added`
- * * `label_created`
- * * `label_deleted`
- * * `label_removed`
- * * `login`
- * * `login_failed`
- * * `logout`
- * * `page_children_reordered`
- * * `page_created`
- * * `page_moved`
- * * `page_removed`
- * * `page_restored`
- * * `page_trashed`
- * * `page_updated`
- * * `page_viewed`
- * * `plugin_enabled`
- * * `plugins_upgraded`
- * * `search_performed`
- * * `server_upgraded`
- * * `space_created`
- * * `space_logo_updated`
- * * `space_permissions_updated`
- * * `space_removed`
- * * `space_updated`
- * * `user_created`
- * * `user_deactivated`
- * * `user_followed`
- * * `user_reactivated`
- * * `user_removed`
- *
- *### Example Request
+ * <h4>Example Request</h4>
  *
  * <pre><code>
- *POST /jira-issue_created?user_id=admin&amp;user_key=admin HTTP/1.1
- *Authorization: JWT ...
- *Atlassian-Connect-Version: x.x
- *Content-Type: application/json
- *{
- *  timestamp: 1426661049725,
- *  webhookEvent: 'jira:issue_created',
- *  ...
- *}
+ * POST /jira-issue\_created?user\_id=admin&amp;user\_key=admin HTTP/1.1
+ * Authorization: JWT ...
+ * Atlassian-Connect-Version: x.x
+ * Content-Type: application/json
+ * {
+ *   timestamp: 1426661049725,
+ *   webhookEvent: 'jira:issue\_created',
+ *   ...
+ * }
  * </code></pre>
  *
- *### Inspecting webhook contents
+ * <h3>Inspecting webhook contents</h3>
  *
  * Each type of webhook event includes information specific to that event in the body content of the POST message. The
  * add-on resource that listens for webhook posts should receive and process the content as appropriate for the add-on.
  * To understand what type of content each webhook generates, you can use the webhook inspector tool.
  *
- * The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a
- * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) Connect add-on
+ * The <a href="https://bitbucket.org/atlassianlabs/webhook-inspector">Webhook Inspector</a> is a
+ * <a href="https://bitbucket.org/atlassian/atlassian-connect-express">atlassian-connect-express</a> Connect add-on
  * that you can install in your development environment to inspect the content of event messages. The Webhook Inspector
  * subscribes and generates each webhook event type available on the running instance of the Atlassian application,
  * and prints the body posted by the instance to the console screen.
  *
- *### References
+ * <h3>References</h3>
+ * <ul>
+ *  <li><a href="https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-Whatwilltheformatofthewebhookcallbackmessagebe%3F">JIRA Webhooks: What will the format of the webhook callback message be?</a></li>
+ *  <li><a href="https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-SampleWebhookPOST">JIRA Webhooks: Sample Webhook POST</a></li>
+ * </ul>
  *
- * * [JIRA Webhooks: What will the format of the webhook callback message be?](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-Whatwilltheformatofthewebhookcallbackmessagebe%3F)
- * * [JIRA Webhooks: Sample Webhook POST](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-SampleWebhookPOST)
+ * <h3>Tutorials</h3>
+ * <ul>
+ *  <li><a href="https://developer.atlassian.com/confdev/tutorials/writing-a-multi-page-blueprint-using-atlassian-connect">Confluence Webhooks: Writing a Multi-page Blueprint using Atlassian Connect</a></li>
+ * </ul>
  *
- *### Tutorials
- *
- * * [Confluence Webhooks: Writing a Multi-page Blueprint using Atlassian Connect](https://developer.atlassian.com/confdev/tutorials/writing-a-multi-page-blueprint-using-atlassian-connect)
- *
- *#### Example
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhook
@@ -190,7 +207,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @SchemaDefinition("webhook")
 public class WebHookModuleBean extends BeanWithParams {
     /**
-     * Specifies the named event you would like to listen to (e.g., "enabled", "jira:issue_created", etc.)
+     * Specifies the named event you would like to listen to (e.g., "enabled", "jira:issue\_created", etc.)
      */
     @Required
     private String event;

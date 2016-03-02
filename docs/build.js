@@ -240,15 +240,18 @@ function findRootEntities(schemas) {
 /**
  * Find module types supported by a particular product (webItemModuleBean, staticContentMacroModuleBean, etc.)
  */
-function findModules(schemas, productDisplayName) {
+function findModules(schemas, productDisplayName, modulesToExclude) {
     var productModules = jsonPath(schemas, "$.properties.*");
 
     // unwrap array types
     productModules = _.map(productModules, function (moduleOrArray) {
         return moduleOrArray.type === "array" ? moduleOrArray.items : moduleOrArray;
     });
-
-    return entitiesToModel(productModules);
+    var moduleIdsToExclude = _.pluck(modulesToExclude, "id");
+    _.remove(productModules, function(productModule) {
+        return _.contains(moduleIdsToExclude, productModule["id"]);
+    });
+    return productModules;
 }
 
 /**
@@ -431,11 +434,12 @@ function rebuildHarpSite() {
         confluence: fs.readJsonSync(confluenceSchemaPath)
     };
 
+    var commonModules = findModules(schemas.common, "Common");
     var entities = {
         root: findRootEntities(schemas),
-        common: findModules(schemas.common, "Common"),
-        jira: findModules(schemas.jira, "JIRA"),
-        confluence: findModules(schemas.confluence, "Confluence"),
+        common: entitiesToModel(commonModules),
+        jira: entitiesToModel(findModules(schemas.jira, "JIRA", commonModules)),
+        confluence: entitiesToModel(findModules(schemas.confluence, "Confluence", commonModules)),
         fragment: findFragmentEntities(schemas)
     };
 

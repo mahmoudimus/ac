@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *All URLs are relative to the base URL that is declared in the connect-container element of the descriptor.
  *
- *#### Creating and editing a Post Function
+ * <h2>Creating and editing a Post Function</h2>
  *
  *The create and edit urls will need to present a form with relevant configuration for the post function. In order to
  * persist this information with JIRA, the page needs to include a snippet of Javascript to facilitate saving this data.
@@ -52,7 +52,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * For more information, see the [javascript API](../../javascript/WorkflowConfiguration.html).
  *
  *
- *#### Example
+ * <h2>Example</h2>
  *
  * For a full add-on example, see the [workflow post function example add-on](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-workflow-post-function-example).
  *
@@ -98,7 +98,7 @@ public class WorkflowPostFunctionModuleBean extends RequiredKeyBean {
      * The relative URL to the add-on resource that will receive the HTTP POST after a workflow transition. It will also
      * include the authentication headers that allow the add-on to validate the authenticity of the request.
      *
-     *#### Contents of the HTTP POST
+     * <h4>Contents of the HTTP POST</h4>
      *
      *To understand the type of content that is sent to the add-on after a state transition, you can use the webhook
      * inspector tool. The [Webhook Inspector](https://bitbucket.org/atlassianlabs/webhook-inspector) is a Connect add-on

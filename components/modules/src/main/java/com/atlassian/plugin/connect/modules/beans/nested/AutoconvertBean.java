@@ -19,7 +19,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * as a parameter on the macro body. You must define the name of this parameter by providing a string value for 'urlParameter'.
  * This allows you to access the URL that triggered the autoconvert.
  *
- *#### Example
+ * <h2>Example</h2>
  *
  * This example inserts a macro into the editor when a user pastes in certain simple Facebook links.
  *

@@ -18,7 +18,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a>
  * documentation for a complete content property example.
  *
- *#### Example
+ * <h2>Example</h2>
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_UI_SUPPORT}
  * @schemaTitle User Interface Support

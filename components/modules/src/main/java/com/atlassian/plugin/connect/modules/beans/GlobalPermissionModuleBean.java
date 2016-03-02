@@ -17,7 +17,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * __Note:__ Global permissions added using this module are not supported for use with the `has_project_permission` condition.
  *
- *#### Example
+ * <h2>Example</h2>
  * @exampleJson {@link ConnectJsonExamples#GLOBAL_PERMISSION_EXAMPLE}
  * @schemaTitle Global Permission
  * @since 1.1
