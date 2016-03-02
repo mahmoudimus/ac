@@ -1,0 +1,22 @@
+#* @vtlvariable name="confluenceRemoteTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonThemeVelocityContext" *#
+#* @vtlvariable name="addonTheme" type="com.atlassian.plugin.connect.confluence.theme.ConfluenceRemoteAddonTheme" *#
+#* @vtlvariable name="currentUser" type="com.atlassian.confluence.user.ConfluenceUserImpl" *#
+#* @vtlvariable name="action" type="com.atlassian.confluence.plugins.search.actions.SearchAction" *#
+#set($addonTheme = $confluenceRemoteTheme.themeManager.globalTheme)
+#set($currentUser = $action.authenticatedUser)
+<html>
+<title>$action.getText('confluence-search.title')</title>
+<head>
+    #parse("/velocity/confluence/theme-support/includes/head.vm")
+</head>
+<body>
+<content tag="connectAddonThemed">true</content>
+    ${addonTheme.getRemoteThemeIframe($addonTheme.navigationInfo.search, {
+        'username' : $currentUser.fullName,
+        'userKey' : $currentUser.key.stringValue,
+        'queryString' : $action.queryString,
+        'cql' : $action.cql,
+        'includeArchivedSpaces': $action.includeArchivedSpaces
+    })}
+</body>
+</html>

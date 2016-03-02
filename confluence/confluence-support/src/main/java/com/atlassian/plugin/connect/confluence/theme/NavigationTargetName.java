@@ -17,6 +17,7 @@ import java.util.Map;
 public enum NavigationTargetName {
     dashboard,
     spaceview,
+    sitesearch,
     contentview;
     private static final Logger log = LoggerFactory.getLogger(NavigationTargetName.class);
     private static final Map<NavigationTargetName, List<NavigationTargetOverrideInfo>> navTargetNameMap;

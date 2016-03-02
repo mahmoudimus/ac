@@ -15,6 +15,7 @@ public class ConfluenceThemeRouteInterceptionsBean {
     private ConfluenceThemeRouteBean dashboard;
     private ConfluenceThemeRouteBean contentview;
     private ConfluenceThemeRouteBean spaceview;
+    private ConfluenceThemeRouteBean sitesearch;
 
     public ConfluenceThemeRouteBean getContentview() {
         return contentview;
@@ -26,6 +27,10 @@ public class ConfluenceThemeRouteInterceptionsBean {
 
     public ConfluenceThemeRouteBean getSpaceview() {
         return spaceview;
+    }
+
+    public ConfluenceThemeRouteBean getSitesearch() {
+        return sitesearch;
     }
 
     public ConfluenceThemeRouteInterceptionsBean(ConfluenceThemeRouteInterceptionsBeanBuilder builder) {

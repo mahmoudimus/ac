@@ -85,6 +85,10 @@ public final class ConfluenceRemoteAddonTheme extends ExperimentalUnsupportedThe
             return NavigationTargetOverrideInfo.blogpost;
         }
 
+        public NavigationTargetOverrideInfo getSearch() {
+            return NavigationTargetOverrideInfo.search;
+        }
+
         public NavigationTargetOverrideInfo getDashboard() {
             return NavigationTargetOverrideInfo.dashboard;
         }

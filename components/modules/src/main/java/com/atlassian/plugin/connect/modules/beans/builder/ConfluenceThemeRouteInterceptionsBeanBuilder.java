@@ -10,6 +10,7 @@ public class ConfluenceThemeRouteInterceptionsBeanBuilder<BUILDER extends Conflu
     private ConfluenceThemeRouteBean dashboard;
     private ConfluenceThemeRouteBean spaceview;
     private ConfluenceThemeRouteBean contentview;
+    private ConfluenceThemeRouteBean sitesearch;
 
     public ConfluenceThemeRouteInterceptionsBeanBuilder() {
     }
@@ -22,6 +23,11 @@ public class ConfluenceThemeRouteInterceptionsBeanBuilder<BUILDER extends Conflu
 
     public BUILDER withDashboard(ConfluenceThemeRouteBean dashboard) {
         this.dashboard = dashboard;
+        return (BUILDER) this;
+    }
+
+    public BUILDER withSitesearch(ConfluenceThemeRouteBean sitesearch) {
+        this.sitesearch = sitesearch;
         return (BUILDER) this;
     }
 
