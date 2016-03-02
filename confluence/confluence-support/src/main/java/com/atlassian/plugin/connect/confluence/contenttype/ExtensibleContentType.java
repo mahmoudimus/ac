@@ -5,8 +5,6 @@ import com.atlassian.confluence.api.service.content.ContentService;
 import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.ContentEntityAdapter;
 import com.atlassian.confluence.content.CustomContentEntityObject;
-import com.atlassian.confluence.content.CustomContentManager;
-import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.content.custom.BaseCustomContentType;
@@ -23,7 +21,7 @@ public class ExtensibleContentType extends BaseCustomContentType {
     private final ContentEntityAdapter contentEntityAdapter;
     private final PaginationService paginationService;
     private final ContentService contentService;
-    private final PermissionDelegate permissionDelegate;
+    private final ExtensibleContentTypePermissionDelegate permissionDelegate;
     private final ContentUiSupport contentUiSupport;
     private final CustomContentApiSupportParams customContentApiSupportParams;
     private final Set<String> supportedContainerTypes;
@@ -42,7 +40,7 @@ public class ExtensibleContentType extends BaseCustomContentType {
         this.contentTypeKey = contentTypeKey;
         this.contentTypeName = bean.getName().getI18nOrValue();
 
-        this.permissionDelegate = new PermissionDelegate(permissionManager);
+        this.permissionDelegate = new ExtensibleContentTypePermissionDelegate(permissionManager);
         this.paginationService = paginationService;
         this.contentService = contentService;
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(bean);
@@ -71,7 +69,7 @@ public class ExtensibleContentType extends BaseCustomContentType {
     }
 
     @Override
-    public PermissionDelegate getPermissionDelegate() {
+    public ExtensibleContentTypePermissionDelegate getPermissionDelegate() {
         return permissionDelegate;
     }
 
@@ -82,7 +80,7 @@ public class ExtensibleContentType extends BaseCustomContentType {
 
     @Override
     public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport() {
-        return new ExtensibleContentTypeSupport(
+        return new ExtensibleContentTypeApiSupport(
                 this,
                 customContentApiSupportParams,
                 paginationService,

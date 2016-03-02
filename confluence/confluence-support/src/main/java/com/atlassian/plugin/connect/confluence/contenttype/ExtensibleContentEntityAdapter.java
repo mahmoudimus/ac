@@ -10,16 +10,9 @@ import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBea
 
 public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent {
     private final boolean indexingEnabled;
-    private final BodyType bodyType;
 
     public ExtensibleContentEntityAdapter(ExtensibleContentTypeModuleBean bean) {
         this.indexingEnabled = bean.getApiSupport().getIndexing().isEnabled();
-
-        switch (bean.getApiSupport().getBodyType()) {
-            default:
-                this.bodyType = BodyType.XHTML;
-                break;
-        }
     }
 
     @Override
@@ -49,7 +42,7 @@ public class ExtensibleContentEntityAdapter extends ContentEntityAdapterParent {
 
     @Override
     public BodyType getDefaultBodyType(final CustomContentEntityObject pluginContentEntityObject) {
-        return bodyType;
+        return BodyType.XHTML;
     }
 
     @Override

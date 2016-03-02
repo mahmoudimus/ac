@@ -39,6 +39,7 @@ public class ExtensibleContentTypeModuleDescriptorFactory
             PaginationService paginationService,
             ContentService contentService,
             CustomContentApiSupportParams customContentApiSupportParams) {
+
         this.moduleFactory = moduleFactory;
         this.customContentApiSupportParams = customContentApiSupportParams;
         this.permissionManager = permissionManager;
@@ -48,14 +49,15 @@ public class ExtensibleContentTypeModuleDescriptorFactory
 
     @Override
     public ContentTypeModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
-        String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
+        String contentTypeName = bean.getContentTypeName(addon);
+        String description = String.format("Support for Extensible Content Type: %s", contentTypeName);
 
         Element descriptionElement = new DOMElement("description");
-        descriptionElement.addText("Support for Extensible Content Type " + contentTypeKey);
+        descriptionElement.addText(description);
 
         Element contentTypeElement = new DOMElement("content-type");
-        contentTypeElement.addAttribute("key", contentTypeKey);
-        contentTypeElement.addAttribute("name", contentTypeKey);
+        contentTypeElement.addAttribute("key", contentTypeName);
+        contentTypeElement.addAttribute("name", contentTypeName);
         contentTypeElement.addAttribute("class", ExtensibleContentType.class.getName());
         contentTypeElement.add(descriptionElement);
 
@@ -65,7 +67,6 @@ public class ExtensibleContentTypeModuleDescriptorFactory
 
         final ExtensibleContentTypeModuleDescriptor descriptor =
                 new ExtensibleContentTypeModuleDescriptor(
-                        contentTypeKey,
                         bean,
                         moduleFactory,
                         permissionManager,
@@ -73,6 +74,7 @@ public class ExtensibleContentTypeModuleDescriptorFactory
                         contentService,
                         customContentApiSupportParams);
         descriptor.init(plugin, contentTypeElement);
+
         return descriptor;
     }
 }

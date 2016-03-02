@@ -14,17 +14,9 @@ import java.util.Set;
  */
 public class APISupportBeanBuilder
         extends BaseModuleBeanBuilder<APISupportBeanBuilder, APISupportBean> {
-    private BodyType bodyType;
-
     private Set<String> supportedContainerTypes;
 
     private Set<String> supportedContainedTypes;
-
-    private String onCreateUrl;
-
-    private String onUpdateUrl;
-
-    private String onDeleteUrl;
 
     /**
      * Defines how would the content type be indexed
@@ -34,11 +26,6 @@ public class APISupportBeanBuilder
     public APISupportBeanBuilder() {
     }
 
-    public APISupportBeanBuilder withBodyType(String bodyType) {
-        this.bodyType = BodyType.valueOf(bodyType.toUpperCase());
-        return this;
-    }
-
     public APISupportBeanBuilder withSupportedContainerTypes(Set<String> supportedContainerTypes) {
         this.supportedContainerTypes = supportedContainerTypes;
         return this;
@@ -46,21 +33,6 @@ public class APISupportBeanBuilder
 
     public APISupportBeanBuilder withSupportedContainedTypes(Set<String> supportedChildrenTypes) {
         this.supportedContainedTypes = supportedChildrenTypes;
-        return this;
-    }
-
-    public APISupportBeanBuilder withOnCreateUrl(String onCreateUrl) {
-        this.onCreateUrl = onCreateUrl;
-        return this;
-    }
-
-    public APISupportBeanBuilder withOnUpdateUrl(String onUpdateUrl) {
-        this.onUpdateUrl = onUpdateUrl;
-        return this;
-    }
-
-    public APISupportBeanBuilder withOnDeleteUrl(String onDeleteUrl) {
-        this.onDeleteUrl = onDeleteUrl;
         return this;
     }
 

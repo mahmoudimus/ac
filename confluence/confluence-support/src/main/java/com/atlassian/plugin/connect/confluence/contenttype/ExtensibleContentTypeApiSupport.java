@@ -38,17 +38,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
+public class ExtensibleContentTypeApiSupport extends CustomContentTypeApiSupport {
     private final ContentType contentTypeKey;
     private final CustomContentManager customContentManager;
     private final PaginationService paginationService;
     private final ContentService contentService;
-    private final PermissionDelegate permissionDelegate;
+    private final ExtensibleContentTypePermissionDelegate permissionDelegate;
     private final ApiSupportProvider apiSupportProvider;
     private final Set<String> supportedContainerTypes;
     private final Set<String> supportedContainedTypes;
 
-    public ExtensibleContentTypeSupport(
+    public ExtensibleContentTypeApiSupport(
             ExtensibleContentType extensibleContentType,
             CustomContentApiSupportParams customContentApiSupportParams,
             PaginationService paginationService,
@@ -183,6 +183,7 @@ public class ExtensibleContentTypeSupport extends CustomContentTypeApiSupport {
         if (predicate == null) {
             return customContentEntityObjects;
         }
+
         return ImmutableList.copyOf(Iterables.filter(customContentEntityObjects, predicate));
     }
 

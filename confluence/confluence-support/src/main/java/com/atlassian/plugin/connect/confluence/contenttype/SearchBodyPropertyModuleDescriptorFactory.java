@@ -28,15 +28,19 @@ public class SearchBodyPropertyModuleDescriptorFactory
 
     @Override
     public SearchBodyPropertyModuleDescriptor createModuleDescriptor(ExtensibleContentTypeModuleBean bean, ConnectAddonBean addon, Plugin plugin) {
-        String contentTypeKey = ExtensibleContentTypeUtils.getContentType(addon, bean);
-        String SearchBodyPropertyModuleKey = ExtensibleContentTypeUtils.getSearchBodyPropertyModuleKey(bean);
+        String contentTypeName = bean.getContentTypeName(addon);
+        String searchBodyPropertyModuleKey = bean.getSearchBodyPropertyModuleKey(addon);
         String contentPropertyKey = bean.getApiSupport().getIndexing().getContentPropertyBody();
 
+        Element descriptionElement = new DOMElement("description");
+        descriptionElement.addText("Search Body Content Property definition for Extensible Content Type: " + contentTypeName);
+
         Element extractorElement = new DOMElement("search-body-property");
-        extractorElement.addAttribute("name", "Search Body Content Property definition for Extensible Content Type " + contentTypeKey);
-        extractorElement.addAttribute("key", SearchBodyPropertyModuleKey);
-        extractorElement.addAttribute("content-type", contentTypeKey);
+        extractorElement.addAttribute("name", searchBodyPropertyModuleKey);
+        extractorElement.addAttribute("key", searchBodyPropertyModuleKey);
+        extractorElement.addAttribute("content-type", plugin.getKey() + ":" + contentTypeName);
         extractorElement.addAttribute("content-property", contentPropertyKey);
+        extractorElement.add(descriptionElement);
 
         if (log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(extractorElement));

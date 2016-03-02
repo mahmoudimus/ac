@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
 import com.atlassian.plugin.connect.modules.beans.builder.ControlBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.OperationSupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintContextPostBody;
@@ -557,15 +556,9 @@ public class ConnectJsonExamples {
                 .withKey("myExtensibleContentType")
                 .withName(new I18nProperty("Extensible Content Type Name", null))
                 .withAPISupport(new APISupportBeanBuilder()
-                        .withBodyType("storage")
                         .withSupportedContainedTypes(Sets.newHashSet("space", "page"))
                         .withSupportedContainerTypes(Sets.newHashSet("comment", "attachment"))
-                        .withOnCreateUrl("/create")
-                        .withOnDeleteUrl("/delete")
-                        .withOnUpdateUrl("/update")
                         .withIndexing(createIndexingBean())
-                        .build())
-                .withOperationSupport(new OperationSupportBeanBuilder()
                         .build())
                 .withUISupport(new UISupportBeanBuilder()
                         .withContentViewComponent("")

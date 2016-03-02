@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBea
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.OperationSupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -35,6 +34,7 @@ import org.junit.BeforeClass;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor.toConfluenceUser;
 import static it.confluence.ConfluenceWebDriverTestBase.TestSpace.DEMO;
@@ -42,6 +42,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public abstract class AbstractExtensibleContentTypeTest {
+    private static final Pattern MODULE_KEY_MATCHER = Pattern.compile("\\W");
+
     protected static final ConfluenceTestedProduct product = new ConfluenceTestedProductAccessor().getConfluenceProduct();
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
     protected static ConfluenceRestClient restClient;
@@ -55,8 +57,8 @@ public abstract class AbstractExtensibleContentTypeTest {
 
     protected static ConnectRunner remotePlugin;
     protected InstallHandlerServlet installHandlerServlet;
-    protected ContentType contentType1;
-    protected ContentType contentType2;
+    protected ContentType CONTENT_TYPE_1;
+    protected ContentType CONTENT_TYPE_2;
     protected String addonKey;
 
     @BeforeClass
@@ -65,6 +67,14 @@ public abstract class AbstractExtensibleContentTypeTest {
         final TestUser admin = testUserFactory.admin();
         rpc.logIn(toConfluenceUser(admin));
         restClient = new ConfluenceRestClient(getProduct(), admin);
+    }
+
+    @After
+    public void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
+            remotePlugin.stopAndUninstall();
+            remotePlugin = null;
+        }
     }
 
     protected static ConfluenceTestedProduct getProduct() {
@@ -81,8 +91,6 @@ public abstract class AbstractExtensibleContentTypeTest {
                 .withName(new I18nProperty(typeName, ""))
                 .withUISupport(new UISupportBeanBuilder()
                         .build())
-                .withOperationSupport(new OperationSupportBeanBuilder()
-                        .build())
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(restrictedContainer)
                         .withSupportedContainedTypes(restrictedContained)
@@ -97,8 +105,6 @@ public abstract class AbstractExtensibleContentTypeTest {
                 .withName(new I18nProperty(typeName, ""))
                 .withUISupport(new UISupportBeanBuilder()
                         .build())
-                .withOperationSupport(new OperationSupportBeanBuilder()
-                        .build())
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(Sets.newHashSet("space"))
                         .withSupportedContainedTypes(Sets.newHashSet())
@@ -109,8 +115,8 @@ public abstract class AbstractExtensibleContentTypeTest {
 
     public void startConnectAddon(ModuleBean... beans) throws Exception {
         addonKey = AddonTestUtils.randomAddonKey();
-        contentType1 = ContentType.valueOf(getCompleteContentTypeKey(TYPE_KEY_1));
-        contentType2 = ContentType.valueOf(getCompleteContentTypeKey(TYPE_KEY_2));
+        CONTENT_TYPE_1 = ContentType.valueOf(getCompleteContentTypeKey(TYPE_KEY_1));
+        CONTENT_TYPE_2 = ContentType.valueOf(getCompleteContentTypeKey(TYPE_KEY_2));
         installHandlerServlet = new InstallHandlerServlet();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
@@ -119,14 +125,6 @@ public abstract class AbstractExtensibleContentTypeTest {
                 .addScopes(ScopeName.READ, ScopeName.WRITE)
                 .addModules("extensibleContentTypes", beans)
                 .start();
-    }
-
-    @After
-    public void stopConnectAddon() throws Exception {
-        if (remotePlugin != null) {
-            remotePlugin.stopAndUninstall();
-            remotePlugin = null;
-        }
     }
 
     public void checkExtensibleContentType(String typeKey, String typeName) throws Exception {
@@ -145,11 +143,6 @@ public abstract class AbstractExtensibleContentTypeTest {
     public JsonContentProperty createContentProperty(Content content, String key, String value) {
         JsonContentProperty contentProperty = createJsonContentProperty(content, key, value);
         return restClient.contentProperties().create(contentProperty).claim();
-    }
-
-    public JsonContentProperty updateContentProperty(JsonContentProperty contentProperty, String value) {
-        JsonContentProperty updatedContentProperty = JsonContentProperty.builder(contentProperty).value(new JsonString(value)).build();
-        return restClient.contentProperties().update(updatedContentProperty).claim();
     }
 
     private JsonContentProperty createJsonContentProperty(Content content, String key, String value) {
@@ -215,6 +208,6 @@ public abstract class AbstractExtensibleContentTypeTest {
     }
 
     public String getCompleteContentTypeKey(String typeKey) {
-        return addonKey + ":" + typeKey;
+        return "com.atlassian.plugins.atlassian-connect-plugin:" + MODULE_KEY_MATCHER.matcher(addonKey + "-" + typeKey).replaceAll("-");
     }
 }

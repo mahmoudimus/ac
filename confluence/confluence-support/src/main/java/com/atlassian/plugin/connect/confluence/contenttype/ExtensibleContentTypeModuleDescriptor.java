@@ -4,8 +4,6 @@ import com.atlassian.confluence.api.service.content.ContentService;
 import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.ContentType;
 import com.atlassian.confluence.content.ContentTypeModuleDescriptor;
-import com.atlassian.confluence.content.CustomContentManager;
-import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.CustomContentApiSupportParams;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.plugin.Plugin;
@@ -14,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBea
 import com.atlassian.plugin.module.ModuleFactory;
 
 public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDescriptor {
-    private final String contentTypeKey;
     private final ExtensibleContentTypeModuleBean bean;
     private final PermissionManager permissionManager;
     private final CustomContentApiSupportParams customContentApiSupportParams;
@@ -22,7 +19,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
     private final ContentService contentService;
 
     public ExtensibleContentTypeModuleDescriptor(
-            String contentTypeKey,
             ExtensibleContentTypeModuleBean bean,
             ModuleFactory moduleFactory,
             PermissionManager permissionManager,
@@ -33,7 +29,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
         super(moduleFactory, customContentApiSupportParams.getProvider());
         this.bean = bean;
 
-        this.contentTypeKey = contentTypeKey;
         this.permissionManager = permissionManager;
         this.paginationService = paginationService;
         this.contentService = contentService;
@@ -52,16 +47,11 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
     @Override
     public ContentType createModule() {
         return new ExtensibleContentType(
-                contentTypeKey,
+                getCompleteKey(),
                 bean,
                 permissionManager,
                 paginationService,
                 contentService,
                 customContentApiSupportParams);
-    }
-
-    @Override
-    public String getCompleteKey() {
-        return contentTypeKey;
     }
 }

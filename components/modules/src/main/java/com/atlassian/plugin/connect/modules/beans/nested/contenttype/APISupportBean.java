@@ -1,9 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.nested.contenttype;
 
-import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
-import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
 import com.google.common.collect.Sets;
@@ -19,12 +17,6 @@ import java.util.Set;
 @SchemaDefinition("apiSupport")
 public class APISupportBean extends BaseModuleBean {
     /**
-     * The body type of the Extensible Content Type. Defaults to {@code storage}
-     */
-    @CommonSchemaAttributes(defaultValue = "storage")
-    private BodyType bodyType;
-
-    /**
      * Defines types that this Extensible Content Type can be contained in.
      * For example: ["space", "blogpost"] indicates a Space or a BlogPost can be set as the container of this Extensible Content Type.
      */
@@ -37,18 +29,6 @@ public class APISupportBean extends BaseModuleBean {
      * For example: ["comment", "attachment"] indicates Comment and Attachment can be contained in this type.
      */
     private Set<String> supportedContainedTypes;
-
-    @StringSchemaAttributes(format = "uri")
-    @CommonSchemaAttributes(defaultValue = "")
-    private String onCreateUrl;
-
-    @StringSchemaAttributes(format = "uri")
-    @CommonSchemaAttributes(defaultValue = "")
-    private String onUpdateUrl;
-
-    @StringSchemaAttributes(format = "uri")
-    @CommonSchemaAttributes(defaultValue = "")
-    private String onDeleteUrl;
 
     /**
      * Defines how this content type will be indexed
@@ -67,11 +47,6 @@ public class APISupportBean extends BaseModuleBean {
     private void initialise() {
         supportedContainedTypes = ObjectUtils.defaultIfNull(supportedContainedTypes, Sets.newHashSet());
         indexing = ObjectUtils.defaultIfNull(indexing, new IndexingBean());
-        bodyType = ObjectUtils.defaultIfNull(bodyType, BodyType.STORAGE);
-    }
-
-    public BodyType getBodyType() {
-        return bodyType;
     }
 
     public Set<String> getSupportedContainerTypes() {
@@ -80,18 +55,6 @@ public class APISupportBean extends BaseModuleBean {
 
     public Set<String> getSupportedContainedTypes() {
         return supportedContainedTypes;
-    }
-
-    public String getOnCreateUrl() {
-        return onCreateUrl;
-    }
-
-    public String getOnUpdateUrl() {
-        return onUpdateUrl;
-    }
-
-    public String getOnDeleteUrl() {
-        return onDeleteUrl;
     }
 
     public IndexingBean getIndexing() {

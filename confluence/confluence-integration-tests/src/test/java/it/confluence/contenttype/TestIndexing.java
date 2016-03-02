@@ -6,26 +6,15 @@ import com.atlassian.confluence.api.model.pagination.SimplePageRequest;
 import com.atlassian.confluence.api.model.search.SearchOptions;
 import com.atlassian.confluence.api.model.search.SearchResult;
 import com.atlassian.confluence.rest.api.model.ExpansionsParser;
-import com.atlassian.pageobjects.elements.PageElement;
-import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TestIndexing extends AbstractExtensibleContentTypeTest {
-    private static TestUser user;
     private final String CONTENT_TITLE = "Test Extensible Type Title";
-
-    @BeforeClass
-    public static void setup() {
-        user = testUserFactory.basicUser();
-    }
 
     @Test
     public void testCanSearchExtensibleContentType() throws Exception {
@@ -34,8 +23,8 @@ public class TestIndexing extends AbstractExtensibleContentTypeTest {
                 createSimpleBean(TYPE_KEY_2, TYPE_NAME_2)
         );
 
-        createContent(buildContent(contentType1, null, CONTENT_TITLE + " 123", "body1"));
-        createContent(buildContent(contentType2, null, CONTENT_TITLE + " 456", "body2"));
+        createContent(buildContent(CONTENT_TYPE_1, null, CONTENT_TITLE + " 123", "body1"));
+        createContent(buildContent(CONTENT_TYPE_2, null, CONTENT_TITLE + " 456", "body2"));
         rpc.flushIndexQueue();
 
         // Test can find content1
@@ -54,11 +43,11 @@ public class TestIndexing extends AbstractExtensibleContentTypeTest {
                 createBeanWithContentPropertyIndexingSupport(TYPE_KEY_2, TYPE_NAME_2, true, "key1")
         );
 
-        Content content1 = createContent(buildContent(contentType1, null, CONTENT_TITLE + " aUniqueKeyForContent1", "body1"));
+        Content content1 = createContent(buildContent(CONTENT_TYPE_1, null, CONTENT_TITLE + " aUniqueKeyForContent1", "body1"));
         createContentProperty(content1, "key1", "{\"content\": \"key1ForContent1\"}");
         createContentProperty(content1, "key2", "{\"content\": \"key2ForContent1\"}");
 
-        Content content2 = createContent(buildContent(contentType2, null, CONTENT_TITLE + " aUniqueKeyForContent2", "body2"));
+        Content content2 = createContent(buildContent(CONTENT_TYPE_2, null, CONTENT_TITLE + " aUniqueKeyForContent2", "body2"));
         createContentProperty(content2, "key1", "{\"content\": \"key1ForContent2\"}");
         createContentProperty(content2, "key2", "{\"content\": \"key2ForContent2\"}");
 
@@ -84,8 +73,8 @@ public class TestIndexing extends AbstractExtensibleContentTypeTest {
                 createBeanWithContentPropertyIndexingSupport(TYPE_KEY_2, TYPE_NAME_2, false, "key2")
         );
 
-        createContent(buildContent(contentType1, null, CONTENT_TITLE + " indexingEnabled", "body1"));
-        createContent(buildContent(contentType2, null, CONTENT_TITLE + " indexingDisabled", "body2"));
+        createContent(buildContent(CONTENT_TYPE_1, null, CONTENT_TITLE + " indexingEnabled", "body1"));
+        createContent(buildContent(CONTENT_TYPE_2, null, CONTENT_TITLE + " indexingDisabled", "body2"));
 
         rpc.flushIndexQueue();
 

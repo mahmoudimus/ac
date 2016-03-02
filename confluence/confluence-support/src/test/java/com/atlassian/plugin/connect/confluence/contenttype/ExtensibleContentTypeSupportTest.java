@@ -15,7 +15,6 @@ import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBea
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.contenttype.UISupportBean;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -97,7 +96,7 @@ public class ExtensibleContentTypeSupportTest {
         ContentType extensible = ContentType.valueOf("extensible");
         ExtensibleContentTypeModuleBean bean = buildBean(Sets.newHashSet("extensible"), Sets.newHashSet("extensible"));
 
-        ExtensibleContentTypeSupport extensibleTypeSupport = buildContentTypeSupport("extensible", bean);
+        ExtensibleContentTypeApiSupport extensibleTypeSupport = buildContentTypeSupport("extensible", bean);
         when(apiSupportProvider.getForType(extensible)).thenReturn(extensibleTypeSupport);
 
         Space space = Space.builder().build();
@@ -107,7 +106,7 @@ public class ExtensibleContentTypeSupportTest {
         assertThat(extensibleTypeSupport.validateCreate(childContent).isValid(), is(true));
     }
 
-    private ExtensibleContentTypeSupport buildContentTypeSupport(String contentTypeKey, ExtensibleContentTypeModuleBean bean) {
+    private ExtensibleContentTypeApiSupport buildContentTypeSupport(String contentTypeKey, ExtensibleContentTypeModuleBean bean) {
         when(customContentApiSupportParams.getProvider()).thenReturn(apiSupportProvider);
 
         ExtensibleContentType extensibleContentType = new ExtensibleContentType(
@@ -118,7 +117,7 @@ public class ExtensibleContentTypeSupportTest {
                 contentService,
                 customContentApiSupportParams);
 
-        return new ExtensibleContentTypeSupport(
+        return new ExtensibleContentTypeApiSupport(
                 extensibleContentType,
                 customContentApiSupportParams,
                 paginationService,
