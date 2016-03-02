@@ -47,7 +47,7 @@ final class ConfluenceThemeUtils {
 
     public static ConfluenceThemeRouteBean getRouteBeanFromProperty(ConfluenceThemeRouteInterceptionsBean routes, PropertyDescriptor property) {
         try {
-            Object invokeResult = property.getReadMethod().invoke(routes);
+            Object invokeResult = invokePropertyMethod(routes, property);
             if (invokeResult instanceof ConfluenceThemeRouteBean) {
                 return (ConfluenceThemeRouteBean) invokeResult;
             } else {
@@ -62,10 +62,23 @@ final class ConfluenceThemeUtils {
         }
     }
 
+    private static Object invokePropertyMethod(ConfluenceThemeRouteInterceptionsBean routes, PropertyDescriptor property) throws IllegalAccessException, InvocationTargetException {
+        return property.getReadMethod().invoke(routes);
+    }
 
     public static List<PropertyDescriptor> filterProperties(final ConfluenceThemeRouteInterceptionsBean props) {
         return Arrays.asList(BEAN_UTIL.getPropertyDescriptors(props))
                      .stream()
-                     .filter(p -> !p.getName().equals("class")).collect(Collectors.toList());
+                     .filter(p ->!p.getName().equals("class") && isPropertySet(props, p))
+                .collect(Collectors.toList());
+    }
+
+    private static boolean isPropertySet(ConfluenceThemeRouteInterceptionsBean props, PropertyDescriptor p) {
+        try {
+            return  invokePropertyMethod(props, p) != null;
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            //TODO: log the error here
+            return false;
+        }
     }
 }
