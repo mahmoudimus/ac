@@ -11,8 +11,6 @@ import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
-import com.atlassian.oauth.serviceprovider.ServiceProviderTokenStore;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -60,7 +58,6 @@ public class CommonImports {
             @ComponentImport ConsumerService consumerService,
             @ComponentImport RequestFactory requestFactory,
             @ComponentImport ApplicationProperties applicationProperties,
-            @ComponentImport ServiceProviderConsumerStore serviceProviderConsumerStore,
             @ComponentImport MutatingApplicationLinkService applicationLinkService,
             @ComponentImport AuthenticationConfigurationManager authenticationConfigurationManager,
             @ComponentImport UserManager userManager,
@@ -84,7 +81,6 @@ public class CommonImports {
             @ComponentImport JwtJsonBuilderFactory jwtBuilderFactory,
             @ComponentImport JwtService jwtService,
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
-            @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
             @ComponentImport CrowdService crowdService,
             @ComponentImport DarkFeatureManager darkFeatureManager,
             @ComponentImport ActiveObjects activeObjects) {

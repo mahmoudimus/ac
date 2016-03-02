@@ -8,10 +8,6 @@ import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.oauth.ServiceProvider;
-import com.atlassian.oauth.util.RSAKeys;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.auth.AuthenticationMethod;
@@ -19,6 +15,7 @@ import com.atlassian.plugin.connect.spi.auth.applinks.MutatingApplicationLinkSer
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +23,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
 import java.util.List;
 import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
 @Component
@@ -51,61 +44,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager {
         this.transactionTemplate = transactionTemplate;
     }
 
-    /**
-     * @deprecated use {@code createAppLink(final ConnectAddonBean addon, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey)} instead
-     */
-    @Deprecated
     @Override
-    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey) {
-        checkNotNull(addonUserKey);
-        transactionTemplate.execute(() -> {
-            String pluginKey = plugin.getKey();
-            URI baseUri = URI.create(baseUrl);
-
-            final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(baseUri);
-
-            final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(RemotePluginContainerApplicationType.class);
-
-            deleteOldAppLinks(pluginKey, expectedApplicationId);
-
-            final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
-                    .displayUrl(baseUri)
-                    .isPrimary(false)
-                    .name(plugin.getName() != null ? plugin.getName() : plugin.getKey())
-                    .rpcUrl(baseUri)
-                    .build();
-
-            log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
-
-            ApplicationLink link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
-
-            link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
-            link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey);
-            link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
-            link.putProperty("system", Boolean.TRUE.toString());
-
-            ServiceProvider serviceProvider = createServiceProvider();
-            switch (authType) {
-                case JWT:
-                    link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
-                    link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
-                    break;
-                case NONE:
-                    link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
-                    break;
-                default:
-                    log.warn("Unknown authType encountered, treating as NONE: " + authType.name());
-                    link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
-                    break;
-            }
-            return null;
-        });
-    }
-
-    @Override
-    public void createAppLink(final ConnectAddonBean addon, final String baseUrl,
-                              final AuthenticationType authType, final String publicKey, final String addonUserKey) {
-        transactionTemplate.execute(() -> {
+    public void createAppLink(final ConnectAddonBean addon, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey) {
+        transactionTemplate.execute((TransactionCallback<Void>) () -> {
             String pluginKey = addon.getKey();
             URI baseUri = URI.create(baseUrl);
 
@@ -131,19 +72,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager {
             link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
             link.putProperty("system", Boolean.TRUE.toString());
 
-            ServiceProvider serviceProvider = createServiceProvider();
-            switch (authType) {
-                case JWT:
-                    link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
-                    link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
-                    break;
-                case NONE:
-                    link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
-                    break;
-                default:
-                    log.warn("Unknown authType encountered, treating as NONE: " + authType.name());
-                    link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
-                    break;
+            link.putProperty(AuthenticationMethod.PROPERTY_NAME, authType.toString());
+            if (authType == AuthenticationType.JWT) {
+                link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
             }
 
             return null;
@@ -255,24 +186,5 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager {
         } else {
             throw new IllegalStateException("Cannot find application ids to manually delete " + expectedApplicationId.get());
         }
-    }
-
-    private ServiceProvider createServiceProvider() {
-        URI dummyUri = URI.create("http://localhost");
-        return new ServiceProvider(dummyUri, dummyUri, dummyUri);
-    }
-
-    protected final PublicKey getPublicKey(String publicKeyText) {
-        PublicKey publicKey;
-        try {
-            if (publicKeyText.startsWith("-----BEGIN CERTIFICATE-----")) {
-                publicKey = RSAKeys.fromEncodedCertificateToPublicKey(publicKeyText);
-            } else {
-                publicKey = RSAKeys.fromPemEncodingToPublicKey(publicKeyText);
-            }
-        } catch (GeneralSecurityException e) {
-            throw new PluginParseException("Invalid public key", e);
-        }
-        return publicKey;
     }
 }
