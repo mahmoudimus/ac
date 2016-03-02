@@ -201,5 +201,7 @@
 
     <properties>
         <debugSchemaGen>false</debugSchemaGen>
+        <!-- Linting breaks JSON schema generator so disable it -->
+        <javadoc.additional.params/>
     </properties>
 </project>
