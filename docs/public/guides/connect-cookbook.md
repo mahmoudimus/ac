@@ -32,10 +32,10 @@ This sample only applies to static add-ons. Add-ons with server components shoul
 and then generate the URL for `all.js`. Accepting `<script>` tag locations from untrusted query string sources 
 could open your application up to XSS attacks.
 
-If you want to set `data-options` for `all.js`, define it in the `<script>` tag as seen in the sample.
+If you want to set [`data-options`](../concepts/javascript-api.html#options) for `all.js`, define them in the `<script>` tag as seen in the sample.
 
 ````
-<script data-options="sizeToParent:false;hideFooter:true">
+<script id="connect-loader" data-options="sizeToParent:true;">
 (function() {
   var getUrlParam = function (param) {
     var codedParam = (new RegExp(param + '=([^&]*)')).exec(window.location.search)[1];
@@ -43,13 +43,14 @@ If you want to set `data-options` for `all.js`, define it in the `<script>` tag 
   };
 
   var baseUrl = getUrlParam('xdm_e') + getUrlParam('cp');
-  var options = document.currentScript.dataset.options;
+  var options = document.getElementById('connect-loader').getAttribute('data-options');
 
   var script = document.createElement("script");
   script.src = baseUrl + '/atlassian-connect/all.js';
   
-  if(options)
-    script.setAttribute('data-options', options);  
+  if(options) {
+    script.setAttribute('data-options', options);
+  }
   
   document.getElementsByTagName("head")[0].appendChild(script);
 })();

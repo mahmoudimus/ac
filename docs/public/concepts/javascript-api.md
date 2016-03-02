@@ -76,7 +76,7 @@ Don't download the all.js file and serve it up from your add-on server directly.
 the product host in order for the cross-domain messaging bridge to be established.
 For determining the host's url in a static add-on, see [this recipe from the Connect cookbook](../guides/connect-cookbook.html#all.js).
 
-### Options
+### <a name="options"></a> Options
 
 The JavaScript client library has some configuration options for customizing its behavior. The options are passed
 using the `data-options` attribute.
