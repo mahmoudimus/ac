@@ -20,6 +20,10 @@ The following scopes are available for use by Atlassian Connect add-ons:
 * `PROJECT_ADMIN` &ndash; can administer a project in JIRA
 * `ADMIN` &ndash; can administer the entire JIRA instance
 
+The scopes are hierarchical, `READ` being the least privileged scope and `ADMIN` the most privileged scope. Specifying a
+scope higher in the hierarchy automatically grants all the scopes lower in the hierarchy. For example, granting `DELETE` scope
+will also grant `WRITE` and `READ` scopes for your addon.
+
 See the following pages for details on which remote endpoints are available in JIRA:
 
 * [JIRA REST](../scopes/jira-rest-scopes.html)
