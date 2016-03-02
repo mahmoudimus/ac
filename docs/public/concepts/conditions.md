@@ -26,7 +26,8 @@ As these remote service invocations have a negative impact the user experience, 
 * [Predefined conditions](#static)
   * [Condition parameters](#static-condition-parameters)
   * [Entity property conditions](#entity-property)
-  * [can_use_application condition](#can-use-application)
+  * [`addon_is_licensed` condition](#addon-is-licensed-condition)
+  * [`can_use_application` condition](#can-use-application)
 * [Boolean operations](#boolean-operations)
 * [Remote conditions](#remote)
   * [Caching remote conditions](#remote-caching)
@@ -86,7 +87,7 @@ ondition. The issue for which permissions are checked is the issue being viewed 
 }
 ```
 
-## <a name="entity-property"></a>Entity property conditions
+### <a name="entity-property"></a>Entity property conditions
 
 Add-ons that need to impose custom requirements on when user interface elements are displayed can use the
 predefined `entity_property_equal_to` condition. This condition allows fast comparisons to be made against data stored
@@ -151,7 +152,40 @@ Also, an add-on that allows users to associate data with a JIRA issue could stor
 on that issue indicating that the issue has additional data, and then use this condition to control the display of a
 web panel with additional information.
 
-## <a name="can-use-application"></a>can_use_application condition
+### <a name="addon-is-licensed-condition"></a>addon_is_licensed condition
+
+The `addon_is_licensed` condition will evaluate to `true` if and only if your add-on is a paid add-on and it 
+is licensed. This condition can be placed on any Atlassian Connect module that supports conditions; it is not context sensitive. 
+Here is an example of the new condition in use:
+
+    "jiraIssueTabPanels": [{
+        "conditions": [
+            {
+                "condition": "addon_is_licensed"
+            },
+            {
+                "condition": "user_is_logged_in"
+            }
+        ], 
+        "key": "your-module-key", 
+        "name": {
+            "value": "Your module name"
+        }, 
+        "url": "/panel/issue?issue_id={issue.id}&issue_key={issue.key}", 
+        "weight": 100
+    }]
+    
+In this example the JIRA Issue Tab Panel will only be shown if the add-on is licensed and the user is logged in. However, there are some
+caveats to this condition:
+
+ * If you give away your add-on for _free_ then you must not use the `addon_is_licensed` condition. This is important because
+   all free add-ons are considered _unlicensed_ and will thus the condition will return `false`. Only use this condition with 
+   paid add-ons that are licensed via the Atlassian Marketplace.
+ * In local development with the AMPS tools, you will likely not have a license installed that says that your add-on is active. 
+   This means that this condition will always return `false` in local development. Consider only adding the condition to 
+   appropriate modules when you know that your add-on will be running on a production Atlassian Cloud instance.
+
+### <a name="can-use-application"></a>can_use_application condition
 
 `can_use_application` condition checks whether the current user is allowed to use a specific application 
  (like JIRA Software or JIRA Service Desk). 
