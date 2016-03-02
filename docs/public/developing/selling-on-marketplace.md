@@ -1,7 +1,7 @@
 # Selling on the Atlassian Marketplace
 
 [Installing in the cloud](./cloud-installation.html) helps you install and test your add-on 
-in your cloud-hosted product. To **sell** your add-on, ensure your add-on meets our 
+in your cloud-hosted product. To **sell** your add-on, first ensure your add-on meets our 
 [approval guidelines](https://developer.atlassian.com/x/WQaf#Add-onapprovalguidelines-AdditionalcriteriaforAtlassianConnectadd-ons) 
 Then, you can publicly list your add-on via the [Atlassian Marketplace site](https://marketplace.atlassian.com/). 
 Public add-ons are available to any cloud customers, whether your add-on is free or paid via Atlassian. 
@@ -11,7 +11,9 @@ Public add-ons are available to any cloud customers, whether your add-on is free
 Customers can subscribe to Connect add-ons from their cloud-hosted Atlassian products, like JIRA 
 Cloud or Confluence Cloud. They first enter into a 30-day free trial for your add-on, which automatically 
 rolls into a  paid subscription (if your add-on is paid, of course). Customers pay the subscription price 
-that you set, and billing only stops if customers cancel their subscription. 
+that you set, and billing only stops if customers cancel their subscription. If a customer does not pay
+ their bill then their instance will be shut down for lack of payment; you will **not** be notified of this event
+ via a lifecycle callback.
 
 If an add-on administrator cancels or unsubscribes from your add-on, it can remain installed in their product 
 until the descriptor is removed. Licensing and installation are separate functions for Connect add-ons, so an 
