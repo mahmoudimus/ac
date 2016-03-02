@@ -40,7 +40,7 @@ ACE helps you create Connect add-ons using Node.js, and handles add-on registrat
 It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/) 
 file, so you don't need to continually restart your add-on as you develop. 
 Importantly, ACE also handles [JSON web token (JWT)](../concepts/understanding-jwt.html), 
-so that requests betwen your add-on and the JIRA application are signed and authenticated. 
+so that requests between your add-on and the JIRA application are signed and authenticated. 
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     You'll need SDK version 4.2.20 or higher.  
