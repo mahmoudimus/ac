@@ -1,59 +1,49 @@
 package com.atlassian.plugin.connect.test.common.servlet;
 
-import java.io.IOException;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import cc.plural.jsonij.JPath;
+import cc.plural.jsonij.JSON;
+import cc.plural.jsonij.Value;
+import cc.plural.jsonij.parser.ParserException;
+import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.api.request.HttpHeaderNames;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookBody;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookTester;
-import com.atlassian.plugin.connect.test.common.webhook.WebHookWaiter;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.JSON;
-import cc.plural.jsonij.Value;
-import cc.plural.jsonij.parser.ParserException;
+import java.io.IOException;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
 import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.randomWebItemBean;
 
-public final class WebHookTestServlet extends HttpServlet
-{
+public final class WebHookTestServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(WebHookTestServlet.class);
 
-    private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<WebHookBody>();
+    private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<>();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-    {
-        if (req.getRequestURI().endsWith("/webhook") || req.getRequestURI().endsWith("-lifecycle"))
-        {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (req.getRequestURI().endsWith("/webhook") || req.getRequestURI().endsWith("-lifecycle")) {
             String version = req.getHeader(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION);
-            try
-            {
+            try {
                 webHooksQueue.push(new JsonWebHookBody(getFullURL(req), JSON.parse(IOUtils.toString(req.getReader())), version));
                 resp.getWriter().write("OKEY DOKEY");
-            } catch (ParserException e)
-            {
+            } catch (ParserException e) {
                 throw new ServletException(e);
             }
         }
     }
 
-    public static void runInRunner(String baseUrl, String eventId, String pluginKey, WebHookTester tester) throws Exception
-    {
+    public static void runInRunner(String baseUrl, String eventId, String pluginKey, WebHookTester tester) throws Exception {
         final String webHookPath = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
@@ -66,23 +56,18 @@ public final class WebHookTestServlet extends HttpServlet
                 .addJWT(new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
                 .start();
 
-        try
-        {
+        try {
             tester.test(servlet::waitForHook);
-        }
-        finally
-        {
+        } finally {
             runner.stopAndUninstall();
         }
     }
 
-    public static void runInJsonRunner(String baseUrl, String webHookId, WebHookTester tester) throws Exception
-    {
+    public static void runInJsonRunner(String baseUrl, String webHookId, WebHookTester tester) throws Exception {
         runInJsonRunner(baseUrl, webHookId, webHookId, tester);
     }
 
-    public static void runInstallInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
-    {
+    public static void runInstallInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception {
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addInstallLifecycle()
@@ -90,18 +75,14 @@ public final class WebHookTestServlet extends HttpServlet
                 .addRoute(ConnectRunner.INSTALLED_PATH, servlet)
                 .start();
 
-        try
-        {
+        try {
             tester.test(servlet::waitForHook);
-        }
-        finally
-        {
+        } finally {
             runner.stopAndUninstall();
         }
     }
 
-    public static void runEnableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
-    {
+    public static void runEnableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception {
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .setAuthenticationToNone()
@@ -110,37 +91,29 @@ public final class WebHookTestServlet extends HttpServlet
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
-        try
-        {
+        try {
             tester.test(servlet::waitForHook);
-        }
-        finally
-        {
+        } finally {
             runner.stopAndUninstall();
         }
     }
 
-    public static void runDisableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
-    {
+    public static void runDisableInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception {
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addDisableLifecycle()
-                .addModule("webItems",randomWebItemBean())
+                .addModule("webItems", randomWebItemBean())
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet)
                 .start();
 
-        try
-        {
+        try {
             tester.test(servlet::waitForHook);
-        }
-        finally
-        {
+        } finally {
             runner.stopAndUninstall();
         }
     }
 
-    public static void runUninstalledInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception
-    {
+    public static void runUninstalledInJsonRunner(String baseUrl, String pluginKey, WebHookTester tester) throws Exception {
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
@@ -148,18 +121,14 @@ public final class WebHookTestServlet extends HttpServlet
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 
-        try
-        {
+        try {
             tester.test(servlet::waitForHook);
-        }
-        finally
-        {
+        } finally {
             runner.stopAndUninstall();
         }
     }
 
-    public static void runInJsonRunner(String baseUrl, String addonKey, String eventId, WebHookTester tester) throws Exception
-    {
+    public static void runInJsonRunner(String baseUrl, String addonKey, String eventId, WebHookTester tester) throws Exception {
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, addonKey)
@@ -170,66 +139,53 @@ public final class WebHookTestServlet extends HttpServlet
                 .addScope(ScopeName.READ) // for receiving web hooks
                 .start();
 
-        try
-        {
+        try {
             tester.test(servlet::waitForHook);
-        }
-        finally
-        {
+        } finally {
             runner.stopAndUninstall();
         }
     }
 
-    public static String getFullURL(HttpServletRequest request)
-    {
+    public static String getFullURL(HttpServletRequest request) {
         StringBuffer requestURL = request.getRequestURL();
         String queryString = request.getQueryString();
 
-        if (queryString == null)
-        {
+        if (queryString == null) {
             return requestURL.toString();
-        } else
-        {
+        } else {
             return requestURL.append('?').append(queryString).toString();
         }
     }
 
-    public WebHookBody waitForHook() throws InterruptedException
-    {
+    public WebHookBody waitForHook() throws InterruptedException {
         return webHooksQueue.poll(10, TimeUnit.SECONDS);
     }
 
-    private static final class JsonWebHookBody implements WebHookBody
-    {
+    private static final class JsonWebHookBody implements WebHookBody {
         private volatile JSON body;
         private volatile String requestURI;
         private volatile String version;
 
-        private JsonWebHookBody(String requestURI, JSON body, String version)
-        {
+        private JsonWebHookBody(String requestURI, JSON body, String version) {
             this.requestURI = requestURI;
             this.body = body;
             this.version = version;
         }
 
         @Override
-        public String find(String expression) throws Exception
-        {
+        public String find(String expression) throws Exception {
             JPath path = JPath.parse(expression);
             Value value = path.evaluate(body);
-            if (value == null)
-            {
+            if (value == null) {
                 log.warn("Can't find expression '" + expression + "' in\n" + body.toJSON());
                 return null;
-            } else
-            {
+            } else {
                 return value.toString();
             }
         }
 
         @Override
-        public String getConnectVersion()
-        {
+        public String getConnectVersion() {
             return this.version;
         }
     }

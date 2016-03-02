@@ -1,39 +1,34 @@
 package com.atlassian.plugin.connect.plugin.web.page;
 
-import java.io.IOException;
-
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
-
+import com.atlassian.plugin.connect.test.matcher.SameDeepPropertyValuesAs;
 import com.google.gson.Gson;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-public class ConfigurePageModuleBeanTest
-{
+public class ConfigurePageModuleBeanTest {
     private static Gson gson;
     private static ConnectPageModuleBean bean;
 
     @Before
-    public void setup()
-    {
+    public void setup() {
         gson = ConnectModulesGsonFactory.getGson();
         bean = createBean();
     }
 
     @Test
-    public void producesCorrectJSON() throws Exception
-    {
+    public void producesCorrectJSON() throws Exception {
         String json = gson.toJson(bean, ConnectPageModuleBean.class);
         String expectedJson = readTestFile();
 
@@ -41,8 +36,7 @@ public class ConfigurePageModuleBeanTest
     }
 
     @Test
-    public void producesCorrectBean() throws Exception
-    {
+    public void producesCorrectBean() throws Exception {
         String json = readTestFile();
         ConnectPageModuleBean deserializedBean = gson.fromJson(json, ConnectPageModuleBean.class);
 
@@ -50,27 +44,24 @@ public class ConfigurePageModuleBeanTest
     }
 
     @Test
-    public void roundTrippingIsPreserving()
-    {
+    public void roundTrippingIsPreserving() {
         String json = gson.toJson(bean, ConnectPageModuleBean.class);
         ConnectPageModuleBean deserializedBean = gson.fromJson(json, ConnectPageModuleBean.class);
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
     }
 
-    private static ConnectPageModuleBean createBean()
-    {
+    private static ConnectPageModuleBean createBean() {
         return newPageBean()
-            .withName(new I18nProperty("Some page", "some.page.name"))
-            .withKey("configure-page")
-            .withLocation("")
-            .withUrl("/my-page")
-            .withIcon(newIconBean().withUrl("/mypage/icon.png").withHeight(80).withWidth(80).build())
-            .build();
+                .withName(new I18nProperty("Some page", "some.page.name"))
+                .withKey("configure-page")
+                .withLocation("")
+                .withUrl("/my-page")
+                .withIcon(newIconBean().withUrl("/mypage/icon.png").withHeight(80).withWidth(80).build())
+                .build();
     }
 
-    private static String readTestFile() throws IOException
-    {
+    private static String readTestFile() throws IOException {
         return readAddonTestFile("configurePageAddon.json");
     }
 

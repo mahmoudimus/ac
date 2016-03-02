@@ -5,36 +5,31 @@ import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 /**
  * @since 1.0
  */
-public class VendorBeanBuilder<T extends VendorBeanBuilder, B extends VendorBean> extends BaseModuleBeanBuilder<T, B>
-{
+@SuppressWarnings("unchecked")
+public class VendorBeanBuilder {
+
     private String name;
     private String url;
 
-    public VendorBeanBuilder()
-    {
+    public VendorBeanBuilder() {
     }
 
-    public VendorBeanBuilder(VendorBean defaultBean)
-    {
+    public VendorBeanBuilder(VendorBean defaultBean) {
         this.name = defaultBean.getName();
         this.url = defaultBean.getUrl();
     }
 
-    public T withName(String name)
-    {
+    public VendorBeanBuilder withName(String name) {
         this.name = name;
-        return (T) this;
+        return this;
     }
 
-    public T withUrl(String url)
-    {
+    public VendorBeanBuilder withUrl(String url) {
         this.url = url;
-        return (T) this;
+        return this;
     }
 
-    @Override
-    public B build()
-    {
-        return (B) new VendorBean(this);
+    public VendorBean build() {
+        return new VendorBean(this);
     }
 }

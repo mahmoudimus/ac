@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-confluence-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.76-SNAPSHOT</version>
+        <version>1.1.79-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -58,12 +58,15 @@
         </profile>
     </profiles>
 
-
     <dependencies>
+        <dependency>
+            <groupId>com.atlassian</groupId>
+            <artifactId>test-batching</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>confluence-test-utils</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.4</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -215,7 +218,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
                 <executions>
                     <execution>
                         <id>test-jar</id>
@@ -348,7 +350,7 @@
 
                     <testGroups>
                         <testGroup>
-                            <id>confluence-misc</id>
+                            <id>confluence-batches</id>
                             <productIds>
                                 <productId>confluence</productId>
                             </productIds>
@@ -356,37 +358,7 @@
                                 <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
-                                <include>it/confluence/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/confluence/iframe/*.java</exclude>
-                                <exclude>it/confluence/item/*.java</exclude>
-                                <exclude>it/confluence/jsapi/*.java</exclude>
-                                <exclude>it/confluence/macro/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-iframe</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-item</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/item/*.java</include>
+                                <include>it/confluence/ConfluenceIntegrationTestBatch.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -401,18 +373,6 @@
                                 <include>it/confluence/jsapi/*.java</include>
                             </includes>
                         </testGroup>
-                        <testGroup>
-                            <id>confluence-macro</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/macro/*.java</include>
-                            </includes>
-                        </testGroup>
                     </testGroups>
 
                 </configuration>
@@ -421,7 +381,6 @@
     </build>
 
     <properties>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9

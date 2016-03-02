@@ -3,9 +3,7 @@ package com.atlassian.plugin.connect.plugin.web.condition;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,9 +14,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@RunWith (MockitoJUnitRunner.class)
-public class IsLicensedConditionTest
-{
+@RunWith(MockitoJUnitRunner.class)
+public class IsLicensedConditionTest {
     @Mock
     private RemotePluginLicenseService pluginLicenseService;
 

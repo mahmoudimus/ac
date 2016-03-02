@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-jira-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.76-SNAPSHOT</version>
+        <version>1.1.79-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -87,6 +87,11 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.atlassian</groupId>
+            <artifactId>test-batching</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-connect-integration-tests-support</artifactId>
             <version>${project.version}</version>
@@ -107,7 +112,7 @@
         <dependency>
             <artifactId>acceptance-data-helper</artifactId>
             <groupId>com.atlassian.test.ondemand</groupId>
-            <version>1.0.14</version>
+            <version>1.0.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -530,7 +535,7 @@
 
                     <testGroups>
                         <testGroup>
-                            <id>jira-misc</id>
+                            <id>jira-batches</id>
                             <productIds>
                                 <productId>jira</productId>
                             </productIds>
@@ -538,38 +543,7 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
-                                <include>it/jira/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/jira/condition/*.java</exclude>
-                                <exclude>it/jira/iframe/*.java</exclude>
-                                <exclude>it/jira/item/*.java</exclude>
-                                <exclude>it/jira/jsapi/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-iframe</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-item</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/condition/*.java</include>
-                                <include>it/jira/item/*.java</include>
+                                <include>it/jira/JiraIntegrationTestBatch.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -585,7 +559,6 @@
                             </includes>
                         </testGroup>
                     </testGroups>
-
                 </configuration>
 
             </plugin>
@@ -593,7 +566,6 @@
     </build>
 
     <properties>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
         <od.testing.configuration>
             use-java,8
             use-maven,3.3.9

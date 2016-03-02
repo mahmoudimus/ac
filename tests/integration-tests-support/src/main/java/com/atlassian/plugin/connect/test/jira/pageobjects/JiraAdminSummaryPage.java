@@ -6,17 +6,14 @@ import com.atlassian.pageobjects.page.AdminHomePage;
 /**
  *
  */
-public class JiraAdminSummaryPage implements AdminHomePage<JiraHeader>
-{
+public class JiraAdminSummaryPage implements AdminHomePage<JiraHeader> {
     @Override
-    public JiraHeader getHeader()
-    {
+    public JiraHeader getHeader() {
         return null;
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return "/secure/AdminSummary.jspa";
     }
 }

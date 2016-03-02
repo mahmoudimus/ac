@@ -1,18 +1,17 @@
 package com.atlassian.plugin.connect.plugin.auth.applinks;
 
-import java.net.URI;
-import java.util.Optional;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
+import java.net.URI;
+import java.util.Optional;
+
 /**
  * A helper component for creating applinks for add ons.
  */
-public interface ConnectApplinkManager
-{
+public interface ConnectApplinkManager {
     /**
      * Creates an {@link ApplicationLink} for a connect add-on.
      * @param plugin The plugin to create the applink for
@@ -20,10 +19,11 @@ public interface ConnectApplinkManager
      * @param authType the authentication type, must be JWT
      * @param publicKey the publicKey used for asymmetric key encryption. Cannot be null if using JWT+RSA
      * @param addonUserKey the user-key of the add-on user; will be stored for later retrieval when we work out the {@link java.security.Principal} for incoming requests from this add-on
-     * 
+     *
      * @deprecated use the addonBean version
      */
-    @Deprecated //use the addonBean version
+    @Deprecated
+    //use the addonBean version
     void createAppLink(Plugin plugin, String baseUrl, AuthenticationType authType, String publicKey, String addonUserKey);
 
     /**
@@ -50,13 +50,13 @@ public interface ConnectApplinkManager
      * @return the {@link ApplicationLink}, or null if either there are none or the plugin key is not associated with a Connect add-on
      * @throws com.atlassian.plugin.connect.plugin.auth.applinks.NotConnectAddonException if the key belongs to a plugin which is not a Connect add-on
      */
-    public ApplicationLink getAppLink(String key) throws NotConnectAddonException;
+    ApplicationLink getAppLink(String key) throws NotConnectAddonException;
 
     /**
      * @param applink application link
      * @return the self link for this application link
      */
-    public URI getApplinkLinkSelfLink(ApplicationLink applink);
+    URI getApplinkLinkSelfLink(ApplicationLink applink);
 
     /**
      * Reads the JWT shared secret or the OAuth consumer public key from an

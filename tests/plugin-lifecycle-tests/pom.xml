@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.76-SNAPSHOT</version>
+        <version>1.1.79-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -103,7 +103,7 @@
                 <configuration>
                     <containerId>tomcat7x</containerId>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
-                    <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
+                    <buildTestPlugin>true</buildTestPlugin>
 
                     <!-- taken from https://bitbucket.org/atlassianlabs/quickreload -->
                     <enableFastdev>false</enableFastdev>
@@ -140,7 +140,7 @@
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
-                        <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                        <atlassian.dev.mode>true</atlassian.dev.mode>
                     </systemPropertyVariables>
 
                     <products>
@@ -151,8 +151,6 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
-                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
-                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                                 <com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>true</com.atlassian.jira.startup.LauncherContextListener.SYNCHRONOUS>
@@ -196,12 +194,6 @@
                             </pluginArtifacts>
 
                             <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.devrel</groupId>
-                                    <artifactId>developer-toolbox-plugin</artifactId>
-                                    <version>${toolbox.version}</version>
-                                </bundledArtifact>
-
                                 <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
                                 <bundledArtifact>
                                     <groupId>com.atlassian.upm</groupId>
@@ -217,8 +209,6 @@
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
-                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
-                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                             </systemPropertyVariables>
@@ -256,12 +246,6 @@
                             </pluginArtifacts>
 
                             <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.devrel</groupId>
-                                    <artifactId>developer-toolbox-plugin</artifactId>
-                                    <version>${toolbox.version}</version>
-                                </bundledArtifact>
-
                                 <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
                                 <bundledArtifact>
                                     <groupId>com.atlassian.upm</groupId>
@@ -306,7 +290,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.5.1</version>
                 <executions>
                     <execution>
                         <id>copy-plugins</id>
@@ -324,13 +307,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <product>jira</product>
-        <skipITs>true</skipITs>
-        <build.test.plugin>true</build.test.plugin>
-        <devmode>true</devmode>
-        <toolbox.version>2.0.6</toolbox.version>
-    </properties>
 
 </project>

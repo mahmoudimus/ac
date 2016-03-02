@@ -11,11 +11,9 @@ import java.util.Map;
  * Serializes Issue objects.
  */
 @JiraComponent
-public class IssueSerializer implements ParameterSerializer<Issue>
-{
+public class IssueSerializer implements ParameterSerializer<Issue> {
     @Override
-    public Map<String, Object> serialize(final Issue issue)
-    {
+    public Map<String, Object> serialize(final Issue issue) {
         return ImmutableMap.<String, Object>of("issue", ImmutableMap.of(
                 "id", issue.getId(),
                 "key", issue.getKey()

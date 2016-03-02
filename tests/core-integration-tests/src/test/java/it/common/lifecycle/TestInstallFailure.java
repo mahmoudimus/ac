@@ -1,15 +1,5 @@
 package it.common.lifecycle;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.core.reader.JwtIssuerValidator;
 import com.atlassian.jwt.core.reader.NimbusJwtReaderFactory;
@@ -30,14 +20,20 @@ import com.atlassian.plugin.connect.test.common.servlet.ConnectRunner;
 import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
 import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.upm.pageobjects.PluginManager;
-
 import com.google.common.collect.ImmutableMap;
-
+import it.common.MultiProductWebDriverTestBase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import it.common.MultiProductWebDriverTestBase;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -48,8 +44,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Tests that we clean up properly on plugin install failure, to avoid recurrence of AC-1187
  */
-public class TestInstallFailure extends MultiProductWebDriverTestBase
-{
+public class TestInstallFailure extends MultiProductWebDriverTestBase {
 
     protected static final String MY_AWESOME_PAGE = "My Awesome Page";
     protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
@@ -63,8 +58,7 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
     protected String awesomePageModuleKey;
 
     @Before
-    public void setup() throws NoSuchAlgorithmException, IOException
-    {
+    public void setup() throws NoSuchAlgorithmException, IOException {
         int query = URL.indexOf("?");
         String route = query > -1 ? URL.substring(0, query) : URL;
 
@@ -84,13 +78,11 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
                 .disableInstallationStatusCheck();
     }
 
-    public void installAddonSuccess() throws Exception
-    {
+    public void installAddonSuccess() throws Exception {
         this.sharedSecret = installAddonSuccessAndReturnSecret();
     }
 
-    public String installAddonSuccessAndReturnSecret() throws Exception
-    {
+    public String installAddonSuccessAndReturnSecret() throws Exception {
         installUninstallHandler.setShouldSend404(false);
         remotePlugin.start();
         this.pluginKey = remotePlugin.getAddon().getKey();
@@ -98,32 +90,27 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         return installUninstallHandler.getInstallPayload().getSharedSecret();
     }
 
-    public void installAddonFailure() throws Exception
-    {
+    public void installAddonFailure() throws Exception {
         installUninstallHandler.setShouldSend404(true);
         remotePlugin.start();
     }
 
     @After
-    public void stopConnectAddon() throws Exception
-    {
-        if (remotePlugin != null)
-        {
+    public void stopConnectAddon() throws Exception {
+        if (remotePlugin != null) {
             remotePlugin.stopAndUninstall();
         }
     }
 
     @Test
-    public void testFailedFirstInstallDoesNotBreakRetries() throws Exception
-    {
+    public void testFailedFirstInstallDoesNotBreakRetries() throws Exception {
         installAddonFailure();
         installAddonSuccess();
         assertPageLinkWorks();
     }
 
     @Test
-    public void testFailedUpgradeDoesNotUninstall() throws Exception
-    {
+    public void testFailedUpgradeDoesNotUninstall() throws Exception {
         installAddonSuccess();
         installAddonFailure();
         assertPageLinkWorks();
@@ -131,29 +118,25 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
 
     @Test
     //See https://ecosystem.atlassian.net/browse/ACDEV-1174
-    public void testMultipleInstallsDoNotChangeSharedSecret() throws Exception
-    {
+    public void testMultipleInstallsDoNotChangeSharedSecret() throws Exception {
         String firstSecret = installAddonSuccessAndReturnSecret();
         String secondSecret = installAddonSuccessAndReturnSecret();
         assertEquals(firstSecret, secondSecret);
     }
 
     @Test
-    public void testFailedInstallDoesNotInstall() throws Exception
-    {
+    public void testFailedInstallDoesNotInstall() throws Exception {
         installAddonFailure();
         assertAddonIsNotInstalled();
     }
 
-    public void assertAddonIsNotInstalled()
-    {
+    public void assertAddonIsNotInstalled() {
         login(testUserFactory.admin());
         PluginManager page = product.visit(PluginManager.class);
         assertTrue("Plugin '" + pluginKey + "' should not be installed", !page.contains(pluginKey));
     }
 
-    public void assertPageLinkWorks() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
-    {
+    public void assertPageLinkWorks() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException {
         loginAndVisit(testUserFactory.basicUser(), HomePage.class);
 
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, MY_AWESOME_PAGE_KEY, remotePlugin.getAddon().getKey());
@@ -167,27 +150,10 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         assertValidJwt(jwt);
     }
 
-    private void assertValidJwt(String jwt) throws JwtParseException, JwtVerificationException, JwtUnknownIssuerException, JwtIssuerLacksSharedSecretException
-    {
-        final JwtIssuerSharedSecretService sharedSecretService = new JwtIssuerSharedSecretService()
-        {
+    private void assertValidJwt(String jwt) throws JwtParseException, JwtVerificationException, JwtUnknownIssuerException, JwtIssuerLacksSharedSecretException {
+        final JwtIssuerSharedSecretService sharedSecretService = issuer -> sharedSecret;
 
-            @Override
-            public String getSharedSecret(String issuer) throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
-            {
-                return sharedSecret;
-            }
-        };
-
-        final JwtIssuerValidator jwtIssuerValidator = new JwtIssuerValidator()
-        {
-
-            @Override
-            public boolean isValid(String issuer)
-            {
-                return true;
-            }
-        };
+        final JwtIssuerValidator jwtIssuerValidator = issuer -> true;
 
         final NimbusJwtReaderFactory readerFactory = new NimbusJwtReaderFactory(jwtIssuerValidator, sharedSecretService);
 
@@ -198,28 +164,23 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         readerFactory.getReader(jwt).read(jwt, ImmutableMap.<String, JwtClaimVerifier>of());
     }
 
-    private static class CustomInstallationHandlerServlet extends HttpServlet
-    {
+    private static class CustomInstallationHandlerServlet extends HttpServlet {
         private boolean shouldSend404 = true;
 
         InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
 
-        protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
-        {
+        protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
             installHandlerServlet.service(req, resp);
-            if (shouldSend404)
-            {
+            if (shouldSend404) {
                 resp.sendError(404);
             }
         }
 
-        public void setShouldSend404(boolean shouldSend404)
-        {
+        public void setShouldSend404(boolean shouldSend404) {
             this.shouldSend404 = shouldSend404;
         }
 
-        public InstallHandlerServlet.InstallPayload getInstallPayload()
-        {
+        public InstallHandlerServlet.InstallPayload getInstallPayload() {
             return installHandlerServlet.getInstallPayload();
         }
     }

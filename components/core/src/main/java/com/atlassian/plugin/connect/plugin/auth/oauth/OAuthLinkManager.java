@@ -10,7 +10,6 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.plugin.connect.api.request.HttpMethod;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
@@ -43,8 +42,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * Manages oauth link operations
  */
 @Component
-public class OAuthLinkManager
-{
+public class OAuthLinkManager {
     public static final String OAUTH_INCOMING_CONSUMERKEY = "oauth.incoming.consumerkey";
     public static final String CONSUMER_KEY_OUTBOUND = "consumerKey.outbound";
     public static final String SERVICE_PROVIDER_REQUEST_TOKEN_URL = "serviceProvider.requestTokenUrl";
@@ -60,40 +58,31 @@ public class OAuthLinkManager
     @Autowired
     public OAuthLinkManager(ServiceProviderConsumerStore serviceProviderConsumerStore,
                             AuthenticationConfigurationManager authenticationConfigurationManager,
-                            ConsumerService consumerService)
-    {
+                            ConsumerService consumerService) {
         this.serviceProviderConsumerStore = serviceProviderConsumerStore;
         this.authenticationConfigurationManager = authenticationConfigurationManager;
         this.consumerService = consumerService;
         this.oauthValidator = new SimpleOAuthValidator();
     }
 
-    public boolean isAppAssociated(String appKey)
-    {
+    public boolean isAppAssociated(String appKey) {
         return serviceProviderConsumerStore.get(appKey) != null;
     }
 
-    public void unassociateProviderWithLink(ApplicationLink link)
-    {
-        if (authenticationConfigurationManager.isConfigured(link.getId(), OAuthAuthenticationProvider.class))
-        {
+    public void unassociateProviderWithLink(ApplicationLink link) {
+        if (authenticationConfigurationManager.isConfigured(link.getId(), OAuthAuthenticationProvider.class)) {
             authenticationConfigurationManager.unregisterProvider(link.getId(), OAuthAuthenticationProvider.class);
         }
     }
 
-    public void validateOAuth2LORequest(OAuthMessage message) throws IOException, URISyntaxException, OAuthException
-    {
+    public void validateOAuth2LORequest(OAuthMessage message) throws IOException, URISyntaxException, OAuthException {
         String consumerKey = message.getConsumerKey();
         Consumer consumer = serviceProviderConsumerStore.get(consumerKey);
-        if (consumer == null)
-        {
+        if (consumer == null) {
             Consumer self = consumerService.getConsumer();
-            if (self.getKey().equals(consumerKey))
-            {
+            if (self.getKey().equals(consumerKey)) {
                 consumer = self;
-            }
-            else
-            {
+            } else {
                 throw new OAuthProblemException(OAuth.Problems.CONSUMER_KEY_UNKNOWN);
             }
         }
@@ -101,20 +90,17 @@ public class OAuthLinkManager
                 new OAuthServiceProvider(null, null, null));
         oauthConsumer.setProperty(RSA_SHA1.PUBLIC_KEY, consumer.getPublicKey().getEncoded());
         final OAuthAccessor accessor = new OAuthAccessor(oauthConsumer);
-        if (log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             printMessageToDebug(message);
         }
         oauthValidator.validateMessage(message, accessor);
     }
 
-    private void printMessageToDebug(OAuthMessage message) throws IOException
-    {
+    private void printMessageToDebug(OAuthMessage message) throws IOException {
         StringBuilder sb = new StringBuilder("Validating incoming OAuth 2LO request:\n");
         sb.append("\turl: ").append(message.URL).append("\n");
         sb.append("\tmethod: ").append(message.method).append("\n");
-        for (Map.Entry<String, String> entry : message.getParameters())
-        {
+        for (Map.Entry<String, String> entry : message.getParameters()) {
             sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
         log.debug(sb.toString());
@@ -123,16 +109,12 @@ public class OAuthLinkManager
     public String generateAuthorizationHeader(HttpMethod method,
                                               ServiceProvider serviceProvider,
                                               URI url,
-                                              Map<String, List<String>> originalParams)
-    {
+                                              Map<String, List<String>> originalParams) {
         final OAuthMessage message = sign(serviceProvider, method, checkNotNull(url), originalParams);
 
-        try
-        {
+        try {
             return message.getAuthorizationHeader(null);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -141,41 +123,28 @@ public class OAuthLinkManager
                                                             HttpMethod method,
                                                             URI url,
                                                             Map<String, List<String>> originalParams
-    )
-    {
+    ) {
         OAuthMessage message = sign(serviceProvider, method, url, originalParams);
-        if (message != null)
-        {
-            try
-            {
+        if (message != null) {
+            try {
                 return message.getParameters();
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-        else
-        {
-            return newArrayList(Maps.transformValues(originalParams, new Function<List<String>, String>()
-            {
-                @Override
-                public String apply(List<String> strings)
-                {
-                    // TODO: Doesn't handle multiple values with the same param name
-                    return strings.get(0);
-                }
+        } else {
+            return newArrayList(Maps.transformValues(originalParams, strings -> {
+                // TODO: Doesn't handle multiple values with the same param name
+                return strings.get(0);
             }).entrySet());
         }
     }
 
     @VisibleForTesting
     public OAuthMessage sign(ServiceProvider serviceProvider,
-                              HttpMethod method,
-                              URI url,
-                              Map<String, List<String>> originalParams
-    )
-    {
+                             HttpMethod method,
+                             URI url,
+                             Map<String, List<String>> originalParams
+    ) {
         notNull(serviceProvider);
         notNull(url);
         checkNormalized(url);
@@ -183,8 +152,7 @@ public class OAuthLinkManager
         Map<String, List<String>> params = Maps.newLinkedHashMap(originalParams);
         Consumer self = consumerService.getConsumer();
         params.put(OAuth.OAUTH_CONSUMER_KEY, singletonList(self.getKey()));
-        if (log.isDebugEnabled())
-        {
+        if (log.isDebugEnabled()) {
             dumpParamsToSign(params);
         }
         Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method.name()), url, convertParameters(params));
@@ -192,35 +160,27 @@ public class OAuthLinkManager
         return OAuthHelper.asOAuthMessage(signedRequest);
     }
 
-    private static void checkNormalized(URI url)
-    {
-        if (!url.normalize().getPath().equals(url.getPath()))
-        {
+    private static void checkNormalized(URI url) {
+        if (!url.normalize().getPath().equals(url.getPath())) {
             throw new IllegalArgumentException("Refusing to sign non-normalized URL: " + url.toString());
         }
     }
 
-    private void dumpParamsToSign(Map<String, List<String>> params)
-    {
+    private void dumpParamsToSign(Map<String, List<String>> params) {
         StringBuilder sb = new StringBuilder();
         sb.append("Signing outgoing with: \n");
-        for (Map.Entry<String, List<String>> entry : params.entrySet())
-        {
+        for (Map.Entry<String, List<String>> entry : params.entrySet()) {
             sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append("\n");
         }
         log.debug(sb.toString());
     }
 
-    private List<com.atlassian.oauth.Request.Parameter> convertParameters(Map<String, List<String>> reqParameters)
-    {
+    private List<com.atlassian.oauth.Request.Parameter> convertParameters(Map<String, List<String>> reqParameters) {
         final List<com.atlassian.oauth.Request.Parameter> parameters = new ArrayList<Request.Parameter>();
-        for (final String parameterName : reqParameters.keySet())
-        {
-            final List<String> values = reqParameters.get(parameterName);
-            for (final String value : values)
-            {
-                parameters.add(new com.atlassian.oauth.Request.Parameter(parameterName, value));
-            }
+        for (final String parameterName : reqParameters.keySet()) {
+            reqParameters.get(parameterName).stream()
+                    .map(value -> new Request.Parameter(parameterName, value))
+                    .forEach(parameters::add);
         }
         return parameters;
     }

@@ -4,8 +4,6 @@ import com.atlassian.json.schema.annotation.Required;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.annotation.Nullable;
-
 /**
  * Defines an entity property to be indexed by JIRA. An entity property is a reference to a JSON object, which also defines it's type.
  *#### Example
@@ -14,8 +12,7 @@ import javax.annotation.Nullable;
  * @schemaTitle Property Index
  * @since 1.0
  */
-public class EntityPropertyIndexExtractionConfigurationBean
-{
+public class EntityPropertyIndexExtractionConfigurationBean {
     /**
      * The objectName to the JSON data which is supposed to be indexed. The objectName will be the key of a flatten JSON object with '.' as the delimiter.
      *
@@ -46,46 +43,37 @@ public class EntityPropertyIndexExtractionConfigurationBean
     /**
      * The name, under which this property will be searchable with JQL.
      */
-    @Nullable
     private String alias;
 
-    public EntityPropertyIndexExtractionConfigurationBean(String objectName, EntityPropertyIndexType type)
-    {
+    public EntityPropertyIndexExtractionConfigurationBean(String objectName, EntityPropertyIndexType type) {
         this(objectName, type, null);
     }
 
-    public EntityPropertyIndexExtractionConfigurationBean(String objectName, EntityPropertyIndexType type, String alias)
-    {
+    public EntityPropertyIndexExtractionConfigurationBean(String objectName, EntityPropertyIndexType type, String alias) {
         this.objectName = objectName;
         this.type = type;
         this.alias = alias;
     }
 
-    public String getObjectName()
-    {
+    public String getObjectName() {
         return objectName;
     }
 
-    public EntityPropertyIndexType getType()
-    {
+    public EntityPropertyIndexType getType() {
         return type;
     }
 
-    public String getAlias()
-    {
+    public String getAlias() {
         return alias;
     }
 
     @Override
-    public boolean equals(Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof EntityPropertyIndexExtractionConfigurationBean))
-        {
+        if (!(otherObj instanceof EntityPropertyIndexExtractionConfigurationBean)) {
             return false;
         }
 
@@ -99,8 +87,7 @@ public class EntityPropertyIndexExtractionConfigurationBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(53, 11)
                 .append(objectName)
                 .append(type)

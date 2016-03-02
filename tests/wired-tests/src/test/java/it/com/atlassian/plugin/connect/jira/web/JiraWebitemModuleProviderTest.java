@@ -16,29 +16,23 @@ import org.junit.runner.RunWith;
 
 import java.util.Map;
 
-import javax.ws.rs.core.UriBuilder;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertTrue;
 
-@Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
-public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
-{
+@Application("jira")
+@RunWith(AtlassianPluginsTestRunner.class)
+public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest {
     private final JiraTestUtil jiraTestUtil;
 
     public JiraWebitemModuleProviderTest(WebItemModuleProvider webItemModuleProvider,
                                          TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-                                         JiraTestUtil jiraTestUtil)
-    {
+                                         JiraTestUtil jiraTestUtil) {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
         this.jiraTestUtil = jiraTestUtil;
     }
 
     @Test
-    public void singleAddonLinkWithContextPrams() throws Exception
-    {
+    public void singleAddonLinkWithContextPrams() throws Exception {
         Project project = jiraTestUtil.createProject();
         WebItemModuleDescriptor descriptor = registerWebItem("myProject={project.key}", "atl.admin/menu");
 

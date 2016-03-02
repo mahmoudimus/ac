@@ -11,10 +11,9 @@ import java.util.List;
 /**
  * A descriptor fragment validator that asserts that web fragment conditions can be properly loaded.
  */
-public interface ConditionLoadingValidator
-{
+public interface ConditionLoadingValidator {
 
     void validate(Plugin plugin, ShallowConnectAddonBean addon, ConnectModuleMeta<?> moduleMeta,
-            List<? extends BeanWithConditions> beansWithConditions)
+                  List<? extends BeanWithConditions> beansWithConditions)
             throws ConnectModuleValidationException;
 }

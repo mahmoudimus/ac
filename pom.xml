@@ -1,18 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.atlassian.pom</groupId>
         <artifactId>public-pom</artifactId>
         <version>4.0.8</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.76-SNAPSHOT</version>
-    <organization>
-        <name>Atlassian</name>
-        <url>http://atlassian.com/</url>
-    </organization>
+    <version>1.1.79-SNAPSHOT</version>
+
+    <name>Atlassian Connect - Parent POM</name>
+    <description>The parent project for Atlassian Connect</description>
+    <packaging>pom</packaging>
+
     <licenses>
         <license>
             <name>Apache License 2.0</name>
@@ -20,9 +22,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    <name>Atlassian Connect - Parent POM</name>
-    <description>This is the Atlassian Connect parent project</description>
-    <packaging>pom</packaging>
 
     <modules>
         <module>components</module>
@@ -41,30 +40,94 @@
         <url>https://bitbucket.org/atlassian/atlassian-connect</url>
     </scm>
 
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://ecosystem.atlassian.net/browse/AC</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://ecosystem-bamboo.internal.atlassian.com/browse/CONNECT</url>
+    </ciManagement>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${surefire.version}</version>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <compilerArgs>
+                            <arg>-Xlint:unchecked</arg>
+                            <arg>-proc:none</arg>
+                            <arg>-Werror</arg>
+                        </compilerArgs>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefire.version}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <org.slf4j.simpleLogger.defaultLogLevel>ERROR</org.slf4j.simpleLogger.defaultLogLevel>
+                        </systemPropertyVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>com.atlassian.maven.plugins</groupId>
                     <artifactId>maven-amps-plugin</artifactId>
                     <version>${amps.version}</version>
                     <extensions>true</extensions>
+                    <configuration>
+                        <containerId>tomcat7x</containerId>
+                        <extractDependencies>true</extractDependencies>
+                        <skipManifestValidation>true</skipManifestValidation>
+                        <!-- disable as much as we can -->
+                        <skipAllPrompts>true</skipAllPrompts>
+                        <enableDevToolbox>false</enableDevToolbox>
+                        <enablePde>false</enablePde>
+                        <compressResources>false</compressResources>
+                        <systemPropertyVariables>
+                            <upm.pac.disable>true</upm.pac.disable>
+                            <upm.plugin.requests.disable>true</upm.plugin.requests.disable>
+                            <upm.email.notifications.disable>true</upm.email.notifications.disable>
+                            <upm.auto.update.enable>false</upm.auto.update.enable>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.atlassian.plugin</groupId>
+                    <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+                    <version>${atlassian.spring.scanner.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>atlassian-spring-scanner</goal>
+                            </goals>
+                            <phase>process-classes</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <includeExclude>-com.atlassian.plugin.spring.scanner.annotation.*</includeExclude>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <configuration>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>external.atlassian.json</groupId>
+                    <artifactId>json-schemagen-maven-plugin</artifactId>
+                    <version>${schema.generator.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>${frontend.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
@@ -85,69 +148,52 @@
                         </excludes>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>enforce-build-environment</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <!-- This version supports invoking individual executions -->
+                                        <version>[3.3.9, 3.4)</version>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>ban-milestones-and-release-candidates</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <banVersionDeps>
+                                        <noFailSnapshots>false</noFailSnapshots>
+                                        <excludes>
+                                            <!-- We have dependencies on milestone artifacts from these groups -->
+                                            <exclude>com.atlassian.selenium</exclude>
+                                        </excludes>
+                                    </banVersionDeps>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav-jackrabbit</artifactId>
-                <version>2.2</version>
-            </extension>
-        </extensions>
         <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <id>enforce-build-environment</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>[3.3.9, 3.4)</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>ban-milestones-and-release-candidates</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <banVersionDeps>
-                                    <noFailSnapshots>false</noFailSnapshots>
-                                    <excludes>
-                                        <!-- We have dependencies on milestone artifacts from these groups -->
-                                        <exclude>com.atlassian.plugins</exclude>
-                                        <exclude>com.atlassian.selenium</exclude>
-                                    </excludes>
-                                </banVersionDeps>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skipTests>${skipUnits}</skipTests>
                     <excludes>
                         <exclude>**/*$*</exclude>
                         <exclude>it/**</exclude>
@@ -156,64 +202,8 @@
                     <argLine>-Xmx1024m</argLine>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>report-only</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <showSuccess>false</showSuccess>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-amps-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <containerId>tomcat7x</containerId>
-                    <extractDependencies>true</extractDependencies>
-                    <skipManifestValidation>true</skipManifestValidation>
-                    <!-- disable as much as we can -->
-                    <skipAllPrompts>true</skipAllPrompts>
-                    <enableDevToolbox>false</enableDevToolbox>
-                    <enablePde>false</enablePde>
-                    <compressResources>false</compressResources>
-                    <systemPropertyVariables>
-                        <upm.pac.disable>true</upm.pac.disable>
-                        <upm.plugin.requests.disable>true</upm.plugin.requests.disable>
-                        <upm.email.notifications.disable>true</upm.email.notifications.disable>
-                        <upm.auto.update.enable>false</upm.auto.update.enable>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.4</version>
-                <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
-            </plugin>
-            <plugin>
-                <groupId>external.atlassian.json</groupId>
-                <artifactId>json-schemagen-maven-plugin</artifactId>
-                <version>${schema.generator.version}</version>
-            </plugin>
         </plugins>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-            </plugin>
-        </plugins>
-    </reporting>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -293,6 +283,13 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
@@ -505,6 +502,12 @@
                         <artifactId>httpmime</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-api</artifactId>
+                <version>${atlassian.plugins.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.atlassian.plugins</groupId>
@@ -821,9 +824,42 @@
                 <artifactId>jira-testkit-client</artifactId>
                 <version>${atlassian.jira.testkit.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian</groupId>
+                <artifactId>test-batching</artifactId>
+                <version>1.0.1</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <profiles>
+        <profile>
+            <id>jrebel</id>
+            <activation>
+                <property>
+                    <name>jrebel</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.zeroturnaround</groupId>
+                        <artifactId>jrebel-maven-plugin</artifactId>
+                        <version>1.1.5</version>
+                        <executions>
+                            <execution>
+                                <id>generate-rebel-xml</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>clover</id>
             <build>
@@ -834,6 +870,12 @@
                             <artifactId>maven-clover2-plugin</artifactId>
                             <configuration>
                                 <skip>false</skip>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <configuration>
+                                <compilerArgs combine.self="override" />
                             </configuration>
                         </plugin>
                     </plugins>
@@ -850,31 +892,34 @@
         </profile>
     </profiles>
     <properties>
+        <!-- SYSTEM PROPERTIES -->
+        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
+
         <!-- VERSIONS -->
         <amps.version>5.1.10</amps.version>
         <atlassian.analytics.version>5.1.5-D20151209T025312</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.crowd.version>2.8.3</atlassian.crowd.version>
-        <atlassian.confluence.version>6.0.0-OD-2016.06.1-0009</atlassian.confluence.version>
+        <atlassian.confluence.version>6.0.0-OD-2016.10.0-1050</atlassian.confluence.version>
         <atlassian.event.version>2.3.5</atlassian.event.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.20.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>7.1.0-OD-06-005</atlassian.jira.version>
+        <atlassian.jira.version>7.2.0-OD-03-010</atlassian.jira.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.testkit.version>7.2.0</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.5.4</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
         <atlassian.jwt.version>1.5.3</atlassian.jwt.version>
         <atlassian.json.schema.validator.version>1.0.4</atlassian.json.schema.validator.version>
-        <atlassian.plugins.version>4.0.0-m020</atlassian.plugins.version>
+        <atlassian.plugins.version>4.1.2</atlassian.plugins.version>
         <applinks.api.version>5.0.0</applinks.api.version>
         <atlassian.rest.version>2.9.13</atlassian.rest.version>
         <atlassian.sal.version>3.0.5</atlassian.sal.version>
         <atlassian.selenium.version>2.2.1-m01-jira-1</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
-        <atlassian.connect-js.version>3.1.15</atlassian.connect-js.version>
+        <atlassian.connect-js.version>3.1.17</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
         <atlassian.security.version>3.2.4</atlassian.security.version>
@@ -888,8 +933,8 @@
         <atlassian.webhooks.api.version>1.0.6</atlassian.webhooks.api.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
 
-        <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
-        <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
+        <atlassian.webresource.version>3.5.16</atlassian.webresource.version>
+        <atlassian.webfragments.version>4.1.0</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
         <atlassian.soy.version>4.1.3</atlassian.soy.version>
         <ao.version>0.29.3</ao.version>
@@ -908,7 +953,7 @@
         <log4j.version>1.2.16</log4j.version>
         <mockito.version>1.9.0</mockito.version>
         <oauth.core.version>20090531</oauth.core.version>
-        <slf4j.version>1.6.4</slf4j.version>
+        <slf4j.version>1.7.5</slf4j.version>
         <spring.version>2.5.6</spring.version>
         <webdriver.browser>firefox</webdriver.browser>
         <plugin.testrunner.version>2.0.0</plugin.testrunner.version>
@@ -917,8 +962,10 @@
         <functestbasics.version>1.9.7</functestbasics.version>
         <jsonij.version>0.2.11</jsonij.version>
         <skipITs>true</skipITs>
+        <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
 
         <!-- BUILD STUFF -->
+        <atlassian.codestyle>platform:1.0.1</atlassian.codestyle>
         <commons.lang.version>2.6</commons.lang.version>
         <commons.lang3.version>3.1</commons.lang3.version>
         <commons.io.version>2.4</commons.io.version>
@@ -930,9 +977,7 @@
         <atlassian.spring.scanner.version>1.2.12</atlassian.spring.scanner.version>
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
-        <skipTests>false</skipTests>
-        <skipUnits>${skipTests}</skipUnits>
-        <schema.generator.version>1.1.1</schema.generator.version>
+        <schema.generator.version>1.1.2</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
         <npm.version>2.3.0</npm.version>
@@ -946,19 +991,4 @@
         <junit.version>4.11</junit.version>
         <jersey.version>1.19</jersey.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>maven-central</id>
-            <url>https://repo1.maven.org/maven2</url>
-            <releases>
-                <checksumPolicy>fail</checksumPolicy>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <checksumPolicy>fail</checksumPolicy>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

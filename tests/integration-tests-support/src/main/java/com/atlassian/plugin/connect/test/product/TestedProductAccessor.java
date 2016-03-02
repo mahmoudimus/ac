@@ -2,12 +2,11 @@ package com.atlassian.plugin.connect.test.product;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
+import com.atlassian.plugin.connect.test.common.util.TestUser;
 import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.plugin.connect.test.jira.product.JiraTestedProductAccessor;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-
-import com.atlassian.plugin.connect.test.common.util.ConnectTestUserFactory;
-import com.atlassian.plugin.connect.test.common.util.TestUser;
 
 /**
  * A simple SPI to be implemented by host-product-specific modules allowing
@@ -16,8 +15,7 @@ import com.atlassian.plugin.connect.test.common.util.TestUser;
  *
  * @since v1.1.58
  */
-public interface TestedProductAccessor
-{
+public interface TestedProductAccessor {
     void login(TestUser user);
 
     <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args);
@@ -28,10 +26,8 @@ public interface TestedProductAccessor
 
     String getGloballyVisibleLocation();
 
-    static TestedProductAccessor get()
-    {
-        switch (System.getProperty("testedProduct", ""))
-        {
+    static TestedProductAccessor get() {
+        switch (System.getProperty("testedProduct", "")) {
             case "confluence":
                 return new ConfluenceTestedProductAccessor();
             default:

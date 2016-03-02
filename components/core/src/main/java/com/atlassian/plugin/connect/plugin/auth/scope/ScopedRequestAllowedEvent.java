@@ -5,8 +5,7 @@ import com.atlassian.analytics.api.annotations.EventName;
 import javax.servlet.http.HttpServletRequest;
 
 @EventName("connect.scoped.request.incoming.allowed")
-public class ScopedRequestAllowedEvent extends ScopedRequestEvent
-{
+public class ScopedRequestAllowedEvent extends ScopedRequestEvent {
 
     private static final long TRIMPRECISION = 100;
 
@@ -16,20 +15,17 @@ public class ScopedRequestAllowedEvent extends ScopedRequestEvent
 
     private final long duration;
 
-    public ScopedRequestAllowedEvent(HttpServletRequest rq, String addonKey, int responseCode, long duration)
-    {
+    public ScopedRequestAllowedEvent(HttpServletRequest rq, String addonKey, int responseCode, long duration) {
         super(rq, addonKey);
         this.responseCode = responseCode;
         this.duration = duration > THRESHOLD ? -1 : duration / TRIMPRECISION;
     }
 
-    public long getDuration()
-    {
+    public long getDuration() {
         return this.duration;
     }
 
-    public int getResponseCode()
-    {
+    public int getResponseCode() {
         return this.responseCode;
     }
 }

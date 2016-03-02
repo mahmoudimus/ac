@@ -31,8 +31,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * Base class for ConnectModuleProviders of Connect Pages. Note that there is actually no P2 module descriptor. Instead
  * it is modelled as a web-item plus a servlet
  */
-public abstract class AbstractConnectPageModuleProvider extends AbstractConnectModuleProvider<ConnectPageModuleBean>
-{
+public abstract class AbstractConnectPageModuleProvider extends AbstractConnectModuleProvider<ConnectPageModuleBean> {
     private static final String RAW_CLASSIFIER = "raw";
 
     private final PluginRetrievalService pluginRetrievalService;
@@ -43,12 +42,11 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     private ConditionLoadingValidator conditionLoadingValidator;
 
     public AbstractConnectPageModuleProvider(PluginRetrievalService pluginRetrievalService,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ConditionClassAccessor conditionClassAccessor,
-            ConditionLoadingValidator conditionLoadingValidator)
-    {
+                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                             ConditionClassAccessor conditionClassAccessor,
+                                             ConditionLoadingValidator conditionLoadingValidator) {
         this.pluginRetrievalService = pluginRetrievalService;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
@@ -59,8 +57,7 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
 
     @Override
     public List<ConnectPageModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry,
-            ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
+                                                                         ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException {
         List<ConnectPageModuleBean> pages = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
         conditionLoadingValidator.validate(pluginRetrievalService.getPlugin(), descriptor, getMeta(), pages);
         validateConditions(descriptor, pages);
@@ -68,13 +65,10 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon)
-    {
-        List<ModuleDescriptor> descriptors = new ArrayList<>();
-        for (ConnectPageModuleBean bean : modules)
-        {
-            if (hasWebItem())
-            {
+    public List<ModuleDescriptor<?>> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectAddonBean addon) {
+        List<ModuleDescriptor<?>> descriptors = new ArrayList<>();
+        for (ConnectPageModuleBean bean : modules) {
+            if (hasWebItem()) {
                 // create a web item targeting the iframe page
                 Integer weight = bean.getWeight() == null ? getDefaultWeight() : bean.getWeight();
                 String location = isNullOrEmpty(bean.getLocation()) ? getDefaultSection() : bean.getLocation();
@@ -101,8 +95,7 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
         return descriptors;
     }
 
-    protected void registerIframeRenderStrategy(ConnectPageModuleBean page, ConnectAddonBean connectAddonBean)
-    {
+    protected void registerIframeRenderStrategy(ConnectPageModuleBean page, ConnectAddonBean connectAddonBean) {
         // register a render strategy for our iframe page
         IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addon(connectAddonBean.getKey())
@@ -130,18 +123,15 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
         iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), page.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
     }
 
-    protected boolean needsEscaping()
-    {
+    protected boolean needsEscaping() {
         return true;
     }
 
-    protected Iterable<Class<? extends Condition>> getConditionClasses()
-    {
+    protected Iterable<Class<? extends Condition>> getConditionClasses() {
         return Collections.emptyList();
     }
 
-    protected boolean hasWebItem()
-    {
+    protected boolean hasWebItem() {
         return true;
     }
 
@@ -151,29 +141,23 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
 
     protected abstract int getDefaultWeight();
 
-    protected void validateConditions(ShallowConnectAddonBean descriptor, List<ConnectPageModuleBean> pageBeans) throws ConnectModuleValidationException
-    {
-        for (ConnectPageModuleBean page : pageBeans)
-        {
-            for (SingleConditionBean condition : ConditionUtils.getSingleConditionsRecursively(page.getConditions()))
-            {
+    protected void validateConditions(ShallowConnectAddonBean descriptor, List<ConnectPageModuleBean> pageBeans) throws ConnectModuleValidationException {
+        for (ConnectPageModuleBean page : pageBeans) {
+            for (SingleConditionBean condition : ConditionUtils.getSingleConditionsRecursively(page.getConditions())) {
                 assertValidPageCondition(descriptor, condition);
             }
         }
     }
 
-    private void assertValidPageCondition(ShallowConnectAddonBean descriptor, SingleConditionBean conditionBean) throws ConnectModuleValidationException
-    {
-        if (!isRemoteCondition(conditionBean.getCondition()) && !isContextFreeCondition(conditionBean))
-        {
+    private void assertValidPageCondition(ShallowConnectAddonBean descriptor, SingleConditionBean conditionBean) throws ConnectModuleValidationException {
+        if (!isRemoteCondition(conditionBean.getCondition()) && !isContextFreeCondition(conditionBean)) {
             String exceptionMessage = String.format("The add-on includes a Page Module with an unsupported condition (%s)", conditionBean.getCondition());
             throw new ConnectModuleValidationException(descriptor, getMeta(), exceptionMessage,
                     "connect.install.error.page.with.invalid.condition", conditionBean.getCondition());
         }
     }
 
-    private boolean isContextFreeCondition(SingleConditionBean conditionBean)
-    {
+    private boolean isContextFreeCondition(SingleConditionBean conditionBean) {
         return conditionClassAccessor.getConditionClassForNoContext(conditionBean).isPresent();
     }
 }

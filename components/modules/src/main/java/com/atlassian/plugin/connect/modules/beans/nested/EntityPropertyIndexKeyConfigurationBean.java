@@ -15,8 +15,7 @@ import java.util.List;
  * @schemaTitle Index Key Configuration
  * @since 1.0
  */
-public class EntityPropertyIndexKeyConfigurationBean
-{
+public class EntityPropertyIndexKeyConfigurationBean {
     /**
      * The list with references to values of JSON object which will be indexed and the types of referenced values.
      */
@@ -29,32 +28,26 @@ public class EntityPropertyIndexKeyConfigurationBean
     @Required
     private String propertyKey;
 
-    public EntityPropertyIndexKeyConfigurationBean(List<EntityPropertyIndexExtractionConfigurationBean> extractions, String propertyKey)
-    {
+    public EntityPropertyIndexKeyConfigurationBean(List<EntityPropertyIndexExtractionConfigurationBean> extractions, String propertyKey) {
         this.extractions = extractions;
         this.propertyKey = propertyKey;
     }
 
-    public List<EntityPropertyIndexExtractionConfigurationBean> getExtractions()
-    {
+    public List<EntityPropertyIndexExtractionConfigurationBean> getExtractions() {
         return extractions;
     }
 
-    public String getPropertyKey()
-    {
+    public String getPropertyKey() {
         return propertyKey;
     }
 
     @Override
-    public boolean equals(final Object otherObj)
-    {
-        if (otherObj == this)
-        {
+    public boolean equals(final Object otherObj) {
+        if (otherObj == this) {
             return true;
         }
 
-        if (!(otherObj instanceof EntityPropertyIndexKeyConfigurationBean))
-        {
+        if (!(otherObj instanceof EntityPropertyIndexKeyConfigurationBean)) {
             return false;
         }
 
@@ -67,8 +60,7 @@ public class EntityPropertyIndexKeyConfigurationBean
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return new HashCodeBuilder(53, 11)
                 .append(extractions)
                 .append(propertyKey)

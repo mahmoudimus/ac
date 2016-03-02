@@ -137,7 +137,7 @@ To run unit tests:
 
 To run JavaScript unit tests:
 
-    mvn clean package -Pkarma-tests -DskipUnits
+    mvn -pl jsapi test -Pkarma-tests
 
 #### Integration tests
 

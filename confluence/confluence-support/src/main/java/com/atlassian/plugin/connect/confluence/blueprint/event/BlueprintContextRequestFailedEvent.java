@@ -6,10 +6,9 @@ import com.atlassian.event.api.AsynchronousPreferred;
 /**
  *
  */
-@EventName ("confluence.blueprint.context.request.fail")
+@EventName("confluence.blueprint.context.request.fail")
 @AsynchronousPreferred
-public class BlueprintContextRequestFailedEvent extends AbstractBlueprintContextEvent
-{
+public class BlueprintContextRequestFailedEvent extends AbstractBlueprintContextEvent {
     private final String failureType;
 
     public BlueprintContextRequestFailedEvent(String addonKey, String moduleKey, String url, String failureType) {
@@ -17,8 +16,7 @@ public class BlueprintContextRequestFailedEvent extends AbstractBlueprintContext
         this.failureType = failureType;
     }
 
-    public String getFailureType()
-    {
+    public String getFailureType() {
         return failureType;
     }
 }

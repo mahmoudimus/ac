@@ -12,45 +12,37 @@ package com.atlassian.plugin.connect.modules.beans.nested;
  *
  * If the format does not match, an error will be logged and an error message will be used for blueprint variable substitution.
  */
-public final class BlueprintContextValue
-{
+public final class BlueprintContextValue {
     private String identifier = "";
     private String value = "";
     private String representation = "plain";
 
-    public String getRepresentation()
-    {
+    public String getRepresentation() {
         return representation;
     }
 
-    public String getValue()
-    {
+    public String getValue() {
         return value;
     }
 
-    public String getIdentifier()
-    {
+    public String getIdentifier() {
         return identifier;
     }
 
-    public void setIdentifier(String identifier)
-    {
+    public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
 
-    public void setRepresentation(String representation)
-    {
+    public void setRepresentation(String representation) {
         this.representation = representation;
     }
 
-    public void setValue(String value)
-    {
+    public void setValue(String value) {
         this.value = value;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder sb = new StringBuilder("BlueprintContextValue{");
         sb.append("identifier='").append(identifier).append('\'');
         sb.append(", value='").append(value).append('\'');

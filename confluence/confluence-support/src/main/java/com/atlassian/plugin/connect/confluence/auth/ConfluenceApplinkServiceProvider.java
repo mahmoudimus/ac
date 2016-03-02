@@ -25,69 +25,55 @@ import javax.inject.Inject;
 import java.net.URI;
 
 @ConfluenceComponent
-public class ConfluenceApplinkServiceProvider implements MutatingApplicationLinkServiceProvider
-{
+public class ConfluenceApplinkServiceProvider implements MutatingApplicationLinkServiceProvider {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceApplinkServiceProvider.class);
     public static final String SYSADMIN = "sysadmin";
 
     private MutatingApplicationLinkService confluenceApplicationLinkService;
 
     @Inject
-    public ConfluenceApplinkServiceProvider(MutatingApplicationLinkService applicationLinkService)
-    {
+    public ConfluenceApplinkServiceProvider(MutatingApplicationLinkService applicationLinkService) {
         this.confluenceApplicationLinkService = new ConfluenceApplicationLinkServiceDecorator(applicationLinkService);
     }
 
     @Override
-    public MutatingApplicationLinkService getMutatingApplicationLinkService()
-    {
+    public MutatingApplicationLinkService getMutatingApplicationLinkService() {
         return confluenceApplicationLinkService;
     }
 
-    private class ConfluenceApplicationLinkServiceDecorator implements MutatingApplicationLinkService
-    {
+    private class ConfluenceApplicationLinkServiceDecorator implements MutatingApplicationLinkService {
         private MutatingApplicationLinkService linkService;
 
-        public ConfluenceApplicationLinkServiceDecorator(final MutatingApplicationLinkService linkService)
-        {
+        public ConfluenceApplicationLinkServiceDecorator(final MutatingApplicationLinkService linkService) {
             this.linkService = linkService;
         }
 
         @Override
-        public MutableApplicationLink addApplicationLink(final ApplicationId applicationId, final ApplicationType applicationType, final ApplicationLinkDetails applicationLinkDetails)
-        {
+        public MutableApplicationLink addApplicationLink(final ApplicationId applicationId, final ApplicationType applicationType, final ApplicationLinkDetails applicationLinkDetails) {
             return linkService.addApplicationLink(applicationId, applicationType, applicationLinkDetails);
         }
 
         @Override
         public void deleteReciprocatedApplicationLink(final ApplicationLink applicationLink)
-                throws ReciprocalActionException, CredentialsRequiredException
-        {
+                throws ReciprocalActionException, CredentialsRequiredException {
             linkService.deleteReciprocatedApplicationLink(applicationLink);
         }
 
         @Override
-        public void deleteApplicationLink(final ApplicationLink applicationLink)
-        {
-            try
-            {
+        public void deleteApplicationLink(final ApplicationLink applicationLink) {
+            try {
                 linkService.deleteApplicationLink(applicationLink);
-            }
-            catch (IllegalArgumentException e)
-            {
+            } catch (IllegalArgumentException e) {
                 log.debug("retrying deleteApplicationLink as sysadmin");
                 //try again as sysadmin
                 ConfluenceUser originalUser = null;
-                try
-                {
+                try {
                     originalUser = AuthenticatedUserThreadLocal.get();
 
                     ConfluenceUser user = FindUserHelper.getUserByUsername(SYSADMIN);
                     AuthenticatedUserThreadLocal.set(user);
                     linkService.deleteApplicationLink(applicationLink);
-                }
-                finally
-                {
+                } finally {
                     AuthenticatedUserThreadLocal.set(originalUser);
                 }
             }
@@ -95,85 +81,72 @@ public class ConfluenceApplinkServiceProvider implements MutatingApplicationLink
 
         @Override
         public MutableApplicationLink getApplicationLink(final ApplicationId applicationId)
-                throws TypeNotInstalledException
-        {
+                throws TypeNotInstalledException {
             return linkService.getApplicationLink(applicationId);
         }
 
         @Override
-        public Iterable<ApplicationLink> getApplicationLinks()
-        {
+        public Iterable<ApplicationLink> getApplicationLinks() {
             return linkService.getApplicationLinks();
         }
 
         @Override
-        public Iterable<ApplicationLink> getApplicationLinks(final Class<? extends ApplicationType> aClass)
-        {
+        public Iterable<ApplicationLink> getApplicationLinks(final Class<? extends ApplicationType> aClass) {
             return linkService.getApplicationLinks(aClass);
         }
 
         @Override
-        public ApplicationLink getPrimaryApplicationLink(final Class<? extends ApplicationType> aClass)
-        {
+        public ApplicationLink getPrimaryApplicationLink(final Class<? extends ApplicationType> aClass) {
             return linkService.getPrimaryApplicationLink(aClass);
         }
 
         @Override
-        public void makePrimary(final ApplicationId applicationId) throws TypeNotInstalledException
-        {
+        public void makePrimary(final ApplicationId applicationId) throws TypeNotInstalledException {
             linkService.makePrimary(applicationId);
         }
 
         @Override
-        public void setSystem(final ApplicationId applicationId, final boolean b) throws TypeNotInstalledException
-        {
+        public void setSystem(final ApplicationId applicationId, final boolean b) throws TypeNotInstalledException {
             linkService.setSystem(applicationId, b);
         }
 
         @Override
         public void changeApplicationId(final ApplicationId applicationId, final ApplicationId applicationId1)
-                throws TypeNotInstalledException
-        {
+                throws TypeNotInstalledException {
             linkService.changeApplicationId(applicationId, applicationId1);
         }
 
         @Override
         public ApplicationLink createApplicationLink(final ApplicationType applicationType, final ApplicationLinkDetails applicationLinkDetails)
-                throws ManifestNotFoundException
-        {
+                throws ManifestNotFoundException {
             return linkService.createApplicationLink(applicationType, applicationLinkDetails);
         }
 
         @Override
         public void createReciprocalLink(final URI uri, final URI uri1, final String s, final String s1)
-                throws ReciprocalActionException
-        {
+                throws ReciprocalActionException {
             linkService.createReciprocalLink(uri, uri1, s, s1);
         }
 
         @Override
         public boolean isAdminUserInRemoteApplication(final URI uri, final String s, final String s1)
-                throws ResponseException
-        {
+                throws ResponseException {
             return linkService.isAdminUserInRemoteApplication(uri, s, s1);
         }
 
         @Override
         public void configureAuthenticationForApplicationLink(final ApplicationLink applicationLink, final AuthenticationScenario authenticationScenario, final String s, final String s1)
-                throws AuthenticationConfigurationException
-        {
+                throws AuthenticationConfigurationException {
             linkService.configureAuthenticationForApplicationLink(applicationLink, authenticationScenario, s, s1);
         }
 
         @Override
-        public URI createSelfLinkFor(final ApplicationId applicationId)
-        {
+        public URI createSelfLinkFor(final ApplicationId applicationId) {
             return linkService.createSelfLinkFor(applicationId);
         }
 
         @Override
-        public boolean isNameInUse(final String s, final ApplicationId applicationId)
-        {
+        public boolean isNameInUse(final String s, final ApplicationId applicationId) {
             return linkService.isNameInUse(s, applicationId);
         }
     }

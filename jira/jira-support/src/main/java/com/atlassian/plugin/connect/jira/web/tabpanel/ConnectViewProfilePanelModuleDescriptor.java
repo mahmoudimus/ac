@@ -15,18 +15,16 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKey
 /**
  * ModuleDescriptor for Connect version of a ViewProfilePanel
  */
-public class ConnectViewProfilePanelModuleDescriptor extends ViewProfilePanelModuleDescriptorImpl
-{
+public class ConnectViewProfilePanelModuleDescriptor extends ViewProfilePanelModuleDescriptorImpl {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
     private final UserManager userManager;
 
     public ConnectViewProfilePanelModuleDescriptor(JiraAuthenticationContext authenticationContext,
-            ModuleFactory moduleFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ModuleContextFilter moduleContextFilter,
-            UserManager userManager)
-    {
+                                                   ModuleFactory moduleFactory,
+                                                   IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                                   ModuleContextFilter moduleContextFilter,
+                                                   UserManager userManager) {
         super(authenticationContext, moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.moduleContextFilter = moduleContextFilter;
@@ -34,15 +32,13 @@ public class ConnectViewProfilePanelModuleDescriptor extends ViewProfilePanelMod
     }
 
     @Override
-    public ViewProfilePanel getModule()
-    {
+    public ViewProfilePanel getModule() {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
         return new ConnectIFrameProfileTabPanel(renderStrategy, moduleContextFilter, userManager);
     }
 
     @Override
-    public String getModuleClassName()
-    {
+    public String getModuleClassName() {
         return super.getModuleClassName();
     }
 

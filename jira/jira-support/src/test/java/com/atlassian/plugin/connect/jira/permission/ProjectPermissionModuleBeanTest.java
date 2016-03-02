@@ -12,15 +12,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 
-public class ProjectPermissionModuleBeanTest
-{
+public class ProjectPermissionModuleBeanTest {
     @Test
-    public void producesCorrectJSON() throws IOException
-    {
+    public void producesCorrectJSON() throws IOException {
         List<ProjectPermissionModuleBean> projectPermissionModuleBean = Arrays.asList(readTestFile());
         System.out.println(projectPermissionModuleBean);
         assertThat(projectPermissionModuleBean, contains(
@@ -41,8 +39,7 @@ public class ProjectPermissionModuleBeanTest
     }
 
     @Test
-    public void connectModuleProjectPermissionCategoriesShouldCorrespondToCategoriesInJira()
-    {
+    public void connectModuleProjectPermissionCategoriesShouldCorrespondToCategoriesInJira() {
         List<String> jiraCategories = Arrays.asList(com.atlassian.jira.permission.ProjectPermissionCategory.values())
                 .stream().map(Enum::toString).collect(Collectors.toList());
         List<String> connectCategories = Arrays.asList(ProjectPermissionCategory.values())
@@ -51,8 +48,7 @@ public class ProjectPermissionModuleBeanTest
         assertThat(jiraCategories, contains(connectCategories.toArray()));
     }
 
-    private static ProjectPermissionModuleBean[] readTestFile() throws IOException
-    {
+    private static ProjectPermissionModuleBean[] readTestFile() throws IOException {
         return ConnectModulesGsonFactory.getGson().fromJson(readAddonTestFile("projectPermissions.json"), ProjectPermissionModuleBean[].class);
     }
 }

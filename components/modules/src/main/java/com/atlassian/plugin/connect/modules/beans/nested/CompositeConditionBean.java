@@ -20,8 +20,7 @@ import java.util.List;
  * @since 1.0
  */
 @SchemaDefinition("compositeCondition")
-public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean
-{
+public class CompositeConditionBean extends BaseModuleBean implements ConditionalBean {
 
     /**
      * The conditions to compose using the specific logical operator.
@@ -33,66 +32,51 @@ public class CompositeConditionBean extends BaseModuleBean implements Conditiona
      */
     private CompositeConditionType type;
 
-    public CompositeConditionBean()
-    {
+    public CompositeConditionBean() {
         this.conditions = new ArrayList<ConditionalBean>();
         this.type = CompositeConditionType.AND;
     }
 
-    public CompositeConditionBean(CompositeConditionBeanBuilder builder)
-    {
+    public CompositeConditionBean(CompositeConditionBeanBuilder builder) {
         super(builder);
 
-        if (null == conditions)
-        {
+        if (null == conditions) {
             this.conditions = new ArrayList<ConditionalBean>();
         }
 
-        if (null == type)
-        {
+        if (null == type) {
             this.type = CompositeConditionType.AND;
         }
     }
 
-    public List<ConditionalBean> getConditions()
-    {
+    public List<ConditionalBean> getConditions() {
         return conditions;
     }
 
-    public CompositeConditionType getType()
-    {
+    public CompositeConditionType getType() {
         return type;
     }
 
-    public static CompositeConditionBeanBuilder newCompositeConditionBean()
-    {
+    public static CompositeConditionBeanBuilder newCompositeConditionBean() {
         return new CompositeConditionBeanBuilder();
     }
 
-    public static CompositeConditionBeanBuilder newCompositeConditionBean(CompositeConditionBean defaultBean)
-    {
+    public static CompositeConditionBeanBuilder newCompositeConditionBean(CompositeConditionBean defaultBean) {
         return new CompositeConditionBeanBuilder(defaultBean);
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hashCode(conditions, type);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (obj == this)
-        {
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
-        }
-        else if (!(obj instanceof CompositeConditionBean))
-        {
+        } else if (!(obj instanceof CompositeConditionBean)) {
             return false;
-        }
-        else
-        {
+        } else {
             final CompositeConditionBean that = (CompositeConditionBean) obj;
             return Objects.equal(conditions, that.conditions) &&
                     Objects.equal(type, that.type);

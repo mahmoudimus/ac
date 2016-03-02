@@ -1,19 +1,17 @@
 package it.confluence.servlet.macro;
 
+import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
+import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
+import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.test.common.servlet.ContextServlet;
-import com.atlassian.plugin.connect.test.common.servlet.InstallHandlerServlet;
-
-import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import static com.atlassian.plugin.connect.api.request.HttpMethod.GET;
 import static com.atlassian.plugin.connect.test.common.util.AddonTestUtils.generateJwtSignature;
@@ -32,10 +30,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * The body handler will be called with the collected body.
  */
-public class MacroBodyServlet extends ContextServlet
-{
-    public enum CollectionType
-    {
+public class MacroBodyServlet extends ContextServlet {
+    public enum CollectionType {
         BY_HASH,
         BY_ID
     }
@@ -47,8 +43,7 @@ public class MacroBodyServlet extends ContextServlet
     private final String addonKey;
 
     public MacroBodyServlet(CollectionType collectionType, String baseUrl, String addonKey,
-                            InstallHandlerServlet installHandlerServlet, BodyHandler bodyHandler)
-    {
+                            InstallHandlerServlet installHandlerServlet, BodyHandler bodyHandler) {
         this.collectionType = collectionType;
         this.baseUrl = baseUrl;
         this.addonKey = addonKey;
@@ -57,16 +52,13 @@ public class MacroBodyServlet extends ContextServlet
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context)
-    {
-        try
-        {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) {
+        try {
             String pageId = req.getParameter("pageId");
             String pageVersion = req.getParameter("pageVersion");
 
             URL url = null;
-            switch (collectionType)
-            {
+            switch (collectionType) {
                 case BY_ID:
                     String macroId = req.getParameter("macroId");
                     url = URI.create(baseUrl + "/rest/api/content/" + pageId + "/history/" + pageVersion + "/macro/id/" + macroId).toURL();
@@ -94,9 +86,7 @@ public class MacroBodyServlet extends ContextServlet
             String body = o.get("body").toString();
 
             bodyHandler.processBody(req, resp, context, body);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace(System.err);
             // this should cause the test to fail
             throw new RuntimeException(e);

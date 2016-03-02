@@ -10,30 +10,25 @@ import com.atlassian.json.schema.annotation.SchemaDefinition;
  * @since 1.0
  */
 @SchemaDefinition("webPanelLayout")
-public class WebPanelLayout
-{
+public class WebPanelLayout {
     private final String width;
     private final String height;
 
-    public WebPanelLayout()
-    {
+    public WebPanelLayout() {
         this.width = "";
         this.height = "";
     }
 
-    public WebPanelLayout(String width, String height)
-    {
+    public WebPanelLayout(String width, String height) {
         this.width = width;
         this.height = height;
     }
 
-    public String getWidth()
-    {
+    public String getWidth() {
         return width;
     }
 
-    public String getHeight()
-    {
+    public String getHeight() {
         return height;
     }
 }

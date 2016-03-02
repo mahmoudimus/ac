@@ -12,8 +12,7 @@ import java.net.URISyntaxException;
 /**
  *
  */
-public class RemotePluginContainerApplicationTypeImpl implements RemotePluginContainerApplicationType
-{
+public class RemotePluginContainerApplicationTypeImpl implements RemotePluginContainerApplicationType {
     private final WebResourceManager webResourceManager;
     private final Plugin plugin;
 
@@ -21,30 +20,23 @@ public class RemotePluginContainerApplicationTypeImpl implements RemotePluginCon
 
     public RemotePluginContainerApplicationTypeImpl(PluginRetrievalService pluginRetrievalService,
                                                     WebResourceManager webResourceManager
-    )
-    {
+    ) {
         this.plugin = pluginRetrievalService.getPlugin();
         this.webResourceManager = webResourceManager;
     }
 
-    public TypeId getId()
-    {
+    public TypeId getId() {
         return TYPE_ID;
     }
 
-    public String getI18nKey()
-    {
+    public String getI18nKey() {
         return "connect.applinks.container.name";
     }
 
-    public final URI getIconUrl()
-    {
-        try
-        {
+    public final URI getIconUrl() {
+        try {
             return new URI(webResourceManager.getStaticPluginResource(plugin.getKey() + ":images", "images", UrlMode.ABSOLUTE) + "/atlassian-icon-16.png");
-        }
-        catch (URISyntaxException e)
-        {
+        } catch (URISyntaxException e) {
             throw new IllegalStateException("Missing icon url for plugin container type");
         }
     }

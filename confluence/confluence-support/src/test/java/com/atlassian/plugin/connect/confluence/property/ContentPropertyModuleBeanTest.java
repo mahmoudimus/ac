@@ -3,8 +3,8 @@ package com.atlassian.plugin.connect.confluence.property;
 import com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
-import com.atlassian.plugin.connect.util.io.TestFileReader;
+import com.atlassian.plugin.connect.test.TestFileReader;
+import com.atlassian.plugin.connect.test.matcher.SameDeepPropertyValuesAs;
 import com.google.gson.Gson;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -13,11 +13,9 @@ import uk.co.datumedge.hamcrest.json.SameJSONAs;
 
 import java.io.IOException;
 
-public class ContentPropertyModuleBeanTest
-{
+public class ContentPropertyModuleBeanTest {
     @Test
-    public void producesCorrectJSON() throws Exception
-    {
+    public void producesCorrectJSON() throws Exception {
         ContentPropertyModuleBean bean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(bean, ContentPropertyModuleBean.class);
@@ -27,8 +25,7 @@ public class ContentPropertyModuleBeanTest
     }
 
     @Test
-    public void producesCorrectBean() throws Exception
-    {
+    public void producesCorrectBean() throws Exception {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
         ContentPropertyModuleBean deserializedBean = gson.fromJson(json, ContentPropertyModuleBean.class);
@@ -38,8 +35,7 @@ public class ContentPropertyModuleBeanTest
     }
 
     @Test
-    public void roundTrippingIsPreserving()
-    {
+    public void roundTrippingIsPreserving() {
         ContentPropertyModuleBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(originalBean, ContentPropertyModuleBean.class);
@@ -48,13 +44,11 @@ public class ContentPropertyModuleBeanTest
         Assert.assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }
 
-    private static ContentPropertyModuleBean createBean()
-    {
+    private static ContentPropertyModuleBean createBean() {
         return ConnectJsonExamples.createContentPropertyExampleBean();
     }
 
-    private static String readTestFile() throws IOException
-    {
+    private static String readTestFile() throws IOException {
         return TestFileReader.readAddonTestFile("contentProperty.json");
     }
 }

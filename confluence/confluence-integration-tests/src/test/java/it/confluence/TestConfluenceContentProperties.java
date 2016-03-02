@@ -1,8 +1,5 @@
 package it.confluence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.atlassian.confluence.api.model.JsonString;
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
@@ -25,10 +22,8 @@ import com.atlassian.plugin.connect.test.common.util.AddonTestUtils;
 import com.atlassian.plugin.connect.test.confluence.product.ConfluenceTestedProductAccessor;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.After;
@@ -38,8 +33,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
-import static com.atlassian.plugin.connect.modules.beans.UISupportModuleBean.newUISupportModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.UISupportBean.newUISupportModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static junit.framework.TestCase.assertFalse;
@@ -54,8 +52,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * Must be run with -DtestedProduct=confluence
  */
-public class TestConfluenceContentProperties
-{
+public class TestConfluenceContentProperties {
     private static final Logger log = getLogger(TestConfluenceContentProperties.class);
 
     private static final String PROPERTY_KEY = "basepropkey";
@@ -90,11 +87,9 @@ public class TestConfluenceContentProperties
     private int spaceCount = 0;
 
     @BeforeClass
-    public static void initRunner() throws Exception
-    {
+    public static void initRunner() throws Exception {
 
-        try
-        {
+        try {
             baseUrl = new ConfluenceTestedProductAccessor().getConfluenceProduct().getProductInstance().getBaseUrl();
 
             ContentPropertyModuleBean moduleBean = newContentPropertyModuleBean()
@@ -150,25 +145,22 @@ public class TestConfluenceContentProperties
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
                     .start();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             // avoid failing to init class, we'll rethrow this in setUp when it can be reported on properly
             setupFailure.add(ex);
         }
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         if (!setupFailure.isEmpty())
             throw setupFailure.get(0);
         setupData();
     }
 
-    private void setupData() throws Exception
-    {
-        String spaceKey = "PROPTEST"+spaceCount++;
+    @SuppressWarnings("unchecked")
+    private void setupData() throws Exception {
+        String spaceKey = "PROPTEST" + spaceCount++;
         space = restClient.spaces().create(Space.builder().key(spaceKey).name("Content property Test Space").build(), false).get();
         contentToFind = restClient.content().create(Content.builder(ContentType.PAGE)
                 .space(space)
@@ -190,7 +182,7 @@ public class TestConfluenceContentProperties
 
         JsonObject propertyValue = new JsonObject();
 
-        propertyValue.add(TEXT_FIELD_OBJECT_KEY, new JsonPrimitive("Sample  text to "+TEXT_FRAGMENT_VALUE));
+        propertyValue.add(TEXT_FIELD_OBJECT_KEY, new JsonPrimitive("Sample  text to " + TEXT_FRAGMENT_VALUE));
         propertyValue.add(STRING_FIELD_OBJECT_KEY, new JsonPrimitive(STRING_VALUE));
         propertyValue.add(NUMERIC_FIELD_OBJECT_KEY, new JsonPrimitive(NUMERIC_VALUE));
         propertyValue.add(DATE_FIELD_OBJECT_KEY, new JsonPrimitive(DATE_VALUE.toString(ISODateTimeFormat.dateTime())));
@@ -224,17 +216,14 @@ public class TestConfluenceContentProperties
     }
 
     @AfterClass
-    public static void tearDownClass() throws Exception
-    {
-        if (runner != null)
-        {
+    public static void tearDownClass() throws Exception {
+        if (runner != null) {
             runner.stopAndUninstall();
         }
     }
 
     @After
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         Promise<LongTaskSubmission> task = restClient.spaces().delete(Space.builder().key(space.getKey()).build());
 
         // this should be moved into RemoteLongTaskService
@@ -242,8 +231,7 @@ public class TestConfluenceContentProperties
 
         final int waitTime = 50;
         final int retry = 100;
-        for (int i = 0 ; longTaskStatus.get().getPercentageComplete() < 100; i++)
-        {
+        for (int i = 0; longTaskStatus.get().getPercentageComplete() < 100; i++) {
             Thread.sleep(50); // wait for the space deletion to finish
             longTaskStatus = restClient.longTasks().get(task.get().getId()).get();
             if (i > 100)
@@ -252,8 +240,7 @@ public class TestConfluenceContentProperties
     }
 
     @Test
-    public void testTextContentProperty() throws Exception
-    {
+    public void testTextContentProperty() throws Exception {
         PageResponse<Content> response = executeCql(String.format("content.property[%s].%s ~ %s", PROPERTY_KEY, TEXT_FIELD_OBJECT_KEY, TEXT_FRAGMENT_VALUE));
         assertHasOneMatchingItem(response, contentToFind);
 
@@ -262,18 +249,16 @@ public class TestConfluenceContentProperties
     }
 
     @Test
-    public void testNumericContentProperty() throws Exception
-    {
+    public void testNumericContentProperty() throws Exception {
         PageResponse<Content> response = executeCql(String.format("content.property[%s].%s >= %s", PROPERTY_KEY, NUMERIC_FIELD_OBJECT_KEY, NUMERIC_VALUE));
         assertHasOneMatchingItem(response, contentToFind);
 
         response = executeCql(String.format("content.property[%s].%s < %s", PROPERTY_KEY, NUMERIC_FIELD_OBJECT_KEY, NUMERIC_VALUE));
-        assertHasOneMatchingItem(response ,contentWithOtherProperty);
+        assertHasOneMatchingItem(response, contentWithOtherProperty);
     }
 
     @Test
-    public void testStringContentProperty() throws Exception
-    {
+    public void testStringContentProperty() throws Exception {
         PageResponse<Content> response = executeCql(String.format("content.property[%s].%s = %s", PROPERTY_KEY, STRING_FIELD_OBJECT_KEY, STRING_VALUE));
         assertHasOneMatchingItem(response, contentToFind);
 
@@ -282,8 +267,7 @@ public class TestConfluenceContentProperties
     }
 
     @Test
-    public void testDateContentProperty() throws Exception
-    {
+    public void testDateContentProperty() throws Exception {
         PageResponse<Content> response = executeCql(String.format("content.property[%s].%s < 2001-01-02", PROPERTY_KEY, DATE_FIELD_OBJECT_KEY));
         assertHasOneMatchingItem(response, contentToFind);
 
@@ -303,32 +287,26 @@ public class TestConfluenceContentProperties
         assertHasOneMatchingItem(response, contentWithOtherProperty);
     }
 
-    private void assertHasOneMatchingItem(PageResponse<Content> response, Promise<Content> content) throws Exception
-    {
+    private void assertHasOneMatchingItem(PageResponse<Content> response, Promise<Content> content) throws Exception {
         assertThat(response.getResults(), hasSize(1));
         assertThat(Iterables.first(response).get().getTitle(), is(content.get().getTitle()));
     }
 
-    private PageResponse<Content> executeCql(String cql) throws Exception
-    {
+    private PageResponse<Content> executeCql(String cql) throws Exception {
         log.debug(cql);
         final int retries = 100;
         final int waitTime = 100;
-        try
-        {
+        try {
             // confluence's index queue flushes every 5 secs (see config of IndexQueueFlusher), we don't have a rest client method to wait on this indexing
-            for (int i = 0; i < retries; i++)
-            {
+            for (int i = 0; i < retries; i++) {
                 PageResponse<Content> result = restClient.cqlSearch().searchContent(cql).get();
                 if (result.size() >= 1)
                     return result;
 
                 Thread.sleep(waitTime);
             }
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException("Could not execute :"+cql, ex);
+        } catch (Exception ex) {
+            throw new RuntimeException("Could not execute :" + cql, ex);
         }
         fail(String.format("Did not find any results after %d secs for query string : %s", retries * waitTime / 1000, cql));
         return null;

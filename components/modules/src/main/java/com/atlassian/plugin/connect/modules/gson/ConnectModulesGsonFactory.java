@@ -22,18 +22,19 @@ import java.util.Map;
 /**
  * @since 1.0
  */
-public class ConnectModulesGsonFactory
-{
+public class ConnectModulesGsonFactory {
 
-    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
+    private static final Type JSON_MODULE_LIST_TYPE = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {
+    }.getType();
 
-    private ConnectModulesGsonFactory()
-    {}
+    private ConnectModulesGsonFactory() {
+    }
 
-    public static GsonBuilder getGsonBuilder()
-    {
-        Type conditionalListType = new TypeToken<List<ConditionalBean>>() {}.getType();
-        Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
+    public static GsonBuilder getGsonBuilder() {
+        Type conditionalListType = new TypeToken<List<ConditionalBean>>() {
+        }.getType();
+        Type mapStringType = new TypeToken<Map<String, String>>() {
+        }.getType();
 
         return new GsonBuilder()
                 .setExclusionStrategies(new ShallowModuleListExclusionStrategy())
@@ -50,41 +51,34 @@ public class ConnectModulesGsonFactory
                 ;
     }
 
-    public static Gson getGson()
-    {
+    public static Gson getGson() {
         return getGsonBuilder().create();
     }
 
-    public static ShallowConnectAddonBean shallowAddonFromJson(JsonElement addonJson)
-    {
+    public static ShallowConnectAddonBean shallowAddonFromJson(JsonElement addonJson) {
         return getGson().fromJson(addonJson, ShallowConnectAddonBean.class);
     }
 
-    public static Map<String, Supplier<List<ModuleBean>>> moduleListFromJson(JsonElement addonJson, 
-                                                                             JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
-    {
+    public static Map<String, Supplier<List<ModuleBean>>> moduleListFromJson(JsonElement addonJson,
+                                                                             JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer) {
         GsonBuilder builder = getGsonBuilder().registerTypeAdapter(JSON_MODULE_LIST_TYPE, moduleDeserializer);
         JsonElement modulesJson = addonJson.getAsJsonObject().get("modules");
         return builder.create().fromJson(modulesJson, JSON_MODULE_LIST_TYPE);
     }
 
-    public static String addonBeanToJson(ConnectAddonBean bean)
-    {
+    public static String addonBeanToJson(ConnectAddonBean bean) {
         return getGson().toJson(bean);
     }
 
-    private static class ShallowModuleListExclusionStrategy implements ExclusionStrategy
-    {
+    private static class ShallowModuleListExclusionStrategy implements ExclusionStrategy {
 
         @Override
-        public boolean shouldSkipField(FieldAttributes f)
-        {
+        public boolean shouldSkipField(FieldAttributes f) {
             return f.getDeclaringClass().equals(ShallowConnectAddonBean.class) && f.getName().equals("modules");
         }
 
         @Override
-        public boolean shouldSkipClass(Class<?> clazz)
-        {
+        public boolean shouldSkipClass(Class<?> clazz) {
             return false;
         }
     }

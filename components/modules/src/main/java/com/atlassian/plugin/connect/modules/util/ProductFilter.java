@@ -12,19 +12,14 @@ package com.atlassian.plugin.connect.modules.util;
  * <p>Example: Atlassian Connect uses this enum to filter out product-specific
  * connect modules. Moral of the story: Don't remove this.</p>
  */
-public enum ProductFilter
-{
+public enum ProductFilter {
     ALL, JIRA, CONFLUENCE, BAMBOO, STASH, BITBUCKET, CROWD, FECRU;
 
-    public static boolean hasProduct(String productName)
-    {
-        try
-        {
+    public static boolean hasProduct(String productName) {
+        try {
             ProductFilter filter = valueOf(productName);
             return (null != filter);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }

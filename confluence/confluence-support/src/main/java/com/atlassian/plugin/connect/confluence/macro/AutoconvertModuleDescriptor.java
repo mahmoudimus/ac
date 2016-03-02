@@ -8,14 +8,12 @@ import com.atlassian.plugin.module.ModuleFactory;
 /**
  * A module descriptor to hold the autoconvert declaration.
  */
-public class AutoconvertModuleDescriptor extends AbstractModuleDescriptor<AutoconvertBean>
-{
+public class AutoconvertModuleDescriptor extends AbstractModuleDescriptor<AutoconvertBean> {
     private final String macroName;
     private final AutoconvertBean autoconvertBean;
     private final MatcherBean matcherBean;
 
-    public AutoconvertModuleDescriptor(ModuleFactory moduleFactory, String macroName, AutoconvertBean autoconvertBean, MatcherBean matcherBean)
-    {
+    public AutoconvertModuleDescriptor(ModuleFactory moduleFactory, String macroName, AutoconvertBean autoconvertBean, MatcherBean matcherBean) {
         super(moduleFactory);
         this.macroName = macroName;
         this.autoconvertBean = autoconvertBean;
@@ -23,13 +21,11 @@ public class AutoconvertModuleDescriptor extends AbstractModuleDescriptor<Autoco
     }
 
     @Override
-    public AutoconvertBean getModule()
-    {
+    public AutoconvertBean getModule() {
         return autoconvertBean;
     }
 
-    public String getMacroName()
-    {
+    public String getMacroName() {
         return macroName;
     }
 

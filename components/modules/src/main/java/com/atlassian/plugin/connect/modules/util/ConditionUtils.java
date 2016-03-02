@@ -8,33 +8,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ConditionUtils
-{
+public class ConditionUtils {
 
-    public static boolean isRemoteCondition(SingleConditionBean bean)
-    {
+    public static boolean isRemoteCondition(SingleConditionBean bean) {
         return isRemoteCondition(bean.getCondition());
     }
 
-    public static boolean isRemoteCondition(String condition)
-    {
-        return (condition.startsWith("http") ||condition.startsWith("/"));
+    public static boolean isRemoteCondition(String condition) {
+        return (condition.startsWith("http") || condition.startsWith("/"));
     }
 
-    public static List<SingleConditionBean> getSingleConditionsRecursively(List<ConditionalBean> conditions)
-    {
+    public static List<SingleConditionBean> getSingleConditionsRecursively(List<ConditionalBean> conditions) {
         return getSingleConditionsRecursively(conditions.stream()).collect(Collectors.toList());
     }
 
-    public static Stream<SingleConditionBean> getSingleConditionsRecursively(Stream<ConditionalBean> conditionStream)
-    {
+    public static Stream<SingleConditionBean> getSingleConditionsRecursively(Stream<ConditionalBean> conditionStream) {
         return conditionStream.flatMap(condition -> {
-            if (SingleConditionBean.class.isAssignableFrom(condition.getClass()))
-            {
+            if (SingleConditionBean.class.isAssignableFrom(condition.getClass())) {
                 return Stream.of((SingleConditionBean) condition);
-            }
-            else
-            {
+            } else {
                 return getSingleConditionsRecursively(((CompositeConditionBean) condition).getConditions().stream());
             }
         });

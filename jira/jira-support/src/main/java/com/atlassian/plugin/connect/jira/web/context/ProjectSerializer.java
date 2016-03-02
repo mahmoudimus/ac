@@ -11,11 +11,9 @@ import java.util.Map;
  * Serializes Project objects.
  */
 @JiraComponent
-public class ProjectSerializer implements ParameterSerializer<Project>
-{
+public class ProjectSerializer implements ParameterSerializer<Project> {
     @Override
-    public Map<String, Object> serialize(final Project project)
-    {
+    public Map<String, Object> serialize(final Project project) {
         return ImmutableMap.<String, Object>of("project", ImmutableMap.of(
                 "id", project.getId(),
                 "key", project.getKey()

@@ -8,8 +8,7 @@ import org.openqa.selenium.NoSuchElementException;
 /**
  * Describes a <tt>dialog-page</tt> module - must be bound after the dialog has been opened.
  */
-public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
-{
+public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog> {
 
     @ElementBy(className = "aui-blanket")
     protected PageElement auiBlanket;
@@ -25,19 +24,16 @@ public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
 
     private static final String DIALOG_CONTAINER_CLASS = "ap-dialog-container";
 
-    public RemoteDialog()
-    {
+    public RemoteDialog() {
         super();
     }
 
-    public RemoteDialog(PageElement iframe)
-    {
+    public RemoteDialog(PageElement iframe) {
         super(iframe);
     }
 
     @Override
-    protected String getContainerCssClassName()
-    {
+    protected String getContainerCssClassName() {
         return DIALOG_CONTAINER_CLASS;
     }
 
@@ -46,32 +42,29 @@ public class RemoteDialog extends AbstractRemoteDialog<RemoteDialog>
         this.waitUntilAUIBlanketHidden();
     }
 
-    public void submitAndWaitUntilHidden()
-    {
+    public void submitAndWaitUntilHidden() {
         submitButton.click();
         waitUntilHidden();
     }
 
-    public void cancelAndWaitUntilHidden()
-    {
+    public void cancelAndWaitUntilHidden() {
         cancelButton.click();
         waitUntilHidden();
     }
 
-    public boolean hasChrome()
-    {
-    	try
-    	{
-    		return submitButton != null && submitButton.isVisible();
-    	}
-    	catch (NoSuchElementException e)
-    	{
-    		return false;
-    	}
+    public boolean hasChrome() {
+        try {
+            return submitButton != null && submitButton.isVisible();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
-    public String getTitle()
-    {
+    public long getAuiBlanketZIndex() {
+        return (Long) this.auiBlanket.javascript().execute("return Number(window.document.defaultView.getComputedStyle(arguments[0]).getPropertyValue('z-index'));");
+    }
+
+    public String getTitle() {
         return titleElement.getText();
     }
 

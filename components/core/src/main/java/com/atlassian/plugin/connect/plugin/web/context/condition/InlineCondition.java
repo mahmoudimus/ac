@@ -6,32 +6,31 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
-public final class InlineCondition
-{
+public final class InlineCondition {
     private final String conditionName;
     private final Map<String, String> params;
 
-    public InlineCondition(String conditionName, Map<String, String> params)
-    {
+    public InlineCondition(String conditionName, Map<String, String> params) {
         this.conditionName = Preconditions.checkNotNull(conditionName);
         this.params = ImmutableMap.copyOf(params);
     }
 
-    public String getConditionName()
-    {
+    public String getConditionName() {
         return conditionName;
     }
 
-    public Map<String, String> getParams()
-    {
+    public Map<String, String> getParams() {
         return params;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         InlineCondition that = (InlineCondition) o;
 
@@ -40,14 +39,12 @@ public final class InlineCondition
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(getConditionName(), getParams());
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return com.google.common.base.Objects.toStringHelper(this)
                 .add("conditionName", getConditionName())
                 .add("params", getParams())
