@@ -9,7 +9,7 @@ package com.atlassian.plugin.connect.modules.beans.nested.contenttype;
 public enum BodyType {
     /**
      * If this Extensible Content Type will have Confluence Storage Format as the content body.
-     * <p>
+     *
      * Please consult <a href="https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format">Confluence Storage Format</a>
      * for additional information about how to construct valid storage format XML.
      */

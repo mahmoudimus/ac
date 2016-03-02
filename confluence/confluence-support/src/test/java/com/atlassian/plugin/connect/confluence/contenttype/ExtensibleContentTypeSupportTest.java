@@ -3,8 +3,6 @@ package com.atlassian.plugin.connect.confluence.contenttype;
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.api.model.content.Space;
-import com.atlassian.confluence.api.service.content.ContentService;
-import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.CustomContentManager;
 import com.atlassian.confluence.content.apisupport.ApiSupportProvider;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
@@ -43,12 +41,6 @@ public class ExtensibleContentTypeSupportTest {
 
     @Mock
     private PermissionManager permissionManager;
-
-    @Mock
-    private PaginationService paginationService;
-
-    @Mock
-    private ContentService contentService;
 
     @Mock
     private ApiSupportProvider apiSupportProvider;
@@ -112,15 +104,11 @@ public class ExtensibleContentTypeSupportTest {
                 contentTypeKey,
                 bean,
                 permissionManager,
-                paginationService,
-                contentService,
                 customContentApiSupportParams);
 
         return new ExtensibleContentTypeApiSupport(
                 extensibleContentType,
-                customContentApiSupportParams,
-                paginationService,
-                contentService);
+                customContentApiSupportParams);
     }
 
     private ExtensibleContentTypeModuleBean buildBean(Set<String> supportedContainer, Set<String> supportedContained) {

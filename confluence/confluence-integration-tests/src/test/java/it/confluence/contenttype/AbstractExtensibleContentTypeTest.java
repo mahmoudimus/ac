@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.ExtensibleContentTypeModuleBea
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ExtensibleContentTypeModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.APISupportBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.nested.contenttype.UISupportBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.contenttype.IndexingBean;
@@ -89,8 +88,6 @@ public abstract class AbstractExtensibleContentTypeTest {
         return new ExtensibleContentTypeModuleBeanBuilder()
                 .withKey(typeKey)
                 .withName(new I18nProperty(typeName, ""))
-                .withUISupport(new UISupportBeanBuilder()
-                        .build())
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(restrictedContainer)
                         .withSupportedContainedTypes(restrictedContained)
@@ -103,8 +100,6 @@ public abstract class AbstractExtensibleContentTypeTest {
         return new ExtensibleContentTypeModuleBeanBuilder()
                 .withKey(typeKey)
                 .withName(new I18nProperty(typeName, ""))
-                .withUISupport(new UISupportBeanBuilder()
-                        .build())
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainerTypes(Sets.newHashSet("space"))
                         .withSupportedContainedTypes(Sets.newHashSet())

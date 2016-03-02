@@ -50,8 +50,6 @@ public class ExtensibleContentTypeModuleDescriptor extends ContentTypeModuleDesc
                 getCompleteKey(),
                 bean,
                 permissionManager,
-                paginationService,
-                contentService,
                 customContentApiSupportParams);
     }
 }

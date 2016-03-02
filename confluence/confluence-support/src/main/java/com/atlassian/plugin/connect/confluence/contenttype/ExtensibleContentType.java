@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.confluence.contenttype;
 
 import com.atlassian.confluence.api.model.content.ContentType;
-import com.atlassian.confluence.api.service.content.ContentService;
-import com.atlassian.confluence.api.service.pagination.PaginationService;
 import com.atlassian.confluence.content.ContentEntityAdapter;
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.content.apisupport.ContentTypeApiSupport;
@@ -19,8 +17,6 @@ public class ExtensibleContentType extends BaseCustomContentType {
     private final String contentTypeKey;
     private final String contentTypeName;
     private final ContentEntityAdapter contentEntityAdapter;
-    private final PaginationService paginationService;
-    private final ContentService contentService;
     private final ExtensibleContentTypePermissionDelegate permissionDelegate;
     private final ContentUiSupport contentUiSupport;
     private final CustomContentApiSupportParams customContentApiSupportParams;
@@ -31,8 +27,6 @@ public class ExtensibleContentType extends BaseCustomContentType {
             String contentTypeKey,
             ExtensibleContentTypeModuleBean bean,
             PermissionManager permissionManager,
-            PaginationService paginationService,
-            ContentService contentService,
             CustomContentApiSupportParams customContentApiSupportParams) {
 
         super(ContentType.valueOf(contentTypeKey), customContentApiSupportParams.getProvider());
@@ -41,8 +35,6 @@ public class ExtensibleContentType extends BaseCustomContentType {
         this.contentTypeName = bean.getName().getI18nOrValue();
 
         this.permissionDelegate = new ExtensibleContentTypePermissionDelegate(permissionManager);
-        this.paginationService = paginationService;
-        this.contentService = contentService;
         this.contentEntityAdapter = new ExtensibleContentEntityAdapter(bean);
         this.contentUiSupport = new ExtensibleContentTypeUISupport(contentTypeName, bean);
         this.customContentApiSupportParams = customContentApiSupportParams;
@@ -82,8 +74,6 @@ public class ExtensibleContentType extends BaseCustomContentType {
     public ContentTypeApiSupport<CustomContentEntityObject> getApiSupport() {
         return new ExtensibleContentTypeApiSupport(
                 this,
-                customContentApiSupportParams,
-                paginationService,
-                contentService);
+                customContentApiSupportParams);
     }
 }

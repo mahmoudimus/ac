@@ -71,8 +71,6 @@ public class ConfluenceImports {
             @ConfluenceImport NotificationManager notificationManager,
             @ConfluenceImport ContentBodyConversionService converter,
             @ConfluenceImport CustomContentApiSupportParams customContentApiSupportParams,
-            @ConfluenceImport ModuleFactory moduleFactory,
-            @ConfluenceImport PaginationService paginationService,
-            @ConfluenceImport ContentService contentService) {
+            @ConfluenceImport ModuleFactory moduleFactory) {
     }
 }
