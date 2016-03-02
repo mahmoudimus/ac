@@ -552,7 +552,7 @@ public class ConnectJsonExamples {
 
     private static String createExtensibleContentTypeExample() {
         ExtensibleContentTypeModuleBean bean = new ExtensibleContentTypeModuleBeanBuilder()
-                .withKey("myExtensibleContentType")
+                .withKey("my-extensible-content-type")
                 .withName(new I18nProperty("Extensible Content Type Name", null))
                 .withAPISupport(new APISupportBeanBuilder()
                         .withSupportedContainedTypes(Sets.newHashSet("space", "page"))

@@ -53,7 +53,7 @@ public class ConfluenceModuleList extends BaseModuleBean {
     private List<ContentPropertyModuleBean> confluenceContentProperties;
 
     /**
-     * Extensible content types
+     * Extensible Content Type allow your Connect add-on to provide customized content types like builtin Page and BlogPost to Confluence.
      */
     private List<ExtensibleContentTypeModuleBean> extensibleContentTypes;
 
