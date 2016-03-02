@@ -32,7 +32,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * the authenticity of that request. Specifically, the JWT token can be found in the "Authorization" HTTP header.
  *
  * Note that if using Apache and mod\_wsgi to serve files to a Django application, the Authentication header is stripped
- * out by default. <a href="http://www.django-rest-framework.org/api-guide/authentication/#apache-mod\_wsgi-specific-configuration">Extra configuration</a>
+ * out by default. <a href="http://www.django-rest-framework.org/api-guide/authentication/#apache-mod_wsgi-specific-configuration">Extra configuration</a>
  * is required to ensure the Authentication header is visible.
  *
  * <h3>Variable Substitution</h3>
@@ -200,7 +200,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * <h2>Example</h2>
  *
- * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK\_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhook
  * @since 1.0
  */
