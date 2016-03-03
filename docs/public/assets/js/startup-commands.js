@@ -22,6 +22,7 @@ var startupCommands = (function() {
                 'environment': {
                     'dev': {
                         'connectVersion' : errorMsgVersion,
+                        'acjsVersion': errorMsgVersion,
                         'jiraVersion' : errorMsgVersion,
                         'confluenceVersion' : errorMsgVersion,
                         'jiraCommand' : errorMsgCommand,
@@ -29,6 +30,7 @@ var startupCommands = (function() {
                     },
                     'prd': {
                         'connectVersion' : errorMsgVersion,
+                        'acjsVersion': errorMsgVersion,
                         'jiraVersion' : errorMsgVersion,
                         'confluenceVersion' : errorMsgVersion,
                         'jiraCommand' : errorMsgCommand,
@@ -58,6 +60,12 @@ var startupCommands = (function() {
         }
         if($("#connect-version-dev").length) {
             $("#connect-version-dev").replaceWith(commands.dev.connectVersion);
+        }
+        if($("#acjs-version-prd").length) {
+            $("#acjs-version-prd").replaceWith(commands.prd.acjsVersion);
+        }
+        if($("#acjs-version-dev").length) {
+            $("#acjs-version-dev").replaceWith(commands.dev.acjsVersion);
         }
     }
 

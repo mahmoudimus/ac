@@ -6,16 +6,23 @@
 	        <span class="aui-icon icon-success"></span>
 	        <strong>Latest Atlassian Connect versions</strong>
 	    </p>
-	    <table>
-	        <tr>
-	            <td>In production:</td>
-	            <td><span id="connect-version-prd"/></td>
-	        </tr>
-	        <tr>
-                <td>In development:</td>
-                <td><span id="connect-version-dev"/></td>
+        <table class="aui">
+            <tr>
+                <th>Artifact</th>
+                <th>In development</th>
+                <th>In production</th>
             </tr>
-		</table>
+            <tr>
+                <td><a href="https://bitbucket.org/atlassian/atlassian-connect">atlassian-connect-plugin</a></td>
+                <td><span id="connect-version-dev"/></td>
+              <td><span id="connect-version-prd"/></td>
+            </tr>
+            <tr>
+                <td><a href=https://bitbucket.org/atlassian/atlassian-connect-js>atlassian-connect-js</a></td>
+                <td><span id="acjs-version-dev"/></td>
+              <td><span id="acjs-version-prd"/></td>
+            </tr>
+        </table>
 </div>
 
 The version numbers for the Atlassian Connect framework and Atlassian products which support it are published in 
