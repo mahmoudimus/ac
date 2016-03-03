@@ -214,14 +214,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.oauth.core</groupId>
-            <artifactId>oauth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.oauth.core</groupId>
-            <artifactId>oauth-provider</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.github.fge</groupId>
             <artifactId>msg-simple</artifactId>
             <version>1.1.2-atlassian</version>
