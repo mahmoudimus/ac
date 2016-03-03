@@ -84,7 +84,7 @@ Your simple content will use [AUI (Atlassian User Interface) styling](../concept
                     <li><tt>CONTEXT</tt>: The application context for the application, such as <tt>/jira</tt> or <tt>/confluence</tt>.</li>
                     <li><tt>all.js</tt>: This file is available in any Atlassian application that supports Connect. This <a href="../concepts/javascript-api.html">Javascript API library</a> provides functions you can use for your add-on. In this case, it enables iframe resizing for the JIRA page that displays your add-on.</li>
                 </ul>
-                <p>You must add `all.js` to your pages in order for your add-on to load in the host product. See the <a href="/guides/connect-cookbook.html#all.js">Connect cookbook</a> for a dynamic alternative for loading `all.js`.</p>
+                <p>You must add `all.js` to your pages in order for your add-on to load in the host product. See the <a href="../guides/connect-cookbook.html#all.js">Connect cookbook</a> for a dynamic alternative for loading `all.js`.</p>
         </tr>
         <tr>
             <td><strong><tt>ac-content</tt></strong></td>
