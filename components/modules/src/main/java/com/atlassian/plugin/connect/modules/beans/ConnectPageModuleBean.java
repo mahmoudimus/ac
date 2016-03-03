@@ -51,6 +51,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *&lt;/script&gt;
  *   </code></pre>
  *
+ * <!-- ## Loading all.js -->
+ *
+ * <p>Note that in order for your page to load in the iframe, you must add the <a href="/concepts/javascript-api.html">JavaScript API library</a>.
+ * See the example of loading `all.js` in the <a href="/guides/connect-cookbook.html#all.js">Connect cookbook</a>.</p>
+ *
  *#### Example
  *
  * @schemaTitle Page
