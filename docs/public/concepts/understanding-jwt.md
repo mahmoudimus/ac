@@ -57,7 +57,7 @@ The JWT Header declares that the encoded object is a JSON Web Token (JWT) and th
         </tr>
     </thead>
     <tr>
-        <td>"typ" (mandatory)</td><td>String</td><td>Type for the token, defaulted to "JWT". Specifies that this is a JWT token</td>
+        <td>"typ"</td><td>String</td><td>Type for the token, defaulted to "JWT". Specifies that this is a JWT token</td>
     </tr>
     <tr>
         <td>"alg" (mandatory)</td><td>String</td><td>Algorithm. specifies the algorithm used to sign the token.
