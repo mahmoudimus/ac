@@ -65,13 +65,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * <h4>Version events</h4>
  * <ul>
- *  <li><code>version\_created</code></li>
- *  <li><code>version\_deleted</code></li>
- *  <li><code>version\_merged</code></li>
- *  <li><code>version\_updated</code></li>
- *  <li><code>version\_moved</code></li>
- *  <li><code>version\_released</code></li>
- *  <li><code>version\_unreleased</code>
+ *  <li><code>jira:version\_created</code></li>
+ *  <li><code>jira:version\_deleted</code></li>
+ *  <li><code>jira:version\_merged</code></li>
+ *  <li><code>jira:version\_updated</code></li>
+ *  <li><code>jira:version\_moved</code></li>
+ *  <li><code>jira:version\_released</code></li>
+ *  <li><code>jira:version\_unreleased</code>
  *
  * Context parameters are <code>${project.id}, ${project.key}, ${version.id}</code>.
  *
@@ -121,7 +121,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *  <li><code>blog\_updated</code></li>
  *  <li><code>blog\_viewed</code></li>
  *  <li><code>blueprint\_page\_created</code></li>
- *  <li><code>cache\_statistics\_changed</code></li>
  *  <li><code>comment\_created</code></li>
  *  <li><code>comment\_removed</code></li>
  *  <li><code>comment\_updated</code></li>
