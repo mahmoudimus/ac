@@ -4,32 +4,25 @@
 <div class="aui-message info">
 	    <p class="title">
 	        <span class="aui-icon icon-success"></span>
-	        <strong>Versions in production</strong>
+	        <strong>Latest Atlassian Connect versions</strong>
 	    </p>
-	    <table>
-	        <tr>
-	            <td>Atlassian Connect plugin:</td>
-	            <td><span id="connect-version-prd"/></td>
-	        </tr>
-	        <tr>
-                <td>Atlassian Connect JS:</td>
-                <td><span id="acjs-version-prd"/></td>
+        <table class="aui">
+            <tr>
+                <th>Artifact</th>
+                <th>In development</th>
+                <th>In production</th>
             </tr>
-		</table>
-		<p class="title">
-			<span class="aui-icon icon-success"></span>
-			<strong>Versions in development</strong>
-		</p>
-		<table>
-			<tr>
-				<td>Atlassian Connect plugin:</td>
-				<td><span id="connect-version-dev"/></td>
-			</tr>
-			<tr>
-				<td>Atlassian Connect JS:</td>
-				<td><span id="acjs-version-dev"/></td>
-			</tr>
-		</table>
+            <tr>
+                <td><a href="https://bitbucket.org/atlassian/atlassian-connect">atlassian-connect-plugin</a></td>
+                <td><span id="connect-version-dev"/></td>
+              <td><span id="connect-version-prd"/></td>
+            </tr>
+            <tr>
+                <td><a href=https://bitbucket.org/atlassian/atlassian-connect-js>atlassian-connect-js</a></td>
+                <td><span id="acjs-version-dev"/></td>
+              <td><span id="acjs-version-prd"/></td>
+            </tr>
+        </table>
 </div>
 
 The version numbers for the Atlassian Connect framework and Atlassian products which support it are published in 
